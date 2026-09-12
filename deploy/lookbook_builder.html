@@ -1115,7 +1115,11 @@ body.is-mobile #wire-overlay #wire-align-panel{display:none !important}
 #wire-overlay .wire-return-edge{stroke:#ff8a3d !important;stroke-dasharray:7 5}
 #wire-overlay circle.wire-adv-rport-in:hover{fill:rgba(255,138,61,.3)}
 #wire-overlay circle.wire-adv-connector:hover{filter:drop-shadow(0 0 7px currentColor)}
-#wire-overlay .wire-srcport-name{width:100%;height:16px;font-size:9px;font-weight:600;font-family:var(--font-mono);color:var(--text);background:rgba(255,255,255,.04);border:1px solid var(--ss-border-soft);border-radius:4px;padding:1px 6px;box-sizing:border-box;outline:none;text-align:right}
+#wire-overlay .wire-hub-name{width:100%;box-sizing:border-box;background:transparent;border:0;outline:0;text-align:center;color:#c084fc;font:800 11px/18px -apple-system,Helvetica,Arial,sans-serif;letter-spacing:2px;text-transform:uppercase;padding:0}
+.wire-hub-name::placeholder{color:rgba(192,132,252,.55)}
+.wire-hub-name:focus{background:rgba(192,132,252,.08);border-radius:4px}
+.wire-edge-dim{opacity:.25}
+.wire-srcport-name{width:100%;height:16px;font-size:9px;font-weight:600;font-family:var(--font-mono);color:var(--text);background:rgba(255,255,255,.04);border:1px solid var(--ss-border-soft);border-radius:4px;padding:1px 6px;box-sizing:border-box;outline:none;text-align:right}
 #wire-overlay .wire-srcport-name:focus{border-color:#ff8a3d}
 #wire-overlay .wire-srcport-name::placeholder{color:var(--text3);opacity:.55}
 #wire-overlay circle.wire-adv-connector[data-source-id^="rop:"]:hover{fill:rgba(78,195,224,.3)}
@@ -3401,7 +3405,7 @@ Also called DSM (Downstage Monitor) in broadcast and theater workflows — same 
   <div class="bb-cell bb-pill bb-yellow" title="The largest number of layers used in any single preset — this is the figure to compare against your switcher's per-scene layer budget. (The most complex single moment in the show.)"><span class="bb-label">Layers</span><strong id="bb-layers">0</strong></div>
   <div id="bb-spacer"></div>
   <div class="bb-cell" id="bb-sel" style="font-size:10px;opacity:.5">—</div>
-  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy — hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16ey</div>
+  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy — hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16ez</div>
   <button class="bb-util" id="tb-adv" onclick="actions.advancedMenu(event)" title="Advanced features (AOI, Free Mode, Blend Zones, Dead Space)" aria-label="Advanced features (AOI, Free Mode, Blend Zones, Dead Space)" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Advanced<span class="adv-count" aria-hidden="true"></span><svg aria-hidden="true" id="tb-adv-chev" width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="opacity:.7"><polyline points="6 9 12 15 18 9"/></svg></button>
   <button class="bb-util" onclick="actions.help()" title="Help — quick reference, keyboard shortcuts, glossary, accessibility" aria-label="Help — quick reference, keyboard shortcuts, glossary, accessibility" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="4.93" y1="4.93" x2="9.17" y2="9.17"/><line x1="14.83" y1="14.83" x2="19.07" y2="19.07"/><line x1="14.83" y1="9.17" x2="19.07" y2="4.93"/><line x1="4.93" y1="19.07" x2="9.17" y2="14.83"/></svg>Help</button>
   <button class="bb-util" id="lb-skin-btn" onclick="lbToggleSkinMenu(event)" title="Color skin" aria-label="Change color skin" style="height:100%;padding:0 13px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="13.5" cy="6.5" r=".6" fill="currentColor" stroke="none"/><circle cx="17" cy="10.5" r=".6" fill="currentColor" stroke="none"/><circle cx="8.5" cy="7.5" r=".6" fill="currentColor" stroke="none"/><circle cx="6.5" cy="12" r=".6" fill="currentColor" stroke="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c.93 0 1.65-.75 1.65-1.69 0-.44-.18-.83-.44-1.12-.29-.29-.44-.65-.44-1.13a1.65 1.65 0 0 1 1.67-1.67h1.97c3.05 0 5.55-2.5 5.55-5.55C21.95 6.01 17.45 2 12 2z"/></svg></button>
@@ -13365,6 +13369,66 @@ function _wireBuildEdges(pidFilter){
   return { destEdges: destEdges, dsmEdges: dsmEdges };
 }
 
+// ── 16ez: generic SWITCHER hub in Simple ─────────────────────────────────
+// Rule (Omar, 2026-09-12): every source feeds a generic switcher and every
+// destination / AUX comes out of it, so the Simple sheet is physically true
+// again: the source-side wire carries the SOURCE connector colour, the
+// destination-side wire the DESTINATION connector colour (HDMI in, SDI out is
+// legal), and the hub grows one input per source and one output per
+// destination + AUX. Renamable (E2, Spyder, ATEM…), draggable (wireLayout.hub).
+const _WIRE_HUB = { W: 190, HEAD: 46, STEP: 24, PAD: 14, COLOR: '#c084fc' };
+function _wireHubName(){ return (wireSettings && wireSettings.hub && String(wireSettings.hub.name || '').trim()) || 'SWITCHER'; }
+function _wireSetHubName(v){
+  if(!wireSettings) return;
+  if(!wireSettings.hub || typeof wireSettings.hub !== 'object') wireSettings.hub = {};
+  wireSettings.hub.name = String(v || '').slice(0, 40);
+  if(typeof _markDirty === 'function') _markDirty();
+  if(typeof scheduleAutoSave === 'function') scheduleAutoSave();
+}
+// Connector-based edge style for a destination / AUX (mirror of _wireEdgeStyle).
+function _wireDestEdgeStyle(kind, refId, fallbackColor){
+  const list = (kind === 'dsm') ? ((typeof dsms !== 'undefined' && Array.isArray(dsms)) ? dsms : []) : ((typeof screens !== 'undefined' && Array.isArray(screens)) ? screens : []);
+  const obj = list.find(o => o && o.id === refId);
+  const spec = obj ? _wireCableSpec(obj.connectorType) : null;
+  if(spec) return { color: spec.color, dash: spec.dash, sw: spec.sw, markerEnd: spec.markerEnd, markerStart: spec.markerStart, typed: true, spec: spec };
+  return { color: fallbackColor, dash: '', sw: 0, markerEnd: '', markerStart: '', typed: false, spec: null };
+}
+// Hub geometry for n inputs / m outputs with its top-left at (x, y).
+function _wireHubGeom(x, y, nIn, nOut){
+  const rows = Math.max(nIn, nOut, 1);
+  const h = _WIRE_HUB.HEAD + rows * _WIRE_HUB.STEP + _WIRE_HUB.PAD;
+  return { x: x, y: y, w: _WIRE_HUB.W, h: h, portY: function(i){ return y + _WIRE_HUB.HEAD + i * _WIRE_HUB.STEP + _WIRE_HUB.STEP / 2; } };
+}
+// The hub node (live diagram + exports). o: { selected, inColors, outColors, live, color, text, muted, fill }
+function _wireHubNodeSVG(p, o){
+  o = o || {};
+  const col = o.color || _WIRE_HUB.COLOR;
+  const muted = o.muted || 'rgba(255,255,255,0.45)', fill = o.fill || 'rgba(0,0,0,0.55)';
+  const nIn = p.nIn || 0, nOut = p.nOut || 0;
+  const name = p.name || 'SWITCHER';
+  const sw = o.selected ? 2.6 : 1.4;
+  const glow = o.live ? (' style="filter:drop-shadow(0 0 ' + (o.selected ? 14 : 6) + 'px ' + col + (o.selected ? '' : '33') + ')"') : '';
+  let s = '<g class="wire-node wire-hub" data-node-id="hub" data-node-type="hub">';
+  s += '<rect x="' + p.x + '" y="' + p.y + '" width="' + p.w + '" height="' + p.h + '" rx="8" ry="8" fill="' + fill + '" stroke="' + col + '" stroke-width="' + sw + '"' + glow + '/>';
+  const cx = p.x + p.w / 2;
+  if(o.live){
+    s += '<foreignObject x="' + (p.x + 8) + '" y="' + (p.y + 7) + '" width="' + (p.w - 16) + '" height="20"><input xmlns="http://www.w3.org/1999/xhtml" class="wire-hub-name" value="' + _esc(name) + '" placeholder="SWITCHER" maxlength="40" title="Rename the switcher (E2, Spyder, ATEM…)"/></foreignObject>';
+  } else {
+    s += '<text x="' + cx + '" y="' + (p.y + 21) + '" text-anchor="middle" fill="' + col + '" font-size="11" font-weight="800" letter-spacing="2">' + _esc(String(name).toUpperCase()) + '</text>';
+  }
+  s += '<text x="' + cx + '" y="' + (p.y + 37) + '" text-anchor="middle" fill="' + muted + '" font-size="9" font-weight="600" letter-spacing="1">' + nIn + ' IN · ' + nOut + ' OUT</text>';
+  s += '<line x1="' + (p.x + 10) + '" y1="' + (p.y + _WIRE_HUB.HEAD - 2) + '" x2="' + (p.x + p.w - 10) + '" y2="' + (p.y + _WIRE_HUB.HEAD - 2) + '" stroke="' + col + '" stroke-opacity="0.35" stroke-width="1"/>';
+  for(let i = 0; i < nIn; i++){
+    const c = (o.inColors && o.inColors[i]) || col;
+    s += '<circle class="wire-hub-port" data-port-id="hin:' + i + '" cx="' + p.x + '" cy="' + p.portY(i) + '" r="4.5" fill="' + c + '" stroke="#0a0e16" stroke-width="1.5"/>';
+  }
+  for(let j = 0; j < nOut; j++){
+    const c = (o.outColors && o.outColors[j]) || col;
+    s += '<circle class="wire-hub-port" data-port-id="hout:' + j + '" cx="' + (p.x + p.w) + '" cy="' + p.portY(j) + '" r="4.5" fill="' + c + '" stroke="#0a0e16" stroke-width="1.5"/>';
+  }
+  return s + '</g>';
+}
+
 function _wireRenderDiagram(container){
   // View dispatch: Advanced is a fully standalone free-form builder.
   if(wireSettings && wireSettings.wireView === 'advanced'){
@@ -13408,9 +13472,10 @@ function _wireRenderDiagram(container){
   const COL_W = 220, NODE_H = 36, NODE_GAP = 15, ROW_STEP = NODE_H + NODE_GAP; // 51 px per row
   const PAD_TOP = 30, PAD_BOT = 30, PAD_LR = 30;
   const SECTION_GAP = 44; // breathing room between Destinations and AUX/DSM
-  const HORIZ_GAP = 16 * GRID; // 2026-06-15: widened (was 10*GRID/300px) so curved wires fan inside the gap instead of bowing behind the node columns
+  const HUB_GAP = 8 * GRID;    // 16ez: sources → SWITCHER → destinations; this gap sits on each side of the hub
   const colSrcX = PAD_LR;
-  const colDstX = colSrcX + COL_W + HORIZ_GAP;
+  const colHubX = colSrcX + COL_W + HUB_GAP;
+  const colDstX = colHubX + _WIRE_HUB.W + HUB_GAP;
   const colDsmX = colDstX;
   const totalW = colDstX + COL_W + PAD_LR;
   // Tallest column wins for canvas height.
@@ -13418,7 +13483,8 @@ function _wireRenderDiagram(container){
   const destSpan = (dests.length > 0) ? dests.length * ROW_STEP - NODE_GAP : 0;
   const dsmSpan  = (dsmNodes.length > 0) ? dsmNodes.length * ROW_STEP - NODE_GAP : 0;
   const rightSpan = destSpan + (destSpan > 0 && dsmSpan > 0 ? SECTION_GAP : 0) + dsmSpan;
-  const innerH = Math.max(srcSpan, rightSpan, NODE_H);
+  const hubGeom0 = _wireHubGeom(0, 0, srcs.length, dests.length + dsmNodes.length);
+  const innerH = Math.max(srcSpan, rightSpan, hubGeom0.h, NODE_H);
   const totalH = PAD_TOP + innerH + PAD_BOT;
   // Center the shorter column against the taller one, then snap to grid
   // so every node sits cleanly between grid lines.
@@ -13444,6 +13510,17 @@ function _wireRenderDiagram(container){
   dsmNodes.forEach((d, i) => {
     _wireAutoPos('dsm:' + d.id, colDsmX, dsmStartY + i * ROW_STEP, 'dsm', d.name, COL_DSM);
   });
+  // 16ez: the SWITCHER hub — centred like the columns, draggable (wireLayout.hub);
+  // its ports are zero-size ghost nodes so the edge code anchors on them as-is.
+  { const hov = wireLayout['hub'];
+    const hx = (hov && typeof hov.x === 'number') ? hov.x : colHubX;
+    const hy = (hov && typeof hov.y === 'number') ? hov.y : snapGrid(PAD_TOP + (innerH - hubGeom0.h) / 2);
+    const hg = _wireHubGeom(hx, hy, srcs.length, dests.length + dsmNodes.length);
+    positions['hub'] = { x: hg.x, y: hg.y, w: hg.w, h: hg.h, type: 'hub', name: _wireHubName(), color: _WIRE_HUB.COLOR, nIn: srcs.length, nOut: dests.length + dsmNodes.length, portY: hg.portY };
+    srcs.forEach((name, i) => { positions['hin:' + i] = { x: hg.x, y: hg.portY(i), w: 0, h: 0, type: 'hubport', name: '' }; });
+    dests.forEach((d, j) => { positions['hout:' + j] = { x: hg.x + hg.w, y: hg.portY(j), w: 0, h: 0, type: 'hubport', name: '' }; });
+    dsmNodes.forEach((d, j) => { const k = dests.length + j; positions['hout:' + k] = { x: hg.x + hg.w, y: hg.portY(k), w: 0, h: 0, type: 'hubport', name: '' }; });
+  }
   // Dynamic viewBox: ensure dragged-far nodes stay visible on every edge.
   // Tracks min x/y too — without this, a node dragged left of x=0
   // (e.g. CONFIDENCE pushed past PAD_LR) gets clipped by the viewBox.
@@ -13474,27 +13551,19 @@ function _wireRenderDiagram(container){
   }
   const bbW = bbR - bbL, bbH = bbB - bbT;
 
-  // Edges
+  // Edges — 16ez: every source → SWITCHER input, SWITCHER output → every
+  // destination / AUX. (Which source feeds which screen per look lives in the
+  // presets and the Look Book pages, not on the physical sheet.)
   const edges = [];
-  Object.keys(edgesData.destEdges).forEach(srcName => {
-    edgesData.destEdges[srcName].forEach(sid => {
-      if(positions['src:' + srcName] && positions['dst:' + sid]){
-        edges.push({ from: 'src:' + srcName, to: 'dst:' + sid });
-      }
-    });
-  });
-  Object.keys(edgesData.dsmEdges).forEach(srcName => {
-    edgesData.dsmEdges[srcName].forEach(dsmId => {
-      if(positions['src:' + srcName] && positions['dsm:' + dsmId]){
-        edges.push({ from: 'src:' + srcName, to: 'dsm:' + dsmId });
-      }
-    });
-  });
+  srcs.forEach((name, i) => { if(positions['src:' + name] && positions['hin:' + i]) edges.push({ from: 'src:' + name, to: 'hin:' + i, hubIn: i, src: name }); });
+  dests.forEach((d, j) => { if(positions['hout:' + j] && positions['dst:' + d.id]) edges.push({ from: 'hout:' + j, to: 'dst:' + d.id, hubOut: j, dstKind: 'dst', dstId: d.id }); });
+  dsmNodes.forEach((d, j) => { const k = dests.length + j; if(positions['hout:' + k] && positions['dsm:' + d.id]) edges.push({ from: 'hout:' + k, to: 'dsm:' + d.id, hubOut: k, dstKind: 'dsm', dstId: d.id }); });
 
   // Edges: source (left) → destination/dsm (right). Anchor on source.RIGHT
   // and destination/DSM.LEFT. wireSettings.wireStyle toggles cubic-bezier
   // ('curved') vs step ('orthogonal').
   const wireStyle = (typeof wireSettings === 'object' && wireSettings && wireSettings.wireStyle) ? wireSettings.wireStyle : 'curved';
+  const _hubInCol = [], _hubOutCol = [];   // 16ez: port dot colours follow their wires
   let svgEdges = '';
   // Termination dots — rendered at each highlighted edge's destination-side
   // endpoint, then drawn on top of the node layer so they stay visible
@@ -13512,7 +13581,7 @@ function _wireRenderDiagram(container){
   // 2026-06-15: scale rail spacing down as edges grow so the whole spread of
   // control-point rails always fits INSIDE the source→dest gap (a wire's
   // control points then never sit behind a node column).
-  const ORTHO_SPACING = Math.max(4, Math.min(20, (HORIZ_GAP * 0.7) / Math.max(1, edges.length)));   // distance between adjacent midX rails
+  const ORTHO_SPACING = Math.max(4, Math.min(20, (HUB_GAP * 0.7) / Math.max(1, edges.length)));   // distance between adjacent midX rails
   const Y_SPACING     = 6;    // distance between adjacent entry/exit rails
   const orthoCenter = (edges.length - 1) / 2;
   // Pre-group edges by source and by destination so we can compute per-
@@ -13580,16 +13649,19 @@ function _wireRenderDiagram(container){
       const _routed = _wireAutoRoute(x1, adjY1, x2, adjY2, wireStyle, _wireRectsFromPositions(positions, null), adjustedMidX, (adjY1 + adjY2) / 2);   // 16en: own nodes included
       if(_routed) path = _routed;
     }
-    const isHighlit = selSet.has(e.from) || selSet.has(e.to);
+    const isHighlit = selSet.has(e.from) || selSet.has(e.to) || (selSet.has('hub') && (e.hubIn != null || e.hubOut != null));
     // Each wire gets the colour assigned to its SOURCE so multiple
     // wires through the same area can be visually told apart.
     const srcName = (e.from.indexOf('src:') === 0) ? e.from.slice(4) : null;
-    const _es = srcName ? _wireEdgeStyle(srcName) : null;   // 16ei: cable type → colour + pattern
+    // 16ei/16ez: source side → SOURCE connector; hub → destination side → DESTINATION connector.
+    const _es = srcName ? _wireEdgeStyle(srcName) : (e.dstKind ? _wireDestEdgeStyle(e.dstKind, e.dstId, (e.dstKind === 'dsm') ? COL_DSM : 'var(--n-cyan)') : null);
     const wireColor = _es ? _es.color : 'var(--n-cyan)';
+    if(e.hubIn != null) _hubInCol[e.hubIn] = wireColor; else if(e.hubOut != null) _hubOutCol[e.hubOut] = wireColor;
+    const _dimEdge = (pid !== null) && !activeSet.has(e.hubIn != null ? e.from : e.to);   // preset filter: fade wires of nodes not in this look
     const stroke = isHighlit ? _wireRgba(wireColor, 0.95) : _wireRgba(wireColor, (_es && _es.typed) ? 0.7 : 0.45);
     const w = isHighlit ? '3.4' : ((_es && _es.typed && _es.sw) ? String(_es.sw) : '2.6');
     const isEdgeSelected = (_wireState.selectedEdgeKey === edgeKey);
-    svgEdges += '<path class="wire-edge' + ((_es && _es.typed) ? ' wire-typed-edge' : '') + '" data-edge-key="' + _esc(edgeKey) + '" data-from="' + _esc(e.from) + '" data-to="' + _esc(e.to) + '" data-mid-offset="' + orthoOffset + '" data-mid-y-offset="' + customYOffset + '" data-y1-offset="' + y1Off + '" data-y2-offset="' + y2Off + '" d="' + path + '" stroke="' + stroke + '" stroke-width="' + w + '" fill="none"' + _wireEdgeExtraAttrs(_es) + ' style="cursor:pointer"/>';
+    svgEdges += '<path class="wire-edge' + ((_es && _es.typed) ? ' wire-typed-edge' : '') + (_dimEdge ? ' wire-edge-dim' : '') + '" data-edge-key="' + _esc(edgeKey) + '" data-from="' + _esc(e.from) + '" data-to="' + _esc(e.to) + '" data-mid-offset="' + orthoOffset + '" data-mid-y-offset="' + customYOffset + '" data-y1-offset="' + y1Off + '" data-y2-offset="' + y2Off + '" d="' + path + '" stroke="' + stroke + '" stroke-width="' + w + '" fill="none"' + _wireEdgeExtraAttrs(_es) + ' style="cursor:pointer"/>';
     if(isHighlit){
       // Termination dots at BOTH ends — tagged with data-from / data-to so
       // they follow the wire endpoints when a node is dragged.
@@ -13617,6 +13689,8 @@ function _wireRenderDiagram(container){
   if(typeof wireThumbnails === 'undefined' || wireThumbnails === null) wireThumbnails = {};
   Object.keys(positions).forEach(id => {
     const p = positions[id];
+    if(p.type === 'hubport') return;
+    if(p.type === 'hub'){ svgNodes += _wireHubNodeSVG(p, { selected: selSet.has(id), inColors: _hubInCol, outColors: _hubOutCol, live: true }); return; }
     const isActive = !isFiltering || activeSet.has(id);
     const isSelected = selSet.has(id);
     const opacity = isActive ? 1 : 0.25;
@@ -13656,6 +13730,13 @@ function _wireRenderDiagram(container){
   // click (≤3px). Click → select node; drag → reposition + save.
   container.querySelectorAll('.wire-node').forEach(el => {
     el.addEventListener('mousedown', function(ev){ _wireStartNodeDrag(ev, this.dataset.nodeId); });
+  });
+  // 16ez: SWITCHER name field on the hub — typing must not start a drag.
+  container.querySelectorAll('.wire-hub-name').forEach(inp => {
+    inp.addEventListener('mousedown', function(ev){ ev.stopPropagation(); });
+    inp.addEventListener('keydown', function(ev){ ev.stopPropagation(); if(ev.key === 'Enter'){ ev.preventDefault(); inp.blur(); } });
+    inp.addEventListener('input', function(){ _wireSetHubName(inp.value); });
+    inp.addEventListener('change', function(){ _wireRender(); });
   });
   // Click on a wire path selects it (shows the midpoint handle).
   container.querySelectorAll('.wire-edge').forEach(el => {
@@ -14519,13 +14600,15 @@ function _wireRenderAdvancedDiagram(container){
   wireAdvanced.dests.forEach(d => {
     const tpl = screenById[d.refId] || _wireAdvGetDestTemplate(d.refId);
     const name = tpl ? (tpl.name || tpl.id) : '[deleted destination]';
-    positions['adst:' + d.id] = { x: d.x, y: d.y, w: TILE_W, h: TILE_H, type: 'destination', name: name, color: COL_DST, refId: d.refId };
+    positions['adst:' + d.id] = { x: d.x, y: d.y, w: TILE_W, h: TILE_H, type: 'destination', name: name, color: COL_DST, refId: d.refId, inC: d.inC };
+    if((parseInt(d.inC, 10) || 1) >= 2) positions['adp:' + d.id + ':1'] = { x: d.x, y: d.y + TILE_H / 2 + 18, w: 0, h: 0, type: 'dstport', name: '' };   // 16ez backup input
   });
   // AUX/DSM INSTANCES — rich tile, name resolved from dsms[].
   wireAdvanced.dsms.forEach(d => {
     const tpl = dsmById[d.refId] || _wireAdvGetDsmTemplate(d.refId);
     const name = tpl ? (tpl.name || tpl.id) : '[deleted AUX/DSM]';
-    positions['adsm:' + d.id] = { x: d.x, y: d.y, w: TILE_W, h: TILE_H, type: 'dsm', name: name, color: COL_DSM, refId: d.refId };
+    positions['adsm:' + d.id] = { x: d.x, y: d.y, w: TILE_W, h: TILE_H, type: 'dsm', name: name, color: COL_DSM, refId: d.refId, inC: d.inC };
+    if((parseInt(d.inC, 10) || 1) >= 2) positions['adp:' + d.id + ':1'] = { x: d.x, y: d.y + TILE_H / 2 + 18, w: 0, h: 0, type: 'dstport', name: '' };   // 16ez backup input
   });
   // Router instances — width scales with chosen size so the matrix fits.
   // 10×10 fits at 460, taller routers cap height and let the grid scroll.
@@ -14669,7 +14752,7 @@ function _wireRenderAdvancedDiagram(container){
       const _routed = _wireAutoRoute(x1, adjY1, x2, adjY2, wireStyle, _wireRectsFromPositions(positions, null), adjustedMidX_a, (adjY1 + adjY2) / 2);   // 16en: own tiles included
       if(_routed) path = _routed;
     }
-    const isHighlit = selSet.has(w.fromId) || selSet.has(w.toId);
+    const isHighlit = selSet.has(w.fromId) || selSet.has(w.toId) || selSet.has(_wireAdvOwnerId(w.fromId)) || selSet.has(_wireAdvOwnerId(w.toId));
     // Resolve the wire colour from its source. asrc:<id> → look up the
     // instance's name → palette colour. rop:* (router outputs) and other
     // origins fall back to the generic cyan.
@@ -14826,6 +14909,18 @@ function _wireRenderAdvancedDiagram(container){
       // dot for visual consistency.
       const inCx = p.x, inCy = p.y + p.h / 2;
       svgNodes += '<circle cx="' + inCx + '" cy="' + inCy + '" r="7" style="fill:rgba(var(--n-cyan-rgb),0.95)" stroke="#0a0e16" stroke-width="2" pointer-events="none"/>';
+      // 16ez (Omar): primary + backup run — a second input point on the tile.
+      // + / − on the top-left corner; PRI / BKP tags once the second point exists.
+      const _dic = Math.min(2, Math.max(1, parseInt(p.inC, 10) || 1));
+      const _dcol = (p.type === 'destination') ? 'var(--n-cyan)' : '#7cf598';
+      if(_dic >= 2){
+        const _in2 = inCy + 18;
+        svgNodes += '<circle class="wire-adv-inport" data-inport-id="adp:' + id.slice(5) + ':1" data-inport-type="' + p.type + '" cx="' + inCx + '" cy="' + _in2 + '" r="7" fill="#0a0e16" stroke="' + _dcol + '" stroke-width="2.2" style="cursor:crosshair"/>';
+        svgNodes += '<text class="wire-adv-follow" x="' + (inCx - 11) + '" y="' + (inCy + 3) + '" text-anchor="end" font-size="8" font-weight="800" fill="' + _dcol + '" letter-spacing="1">PRI</text>';
+        svgNodes += '<text class="wire-adv-follow" x="' + (inCx - 11) + '" y="' + (_in2 + 3) + '" text-anchor="end" font-size="8" font-weight="800" fill="' + _dcol + '" letter-spacing="1">BKP</text>';
+      }
+      svgNodes += '<circle class="wire-dst-inbtn" data-dst-id="' + _esc(id) + '" data-act="' + (_dic >= 2 ? 'rem' : 'add') + '" cx="' + p.x + '" cy="' + p.y + '" r="8" fill="#0a0e16" stroke="' + _dcol + '" stroke-width="1.4" style="cursor:pointer"><title>' + (_dic >= 2 ? 'Remove the backup input' : 'Add a backup input (primary + backup run)') + '</title></circle>';
+      svgNodes += '<text class="wire-adv-follow wire-dst-inbtn-glyph" x="' + p.x + '" y="' + (p.y + 3.5) + '" text-anchor="middle" font-size="12" font-weight="700" fill="' + _dcol + '" pointer-events="none">' + (_dic >= 2 ? '\u2212' : '+') + '</text>';
     } else {
       // Fallback for legacy types — compact rect-pill look. Source-port
       // ghost nodes (asp: entries) carry no color, so default to the source
@@ -14885,7 +14980,7 @@ function _wireRenderAdvancedDiagram(container){
     el.addEventListener('mousedown', function(ev){
       // Connector dots (output ports) and router input port hit-tests
       // have their own handlers / are drop-only — don't start a drag.
-      if(ev.target.classList && (ev.target.classList.contains('wire-adv-connector') || ev.target.classList.contains('wire-adv-rport-in') || ev.target.classList.contains('wire-src-outbtn'))) return;
+      if(ev.target.classList && (ev.target.classList.contains('wire-adv-connector') || ev.target.classList.contains('wire-adv-rport-in') || ev.target.classList.contains('wire-src-outbtn') || ev.target.classList.contains('wire-dst-inbtn'))) return;
       const tag = (ev.target && ev.target.tagName) || '';
       if(tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || tag === 'BUTTON' || tag === 'OPTION') return;
       if(ev.target && ev.target.isContentEditable) return;
@@ -14904,6 +14999,14 @@ function _wireRenderAdvancedDiagram(container){
     el.addEventListener('click', function(ev){
       ev.preventDefault(); ev.stopPropagation();
       _wireAdvSrcOutBtn(this.dataset.srcId, this.dataset.act);
+    });
+  });
+  // 16ez: destination / AUX backup-input +/−.
+  container.querySelectorAll('.wire-dst-inbtn').forEach(el => {
+    el.addEventListener('mousedown', function(ev){ ev.preventDefault(); ev.stopPropagation(); });
+    el.addEventListener('click', function(ev){
+      ev.preventDefault(); ev.stopPropagation();
+      _wireAdvDstInBtn(this.dataset.dstId, this.dataset.act);
     });
   });
   // Wire click — select for midpoint editing. (To delete a wire, select
@@ -15064,9 +15167,15 @@ function _wireAdvStartWireDraw(ev, sourceNodeId){
     if(!el) return;
     let tid = null;
     let type = null; // 'destination' | 'dsm' | 'router' | 'rport-in'
+    let _autoBackup = null;   // 16ez: tile whose second input pops up for this run
+    // PRIORITY 0 (16ez): the backup input dot on a destination / AUX tile.
+    const inpEl = el.closest('.wire-adv-inport');
     // PRIORITY 1: router input port (per-row), Phase 2 wiring path.
     const ripEl = el.closest('.wire-adv-rport-in');
-    if(ripEl){
+    if(inpEl){
+      tid  = inpEl.getAttribute('data-inport-id');          // 'adp:<instId>:1'
+      type = inpEl.getAttribute('data-inport-type') || 'destination';
+    } else if(ripEl){
       tid  = ripEl.getAttribute('data-rport-id'); // 'rip:routerId:idx'
       type = 'rport-in';
     } else {
@@ -15076,6 +15185,16 @@ function _wireAdvStartWireDraw(ev, sourceNodeId){
       tid  = g.getAttribute('data-node-id');
       type = g.getAttribute('data-node-type');
       if(type !== 'destination' && type !== 'dsm' && type !== 'router') return;
+      // 16ez (Omar): the primary input is already fed by ANOTHER source, so this
+      // run is the BACKUP — the second point pops up and takes the new line.
+      if((type === 'destination' || type === 'dsm') && (wireAdvanced.wires || []).some(w => w.toId === tid && w.fromId !== sourceNodeId)){
+        const _bk = 'adp:' + tid.slice(5) + ':1';
+        if((wireAdvanced.wires || []).some(w => w.toId === _bk)){
+          if(typeof showAlert === 'function') showAlert({ variant: 'warning', title: 'Both inputs in use', message: 'This tile already has a primary and a backup feed. Delete one of them first.' });
+          return;
+        }
+        _autoBackup = _wireAdvInstOf(tid); tid = _bk;
+      }
       // If the drop landed on a router's body (not on a specific input
       // port dot), infer which input row the cursor was over and treat
       // it as a row-level drop. Without this, the source name never
@@ -15107,10 +15226,16 @@ function _wireAdvStartWireDraw(ev, sourceNodeId){
     // are ALLOWED — real system diagrams do this (e.g. ATEM outputs looping
     // back through converters into its own inputs). Only exact duplicates are
     // blocked below.
+    // 16ez: a backup input takes exactly one cable.
+    if(tid && tid.indexOf('adp:') === 0 && (wireAdvanced.wires || []).some(w => w.toId === tid && w.fromId !== sourceNodeId)){
+      if(typeof showAlert === 'function') showAlert({ variant: 'warning', title: 'Backup input in use', message: 'That backup input already has a cable. Delete it first.' });
+      return;
+    }
     // Prevent duplicate wires.
     const dup = (wireAdvanced.wires || []).some(w => w.fromId === sourceNodeId && w.toId === tid);
     if(dup) return;
     if(typeof pushUndo === 'function') pushUndo();
+    if(_autoBackup) _autoBackup.inst.inC = 2;
     wireAdvanced.wires.push({ id: 'w' + Date.now().toString(36) + Math.random().toString(36).slice(2,5), fromId: sourceNodeId, toId: tid,
       // Return tool: tag the wire as a RETURN feed (renders dashed amber).
       kind: (wireSettings && wireSettings.tool === 'return') ? 'return' : undefined });
@@ -15150,6 +15275,7 @@ function _wireAdvAutoCellName(fromId){
 function _wireAdvAutoTargetName(toId){
   _wireAdvHelpers();
   if(toId.indexOf('adst:') === 0 || toId.indexOf('adsm:') === 0) return _wireAdvAutoCellName(toId);
+  if(toId.indexOf('adp:') === 0){ const o = _wireAdvInstOf(toId); const base = o ? _wireAdvAutoCellName(o.ownerId) : ''; return base ? base + ' \u00b7 BKP' : ''; }   // 16ez
   if(toId.indexOf('dst:') === 0){ const s = (typeof screens !== 'undefined' ? screens : []).find(x => x.id === toId.slice(4)); return s ? (s.name || s.id) : ''; }
   if(toId.indexOf('dsm:') === 0){ const d = (typeof dsms !== 'undefined' ? dsms : []).find(x => x.id === toId.slice(4)); return d ? (d.name || d.id) : ''; }
   if(toId.indexOf('rip:') === 0){ const p = toId.split(':'); const r = wireAdvanced.routers.find(x => x.id === p[1]); return r ? ((r.label || 'Router') + ' IN ' + ((parseInt(p[2], 10) || 0) + 1)) : ''; }
@@ -15270,6 +15396,47 @@ function _wireAdvToggleSrcPortLabels(srcId){
   if(typeof scheduleAutoSave === 'function') scheduleAutoSave();
   _wireRender();
 }
+// 16ez: destination / AUX instance lookup by any of its ids ('adst:x' / 'adsm:x' / 'adp:x:1').
+function _wireAdvInstOf(id){
+  _wireAdvHelpers();
+  let key = null;
+  if(id && id.indexOf('adp:') === 0) key = id.split(':')[1];
+  else if(id && (id.indexOf('adst:') === 0 || id.indexOf('adsm:') === 0)) key = id.slice(5);
+  if(!key) return null;
+  const d = (wireAdvanced.dests || []).find(x => x.id === key); if(d) return { inst: d, kind: 'destination', ownerId: 'adst:' + d.id };
+  const m = (wireAdvanced.dsms  || []).find(x => x.id === key); if(m) return { inst: m, kind: 'dsm', ownerId: 'adsm:' + m.id };
+  return null;
+}
+// The tile a port id belongs to (selection / highlight follow the tile).
+function _wireAdvOwnerId(id){
+  if(!id) return id;
+  if(id.indexOf('adp:') === 0){ const o = _wireAdvInstOf(id); return o ? o.ownerId : id; }
+  if(id.indexOf('asp:') === 0) return 'asrc:' + id.split(':')[1];
+  if(id.indexOf('rip:') === 0 || id.indexOf('rop:') === 0) return 'router:' + id.split(':')[1];
+  return id;
+}
+// + / − backup input on a destination / AUX tile (max 2 inputs: primary + backup).
+function _wireAdvDstInBtn(nodeId, act){
+  const o = _wireAdvInstOf(nodeId); if(!o) return;
+  const cur = Math.min(2, Math.max(1, parseInt(o.inst.inC, 10) || 1));
+  if(act === 'add'){
+    if(cur >= 2) return;
+    if(typeof pushUndo === 'function') pushUndo();
+    o.inst.inC = 2;
+  } else {
+    if(cur <= 1) return;
+    const bk = 'adp:' + o.inst.id + ':1';
+    if((wireAdvanced.wires || []).some(w => w.toId === bk || w.fromId === bk)){
+      if(typeof showAlert === 'function') showAlert({ variant: 'warning', title: 'Backup input in use', message: 'The backup input still has a cable \u2014 delete it first, then remove the point.' });
+      return;
+    }
+    if(typeof pushUndo === 'function') pushUndo();
+    o.inst.inC = 1;
+  }
+  if(typeof scheduleAutoSave === 'function') scheduleAutoSave();
+  _wireRender();
+}
+
 function _wireAdvSrcOutBtn(srcId, act){
   if(act === 'labels'){ _wireAdvToggleSrcPortLabels(srcId); return; }   // 16es: "Aa" button on the tile
   _wireAdvHelpers();
@@ -15405,7 +15572,7 @@ function _wireBuildAdvancedExportSvg(theme, opts){
   if(!clone.getAttribute('xmlns:xlink')) clone.setAttribute('xmlns:xlink', 'http://www.w3.org/1999/xlink');
   // Strip interactive-only elements that shouldn't be in the export
   // (mid-handle drag dots, drop hints, marquee selection rect).
-  clone.querySelectorAll('.wire-mid-handle, .wire-drop-hint, .wire-marquee, .wire-end-dot, .wire-src-outbtn, .wire-src-outbtn-glyph, .wire-edge-hit').forEach(el => el.remove());
+  clone.querySelectorAll('.wire-mid-handle, .wire-drop-hint, .wire-marquee, .wire-end-dot, .wire-src-outbtn, .wire-src-outbtn-glyph, .wire-dst-inbtn, .wire-dst-inbtn-glyph, .wire-edge-hit').forEach(el => el.remove());
   // Drop any cursor/transition styles that came from CSS — exports
   // should look static, not interactive.
   clone.removeAttribute('style');
@@ -15660,6 +15827,7 @@ function _wireBuildExportSvg(theme, opts){
     srcAccent: '#c2520c',
     dstAccent: '#0e7490',
     dsmAccent: '#16a34a',
+    hubAccent: '#7e22ce',
     edgeColor: 'rgba(58,80,120,0.45)',
     edgeHilit: 'rgba(20,40,80,0.85)',
     nodeFill: '#ffffff',
@@ -15672,6 +15840,7 @@ function _wireBuildExportSvg(theme, opts){
     srcAccent: '#ff8a3d',
     dstAccent: _wireResolveCyan(),
     dsmAccent: '#7cf598',
+    hubAccent: '#c084fc',
     edgeColor: 'rgba('+_wireResolveCyanRgb()+',0.42)',
     edgeHilit: 'rgba('+_wireResolveCyanRgb()+',0.85)',
     nodeFill: 'rgba(0,0,0,0.55)',
@@ -15692,16 +15861,18 @@ function _wireBuildExportSvg(theme, opts){
   const COL_W = 220, NODE_H = 36, NODE_GAP = 15, ROW_STEP = NODE_H + NODE_GAP;
   const PAD_TOP = 56, PAD_BOT = 30, PAD_LR = 30;
   const SECTION_GAP = 44;
-  const HORIZ_GAP = 10 * GRID;
+  const HUB_GAP = 5 * GRID;    // 16ez: sources → SWITCHER → destinations
   const colSrcX = PAD_LR;
-  const colDstX = colSrcX + COL_W + HORIZ_GAP;
+  const colHubX = colSrcX + COL_W + HUB_GAP;
+  const colDstX = colHubX + _WIRE_HUB.W + HUB_GAP;
   const colDsmX = colDstX;
   const totalW = colDstX + COL_W + PAD_LR;
   const srcSpan  = (srcs.length > 0) ? srcs.length * ROW_STEP - NODE_GAP : 0;
   const destSpan = (dests.length > 0) ? dests.length * ROW_STEP - NODE_GAP : 0;
   const dsmSpan  = (dsmNodes.length > 0) ? dsmNodes.length * ROW_STEP - NODE_GAP : 0;
   const rightSpan = destSpan + (destSpan > 0 && dsmSpan > 0 ? SECTION_GAP : 0) + dsmSpan;
-  const innerH = Math.max(srcSpan, rightSpan, NODE_H);
+  const hubGeom0 = _wireHubGeom(0, 0, srcs.length, dests.length + dsmNodes.length);
+  const innerH = Math.max(srcSpan, rightSpan, hubGeom0.h, NODE_H);
   const totalH = PAD_TOP + innerH + PAD_BOT;
   function snapGridE(v){ return Math.round(v / GRID) * GRID; }
   const srcStartY = snapGridE(PAD_TOP + (innerH - srcSpan) / 2);
@@ -15720,6 +15891,16 @@ function _wireBuildExportSvg(theme, opts){
   srcs.forEach((name, i) => { _pos('src:' + name, colSrcX, srcStartY + i * ROW_STEP, 'source', name, t.srcAccent); });
   dests.forEach((d, i) => { _pos('dst:' + d.id, colDstX, dstStartY + i * ROW_STEP, 'destination', d.name, t.dstAccent); });
   dsmNodes.forEach((d, i) => { _pos('dsm:' + d.id, colDsmX, dsmStartY + i * ROW_STEP, 'dsm', d.name, t.dsmAccent); });
+  { // 16ez: SWITCHER hub + ghost ports (same maths as the live diagram)
+    const hov = wireLayout['hub'];
+    const hx = (hov && typeof hov.x === 'number') ? hov.x : colHubX;
+    const hy = (hov && typeof hov.y === 'number') ? hov.y : snapGridE(PAD_TOP + (innerH - hubGeom0.h) / 2);
+    const hg = _wireHubGeom(hx, hy, srcs.length, dests.length + dsmNodes.length);
+    positions['hub'] = { x: hg.x, y: hg.y, w: hg.w, h: hg.h, type: 'hub', name: _wireHubName(), color: t.hubAccent, nIn: srcs.length, nOut: dests.length + dsmNodes.length, portY: hg.portY };
+    srcs.forEach((name, i) => { positions['hin:' + i] = { x: hg.x, y: hg.portY(i), w: 0, h: 0, type: 'hubport', name: '' }; });
+    dests.forEach((d, j) => { positions['hout:' + j] = { x: hg.x + hg.w, y: hg.portY(j), w: 0, h: 0, type: 'hubport', name: '' }; });
+    dsmNodes.forEach((d, j) => { const k = dests.length + j; positions['hout:' + k] = { x: hg.x + hg.w, y: hg.portY(k), w: 0, h: 0, type: 'hubport', name: '' }; });
+  }
   let bbL = 0, bbT = 0, bbR = totalW, bbB = totalH;
   Object.values(positions).forEach(p => {
     if(p.x - PAD_LR < bbL) bbL = p.x - PAD_LR;
@@ -15729,22 +15910,13 @@ function _wireBuildExportSvg(theme, opts){
   });
   const bbW = bbR - bbL, bbH = bbB - bbT;
 
-  // Edges
+  // Edges — 16ez: every source → SWITCHER input, SWITCHER output → every
+  // destination / AUX. (Which source feeds which screen per look lives in the
+  // presets and the Look Book pages, not on the physical sheet.)
   const edges = [];
-  Object.keys(edgesData.destEdges).forEach(srcName => {
-    edgesData.destEdges[srcName].forEach(sid => {
-      if(positions['src:' + srcName] && positions['dst:' + sid]){
-        edges.push({ from: 'src:' + srcName, to: 'dst:' + sid });
-      }
-    });
-  });
-  Object.keys(edgesData.dsmEdges).forEach(srcName => {
-    edgesData.dsmEdges[srcName].forEach(dsmId => {
-      if(positions['src:' + srcName] && positions['dsm:' + dsmId]){
-        edges.push({ from: 'src:' + srcName, to: 'dsm:' + dsmId });
-      }
-    });
-  });
+  srcs.forEach((name, i) => { if(positions['src:' + name] && positions['hin:' + i]) edges.push({ from: 'src:' + name, to: 'hin:' + i, hubIn: i, src: name }); });
+  dests.forEach((d, j) => { if(positions['hout:' + j] && positions['dst:' + d.id]) edges.push({ from: 'hout:' + j, to: 'dst:' + d.id, hubOut: j, dstKind: 'dst', dstId: d.id }); });
+  dsmNodes.forEach((d, j) => { const k = dests.length + j; if(positions['hout:' + k] && positions['dsm:' + d.id]) edges.push({ from: 'hout:' + k, to: 'dsm:' + d.id, hubOut: k, dstKind: 'dsm', dstId: d.id }); });
 
   let parts = [];
   parts.push('<svg xmlns="http://www.w3.org/2000/svg" viewBox="' + bbL + ' ' + bbT + ' ' + bbW + ' ' + bbH + '" width="' + bbW + '" height="' + bbH + '" font-family="-apple-system,Helvetica,Arial,sans-serif">');
@@ -15776,6 +15948,7 @@ function _wireBuildExportSvg(theme, opts){
   const EXP_ORTHO_SPACING = 20;
   const EXP_Y_SPACING     = 6;
   const expOrthoCenter    = (edges.length - 1) / 2;
+  const _xHubIn = [], _xHubOut = [];   // 16ez
   const expFromGroups = {}, expToGroups = {};
   edges.forEach(e => {
     (expFromGroups[e.from] = expFromGroups[e.from] || []).push(e);
@@ -15809,14 +15982,18 @@ function _wireBuildExportSvg(theme, opts){
     // Per-source wire colour: edges from src:NAME use the source's
     // assigned cable colour, otherwise fall back to the theme default.
     const expSrcName = (e.from.indexOf('src:') === 0) ? e.from.slice(4) : null;
-    const _xes = expSrcName ? _wireEdgeStyle(expSrcName) : null;   // 16ei: cable type → colour + pattern
+    // 16ei/16ez: source side → SOURCE connector; hub → destination side → DESTINATION connector.
+    const _xes = expSrcName ? _wireEdgeStyle(expSrcName) : (e.dstKind ? _wireDestEdgeStyle(e.dstKind, e.dstId, (e.dstKind === 'dsm') ? t.dsmAccent : t.dstAccent) : null);
     const expWireColor = _xes ? _xes.color : t.edgeColor;
+    if(e.hubIn != null) _xHubIn[e.hubIn] = expWireColor; else if(e.hubOut != null) _xHubOut[e.hubOut] = expWireColor;
     parts.push('<path d="' + path + '" stroke="' + expWireColor + '" stroke-width="' + ((_xes && _xes.typed && _xes.sw) ? _xes.sw : 2.6) + '" fill="none" opacity="0.85"' + _wireEdgeExtraAttrs(_xes) + '/>');
   });
   // Nodes (source nodes embed thumbnail if uploaded)
   if(typeof wireThumbnails === 'undefined' || wireThumbnails === null) wireThumbnails = {};
   Object.keys(positions).forEach(id => {
     const p = positions[id];
+    if(p.type === 'hubport') return;
+    if(p.type === 'hub'){ parts.push(_wireHubNodeSVG(p, { selected: false, inColors: _xHubIn, outColors: _xHubOut, live: false, color: t.hubAccent, text: t.text, muted: t.textMuted, fill: t.nodeFill })); return; }
     parts.push('<g>');
     parts.push('<rect x="' + p.x + '" y="' + p.y + '" width="' + p.w + '" height="' + p.h + '" rx="6" ry="6" fill="' + t.nodeFill + '" stroke="' + p.color + '" stroke-width="1.4"/>');
     let textX = p.x + 12;
@@ -16602,19 +16779,25 @@ function _wireMarkerDefsSVG(){
 function _wireCableTypesInUse(){
   const names = []; const seen = new Set();
   const add = n => { if(n && !seen.has(n)){ seen.add(n); names.push(n); } };
+  const extra = [];
   if(wireSettings && wireSettings.wireView === 'advanced'){
     ((wireAdvanced && wireAdvanced.sources) || []).forEach(s => add(s && s.name));
     ((wireAdvanced && wireAdvanced.customSources) || []).forEach(s => add(s && s.name));
   } else {
     _wireBuildAllSourceNames().forEach(add);
+    // 16ez: Simple draws destination / AUX connectors on the hub's output side.
+    ((typeof screens !== 'undefined' && Array.isArray(screens)) ? screens : []).forEach(sc => { if(sc && sc.connectorType) extra.push({ name: sc.name || sc.id, type: sc.connectorType }); });
+    ((typeof dsms !== 'undefined' && Array.isArray(dsms)) ? dsms : []).forEach(dm => { if(dm && dm.connectorType) extra.push({ name: dm.name || dm.id, type: dm.connectorType }); });
   }
   const rows = []; const byType = {};
-  names.forEach(n => {
-    const spec = _wireCableSpec(_wireGetSourceMeta(n).connectorType);
+  const put = (n, ct) => {
+    const spec = _wireCableSpec(ct);
     if(!spec) return;
     if(!byType[spec.type]){ byType[spec.type] = { spec: spec, sources: [] }; rows.push(byType[spec.type]); }
     byType[spec.type].sources.push(n);
-  });
+  };
+  names.forEach(n => put(n, _wireGetSourceMeta(n).connectorType));
+  extra.forEach(x => put(x.name, x.type));
   const order = (typeof _SYS_CONNECTORS !== 'undefined' ? _SYS_CONNECTORS : []).map(o => o.value).filter(Boolean);
   rows.sort((a, b) => order.indexOf(a.spec.type) - order.indexOf(b.spec.type));
   return rows;
@@ -16658,7 +16841,7 @@ function _wireLegendSVG(x, y, theme){
     const cy = y + TITLE + 6 + i * ROW + 6;
     s += '<path d="M' + x + ' ' + cy + ' H' + (x + LINE_W) + '" stroke="' + sp.color + '" stroke-width="' + sp.sw + '" fill="none"' + (sp.dash ? ' stroke-dasharray="' + sp.dash + '"' : '') + ' marker-end="' + sp.markerEnd + '"' + (sp.markerStart ? ' marker-start="' + sp.markerStart + '"' : '') + '/>';
     s += '<text x="' + (x + LINE_W + 12) + '" y="' + (cy + 3.5) + '" fill="' + txt + '" font-size="10" font-weight="700">' + _esc(sp.type) + '</text>';
-    s += '<text x="' + (x + LINE_W + 12 + 72) + '" y="' + (cy + 3.5) + '" fill="' + muted + '" font-size="9">' + _esc(sp.label) + ' · ' + r.sources.length + ' source' + (r.sources.length === 1 ? '' : 's') + '</text>';
+    s += '<text x="' + (x + LINE_W + 12 + 72) + '" y="' + (cy + 3.5) + '" fill="' + muted + '" font-size="9">' + _esc(sp.label) + ' · ' + r.sources.length + ' line' + (r.sources.length === 1 ? '' : 's') + '</text>';
   });
   s += '</g>';
   return { svg: s, h: TITLE + 6 + rows.length * ROW + 8 };
@@ -17749,9 +17932,14 @@ function _wireStartNodeDrag(ev, nodeId){
   dragIds.forEach(id => { if(id.indexOf('router:') === 0) draggedRouterIds.add(id.slice(7)); });
   const draggedSrcIds = new Set();
   dragIds.forEach(id => { if(id.indexOf('asrc:') === 0) draggedSrcIds.add(id.slice(5)); });
+  const draggedDstIds = new Set();   // 16ez
+  dragIds.forEach(id => { if(id.indexOf('adst:') === 0 || id.indexOf('adsm:') === 0) draggedDstIds.add(id.slice(5)); });
+  const draggedHub = dragIds.indexOf('hub') >= 0;   // 16ez Simple hub
   function _isPortOfDragged(id){
     if(!id) return false;
     if((id.indexOf('rip:') === 0 || id.indexOf('rop:') === 0) && draggedRouterIds.has(id.split(':')[1])) return true;
+    if(id.indexOf('adp:') === 0 && draggedDstIds.has(id.split(':')[1])) return true;
+    if((id.indexOf('hin:') === 0 || id.indexOf('hout:') === 0) && draggedHub) return true;
     return id.indexOf('asp:') === 0 && draggedSrcIds.has(id.split(':')[1]);
   }
   // Analytic port positions — MUST match the render (ROUTER_W=660,
@@ -17778,6 +17966,17 @@ function _wireStartNodeDrag(ev, nodeId){
       origPortXY['asp:' + sid2 + ':' + k] = { x: st.x + 260, y: st.y + sh2 / 2 + k * 18 };
     }
   });
+  // 16ez: backup input dot on dragged destination / AUX tiles (mid + 18).
+  draggedDstIds.forEach(did => {
+    const dt = (wireAdvanced.dests || []).find(d => d.id === did) || (wireAdvanced.dsms || []).find(d => d.id === did);
+    if(dt && (parseInt(dt.inC, 10) || 1) >= 2) origPortXY['adp:' + did + ':1'] = { x: dt.x, y: dt.y + 110 / 2 + 18 };
+  });
+  // 16ez: Simple hub ports — read straight off the rendered dots.
+  if(draggedHub){
+    svg.querySelectorAll('.wire-hub-port[data-port-id]').forEach(c => {
+      origPortXY[c.getAttribute('data-port-id')] = { x: parseFloat(c.getAttribute('cx')), y: parseFloat(c.getAttribute('cy')) };
+    });
+  }
   const edges = svg.querySelectorAll('.wire-edge');
   const touchingEdges = [];
   edges.forEach(p => {
@@ -21292,6 +21491,10 @@ function openPdfExportModal(){
     wsCurved.checked = (wireStyleSaved !== 'orthogonal');
     wsOrtho.checked  = (wireStyleSaved === 'orthogonal');
   }
+  // 16ez: Simple / Advanced for the Look Book's wire page — defaults to the view on screen.
+  const wireViewSaved = o.wireView || ((wireSettings && wireSettings.wireView === 'advanced') ? 'advanced' : 'simple');
+  const wvS = document.getElementById('pdf-opt-wire-view-simple'), wvA = document.getElementById('pdf-opt-wire-view-advanced');
+  if(wvS && wvA){ wvS.checked = (wireViewSaved !== 'advanced'); wvA.checked = (wireViewSaved === 'advanced'); }
   // Dim the wire-style row when "Wire Diagram" is unchecked.
   const wireOptEl = document.getElementById('pdf-opt-wire');
   const wireStyleRow = document.getElementById('pdf-opt-wire-style-row');
@@ -21330,6 +21533,10 @@ function _pdfConfirmExport(){
     wireStyle:      (function(){
       const o = document.querySelector('input[name="pdf-opt-wire-style"]:checked');
       return o ? o.value : 'curved';
+    })(),
+    wireView:       (function(){
+      const o = document.querySelector('input[name="pdf-opt-wire-view"]:checked');
+      return o ? o.value : ((wireSettings && wireSettings.wireView === 'advanced') ? 'advanced' : 'simple');
     })(),
     theme:          (window._pdfPendingTheme === 'dark' ? 'dark' : 'light'),
     version:        (vEl && vEl.value.trim()) || 'v1'
@@ -22394,12 +22601,19 @@ function exportPDF(_returnHtml){
     // 16ek: the wire page prints as an RCM-style drawing sheet (frame, cable
     // key, project title block, footer). Advanced prints its ACTIVE page.
     const _wTheme = opts.theme === 'dark' ? 'dark' : 'light';
+    // 16ez (Omar): the Look Book asks Simple or Advanced for its wire page,
+    // whatever is on screen. Swap the view for the build, restore right after.
+    const _wPrevView = (typeof wireSettings === 'object' && wireSettings) ? wireSettings.wireView : undefined;
+    const _wWant = (opts.wireView === 'advanced') ? 'advanced' : ((opts.wireView === 'simple') ? 'simple' : (_wPrevView === 'advanced' ? 'advanced' : 'simple'));
+    const _wSwap = !!(wireSettings && _wPrevView !== _wWant);
+    if(_wSwap){ wireSettings.wireView = _wWant; try{ if(typeof _wireRefreshIfOpen === 'function') _wireRefreshIfOpen(); }catch(e){} }
     const _wInner = (typeof _wireBuildExportSvg === 'function') ? _wireBuildExportSvg(_wTheme, { transparent: true, noLegend: true, wireStyle: opts.wireStyle }) : '';
-    const _wAdv = (typeof wireSettings === 'object' && wireSettings && wireSettings.wireView === 'advanced');
+    const _wAdv = (_wWant === 'advanced');
     const _wPage = (_wAdv && typeof _wireAdvHelpers === 'function') ? (function(){ try{ _wireAdvHelpers(); const pg = (wireAdvanced._pages || []).find(x => x.id === wireAdvanced._activePageId); return pg ? (pg.name || '') : ''; }catch(e){ return ''; } })() : '';
     const wireSvg = (_wInner && typeof _wireSheetSvg === 'function')
       ? _wireSheetSvg(_wInner, { theme: _wTheme, pageLabel: 'Page 1', title: (_wPage && !/^page\s*\d+$/i.test(_wPage.trim())) ? _wPage : (_wAdv ? 'Signal Flow' : 'Full System'), version: (typeof showMeta === 'object' && showMeta && showMeta.projectVer) ? showMeta.projectVer : 'V1', legendRows: (typeof _wireCableTypesInUse === 'function') ? _wireCableTypesInUse() : [] })
       : _wInner;
+    if(_wSwap){ wireSettings.wireView = _wPrevView; try{ if(typeof _wireRefreshIfOpen === 'function') _wireRefreshIfOpen(); }catch(e){} }   // 16ez: put the screen back
     wireHtml = `<div id="pdf-wire" class="page wire-page" style="padding:24px 30px;display:flex;flex-direction:column">
       <div class="ph-hdr"><div class="ph-code" style="background:#7cf598;color:#04201a">WIRE</div><div class="ph-name">Signal Flow Diagram</div><div class="ph-notes">Every signal path that exists in any preset</div></div>
       <div class="wire-svg-wrap" style="flex:1;display:flex;align-items:center;justify-content:center;padding:8px 0;min-height:0;overflow:hidden">${wireSvg}</div>
@@ -25343,6 +25557,9 @@ document.addEventListener('keydown', e => {
           <span style="color:var(--text3);font-weight:600">Wire style:</span>
           <label style="display:inline-flex;align-items:center;gap:5px;cursor:pointer"><input type="radio" name="pdf-opt-wire-style" id="pdf-opt-wire-style-curved" value="curved" checked> Curved</label>
           <label style="display:inline-flex;align-items:center;gap:5px;cursor:pointer"><input type="radio" name="pdf-opt-wire-style" id="pdf-opt-wire-style-orthogonal" value="orthogonal"> Orthogonal</label>
+          <span style="margin-left:14px;color:var(--text3);font-weight:600">Wire view:</span>
+          <label style="display:inline-flex;align-items:center;gap:5px;cursor:pointer"><input type="radio" name="pdf-opt-wire-view" id="pdf-opt-wire-view-simple" value="simple" checked> Simple</label>
+          <label style="display:inline-flex;align-items:center;gap:5px;cursor:pointer"><input type="radio" name="pdf-opt-wire-view" id="pdf-opt-wire-view-advanced" value="advanced"> Advanced</label>
         </div>
       </div>
     </div>
