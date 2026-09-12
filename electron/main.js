@@ -33,6 +33,11 @@ const { pathToFileURL } = require('url');
 let autoUpdater = null;
 try { autoUpdater = require('electron-updater').autoUpdater; } catch (e) { /* dev mode */ }
 
+// The dev shell (`npm start`) must never share settings / recents / thumbnails
+// with the installed app — Electron keys userData by package.json "name" for
+// both, so give development its own folder.
+if (!app.isPackaged) app.setPath('userData', path.join(app.getPath('appData'), 'av-look-book-dev'));
+
 // ── CONFIG ─────────────────────────────────────────────────────────────────
 const GH_OWNER = 'AVEducate';
 const GH_REPO  = 'AV-Look-Book';

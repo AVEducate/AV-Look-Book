@@ -61,13 +61,28 @@
   .row .x{position:static;opacity:1;width:20px;height:20px;line-height:18px;flex:0 0 auto}
   .row.missing .name{color:var(--danger)}
   .empty-note{padding:26px;text-align:center;color:var(--muted)}
-  /* Remove / trash confirmation */
-  .veil{position:fixed;inset:0;background:rgba(3,8,14,.72);display:flex;align-items:center;justify-content:center;z-index:50}
-  .dlg{width:420px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px 20px 16px;box-shadow:0 20px 50px rgba(0,0,0,.6)}
-  .dlg h3{margin:0 0 6px;font-size:14px}
-  .dlg p{margin:0 0 14px;color:var(--muted);font-size:12px;line-height:1.5}
-  .dlg .btns{display:flex;flex-direction:column;gap:8px}
-  .dlg .btn.danger:hover{border-color:var(--danger);background:rgba(255,77,90,.12)}
+  /* Remove / trash confirmation — same anatomy as the app's own dialogs
+     (#dlg-overlay / .dlg-box v-warning): strip + icon + uppercase title,
+     body text, pill buttons in a footer row. */
+  .veil{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.78);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center}
+  .dlg{min-width:320px;max-width:480px;background:#0a0f1c;border-radius:10px;overflow:hidden;border:1px solid rgba(240,192,96,.32);
+       box-shadow:0 20px 60px rgba(0,0,0,.9),0 0 24px rgba(34,228,255,.12);animation:pop .18s cubic-bezier(.4,.2,.2,1.1)}
+  @keyframes pop{from{transform:scale(.96);opacity:0}to{transform:scale(1);opacity:1}}
+  .dlg-hdr{display:flex;align-items:center;gap:10px;padding:16px 24px;border-bottom:1px solid rgba(255,255,255,.08);
+           background:linear-gradient(90deg,rgba(240,192,96,.08) 0%,transparent 60%)}
+  .dlg-strip{width:3px;height:18px;border-radius:2px;flex-shrink:0;background:#f0c060;box-shadow:0 0 8px #f0c060}
+  .dlg-icon{font-size:18px;line-height:1;color:#f0c060;flex-shrink:0}
+  .dlg h3{margin:0;flex:1;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#f0c060;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .dlg-body{padding:16px 24px;font-size:12.5px;line-height:1.55;color:var(--text);white-space:pre-wrap}
+  .dlg-foot{display:flex;gap:8px;justify-content:flex-end;padding:12px 24px;border-top:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.015)}
+  .pill{position:relative;isolation:isolate;height:40px;padding:10px 22px;border-radius:999px;font:inherit;font-size:11px;letter-spacing:.02em;
+        cursor:pointer;background:#0a0d12;border:1px solid rgba(255,255,255,.1);color:var(--text);font-weight:400;transition:all .15s;white-space:nowrap}
+  .pill::before{content:"";position:absolute;inset:3px;border-radius:999px;z-index:-1;background:linear-gradient(180deg,#1a253f,#101a2e);box-shadow:0 1px 2px rgba(0,0,0,.4)}
+  .pill:hover::before{filter:brightness(1.15)}
+  .pill.warn{font-weight:600;color:#221500;border-color:#f0c060;box-shadow:0 0 12px rgba(240,192,96,.45)}
+  .pill.warn::before{background:linear-gradient(180deg,#f0c060,#c9933a);box-shadow:inset 0 1px 0 rgba(255,255,255,.3)}
+  .pill.danger{font-weight:600;color:#fff;border-color:#ff4d5a;box-shadow:0 0 12px rgba(255,77,90,.45)}
+  .pill.danger::before{background:linear-gradient(180deg,#ff4d5a,#c1212f);box-shadow:inset 0 1px 0 rgba(255,255,255,.25)}
   [hidden]{display:none!important}
 </style>
 </head>
@@ -91,13 +106,13 @@
     </div>
   </div>
 <div class="veil" id="veil" hidden>
-  <div class="dlg">
-    <h3 id="dlg-title">Remove this project?</h3>
-    <p id="dlg-text"></p>
-    <div class="btns">
-      <button class="btn" id="dlg-remove">Remove from this list only</button>
-      <button class="btn danger" id="dlg-trash">Move the file to the Trash</button>
-      <button class="btn" id="dlg-cancel">Cancel</button>
+  <div class="dlg" role="dialog" aria-labelledby="dlg-title">
+    <div class="dlg-hdr"><div class="dlg-strip"></div><span class="dlg-icon">⚠</span><h3 id="dlg-title">Remove project?</h3></div>
+    <div class="dlg-body" id="dlg-text"></div>
+    <div class="dlg-foot">
+      <button class="pill" id="dlg-cancel">Cancel</button>
+      <button class="pill danger" id="dlg-trash">Move to Trash</button>
+      <button class="pill warn" id="dlg-remove">Remove from list</button>
     </div>
   </div>
 </div>
@@ -173,16 +188,17 @@
   let pendingRemove = null;
   function askRemove(it){
     pendingRemove = it;
-    $('dlg-title').textContent = 'Remove \u201c' + (it.name || base(it.path)) + '\u201d?';
+    $('dlg-title').textContent = it.missing ? 'File missing' : 'Remove project?';
     $('dlg-text').textContent = it.missing
-      ? 'The file is already missing from disk. Remove it from the list?'
-      : 'Remove it from Recent Projects, or move the file itself to the Trash. Trash can be undone from the Finder.';
+      ? '\u201c' + (it.name || base(it.path)) + '\u201d is no longer on disk.\nRemove it from Recent Projects?'
+      : 'Remove \u201c' + (it.name || base(it.path)) + '\u201d from Recent Projects, or move the file itself to the Trash.\nTrash can be undone from the Finder.';
     $('dlg-trash').hidden = !!it.missing;
     $('veil').hidden = false;
   }
   $('dlg-remove').onclick = async () => { const it = pendingRemove; $('veil').hidden = true; if (it) await api.action('removeConfirmed', it.id, false); refresh(); };
   $('dlg-trash').onclick  = async () => { const it = pendingRemove; $('veil').hidden = true; if (it) await api.action('removeConfirmed', it.id, true); refresh(); };
   $('dlg-cancel').onclick = () => { $('veil').hidden = true; pendingRemove = null; };
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !$('veil').hidden) { $('veil').hidden = true; pendingRemove = null; } });
   $('veil').onclick = (e) => { if (e.target === $('veil')) { $('veil').hidden = true; pendingRemove = null; } };
   async function refresh(){ try { data = await api.list(); } catch (e) {} render(); }
 
