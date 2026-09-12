@@ -15,7 +15,7 @@
 //
 // The SHELL itself (this Electron wrapper) updates through electron-updater +
 // GitHub Releases. That path needs code signing on macOS to work.
-const { app, BrowserWindow, ipcMain, shell, protocol, net } = require('electron');
+const { app, BrowserWindow, ipcMain, shell, protocol, net, dialog } = require('electron');
 const path = require('path');
 const fs = require('fs');
 const { pathToFileURL } = require('url');
@@ -95,6 +95,24 @@ function createWindow(){
     if (/^https?:\/\//i.test(url)) { shell.openExternal(url); return { action: 'deny' }; }
     return { action: 'allow' };
   });
+  // The app's beforeunload guard (unsaved changes) cancels the close in Electron
+  // WITHOUT showing anything — so Cmd+Q / the red button looked dead. Ask here
+  // with a native dialog; "Quit anyway" lets the close proceed. The page's
+  // pagehide handler still writes the draft, so nothing is lost either way.
+  win.webContents.on('will-prevent-unload', (event) => {
+    console.log('[lb] unsaved-changes dialog');
+    const choice = dialog.showMessageBoxSync(win, {
+      type: 'warning',
+      title: 'Unsaved changes',
+      message: 'This show has unsaved changes.',
+      detail: 'Your latest work is kept as a draft and offered back the next time you open Look Book Builder. Save the .avlb first if you want a file you can send.',
+      buttons: ['Quit anyway', 'Cancel'],
+      defaultId: 1,
+      cancelId: 1,
+      noLink: true
+    });
+    if (choice === 0) event.preventDefault();   // = ignore the page's veto, close
+  });
   win.on('closed', () => { win = null; });
 }
 
@@ -154,7 +172,8 @@ app.whenReady().then(() => {
   app.on('activate', () => { if (BrowserWindow.getAllWindows().length === 0) createWindow(); });
 });
 
-app.on('window-all-closed', () => { if (process.platform !== 'darwin') app.quit(); });
+// Single-window app: closing the window closes the program (Omar's spec, all platforms).
+app.on('window-all-closed', () => { app.quit(); });
 
 // ── Bridge (preload → window.lookbookNative) ─────────────────────────────
 ipcMain.handle('lb:relaunch', async () => { app.relaunch(); app.exit(0); });
