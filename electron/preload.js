@@ -12,7 +12,8 @@ contextBridge.exposeInMainWorld('lookbookNative', {
   version: version,
   // { shell, build, online } — shell version, running HTML build stamp, connectivity
   info: () => ipcRenderer.invoke('lb:info'),
-  // Ask the shell to look for a newer app build right now (online only).
+  // Ask the shell to look for a newer app build right now.
+  // → { status: 'offline'|'no-release'|'up-to-date'|'downloaded'|'error', current, remote }
   checkForUpdates: () => ipcRenderer.invoke('lb:checkForUpdates'),
   // Relaunch onto the newest downloaded build.
   relaunch: () => ipcRenderer.invoke('lb:relaunch'),

@@ -99,20 +99,24 @@ function createWindow(){
 }
 
 // ── Content update check (the HTML app) ──────────────────────────────────
+// Returns { status, current, remote } — status is one of
+// 'offline' | 'no-release' | 'up-to-date' | 'downloaded' | 'error'
+// (the app can show that on a "Check for updates" click later).
 async function checkForContentUpdate(){
-  if (!net.isOnline()) return;                       // offline: silent
+  const current = stampOfFile(currentHtmlPath());
+  if (!net.isOnline()) return { status: 'offline', current, remote: '' };   // offline: silent
   try {
     const res = await net.fetch(CONTENT_URL, { cache: 'no-store' });
-    if (!res.ok) return;                             // no release yet / 404
+    if (!res.ok) return { status: 'no-release', current, remote: '' };      // no release yet / 404
     const html = await res.text();
     const remote = stampOf(html);
-    if (!remote) return;
-    const local = stampOfFile(currentHtmlPath());
-    if (!stampNewer(remote, local)) return;          // nothing newer
+    if (!remote) return { status: 'no-release', current, remote: '' };
+    if (!stampNewer(remote, current)) return { status: 'up-to-date', current, remote };
     fs.mkdirSync(app.getPath('userData'), { recursive: true });
     fs.writeFileSync(latestPath(), html, 'utf8');
     if (win && notifiedStamp !== remote) { notifiedStamp = remote; showUpdateToast(remote); }
-  } catch (e) { /* network hiccup — try again next interval */ }
+    return { status: 'downloaded', current, remote };
+  } catch (e) { return { status: 'error', current, remote: '', message: String(e && e.message || e) }; }
 }
 
 // Small in-window note, styled like the app's own toasts. "Restart" relaunches
@@ -154,7 +158,7 @@ app.on('window-all-closed', () => { if (process.platform !== 'darwin') app.quit(
 
 // ── Bridge (preload → window.lookbookNative) ─────────────────────────────
 ipcMain.handle('lb:relaunch', async () => { app.relaunch(); app.exit(0); });
-ipcMain.handle('lb:checkForUpdates', async () => { await checkForContentUpdate(); return { current: stampOfFile(currentHtmlPath()) }; });
+ipcMain.handle('lb:checkForUpdates', async () => checkForContentUpdate());
 ipcMain.handle('lb:info', async () => ({ shell: app.getVersion(), build: stampOfFile(currentHtmlPath()), online: net.isOnline() }));
 
 // Add-on / license hook (STUB — wire to the store later; see project memory).
