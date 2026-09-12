@@ -24,7 +24,8 @@
 //
 // The SHELL itself (this Electron wrapper) updates through electron-updater +
 // GitHub Releases. That path needs code signing on macOS to work.
-const { app, BrowserWindow, ipcMain, shell, protocol, net, dialog, Menu, nativeImage } = require('electron');
+const { app, BrowserWindow, ipcMain, shell, protocol, net, dialog, Menu, nativeImage, clipboard } = require('electron');
+const { execFile } = require('child_process');
 const path = require('path');
 const fs = require('fs');
 const crypto = require('crypto');
@@ -47,6 +48,7 @@ const CONTENT_URL = 'https://github.com/' + GH_OWNER + '/' + GH_REPO + '/release
 const CHECK_EVERY_MS = 4 * 60 * 60 * 1000;   // re-check every 4 h while running
 const RECENT_MAX = 200;                       // how many projects the Welcome list remembers
 const THUMB_WIDTH = 640;                      // px, thumbnails are 16:10-ish window captures
+const DOWNLOAD_PAGE_URL = 'https://github.com/AVEducate/AV-Look-Book/releases/latest';   // where a recipient gets the app (swap for the download page later)
 // ───────────────────────────────────────────────────────────────────────────
 
 const BUNDLED = path.join(__dirname, 'app', 'index.html');
@@ -552,6 +554,70 @@ ipcMain.handle('lb:project:open', async (e, intoThis) => {
   return { ok: true };
 });
 ipcMain.handle('lb:project:new', async () => { createProjectWindow({ mode: 'new' }); return { ok: true }; });
+
+// ── Send show (16fa, Omar): PDF + Excel + .avlb into Documents/AV Look Book/
+// Outbox/<show>, then a new email with the three attached. Apple Mail via
+// AppleScript on the Mac; elsewhere (or if Mail refuses) the default mail app
+// opens with the text, the text also goes on the clipboard, and the folder is
+// revealed so the files are one drag away. p.mode === 'files' skips mail.
+function stampNow(){ const d = new Date(); const z = n => String(n).padStart(2, '0'); return d.getFullYear() + '-' + z(d.getMonth() + 1) + '-' + z(d.getDate()) + ' ' + z(d.getHours()) + z(d.getMinutes()); }
+async function renderLookBookPdf(html){
+  const tmp = path.join(app.getPath('temp'), 'avlb-send-' + Date.now() + '.html');
+  fs.writeFileSync(tmp, html, 'utf8');
+  const w = new BrowserWindow({ show: false, width: 1200, height: 900, webPreferences: { sandbox: true, contextIsolation: true } });
+  try {
+    await w.loadFile(tmp);
+    await new Promise(r => setTimeout(r, 1500));            // fonts + embedded images
+    return await w.webContents.printToPDF({ printBackground: true, preferCSSPageSize: true });
+  } finally { try { w.destroy(); } catch (e) {} try { fs.unlinkSync(tmp); } catch (e) {} }
+}
+function mailViaAppleMail(subject, body, files){
+  const esc = v => String(v).replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+  const content = esc(body).split('\n').join('" & return & "');
+  const attach = files.map(f => '    make new attachment with properties {file name:POSIX file "' + esc(f) + '"} at after the last paragraph').join('\n');
+  const script = 'tell application "Mail"\n'
+    + '  set m to make new outgoing message with properties {subject:"' + esc(subject) + '", content:"' + content + '" & return & return, visible:true}\n'
+    + '  tell m\n' + attach + '\n  end tell\n'
+    + '  activate\n'
+    + 'end tell';
+  return new Promise(res => { execFile('osascript', ['-e', script], { timeout: 25000 }, (err) => { if (err) console.log('[lb] Apple Mail hand-off failed:', err.message); res(!err); }); });
+}
+ipcMain.handle('lb:project:sendShow', async (e, p) => {
+  p = p || {};
+  try {
+    const showRaw = String(p.show || 'Untitled Show').trim() || 'Untitled Show';
+    const show = safeFileName(showRaw);
+    const dir = path.join(projectsDir(), 'Outbox', show + ' ' + stampNow());
+    fs.mkdirSync(dir, { recursive: true });
+    const files = [];
+    if (p.html) { const f = path.join(dir, show + ' - Look Book.pdf'); fs.writeFileSync(f, await renderLookBookPdf(String(p.html))); files.push(f); }
+    if (p.xlsxB64) { const f = path.join(dir, show + ' - Cue Sheet.xlsx'); fs.writeFileSync(f, Buffer.from(String(p.xlsxB64), 'base64')); files.push(f); }
+    if (p.avlb) { const f = path.join(dir, show + ' (open with AV Look Book).avlb'); fs.writeFileSync(f, String(p.avlb), 'utf8'); files.push(f); }
+    const link = p.downloadUrl || DOWNLOAD_PAGE_URL;
+    const subject = 'Look Book — ' + showRaw;
+    const body = [
+      'Hi,',
+      '',
+      'Here’s the look book for “' + showRaw + '”. Attached:',
+      '',
+      '  • ' + show + ' - Look Book.pdf — the full look book',
+      '  • ' + show + ' - Cue Sheet.xlsx — the I/O and preset sheets',
+      '  • ' + show + ' (open with AV Look Book).avlb — the show file. Open it in AV Look Book: ' + link,
+      '',
+      'AV Look Book is free for Mac and Windows: ' + link
+    ].join('\n');
+    let mailed = false;
+    if (p.mode !== 'files') {
+      if (process.platform === 'darwin') mailed = await mailViaAppleMail(subject, body, files);
+      if (!mailed) {
+        try { clipboard.writeText(body); } catch (err) {}
+        try { await shell.openExternal('mailto:?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body)); } catch (err) {}
+        if (files[0]) shell.showItemInFolder(files[0]);
+      }
+    }
+    return { ok: true, mailed, folder: dir, files, subject, body };
+  } catch (err) { return { ok: false, error: String(err && err.message || err) }; }
+});
 ipcMain.handle('lb:welcome:show', async () => { showWelcome(); return { ok: true }; });
 
 // ── Bridge: Welcome window ───────────────────────────────────────────────
