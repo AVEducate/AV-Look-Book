@@ -1,4 +1,4 @@
-# Look Book Builder — build installers on every version tag (v0.1.0, v0.2.0 …)
+# AV Look Book — build installers on every version tag (v0.1.0, v0.2.0 …)
 # and attach them, plus the app HTML (for in-app content updates), to the
 # GitHub Release for that tag. Unsigned until Apple / Windows signing is set up
 # (see electron/README.md). Trigger by hand from the Actions tab too.

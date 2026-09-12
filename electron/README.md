@@ -1,4 +1,4 @@
-# Look Book Builder — Desktop (Electron)
+# AV Look Book — Desktop (Electron)
 
 The desktop app is a thin Chromium shell around the single-file web app
 (`../deploy/lookbook_builder.html`). It runs **online or offline** and keeps all
@@ -32,8 +32,8 @@ git tag v0.1.0
 git push origin v0.1.0
 ```
 It produces and attaches to the GitHub Release:
-- `LookBookBuilder-<ver>-mac-arm64.dmg`, `LookBookBuilder-<ver>-mac-x64.dmg`
-- `LookBookBuilder-<ver>-win-x64.exe` (NSIS installer)
+- `AVLookBook-<ver>-mac-arm64.dmg`, `AVLookBook-<ver>-mac-x64.dmg`
+- `AVLookBook-<ver>-win-x64.exe` (NSIS installer)
 - `lookbook_builder.html` (what installed apps download as a content update)
 
 Bump `version` in `package.json` before tagging a new shell; content-only
@@ -48,8 +48,8 @@ npm start            # copies the latest HTML into app/ and opens the window
 
 ## Build installers locally
 ```bash
-npm run dist:mac     # -> dist/LookBookBuilder-<ver>-mac-<arch>.dmg   (on a Mac)
-npm run dist:win     # -> dist/LookBookBuilder-<ver>-win-x64.exe      (on Windows / CI)
+npm run dist:mac     # -> dist/AVLookBook-<ver>-mac-<arch>.dmg   (on a Mac)
+npm run dist:win     # -> dist/AVLookBook-<ver>-win-x64.exe      (on Windows / CI)
 ```
 
 ## Code signing (later)

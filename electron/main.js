@@ -1,4 +1,4 @@
-// Look Book Builder — Electron main process
+// AV Look Book — Electron main process
 //
 // LOAD MODE A (Omar, 2026-09-11): the app ALWAYS runs from its own internal
 // address (app://lookbook/) so drafts, autosave and settings live in ONE place
@@ -77,7 +77,7 @@ function createWindow(){
     minWidth: 1024,
     minHeight: 700,
     backgroundColor: '#0a1322',
-    title: 'Look Book Builder',
+    title: 'AV Look Book',
     icon: path.join(__dirname, 'build', 'icon.png'),   // Linux/dev; mac/win use the packaged icon
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
@@ -105,7 +105,7 @@ function createWindow(){
       type: 'warning',
       title: 'Unsaved changes',
       message: 'This show has unsaved changes.',
-      detail: 'Your latest work is kept as a draft and offered back the next time you open Look Book Builder. Save the .avlb first if you want a file you can send.',
+      detail: 'Your latest work is kept as a draft and offered back the next time you open AV Look Book. Save the .avlb first if you want a file you can send.',
       buttons: ['Quit anyway', 'Cancel'],
       defaultId: 1,
       cancelId: 1,
