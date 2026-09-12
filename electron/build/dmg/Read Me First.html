@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AV Look Book — Read Me First</title>
+<style>
+  :root{--bg:#0a1322;--panel:#0c1a24;--line:rgba(34,228,255,.22);--soft:rgba(255,255,255,.08);--text:#e8e8ea;--muted:#8a94a3;--cyan:#22e4ff;--amber:#f0c060;--red:#ff4d5a;--green:#4ddc8a}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif}
+  .wrap{max-width:760px;margin:0 auto;padding:44px 28px 60px}
+  .hdr{display:flex;align-items:center;gap:18px;margin-bottom:8px}
+  .mark{width:56px;height:56px;border-radius:14px;background:#0f1c2e;border:1px solid var(--line);display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1.3fr 1fr;gap:4px;padding:8px}
+  .mark i{display:block;border-radius:3px}
+  .mark i:nth-child(1){grid-column:1/3;background:#e5484d}
+  .mark i:nth-child(2){background:#46a758}
+  .mark i:nth-child(3){background:#3e63dd}
+  h1{margin:0;font-size:24px;letter-spacing:.01em}
+  .sub{color:var(--muted);margin:0 0 30px;font-size:14px}
+  h2{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--cyan);margin:34px 0 10px}
+  .card{background:var(--panel);border:1px solid var(--soft);border-radius:10px;padding:16px 18px;margin:0 0 12px}
+  .card.warn{border-color:rgba(240,192,96,.35)} .card.warn h3{color:var(--amber)}
+  .card.err{border-color:rgba(255,77,90,.35)} .card.err h3{color:var(--red)}
+  .card.ok{border-color:rgba(77,220,138,.3)} .card.ok h3{color:var(--green)}
+  h3{margin:0 0 6px;font-size:15px}
+  p{margin:0 0 8px} p:last-child{margin-bottom:0}
+  ol{margin:6px 0 0;padding-left:22px} li{margin:4px 0}
+  code{font:13px ui-monospace,Menlo,monospace;background:#06101a;border:1px solid var(--soft);border-radius:6px;padding:2px 7px;color:#bfe9ff}
+  pre{font:13px/1.5 ui-monospace,Menlo,monospace;background:#06101a;border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin:8px 0 0;color:#bfe9ff;overflow:auto;-webkit-user-select:all;user-select:all}
+  .muted{color:var(--muted)}
+  a{color:var(--cyan);text-decoration:none} a:hover{text-decoration:underline}
+  .foot{margin-top:40px;padding-top:16px;border-top:1px solid var(--soft);color:var(--muted);font-size:13px}
+  kbd{font:12px -apple-system,Helvetica,Arial,sans-serif;background:#1a253f;border:1px solid var(--soft);border-radius:5px;padding:1px 6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hdr"><div class="mark"><i></i><i></i><i></i></div><h1>AV Look Book &middot; Read Me First</h1></div>
+  <p class="sub">Two minutes now saves a support email later. Everything below is a one-time thing.</p>
+
+  <h2>Installing</h2>
+  <div class="card ok">
+    <h3>Drag AV Look Book into Applications</h3>
+    <p>Drop the app on the <b>Applications</b> folder shown in this window, then eject the disk image. Open it from Applications or Launchpad, not from the disk image.</p>
+  </div>
+
+  <h2>First launch</h2>
+  <div class="card warn">
+    <h3>&ldquo;Apple could not verify AV Look Book is free of malware&rdquo;</h3>
+    <p>AV Look Book is not yet signed with an Apple Developer ID, so macOS stops the very first open. It is a one-time step:</p>
+    <ol>
+      <li>Click <b>Done</b> on that message.</li>
+      <li>Open <b>System Settings &rsaquo; Privacy &amp; Security</b> and scroll down to the <b>Security</b> section.</li>
+      <li>Next to &ldquo;AV Look Book was blocked&rdquo; click <b>Open Anyway</b>, then confirm.</li>
+    </ol>
+    <p class="muted">After that it opens like any other app.</p>
+  </div>
+  <div class="card err">
+    <h3>&ldquo;AV Look Book is damaged and can&rsquo;t be opened&rdquo;</h3>
+    <p>This appears on older downloads, or when a copy has been passed between Macs. Open <b>Terminal</b> (Applications &rsaquo; Utilities), paste this one line, press <kbd>return</kbd>, then open the app again:</p>
+    <pre>xattr -cr "/Applications/AV Look Book.app"</pre>
+  </div>
+  <div class="card err">
+    <h3>&ldquo;The disk image is corrupted&rdquo; or it won&rsquo;t open</h3>
+    <p>The download did not finish. The installer is about <b>100&nbsp;MB</b>; if the file in Downloads is smaller, delete it and download again from the releases page.</p>
+  </div>
+
+  <h2>Your shows</h2>
+  <div class="card">
+    <h3>Documents &rsaquo; AV Look Book</h3>
+    <p>Every show is one <code>.avlb</code> file in that folder and is saved automatically while you work. Back the folder up like any other project folder, and copy a file to share a show with someone else.</p>
+    <p>The Welcome window lists your recent shows. <b>Open Last Project</b> takes you straight back to the one you were working on.</p>
+  </div>
+
+  <h2>Updates</h2>
+  <div class="card">
+    <h3>Automatic when online, silent when not</h3>
+    <p>When your Mac is online, AV Look Book checks for a newer build on launch and every few hours. When one is ready you get an <b>Update ready &middot; Restart now</b> note in the window. Offline it just runs.</p>
+    <p class="muted">New versions of the app shell itself are a fresh download from the releases page. The Welcome window shows which version you have.</p>
+  </div>
+
+  <h2>Something else</h2>
+  <div class="card">
+    <h3>Email <a href="mailto:Info@aveducate.com">Info@aveducate.com</a></h3>
+    <p>Include the version shown in the Welcome window and a screenshot if there is a message on screen. Latest downloads: <a href="https://github.com/AVEducate/AV-Look-Book/releases/latest">github.com/AVEducate/AV-Look-Book/releases/latest</a></p>
+  </div>
+
+  <div class="foot">AV Look Book by AV Educate &middot; macOS 13 or newer &middot; Apple silicon and Intel builds</div>
+</div>
+</body>
+</html>

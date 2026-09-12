@@ -1,0 +1,30 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+  html,body{margin:0;width:660px;height:500px;overflow:hidden}
+  body{background:#0a1322;color:#e8e8ea;font:14px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;position:relative}
+  .grid{position:absolute;inset:0;background-image:linear-gradient(rgba(34,228,255,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(34,228,255,.045) 1px,transparent 1px);background-size:30px 30px}
+  .glow{position:absolute;left:50%;top:200px;width:440px;height:220px;transform:translate(-50%,-50%);background:radial-gradient(ellipse at center,rgba(34,228,255,.11),transparent 65%)}
+  .title{position:absolute;left:0;right:0;top:34px;text-align:center}
+  .title b{display:block;font-size:22px;letter-spacing:.02em}
+  .title span{display:block;margin-top:4px;font-size:11px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:#22e4ff}
+  /* arrow centred between the app (x=230) and the folder (x=430), on the icon centre line (y=200) */
+  .arrow{position:absolute;left:283px;top:185px;width:94px;height:30px}
+  .arrow line{stroke:#22e4ff;stroke-width:3;stroke-linecap:round}
+  .arrow path{fill:#22e4ff}
+  .hint{position:absolute;left:0;right:0;top:268px;text-align:center;color:#8a94a3;font-size:12.5px}
+  .card{position:absolute;top:338px;height:134px;background:rgba(12,26,36,.85);border:1px solid rgba(34,228,255,.22);border-radius:8px;padding:12px 14px;font-size:12px;line-height:1.4;box-sizing:border-box}
+  .card b{display:block;color:#22e4ff;font-size:10px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:5px}
+  .card em{font-style:normal;color:#f0c060;font-weight:700}
+  .c1{left:36px;width:298px}
+  .c2{left:350px;width:274px;padding-right:118px}   /* right 110 px of this card is the Read Me icon's home */
+  .c2 .go{position:absolute;right:104px;top:58px;color:#22e4ff;font-size:22px;line-height:1}
+</style></head>
+<body>
+  <div class="grid"></div><div class="glow"></div>
+  <div class="title"><b>AV Look Book</b><span>Drag the app into Applications</span></div>
+  <svg class="arrow" viewBox="0 0 94 30"><line x1="4" y1="15" x2="72" y2="15"/><path d="M70 5 L90 15 L70 25 Z"/></svg>
+  <div class="hint">Then open it from Applications, not from this window.</div>
+  <div class="card c1"><b>First launch</b>If macOS says it can&rsquo;t verify the developer: <em>System Settings &rsaquo; Privacy &amp; Security &rsaquo; Open Anyway</em>. One time only.</div>
+  <div class="card c2"><b>Need help?</b>Double-click <em>Read Me First</em>.<br><br>Or email<br>Info@aveducate.com<div class="go">&rarr;</div></div>
+</body></html>

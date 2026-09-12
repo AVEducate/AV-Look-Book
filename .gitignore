@@ -18,3 +18,4 @@ electron/app/
 .DS_Store
 *.log
 Thumbs.db
+electron/build/dmg/preview@2x.png
