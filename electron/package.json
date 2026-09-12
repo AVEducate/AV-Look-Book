@@ -1,6 +1,6 @@
 {
   "name": "av-look-book-desktop",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "AV Look Book \u2014 desktop shell (Electron; one-home loader with GitHub Release content updates)",
   "author": "AV Educate <Info@aveducate.com>",
   "license": "UNLICENSED",
@@ -68,6 +68,7 @@
         "repo": "AV-Look-Book",
         "releaseType": "release"
       }
-    ]
+    ],
+    "afterPack": "build/afterPack.js"
   }
 }
