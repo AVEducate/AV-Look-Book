@@ -1,0 +1,20 @@
+# Look Book Builder — keep the repo to what GitHub needs: the app (deploy/),
+# the desktop shell (electron/) and the build workflow (.github/).
+# Local checkpoints, generated output, test fixtures and show files stay out.
+backups/
+exports/
+mockups/
+app/
+docs/
+tests/
+prototype/
+INDEX PAGE/
+.claude/
+electron/node_modules/
+electron/dist/
+electron/app/
+*.avlb
+*.zip
+.DS_Store
+*.log
+Thumbs.db

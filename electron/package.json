@@ -1,0 +1,73 @@
+{
+  "name": "lookbook-builder-desktop",
+  "version": "0.1.0",
+  "description": "Look Book Builder \u2014 desktop shell (Electron; one-home loader with GitHub Release content updates)",
+  "author": "AV Educate <Info@aveducate.com>",
+  "license": "UNLICENSED",
+  "main": "main.js",
+  "scripts": {
+    "copy-html": "node -e \"require('fs').mkdirSync('app',{recursive:true});require('fs').copyFileSync('../deploy/lookbook_builder.html','app/index.html')\"",
+    "start": "npm run copy-html && electron .",
+    "dist:mac": "npm run copy-html && electron-builder --mac",
+    "dist:win": "npm run copy-html && electron-builder --win",
+    "dist": "npm run copy-html && electron-builder"
+  },
+  "devDependencies": {
+    "electron": "^33.2.0",
+    "electron-builder": "^25.1.8"
+  },
+  "dependencies": {
+    "electron-updater": "^6.3.9"
+  },
+  "build": {
+    "appId": "com.aveducate.lookbookbuilder",
+    "productName": "Look Book Builder",
+    "artifactName": "LookBookBuilder-${version}-${os}-${arch}.${ext}",
+    "directories": {
+      "buildResources": "build",
+      "output": "dist"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "app/**/*",
+      "package.json"
+    ],
+    "mac": {
+      "category": "public.app-category.productivity",
+      "icon": "build/icon.icns",
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "arm64",
+            "x64"
+          ]
+        }
+      ]
+    },
+    "win": {
+      "icon": "build/icon.ico",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    },
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "AVEducate",
+        "repo": "AV-Look-Book",
+        "releaseType": "release"
+      }
+    ]
+  }
+}

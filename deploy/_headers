@@ -1,0 +1,10 @@
+# Netlify cache rules. Force browsers (esp. Safari, which caches HTML hard) to
+# revalidate the app/landing/guide on every load so a new deploy is picked up
+# immediately instead of serving a stale copy. "no-cache" = always check with
+# the server (uses ETag, so it only re-downloads when the file actually changed).
+/index.html
+  Cache-Control: no-cache
+/lookbook_builder.html
+  Cache-Control: no-cache
+/quick_guide.html
+  Cache-Control: no-cache
