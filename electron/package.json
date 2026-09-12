@@ -82,7 +82,6 @@
       }
     ],
     "dmg": {
-      "title": "AV Look Book ${version}",
       "background": "build/dmg/background.tiff",
       "iconSize": 80,
       "window": {
