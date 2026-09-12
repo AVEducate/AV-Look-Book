@@ -13,11 +13,21 @@
 // stamp is newer we save it and show a small "Update ready — restart to apply"
 // note inside the window. Offline: no check, no message — it just runs.
 //
+// PROJECTS AS FILES + WELCOME WINDOW (Omar, 2026-09-12, Mitti-style):
+//   • A Welcome window (welcome.html) opens first: New Project / Open Last
+//     Project / Getting Started, and a grid of recent projects with
+//     thumbnails. Recents live in userData/settings.json.
+//   • Every project runs in its OWN window. The page asks the shell what to
+//     show (boot), creates its file on Build My Show, and autosaves into it.
+//   • Closing a window flushes the file and captures a thumbnail first.
+//     When the last project window closes the Welcome window comes back.
+//
 // The SHELL itself (this Electron wrapper) updates through electron-updater +
 // GitHub Releases. That path needs code signing on macOS to work.
-const { app, BrowserWindow, ipcMain, shell, protocol, net, dialog } = require('electron');
+const { app, BrowserWindow, ipcMain, shell, protocol, net, dialog, Menu, nativeImage } = require('electron');
 const path = require('path');
 const fs = require('fs');
+const crypto = require('crypto');
 const { pathToFileURL } = require('url');
 
 let autoUpdater = null;
@@ -30,6 +40,8 @@ const GH_REPO  = 'AV-Look-Book';
 // so "latest" always points at the newest build of the app itself.
 const CONTENT_URL = 'https://github.com/' + GH_OWNER + '/' + GH_REPO + '/releases/latest/download/lookbook_builder.html';
 const CHECK_EVERY_MS = 4 * 60 * 60 * 1000;   // re-check every 4 h while running
+const RECENT_MAX = 200;                       // how many projects the Welcome list remembers
+const THUMB_WIDTH = 640;                      // px, thumbnails are 16:10-ish window captures
 // ───────────────────────────────────────────────────────────────────────────
 
 const BUNDLED = path.join(__dirname, 'app', 'index.html');
@@ -61,7 +73,82 @@ function currentHtmlPath(){
   return BUNDLED;
 }
 
-let win = null;
+// ── Settings + recents (userData/settings.json) ──────────────────────────
+const settingsPath = () => path.join(app.getPath('userData'), 'settings.json');
+let settings = { showWelcomeOnLaunch: true, recents: [] };
+function loadSettings(){
+  try {
+    const s = JSON.parse(fs.readFileSync(settingsPath(), 'utf8'));
+    if (s && typeof s === 'object') settings = Object.assign(settings, s);
+  } catch (e) { /* first run */ }
+  if (!Array.isArray(settings.recents)) settings.recents = [];
+  if (typeof settings.showWelcomeOnLaunch !== 'boolean') settings.showWelcomeOnLaunch = true;
+}
+function saveSettings(){
+  try { fs.mkdirSync(app.getPath('userData'), { recursive: true }); fs.writeFileSync(settingsPath(), JSON.stringify(settings, null, 2)); } catch (e) {}
+}
+const recentId = (p) => crypto.createHash('sha1').update(String(p)).digest('hex').slice(0, 16);
+const thumbsDir = () => path.join(app.getPath('userData'), 'thumbs');
+const thumbPath = (id) => path.join(thumbsDir(), id + '.png');
+function findRecent(id){ return settings.recents.find(r => r.id === id) || null; }
+// Move (or add) a project to the front of the list. "Last worked on" = slot 1.
+function touchRecent(p, name){
+  const id = recentId(p);
+  const i = settings.recents.findIndex(r => r.id === id);
+  const it = i >= 0 ? settings.recents.splice(i, 1)[0] : { id, path: p };
+  it.path = p;
+  if (name) it.name = name;
+  it.lastOpened = Date.now();
+  settings.recents.unshift(it);
+  if (settings.recents.length > RECENT_MAX) settings.recents.length = RECENT_MAX;
+  saveSettings(); refreshWelcome(); rebuildMenu();
+}
+function removeRecent(id){
+  const i = settings.recents.findIndex(r => r.id === id);
+  if (i >= 0) settings.recents.splice(i, 1);
+  try { fs.unlinkSync(thumbPath(id)); } catch (e) {}
+  saveSettings(); refreshWelcome(); rebuildMenu();
+}
+function thumbDataUrl(id){
+  try { return 'data:image/png;base64,' + fs.readFileSync(thumbPath(id)).toString('base64'); } catch (e) { return null; }
+}
+
+// ── Project files ────────────────────────────────────────────────────────
+function projectsDir(){
+  const d = path.join(app.getPath('documents'), 'AV Look Book');
+  try { fs.mkdirSync(d, { recursive: true }); } catch (e) {}
+  return d;
+}
+function safeFileName(name){
+  const n = String(name || '').replace(/[\\/:*?"<>|]/g, '-').replace(/\s+/g, ' ').trim().slice(0, 80);
+  return n || 'Untitled Show';
+}
+function uniquePath(dir, base){
+  let p = path.join(dir, base + '.avlb'), k = 2;
+  while (fs.existsSync(p)) { p = path.join(dir, base + ' (' + (k++) + ').avlb'); }
+  return p;
+}
+function readProject(p){
+  const text = fs.readFileSync(p, 'utf8');
+  let name = '';
+  try { const j = JSON.parse(text); name = String(j.showName || '').trim(); } catch (e) {}
+  return { text, name };
+}
+function nameFromJson(json){
+  try { return String(JSON.parse(json).showName || '').trim(); } catch (e) { return ''; }
+}
+function writeProject(p, json){
+  fs.mkdirSync(path.dirname(p), { recursive: true });
+  const tmp = p + '.tmp';
+  fs.writeFileSync(tmp, json, 'utf8');
+  fs.renameSync(tmp, p);             // atomic-ish: never leave a half-written .avlb
+}
+
+// ── Windows ──────────────────────────────────────────────────────────────
+const projects = new Map();          // webContents.id → { win, boot, path, name, closing }
+let welcomeWin = null;
+let guideWin = null;
+let quitting = false;
 let notifiedStamp = '';
 
 // app://lookbook/  →  the current HTML. Registered as a "standard" scheme so
@@ -70,14 +157,22 @@ protocol.registerSchemesAsPrivileged([
   { scheme: 'app', privileges: { standard: true, secure: true, supportFetchAPI: true, corsEnabled: true, stream: true } }
 ]);
 
-function createWindow(){
-  win = new BrowserWindow({
+function entryFor(sender){ return projects.get(sender.id) || null; }
+function projectWindowFor(p){ for (const e of projects.values()) if (e.path && e.path === p) return e; return null; }
+
+function createProjectWindow(boot){
+  if (boot.mode === 'open') {
+    const ex = projectWindowFor(boot.path);
+    if (ex) { ex.win.focus(); return ex; }
+  }
+  const win = new BrowserWindow({
     width: 1440,
     height: 900,
     minWidth: 1024,
     minHeight: 700,
     backgroundColor: '#0a1322',
     title: 'AV Look Book',
+    show: false,
     icon: path.join(__dirname, 'build', 'icon.png'),   // Linux/dev; mac/win use the packaged icon
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
@@ -88,6 +183,10 @@ function createWindow(){
       additionalArguments: ['--lb-shell-version=' + app.getVersion()]
     }
   });
+  const wcId = win.webContents.id;
+  const entry = { win, boot, path: boot.mode === 'open' ? boot.path : null, name: '', closing: false };
+  projects.set(wcId, entry);
+  win.once('ready-to-show', () => { win.show(); });
   win.loadURL('app://lookbook/');
   // Real links (docs, store, GitHub) open in the user's browser; blob:/data:
   // windows (the PDF print previews) stay in-app.
@@ -95,31 +194,204 @@ function createWindow(){
     if (/^https?:\/\//i.test(url)) { shell.openExternal(url); return { action: 'deny' }; }
     return { action: 'allow' };
   });
-  // The app's beforeunload guard (unsaved changes) cancels the close in Electron
-  // WITHOUT showing anything — so Cmd+Q / the red button looked dead. Ask here
-  // with a native dialog; "Quit anyway" lets the close proceed. The page's
-  // pagehide handler still writes the draft, so nothing is lost either way.
+  // Keep the recents name in step with the show name (the page sets
+  // document.title to "<show> — Look Book Builder").
+  win.webContents.on('page-title-updated', (_e, title) => {
+    const n = String(title || '').replace(/\s+—\s+Look Book Builder$/, '').trim();
+    if (!n || n === 'Look Book Builder' || n === 'AV Look Book') return;
+    entry.name = n;
+    if (entry.path) {
+      const it = findRecent(recentId(entry.path));
+      if (it && it.name !== n) { it.name = n; saveSettings(); refreshWelcome(); rebuildMenu(); }
+    }
+  });
+  // The page vetoes a close only when it has changes that are NOT in a file
+  // (a show that was never saved). Named shows are flushed to disk in the
+  // close flow below, so they never get here.
   win.webContents.on('will-prevent-unload', (event) => {
-    console.log('[lb] unsaved-changes dialog');
+    console.log('[lb] unsaved-changes dialog for', entry.path || '(unsaved show)');
     const choice = dialog.showMessageBoxSync(win, {
       type: 'warning',
       title: 'Unsaved changes',
-      message: 'This show has unsaved changes.',
-      detail: 'Your latest work is kept as a draft and offered back the next time you open AV Look Book. Save the .avlb first if you want a file you can send.',
-      buttons: ['Quit anyway', 'Cancel'],
+      message: 'This show has changes that are not saved to a file.',
+      detail: 'Save it first (Cmd+S) if you want to keep it. Closing now discards the changes.',
+      buttons: ['Close anyway', 'Cancel'],
       defaultId: 1,
       cancelId: 1,
       noLink: true
     });
-    if (choice === 0) event.preventDefault();   // = ignore the page's veto, close
+    if (choice === 0) event.preventDefault();          // ignore the page's veto, close
+    else { entry.closing = false; quitting = false; }  // user backed out
   });
-  win.on('closed', () => { win = null; });
+  // Close flow: flush the file, capture the thumbnail, then really close.
+  win.on('close', (e) => {
+    if (entry.closing) return;                          // second pass → let it go
+    e.preventDefault();
+    entry.closing = true;
+    (async () => {
+      let flushed = null;
+      try {
+        flushed = await Promise.race([
+          win.webContents.executeJavaScript('window.__lbFlushSave ? window.__lbFlushSave() : true', true),
+          new Promise(res => setTimeout(() => res('timeout'), 5000))
+        ]);
+      } catch (err) { flushed = 'error: ' + (err && err.message); }
+      console.log('[lb] close:', entry.path || '(unsaved show)', 'flush →', flushed);
+      await captureThumb(entry);
+      if (!win.isDestroyed()) win.close();
+    })();
+  });
+  win.on('closed', () => {
+    projects.delete(wcId);
+    if (!quitting && projects.size === 0) showWelcome();
+  });
+  if (welcomeWin && !welcomeWin.isDestroyed()) welcomeWin.hide();
+  return entry;
+}
+
+function openProjectPath(p){
+  if (!fs.existsSync(p)) {
+    dialog.showMessageBox({ type: 'warning', title: 'File not found', message: 'That project file is no longer where it was.', detail: p, buttons: ['OK'] });
+    refreshWelcome();
+    return null;
+  }
+  return createProjectWindow({ mode: 'open', path: p });
+}
+
+async function captureThumb(entry){
+  if (!entry.path || entry.win.isDestroyed() || entry.win.webContents.isDestroyed()) return;
+  try {
+    const img = await entry.win.webContents.capturePage();
+    if (!img || img.isEmpty()) return;
+    fs.mkdirSync(thumbsDir(), { recursive: true });
+    fs.writeFileSync(thumbPath(recentId(entry.path)), img.resize({ width: THUMB_WIDTH }).toPNG());
+    refreshWelcome();
+  } catch (e) { /* hidden / minimized windows can't be captured — keep the old thumb */ }
+}
+
+// ── Welcome window ───────────────────────────────────────────────────────
+function showWelcome(){
+  if (welcomeWin && !welcomeWin.isDestroyed()) { welcomeWin.show(); welcomeWin.focus(); refreshWelcome(); return welcomeWin; }
+  welcomeWin = new BrowserWindow({
+    width: 1000,
+    height: 620,
+    resizable: false,
+    minimizable: true,
+    maximizable: false,
+    fullscreenable: false,
+    title: 'Welcome to AV Look Book',
+    backgroundColor: '#0a1322',
+    show: false,
+    icon: path.join(__dirname, 'build', 'icon.png'),
+    webPreferences: {
+      preload: path.join(__dirname, 'welcome-preload.js'),
+      contextIsolation: true,
+      nodeIntegration: false,
+      sandbox: true
+    }
+  });
+  welcomeWin.once('ready-to-show', () => welcomeWin.show());
+  welcomeWin.loadURL('app://lookbook/welcome.html');
+  welcomeWin.on('closed', () => { welcomeWin = null; });
+  return welcomeWin;
+}
+function refreshWelcome(){
+  if (welcomeWin && !welcomeWin.isDestroyed()) { try { welcomeWin.webContents.send('lb:welcome:refresh'); } catch (e) {} }
+}
+function showGuide(){
+  if (guideWin && !guideWin.isDestroyed()) { guideWin.show(); guideWin.focus(); return; }
+  guideWin = new BrowserWindow({
+    width: 1200, height: 820, minWidth: 800, minHeight: 600,
+    title: 'Getting Started — AV Look Book', backgroundColor: '#0a1322',
+    webPreferences: { contextIsolation: true, nodeIntegration: false, sandbox: true }
+  });
+  guideWin.loadURL('app://lookbook/quick_guide.html');
+  guideWin.webContents.setWindowOpenHandler(({ url }) => { if (/^https?:\/\//i.test(url)) shell.openExternal(url); return { action: 'deny' }; });
+  guideWin.on('closed', () => { guideWin = null; });
+}
+
+// ── Menu ─────────────────────────────────────────────────────────────────
+function focusedProject(){
+  const w = BrowserWindow.getFocusedWindow();
+  if (w && projects.has(w.webContents.id)) return projects.get(w.webContents.id);
+  for (const e of projects.values()) return e;
+  return null;
+}
+function sendToFocused(cmd){
+  const e = focusedProject();
+  if (e && !e.win.isDestroyed()) e.win.webContents.send('lb:menu', cmd);
+}
+async function menuOpen(){
+  const e = focusedProject();
+  const r = await dialog.showOpenDialog(e ? e.win : (welcomeWin || undefined), {
+    defaultPath: projectsDir(),
+    filters: [{ name: 'AV Look Book Project', extensions: ['avlb', 'json'] }],
+    properties: ['openFile']
+  });
+  if (r.canceled || !r.filePaths[0]) return;
+  openProjectPath(r.filePaths[0]);
+}
+async function menuCheckUpdates(){
+  const r = await checkForContentUpdate();
+  const text = {
+    'offline': 'You are offline. AV Look Book checks again automatically when a connection is back.',
+    'no-release': 'No update is published yet.',
+    'up-to-date': 'You are on the latest build (' + r.current + ').',
+    'downloaded': 'Build ' + r.remote + ' is downloaded. Restart AV Look Book to use it.',
+    'error': 'The update check failed: ' + (r.message || 'unknown error')
+  }[r.status] || 'Unknown result.';
+  dialog.showMessageBox({ type: 'info', title: 'Check for Updates', message: text, buttons: ['OK'] });
+}
+function rebuildMenu(){
+  const isMac = process.platform === 'darwin';
+  const recentsSub = settings.recents.slice(0, 10).map(r => ({ label: r.name || path.basename(r.path), click: () => openProjectPath(r.path) }));
+  const template = [
+    ...(isMac ? [{ label: app.name, submenu: [
+      { role: 'about' }, { type: 'separator' },
+      { label: 'Check for Updates…', click: menuCheckUpdates }, { type: 'separator' },
+      { role: 'services' }, { type: 'separator' },
+      { role: 'hide' }, { role: 'hideOthers' }, { role: 'unhide' }, { type: 'separator' },
+      { role: 'quit' }
+    ] }] : []),
+    { label: 'File', submenu: [
+      { label: 'New Project', accelerator: 'CmdOrCtrl+N', click: () => createProjectWindow({ mode: 'new' }) },
+      { label: 'Open…', accelerator: 'CmdOrCtrl+O', click: menuOpen },
+      { label: 'Open Recent', submenu: recentsSub.length ? recentsSub : [{ label: 'No recent projects', enabled: false }] },
+      { type: 'separator' },
+      { label: 'Save', accelerator: 'CmdOrCtrl+S', click: () => sendToFocused('save') },
+      { label: 'Save As…', accelerator: 'Shift+CmdOrCtrl+S', click: () => sendToFocused('saveAs') },
+      { type: 'separator' },
+      { label: 'Welcome Window', accelerator: 'Shift+CmdOrCtrl+W', click: () => showWelcome() },
+      { type: 'separator' },
+      isMac ? { role: 'close' } : { role: 'quit' }
+    ] },
+    // Undo/Redo deliberately carry no accelerator: the app handles Cmd+Z /
+    // Cmd+Shift+Z / Cmd+Y itself (project undo), and a menu accelerator
+    // would swallow those keys.
+    { label: 'Edit', submenu: [
+      { label: 'Undo', role: 'undo' }, { label: 'Redo', role: 'redo' }, { type: 'separator' },
+      { role: 'cut' }, { role: 'copy' }, { role: 'paste' }, { role: 'selectAll' }
+    ] },
+    { label: 'View', submenu: [
+      { role: 'resetZoom' }, { role: 'zoomIn' }, { role: 'zoomOut' }, { type: 'separator' },
+      { role: 'togglefullscreen' },
+      ...(app.isPackaged ? [] : [{ type: 'separator' }, { role: 'reload' }, { role: 'toggleDevTools' }])
+    ] },
+    { label: 'Window', submenu: [ { role: 'minimize' }, { role: 'zoom' }, ...(isMac ? [{ type: 'separator' }, { role: 'front' }] : [{ role: 'close' }]) ] },
+    { role: 'help', submenu: [
+      { label: 'Getting Started', click: () => showGuide() },
+      ...(isMac ? [] : [{ label: 'Check for Updates…', click: menuCheckUpdates }]),
+      { label: 'AV Look Book on GitHub', click: () => shell.openExternal('https://github.com/' + GH_OWNER + '/' + GH_REPO) }
+    ] }
+  ];
+  // Roles undo/redo get a default accelerator from Electron; strip it.
+  template.forEach(m => (m.submenu || []).forEach(i => { if (i.role === 'undo' || i.role === 'redo') i.accelerator = ''; }));
+  Menu.setApplicationMenu(Menu.buildFromTemplate(template));
 }
 
 // ── Content update check (the HTML app) ──────────────────────────────────
 // Returns { status, current, remote } — status is one of
 // 'offline' | 'no-release' | 'up-to-date' | 'downloaded' | 'error'
-// (the app can show that on a "Check for updates" click later).
 async function checkForContentUpdate(){
   const current = stampOfFile(currentHtmlPath());
   if (!net.isOnline()) return { status: 'offline', current, remote: '' };   // offline: silent
@@ -132,14 +404,15 @@ async function checkForContentUpdate(){
     if (!stampNewer(remote, current)) return { status: 'up-to-date', current, remote };
     fs.mkdirSync(app.getPath('userData'), { recursive: true });
     fs.writeFileSync(latestPath(), html, 'utf8');
-    if (win && notifiedStamp !== remote) { notifiedStamp = remote; showUpdateToast(remote); }
+    if (notifiedStamp !== remote) { notifiedStamp = remote; for (const e of projects.values()) showUpdateToast(e.win, remote); }
     return { status: 'downloaded', current, remote };
   } catch (e) { return { status: 'error', current, remote: '', message: String(e && e.message || e) }; }
 }
 
 // Small in-window note, styled like the app's own toasts. "Restart" relaunches
 // on the new build; "Later" just hides it (it applies on the next launch).
-function showUpdateToast(stamp){
+function showUpdateToast(win, stamp){
+  if (!win || win.isDestroyed()) return;
   const js = `(function(){
     if(document.getElementById('lb-native-update')) return;
     var d=document.createElement('div'); d.id='lb-native-update';
@@ -154,28 +427,158 @@ function showUpdateToast(stamp){
   try { win.webContents.executeJavaScript(js); } catch (e) {}
 }
 
+// ── App lifecycle ────────────────────────────────────────────────────────
+let pendingOpen = null;                                   // .avlb double-clicked before ready
+app.on('open-file', (e, p) => { e.preventDefault(); if (app.isReady()) openProjectPath(p); else pendingOpen = p; });
+
 app.whenReady().then(() => {
+  loadSettings();
   protocol.handle('app', (req) => {
     const url = new URL(req.url);
-    if (url.hostname === 'lookbook' && (url.pathname === '/' || url.pathname === '/index.html')) {
-      // pathToFileURL: userData lives under "Application Support" — the space
-      // must be percent-encoded or the fetch fails.
-      return net.fetch(pathToFileURL(currentHtmlPath()).toString());
-    }
+    if (url.hostname !== 'lookbook') return new Response('Not found', { status: 404 });
+    const p = url.pathname;
+    // pathToFileURL: userData lives under "Application Support" — the space
+    // must be percent-encoded or the fetch fails.
+    if (p === '/' || p === '/index.html') return net.fetch(pathToFileURL(currentHtmlPath()).toString());
+    const files = {
+      '/welcome.html':     path.join(__dirname, 'welcome.html'),
+      '/quick_guide.html': path.join(__dirname, 'app', 'quick_guide.html'),
+      '/icon.png':         path.join(__dirname, 'build', 'icon.png')
+    };
+    if (files[p] && fs.existsSync(files[p])) return net.fetch(pathToFileURL(files[p]).toString());
     return new Response('Not found', { status: 404 });
   });
-  createWindow();
+  rebuildMenu();
+
+  // What to show first: a file handed to us, else Welcome (or the last
+  // project directly when "Show this window on launch" is off).
+  const argFile = process.argv.slice(1).find(a => /\.avlb$/i.test(a) && fs.existsSync(a));
+  const first = pendingOpen || argFile;
+  const last = settings.recents[0];
+  if (first) openProjectPath(first);
+  else if (!settings.showWelcomeOnLaunch && last && fs.existsSync(last.path)) openProjectPath(last.path);
+  else showWelcome();
+  pendingOpen = null;
+
   // Content check now + periodically; shell update check (packaged builds only).
   setTimeout(checkForContentUpdate, 4000);
   setInterval(checkForContentUpdate, CHECK_EVERY_MS);
   if (autoUpdater && app.isPackaged) { try { autoUpdater.checkForUpdatesAndNotify(); } catch (e) {} }
-  app.on('activate', () => { if (BrowserWindow.getAllWindows().length === 0) createWindow(); });
+  app.on('activate', () => { if (BrowserWindow.getAllWindows().length === 0) showWelcome(); });
 });
 
-// Single-window app: closing the window closes the program (Omar's spec, all platforms).
+app.on('before-quit', () => { quitting = true; });
+// Only fires when every window (Welcome included) is gone: the user closed
+// the Welcome window with nothing else open → the program closes (Omar's spec).
 app.on('window-all-closed', () => { app.quit(); });
 
-// ── Bridge (preload → window.lookbookNative) ─────────────────────────────
+// ── Bridge: project windows (preload → window.lookbookNative.project) ────
+ipcMain.handle('lb:project:boot', async (e) => {
+  const entry = entryFor(e.sender); if (!entry) return { mode: 'new' };
+  if (entry.boot.mode === 'open') {
+    try {
+      const { text, name } = readProject(entry.boot.path);
+      entry.path = entry.boot.path; entry.name = name;
+      touchRecent(entry.path, name);
+      return { mode: 'open', path: entry.path, name, json: text };
+    } catch (err) {
+      entry.path = null;
+      return { mode: 'new', error: String(err && err.message || err) };
+    }
+  }
+  return { mode: 'new' };
+});
+ipcMain.handle('lb:project:create', async (e, name, json) => {
+  const entry = entryFor(e.sender); if (!entry) return { ok: false, error: 'no window' };
+  try {
+    const p = uniquePath(projectsDir(), safeFileName(name));
+    writeProject(p, String(json || ''));
+    entry.path = p; entry.name = String(name || '');
+    touchRecent(p, entry.name);
+    setTimeout(() => captureThumb(entry), 400);
+    return { ok: true, path: p, file: path.basename(p) };
+  } catch (err) { return { ok: false, error: String(err && err.message || err) }; }
+});
+async function saveAsFlow(entry, json, suggested){
+  const r = await dialog.showSaveDialog(entry.win, {
+    defaultPath: path.join(projectsDir(), safeFileName(suggested) + '.avlb'),
+    filters: [{ name: 'AV Look Book Project', extensions: ['avlb'] }]
+  });
+  if (r.canceled || !r.filePath) return { ok: false, cancelled: true };
+  let p = r.filePath; if (!/\.avlb$/i.test(p)) p += '.avlb';
+  writeProject(p, String(json || ''));
+  entry.path = p;
+  touchRecent(p, nameFromJson(json) || entry.name);
+  setTimeout(() => captureThumb(entry), 200);
+  return { ok: true, path: p };
+}
+ipcMain.handle('lb:project:save', async (e, json, auto) => {
+  const entry = entryFor(e.sender); if (!entry) return { ok: false, error: 'no window' };
+  try {
+    if (!entry.path) return await saveAsFlow(entry, json, nameFromJson(json) || 'Untitled Show');
+    writeProject(entry.path, String(json || ''));
+    touchRecent(entry.path, nameFromJson(json) || entry.name);
+    if (!auto) setTimeout(() => captureThumb(entry), 200);
+    return { ok: true, path: entry.path };
+  } catch (err) { return { ok: false, error: String(err && err.message || err) }; }
+});
+ipcMain.handle('lb:project:saveAs', async (e, json, suggested) => {
+  const entry = entryFor(e.sender); if (!entry) return { ok: false, error: 'no window' };
+  try { return await saveAsFlow(entry, json, suggested || 'Untitled Show'); }
+  catch (err) { return { ok: false, error: String(err && err.message || err) }; }
+});
+ipcMain.handle('lb:project:open', async (e, intoThis) => {
+  const entry = entryFor(e.sender); if (!entry) return { ok: false, error: 'no window' };
+  const r = await dialog.showOpenDialog(entry.win, {
+    defaultPath: projectsDir(),
+    filters: [{ name: 'AV Look Book Project', extensions: ['avlb', 'json'] }],
+    properties: ['openFile']
+  });
+  if (r.canceled || !r.filePaths[0]) return { ok: false, cancelled: true };
+  const p = r.filePaths[0];
+  if (intoThis && !projectWindowFor(p)) {
+    try {
+      const { text, name } = readProject(p);
+      entry.path = p; entry.name = name; touchRecent(p, name);
+      return { ok: true, path: p, json: text };
+    } catch (err) { return { ok: false, error: String(err && err.message || err) }; }
+  }
+  openProjectPath(p);
+  return { ok: true };
+});
+ipcMain.handle('lb:project:new', async () => { createProjectWindow({ mode: 'new' }); return { ok: true }; });
+ipcMain.handle('lb:welcome:show', async () => { showWelcome(); return { ok: true }; });
+
+// ── Bridge: Welcome window ───────────────────────────────────────────────
+ipcMain.handle('lb:welcome:list', async () => ({
+  version: app.getVersion(),
+  build: stampOfFile(currentHtmlPath()),
+  showOnLaunch: settings.showWelcomeOnLaunch,
+  items: settings.recents.map((r, i) => ({
+    id: r.id, path: r.path, name: r.name || '', lastOpened: r.lastOpened || 0,
+    missing: !fs.existsSync(r.path),
+    thumb: i < 6 ? thumbDataUrl(r.id) : null
+  }))
+}));
+ipcMain.handle('lb:welcome:action', async (_e, name, a, b) => {
+  switch (name) {
+    case 'new': createProjectWindow({ mode: 'new' }); break;
+    case 'openLast': { const it = settings.recents[0]; if (it) openProjectPath(it.path); else createProjectWindow({ mode: 'new' }); break; }
+    case 'open': { const it = findRecent(a); if (it) openProjectPath(it.path); break; }
+    case 'browse': await menuOpen(); break;
+    case 'gettingStarted': showGuide(); break;
+    case 'removeConfirmed': {
+      const it = findRecent(a); if (!it) break;
+      if (b === true && fs.existsSync(it.path)) { try { await shell.trashItem(it.path); } catch (err) { return { ok: false, error: String(err && err.message || err) }; } }
+      removeRecent(a);
+      break;
+    }
+    case 'setShowOnLaunch': settings.showWelcomeOnLaunch = !!a; saveSettings(); break;
+  }
+  return { ok: true };
+});
+
+// ── Bridge: misc (preload → window.lookbookNative) ───────────────────────
 ipcMain.handle('lb:relaunch', async () => { app.relaunch(); app.exit(0); });
 ipcMain.handle('lb:checkForUpdates', async () => checkForContentUpdate());
 ipcMain.handle('lb:info', async () => ({ shell: app.getVersion(), build: stampOfFile(currentHtmlPath()), online: net.isOnline() }));

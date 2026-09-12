@@ -1,12 +1,12 @@
 {
   "name": "av-look-book-desktop",
-  "version": "0.1.4",
+  "version": "0.2.0",
   "description": "AV Look Book \u2014 desktop shell (Electron; one-home loader with GitHub Release content updates)",
   "author": "AV Educate <Info@aveducate.com>",
   "license": "UNLICENSED",
   "main": "main.js",
   "scripts": {
-    "copy-html": "node -e \"require('fs').mkdirSync('app',{recursive:true});require('fs').copyFileSync('../deploy/lookbook_builder.html','app/index.html')\"",
+    "copy-html": "node -e \"const fs=require('fs');fs.mkdirSync('app',{recursive:true});fs.copyFileSync('../deploy/lookbook_builder.html','app/index.html');fs.copyFileSync('../deploy/quick_guide.html','app/quick_guide.html')\"",
     "start": "npm run copy-html && electron .",
     "dist:mac": "npm run copy-html && electron-builder --mac",
     "dist:win": "npm run copy-html && electron-builder --win",
@@ -30,6 +30,8 @@
     "files": [
       "main.js",
       "preload.js",
+      "welcome-preload.js",
+      "welcome.html",
       "app/**/*",
       "package.json"
     ],
@@ -69,6 +71,14 @@
         "releaseType": "release"
       }
     ],
-    "afterPack": "build/afterPack.js"
+    "afterPack": "build/afterPack.js",
+    "fileAssociations": [
+      {
+        "ext": "avlb",
+        "name": "AV Look Book Project",
+        "description": "AV Look Book Project",
+        "role": "Editor"
+      }
+    ]
   }
 }

@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Welcome to AV Look Book</title>
+<style>
+  :root{
+    --bg:#0a1322; --panel:#0c1a24; --line:rgba(34,228,255,.22); --line-soft:rgba(255,255,255,.08);
+    --text:#e8e8ea; --muted:#8a94a3; --cyan:#22e4ff; --cyan-dim:rgba(34,228,255,.12); --danger:#ff4d5a;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0}
+  body{background:var(--bg);color:var(--text);font:13px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+       display:grid;grid-template-columns:300px 1fr;overflow:hidden;-webkit-user-select:none;user-select:none}
+  .left{padding:34px 28px 22px;border-right:1px solid var(--line-soft);display:flex;flex-direction:column;align-items:center;gap:10px}
+  .left img{width:112px;height:112px;border-radius:26px;box-shadow:0 14px 34px rgba(0,0,0,.55)}
+  .left .ver{color:var(--muted);font-size:11px;letter-spacing:.06em;margin-bottom:18px}
+  .btn{width:100%;padding:11px 14px;border-radius:8px;border:1px solid var(--line);background:transparent;color:var(--text);
+       font:inherit;font-weight:600;cursor:pointer;text-align:center;transition:background .12s,border-color .12s}
+  .btn:hover{background:var(--cyan-dim);border-color:var(--cyan)}
+  .btn:disabled{opacity:.4;cursor:default;background:transparent;border-color:var(--line)}
+  .btn.primary{background:var(--cyan);border-color:var(--cyan);color:#001620}
+  .btn.primary:hover{background:#5cebff}
+  .left .spacer{flex:1}
+  label.chk{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:12px;cursor:pointer}
+  label.chk input{accent-color:var(--cyan);width:14px;height:14px;margin:0}
+  .right{padding:30px 34px 22px;display:flex;flex-direction:column;min-width:0}
+  h2{margin:0 0 16px;font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--cyan)}
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);grid-auto-rows:1fr;gap:14px;flex:1;min-height:0}
+  .tile{position:relative;display:flex;flex-direction:column;border:1px solid var(--line-soft);border-radius:8px;background:var(--panel);
+        overflow:hidden;cursor:pointer;min-height:0;transition:border-color .12s,transform .12s}
+  .tile:hover{border-color:var(--cyan)}
+  .tile:active{transform:scale(.99)}
+  .tile .thumb{flex:1;min-height:0;background:#06101a center/cover no-repeat;display:flex;align-items:center;justify-content:center;
+               color:var(--muted);font-size:11px;letter-spacing:.06em;text-transform:uppercase}
+  .tile .thumb.img{background-size:cover}
+  .tile .meta{padding:8px 10px 9px;border-top:1px solid var(--line-soft)}
+  .tile .name{font-weight:700;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .tile .sub{color:var(--muted);font-size:10.5px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .tile.empty{border-style:dashed;cursor:pointer}
+  .tile.empty .thumb{color:var(--muted);text-transform:none;letter-spacing:.02em;font-size:13px;font-weight:600}
+  .tile.missing{opacity:.55}
+  .tile.missing .thumb::after{content:"FILE MISSING";color:var(--danger)}
+  .tile .x{position:absolute;top:6px;right:6px;width:22px;height:22px;border-radius:6px;border:1px solid rgba(255,255,255,.18);
+           background:rgba(6,16,26,.85);color:#c9d1d9;font:700 13px/20px inherit;text-align:center;cursor:pointer;opacity:0;transition:opacity .12s}
+  .tile:hover .x{opacity:1}
+  .tile .x:hover{border-color:var(--danger);color:var(--danger)}
+  .foot{display:flex;justify-content:space-between;align-items:center;margin-top:14px;gap:10px}
+  .link{background:transparent;border:1px solid var(--line-soft);border-radius:8px;color:var(--text);padding:8px 14px;font:inherit;font-weight:600;cursor:pointer}
+  .link:hover{border-color:var(--cyan);background:var(--cyan-dim)}
+  .hint{color:var(--muted);font-size:11px}
+  /* More-projects list */
+  .list{flex:1;min-height:0;overflow:auto;border:1px solid var(--line-soft);border-radius:8px;background:var(--panel)}
+  .row{display:flex;align-items:center;gap:12px;padding:9px 12px;border-bottom:1px solid var(--line-soft);cursor:pointer}
+  .row:last-child{border-bottom:none}
+  .row:hover{background:var(--cyan-dim)}
+  .row .name{font-weight:700;flex:0 0 200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .row .file{color:var(--muted);flex:1;font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;direction:rtl;text-align:left}
+  .row .when{color:var(--muted);font-size:11px;flex:0 0 auto}
+  .row .x{position:static;opacity:1;width:20px;height:20px;line-height:18px;flex:0 0 auto}
+  .row.missing .name{color:var(--danger)}
+  .empty-note{padding:26px;text-align:center;color:var(--muted)}
+  /* Remove / trash confirmation */
+  .veil{position:fixed;inset:0;background:rgba(3,8,14,.72);display:flex;align-items:center;justify-content:center;z-index:50}
+  .dlg{width:420px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px 20px 16px;box-shadow:0 20px 50px rgba(0,0,0,.6)}
+  .dlg h3{margin:0 0 6px;font-size:14px}
+  .dlg p{margin:0 0 14px;color:var(--muted);font-size:12px;line-height:1.5}
+  .dlg .btns{display:flex;flex-direction:column;gap:8px}
+  .dlg .btn.danger:hover{border-color:var(--danger);background:rgba(255,77,90,.12)}
+  [hidden]{display:none!important}
+</style>
+</head>
+<body>
+  <div class="left">
+    <img id="icon" src="app://lookbook/icon.png" alt="">
+    <div class="ver" id="ver">&nbsp;</div>
+    <button class="btn primary" id="btn-new">New Project</button>
+    <button class="btn" id="btn-last">Open Last Project</button>
+    <button class="btn" id="btn-help">Getting Started</button>
+    <div class="spacer"></div>
+    <label class="chk"><input type="checkbox" id="chk-launch"> Show this window on launch</label>
+  </div>
+  <div class="right">
+    <h2 id="heading">Recent Projects</h2>
+    <div class="grid" id="grid"></div>
+    <div class="list" id="list" hidden></div>
+    <div class="foot">
+      <button class="link" id="btn-more">More projects…</button>
+      <span class="hint" id="hint">Projects live in Documents › AV Look Book. Use File › Open to browse for a file.</span>
+    </div>
+  </div>
+<div class="veil" id="veil" hidden>
+  <div class="dlg">
+    <h3 id="dlg-title">Remove this project?</h3>
+    <p id="dlg-text"></p>
+    <div class="btns">
+      <button class="btn" id="dlg-remove">Remove from this list only</button>
+      <button class="btn danger" id="dlg-trash">Move the file to the Trash</button>
+      <button class="btn" id="dlg-cancel">Cancel</button>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  const api = window.lookbookWelcome;
+  const SLOTS = 6;
+  let data = { items: [], showOnLaunch: true, version: '', build: '' };
+  let showingList = false;
+
+  const $ = (id) => document.getElementById(id);
+  const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  function ago(ts){
+    if (!ts) return '';
+    const m = Math.round((Date.now() - ts) / 60000);
+    if (m < 1) return 'just now';
+    if (m < 60) return m + ' min ago';
+    const h = Math.round(m / 60); if (h < 24) return h + (h === 1 ? ' hour ago' : ' hours ago');
+    const d = Math.round(h / 24); if (d < 30) return d + (d === 1 ? ' day ago' : ' days ago');
+    return new Date(ts).toLocaleDateString();
+  }
+  function base(p){ return String(p || '').split(/[\\/]/).pop(); }
+
+  function renderGrid(){
+    const g = $('grid'); g.innerHTML = '';
+    const items = data.items.slice(0, SLOTS);
+    for (let i = 0; i < SLOTS; i++) {
+      const it = items[i];
+      const t = document.createElement('div');
+      if (!it) {
+        t.className = 'tile empty';
+        t.innerHTML = '<div class="thumb">New Project</div>';
+        t.onclick = () => api.action('new');
+      } else {
+        t.className = 'tile' + (it.missing ? ' missing' : '');
+        t.innerHTML =
+          '<div class="thumb' + (it.thumb ? ' img' : '') + '"' + (it.thumb ? ' style="background-image:url(' + it.thumb + ')"' : '') + '>' + (it.thumb || it.missing ? '' : 'No preview yet') + '</div>' +
+          '<div class="meta"><div class="name" title="' + esc(it.path) + '">' + esc(it.name || base(it.path)) + '</div>' +
+          '<div class="sub">' + esc(base(it.path)) + ' · ' + esc(ago(it.lastOpened)) + '</div></div>' +
+          '<div class="x" title="Remove or delete this project">✕</div>';
+        t.onclick = () => api.action('open', it.id);
+        t.querySelector('.x').onclick = (e) => { e.stopPropagation(); askRemove(it); };
+      }
+      g.appendChild(t);
+    }
+  }
+  function renderList(){
+    const l = $('list'); l.innerHTML = '';
+    if (!data.items.length) { l.innerHTML = '<div class="empty-note">No projects yet.</div>'; return; }
+    data.items.forEach(it => {
+      const r = document.createElement('div');
+      r.className = 'row' + (it.missing ? ' missing' : '');
+      r.innerHTML = '<div class="name">' + esc(it.name || base(it.path)) + '</div><div class="file" title="' + esc(it.path) + '">' + esc(it.path) + '</div>' +
+                    '<div class="when">' + esc(ago(it.lastOpened)) + '</div><div class="x" title="Remove or delete this project">✕</div>';
+      r.onclick = () => api.action('open', it.id);
+      r.querySelector('.x').onclick = (e) => { e.stopPropagation(); askRemove(it); };
+      l.appendChild(r);
+    });
+    const br = document.createElement('div');
+    br.className = 'row'; br.innerHTML = '<div class="name" style="color:var(--cyan)">Browse for a file…</div><div class="file">Open a project that is not in this list</div>';
+    br.onclick = () => api.action('browse');
+    l.appendChild(br);
+  }
+  function render(){
+    $('ver').textContent = (data.version ? 'v' + data.version : '') + (data.build ? '  ·  app ' + data.build : '');
+    $('chk-launch').checked = !!data.showOnLaunch;
+    $('btn-last').disabled = !data.items.length;
+    $('heading').textContent = showingList ? 'All Projects (' + data.items.length + ')' : 'Recent Projects';
+    $('grid').hidden = showingList; $('list').hidden = !showingList;
+    $('btn-more').textContent = showingList ? 'Back to recent' : ('More projects…' + (data.items.length > SLOTS ? ' (' + (data.items.length - SLOTS) + ' older)' : ''));
+    showingList ? renderList() : renderGrid();
+  }
+  let pendingRemove = null;
+  function askRemove(it){
+    pendingRemove = it;
+    $('dlg-title').textContent = 'Remove \u201c' + (it.name || base(it.path)) + '\u201d?';
+    $('dlg-text').textContent = it.missing
+      ? 'The file is already missing from disk. Remove it from the list?'
+      : 'Remove it from Recent Projects, or move the file itself to the Trash. Trash can be undone from the Finder.';
+    $('dlg-trash').hidden = !!it.missing;
+    $('veil').hidden = false;
+  }
+  $('dlg-remove').onclick = async () => { const it = pendingRemove; $('veil').hidden = true; if (it) await api.action('removeConfirmed', it.id, false); refresh(); };
+  $('dlg-trash').onclick  = async () => { const it = pendingRemove; $('veil').hidden = true; if (it) await api.action('removeConfirmed', it.id, true); refresh(); };
+  $('dlg-cancel').onclick = () => { $('veil').hidden = true; pendingRemove = null; };
+  $('veil').onclick = (e) => { if (e.target === $('veil')) { $('veil').hidden = true; pendingRemove = null; } };
+  async function refresh(){ try { data = await api.list(); } catch (e) {} render(); }
+
+  $('btn-new').onclick  = () => api.action('new');
+  $('btn-last').onclick = () => api.action('openLast');
+  $('btn-help').onclick = () => api.action('gettingStarted');
+  $('btn-more').onclick = () => { showingList = !showingList; render(); };
+  $('chk-launch').onchange = (e) => api.action('setShowOnLaunch', e.target.checked);
+  api.onRefresh(refresh);
+  refresh();
+})();
+</script>
+</body>
+</html>

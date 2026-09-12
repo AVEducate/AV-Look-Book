@@ -25,7 +25,10 @@ combinations, then exports as TSV/CSV spreadsheets and a look book PDF.
   cp backups/lookbook_builder_v1-desktop-only_2026-06-14.html deploy/lookbook_builder.html
   ```
 - `exports/` — test exports (.avlb, .tsv, .csv)
-- `electron/` — empty; Electron wrapper goes here later
+- `electron/` — the AV Look Book desktop shell (Electron 33): `main.js` (Welcome window,
+  one window per project, recents + thumbnails, GitHub-Release content updates),
+  `preload.js` / `welcome-preload.js` bridges, `welcome.html`. Installers are built by
+  `.github/workflows/release.yml` on every `v*` tag → GitHub Releases (repo AVEducate/AV-Look-Book).
 - `app/` — **legacy folder, no longer in use.** The file used to live here;
   it was renamed into `backups/` on 2026-05-19 as the good-model safety net.
   Do not put new working copies here.
@@ -129,7 +132,7 @@ or a mutation manually poking the DOM).
 1. Optional: extend the `actions.*` controller seam into the remaining low-churn
    areas (table cell setters, modals) — diminishing returns; only if asked.
 2. StyleSeed UI rollout (skins: Tech/Black/Raycast) — ongoing, one screen at a time.
-3. Electron packaging — deferred until HTML demo is signed off.
+3. Electron packaging — DONE (2026-09-11/12): shell 0.2.0 with Welcome window; see project memory.
 
 Recently done (see project memory for detail + gotchas):
 - 3-layer migration, builds 16bq→16by (Phases 0→6): one batched redraw
