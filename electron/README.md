@@ -32,8 +32,8 @@ git tag v0.1.0
 git push origin v0.1.0
 ```
 It produces and attaches to the GitHub Release:
-- `AVLookBook-<ver>-mac-arm64.dmg`, `AVLookBook-<ver>-mac-x64.dmg`
-- `AVLookBook-<ver>-win-x64.exe` (NSIS installer)
+- `AVLookBook-mac-arm64.dmg`, `AVLookBook-mac-x64.dmg` (versionless names → permanent `releases/latest/download/…` links)
+- `AVLookBook-win-x64.exe` (NSIS installer)
 - `lookbook_builder.html` (what installed apps download as a content update)
 
 Bump `version` in `package.json` before tagging a new shell; content-only
@@ -48,8 +48,8 @@ npm start            # copies the latest HTML into app/ and opens the window
 
 ## Build installers locally
 ```bash
-npm run dist:mac     # -> dist/AVLookBook-<ver>-mac-<arch>.dmg   (on a Mac)
-npm run dist:win     # -> dist/AVLookBook-<ver>-win-x64.exe      (on Windows / CI)
+npm run dist:mac     # -> dist/AVLookBook-mac-<arch>.dmg   (on a Mac)
+npm run dist:win     # -> dist/AVLookBook-win-x64.exe      (on Windows / CI)
 ```
 
 ## Code signing (later)

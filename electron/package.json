@@ -1,6 +1,6 @@
 {
   "name": "av-look-book-desktop",
-  "version": "0.2.7",
+  "version": "0.2.8",
   "description": "AV Look Book \u2014 desktop shell (Electron; one-home loader with GitHub Release content updates)",
   "author": "AV Educate <Info@aveducate.com>",
   "license": "UNLICENSED",
@@ -22,7 +22,7 @@
   "build": {
     "appId": "com.aveducate.avlookbook",
     "productName": "AV Look Book",
-    "artifactName": "AVLookBook-${version}-${os}-${arch}.${ext}",
+    "artifactName": "AVLookBook-${os}-${arch}.${ext}",
     "directories": {
       "buildResources": "build",
       "output": "dist"
