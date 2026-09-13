@@ -1,6 +1,6 @@
 {
   "name": "av-look-book-desktop",
-  "version": "0.2.10",
+  "version": "0.2.11",
   "description": "AV Look Book \u2014 desktop shell (Electron; one-home loader with GitHub Release content updates)",
   "author": "AV Educate <Info@aveducate.com>",
   "license": "UNLICENSED",
@@ -82,7 +82,7 @@
       }
     ],
     "dmg": {
-      "background": "build/dmg/background.tiff",
+      "backgroundColor": "#1c1c1e",
       "iconSize": 80,
       "window": {
         "width": 660,
@@ -100,7 +100,7 @@
           "path": "/Applications"
         },
         {
-          "x": 570,
+          "x": 330,
           "y": 394,
           "type": "file",
           "path": "build/dmg/Read Me First.html"
