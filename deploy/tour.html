@@ -1,0 +1,868 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Look Book Builder · Guided Tour</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root {
+    --bg: #0a0a0c;
+    --surface: #16161c;
+    --surface-2: #1f1f27;
+    --border: #2a2a32;
+    --text: #e8e8ea;
+    --text2: #9a9aa3;
+    --text3: #6a6a73;
+    --accent: #4ec3e0;
+    --accent-hover: #6fd0e8;
+    --purple: #a78bfa;
+    --green: #6ee7a8;
+    --orange: #fb923c;
+    --amber: #fbbf24;
+    --rose: #f87171;
+    /* ── StyleSeed structure tokens (palette kept above) ── */
+    --ss-space-1:4px; --ss-space-2:8px; --ss-space-3:12px; --ss-space-4:16px; --ss-space-6:24px; --ss-space-8:32px;
+    --ss-radius-control:8px; --ss-radius-card:12px;
+    --ss-border-soft:rgba(255,255,255,.06); --ss-border-soft2:rgba(255,255,255,.10);
+    --ss-track-label:.06em;
+    --ss-dur-fast:100ms; --ss-dur-normal:200ms; --ss-dur-slow:350ms; --ss-ease:cubic-bezier(.4,.05,.2,1);
+    --ss-inset:inset 2px 2px 5px rgba(0,0,0,.55), inset -1px -1px 2px rgba(255,255,255,.02);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
+  :focus:not(:focus-visible) { outline: none; }
+
+  /* ── Outer wrappers: narrow for prose, wide for the tour rail ───────── */
+  .wrap {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 64px 24px 0;
+  }
+  .wrap-wide {
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+  .wrap-end {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0 24px 80px;
+  }
+
+  /* ── Hero ──────────────────────────────────────────────────────────── */
+  .brand {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-bottom: 10px;
+  }
+  h1 {
+    font-size: 48px;
+    font-weight: 700;
+    line-height: 1.05;
+    margin: 0 0 16px;
+    letter-spacing: -0.02em;
+  }
+  .tagline {
+    font-size: 18px;
+    color: var(--text2);
+    margin: 0 0 28px;
+    line-height: 1.5;
+  }
+  .blurb {
+    font-size: 15px;
+    color: var(--text2);
+    line-height: 1.65;
+    margin: 0 0 32px;
+  }
+  .cta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+  }
+  .cta {
+    position: relative; isolation: isolate;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 28px;
+    background: #0a0a0c;
+    color: #06222b;
+    border: 1px solid var(--ss-border-soft);
+    border-radius: 999px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 15px;
+    letter-spacing: 0.01em;
+    box-shadow: var(--ss-inset);
+    transition: transform var(--ss-dur-fast) var(--ss-ease);
+  }
+  .cta::before {
+    content: ""; position: absolute; inset: 3px; border-radius: 999px; z-index: -1; pointer-events: none;
+    background: linear-gradient(180deg, var(--accent-hover), #2f93ad);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.3);
+    transition: filter var(--ss-dur-normal) var(--ss-ease);
+  }
+  .cta:hover::before { filter: brightness(1.08); }
+  .cta:active { transform: translateY(1px); }
+  .cta svg { width: 16px; height: 16px; }
+  .cta-ghost {
+    position: relative; isolation: isolate;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 22px;
+    background: #0a0a0c;
+    color: var(--text);
+    border: 1px solid var(--ss-border-soft);
+    border-radius: 999px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: 0.01em;
+    box-shadow: var(--ss-inset);
+    transition: color var(--ss-dur-normal) var(--ss-ease);
+  }
+  .cta-ghost::before {
+    content: ""; position: absolute; inset: 3px; border-radius: 999px; z-index: -1; pointer-events: none;
+    background: linear-gradient(180deg, #1b1b22, #131319);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.4);
+    transition: filter var(--ss-dur-normal) var(--ss-ease);
+  }
+  .cta-ghost:hover { color: var(--accent); }
+  .cta-ghost:hover::before { filter: brightness(1.4); }
+  .cta-ghost svg { width: 14px; height: 14px; }
+
+  /* ── Section headings (Core, Tour) ─────────────────────────────────── */
+  .section-label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 56px 0 14px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--text3);
+  }
+  .section-label::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+  .section-label.new::before,
+  .section-label.tour::before {
+    background: rgba(78,195,224,0.12);
+    color: var(--accent);
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    padding: 3px 7px;
+    border-radius: 4px;
+    border: 1px solid rgba(78,195,224,0.3);
+  }
+  .section-label.new::before  { content: "NEW"; }
+  .section-label.tour::before { content: "TOUR"; }
+
+  /* ── Core (4 compact tiles, kept from original) ────────────────────── */
+  .features {
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+  }
+  .feat {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--ss-radius-card);
+    padding: 16px 18px 16px 26px;
+    position: relative;
+  }
+
+  /* Core-tile visuals — small SVG mockups of each foundational concept. */
+  .feat {
+    padding: 0 18px 16px 26px;
+    overflow: hidden;
+  }
+  .feat-visual {
+    aspect-ratio: 360 / 100;
+    margin: 0 -18px 14px -26px;
+    background: linear-gradient(180deg, #0c1322 0%, #0a0f1c 100%);
+    border-bottom: 1px solid var(--border);
+    overflow: hidden;
+    display: block;
+  }
+  .feat-visual svg { width: 100%; height: 100%; display: block; }
+  .feat-visual + .feat-label { margin-top: 0; }
+  /* Real-screenshot variant — let the image sit at its natural aspect
+     ratio inside the tile, capped to a comfortable height range. */
+  .feat-visual--img {
+    /* Uniform aspect across all Core tiles so heights match. Images that
+       are wider or narrower than 360:100 get centered + letterboxed. */
+    aspect-ratio: 360 / 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+  }
+  .feat-visual--img img {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    display: block;
+    border-radius: 4px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+  }
+
+  /* Accent pill: anchored to the label row so its vertical position is
+     consistent across all tiles, regardless of how tall the body text is. */
+  .feat.purple { color: var(--purple); --pill: var(--purple); }
+  .feat.green  { color: var(--green);  --pill: var(--green); }
+  .feat.orange { color: var(--orange); --pill: var(--orange); }
+  .feat.amber  { color: var(--amber);  --pill: var(--amber); }
+  .feat.cyan   { color: var(--accent); --pill: var(--accent); }
+  .feat.rose   { color: var(--rose);   --pill: var(--rose); }
+  .feat-label {
+    position: relative;
+  }
+  .feat-label::before {
+    content: "";
+    position: absolute;
+    left: -16px;      /* keeps the pill at the same horizontal x as before */
+    top: 50%;
+    width: 3px;
+    height: 14px;
+    transform: translateY(-50%);
+    border-radius: 2px;
+    background: var(--pill);
+    box-shadow: 0 0 8px var(--pill);
+    opacity: 0.95;
+  }
+  .feat-label {
+    color: var(--text3);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin: 0 0 4px;
+  }
+  .feat-text {
+    color: var(--text);
+    font-size: 13px;
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  /* ── Tour intro + jump-chip rail ───────────────────────────────────── */
+  .tour-intro {
+    margin: 14px 0 24px;
+    font-size: 15px;
+    color: var(--text2);
+    line-height: 1.65;
+  }
+  .tour-intro strong { color: var(--text); font-weight: 600; }
+
+  .toc {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0 0 56px;
+    padding: 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+  }
+  .toc-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 12px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    text-decoration: none;
+    font-size: 12px;
+    color: var(--text2);
+    transition: border-color var(--ss-dur-fast) var(--ss-ease), color var(--ss-dur-fast) var(--ss-ease), background var(--ss-dur-fast) var(--ss-ease), transform var(--ss-dur-fast) var(--ss-ease);
+  }
+  .toc-chip:hover {
+    color: var(--text);
+    background: rgba(255,255,255,0.04);
+    transform: translateY(-1px);
+  }
+  .toc-chip .toc-num {
+    font-family: ui-monospace, monospace;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    opacity: 0.7;
+  }
+  .toc-cyan:hover   { border-color: var(--accent); color: var(--accent); }
+  .toc-purple:hover { border-color: var(--purple); color: var(--purple); }
+  .toc-orange:hover { border-color: var(--orange); color: var(--orange); }
+  .toc-green:hover  { border-color: var(--green);  color: var(--green); }
+  .toc-amber:hover  { border-color: var(--amber);  color: var(--amber); }
+  .toc-rose:hover   { border-color: var(--rose);   color: var(--rose); }
+
+  /* ── Tour sections: alternating visual + text rows ─────────────────── */
+  .tour-section {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+    gap: 48px;
+    align-items: center;
+    margin: 96px 0;
+    scroll-margin-top: 24px;
+  }
+  .tour-section:first-of-type { margin-top: 16px; }
+  .tour-section--flip {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+  }
+  .tour-section--flip .tour-visual { order: 2; }
+  .tour-section--flip .tour-content { order: 1; }
+
+  .tour-visual {
+    aspect-ratio: 8 / 3;
+    background: linear-gradient(180deg, #0a0a0e 0%, #0d0d12 100%);
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    box-shadow: 0 10px 32px rgba(0,0,0,0.45), inset 0 0 0 1px rgba(255,255,255,0.02);
+    position: relative;
+  }
+  .tour-visual svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  /* Real-screenshot tiles: image embedded at natural aspect inside the
+     8:3 frame. Letterboxing on top/bottom for wide shots and on sides for
+     tall shots is intentional — looks like a framed device shot. */
+  .tour-visual--img {
+    aspect-ratio: auto;
+    min-height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px;
+  }
+  .tour-visual--img img {
+    max-width: 100%;
+    max-height: 320px;
+    width: auto;
+    height: auto;
+    display: block;
+    border-radius: 6px;
+    box-shadow: 0 6px 22px rgba(0,0,0,0.55);
+  }
+
+  .tour-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .tour-num {
+    font-family: ui-monospace, monospace;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.10em;
+    color: var(--text3);
+  }
+  .tour-kicker {
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 4px;
+  }
+  .tour-content h2 {
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.015em;
+    margin: 0 0 14px;
+    color: var(--text);
+  }
+  .tour-lead {
+    font-size: 16px;
+    color: var(--text);
+    line-height: 1.5;
+    margin: 0 0 14px;
+  }
+  .tour-body {
+    font-size: 14px;
+    color: var(--text2);
+    line-height: 1.7;
+    margin: 0 0 18px;
+  }
+  .tour-where {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    padding: 11px 14px;
+    border-radius: 0 6px 6px 0;
+    background: rgba(255,255,255,0.02);
+    border-left: 2px solid var(--border);
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: var(--text2);
+  }
+  .tour-where-label {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    flex-shrink: 0;
+    padding-top: 1px;
+  }
+
+  /* Color the kicker, where-strip, and h2 hover-glow per section. */
+  .tour-cyan   .tour-kicker { color: var(--accent); background: rgba(78,195,224,0.10); }
+  .tour-purple .tour-kicker { color: var(--purple); background: rgba(167,139,250,0.10); }
+  .tour-orange .tour-kicker { color: var(--orange); background: rgba(251,146,60,0.10); }
+  .tour-green  .tour-kicker { color: var(--green);  background: rgba(110,231,168,0.10); }
+  .tour-amber  .tour-kicker { color: var(--amber);  background: rgba(251,191,36,0.10); }
+  .tour-rose   .tour-kicker { color: var(--rose);   background: rgba(248,113,113,0.10); }
+
+  .tour-cyan   .tour-where { border-left-color: var(--accent); }
+  .tour-purple .tour-where { border-left-color: var(--purple); }
+  .tour-orange .tour-where { border-left-color: var(--orange); }
+  .tour-green  .tour-where { border-left-color: var(--green); }
+  .tour-amber  .tour-where { border-left-color: var(--amber); }
+  .tour-rose   .tour-where { border-left-color: var(--rose); }
+
+  .tour-cyan   .tour-where-label { color: var(--accent); }
+  .tour-purple .tour-where-label { color: var(--purple); }
+  .tour-orange .tour-where-label { color: var(--orange); }
+  .tour-green  .tour-where-label { color: var(--green); }
+  .tour-amber  .tour-where-label { color: var(--amber); }
+  .tour-rose   .tour-where-label { color: var(--rose); }
+
+  /* Mobile / narrow viewports: collapse to single column with visual on top. */
+  @media (max-width: 760px) {
+    h1 { font-size: 36px; }
+    .tour-section,
+    .tour-section--flip {
+      grid-template-columns: 1fr;
+      gap: 22px;
+      margin: 64px 0;
+    }
+    .tour-section--flip .tour-visual,
+    .tour-section--flip .tour-content { order: initial; }
+    .tour-content h2 { font-size: 24px; }
+  }
+
+  /* ── Existing footer chrome (feedback, note, disclaimer) ───────────── */
+  .feedback-tile {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: 64px;
+    padding: 16px 18px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    text-decoration: none;
+    color: var(--text);
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .feedback-tile:hover {
+    border-color: var(--amber);
+    background: var(--surface-2);
+  }
+  .feedback-icon {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: rgba(251,191,36,0.12);
+    display: grid;
+    place-items: center;
+    color: var(--amber);
+  }
+  .feedback-icon svg { width: 18px; height: 18px; }
+  .feedback-body { flex: 1; min-width: 0; }
+  .feedback-label {
+    color: var(--text);
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0 0 2px;
+  }
+  .feedback-sub {
+    color: var(--text2);
+    font-size: 12px;
+    margin: 0;
+    line-height: 1.45;
+  }
+  .feedback-arrow {
+    flex-shrink: 0;
+    color: var(--text3);
+    transition: color 0.15s, transform 0.15s;
+  }
+  .feedback-arrow svg { width: 16px; height: 16px; }
+  .feedback-tile:hover .feedback-arrow {
+    color: var(--amber);
+    transform: translateX(2px);
+  }
+  .note {
+    margin-top: 32px;
+    padding: 16px 18px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--amber);
+    border-radius: 8px;
+    color: var(--text2);
+    font-size: 13px;
+    line-height: 1.55;
+  }
+  .note strong { color: var(--text); font-weight: 600; }
+  footer {
+    margin-top: 48px;
+    padding-top: 22px;
+    border-top: 1px solid var(--border);
+    color: var(--text3);
+    font-size: 12px;
+  }
+  .disclaimer {
+    color: var(--text2);
+    font-size: 12px;
+    line-height: 1.6;
+    margin: 0 0 14px;
+    max-width: 620px;
+  }
+  .disclaimer strong { color: var(--text); font-weight: 600; }
+  .build-info {
+    color: var(--text3);
+    font-size: 11px;
+    letter-spacing: 0.04em;
+  }
+</style>
+</head>
+<body>
+  <!-- ── Hero ─────────────────────────────────────────────────────────── -->
+  <div class="wrap">
+    <div class="brand">Beta · Private Access</div>
+    <h1>Look Book Builder</h1>
+    <p class="tagline">A planning tool for show callers and project managers in live events.</p>
+
+    <p class="blurb">
+      Map screen configurations, layer assignments, AUX outputs, and preset combinations
+      for any live event. Build the run-of-show visually, then export as a spreadsheet
+      for your operators or a look book PDF for the client.
+    </p>
+
+    <div class="cta-row">
+      <a class="cta-ghost" href="quick_guide.html" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+        </svg>
+        Quick Guide
+      </a>
+      <a class="cta" href="lookbook_builder.html">
+        Open the App
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 12h14M13 5l7 7-7 7"/>
+        </svg>
+      </a>
+      <a class="cta-ghost" href="#tour">
+        Take the tour
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M7 13l5 5 5-5M7 6l5 5 5-5"/>
+        </svg>
+      </a>
+    </div>
+
+    <!-- ── Core (compact 4-tile grid — these are foundational, not "new") ── -->
+    <div class="section-label">Core</div>
+    <div class="features">
+      <div class="feat purple">
+        <div class="feat-visual feat-visual--img"><img src="img/3%20Tools%20Pages%20.png" alt="3-Tool Workspace" loading="lazy"></div>
+        <div class="feat-label">3-Tool Workspace</div>
+        <div class="feat-text">Different planning jobs need different lenses. Mapping signal flow is a different mental model from cueing layers, and cueing layers is different from logging cables.</div>
+      </div>
+      <div class="feat green"><div class="feat-visual feat-visual--img"><img src="img/Preset.png" alt="Presets" loading="lazy"></div><div class="feat-label">Presets</div>
+        <div class="feat-text">Build unlimited preset combinations with per-preset layer and position overrides.</div>
+      </div>
+      <div class="feat orange"><div class="feat-visual feat-visual--img"><img src="img/Destination.png" alt="Destinations" loading="lazy"></div><div class="feat-label">Destinations</div>
+        <div class="feat-text">Up to 16 layers per destination — most stay simple, complex shots grow as needed.</div>
+      </div>
+      <div class="feat amber"><div class="feat-visual feat-visual--img"><img src="img/dsm-aux.png" alt="AUX / DSM" loading="lazy"></div><div class="feat-label">AUX / DSM</div>
+        <div class="feat-text">Track auxiliary outputs and downstage monitors with per-preset content.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Tour intro + jump chips ─────────────────────────────────────── -->
+  <div class="wrap" id="tour">
+    <div class="section-label tour">What's New · Guided Tour</div>
+    <p class="tour-intro">
+      Twelve sections, in build order. Each one walks through a capability shipped
+      since the previous beta — <strong>what it is, why it exists, and where to find it.</strong>
+      Skim the chips below to jump straight to one, or scroll through end-to-end.
+    </p>
+    <div class="toc">
+      <a class="toc-chip toc-cyan" href="#feat-01"><span class="toc-num">01</span><span class="toc-text">Multi-Page Wire Diagrams</span></a>
+      <a class="toc-chip toc-purple" href="#feat-02"><span class="toc-num">02</span><span class="toc-text">Wire Mode</span></a>
+      <a class="toc-chip toc-orange" href="#feat-03"><span class="toc-num">03</span><span class="toc-text">Advanced Wire Builder</span></a>
+      <a class="toc-chip toc-green" href="#feat-04"><span class="toc-num">04</span><span class="toc-text">Persistent Top Toolbar</span></a>
+      <a class="toc-chip toc-amber" href="#feat-05"><span class="toc-num">05</span><span class="toc-text">Unified Resolution Picker</span></a>
+      <a class="toc-chip toc-rose" href="#feat-06"><span class="toc-num">06</span><span class="toc-text">Layer Simple ↔ Advanced Toggle</span></a>
+      <a class="toc-chip toc-cyan" href="#feat-07"><span class="toc-num">07</span><span class="toc-text">Quick Setup — Project Metadata</span></a>
+      <a class="toc-chip toc-purple" href="#feat-08"><span class="toc-num">08</span><span class="toc-text">Wire Mode Export</span></a>
+      <a class="toc-chip toc-green" href="#feat-09"><span class="toc-num">09</span><span class="toc-text">Asset Pack — Download All</span></a>
+      <a class="toc-chip toc-orange" href="#feat-10"><span class="toc-num">10</span><span class="toc-text">Smarter Pre-Export Check</span></a>
+      <a class="toc-chip toc-amber" href="#feat-11"><span class="toc-num">11</span><span class="toc-text">Upload Indicators on Tiles</span></a>
+      <a class="toc-chip toc-rose" href="#feat-12"><span class="toc-num">12</span><span class="toc-text">Help &amp; Glossary</span></a>
+    </div>
+  </div>
+
+  <!-- ── 12 tour sections (alternating layout) ─────────────────────── -->
+  <div class="wrap-wide">
+    <section class="tour-section tour-cyan" id="feat-01"><div class="tour-visual tour-visual--img"><img src="img/Advanced%20Wire%20Builder.png" alt="Multi-Page Wire Diagrams" loading="lazy"></div>
+      <div class="tour-content">
+        <div class="tour-meta">
+          <span class="tour-num">01</span>
+          <span class="tour-kicker">PAGES</span>
+        </div>
+        <h2>Multi-Page Wire Diagrams</h2>
+        <p class="tour-lead">Three independent pages for main, backup, and video-only flows.</p>
+        <p class="tour-body">Advanced Wire Mode gives you three independent pages — typically one for the main rig, one for backup, and one for a video-only flow. Each page has its own canvas, its own sources and destinations, and its own router matrix. All three live in the same project file and export together.</p>
+        <div class="tour-where">
+          <span class="tour-where-label">Where</span>
+          <span class="tour-where-text">Wire Mode → Advanced. PAGE 1 / 2 / 3 tabs along the top to switch.</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="tour-section tour-purple tour-section--flip" id="feat-02"><div class="tour-visual tour-visual--img"><img src="img/Wire%20Mode.png" alt="Wire Mode" loading="lazy"></div>
+      <div class="tour-content">
+        <div class="tour-meta">
+          <span class="tour-num">02</span>
+          <span class="tour-kicker">SIGNAL FLOW</span>
+        </div>
+        <h2>Wire Mode</h2>
+        <p class="tour-lead">A fullscreen view that maps every source-to-destination path in your show.</p>
+        <p class="tour-body">Simple mode auto-generates the diagram from your existing show data — sources on the left, destinations on the right, color-coded cables in between. Mid-point handles on each wire let you route around crossings so the picture matches how the rack is actually built.</p>
+        <div class="tour-where">
+          <span class="tour-where-label">Where</span>
+          <span class="tour-where-text">Top toolbar → WIRE. Drag to pan with the hand tool, scroll to zoom.</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="tour-section tour-orange" id="feat-03"><div class="tour-visual tour-visual--img"><img src="img/Advanced%20Wire%20Builder.png" alt="Advanced Wire Builder" loading="lazy"></div>
+      <div class="tour-content">
+        <div class="tour-meta">
+          <span class="tour-num">03</span>
+          <span class="tour-kicker">FREE-FORM CANVAS</span>
+        </div>
+        <h2>Advanced Wire Builder</h2>
+        <p class="tour-lead">Wire · Video Presets · I/O Patch sit as peer tabs in the top toolbar.</p>
+        <p class="tour-body">When one diagram isn't enough, switch Wire Mode into Advanced. Drag sources, destinations, and AUX/DSM tiles anywhere on the canvas. Drop a 10×10, 20×20, 30×30, or 40×40 router I/O matrix into the middle to model the actual processor between your inputs and outputs.</p>
+        <div class="tour-where">
+          <span class="tour-where-label">Where</span>
+          <span class="tour-where-text">In Wire Mode, toggle Simple → Advanced. PAGE 1 / 2 / 3 tabs along the top.</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="tour-section tour-green tour-section--flip" id="feat-04"><div class="tour-visual tour-visual--img"><img src="img/Persistent%20Top%20Toolbar.png" alt="Persistent Top Toolbar" loading="lazy"></div>
+      <div class="tour-content">
+        <div class="tour-meta">
+          <span class="tour-num">04</span>
+          <span class="tour-kicker">NAVIGATION</span>
+        </div>
+        <h2>Persistent Top Toolbar</h2>
+        <p class="tour-lead">SHOW · CANVAS · ADD · HISTORY · PROJECT · EXPORT — at the top of every view.</p>
+        <p class="tour-body">Before, each tool had its own toolbar in a slightly different place. Now the same toolbar follows you from Wire to Video Presets to I/O Patch. The 3-tool nav pill and Exit live on a second row, always in the same spot, so muscle memory carries across the whole app.</p>
+        <div class="tour-where">
+          <span class="tour-where-label">Where</span>
+          <span class="tour-where-text">Always visible at the top, every tool. Hides only during fullscreen presentation.</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="tour-section tour-amber" id="feat-05"><div class="tour-visual tour-visual--img"><img src="img/unified%20resolution%20picker.png" alt="Unified Resolution Picker" loading="lazy"></div>
+      <div class="tour-content">
+        <div class="tour-meta">
+          <span class="tour-num">05</span>
+          <span class="tour-kicker">RESOLUTIONS</span>
+        </div>
+        <h2>Unified Resolution Picker</h2>
+        <p class="tour-lead">One categorized library, used everywhere a resolution is set.</p>
+        <p class="tour-body">The picker is identical in Quick Setup, Destination Combinations, Wire Mode, and I/O Patch. Custom Resolution sits at the top and opens the EDID / bandwidth calculator. "USED IN THIS SHOW" auto-detects what your project already references; below that, standard groups (SD · HD · DCI · QHD · UHD · 5K+ · LED) make picking the right one fast.</p>
+        <div class="tour-where">
+          <span class="tour-where-label">Where</span>
+          <span class="tour-where-text">Click any resolution chip or field — same picker opens everywhere.</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="tour-section tour-rose tour-section--flip" id="feat-06"><div class="tour-visual tour-visual--img"><img src="img/Layer%20Simple%20and%20Advance%20Toggle.png" alt="Layer Simple ↔ Advanced Toggle" loading="lazy"></div>
+      <div class="tour-content">
+        <div class="tour-meta">
+          <span class="tour-num">06</span>
+          <span class="tour-kicker">TOUCH-FRIENDLY</span>
+        </div>
+        <h2>Layer Simple ↔ Advanced Toggle</h2>
+        <p class="tour-lead">A pill toggle inside the layer panel header.</p>
+        <p class="tour-body">The old simple-versus-advanced switch needed a double-click pattern — fine with a mouse, awkward on a touchscreen at front-of-house. The new pill is one tap and the panel rebuilds in place. Designed for the rack-side touch displays we know you actually plan on.</p>
+        <div class="tour-where">
+          <span class="tour-where-label">Where</span>
+          <span class="tour-where-text">Open any layer panel (D1, AUX, DSM). Pill sits in the top-right of the header.</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="tour-section tour-cyan" id="feat-07"><div class="tour-visual tour-visual--img"><img src="img/Quick%20Set%20Up%20.png" alt="Quick Setup — Project Metadata" loading="lazy"></div>
+      <div class="tour-content">
+        <div class="tour-meta">
+          <span class="tour-num">07</span>
+          <span class="tour-kicker">PROJECT INFO</span>
+        </div>
+        <h2>Quick Setup — Project Metadata</h2>
+        <p class="tour-lead">Show Name, Date, and Venue captured at project creation.</p>
+        <p class="tour-body">These three fields flow into the PDF header, the look book cover, and the suggested filename when you save or export. Capture them up front and you won't re-type "Acme Conference 2026" every time you export. Edit later via the SHOW button on the top toolbar.</p>
+        <div class="tour-where">
+          <span class="tour-where-label">Where</span>
+          <span class="tour-where-text">Quick Setup wizard on new projects · SHOW button afterward.</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="tour-section tour-purple tour-section--flip" id="feat-08"><div class="tour-visual tour-visual--img"><img src="img/Wire%20mode%20Export.png" alt="Wire Mode Export" loading="lazy"></div>
+      <div class="tour-content">
+        <div class="tour-meta">
+          <span class="tour-num">08</span>
+          <span class="tour-kicker">EXPORT</span>
+        </div>
+        <h2>Wire Mode Export</h2>
+        <p class="tour-lead">Wire diagrams as PDF, SVG, or PNG, in light or dark theme.</p>
+        <p class="tour-body">Crew shifts want dark for stage-call sheets; clients want light for slide decks. Multi-page Advanced exports come out as a single multi-page PDF or as separate PNGs per page. SVG keeps every label, color, and wire editable downstream if your designer wants to relabel for the audience.</p>
+        <div class="tour-where">
+          <span class="tour-where-label">Where</span>
+          <span class="tour-where-text">Wire Mode → side panel → Export Wire Diagram. Pick theme + format.</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="tour-section tour-green" id="feat-09"><div class="tour-visual tour-visual--img"><img src="img/Asset%20Pack.png" alt="Asset Pack — Download All" loading="lazy"></div>
+      <div class="tour-content">
+        <div class="tour-meta">
+          <span class="tour-num">09</span>
+          <span class="tour-kicker">ASSETS</span>
+        </div>
+        <h2>Asset Pack — Download All</h2>
+        <p class="tour-lead">One-click ZIP of every thumbnail in the project.</p>
+        <p class="tour-body">After a show wraps, your team usually wants the imagery on its own — sources, destinations, AUX/DSM screens — for archives or post-event recap decks. Instead of clicking download on each tile, grab them all at once. Files come out as 1920×1080 PNGs, organized into sources/ destinations/ aux-dsm/ subfolders.</p>
+        <div class="tour-where">
+          <span class="tour-where-label">Where</span>
+          <span class="tour-where-text">Wire Mode → side panel → Download All Thumbnails.</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="tour-section tour-orange tour-section--flip" id="feat-10"><div class="tour-visual tour-visual--img"><img src="img/Smart%20Pre%20-%20export%20check.png" alt="Smarter Pre-Export Check" loading="lazy"></div>
+      <div class="tour-content">
+        <div class="tour-meta">
+          <span class="tour-num">10</span>
+          <span class="tour-kicker">VALIDATION</span>
+        </div>
+        <h2>Smarter Pre-Export Check</h2>
+        <p class="tour-lead">A centered modal that flags problems before the file lands on disk.</p>
+        <p class="tour-body">The check runs for Look Book PDF, I/O Patch CSV, and Wire Mode exports. SOURCES warnings and DESTINATIONS warnings are grouped visually so you see at a glance what's missing on which side. You can fix and re-export, or override and continue if you know what you're doing.</p>
+        <div class="tour-where">
+          <span class="tour-where-label">Where</span>
+          <span class="tour-where-text">Automatic — every export runs the check first.</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="tour-section tour-amber" id="feat-11">
+      <div class="tour-visual tour-visual--img"><img src="img/Upload%20Indicators%20on%20Tiles.png" alt="Upload Indicators on Tiles" loading="lazy"></div>
+      <div class="tour-content">
+        <div class="tour-meta">
+          <span class="tour-num">11</span>
+          <span class="tour-kicker">AFFORDANCE</span>
+        </div>
+        <h2>Upload Indicators on Tiles</h2>
+        <p class="tour-lead">A small upload-arrow icon on every tile until you add artwork.</p>
+        <p class="tour-body">New users couldn't tell the colored source and destination tiles were clickable for image upload — the icon makes the affordance explicit. It disappears once you've dropped in artwork, so it never gets in the way of a finished look book.</p>
+        <div class="tour-where">
+          <span class="tour-where-label">Where</span>
+          <span class="tour-where-text">Visible on every source, destination, and AUX/DSM tile until uploaded.</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="tour-section tour-rose tour-section--flip" id="feat-12">
+      <div class="tour-visual tour-visual--img"><img src="img/Help%20and%20Glossary.png" alt="Help &amp; Glossary" loading="lazy"></div>
+      <div class="tour-content">
+        <div class="tour-meta">
+          <span class="tour-num">12</span>
+          <span class="tour-kicker">HELP</span>
+        </div>
+        <h2>Help &amp; Glossary</h2>
+        <p class="tour-lead">Help section now covers Wire Mode, I/O Patch, and the audited keyboard shortcuts.</p>
+        <p class="tour-body">The app moved fast over the last few weeks — Help needed to catch up. New entries for the Wire Mode tools, I/O Patch concepts, and a fresh pass through every keyboard shortcut to make sure what's listed matches what actually fires.</p>
+        <div class="tour-where">
+          <span class="tour-where-label">Where</span>
+          <span class="tour-where-text">TOOLS group on the top toolbar → Help.</span>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ── Closer: feedback tile + beta note + footer ───────────────── -->
+  <div class="wrap-end">
+    <a class="feedback-tile" href="mailto:info@aveducate.com?subject=Look%20Book%20Builder%20Feedback">
+      <div class="feedback-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+        </svg>
+      </div>
+      <div class="feedback-body">
+        <div class="feedback-label">Have feedback?</div>
+        <p class="feedback-sub">Quirks, ideas, bugs — write to info@aveducate.com.</p>
+      </div>
+      <div class="feedback-arrow">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M5 12h14M13 5l7 7-7 7"/>
+        </svg>
+      </div>
+    </a>
+
+    <div class="note">
+      <strong>Beta — work in progress.</strong>
+      The Wire Mode export, Asset Pack ZIP, and Pre-Export Check are still settling in.
+      If something looks off or breaks, capture a screenshot and send it our way.
+    </div>
+
+    <footer>
+      <p class="disclaimer">
+        <strong>Look Book Builder</strong> is a planning tool. It does not control AV
+        hardware, send GPI triggers, or interface with switchers in production. Use it
+        for documentation, run-of-show planning, and operator briefings — not as a live
+        control surface.
+      </p>
+      <div class="build-info">build 2026-06-08 · private beta</div>
+    </footer>
+  </div>
+</body>
+</html>
