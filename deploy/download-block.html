@@ -1,7 +1,6 @@
-<!-- AV Look Book — download section for a Squarespace CODE BLOCK.
-     Self-contained (inline CSS + JS, no external files). Paste the whole thing
-     into a Code Block on the unlisted "Download" page that the email form
-     redirects to. Links never change: they always point at the newest release. -->
+<!-- AV Look Book download section for a Squarespace CODE BLOCK (HTML mode, "Display Source" OFF).
+     No scripts, so it renders on every Squarespace plan. Links never change: they always
+     point at the newest release. -->
 <div id="avlb-dl" style="font:16px/1.55 -apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;color:#e8e8ea;background:#0a1322;padding:28px;border-radius:14px">
   <style>
     #avlb-dl *{box-sizing:border-box}
@@ -45,13 +44,5 @@
       <p>Your shows live in <b>Documents › AV Look Book</b>, one <code>.avlb</code> file per show, saved automatically. Questions: <a href="mailto:Info@aveducate.com">Info@aveducate.com</a></p>
     </div>
   </div>
-  <div class="fine">Free · No account · <span id="avlb-ver">Latest version</span> · <a href="https://github.com/AVEducate/AV-Look-Book/releases">Release notes</a></div>
-  <script>
-  (function(){
-    var ua = navigator.userAgent || '', mac = /Macintosh|Mac OS X/.test(ua), win = /Windows/.test(ua);
-    var id = win ? 'avlb-win' : (mac ? 'avlb-arm' : 'avlb-win');
-    var el = document.getElementById(id); if (el) el.className += ' hot';
-    try { fetch('https://api.github.com/repos/AVEducate/AV-Look-Book/releases/latest').then(function(r){ return r.ok ? r.json() : null; }).then(function(j){ if (j && j.tag_name) document.getElementById('avlb-ver').textContent = 'Version ' + String(j.tag_name).replace(/^v/, ''); }).catch(function(){}); } catch (e) {}
-  })();
-  </script>
+  <div class="fine">Free · No account · Always the latest version · <a href="https://github.com/AVEducate/AV-Look-Book/releases">Release notes</a></div>
 </div>
