@@ -165,6 +165,37 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
 .lp-mode-toggle .lp-mode-btn:hover{color:var(--text)}
 .lp-mode-toggle .lp-mode-btn.active{background:rgba(var(--n-cyan-rgb),.15);color:var(--n-cyan);box-shadow:inset 0 0 6px rgba(var(--n-cyan-rgb),.18)}
 .lp-mode-toggle .lp-mode-btn.active:hover{filter:brightness(1.08)}
+/* Layer panel ADVANCED accordion + FX controls (2026-09-13, 16fo). Modelled on a
+   switcher's layer Properties panel: one collapsible row per section, header tools
+   (copy / paste / reset) on hover, square 4px corners per the 16fm shape system. */
+.lfx-acc{border:1px solid var(--n-line);border-radius:4px;background:rgba(255,255,255,.015);margin-bottom:6px;overflow:hidden}
+.lfx-hd{display:flex;align-items:center;gap:6px;padding:7px 10px;cursor:pointer;user-select:none;font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--text2)}
+.lfx-hd:hover{background:rgba(255,255,255,.03);color:var(--text)}
+.lfx-acc.open>.lfx-hd{color:var(--n-cyan)}
+.lfx-ttl{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lfx-tools{display:none;gap:2px}
+.lfx-hd:hover .lfx-tools,.lfx-acc.open>.lfx-hd .lfx-tools{display:inline-flex}
+.lfx-tools button{font-size:10px;font-weight:700;line-height:1;padding:3px 5px;border:1px solid var(--n-line);border-radius:3px;background:var(--n-track);color:var(--text3);cursor:pointer;font-family:inherit}
+.lfx-tools button:hover{color:var(--n-cyan);border-color:rgba(var(--n-cyan-rgb),.4)}
+.lfx-chev{font-size:8px;color:var(--text3);transition:transform .15s}
+.lfx-acc.open>.lfx-hd .lfx-chev{transform:rotate(180deg)}
+.lfx-body{display:none;padding:2px 10px 10px;border-top:1px solid var(--n-line)}
+.lfx-acc.open>.lfx-body{display:block}
+.lfx-row{display:grid;grid-template-columns:62px 1fr;gap:6px;align-items:center;margin-top:6px}
+.lfx-lbl{font-size:11px;color:var(--text3);letter-spacing:.04em}
+.lfx-inp{width:100%;font-size:11px;padding:6px 8px;border:1px solid rgba(255,255,255,.06);border-radius:4px;background:var(--n-track);color:#9dd6ff;outline:none;box-sizing:border-box;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5);font-family:var(--font-mono);text-align:center;transition:all .15s}
+.lfx-inp:focus{border-color:rgba(var(--n-cyan-rgb),.5)}
+.lfx-tog{font-size:10px;font-weight:800;letter-spacing:.08em;padding:5px 10px;border:1px solid rgba(255,255,255,.1);border-radius:4px;background:var(--n-track);color:var(--text3);cursor:pointer;font-family:inherit;min-width:52px;justify-self:start;transition:all .15s}
+.lfx-tog:hover{color:var(--text)}
+.lfx-tog.on{border-color:var(--n-green);color:var(--n-green);background:#0a1f14;box-shadow:inset 0 0 6px rgba(77,220,138,.2)}
+.lfx-sub{margin-top:8px;padding:6px 8px 8px;border:1px solid var(--n-line);border-radius:4px;transition:opacity .15s}
+.lfx-sub.off{opacity:.45}
+.lfx-subttl{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3)}
+.lfx-range{width:100%;accent-color:var(--n-cyan);margin:8px 0 0;cursor:pointer}
+.lfx-color{width:36px;height:27px;padding:0;border:1px solid rgba(255,255,255,.15);border-radius:4px;background:var(--n-track);cursor:pointer;flex-shrink:0}
+.lfx-color::-webkit-color-swatch-wrapper{padding:2px}
+.lfx-color::-webkit-color-swatch{border:none;border-radius:2px}
+.lfx-hint{font-size:10px;color:#777;margin-top:6px;line-height:1.4}
 
 .dsm-toggle{font-size:11px;padding:3px 9px;border-radius:999px;border:1px solid rgba(255,77,90,.35);background:#1a0c10;color:#a04050;cursor:pointer;transition:all .15s;white-space:nowrap;letter-spacing:.04em;text-transform:uppercase;font-weight:700}
 .dsm-toggle.dsm-on{border-color:var(--n-green);background:#0a1f14;color:var(--n-green);box-shadow:inset 0 0 6px rgba(77,220,138,.2), 0 0 6px rgba(77,220,138,.35)}
@@ -3428,7 +3459,7 @@ Also called DSM (Downstage Monitor) in broadcast and theater workflows — same 
   <div class="bb-cell bb-pill bb-yellow" title="The largest number of layers used in any single preset — this is the figure to compare against your switcher's per-scene layer budget. (The most complex single moment in the show.)"><span class="bb-label">Layers</span><strong id="bb-layers">0</strong></div>
   <div id="bb-spacer"></div>
   <div class="bb-cell" id="bb-sel" style="font-size:10px;opacity:.5">—</div>
-  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy — hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16fn</div>
+  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy — hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16fo</div>
   <button class="bb-util" id="tb-adv" onclick="actions.advancedMenu(event)" title="Advanced features (AOI, Free Mode, Blend Zones, Dead Space)" aria-label="Advanced features (AOI, Free Mode, Blend Zones, Dead Space)" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Advanced<span class="adv-count" aria-hidden="true"></span><svg aria-hidden="true" id="tb-adv-chev" width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="opacity:.7"><polyline points="6 9 12 15 18 9"/></svg></button>
   <button class="bb-util" onclick="actions.help()" title="Help — quick reference, keyboard shortcuts, glossary, accessibility" aria-label="Help — quick reference, keyboard shortcuts, glossary, accessibility" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="4.93" y1="4.93" x2="9.17" y2="9.17"/><line x1="14.83" y1="14.83" x2="19.07" y2="19.07"/><line x1="14.83" y1="9.17" x2="19.07" y2="4.93"/><line x1="4.93" y1="19.07" x2="9.17" y2="14.83"/></svg>Help</button>
   <button class="bb-util" id="lb-skin-btn" onclick="lbToggleSkinMenu(event)" title="Color skin" aria-label="Change color skin" style="height:100%;padding:0 13px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="13.5" cy="6.5" r=".6" fill="currentColor" stroke="none"/><circle cx="17" cy="10.5" r=".6" fill="currentColor" stroke="none"/><circle cx="8.5" cy="7.5" r=".6" fill="currentColor" stroke="none"/><circle cx="6.5" cy="12" r=".6" fill="currentColor" stroke="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c.93 0 1.65-.75 1.65-1.69 0-.44-.18-.83-.44-1.12-.29-.29-.44-.65-.44-1.13a1.65 1.65 0 0 1 1.67-1.67h1.97c3.05 0 5.55-2.5 5.55-5.55C21.95 6.01 17.45 2 12 2z"/></svg></button>
@@ -5161,6 +5192,80 @@ function setCropField(el){
   scheduleRender();
 }
 
+// ── Layer FX (2026-09-13, 16fo) ─────────────────────────────────────────────
+// Per-preset, per-destination, per-layer properties beyond crop, modelled on
+// a switcher's layer Properties panel (Omar's "advance controls" photos):
+//   op            opacity 0..256 (switcher scale; the panel also shows 0..100 %)
+//   flipH / flipV mirror the source
+//   edge          {on,color,op,h,v,round,radius}  border drawn OUTSIDE the visible area
+//   shadow        {on,color,op,x,y}               drop shadow of the visible area
+// Stored under p.layerFx[sid][n] and rides the preset object (schema v3 stays —
+// additive keys; older builds ignore them). Only NON-default records are kept, so
+// an untouched layer has no record and renders byte-for-byte as before. Mirrors
+// the crop bucket at every lifecycle site: duplicate preset (both clones), copy
+// destination, remove destination (both paths), remove layer everywhere; undo is
+// the JSON snapshot, so it needs nothing.
+const _LFX_DEF = Object.freeze({op:256, flipH:false, flipV:false,
+  edge:{on:false, color:'#ffffff', op:256, h:10, v:10, round:false, radius:20},
+  shadow:{on:false, color:'#000000', op:160, x:12, y:12}});
+function _lfxNorm(f){
+  f=f||{};
+  const c=(v,lo,hi,d)=>{ v=Math.round(+v); return isNaN(v)?d:Math.max(lo,Math.min(hi,v)); };
+  const hex=(v,d)=>/^#[0-9a-f]{6}$/i.test(v||'')?String(v).toLowerCase():d;
+  const e=f.edge||{}, s=f.shadow||{}, D=_LFX_DEF;
+  return {op:c(f.op,0,256,256), flipH:!!f.flipH, flipV:!!f.flipV,
+    edge:{on:!!e.on, color:hex(e.color,D.edge.color), op:c(e.op,0,256,256), h:c(e.h,0,400,D.edge.h), v:c(e.v,0,400,D.edge.v), round:!!e.round, radius:c(e.radius,0,2000,D.edge.radius)},
+    shadow:{on:!!s.on, color:hex(s.color,D.shadow.color), op:c(s.op,0,256,D.shadow.op), x:c(s.x,-2000,2000,D.shadow.x), y:c(s.y,-2000,2000,D.shadow.y)}};
+}
+function _lfxDefault(){ return _lfxNorm(_LFX_DEF); }
+function getLayerFx(pid,sid,n){
+  const p=presets.find(x=>x.id===pid);
+  const raw=p&&p.layerFx&&p.layerFx[sid]&&p.layerFx[sid][n];
+  if(!raw) return _lfxDefault();
+  const d=_lfxDefault();
+  return _lfxNorm(Object.assign(d, raw, {edge:Object.assign(d.edge, raw.edge||{}), shadow:Object.assign(d.shadow, raw.shadow||{})}));
+}
+// fields may be partial and nested-partial: {op:128} / {edge:{on:true,h:12}} / {flipH:true}
+function setLayerFx(pid,sid,n,fields){
+  const p=presets.find(x=>x.id===pid); if(!p||!fields) return;
+  const cur=getLayerFx(pid,sid,n);
+  if(fields.edge) Object.assign(cur.edge, fields.edge);
+  if(fields.shadow) Object.assign(cur.shadow, fields.shadow);
+  Object.keys(fields).forEach(k=>{ if(k!=='edge'&&k!=='shadow') cur[k]=fields[k]; });
+  const nx=_lfxNorm(cur);
+  if(JSON.stringify(nx)===JSON.stringify(_lfxDefault())){
+    if(p.layerFx&&p.layerFx[sid]){
+      delete p.layerFx[sid][n];
+      if(!Object.keys(p.layerFx[sid]).length) delete p.layerFx[sid];
+      if(!Object.keys(p.layerFx).length) delete p.layerFx;
+    }
+    return;
+  }
+  if(!p.layerFx) p.layerFx={};
+  if(!p.layerFx[sid]) p.layerFx[sid]={};
+  p.layerFx[sid][n]=nx;
+}
+function _lfxRgba(hex,op){
+  const m=/^#?([0-9a-f]{6})$/i.exec(hex||'');
+  const a=(Math.max(0,Math.min(256,+op||0))/256).toFixed(3);
+  if(!m) return 'rgba(255,255,255,'+a+')';
+  const v=parseInt(m[1],16);
+  return 'rgba('+(v>>16&255)+','+(v>>8&255)+','+(v&255)+','+a+')';
+}
+// One-line human summary for the look book / Excel / CSV ('' when default).
+function _lfxSummary(pid,sid,n){
+  const p=presets.find(x=>x.id===pid);
+  if(!(p&&p.layerFx&&p.layerFx[sid]&&p.layerFx[sid][n])) return '';
+  const fx=getLayerFx(pid,sid,n), parts=[];
+  const pc=v=>Math.round(v/256*100)+'%';
+  if(fx.op<256) parts.push('Opacity '+pc(fx.op)+' ('+fx.op+'/256)');
+  if(fx.flipH) parts.push('Flip H');
+  if(fx.flipV) parts.push('Flip V');
+  if(fx.edge.on) parts.push('Border '+fx.edge.h+'\u00d7'+fx.edge.v+'px '+fx.edge.color+(fx.edge.op<256?' @'+pc(fx.edge.op):'')+(fx.edge.round?' r'+fx.edge.radius:''));
+  if(fx.shadow.on) parts.push('Shadow '+(fx.shadow.x>=0?'+':'')+fx.shadow.x+','+(fx.shadow.y>=0?'+':'')+fx.shadow.y+'px '+fx.shadow.color+(fx.shadow.op<256?' @'+pc(fx.shadow.op):''));
+  return parts.join(' \u00b7 ');
+}
+
 function setLayerName(pid,sid,n,name){
   const p=presets.find(x=>x.id===pid);if(!p)return;
   if(!p.layerSizes)p.layerSizes={};
@@ -5175,6 +5280,7 @@ function removeLayerGlobally(pid,sid,n){
     if(p.layers&&p.layers[sid]) delete p.layers[sid][n];
     if(p.layerSizes&&p.layerSizes[sid]) delete p.layerSizes[sid][n];
     if(p.crops&&p.crops[sid]) delete p.crops[sid][n];
+    if(p.layerFx&&p.layerFx[sid]) delete p.layerFx[sid][n];
   });
   closeLayerPanel(); selLayer=null;
   scheduleRender();
@@ -5244,6 +5350,7 @@ function syncLayerPanel(pid,sid,n,w,h){
   const hEl=pop.querySelector('.lp-h');
   if(wEl&&document.activeElement!==wEl) wEl.value=w;
   if(hEl&&document.activeElement!==hEl) hEl.value=h;
+  if(pop.querySelector('.lfx-geo')) _lfxRefreshGeo(pop,pid,sid,n);   // 16fo accordion
 }
 
 // Selected layer: {pid,sid,n}
@@ -5923,6 +6030,50 @@ function render(){
 
 // ── renderCanvas helpers ──────────────────────────────────────────────────────
 
+// ── Layer FX chip parts (16fo) ──────────────────────────────────────────────
+// Shared by _rcChip (canvas — and the look book PDF, which reuses that render)
+// and _rfChip (fullscreen). Returns empty strings when the layer has no FX
+// record, so untouched layers keep their exact previous markup.
+//   bg       : a .chip-bg div carrying the real background with opacity/flip —
+//              labels stay readable and un-mirrored on top of it
+//   innerCss : border-radius for chip-inner (uncropped + Round)
+//   round    : ' round Npx' to append inside the crop clip-path (cropped + Round)
+//   overlay  : sibling elements sized to the VISIBLE area — border/shadow box
+//              (outside the picture, like a switcher edge) + the badge row
+function _lfxChipParts(p,s,n,chipBg,cx,cy,cw,ch,cpT,cpB,cpL,cpR,scale,showBadges,vh){
+  const out={bg:'',innerCss:'',round:'',overlay:''};
+  if(!(p.layerFx&&p.layerFx[s.id]&&p.layerFx[s.id][n])) return out;
+  const fx=getLayerFx(p.id,s.id,n);
+  const hasCrop=!!(cpT||cpB||cpL||cpR);
+  const visX=cx+cpL, visY=cy+cpT, visW=Math.max(0,cw-cpL-cpR), visH=Math.max(0,ch-cpT-cpB);
+  const radPx=fx.edge.round?Math.max(0,Math.round(fx.edge.radius*scale)):0;
+  const tf=(fx.flipH?'scaleX(-1) ':'')+(fx.flipV?'scaleY(-1)':'');
+  if(fx.op<256||tf){
+    out.bg='<div class="chip-bg" style="position:absolute;inset:0;background:'+chipBg+';opacity:'+(fx.op/256).toFixed(3)+(tf?';transform:'+tf.trim():'')+'"></div>';
+  }
+  if(radPx){ if(hasCrop) out.round=' round '+radPx+'px'; else out.innerCss=';border-radius:'+radPx+'px'; }
+  if(fx.edge.on||fx.shadow.on){
+    const bh=fx.edge.on?Math.max(1,Math.round(fx.edge.h*scale)):0;
+    const bv=fx.edge.on?Math.max(1,Math.round(fx.edge.v*scale)):0;
+    let st='position:absolute;left:'+(visX-bh)+'px;top:'+(visY-bv)+'px;width:'+(visW+2*bh)+'px;height:'+(visH+2*bv)+'px;box-sizing:border-box;pointer-events:none;z-index:3;';
+    st+='border-style:solid;border-width:'+bv+'px '+bh+'px;border-color:'+(fx.edge.on?_lfxRgba(fx.edge.color,fx.edge.op):'transparent')+';';
+    if(radPx) st+='border-radius:'+(radPx+Math.max(bh,bv))+'px;';
+    if(fx.shadow.on) st+='box-shadow:'+Math.round(fx.shadow.x*scale)+'px '+Math.round(fx.shadow.y*scale)+'px 0 0 '+_lfxRgba(fx.shadow.color,fx.shadow.op)+';';
+    out.overlay+='<div class="lfx-ov" style="'+st+'"></div>';
+  }
+  if(showBadges){
+    const b=[];
+    if(fx.op<256) b.push(Math.round(fx.op/256*100)+'%');
+    if(fx.flipH) b.push('\u21c6');
+    if(fx.flipV) b.push('\u21c5');
+    if(b.length){
+      const fs=Math.max(6,Math.round(vh*0.055));
+      out.overlay+='<div class="lfx-badge" style="position:absolute;left:'+visX+'px;top:'+visY+'px;width:'+visW+'px;height:'+visH+'px;display:flex;align-items:flex-end;justify-content:flex-end;padding:2px;box-sizing:border-box;pointer-events:none;z-index:6"><span style="font-size:'+fs+'px;line-height:1.2;color:#fff;background:rgba(0,0,0,.6);padding:1px 3px;border-radius:2px;font-family:var(--font-mono)">'+b.join(' ')+'</span></div>';
+    }
+  }
+  return out;
+}
+
 function _rcChip(p,s,n,vw,vh,aoiVX,aoiVY,aoiVW,aoiVH,sc){
   const v=getL(p.id,s.id,n); if(!v)return '';
   const ct=findContent(v);
@@ -5946,11 +6097,18 @@ function _rcChip(p,s,n,vw,vh,aoiVX,aoiVY,aoiVW,aoiVH,sc){
   const szL=Math.max(6,Math.round(vh*0.09));
   const szS=Math.max(5,Math.round(vh*0.06));
   const _chipBg=ct.img?('#000 url('+ct.img+') center/cover no-repeat'):ct.c;
+  // 16fo: crop insets are needed up here now (the FX overlay is sized to the
+  // visible area); the clip-path string itself is still built further down.
+  const cr2 = getCrop(p.id, s.id, n) || {t:0,b:0,l:0,r:0};
+  const cpT = Math.round(ch * cr2.t / 100), cpB = Math.round(ch * cr2.b / 100);
+  const cpL = Math.round(cw * cr2.l / 100), cpR = Math.round(cw * cr2.r / 100);
+  const hasCrop = !!(cr2.t || cr2.b || cr2.l || cr2.r);
+  const fxc=_lfxChipParts(p,s,n,_chipBg,cx,cy,cw,ch,cpT,cpB,cpL,cpR,vw/Math.max(1,parseInt(s.w)),showMode==='show',vh);
   const inner=showMode==='show'
-    ?'<div class="chip-inner" style="background:'+_chipBg+';flex-direction:column;gap:1px">'
+    ?'<div class="chip-inner" style="background:'+(fxc.bg?'none':_chipBg)+';flex-direction:column;gap:1px'+fxc.innerCss+'">'+fxc.bg
       +'<span style="font-size:'+szL+'px;font-weight:700;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.7);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:90%">'+v.slice(0,14)+'</span>'
       +'<span class="chip-res" style="font-size:'+szS+'px;color:rgba(255,255,255,.6)">'+chipRes+'</span></div>'
-    :'<div class="chip-inner" style="background:'+_chipBg+'"></div>';
+    :'<div class="chip-inner" style="background:'+(fxc.bg?'none':_chipBg)+fxc.innerCss+'">'+fxc.bg+'</div>';
   const pid=p.id, sid=s.id;
   const handles=isSelL
     ?'<div class="lrh lrh-tl" onmousedown="startLayerResize(event,\''+pid+'\',\''+sid+'\','+n+',\'tl\','+vw+','+vh+')"></div>'
@@ -5959,11 +6117,7 @@ function _rcChip(p,s,n,vw,vh,aoiVX,aoiVY,aoiVW,aoiVH,sc){
      +'<div class="lrh lrh-br" onmousedown="startLayerResize(event,\''+pid+'\',\''+sid+'\','+n+',\'br\','+vw+','+vh+')"></div>':'';
   // Crop state — needed both for the chip's clip-path AND for the
   // red-line indicators rendered as siblings (so they aren't clipped).
-  const cr2 = getCrop(p.id, s.id, n) || {t:0,b:0,l:0,r:0};
-  const cpT = Math.round(ch * cr2.t / 100), cpB = Math.round(ch * cr2.b / 100);
-  const cpL = Math.round(cw * cr2.l / 100), cpR = Math.round(cw * cr2.r / 100);
-  const hasCrop = !!(cr2.t || cr2.b || cr2.l || cr2.r);
-  const clip = hasCrop ? 'clip-path:inset('+cpT+'px '+cpR+'px '+cpB+'px '+cpL+'px);' : '';
+  const clip = hasCrop ? 'clip-path:inset('+cpT+'px '+cpR+'px '+cpB+'px '+cpL+'px'+fxc.round+');' : '';
 
   // 2026-05-22: red lines at the chip's visible (post-clip) edges,
   // rendered as SIBLINGS so they aren't themselves clipped by the
@@ -5992,7 +6146,7 @@ function _rcChip(p,s,n,vw,vh,aoiVX,aoiVY,aoiVW,aoiVH,sc){
     +'<div class="screen-lbl" style="font-size:'+Math.max(6,Math.round(ch*0.1))+'px;background:rgba(0,0,0,.7)">Layer '+n+'</div>'
     +'<button class="lc-reset" onclick="event.stopPropagation();event.preventDefault();resetLayerPosition(\''+pid+'\',\''+sid+'\','+n+')" title="Reset L'+n+' position to default" aria-label="Reset L'+n+' position to default" onmousedown="event.stopPropagation()">\u21ba</button>'
     +'</div>'
-    + cropOverlay;
+    + cropOverlay + fxc.overlay;
 }
 
 function _rcAoiOverlay(p,s,vw,vh,aoiData,aoiVX,aoiVY,aoiVW,aoiVH,sc){
@@ -7735,7 +7889,7 @@ function _qsClonePreset(){
     layerSizes:inherit('layerSizes'), crops:inherit('crops'), aoi:inherit('aoi'),
     positions:inherit('positions'), dsmOn:inherit('dsmOn'), dsmContent:inherit('dsmContent'),
     dsmColor:inherit('dsmColor'), dsmName:inherit('dsmName'), dsmType:inherit('dsmType'),
-    screenName:inherit('screenName'), bgNames:inherit('bgNames'), rotations:inherit('rotations'), opacities:inherit('opacities')
+    screenName:inherit('screenName'), bgNames:inherit('bgNames'), rotations:inherit('rotations'), opacities:inherit('opacities'), layerFx:inherit('layerFx')
   };
   Object.keys(np).forEach(k=>{ if(np[k]===undefined) delete np[k]; });
   presets.push(np);
@@ -7785,6 +7939,7 @@ function confirmQSEdit(){
         if(p.opacities) delete p.opacities[sid];
         if(p.layerSizes) delete p.layerSizes[sid];
         if(p.crops) delete p.crops[sid];
+        if(p.layerFx) delete p.layerFx[sid];
         if(p.aoi) delete p.aoi[sid];
         if(p.screenName) delete p.screenName[sid];
         if(p.bgNames) delete p.bgNames[sid];
@@ -8061,6 +8216,7 @@ function deleteScreen(sid){
     if(p.bgNames) delete p.bgNames[sid];
     if(p.layerSizes) delete p.layerSizes[sid];
     if(p.crops) delete p.crops[sid];
+    if(p.layerFx) delete p.layerFx[sid];
     if(p.aoi) delete p.aoi[sid];
     if(p.showMode) delete p.showMode[sid];
     if(p.rotations) delete p.rotations[sid];
@@ -8818,7 +8974,7 @@ function _lpHeader(n, screenName, isAdv){
         <h3 title="${_esc(full)}">L${n} · ${_esc(screenName)}</h3>
         <div class="lp-mode-toggle" data-seg="lp-mode" role="group" aria-label="Layer panel mode">
           <button type="button" class="lp-mode-btn${!isAdv?' active':''}" data-mode="simple" onclick="_lpSwitchMode(false)" title="Switch to Simple — custom name + content + size" aria-pressed="${!isAdv}">Simple</button>
-          <button type="button" class="lp-mode-btn${isAdv?' active':''}" data-mode="advanced" onclick="_lpSwitchMode(true)" title="Switch to Advanced — layer display + crop" aria-pressed="${isAdv}">Advanced</button>
+          <button type="button" class="lp-mode-btn${isAdv?' active':''}" data-mode="advanced" onclick="_lpSwitchMode(true)" title="Switch to Advanced — display, position &amp; size, opacity, crop, border, effects" aria-pressed="${isAdv}">Advanced</button>
         </div>
         <div class="pm-dot"></div>
         <button class="pm-close" onclick="closeLayerPanel()" title="Close layer properties" aria-label="Close layer properties"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="4" x2="20" y2="20"/><line x1="20" y1="4" x2="4" y2="20"/></svg></button>
@@ -8886,18 +9042,19 @@ function _lpRemoveLocal(){
 }
 
 function _lpAdvancedSection(v, cr, pid, sid, n, isAdv){
-  // 2026-05-22: crop inputs now show PIXELS of the layer's source dims.
-  // Storage stays as percentage so existing render/clip-path logic is
-  // unchanged. Conversion is on the way in (px → %) and on the way out
-  // (% → px for display). The layer dim depends on screen × layerSize:
-  //   layerW = screen.w × lsz.wf,  layerH = screen.h × lsz.hf
+  // 2026-05-22: crop inputs show PIXELS of the layer's source dims; storage
+  // stays % (lpCropChange converts). 2026-09-13 (16fo): the Advanced tab is an
+  // ACCORDION — Position & Size, Opacity, Crop, Border, Effects — modelled on a
+  // switcher's layer Properties panel (Omar's mock). Each header carries
+  // copy / paste / reset for that section only (_lfxSecAction) and a chevron;
+  // open state persists per browser (_lfxOpen). Crop IDs/classes are unchanged
+  // so updateCropPreview + lpCropChange keep working.
   const _s = (typeof screens !== 'undefined' && Array.isArray(screens)) ? screens.find(x=>x.id===sid) : null;
   const _sw = _s ? parseInt(_s.w) : 1920;
   const _sh = _s ? parseInt(_s.h) : 1080;
   const _lsz = (typeof getLayerSize === 'function') ? (getLayerSize(pid,sid,n) || {wf:0.5,hf:0.5}) : {wf:0.5,hf:0.5};
   const _layerW = Math.round(_sw * _lsz.wf);
   const _layerH = Math.round(_sh * _lsz.hf);
-  // Convert stored % to display px for initial values
   const _topPx = Math.round((cr.t||0) * _layerH / 100);
   const _botPx = Math.round((cr.b||0) * _layerH / 100);
   const _lftPx = Math.round((cr.l||0) * _layerW / 100);
@@ -8906,19 +9063,31 @@ function _lpAdvancedSection(v, cr, pid, sid, n, isAdv){
   const _maxTB = Math.floor(_layerH * 0.49);
   const _maxLR = Math.floor(_layerW * 0.49);
   const cropInp = (dim, label, val, maxPx) => `<div>
-                <div style="font-size:11px;color:var(--text3);margin-bottom:4px;letter-spacing:.04em">${label} <span style="opacity:.55;font-weight:400">(px)</span></div>
-                <input class="lp-cr-inp" type="number" value="${val}" min="0" max="${maxPx}" data-dim="${dim}" data-layer-w="${_layerW}" data-layer-h="${_layerH}" style="width:100%;font-size:11px;padding:6px 10px;border:1px solid rgba(255,255,255,.06);border-radius:4px;background:var(--n-track);color:#ff9aa8;outline:none;box-sizing:border-box;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5);transition:all .15s;font-family:var(--font-mono);text-align:center" data-fx="pink-c" oninput="lpCropChange(this,'${pid}','${sid}',${n})">
+                <div class="lfx-lbl" style="margin-bottom:4px">${label} <span style="opacity:.55;font-weight:400">(px)</span></div>
+                <input class="lp-cr-inp lfx-inp" type="number" value="${val}" min="0" max="${maxPx}" data-dim="${dim}" data-layer-w="${_layerW}" data-layer-h="${_layerH}" style="color:#ff9aa8" data-fx="pink-c" oninput="lpCropChange(this,'${pid}','${sid}',${n})">
               </div>`;
   const ct = findContent(v);
   const innerBg = ct ? ct.c : 'var(--n-cyan)';
-  return `
-      <div class="lp-adv-section" style="display:${isAdv?'block':'none'}">
-        <div style="border-top:1px solid var(--n-line);padding-top:12px;margin-bottom:10px">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-            <div style="font-size:11px;font-weight:800;color:#ff9aa8;letter-spacing:.12em;text-transform:uppercase;display:flex;align-items:center;gap:6px"><span style="width:2px;height:10px;border-radius:1px;background:#ff9aa8;box-shadow:0 0 4px rgba(255,154,168,.6);display:inline-block"></span>Crop <span style="font-weight:500;color:var(--text3);font-size:10px;letter-spacing:.04em">(px)</span></div>
-            <button onclick="setCrop('${pid}','${sid}',${n},{t:0,b:0,l:0,r:0});scheduleRender();document.querySelectorAll('.lp-cr-inp').forEach(i=>i.value=0)" style="font-size:10px;padding:1px 6px;border:1px solid #333;border-radius:3px;background:transparent;color:#555;cursor:pointer">Reset</button>
+  const geo = _lfxGeo(pid,sid,n,_sw,_sh);
+  const fx = getLayerFx(pid,sid,n);
+  const num = (path,val,min,max) => `<input class="lfx-inp lfx-num" data-path="${path}" type="number" value="${val}" min="${min}" max="${max}" oninput="_lfxNumInput(this)" onfocus="_lfxFocus()" onchange="_lfxCommit()">`;
+  const tog = (path,on,sub) => `<button type="button" class="lfx-tog${on?' on':''}" data-path="${path}"${sub?' data-sub="'+sub+'"':''} onclick="_lfxTog(this)" aria-pressed="${on}">${on?'ON':'OFF'}</button>`;
+  const row = (label,ctl) => `<div class="lfx-row"><span class="lfx-lbl">${label}</span>${ctl}</div>`;
+  const color = (path,val) => `<div style="display:flex;gap:6px;align-items:center"><input type="color" class="lfx-color" data-path="${path}" value="${val}" oninput="_lfxColorInput(this)" onfocus="_lfxFocus()" onchange="_lfxCommit()" title="Pick a colour"><input type="text" class="lfx-inp lfx-hex" data-path="${path}" value="${val}" maxlength="7" spellcheck="false" oninput="_lfxHexInput(this)" onfocus="_lfxFocus()" onchange="_lfxCommit()" title="Hex colour"></div>`;
+  const sec = (key,title,body) => `<div class="lfx-acc${_lfxOpen[key]?' open':''}" data-sec="${key}">
+        <div class="lfx-hd" onclick="_lfxToggleSec('${key}')" title="Expand or collapse"><span class="lfx-ttl">${title}</span><span class="lfx-tools" onclick="event.stopPropagation()"><button type="button" title="Copy" aria-label="Copy section" onclick="_lfxSecAction('copy','${key}')">C</button><button type="button" title="Paste" aria-label="Paste section" onclick="_lfxSecAction('paste','${key}')">P</button><button type="button" title="Reset" aria-label="Reset section" onclick="_lfxSecAction('reset','${key}')">&#8634;</button></span><span class="lfx-chev" aria-hidden="true">&#9660;</span></div>
+        <div class="lfx-body">${body}</div>
+      </div>`;
+  const geoInp = (dim,label,val) => `<div><div class="lfx-lbl" style="margin-bottom:4px">${label} <span style="opacity:.55;font-weight:400">(px)</span></div><input class="lfx-inp lfx-geo" data-dim="${dim}" type="number" value="${val}" onchange="_lfxGeoChange(this)" onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur()}"></div>`;
+  const posBody = `<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px">
+            ${geoInp('x','X',geo.x)}${geoInp('y','Y',geo.y)}${geoInp('w','Width',geo.w)}${geoInp('h','Height',geo.h)}
           </div>
-          <div style="position:relative;width:100%;padding-bottom:56.25%;background:#0a0f1c;border:1px solid var(--n-line);border-radius:8px;margin-bottom:8px;overflow:hidden;box-shadow:inset 0 2px 6px rgba(0,0,0,.6)" id="lp-crop-prev">
+          ${row('Lock ratio',`<button type="button" class="lfx-tog${_lfxLock?' on':''}" onclick="_lfxToggleLock(this)" title="Keep the aspect ratio when typing Width or Height" aria-pressed="${_lfxLock}">${_lfxLock?'ON':'OFF'}</button>`)}
+          <div class="lfx-hint">Box position and size on ${_sw}\u00d7${_sh}. Crop trims inside this box; drag the chip to move it.</div>`;
+  const opBody = `${row('0 \u2013 256',`<input class="lfx-inp lfx-op256" type="number" min="0" max="256" value="${fx.op}" oninput="_lfxOpInput(this,'v256')" onfocus="_lfxFocus()" onchange="_lfxCommit()">`)}
+          ${row('Percent',`<input class="lfx-inp lfx-oppct" type="number" min="0" max="100" value="${Math.round(fx.op/256*100)}" oninput="_lfxOpInput(this,'pct')" onfocus="_lfxFocus()" onchange="_lfxCommit()">`)}
+          <input type="range" class="lfx-range lfx-op256" min="0" max="256" value="${fx.op}" oninput="_lfxOpInput(this,'v256')" onpointerdown="_lfxFocus()" onchange="_lfxCommit()" aria-label="Opacity">`;
+  const cropBody = `<div style="position:relative;width:100%;padding-bottom:56.25%;background:#0a0f1c;border:1px solid var(--n-line);border-radius:4px;margin:6px 0 8px;overflow:hidden;box-shadow:inset 0 2px 6px rgba(0,0,0,.6)" id="lp-crop-prev">
             <div id="lp-crop-inner" style="position:absolute;background:${innerBg};transition:all .1s;border:1px solid rgba(255,255,255,.3)"></div>
             <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none">
               <span style="font-size:11px;color:rgba(255,255,255,.3)">preview</span>
@@ -8930,7 +9099,35 @@ function _lpAdvancedSection(v, cr, pid, sid, n, isAdv){
             ${cropInp('l','Left',   _lftPx, _maxLR)}
             ${cropInp('r','Right',  _rgtPx, _maxLR)}
           </div>
-          <div style="font-size:10px;color:#777;margin-top:4px">Pixels of the layer's source size — max keeps ~2% visible</div>
+          <div class="lfx-hint">Pixels of the layer's source size \u2014 max keeps ~2% visible</div>`;
+  const borderBody = `${row('Edge',tog('edge.on',fx.edge.on,'edge'))}
+          ${row('Shadow',tog('shadow.on',fx.shadow.on,'shadow'))}
+          <div class="lfx-sub${fx.edge.on?'':' off'}" data-sub="edge"><div class="lfx-subttl">Edge</div>
+            ${row('Color',color('edge.color',fx.edge.color))}
+            ${row('Opacity',num('edge.op',fx.edge.op,0,256))}
+            ${row('H Size',num('edge.h',fx.edge.h,0,400))}
+            ${row('V Size',num('edge.v',fx.edge.v,0,400))}
+            ${row('Round',tog('edge.round',fx.edge.round,''))}
+            ${row('Radius',num('edge.radius',fx.edge.radius,0,2000))}
+          </div>
+          <div class="lfx-sub${fx.shadow.on?'':' off'}" data-sub="shadow"><div class="lfx-subttl">Shadow</div>
+            ${row('Color',color('shadow.color',fx.shadow.color))}
+            ${row('Opacity',num('shadow.op',fx.shadow.op,0,256))}
+            ${row('Offset X',num('shadow.x',fx.shadow.x,-2000,2000))}
+            ${row('Offset Y',num('shadow.y',fx.shadow.y,-2000,2000))}
+          </div>
+          <div class="lfx-hint">Sizes and offsets in destination pixels. The edge sits outside the visible picture; opacity is 0\u2013256.</div>`;
+  const fxBody = `${row('Flip H',tog('flipH',fx.flipH,''))}
+          ${row('Flip V',tog('flipV',fx.flipV,''))}
+          <div class="lfx-hint">Mirrors the source. Shows on the canvas when the layer has a thumbnail; the chip badge and the look book always note it.</div>`;
+  return `
+      <div class="lp-adv-section" style="display:${isAdv?'block':'none'}">
+        <div style="border-top:1px solid var(--n-line);padding-top:10px;margin-bottom:10px">
+          ${sec('pos','Position &amp; Size',posBody)}
+          ${sec('op','Opacity',opBody)}
+          ${sec('crop','Crop',cropBody)}
+          ${sec('border','Border',borderBody)}
+          ${sec('fx','Effects',fxBody)}
         </div>
         <button class="lp-remove-global pm-btn-danger">✕ Remove from ALL presets</button>
       </div>`;
@@ -9167,9 +9364,10 @@ function openLayerPanelWithMode(e,pid,sid,n,_adv){
   pop._switchMode = function(toAdv){
     if(isAdv === !!toAdv) return;
     isAdv = !!toAdv;
-    buildHTML();
-    wireEvents();
+    buildHTML();   // buildHTML() ends with wireEvents() — the extra call here doubled every listener (16fo)
   };
+  // 16fo: section copy/paste/reset re-render the body in place (same popup, same spot).
+  pop._rebuild = function(){ buildHTML(); };
   buildHTML();
   document.body.appendChild(pop);
   positionPop();
@@ -9217,6 +9415,151 @@ function lpCropChange(inp,pid,sid,n){
   }
 }
 
+
+// ══ Layer FX — Advanced accordion controller (2026-09-13, 16fo) ═════════════
+// Everything the accordion's inline handlers call. State: which sections are
+// open (persisted), the aspect lock for W/H typing, a per-section clipboard,
+// and the undo snapshot taken when a live input gains focus (committed on
+// change → ONE undo step per edit, see pushUndoFrom).
+var _lfxOpen=(function(){
+  const d={pos:false,op:false,crop:true,border:false,fx:false};
+  try{ const s=JSON.parse(localStorage.getItem('lb_lfx_open')||'null'); if(s&&typeof s==='object') Object.keys(d).forEach(k=>{ if(typeof s[k]==='boolean') d[k]=s[k]; }); }catch(e){}
+  return d;
+})();
+var _lfxLock=false;
+var _lfxClip={};
+var _lfxSnap=null;
+function _lfxPanelCtx(){
+  const pop=document.getElementById('layer-panel'); if(!pop) return null;
+  const sid=pop.dataset.sid, s=screens.find(x=>x.id===sid); if(!s) return null;
+  return {pop, pid:pop.dataset.pid, sid, n:parseInt(pop.dataset.n), s, sw:parseInt(s.w)||1, sh:parseInt(s.h)||1};
+}
+function _lfxToggleSec(key){
+  _lfxOpen[key]=!_lfxOpen[key];
+  try{ localStorage.setItem('lb_lfx_open',JSON.stringify(_lfxOpen)); }catch(e){}
+  const pop=document.getElementById('layer-panel'); if(!pop) return;
+  const acc=pop.querySelector('.lfx-acc[data-sec="'+key+'"]'); if(acc) acc.classList.toggle('open',_lfxOpen[key]);
+}
+// Box geometry in destination px (x/y = top-left of the UNCROPPED box). Layers
+// without a stored position use the same stagger the canvas draws them with.
+function _lfxGeo(pid,sid,n,sw,sh){
+  const lsz=getLayerSize(pid,sid,n);
+  const wf=lsz?lsz.wf:0.5, hf=lsz?lsz.hf:0.5;
+  const k=((n-1)%4+4)%4;
+  const dx=Math.max(0,Math.min(1-wf,(1-wf)/2+0.02*k)), dy=Math.max(0,Math.min(1-hf,(1-hf)/2+0.02*k));
+  const xf=(lsz&&lsz.xf!==undefined)?lsz.xf:dx, yf=(lsz&&lsz.yf!==undefined)?lsz.yf:dy;
+  return {x:Math.round(sw*xf), y:Math.round(sh*yf), w:Math.round(sw*wf), h:Math.round(sh*hf)};
+}
+function _lfxRefreshGeo(pop,pid,sid,n){
+  const s=screens.find(x=>x.id===sid); if(!s) return;
+  const g=_lfxGeo(pid,sid,n,parseInt(s.w)||1,parseInt(s.h)||1);
+  pop.querySelectorAll('.lfx-geo').forEach(i=>{ if(document.activeElement!==i) i.value=g[i.dataset.dim]; });
+}
+function _lfxGeoChange(inp){
+  const c=_lfxPanelCtx(); if(!c) return;
+  const cur=_lfxGeo(c.pid,c.sid,c.n,c.sw,c.sh);
+  const dim=inp.dataset.dim, val=parseInt(inp.value);
+  if(isNaN(val)){ inp.value=cur[dim]; return; }
+  let x=cur.x, y=cur.y, w=cur.w, h=cur.h;
+  if(dim==='w'){ w=Math.max(67,Math.min(c.sw,val)); if(_lfxLock&&cur.w>0) h=Math.round(w*cur.h/cur.w); }
+  else if(dim==='h'){ h=Math.max(67,Math.min(c.sh,val)); if(_lfxLock&&cur.h>0) w=Math.round(h*cur.w/cur.h); }
+  else if(dim==='x') x=val; else y=val;
+  const snap=_snapshot();
+  setLayerSize(c.pid,c.sid,c.n,w/c.sw,h/c.sh,x/c.sw,y/c.sh);
+  pushUndoFrom(snap);
+  _lfxApply();
+  _lfxRefreshGeo(c.pop,c.pid,c.sid,c.n);
+}
+function _lfxToggleLock(btn){
+  _lfxLock=!_lfxLock;
+  btn.classList.toggle('on',_lfxLock); btn.textContent=_lfxLock?'ON':'OFF'; btn.setAttribute('aria-pressed',_lfxLock);
+}
+function _lfxFocus(){ _lfxSnap=_snapshot(); }   // live handlers also snapshot on their first event if focus never fired
+function _lfxCommit(){ if(_lfxSnap){ pushUndoFrom(_lfxSnap); _lfxSnap=null; } }
+function _lfxApply(){ scheduleRender(); if(fsPresetId) renderFullscreen(); }
+function _lfxSetPath(c,path,value){
+  const parts=String(path||'').split('.');
+  if(!parts[0]) return;
+  if(parts.length===1) setLayerFx(c.pid,c.sid,c.n,{[parts[0]]:value});
+  else setLayerFx(c.pid,c.sid,c.n,{[parts[0]]:{[parts[1]]:value}});
+}
+function _lfxOpInput(el,kind){
+  const c=_lfxPanelCtx(); if(!c) return;
+  if(!_lfxSnap) _lfxSnap=_snapshot();
+  const v=parseFloat(el.value); if(isNaN(v)) return;
+  const op=kind==='pct'?Math.round(Math.max(0,Math.min(100,v))/100*256):Math.round(Math.max(0,Math.min(256,v)));
+  setLayerFx(c.pid,c.sid,c.n,{op});
+  c.pop.querySelectorAll('.lfx-op256').forEach(i=>{ if(i!==el) i.value=op; });
+  c.pop.querySelectorAll('.lfx-oppct').forEach(i=>{ if(i!==el) i.value=Math.round(op/256*100); });
+  _lfxApply();
+}
+function _lfxNumInput(el){
+  const c=_lfxPanelCtx(); if(!c) return;
+  if(!_lfxSnap) _lfxSnap=_snapshot();
+  const v=parseInt(el.value); if(isNaN(v)) return;
+  const lo=parseInt(el.min), hi=parseInt(el.max);
+  _lfxSetPath(c,el.dataset.path,Math.max(isNaN(lo)?-9999:lo,Math.min(isNaN(hi)?9999:hi,v)));
+  _lfxApply();
+}
+function _lfxColorInput(el){
+  const c=_lfxPanelCtx(); if(!c) return;
+  if(!_lfxSnap) _lfxSnap=_snapshot();
+  const hex=String(el.value||'').toLowerCase();
+  if(!/^#[0-9a-f]{6}$/.test(hex)) return;
+  _lfxSetPath(c,el.dataset.path,hex);
+  const hx=el.parentElement&&el.parentElement.querySelector('.lfx-hex'); if(hx&&document.activeElement!==hx) hx.value=hex;
+  _lfxApply();
+}
+function _lfxHexInput(el){
+  const hex=String(el.value||'').trim().toLowerCase().replace(/^([0-9a-f]{6})$/,'#$1');
+  if(!/^#[0-9a-f]{6}$/.test(hex)) return;
+  const c=_lfxPanelCtx(); if(!c) return;
+  if(!_lfxSnap) _lfxSnap=_snapshot();
+  _lfxSetPath(c,el.dataset.path,hex);
+  const ci=el.parentElement&&el.parentElement.querySelector('.lfx-color'); if(ci) ci.value=hex;
+  _lfxApply();
+}
+function _lfxTog(btn){
+  const c=_lfxPanelCtx(); if(!c) return;
+  const on=!btn.classList.contains('on');
+  const snap=_snapshot();
+  _lfxSetPath(c,btn.dataset.path,on);
+  pushUndoFrom(snap);
+  btn.classList.toggle('on',on); btn.textContent=on?'ON':'OFF'; btn.setAttribute('aria-pressed',on);
+  const sub=btn.dataset.sub?c.pop.querySelector('.lfx-sub[data-sub="'+btn.dataset.sub+'"]'):null;
+  if(sub) sub.classList.toggle('off',!on);
+  _lfxApply();
+}
+function _lfxFlash(pop,key,msg){
+  const t=pop.querySelector('.lfx-acc[data-sec="'+key+'"] .lfx-ttl'); if(!t) return;
+  const orig=t.dataset.orig||t.textContent; t.dataset.orig=orig; t.textContent=msg;
+  clearTimeout(t._fl); t._fl=setTimeout(()=>{ t.textContent=orig; },900);
+}
+// Header tools: copy / paste / reset for ONE section of the open layer.
+function _lfxSecAction(action,key){
+  const c=_lfxPanelCtx(); if(!c) return;
+  const pid=c.pid, sid=c.sid, n=c.n, sw=c.sw, sh=c.sh, pop=c.pop;
+  if(action==='copy'){
+    if(key==='pos') _lfxClip.pos=_lfxGeo(pid,sid,n,sw,sh);
+    else if(key==='crop') _lfxClip.crop=Object.assign({},getCrop(pid,sid,n));
+    else { const fx=getLayerFx(pid,sid,n); _lfxClip[key]= key==='op'?{op:fx.op} : key==='border'?{edge:fx.edge,shadow:fx.shadow} : {flipH:fx.flipH,flipV:fx.flipV}; }
+    _lfxFlash(pop,key,'Copied'); return;
+  }
+  const snap=_snapshot();
+  if(action==='paste'){
+    const cp=_lfxClip[key]; if(!cp){ _lfxFlash(pop,key,'Nothing copied'); return; }
+    if(key==='pos') setLayerSize(pid,sid,n,cp.w/sw,cp.h/sh,cp.x/sw,cp.y/sh);
+    else if(key==='crop') setCrop(pid,sid,n,Object.assign({},cp));
+    else setLayerFx(pid,sid,n,JSON.parse(JSON.stringify(cp)));
+    pushUndoFrom(snap);
+  } else if(action==='reset'){
+    if(key==='pos') resetLayerPosition(pid,sid,n);   // pushes its own undo step
+    else if(key==='crop'){ setCrop(pid,sid,n,{t:0,b:0,l:0,r:0}); pushUndoFrom(snap); }
+    else { const d=_lfxDefault(); setLayerFx(pid,sid,n, key==='op'?{op:d.op} : key==='border'?{edge:d.edge,shadow:d.shadow} : {flipH:false,flipV:false}); pushUndoFrom(snap); }
+  } else return;
+  _lfxApply();
+  if(typeof pop._rebuild==='function') pop._rebuild();
+}
 
 function openLabelColorPicker(swatchEl, label){
   const entry=CONTENT.find(c=>c.l===label)||customLibrary.find(c=>c.l===label);
@@ -9906,6 +10249,7 @@ function addPreset(){
     bgNames:   inherit('bgNames'),
     rotations: inherit('rotations'),
     opacities: inherit('opacities'),
+    layerFx:   inherit('layerFx'),
   };
 
   // Strip undefined fields so the object stays clean
@@ -19397,8 +19741,12 @@ function _rfChip(p,s,n,sc,aoiVX,aoiVY,aoiVW,aoiVH){
   const cr=getCrop(p.id,s.id,n)||{t:0,b:0,l:0,r:0};
   const cpTop=Math.round(ch*cr.t/100),cpBot=Math.round(ch*cr.b/100);
   const cpL=Math.round(cw*cr.l/100),cpR=Math.round(cw*cr.r/100);
+  const _chipBgF=ct.img?('#000 url('+ct.img+') center/cover no-repeat'):ct.c;
+  const fxc=_lfxChipParts(p,s,n,_chipBgF,cx,cy,cw,ch,cpTop,cpBot,cpL,cpR,sc,getShowMode(p.id,s.id)==='show',vh);
+  // 16fo: bottom inset is cpBot (it was the visible height — a pre-existing slip
+  // that clipped cropped layers in the fullscreen view).
   const clipPath=(cr.t||cr.b||cr.l||cr.r)
-    ?'clip-path:inset('+cpTop+'px '+cpR+'px '+(ch-cpTop-cpBot)+'px '+cpL+'px);':'';
+    ?'clip-path:inset('+cpTop+'px '+cpR+'px '+cpBot+'px '+cpL+'px'+fxc.round+');':'';
   const pid=p.id,sid=s.id;
   const handles=isSelL
     ?'<div class="lrh lrh-tl" onmousedown="startLayerResize(event,\''+pid+'\',\''+sid+'\','+n+',\'tl\','+vw+','+vh+')"></div>'
@@ -19410,8 +19758,8 @@ function _rfChip(p,s,n,sc,aoiVX,aoiVY,aoiVW,aoiVH){
     +' onclick="layerChipClick(event,\''+pid+'\',\''+sid+'\','+n+')"'
     +' ondblclick="openLayerPanelWithMode(event,\''+pid+'\',\''+sid+'\','+n+',\'crop\')"'
     +' onmousedown="startLayerDrag(event,\''+pid+'\',\''+sid+'\','+n+','+vw+','+vh+')">'
-    +'<div class="chip-inner" style="background:'+(ct.img?('#000 url('+ct.img+') center/cover no-repeat'):ct.c)+'"></div>'
-    +handles+'</div>';
+    +'<div class="chip-inner" style="background:'+(fxc.bg?'none':_chipBgF)+fxc.innerCss+'">'+fxc.bg+'</div>'
+    +handles+'</div>'+fxc.overlay;
 }
 
 // 2. One screen box in engineer canvas
@@ -20646,7 +20994,7 @@ function duplicateScreen(sid){
   // Copy all per-preset data for this screen to the new one
   presets.forEach(p=>{
     const copy=k=>{if(p[k]&&p[k][sid]!==undefined){if(!p[k])p[k]={};p[k][newId]=JSON.parse(JSON.stringify(p[k][sid]));}}
-    ;['layers','colors','bgs','bgNames','showMode','layerSizes','crops','aoi','opacities'].forEach(copy);
+    ;['layers','colors','bgs','bgNames','showMode','layerSizes','crops','aoi','opacities','layerFx'].forEach(copy);
     // Repack all positions from scratch so every screen gets a clean left-to-right strip slot
     p.positions={};
     repackPositions(p.id);
@@ -20927,6 +21275,16 @@ function _snapshot(){
 }
 function pushUndo(){
   _undoStack.push(_snapshot());
+  if(_undoStack.length>50)_undoStack.shift();
+  _redoStack=[];
+  _syncUndoButtons();
+}
+// 16fo: push a PRE-mutation snapshot only if the state actually changed — lets
+// live inputs (opacity slider, border fields) make ONE undo step per edit
+// instead of one per keystroke, and skips no-op commits entirely.
+function pushUndoFrom(snap){
+  if(!snap||snap===_snapshot()) return;
+  _undoStack.push(snap);
   if(_undoStack.length>50)_undoStack.shift();
   _redoStack=[];
   _syncUndoButtons();
@@ -21312,6 +21670,7 @@ function _doExportCSV(){
               const _lw=Math.round(_sw*(lsz?lsz.wf:0.5)),_lh=Math.round(_sh*(lsz?lsz.hf:0.5));
               entry+=' [crop T'+Math.round((crop.t||0)*_lh/100)+' B'+Math.round((crop.b||0)*_lh/100)+' L'+Math.round((crop.l||0)*_lw/100)+' R'+Math.round((crop.r||0)*_lw/100)+'px → '+_vs.w+'x'+_vs.h+']';
             }
+            const _fxC=_lfxSummary(p.id,s.id,n); if(_fxC) entry+=' {'+_fxC+'}';
             parts.push(entry);
           });
           if(aoi) parts.push('AOI:'+aoi.w+'x'+aoi.h+'@'+aoi.x+','+aoi.y);
@@ -21630,7 +21989,8 @@ function _doExportExcel(_returnBlob){
         if(lnums.length>0) lines.push(lnums.map(n=>{
           const _ls=getLayerSize(p.id,s.id,n)||{wf:0.5,hf:0.5};
           const _vs=_layerVisibleSize(p.id,s.id,n,parseInt(s.w),parseInt(s.h),_ls.wf,_ls.hf);
-          return 'L'+n+': '+getL(p.id,s.id,n)+' ('+_vs.w+'\u00d7'+_vs.h+')';
+          const _fxE=_lfxSummary(p.id,s.id,n);
+          return 'L'+n+': '+getL(p.id,s.id,n)+' ('+_vs.w+'\u00d7'+_vs.h+')'+(_fxE?' \u00b7 '+_fxE:'');
         }).join(' / '));
         if(aoi) lines.push('AOI: '+aoi.w+'x'+aoi.h+' @ '+aoi.x+','+aoi.y);
         rowVals.push(lines.join('\n'));
@@ -21688,7 +22048,9 @@ function openPdfExportModal(){
   const _hasCropData = (function(){
     if(typeof presets === 'undefined' || !Array.isArray(presets)) return false;
     for(const p of presets){
-      if(!p || !p.crops) continue;
+      if(!p) continue;
+      if(p.layerFx && Object.keys(p.layerFx).some(k=>Object.keys(p.layerFx[k]||{}).length)) return true;   // 16fo
+      if(!p.crops) continue;
       for(const sid in p.crops){
         const byLayer = p.crops[sid];
         for(const n in byLayer){
@@ -22092,6 +22454,7 @@ function exportPDF(_returnHtml){
           const _visA = _layerVisibleSize(p.id, s.id, n, parseInt(s.w), parseInt(s.h), _lsz.wf, _lsz.hf);
           if(parts.length) lines.push('<div class="crop-line">⌐ Crop · '+parts.join(' · ')+' → '+_visA.w+'×'+_visA.h+'</div>');
         }
+        if(opts.showCrop){ const _fxA=_lfxSummary(p.id,s.id,n); if(_fxA) lines.push('<div class="crop-line">\u25d0 '+_esc(_fxA)+'</div>'); }
       });
       if(aoi && opts.showAOI){
         lines.push(`<div class="aoi-line">▢ AOI ${aoi.w}×${aoi.h} @ (${aoi.x}, ${aoi.y})</div>`);
@@ -22127,6 +22490,7 @@ function exportPDF(_returnHtml){
           const _visB = _layerVisibleSize(p.id, s.id, n, parseInt(s.w), parseInt(s.h), (_lsz.wf||0.5), (_lsz.hf||0.5));
           if(parts.length) rows += '<div class="bd-crop">\u2310 '+parts.join(' \u00b7 ')+' \u2192 '+_visB.w+'\u00d7'+_visB.h+'</div>';
         }
+        if(opts.showCrop){ const _fxB=_lfxSummary(p.id,s.id,n); if(_fxB) rows += '<div class="bd-crop">\u25d0 '+_esc(_fxB)+'</div>'; }
       });
       if(aoi && opts.showAOI) rows += `<div class="bd-aoi">\u25a2 AOI ${aoi.w}\u00d7${aoi.h}</div>`;
       const dLabel = 'Destination ' + String(i+1).padStart(2,'0');
@@ -25850,7 +26214,7 @@ document.addEventListener('keydown', e => {
       <div style="font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--n-amber);margin-bottom:8px">Details</div>
       <div style="display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--text)">
         <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" id="pdf-opt-aoi"> Show AOI markers + dimensions</label>
-        <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" id="pdf-opt-crop"> Show Crop in breakdown table</label>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" id="pdf-opt-crop"> Show Crop and layer FX (opacity, flip, border) in breakdown table</label>
         <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" id="pdf-opt-blend"> Show Blend Zones (destination overlaps)</label>
         <label style="display:flex;align-items:center;gap:8px;cursor:pointer"><input type="checkbox" id="pdf-opt-dead"> Show Dead Space (gaps between destinations)</label>
         <div style="font-size:10px;color:var(--text3);margin-top:4px;font-style:italic;line-height:1.5">Defaults follow your Advanced menu state — toggle a feature ON in Advanced ▾ to include it here automatically.</div>
