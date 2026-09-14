@@ -48,7 +48,7 @@ const CONTENT_URL = 'https://github.com/' + GH_OWNER + '/' + GH_REPO + '/release
 const CHECK_EVERY_MS = 4 * 60 * 60 * 1000;   // re-check every 4 h while running
 const RECENT_MAX = 200;                       // how many projects the Welcome list remembers
 const THUMB_WIDTH = 640;                      // px, thumbnails are 16:10-ish window captures
-const DOWNLOAD_PAGE_URL = 'https://github.com/AVEducate/AV-Look-Book/releases/latest';   // where a recipient gets the app (swap for the download page later)
+const DOWNLOAD_PAGE_URL = 'https://www.aveducate.com/av-look-book';   // where a recipient gets the app (landing page → sign-up → /download)
 // ───────────────────────────────────────────────────────────────────────────
 
 const BUNDLED = path.join(__dirname, 'app', 'index.html');
