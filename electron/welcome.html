@@ -16,7 +16,7 @@
   .left{padding:34px 28px 22px;border-right:1px solid var(--line-soft);display:flex;flex-direction:column;align-items:center;gap:10px}
   .left img{width:112px;height:112px;border-radius:26px;box-shadow:0 14px 34px rgba(0,0,0,.55)}
   .left .ver{color:var(--muted);font-size:11px;letter-spacing:.06em;margin-bottom:18px}
-  .btn{width:100%;padding:11px 14px;border-radius:8px;border:1px solid var(--line);background:transparent;color:var(--text);
+  .btn{width:100%;padding:11px 14px;border-radius:4px;border:1px solid var(--line);background:transparent;color:var(--text);
        font:inherit;font-weight:600;cursor:pointer;text-align:center;transition:background .12s,border-color .12s}
   .btn:hover{background:var(--cyan-dim);border-color:var(--cyan)}
   .btn:disabled{opacity:.4;cursor:default;background:transparent;border-color:var(--line)}
@@ -42,12 +42,12 @@
   .tile.empty .thumb{color:var(--muted);text-transform:none;letter-spacing:.02em;font-size:13px;font-weight:600}
   .tile.missing{opacity:.55}
   .tile.missing .thumb::after{content:"FILE MISSING";color:var(--danger)}
-  .tile .x{position:absolute;top:6px;right:6px;width:22px;height:22px;border-radius:6px;border:1px solid rgba(255,255,255,.18);
+  .tile .x{position:absolute;top:6px;right:6px;width:22px;height:22px;border-radius:4px;border:1px solid rgba(255,255,255,.18);
            background:rgba(6,16,26,.85);color:#c9d1d9;font:700 13px/20px inherit;text-align:center;cursor:pointer;opacity:0;transition:opacity .12s}
   .tile:hover .x{opacity:1}
   .tile .x:hover{border-color:var(--danger);color:var(--danger)}
   .foot{display:flex;justify-content:space-between;align-items:center;margin-top:14px;gap:10px}
-  .link{background:transparent;border:1px solid var(--line-soft);border-radius:8px;color:var(--text);padding:8px 14px;font:inherit;font-weight:600;cursor:pointer}
+  .link{background:transparent;border:1px solid var(--line-soft);border-radius:4px;color:var(--text);padding:8px 14px;font:inherit;font-weight:600;cursor:pointer}
   .link:hover{border-color:var(--cyan);background:var(--cyan-dim)}
   .hint{color:var(--muted);font-size:11px}
   /* More-projects list */
@@ -61,11 +61,13 @@
   .row .x{position:static;opacity:1;width:20px;height:20px;line-height:18px;flex:0 0 auto}
   .row.missing .name{color:var(--danger)}
   .empty-note{padding:26px;text-align:center;color:var(--muted)}
+  /* 2026-09-13 (shell 0.2.19): square corners to match app build 16fm — buttons/pills 4px,
+     recessed pill faces 2px, dialog 8px; project tiles stay 8px cards like the app's preset rows. */
   /* Remove / trash confirmation — same anatomy as the app's own dialogs
      (#dlg-overlay / .dlg-box v-warning): strip + icon + uppercase title,
      body text, pill buttons in a footer row. */
   .veil{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.78);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center}
-  .dlg{min-width:320px;max-width:480px;background:#0a0f1c;border-radius:10px;overflow:hidden;border:1px solid rgba(240,192,96,.32);
+  .dlg{min-width:320px;max-width:480px;background:#0a0f1c;border-radius:8px;overflow:hidden;border:1px solid rgba(240,192,96,.32);
        box-shadow:0 20px 60px rgba(0,0,0,.9),0 0 24px rgba(34,228,255,.12);animation:pop .18s cubic-bezier(.4,.2,.2,1.1)}
   @keyframes pop{from{transform:scale(.96);opacity:0}to{transform:scale(1);opacity:1}}
   .dlg-hdr{display:flex;align-items:center;gap:10px;padding:16px 24px;border-bottom:1px solid rgba(255,255,255,.08);
@@ -75,9 +77,9 @@
   .dlg h3{margin:0;flex:1;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#f0c060;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .dlg-body{padding:16px 24px;font-size:12.5px;line-height:1.55;color:var(--text);white-space:pre-wrap}
   .dlg-foot{display:flex;gap:8px;justify-content:flex-end;padding:12px 24px;border-top:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.015)}
-  .pill{position:relative;isolation:isolate;height:40px;padding:10px 22px;border-radius:999px;font:inherit;font-size:11px;letter-spacing:.02em;
+  .pill{position:relative;isolation:isolate;height:40px;padding:10px 22px;border-radius:4px;font:inherit;font-size:11px;letter-spacing:.02em;
         cursor:pointer;background:#0a0d12;border:1px solid rgba(255,255,255,.1);color:var(--text);font-weight:400;transition:all .15s;white-space:nowrap}
-  .pill::before{content:"";position:absolute;inset:3px;border-radius:999px;z-index:-1;background:linear-gradient(180deg,#1a253f,#101a2e);box-shadow:0 1px 2px rgba(0,0,0,.4)}
+  .pill::before{content:"";position:absolute;inset:3px;border-radius:2px;z-index:-1;background:linear-gradient(180deg,#1a253f,#101a2e);box-shadow:0 1px 2px rgba(0,0,0,.4)}
   .pill:hover::before{filter:brightness(1.15)}
   .pill.warn{font-weight:600;color:#221500;border-color:#f0c060;box-shadow:0 0 12px rgba(240,192,96,.45)}
   .pill.warn::before{background:linear-gradient(180deg,#f0c060,#c9933a);box-shadow:inset 0 1px 0 rgba(255,255,255,.3)}
