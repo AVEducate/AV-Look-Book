@@ -523,7 +523,7 @@ tr.screen-drag-over.screen-drag-over-top td{box-shadow:0 -2px 0 var(--n-cyan), 0
 
 /* Phase 4 — Property modals (Screen, Layer, DSM) — Option C wrapper + header + buttons */
 .pm{background:#0a0f1c !important;border-radius:12px !important;overflow:hidden;box-shadow:0 16px 50px rgba(0,0,0,.85), var(--n-shadow-raised) !important}
-.pm-hdr{display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid var(--n-line);margin:-16px -16px 12px;}
+.pm-hdr{display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid var(--n-line);margin:-16px -16px 12px;position:sticky;top:-16px;z-index:5}
 .pm-hdr .pm-strip{width:3px;height:18px;border-radius:2px;flex-shrink:0}
 .pm-hdr h3{font-size:var(--ss-fs-label);font-weight:800;letter-spacing:var(--ss-track-label);text-transform:uppercase;flex:1;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .pm-hdr .pm-meta{font-size:11px;color:var(--text3);font-family:var(--font-mono)}
@@ -3311,6 +3311,8 @@ button[onclick="event.stopPropagation();actions.addDSM()"],button[onclick="event
 .preset-row.pr-current{border-left-color:var(--n-amber)}
 #tbody tr.grp-current td{background:rgba(240,192,96,.06)}
 #tbody tr.grp-current:not(.row-sel){box-shadow:inset 3px 0 0 rgba(240,192,96,.55)}
+/* 16fp: sticky popup header stays opaque over scrolled content (variant rules above set a transparent gradient via the shorthand) */
+.pm .pm-hdr,.pm.p-amber .pm-hdr,.pm.p-cyan .pm-hdr,.pm.p-green .pm-hdr,.pm.p-orange .pm-hdr{background-color:#0a0f1c}
 </style>
 </head>
 <body data-skin="black">
@@ -3459,7 +3461,7 @@ Also called DSM (Downstage Monitor) in broadcast and theater workflows — same 
   <div class="bb-cell bb-pill bb-yellow" title="The largest number of layers used in any single preset — this is the figure to compare against your switcher's per-scene layer budget. (The most complex single moment in the show.)"><span class="bb-label">Layers</span><strong id="bb-layers">0</strong></div>
   <div id="bb-spacer"></div>
   <div class="bb-cell" id="bb-sel" style="font-size:10px;opacity:.5">—</div>
-  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy — hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16fo</div>
+  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy — hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16fp</div>
   <button class="bb-util" id="tb-adv" onclick="actions.advancedMenu(event)" title="Advanced features (AOI, Free Mode, Blend Zones, Dead Space)" aria-label="Advanced features (AOI, Free Mode, Blend Zones, Dead Space)" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Advanced<span class="adv-count" aria-hidden="true"></span><svg aria-hidden="true" id="tb-adv-chev" width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="opacity:.7"><polyline points="6 9 12 15 18 9"/></svg></button>
   <button class="bb-util" onclick="actions.help()" title="Help — quick reference, keyboard shortcuts, glossary, accessibility" aria-label="Help — quick reference, keyboard shortcuts, glossary, accessibility" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="4.93" y1="4.93" x2="9.17" y2="9.17"/><line x1="14.83" y1="14.83" x2="19.07" y2="19.07"/><line x1="14.83" y1="9.17" x2="19.07" y2="4.93"/><line x1="4.93" y1="19.07" x2="9.17" y2="14.83"/></svg>Help</button>
   <button class="bb-util" id="lb-skin-btn" onclick="lbToggleSkinMenu(event)" title="Color skin" aria-label="Change color skin" style="height:100%;padding:0 13px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="13.5" cy="6.5" r=".6" fill="currentColor" stroke="none"/><circle cx="17" cy="10.5" r=".6" fill="currentColor" stroke="none"/><circle cx="8.5" cy="7.5" r=".6" fill="currentColor" stroke="none"/><circle cx="6.5" cy="12" r=".6" fill="currentColor" stroke="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c.93 0 1.65-.75 1.65-1.69 0-.44-.18-.83-.44-1.12-.29-.29-.44-.65-.44-1.13a1.65 1.65 0 0 1 1.67-1.67h1.97c3.05 0 5.55-2.5 5.55-5.55C21.95 6.01 17.45 2 12 2z"/></svg></button>
@@ -7252,6 +7254,7 @@ function openDSMPanel(e,pid,dsmId){
   pop.style.left=Math.min(r.right+8,window.innerWidth-258)+'px';
   pop.style.top=Math.max(_topbarSafeTop(),Math.min(r.top,window.innerHeight-500))+'px';
   document.body.appendChild(pop);
+  _pmFit(pop);   // 16fp: after attach — needs the real height
   makeDraggable(pop,pop.querySelector('div'));
   setTimeout(()=>pop.querySelector('#dsmp-name').select(),50);
 }
@@ -8015,6 +8018,9 @@ function confirmScreen(){
 // ---- Keyboard ----
 document.addEventListener('click',e=>{
   // Close each popup if click landed outside it
+  // 16fp: a press that STARTED inside a popup (slider drag, header drag) and was
+  // released outside still fires a click on <body> — that must not close anything.
+  if(window._lbPressInPopup) return;
   if(!e.target.closest('#res-warn-pop')) closeResWarn();
 
   // Screen panel — close if click is outside panel and not on a screen-box (which opens it)
@@ -8798,6 +8804,7 @@ function openScreenPanel(e,pid,sid){
   pop.style.left=Math.min(r.right+8,window.innerWidth-268)+'px';
   pop.style.top=Math.max(_topbarSafeTop(),Math.min(r.top,window.innerHeight-480))+'px';
   document.body.appendChild(pop);
+  _pmFit(pop);   // 16fp: after attach — needs the real height
   makeDraggable(pop,pop.querySelector('div'));
   // Focus the panel itself so its keydown (Enter/Escape) works immediately —
   // without this, Escape is dead until the user clicks a field inside.
@@ -9355,6 +9362,7 @@ function openLayerPanelWithMode(e,pid,sid,n,_adv){
     if(ly<safeTop) ly=safeTop;
     pop.style.left=lx+'px';
     pop.style.top=ly+'px';
+    _pmFit(pop);
   }
 
   // Expose an in-place mode switcher so the Simple/Advanced pill in the
@@ -9365,9 +9373,10 @@ function openLayerPanelWithMode(e,pid,sid,n,_adv){
     if(isAdv === !!toAdv) return;
     isAdv = !!toAdv;
     buildHTML();   // buildHTML() ends with wireEvents() — the extra call here doubled every listener (16fo)
+    _pmFit(pop);
   };
   // 16fo: section copy/paste/reset re-render the body in place (same popup, same spot).
-  pop._rebuild = function(){ buildHTML(); };
+  pop._rebuild = function(){ buildHTML(); _pmFit(pop); };
   buildHTML();
   document.body.appendChild(pop);
   positionPop();
@@ -9439,6 +9448,7 @@ function _lfxToggleSec(key){
   try{ localStorage.setItem('lb_lfx_open',JSON.stringify(_lfxOpen)); }catch(e){}
   const pop=document.getElementById('layer-panel'); if(!pop) return;
   const acc=pop.querySelector('.lfx-acc[data-sec="'+key+'"]'); if(acc) acc.classList.toggle('open',_lfxOpen[key]);
+  _pmFit(pop);   // 16fp: a section opening must not push the panel off the window
 }
 // Box geometry in destination px (x/y = top-left of the UNCROPPED box). Layers
 // without a stored position use the same stagger the canvas draws them with.
@@ -9596,6 +9606,34 @@ function openLabelColorPicker(swatchEl, label){
   requestAnimationFrame(()=>{cpDrawSpectrum();cpUpdateCursor();cpUpdateHueThumb();cpUpdateAlpha();cpUpdateInputs();});
 }
 
+// ── Popup fit (2026-09-13, 16fp) ────────────────────────────────────────────
+// Omar: "the panel sometimes gets lost behind the screen and I can't access
+// the full panel." Three causes, one helper: #toolbar is z-index 700 (above
+// the 600 popups) so anything above its bottom edge is buried; max-height was
+// a flat 90vh measured from wherever the popup sat, so the bottom ran off the
+// window; and the header scrolled away inside a tall panel (now sticky, CSS).
+// _pmFit keeps a fixed popup inside [safeTop, innerHeight-8] and caps its
+// height to the room it has, so the inner scroll always reaches the last row.
+function _pmFit(pop){
+  if(!pop||!pop.isConnected) return;
+  const safeTop=(typeof _topbarSafeTop==='function')?_topbarSafeTop():8;
+  const vh=window.innerHeight, vw=window.innerWidth;
+  pop.style.overflowY='auto';
+  pop.style.maxHeight=Math.max(160, vh-safeTop-8)+'px';
+  const h=pop.offsetHeight, w=pop.offsetWidth;
+  let top=parseFloat(pop.style.top); if(isNaN(top)) top=safeTop;
+  let left=parseFloat(pop.style.left); if(isNaN(left)) left=8;
+  if(top+h>vh-8) top=vh-8-h;
+  if(top<safeTop) top=safeTop;
+  if(left+w>vw-8) left=vw-8-w;
+  if(left<8) left=8;
+  pop.style.top=Math.round(top)+'px'; pop.style.left=Math.round(left)+'px';
+}
+function _pmFitAll(){ ['layer-panel','dsm-panel','screen-panel'].forEach(id=>_pmFit(document.getElementById(id))); }
+window.addEventListener('resize', _pmFitAll);
+// Remember whether the current press began inside a popup (read by the outside-click closer).
+document.addEventListener('pointerdown', function(e){ window._lbPressInPopup=!!(e.target&&e.target.closest&&e.target.closest('.pm,#color-pop,#layer-panel,#dsm-panel,#screen-panel')); }, true);
+
 function makeDraggable(el, handle){
   handle=handle||el;
   handle.style.cursor='move';
@@ -9605,11 +9643,25 @@ function makeDraggable(el, handle){
     e.preventDefault();
     const r=el.getBoundingClientRect();
     const ox=e.clientX-r.left, oy=e.clientY-r.top;
+    const sx=e.clientX, sy=e.clientY; let moved=false;
     function mv(e){
+      if(Math.abs(e.clientX-sx)>3||Math.abs(e.clientY-sy)>3) moved=true;
+      // 16fp: never above the toolbar (z-index 700 would bury the handle) and never off the bottom.
+      const safeTop=(typeof _topbarSafeTop==='function')?_topbarSafeTop():0;
       el.style.left=Math.max(0,Math.min(window.innerWidth-el.offsetWidth,e.clientX-ox))+'px';
-      el.style.top=Math.max(0,Math.min(window.innerHeight-el.offsetHeight,e.clientY-oy))+'px';
+      el.style.top=Math.max(safeTop,Math.min(window.innerHeight-el.offsetHeight,e.clientY-oy))+'px';
     }
-    function up(){window.removeEventListener('mousemove',mv);window.removeEventListener('mouseup',up);}
+    function up(){
+      window.removeEventListener('mousemove',mv);window.removeEventListener('mouseup',up);
+      // 16fp: a drag that ends with the pointer outside the panel (the panel
+      // stops at the clamp, the pointer keeps going) fires a document click
+      // that the outside-click closers read as "close me". Swallow that one.
+      if(moved){
+        const eat=function(ev){ ev.stopPropagation(); ev.preventDefault(); window.removeEventListener('click',eat,true); };
+        window.addEventListener('click',eat,true);
+        setTimeout(()=>window.removeEventListener('click',eat,true),0);
+      }
+    }
     window.addEventListener('mousemove',mv);
     window.addEventListener('mouseup',up);
   });
