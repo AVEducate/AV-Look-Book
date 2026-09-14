@@ -192,9 +192,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-siz
 .lfx-sub.off{opacity:.45}
 .lfx-subttl{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3)}
 .lfx-range{width:100%;accent-color:var(--n-cyan);margin:8px 0 0;cursor:pointer}
-.lfx-color{width:36px;height:27px;padding:0;border:1px solid rgba(255,255,255,.15);border-radius:4px;background:var(--n-track);cursor:pointer;flex-shrink:0}
-.lfx-color::-webkit-color-swatch-wrapper{padding:2px}
-.lfx-color::-webkit-color-swatch{border:none;border-radius:2px}
+.lfx-swatch{width:36px;height:27px;padding:0;border:1px solid rgba(255,255,255,.18);border-radius:4px;cursor:pointer;flex-shrink:0;box-shadow:0 1px 4px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.06);transition:box-shadow .15s}
+.lfx-swatch:hover{box-shadow:0 0 0 2px rgba(var(--n-cyan-rgb),.45),0 1px 4px rgba(0,0,0,.5)}
 .lfx-hint{font-size:10px;color:#777;margin-top:6px;line-height:1.4}
 
 .dsm-toggle{font-size:11px;padding:3px 9px;border-radius:999px;border:1px solid rgba(255,77,90,.35);background:#1a0c10;color:#a04050;cursor:pointer;transition:all .15s;white-space:nowrap;letter-spacing:.04em;text-transform:uppercase;font-weight:700}
@@ -3461,7 +3460,7 @@ Also called DSM (Downstage Monitor) in broadcast and theater workflows — same 
   <div class="bb-cell bb-pill bb-yellow" title="The largest number of layers used in any single preset — this is the figure to compare against your switcher's per-scene layer budget. (The most complex single moment in the show.)"><span class="bb-label">Layers</span><strong id="bb-layers">0</strong></div>
   <div id="bb-spacer"></div>
   <div class="bb-cell" id="bb-sel" style="font-size:10px;opacity:.5">—</div>
-  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy — hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16fp</div>
+  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy — hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16fq</div>
   <button class="bb-util" id="tb-adv" onclick="actions.advancedMenu(event)" title="Advanced features (AOI, Free Mode, Blend Zones, Dead Space)" aria-label="Advanced features (AOI, Free Mode, Blend Zones, Dead Space)" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Advanced<span class="adv-count" aria-hidden="true"></span><svg aria-hidden="true" id="tb-adv-chev" width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="opacity:.7"><polyline points="6 9 12 15 18 9"/></svg></button>
   <button class="bb-util" onclick="actions.help()" title="Help — quick reference, keyboard shortcuts, glossary, accessibility" aria-label="Help — quick reference, keyboard shortcuts, glossary, accessibility" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="4.93" y1="4.93" x2="9.17" y2="9.17"/><line x1="14.83" y1="14.83" x2="19.07" y2="19.07"/><line x1="14.83" y1="9.17" x2="19.07" y2="4.93"/><line x1="4.93" y1="19.07" x2="9.17" y2="14.83"/></svg>Help</button>
   <button class="bb-util" id="lb-skin-btn" onclick="lbToggleSkinMenu(event)" title="Color skin" aria-label="Change color skin" style="height:100%;padding:0 13px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="13.5" cy="6.5" r=".6" fill="currentColor" stroke="none"/><circle cx="17" cy="10.5" r=".6" fill="currentColor" stroke="none"/><circle cx="8.5" cy="7.5" r=".6" fill="currentColor" stroke="none"/><circle cx="6.5" cy="12" r=".6" fill="currentColor" stroke="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c.93 0 1.65-.75 1.65-1.69 0-.44-.18-.83-.44-1.12-.29-.29-.44-.65-.44-1.13a1.65 1.65 0 0 1 1.67-1.67h1.97c3.05 0 5.55-2.5 5.55-5.55C21.95 6.01 17.45 2 12 2z"/></svg></button>
@@ -9080,7 +9079,7 @@ function _lpAdvancedSection(v, cr, pid, sid, n, isAdv){
   const num = (path,val,min,max) => `<input class="lfx-inp lfx-num" data-path="${path}" type="number" value="${val}" min="${min}" max="${max}" oninput="_lfxNumInput(this)" onfocus="_lfxFocus()" onchange="_lfxCommit()">`;
   const tog = (path,on,sub) => `<button type="button" class="lfx-tog${on?' on':''}" data-path="${path}"${sub?' data-sub="'+sub+'"':''} onclick="_lfxTog(this)" aria-pressed="${on}">${on?'ON':'OFF'}</button>`;
   const row = (label,ctl) => `<div class="lfx-row"><span class="lfx-lbl">${label}</span>${ctl}</div>`;
-  const color = (path,val) => `<div style="display:flex;gap:6px;align-items:center"><input type="color" class="lfx-color" data-path="${path}" value="${val}" oninput="_lfxColorInput(this)" onfocus="_lfxFocus()" onchange="_lfxCommit()" title="Pick a colour"><input type="text" class="lfx-inp lfx-hex" data-path="${path}" value="${val}" maxlength="7" spellcheck="false" oninput="_lfxHexInput(this)" onfocus="_lfxFocus()" onchange="_lfxCommit()" title="Hex colour"></div>`;
+  const color = (path,val) => `<div style="display:flex;gap:6px;align-items:center"><button type="button" class="lfx-swatch" data-path="${path}" style="background:${val}" onclick="_lfxOpenColor(this)" title="Open the colour picker" aria-label="Open the colour picker"></button><input type="text" class="lfx-inp lfx-hex" data-path="${path}" value="${val}" maxlength="7" spellcheck="false" oninput="_lfxHexInput(this)" onfocus="_lfxFocus()" onchange="_lfxCommit()" title="Hex colour"></div>`;
   const sec = (key,title,body) => `<div class="lfx-acc${_lfxOpen[key]?' open':''}" data-sec="${key}">
         <div class="lfx-hd" onclick="_lfxToggleSec('${key}')" title="Expand or collapse"><span class="lfx-ttl">${title}</span><span class="lfx-tools" onclick="event.stopPropagation()"><button type="button" title="Copy" aria-label="Copy section" onclick="_lfxSecAction('copy','${key}')">C</button><button type="button" title="Paste" aria-label="Paste section" onclick="_lfxSecAction('paste','${key}')">P</button><button type="button" title="Reset" aria-label="Reset section" onclick="_lfxSecAction('reset','${key}')">&#8634;</button></span><span class="lfx-chev" aria-hidden="true">&#9660;</span></div>
         <div class="lfx-body">${body}</div>
@@ -9511,23 +9510,48 @@ function _lfxNumInput(el){
   _lfxSetPath(c,el.dataset.path,Math.max(isNaN(lo)?-9999:lo,Math.min(isNaN(hi)?9999:hi,v)));
   _lfxApply();
 }
-function _lfxColorInput(el){
-  const c=_lfxPanelCtx(); if(!c) return;
-  if(!_lfxSnap) _lfxSnap=_snapshot();
-  const hex=String(el.value||'').toLowerCase();
-  if(!/^#[0-9a-f]{6}$/.test(hex)) return;
-  _lfxSetPath(c,el.dataset.path,hex);
-  const hx=el.parentElement&&el.parentElement.querySelector('.lfx-hex'); if(hx&&document.activeElement!==hx) hx.value=hex;
-  _lfxApply();
-}
 function _lfxHexInput(el){
   const hex=String(el.value||'').trim().toLowerCase().replace(/^([0-9a-f]{6})$/,'#$1');
   if(!/^#[0-9a-f]{6}$/.test(hex)) return;
   const c=_lfxPanelCtx(); if(!c) return;
   if(!_lfxSnap) _lfxSnap=_snapshot();
   _lfxSetPath(c,el.dataset.path,hex);
-  const ci=el.parentElement&&el.parentElement.querySelector('.lfx-color'); if(ci) ci.value=hex;
+  const sw=el.parentElement&&el.parentElement.querySelector('.lfx-swatch'); if(sw) sw.style.background=hex;
   _lfxApply();
+}
+// 16fq: the Edge / Shadow swatches open the app's own colour picker (#color-pop)
+// in callback mode — same spectrum / hue / alpha / hex / swatches as everywhere
+// else. The picker's A% drives the section's 0–256 opacity. Apply commits (one
+// undo step, pushed by cpApply); Close leaves the values as they were.
+function _lfxOpenColor(btn){
+  const c=_lfxPanelCtx(); if(!c) return;
+  const path=String(btn.dataset.path||''); const sec=path.split('.')[0];
+  if(sec!=='edge'&&sec!=='shadow') return;
+  const cur=getLayerFx(c.pid,c.sid,c.n)[sec];
+  const pop=document.getElementById('color-pop'); if(!pop) return;
+  cpSetFromHex(cur.color); _cpA=Math.max(0,Math.min(1,cur.op/256));
+  colorPopTarget={lfx:true, onApply:function(hex,a){
+    const c2=_lfxPanelCtx(); if(!c2) return;
+    const op=Math.round(Math.max(0,Math.min(1,a))*256);
+    setLayerFx(c2.pid,c2.sid,c2.n,{[sec]:{color:hex, op:op}});
+    const sw=c2.pop.querySelector('.lfx-swatch[data-path="'+path+'"]'); if(sw) sw.style.background=hex;
+    const hx=c2.pop.querySelector('.lfx-hex[data-path="'+path+'"]'); if(hx) hx.value=hex;
+    const opI=c2.pop.querySelector('.lfx-num[data-path="'+sec+'.op"]'); if(opI) opI.value=op;
+    _lfxApply();
+  }};
+  const hdr=document.getElementById('color-pop-header'); if(hdr) hdr.style.display='flex';
+  const lbl=document.getElementById('cp-label'); if(lbl) lbl.textContent='Layer '+c.n+' \u00b7 '+(sec==='edge'?'Edge colour':'Shadow colour');
+  const nameRow=document.getElementById('cp-name-row'); if(nameRow) nameRow.style.display='none';
+  const applyBtn=document.getElementById('cp-apply'); const imgBtn=applyBtn&&applyBtn.previousElementSibling; if(imgBtn) imgBtn.style.display='none';
+  pop.style.zIndex='650';                      // above the layer panel (600) so both stay usable
+  pop.style.display='block';
+  const pw=pop.offsetWidth||268, ph=pop.offsetHeight||440;
+  const pr=c.pop.getBoundingClientRect(), br=btn.getBoundingClientRect();
+  const safeT=(typeof _topbarSafeTop==='function')?_topbarSafeTop():8;
+  let left=pr.right+8; if(left+pw>window.innerWidth-8) left=pr.left-pw-8; if(left<8) left=8;
+  let top=br.top-8; if(top+ph>window.innerHeight-8) top=window.innerHeight-8-ph; if(top<safeT) top=safeT;
+  pop.style.left=Math.round(left)+'px'; pop.style.top=Math.round(top)+'px';
+  requestAnimationFrame(cpRefresh);
 }
 function _lfxTog(btn){
   const c=_lfxPanelCtx(); if(!c) return;
@@ -9670,6 +9694,7 @@ function makeDraggable(el, handle){
 function closeLayerPanel(){
   const p=document.getElementById('layer-panel');
   if(p) p.remove();
+  if(colorPopTarget&&colorPopTarget.lfx&&typeof closeColorPop==='function') closeColorPop();   // 16fq
   // Clear the mobile inline flag even if is-mobile flipped off mid-session —
   // a stranded true suppresses the desktop outside-click closers forever.
   if(window._mbInlinePanelOpen && typeof window._mbInlineClose==='function'){ window._mbInlineClose(); }
@@ -10596,6 +10621,12 @@ function cpApply(){
   pushUndo();
   const [r,g,b]=hsvToRgb(_cpH,_cpS,_cpV);
   const hex=rgbToHex(r,g,b);
+  if(colorPopTarget&&typeof colorPopTarget.onApply==='function'){   // 16fq callback mode (layer FX colours)
+    const cb=colorPopTarget.onApply, a=_cpA;
+    closeColorPop();
+    cb(hex,a);
+    return;
+  }
   if(_cpModalMode){
     pickModalColor(hex);
     _cpModalMode=false;
@@ -10863,6 +10894,9 @@ function triggerScreenImageUpload(sid,pid){
 function closeColorPop(){
   const pop=document.getElementById('color-pop');
   pop.style.display='none';
+  // 16fq: undo the callback-mode chrome (hidden Image button, raised z-index)
+  const _ab=document.getElementById('cp-apply'); const _ib=_ab&&_ab.previousElementSibling; if(_ib) _ib.style.display='';
+  pop.style.zIndex='500';
   pop.classList.remove('mb-color-fullscreen');
   if(typeof _mbColorBackdropRemove==='function') _mbColorBackdropRemove();
   colorPopTarget=null;
