@@ -740,7 +740,7 @@ body.is-mobile .dlg-btn-primary,body.is-mobile .dlg-btn-cancel{min-height:var(--
 .wire-nav-pillgroup .wire-nav-btn.wire-nav-active:hover{background:transparent}
 /* ── Reusable segmented control (matches the tool-nav) ── 2026-06-21 ──
    Track + lifted active thumb. Markup: <span class="lb-seg"><button class="lb-seg-btn on">..</button>..</span> */
-.lb-seg{display:inline-flex;align-items:center;gap:2px;padding:3px;border:1px solid var(--ss-border-soft);border-radius:999px;background:#0a0d12;box-shadow:var(--n-shadow-inset);vertical-align:middle}
+.lb-seg{display:inline-flex;align-items:center;gap:2px;padding:3px;border:1px solid var(--ss-border-soft);border-radius:4px;background:#0a0d12;box-shadow:var(--n-shadow-inset);vertical-align:middle}
 .lb-seg .lb-seg-btn{background:transparent;border:none;color:var(--ss-t2);font-size:11px;font-weight:700;letter-spacing:.02em;padding:0 14px;height:26px;border-radius:999px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px;font-family:inherit;transition:all .18s;white-space:nowrap}
 .lb-seg .lb-seg-btn:hover{background:rgba(255,255,255,.05);color:var(--ss-t1)}
 .lb-seg .lb-seg-btn.on{background:linear-gradient(180deg,var(--sk-pill1),var(--sk-pill2));color:var(--n-cyan);box-shadow:0 1px 3px rgba(0,0,0,.45), inset 0 1px 0 rgba(var(--n-cyan-rgb),.15);cursor:default}
@@ -3261,6 +3261,23 @@ button[onclick="event.stopPropagation();actions.addDSM()"]:hover{color:var(--n-a
 button[onclick="event.stopPropagation();actions.removeDSM()"]:hover{color:var(--n-red) !important}
 body #toolbar .tb-btn.save-dirty:not(.sec):not(.pri){color:rgba(240,192,96,.6) !important}
 body #toolbar .tb-btn.save-dirty:not(.sec):not(.pri):hover{color:#f0c060 !important}
+
+/* ══ SQUARE CORNERS (2026-09-13, build 16fm — Omar: "lets do Squares… fit inside the box correctly") ══
+   Boxed controls replace the 999px pills app-wide. Rules: outer 4px; a recessed inner face
+   (::before, inset 3px) gets 2px = outer − inset, so the two rectangles nest; segmented tracks
+   4px with their buttons + thumb at 3px; chips, tags, colour dots, labels 3px. Things that MEAN
+   round stay round: status/LED dots, toggle-switch sliders + knobs, count badges, PDF cover brand.
+   Kept as ONE block at the end of the cascade (the recess pass ~L798 uses !important, so this
+   must too) instead of editing ~160 older rules — revert = delete this block + the inline edits. */
+.tbi,.tb-btn,.p-code,.p-name,.del-btn,.dsm-toggle,#collapse-btn,#custom-input,.fs-nav-btn,.fs-panel-hdr .fs-add-btn,.fs-num-inp,.fs-edid-inp,.pm-btn-primary,.pm-btn-cancel,.pm-btn-danger,.dlg-btn-primary,.dlg-btn-cancel,.cpr-btn,#wire-overlay .wire-panel-inline-toggle,.topbar-exit-btn,.sys-name-cell .sys-name-input,#wire-overlay .wire-custom-name,.sys-btn,.sys-add-btn,.pill-btn,button[onclick="_wireDownloadAllThumbnails()"],#wire-zoom-widget,#wire-zoom-widget button,#wire-router-menu-btn,.ob-cta,.bb-pod-action,.sys-scope-pill,.sys-type-input,.skip-link,.mb-empty-cta,.mb-le-nameinput,.tbc,#sp-bg-btn,button[onclick^="setCrop("],.lb-seg,.lp-mode-toggle,.wire-nav-pillgroup,.pm-hdr .pm-close,#wire-overlay .wire-pane-add,button[onclick="closeColorPop()"],button[onclick="closeResWarn()"],#wire-overlay .wire-card-delete,#wire-overlay .wire-thumb-clear,.blend-popup-close,.fs-zoom-btn,.lc-reset,button[onclick="event.stopPropagation();actions.addDSM()"],button[onclick="event.stopPropagation();actions.removeDSM()"],.eng-toggle:focus-visible,button[class*="btn"]:focus-visible,button[class*="pill"]:focus-visible{border-radius:4px !important}
+.lb-seg .lb-seg-btn,.lb-seg .seg-thumb,.lp-mode-toggle .seg-thumb,.lp-mode-toggle .lp-mode-btn,.wire-nav-pillgroup .wire-nav-btn,.wire-nav-pillgroup .wire-nav-thumb,.sys-modal .beta-pill,.mb-le-reschip,.mb-le-chip,.chip-x,.aoi-btn,.layer-dot,.dsm-dot{border-radius:3px !important}
+#toolbar .tb-btn::before,#table-toolbar .tb-btn::before,#custom-modal .tb-btn::before,.dlg-btn-primary::before,.dlg-btn-cancel::before,.pm-btn-primary::before,.pm-btn-cancel::before,.pm-btn-danger::before,.sys-btn::before,.del-btn::before,.cpr-btn::before,.fs-nav-btn::before,.pill-btn::before,#wire-overlay .wire-pane-add::before,.pm-hdr .pm-close::before,.sys-add-btn::before,.topbar-exit-btn::before,button[onclick="_wireResetLayout()"]::before,button[onclick="openWireExportModal()"]::before,#wire-router-menu-btn::before,button[onclick="closeFullscreen()"]::before,button[onclick="resetA11y()"]::before,button[onclick^="triggerScreenImageUpload"]::before,button[onclick="_wireDownloadAllThumbnails()"]::before,.tbc::before,#wire-overlay .wire-panel-inline-toggle::before,button[onclick="closeColorPop()"]::before,button[onclick="closeResWarn()"]::before,.fs-zoom-btn::before{border-radius:2px !important}
+/* DSM/AUX strip − + : boxes on the AUX chip's height (21px) with a glyph that fills the box. */
+button[onclick="event.stopPropagation();actions.addDSM()"],button[onclick="event.stopPropagation();actions.removeDSM()"]{height:21px !important;width:26px !important;padding:0 !important;font-size:16px !important;font-weight:700 !important;line-height:1 !important}
+/* Working-preset marker: a 3px amber bar on the left of the preset row last pointed at
+   (.pr-current, kept in _currentPid so it survives re-renders). */
+.preset-row{border-left:3px solid transparent}
+.preset-row.pr-current{border-left-color:var(--n-amber)}
 </style>
 </head>
 <body data-skin="black">
@@ -3409,7 +3426,7 @@ Also called DSM (Downstage Monitor) in broadcast and theater workflows — same 
   <div class="bb-cell bb-pill bb-yellow" title="The largest number of layers used in any single preset — this is the figure to compare against your switcher's per-scene layer budget. (The most complex single moment in the show.)"><span class="bb-label">Layers</span><strong id="bb-layers">0</strong></div>
   <div id="bb-spacer"></div>
   <div class="bb-cell" id="bb-sel" style="font-size:10px;opacity:.5">—</div>
-  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy — hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16fl</div>
+  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy — hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16fm</div>
   <button class="bb-util" id="tb-adv" onclick="actions.advancedMenu(event)" title="Advanced features (AOI, Free Mode, Blend Zones, Dead Space)" aria-label="Advanced features (AOI, Free Mode, Blend Zones, Dead Space)" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Advanced<span class="adv-count" aria-hidden="true"></span><svg aria-hidden="true" id="tb-adv-chev" width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="opacity:.7"><polyline points="6 9 12 15 18 9"/></svg></button>
   <button class="bb-util" onclick="actions.help()" title="Help — quick reference, keyboard shortcuts, glossary, accessibility" aria-label="Help — quick reference, keyboard shortcuts, glossary, accessibility" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="4.93" y1="4.93" x2="9.17" y2="9.17"/><line x1="14.83" y1="14.83" x2="19.07" y2="19.07"/><line x1="14.83" y1="9.17" x2="19.07" y2="4.93"/><line x1="4.93" y1="19.07" x2="9.17" y2="14.83"/></svg>Help</button>
   <button class="bb-util" id="lb-skin-btn" onclick="lbToggleSkinMenu(event)" title="Color skin" aria-label="Change color skin" style="height:100%;padding:0 13px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="13.5" cy="6.5" r=".6" fill="currentColor" stroke="none"/><circle cx="17" cy="10.5" r=".6" fill="currentColor" stroke="none"/><circle cx="8.5" cy="7.5" r=".6" fill="currentColor" stroke="none"/><circle cx="6.5" cy="12" r=".6" fill="currentColor" stroke="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c.93 0 1.65-.75 1.65-1.69 0-.44-.18-.83-.44-1.12-.29-.29-.44-.65-.44-1.13a1.65 1.65 0 0 1 1.67-1.67h1.97c3.05 0 5.55-2.5 5.55-5.55C21.95 6.01 17.45 2 12 2z"/></svg></button>
@@ -3549,8 +3566,8 @@ Also called DSM (Downstage Monitor) in broadcast and theater workflows — same 
       <button onclick="_wireZoomBy(0.1)" style="background:transparent;border:none;color:var(--n-cyan);font-size:13px;font-weight:700;padding:4px 10px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;height:26px;min-width:26px" title="Zoom in" aria-label="Zoom in"><svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
       <button onclick="_wireZoomFit()" style="background:rgba(var(--n-cyan-rgb),.08);border:none;border-left:1px solid rgba(var(--n-cyan-rgb),.25);color:var(--n-cyan);font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:0 12px;cursor:pointer;height:26px" title="Fit all content to view" aria-label="Fit all content to view"><svg aria-hidden="true" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;margin-right:4px"><polyline points="4 14 4 4 14 4"/><polyline points="20 10 20 20 10 20"/></svg>Fit</button>
     </div>
-    <button onclick="openWireExportModal()" style="font-size:11px;padding:5px 12px;border:1px solid rgba(124,245,152,.5);border-radius:999px;background:linear-gradient(180deg,#0c1a13 0%,#080f0c 100%);color:#7cf598;cursor:pointer;font-weight:600;letter-spacing:.03em;display:inline-flex;align-items:center;gap:5px;box-shadow:var(--n-shadow-raised);transition:all .15s" title="Export the Wire diagram as PDF, SVG, or PNG" aria-label="Export Wire diagram"><svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export</button>
-    <button onclick="_wireResetLayout()" style="font-size:11px;padding:5px 12px;border:1px solid rgba(var(--n-cyan-rgb),.4);border-radius:999px;background:linear-gradient(180deg,#0c1a24 0%,#080f18 100%);color:var(--n-cyan);cursor:pointer;font-weight:600;letter-spacing:.03em;display:inline-flex;align-items:center;gap:5px;box-shadow:var(--n-shadow-raised);transition:all .15s" title="Snap every node back to the default 3-column auto layout" aria-label="Reset Wire Mode layout to auto"><svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>Reset Layout</button>
+    <button onclick="openWireExportModal()" style="font-size:11px;padding:5px 12px;border:1px solid rgba(124,245,152,.5);border-radius:4px;background:linear-gradient(180deg,#0c1a13 0%,#080f0c 100%);color:#7cf598;cursor:pointer;font-weight:600;letter-spacing:.03em;display:inline-flex;align-items:center;gap:5px;box-shadow:var(--n-shadow-raised);transition:all .15s" title="Export the Wire diagram as PDF, SVG, or PNG" aria-label="Export Wire diagram"><svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export</button>
+    <button onclick="_wireResetLayout()" style="font-size:11px;padding:5px 12px;border:1px solid rgba(var(--n-cyan-rgb),.4);border-radius:4px;background:linear-gradient(180deg,#0c1a24 0%,#080f18 100%);color:var(--n-cyan);cursor:pointer;font-weight:600;letter-spacing:.03em;display:inline-flex;align-items:center;gap:5px;box-shadow:var(--n-shadow-raised);transition:all .15s" title="Snap every node back to the default 3-column auto layout" aria-label="Reset Wire Mode layout to auto"><svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>Reset Layout</button>
     <!-- Wire-specific sub-toolbar only. The 3-way nav + Exit live in the
          persistent home toolbar above so muscle-memory targets stay
          constant across views. -->
@@ -3598,7 +3615,7 @@ Also called DSM (Downstage Monitor) in broadcast and theater workflows — same 
         <!-- Floating tool palette — Select / Hand. Vertically centered on
              the canvas wrapper (not the scrollable child), so it stays
              pinned regardless of pan/scroll. -->
-        <div id="wire-tool-palette" style="position:absolute;top:50%;left:12px;transform:translateY(-50%);display:inline-flex;flex-direction:column;gap:0;border:1px solid rgba(var(--n-cyan-rgb),.35);border-radius:999px;background:linear-gradient(180deg,#0c1a24 0%,#080f18 100%);box-shadow:var(--n-shadow-raised);overflow:hidden;z-index:30">
+        <div id="wire-tool-palette" style="position:absolute;top:50%;left:12px;transform:translateY(-50%);display:inline-flex;flex-direction:column;gap:0;border:1px solid rgba(var(--n-cyan-rgb),.35);border-radius:4px;background:linear-gradient(180deg,#0c1a24 0%,#080f18 100%);box-shadow:var(--n-shadow-raised);overflow:hidden;z-index:30">
           <button id="wire-tool-select" onclick="_wireSetTool('select')" title="Select tool — click nodes, draw wires, drag in Advanced" aria-label="Select tool" style="background:transparent;border:none;color:var(--n-cyan);padding:0;cursor:pointer;width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;transition:all .12s"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3l7.07 17 2.51-7.39L20 10.07 3 3z"/></svg></button>
           <span style="height:1px;align-self:stretch;background:rgba(var(--n-cyan-rgb),.18)"></span>
           <button id="wire-tool-hand" onclick="_wireSetTool('hand')" title="Hand tool — click and drag anywhere to pan the canvas" aria-label="Hand / pan tool" style="background:transparent;border:none;color:var(--n-cyan);padding:0;cursor:pointer;width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;transition:all .12s"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 11V6a2 2 0 0 0-4 0v5"/><path d="M14 10V4a2 2 0 0 0-4 0v6"/><path d="M10 10.5V6a2 2 0 0 0-4 0v8"/><path d="M18 8a2 2 0 0 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/></svg></button>
@@ -3736,7 +3753,7 @@ Also called DSM (Downstage Monitor) in broadcast and theater workflows — same 
     <!-- Centre — lock + exit (absolute centred) -->
     <div style="position:absolute;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:8px">
       <div id="fs-lock-btn" class="n-lock-slider" onclick="fsToggleLock()" title="Lock/free canvas"><div class="n-lock-knob"><svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg></div><span class="n-lock-label">Free</span></div>
-      <button onclick="closeFullscreen()" style="font-size:11px;padding:5px 14px;border:1px solid rgba(255,77,90,.4);border-radius:999px;background:linear-gradient(180deg,#1a0c10 0%,#120a0d 100%);color:var(--n-red);cursor:pointer;font-weight:600;letter-spacing:.03em;display:inline-flex;align-items:center;gap:5px;box-shadow:var(--n-shadow-raised);transition:all .15s" onmouseover="this.style.boxShadow='var(--n-shadow-raised), 0 0 8px rgba(255,77,90,.4)'" onmouseout="this.style.boxShadow='var(--n-shadow-raised)'" title="Exit engineer mode" aria-label="Exit engineer mode"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Exit</button>
+      <button onclick="closeFullscreen()" style="font-size:11px;padding:5px 14px;border:1px solid rgba(255,77,90,.4);border-radius:4px;background:linear-gradient(180deg,#1a0c10 0%,#120a0d 100%);color:var(--n-red);cursor:pointer;font-weight:600;letter-spacing:.03em;display:inline-flex;align-items:center;gap:5px;box-shadow:var(--n-shadow-raised);transition:all .15s" onmouseover="this.style.boxShadow='var(--n-shadow-raised), 0 0 8px rgba(255,77,90,.4)'" onmouseout="this.style.boxShadow='var(--n-shadow-raised)'" title="Exit engineer mode" aria-label="Exit engineer mode"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Exit</button>
     </div>
     <!-- Right — zoom + tools -->
     <div style="display:flex;align-items:center;gap:6px;padding:0 14px;flex:1;justify-content:flex-end">
@@ -3745,7 +3762,7 @@ Also called DSM (Downstage Monitor) in broadcast and theater workflows — same 
       <button onclick="fsFitScreen()" class="fs-nav-btn" title="Fit view" aria-label="Fit view">Fit</button>
       <div style="width:1px;height:22px;background:var(--n-line)"></div>
       <button onclick="fsZoomBy(-0.15)" title="Zoom out" aria-label="Zoom out" class="fs-zoom-btn">−</button>
-      <span id="fs-zoom-lbl" style="font-size:11px;font-weight:600;color:var(--text);min-width:46px;text-align:center;padding:4px 10px;border-radius:999px;border:1px solid var(--n-line);background:var(--n-track);cursor:pointer;font-family:var(--font-mono)" onclick="fsFitScreen()" title="Click to fit">100%</span>
+      <span id="fs-zoom-lbl" style="font-size:11px;font-weight:600;color:var(--text);min-width:46px;text-align:center;padding:4px 10px;border-radius:4px;border:1px solid var(--n-line);background:var(--n-track);cursor:pointer;font-family:var(--font-mono)" onclick="fsFitScreen()" title="Click to fit">100%</span>
       <button onclick="fsZoomBy(0.15)"  title="Zoom in" aria-label="Zoom in"  class="fs-zoom-btn">+</button>
     </div>
   </div>
@@ -3931,7 +3948,7 @@ Also called DSM (Downstage Monitor) in broadcast and theater workflows — same 
   <div id="cp-name-row" style="display:none;margin-bottom:10px">
     <div style="font-size:10px;font-weight:800;color:var(--n-cyan);letter-spacing:.12em;text-transform:uppercase;margin-bottom:5px;display:flex;align-items:center;gap:5px"><span style="width:2px;height:9px;border-radius:1px;background:var(--n-cyan);box-shadow:0 0 4px var(--n-cyan);display:inline-block"></span>BG Name <span style="font-weight:500;opacity:.6;color:var(--text3);letter-spacing:.04em">· optional label</span></div>
     <input id="cp-name" placeholder="e.g. FULL BLACK · LOGO · STAGE MAP"
-      style="width:100%;font-size:11px;padding:6px 12px;border:1px solid rgba(255,255,255,.06);border-radius:999px;background:var(--n-track);color:#fff;outline:none;box-sizing:border-box;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5);transition:all .15s;font-family:var(--font-mono)"
+      style="width:100%;font-size:11px;padding:6px 12px;border:1px solid rgba(255,255,255,.06);border-radius:4px;background:var(--n-track);color:#fff;outline:none;box-sizing:border-box;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5);transition:all .15s;font-family:var(--font-mono)"
       data-fx="cyan"
       onkeydown="if(event.key==='Enter')cpApply()" aria-label="BG color label">
   </div>
@@ -3961,23 +3978,23 @@ Also called DSM (Downstage Monitor) in broadcast and theater workflows — same 
   <div style="display:flex;gap:5px;margin-bottom:10px;align-items:center">
     <div style="flex:1.4">
       <div style="font-size:10px;color:var(--text3);margin-bottom:4px;text-align:center;letter-spacing:.1em;font-weight:700">HEX</div>
-      <input id="cp-hex" maxlength="7" style="width:100%;font-size:12px;padding:6px 8px;border:1px solid rgba(255,255,255,.06);border-radius:999px;background:var(--n-track);color:#fff;outline:none;text-align:center;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5);transition:all .15s;font-family:var(--font-mono)" data-fx="cyan" aria-label="Hex color">
+      <input id="cp-hex" maxlength="7" style="width:100%;font-size:12px;padding:6px 8px;border:1px solid rgba(255,255,255,.06);border-radius:4px;background:var(--n-track);color:#fff;outline:none;text-align:center;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5);transition:all .15s;font-family:var(--font-mono)" data-fx="cyan" aria-label="Hex color">
     </div>
     <div style="flex:1">
       <div style="font-size:10px;color:var(--text3);margin-bottom:4px;text-align:center;letter-spacing:.1em;font-weight:700">R</div>
-      <input id="cp-r" type="number" min="0" max="255" style="width:100%;font-size:12px;padding:6px 4px;border:1px solid rgba(255,255,255,.06);border-radius:999px;background:var(--n-track);color:#fff;outline:none;text-align:center;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5);transition:all .15s;font-family:var(--font-mono)" data-fx="red" aria-label="Red (0-255)">
+      <input id="cp-r" type="number" min="0" max="255" style="width:100%;font-size:12px;padding:6px 4px;border:1px solid rgba(255,255,255,.06);border-radius:4px;background:var(--n-track);color:#fff;outline:none;text-align:center;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5);transition:all .15s;font-family:var(--font-mono)" data-fx="red" aria-label="Red (0-255)">
     </div>
     <div style="flex:1">
       <div style="font-size:10px;color:var(--text3);margin-bottom:4px;text-align:center;letter-spacing:.1em;font-weight:700">G</div>
-      <input id="cp-g" type="number" min="0" max="255" style="width:100%;font-size:12px;padding:6px 4px;border:1px solid rgba(255,255,255,.06);border-radius:999px;background:var(--n-track);color:#fff;outline:none;text-align:center;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5);transition:all .15s;font-family:var(--font-mono)" data-fx="green" aria-label="Green (0-255)">
+      <input id="cp-g" type="number" min="0" max="255" style="width:100%;font-size:12px;padding:6px 4px;border:1px solid rgba(255,255,255,.06);border-radius:4px;background:var(--n-track);color:#fff;outline:none;text-align:center;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5);transition:all .15s;font-family:var(--font-mono)" data-fx="green" aria-label="Green (0-255)">
     </div>
     <div style="flex:1">
       <div style="font-size:10px;color:var(--text3);margin-bottom:4px;text-align:center;letter-spacing:.1em;font-weight:700">B</div>
-      <input id="cp-b" type="number" min="0" max="255" style="width:100%;font-size:12px;padding:6px 4px;border:1px solid rgba(255,255,255,.06);border-radius:999px;background:var(--n-track);color:#fff;outline:none;text-align:center;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5);transition:all .15s;font-family:var(--font-mono)" data-fx="cyan" aria-label="Blue (0-255)">
+      <input id="cp-b" type="number" min="0" max="255" style="width:100%;font-size:12px;padding:6px 4px;border:1px solid rgba(255,255,255,.06);border-radius:4px;background:var(--n-track);color:#fff;outline:none;text-align:center;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5);transition:all .15s;font-family:var(--font-mono)" data-fx="cyan" aria-label="Blue (0-255)">
     </div>
     <div style="flex:.8">
       <div style="font-size:10px;color:var(--text3);margin-bottom:4px;text-align:center;letter-spacing:.1em;font-weight:700">A%</div>
-      <input id="cp-a" type="number" min="0" max="100" style="width:100%;font-size:12px;padding:6px 4px;border:1px solid rgba(255,255,255,.06);border-radius:999px;background:var(--n-track);color:#fff;outline:none;text-align:center;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5);transition:all .15s;font-family:var(--font-mono)" data-fx="purple" aria-label="Alpha (0-100%)">
+      <input id="cp-a" type="number" min="0" max="100" style="width:100%;font-size:12px;padding:6px 4px;border:1px solid rgba(255,255,255,.06);border-radius:4px;background:var(--n-track);color:#fff;outline:none;text-align:center;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5);transition:all .15s;font-family:var(--font-mono)" data-fx="purple" aria-label="Alpha (0-100%)">
     </div>
   </div>
   <!-- Preview + quick swatches -->
@@ -3987,7 +4004,7 @@ Also called DSM (Downstage Monitor) in broadcast and theater workflows — same 
   </div>
   <!-- Upload + Apply buttons -->
   <div style="display:flex;gap:6px">
-    <button onclick="triggerScreenImageUpload(colorPopTarget&&colorPopTarget.sid,colorPopTarget&&colorPopTarget.pid)" style="flex:1;font-size:10px;padding:6px;border:1px dashed rgba(var(--n-cyan-rgb),.35);border-radius:999px;background:linear-gradient(180deg,#141d33 0%,#0c1322 100%);color:var(--text2);cursor:pointer;transition:all .15s" onmouseover="this.style.color='var(--n-cyan)';this.style.borderColor='var(--n-cyan)'" onmouseout="this.style.color='var(--text2)';this.style.borderColor='rgba(var(--n-cyan-rgb),.35)'">🖼 Image</button>
+    <button onclick="triggerScreenImageUpload(colorPopTarget&&colorPopTarget.sid,colorPopTarget&&colorPopTarget.pid)" style="flex:1;font-size:10px;padding:6px;border:1px dashed rgba(var(--n-cyan-rgb),.35);border-radius:4px;background:linear-gradient(180deg,#141d33 0%,#0c1322 100%);color:var(--text2);cursor:pointer;transition:all .15s" onmouseover="this.style.color='var(--n-cyan)';this.style.borderColor='var(--n-cyan)'" onmouseout="this.style.color='var(--text2)';this.style.borderColor='rgba(var(--n-cyan-rgb),.35)'">🖼 Image</button>
     <button id="cp-apply" onclick="cpApply()" class="pm-btn-primary" style="flex:2">Apply</button>
   </div>
   </div><!-- /.cp-controls-col -->
@@ -4260,7 +4277,7 @@ Also called DSM (Downstage Monitor) in broadcast and theater workflows — same 
         <!-- Reset All -->
         <div style="margin-top:24px;padding-top:14px;border-top:1px solid var(--n-line);display:flex;justify-content:flex-end;align-items:center;gap:12px">
           <div style="font-size:10px;color:#8a93a8;flex:1">Restore everything to defaults and clear stored settings.</div>
-          <button onclick="resetA11y()" style="padding:7px 16px;border:1px solid rgba(255,77,90,.4);background:linear-gradient(180deg,#1a0c10 0%,#120a0d 100%);color:#ff8a92;border-radius:999px;cursor:pointer;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-family:inherit;transition:all .15s" title="Reset all accessibility settings to defaults" aria-label="Reset all accessibility settings to defaults">↺ Reset All</button>
+          <button onclick="resetA11y()" style="padding:7px 16px;border:1px solid rgba(255,77,90,.4);background:linear-gradient(180deg,#1a0c10 0%,#120a0d 100%);color:#ff8a92;border-radius:4px;cursor:pointer;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-family:inherit;transition:all .15s" title="Reset all accessibility settings to defaults" aria-label="Reset all accessibility settings to defaults">↺ Reset All</button>
         </div>
 
       </div>
@@ -4435,21 +4452,21 @@ Also called DSM (Downstage Monitor) in broadcast and theater workflows — same 
     <div style="margin-bottom:10px">
       <div style="font-size:11px;color:var(--text3);margin-bottom:4px;letter-spacing:.04em">Name</div>
       <input id="ms-n" placeholder="Destination 01"
-        style="width:100%;font-size:12px;padding:7px 14px;border:1px solid rgba(255,255,255,.06);border-radius:999px;background:var(--n-track);color:#fff;outline:none;box-sizing:border-box;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5);transition:all .15s;font-family:var(--font-mono)"
+        style="width:100%;font-size:12px;padding:7px 14px;border:1px solid rgba(255,255,255,.06);border-radius:4px;background:var(--n-track);color:#fff;outline:none;box-sizing:border-box;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5);transition:all .15s;font-family:var(--font-mono)"
         data-fx="orange" aria-label="Destination name">
     </div>
     <div style="display:grid;grid-template-columns:1fr 16px 1fr;gap:6px;align-items:end;margin-bottom:14px">
       <div>
         <div style="font-size:11px;color:var(--text3);margin-bottom:4px;letter-spacing:.04em">Width</div>
         <input id="ms-w" type="number" min="67" max="7680" value="1920"
-          style="width:100%;font-size:12px;padding:7px 12px;border:1px solid rgba(255,255,255,.06);border-radius:999px;background:var(--n-track);color:#9dd6ff;outline:none;box-sizing:border-box;appearance:textfield;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5);transition:all .15s;font-family:var(--font-mono);text-align:center"
+          style="width:100%;font-size:12px;padding:7px 12px;border:1px solid rgba(255,255,255,.06);border-radius:4px;background:var(--n-track);color:#9dd6ff;outline:none;box-sizing:border-box;appearance:textfield;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5);transition:all .15s;font-family:var(--font-mono);text-align:center"
           data-fx="orange-c" aria-label="Destination width (px)">
       </div>
       <div style="color:var(--text3);font-size:13px;text-align:center;padding-bottom:8px">×</div>
       <div>
         <div style="font-size:11px;color:var(--text3);margin-bottom:4px;letter-spacing:.04em">Height</div>
         <input id="ms-h" type="number" min="67" max="4320" value="1080"
-          style="width:100%;font-size:12px;padding:7px 12px;border:1px solid rgba(255,255,255,.06);border-radius:999px;background:var(--n-track);color:#9dd6ff;outline:none;box-sizing:border-box;appearance:textfield;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5);transition:all .15s;font-family:var(--font-mono);text-align:center"
+          style="width:100%;font-size:12px;padding:7px 12px;border:1px solid rgba(255,255,255,.06);border-radius:4px;background:var(--n-track);color:#9dd6ff;outline:none;box-sizing:border-box;appearance:textfield;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5);transition:all .15s;font-family:var(--font-mono);text-align:center"
           data-fx="orange-c" aria-label="Destination height (px)">
       </div>
     </div>
@@ -4462,7 +4479,7 @@ Also called DSM (Downstage Monitor) in broadcast and theater workflows — same 
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
         <div id="ms-preview" style="width:34px;height:26px;border-radius:6px;border:1px solid rgba(255,255,255,.15);background:#1a1a1a;flex-shrink:0;box-shadow:0 1px 4px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.05)"></div>
         <input id="ms-hex" maxlength="7" value="#1a1a1a"
-          style="width:80px;font-size:11px;padding:5px 12px;border:1px solid rgba(255,255,255,.06);border-radius:999px;background:var(--n-track);color:#fff;outline:none;font-family:var(--font-mono);text-align:center;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5);transition:all .15s"
+          style="width:80px;font-size:11px;padding:5px 12px;border:1px solid rgba(255,255,255,.06);border-radius:4px;background:var(--n-track);color:#fff;outline:none;font-family:var(--font-mono);text-align:center;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5);transition:all .15s"
           data-fx="orange" aria-label="Destination color (hex)">
         <button onclick="openModalColorPicker()" class="pm-btn-cancel" style="flex:0 0 auto;height:28px;padding:5px 14px;font-size:10px">Pick…</button>
       </div>
@@ -4865,13 +4882,13 @@ function renderDSMToolbar(p){
     </span>
     <div style="width:1px;height:16px;background:rgba(240,192,96,.18);flex-shrink:0;margin-right:2px"></div>
     <button onclick="event.stopPropagation();actions.removeDSM()"
-      style="font-size:14px;width:22px;height:22px;border-radius:999px;border:1px solid rgba(255,77,90,.3);background:linear-gradient(180deg,#1a1408 0%,#120e08 100%);color:rgba(255,77,90,.85);cursor:${dsms.length>0?'pointer':'default'};line-height:1;padding:0 0 2px 0;font-weight:700;transition:all .15s;margin-right:4px;flex-shrink:0;opacity:${dsms.length>0?'1':'.4'}"
+      style="font-size:14px;width:22px;height:22px;border-radius:4px;border:1px solid rgba(255,77,90,.3);background:linear-gradient(180deg,#1a1408 0%,#120e08 100%);color:rgba(255,77,90,.85);cursor:${dsms.length>0?'pointer':'default'};line-height:1;padding:0 0 2px 0;font-weight:700;transition:all .15s;margin-right:4px;flex-shrink:0;opacity:${dsms.length>0?'1':'.4'}"
       onmouseover="if(${dsms.length>0}){this.style.borderColor='var(--n-red)';this.style.color='var(--n-red)';this.style.boxShadow='0 0 6px rgba(255,77,90,.4)'}"
       onmouseout="this.style.borderColor='rgba(255,77,90,.3)';this.style.color='rgba(255,77,90,.85)';this.style.boxShadow='none'"
       title="${dsms.length>0?('Remove last '+_esc(lbl)):'Nothing to remove'}">−</button>
     ${boxes}
     <button onclick="event.stopPropagation();actions.addDSM()"
-      style="font-size:12px;width:22px;height:22px;border-radius:999px;border:1px solid rgba(240,192,96,.35);background:linear-gradient(180deg,#1a1408 0%,#120e08 100%);color:var(--n-amber);cursor:pointer;line-height:1;padding:0;font-weight:700;transition:all .15s;flex-shrink:0"
+      style="font-size:12px;width:22px;height:22px;border-radius:4px;border:1px solid rgba(240,192,96,.35);background:linear-gradient(180deg,#1a1408 0%,#120e08 100%);color:var(--n-amber);cursor:pointer;line-height:1;padding:0;font-weight:700;transition:all .15s;flex-shrink:0"
       onmouseover="this.style.borderColor='var(--n-amber)';this.style.boxShadow='0 0 6px rgba(240,192,96,.4)'"
       onmouseout="this.style.borderColor='rgba(240,192,96,.35)';this.style.boxShadow='none'"
       title="Add ${_esc(lbl)}" aria-label="Add ${_esc(lbl)}">+</button>
@@ -6707,7 +6724,8 @@ function renderCanvas(){
     const blendGroups=_rcBlendGroups(pos,sc,p.id);
     const szd=p.minimized?'border-radius:7px;width:'+(canvasVW+20)+'px':'min-width:'+(canvasVW+20)+'px';
     const cp=_copiedPreset;
-    return '<div class="preset-row" data-pid="'+p.id+'" style="'+szd+'" ondragover="presetDragOver(event)" ondrop="presetDrop(event,\''+p.id+'\')">'
+    const _cur=(_currentPid&&presets.some(x=>x.id===_currentPid))?_currentPid:(presets[0]&&presets[0].id);
+    return '<div class="preset-row'+(p.id===_cur?' pr-current':'')+'" data-pid="'+p.id+'" style="'+szd+'" ondragover="presetDragOver(event)" ondrop="presetDrop(event,\''+p.id+'\')">'
       +'<div class="preset-header" ondblclick="_safeToggleMinimize(event,\''+p.id+'\')">'
         +'<div draggable="true" ondragstart="presetDragStart(event,\''+p.id+'\')" ondragend="presetDragEnd()" style="display:flex;align-items:center;padding:0 6px 0 0;cursor:grab;color:var(--text3);opacity:.5;user-select:none;flex-shrink:0" title="Drag to reorder"><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><circle cx="9" cy="5" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="15" cy="5" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="15" cy="19" r="1"/></svg></div>'
         +'<div style="display:flex;flex-direction:column;gap:1px">'
@@ -7006,7 +7024,7 @@ function openDSMPanel(e,pid,dsmId){
 
     ${_sh('Name','(this preset)')}
     <input id="dsmp-name" value="${_esc(getDSMName(pid,dsmId))}"
-      style="width:100%;font-size:12px;padding:7px 14px;border:1px solid rgba(255,255,255,.06);border-radius:999px;background:var(--n-track);color:#fff;outline:none;box-sizing:border-box;margin-bottom:12px;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5);transition:all .15s"
+      style="width:100%;font-size:12px;padding:7px 14px;border:1px solid rgba(255,255,255,.06);border-radius:4px;background:var(--n-track);color:#fff;outline:none;box-sizing:border-box;margin-bottom:12px;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5);transition:all .15s"
       data-fx="amber" aria-label="AUX name (this preset)">
 
     ${_sh('Content Type','')}
@@ -7023,14 +7041,14 @@ function openDSMPanel(e,pid,dsmId){
       <div>
         <div style="font-size:11px;color:var(--text3);margin-bottom:4px;letter-spacing:.04em">Width</div>
         <input id="dsmp-w" type="number" value="${dsm.w}" min="67" max="7680"
-          style="width:100%;font-size:12px;padding:7px 12px;border:1px solid rgba(255,255,255,.06);border-radius:999px;background:var(--n-track);color:#9dd6ff;outline:none;box-sizing:border-box;appearance:textfield;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5);transition:all .15s;font-family:var(--font-mono);text-align:center"
+          style="width:100%;font-size:12px;padding:7px 12px;border:1px solid rgba(255,255,255,.06);border-radius:4px;background:var(--n-track);color:#9dd6ff;outline:none;box-sizing:border-box;appearance:textfield;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5);transition:all .15s;font-family:var(--font-mono);text-align:center"
           data-fx="amber-c" aria-label="AUX width (px)">
       </div>
       <div style="color:var(--text3);font-size:13px;text-align:center;padding-bottom:8px">×</div>
       <div>
         <div style="font-size:11px;color:var(--text3);margin-bottom:4px;letter-spacing:.04em">Height</div>
         <input id="dsmp-h" type="number" value="${dsm.h}" min="67" max="4320"
-          style="width:100%;font-size:12px;padding:7px 12px;border:1px solid rgba(255,255,255,.06);border-radius:999px;background:var(--n-track);color:#9dd6ff;outline:none;box-sizing:border-box;appearance:textfield;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5);transition:all .15s;font-family:var(--font-mono);text-align:center"
+          style="width:100%;font-size:12px;padding:7px 12px;border:1px solid rgba(255,255,255,.06);border-radius:4px;background:var(--n-track);color:#9dd6ff;outline:none;box-sizing:border-box;appearance:textfield;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5);transition:all .15s;font-family:var(--font-mono);text-align:center"
           data-fx="amber-c" aria-label="AUX height (px)">
       </div>
     </div>
@@ -8410,14 +8428,14 @@ function openScreenPanel(e,pid,sid){
       <div>
         <div style="font-size:11px;color:var(--text3);margin-bottom:4px;letter-spacing:.04em">Width</div>
         <input id="sp-w" type="number" value="${s.w}" min="67" max="7680"
-          style="width:100%;font-size:12px;padding:7px 12px;border:1px solid rgba(255,255,255,.06);border-radius:999px;background:var(--n-track);color:#9dd6ff;outline:none;box-sizing:border-box;appearance:textfield;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5);transition:all .15s;font-family:var(--font-mono);text-align:center"
+          style="width:100%;font-size:12px;padding:7px 12px;border:1px solid rgba(255,255,255,.06);border-radius:4px;background:var(--n-track);color:#9dd6ff;outline:none;box-sizing:border-box;appearance:textfield;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5);transition:all .15s;font-family:var(--font-mono);text-align:center"
           data-fx="orange-c" aria-label="Destination width (px)">
       </div>
       <div style="color:var(--text3);font-size:13px;text-align:center;padding-bottom:8px">×</div>
       <div>
         <div style="font-size:11px;color:var(--text3);margin-bottom:4px;letter-spacing:.04em">Height</div>
         <input id="sp-h" type="number" value="${s.h}" min="67" max="4320"
-          style="width:100%;font-size:12px;padding:7px 12px;border:1px solid rgba(255,255,255,.06);border-radius:999px;background:var(--n-track);color:#9dd6ff;outline:none;box-sizing:border-box;appearance:textfield;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5);transition:all .15s;font-family:var(--font-mono);text-align:center"
+          style="width:100%;font-size:12px;padding:7px 12px;border:1px solid rgba(255,255,255,.06);border-radius:4px;background:var(--n-track);color:#9dd6ff;outline:none;box-sizing:border-box;appearance:textfield;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5);transition:all .15s;font-family:var(--font-mono);text-align:center"
           data-fx="orange-c" aria-label="Destination height (px)">
       </div>
     </div>
@@ -8427,7 +8445,7 @@ function openScreenPanel(e,pid,sid){
       <div style="font-size:11px;font-weight:800;color:var(--n-cyan);letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:6px">
         <span style="width:2px;height:10px;border-radius:1px;background:var(--n-cyan);box-shadow:0 0 4px var(--n-cyan);display:inline-block"></span>
         <span>Layers <span style="font-weight:500;color:var(--text3);letter-spacing:.05em">· ${_esc(p.code)}</span></span>
-        <button id="sp-reset-layer-pos" title="Reset all layer positions on this destination to default staggered layout" aria-label="Reset all layer positions on this destination to default staggered layout" style="margin-left:auto;font-size:10px;padding:2px 8px;border:1px solid rgba(var(--n-cyan-rgb),.35);border-radius:999px;background:linear-gradient(180deg,rgba(var(--n-cyan-rgb),.08) 0%,rgba(var(--n-cyan-rgb),.02) 100%);color:var(--n-cyan);cursor:pointer;font-weight:600;display:flex;align-items:center;gap:3px;line-height:1;font-family:inherit">↺ <span style="letter-spacing:.04em">Reset</span></button>
+        <button id="sp-reset-layer-pos" title="Reset all layer positions on this destination to default staggered layout" aria-label="Reset all layer positions on this destination to default staggered layout" style="margin-left:auto;font-size:10px;padding:2px 8px;border:1px solid rgba(var(--n-cyan-rgb),.35);border-radius:4px;background:linear-gradient(180deg,rgba(var(--n-cyan-rgb),.08) 0%,rgba(var(--n-cyan-rgb),.02) 100%);color:var(--n-cyan);cursor:pointer;font-weight:600;display:flex;align-items:center;gap:3px;line-height:1;font-family:inherit">↺ <span style="letter-spacing:.04em">Reset</span></button>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:5px">
         ${getLayerNums(p.id).map(n=>{
@@ -8456,20 +8474,20 @@ function openScreenPanel(e,pid,sid){
         <div>
           <div style="font-size:11px;color:var(--text3);margin-bottom:4px;letter-spacing:.04em">X Position</div>
           <input id="sp-x" type="number" value="${pos.x}" step="1"
-            style="width:100%;font-size:12px;padding:7px 12px;border:1px solid rgba(255,255,255,.06);border-radius:999px;background:var(--n-track);color:#a8e6b6;outline:none;box-sizing:border-box;appearance:textfield;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5);transition:all .15s;font-family:var(--font-mono);text-align:center"
+            style="width:100%;font-size:12px;padding:7px 12px;border:1px solid rgba(255,255,255,.06);border-radius:4px;background:var(--n-track);color:#a8e6b6;outline:none;box-sizing:border-box;appearance:textfield;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5);transition:all .15s;font-family:var(--font-mono);text-align:center"
             data-fx="orange-c" aria-label="Destination X position (px)">
         </div>
         <div>
           <div style="font-size:11px;color:var(--text3);margin-bottom:4px;letter-spacing:.04em">Y Position</div>
           <input id="sp-y" type="number" value="${pos.y}" step="1"
-            style="width:100%;font-size:12px;padding:7px 12px;border:1px solid rgba(255,255,255,.06);border-radius:999px;background:var(--n-track);color:#a8e6b6;outline:none;box-sizing:border-box;appearance:textfield;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5);transition:all .15s;font-family:var(--font-mono);text-align:center"
+            style="width:100%;font-size:12px;padding:7px 12px;border:1px solid rgba(255,255,255,.06);border-radius:4px;background:var(--n-track);color:#a8e6b6;outline:none;box-sizing:border-box;appearance:textfield;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5);transition:all .15s;font-family:var(--font-mono);text-align:center"
             data-fx="orange-c" aria-label="Destination Y position (px)">
         </div>
       </div>
       <div>
         <div style="font-size:11px;color:var(--text3);margin-bottom:4px;letter-spacing:.04em">Rotation (°)</div>
         <input id="sp-rot" type="number" value="${rot}" min="-360" max="360" step="1"
-          style="width:100%;font-size:12px;padding:7px 12px;border:1px solid rgba(255,255,255,.06);border-radius:999px;background:var(--n-track);color:#ffd470;outline:none;box-sizing:border-box;appearance:textfield;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5);transition:all .15s;font-family:var(--font-mono);text-align:center"
+          style="width:100%;font-size:12px;padding:7px 12px;border:1px solid rgba(255,255,255,.06);border-radius:4px;background:var(--n-track);color:#ffd470;outline:none;box-sizing:border-box;appearance:textfield;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5);transition:all .15s;font-family:var(--font-mono);text-align:center"
           data-fx="orange-c" aria-label="Destination rotation (degrees)">
       </div>
     </div>
@@ -8481,18 +8499,18 @@ function openScreenPanel(e,pid,sid){
     </div>
 
     <div style="margin-top:8px">
-      <button id="sp-reset-layout" style="width:100%;font-size:10px;padding:7px;border:1px solid rgba(240,192,96,.35);border-radius:999px;background:linear-gradient(180deg,#1a1408 0%,#120e08 100%);color:var(--n-amber);cursor:pointer;font-weight:600" title="Wipe this preset's positions and rebuild left-to-right" aria-label="Wipe this preset's positions and rebuild left-to-right">↺ Reset Preset Layout</button>
+      <button id="sp-reset-layout" style="width:100%;font-size:10px;padding:7px;border:1px solid rgba(240,192,96,.35);border-radius:4px;background:linear-gradient(180deg,#1a1408 0%,#120e08 100%);color:var(--n-amber);cursor:pointer;font-weight:600" title="Wipe this preset's positions and rebuild left-to-right" aria-label="Wipe this preset's positions and rebuild left-to-right">↺ Reset Preset Layout</button>
     </div>
 
     <div style="margin-top:10px;padding-top:12px;border-top:1px solid var(--n-line)">
       <div style="font-size:11px;font-weight:800;color:var(--n-orange);letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:6px"><span style="width:2px;height:10px;border-radius:1px;background:var(--n-orange);box-shadow:0 0 4px var(--n-orange);display:inline-block"></span>Destination Display</div>
       <div style="display:flex;gap:6px;margin-bottom:10px">
         <button id="sp-show-show" onclick="actions.setShowMode('show')"
-          style="flex:1;font-size:10px;font-weight:700;letter-spacing:.06em;padding:7px;border-radius:999px;cursor:pointer;transition:all .15s;border:1px solid ${getShowMode(pid,sid)==='show'?'var(--n-orange)':'var(--n-line)'};background:${getShowMode(pid,sid)==='show'?'linear-gradient(180deg,rgba(255,138,61,.18) 0%,rgba(255,138,61,.06) 100%)':'linear-gradient(180deg,#141d33 0%,#0c1322 100%)'};color:${getShowMode(pid,sid)==='show'?'var(--n-orange)':'var(--text2)'};box-shadow:${getShowMode(pid,sid)==='show'?'inset 0 0 8px rgba(255,138,61,.2), 0 0 6px rgba(255,138,61,.2)':'var(--n-shadow-raised)'}">
+          style="flex:1;font-size:10px;font-weight:700;letter-spacing:.06em;padding:7px;border-radius:4px;cursor:pointer;transition:all .15s;border:1px solid ${getShowMode(pid,sid)==='show'?'var(--n-orange)':'var(--n-line)'};background:${getShowMode(pid,sid)==='show'?'linear-gradient(180deg,rgba(255,138,61,.18) 0%,rgba(255,138,61,.06) 100%)':'linear-gradient(180deg,#141d33 0%,#0c1322 100%)'};color:${getShowMode(pid,sid)==='show'?'var(--n-orange)':'var(--text2)'};box-shadow:${getShowMode(pid,sid)==='show'?'inset 0 0 8px rgba(255,138,61,.2), 0 0 6px rgba(255,138,61,.2)':'var(--n-shadow-raised)'}">
           Show Labels
         </button>
         <button id="sp-show-shape" onclick="actions.setShowMode('shape')"
-          style="flex:1;font-size:10px;font-weight:700;letter-spacing:.06em;padding:7px;border-radius:999px;cursor:pointer;transition:all .15s;border:1px solid ${getShowMode(pid,sid)==='shape'?'var(--n-orange)':'var(--n-line)'};background:${getShowMode(pid,sid)==='shape'?'linear-gradient(180deg,rgba(255,138,61,.18) 0%,rgba(255,138,61,.06) 100%)':'linear-gradient(180deg,#141d33 0%,#0c1322 100%)'};color:${getShowMode(pid,sid)==='shape'?'var(--n-orange)':'var(--text2)'};box-shadow:${getShowMode(pid,sid)==='shape'?'inset 0 0 8px rgba(255,138,61,.2), 0 0 6px rgba(255,138,61,.2)':'var(--n-shadow-raised)'}">
+          style="flex:1;font-size:10px;font-weight:700;letter-spacing:.06em;padding:7px;border-radius:4px;cursor:pointer;transition:all .15s;border:1px solid ${getShowMode(pid,sid)==='shape'?'var(--n-orange)':'var(--n-line)'};background:${getShowMode(pid,sid)==='shape'?'linear-gradient(180deg,rgba(255,138,61,.18) 0%,rgba(255,138,61,.06) 100%)':'linear-gradient(180deg,#141d33 0%,#0c1322 100%)'};color:${getShowMode(pid,sid)==='shape'?'var(--n-orange)':'var(--text2)'};box-shadow:${getShowMode(pid,sid)==='shape'?'inset 0 0 8px rgba(255,138,61,.2), 0 0 6px rgba(255,138,61,.2)':'var(--n-shadow-raised)'}">
           Remove Labels
         </button>
       </div>
@@ -8806,7 +8824,7 @@ function _lpHeader(n, screenName, isAdv){
 function _lpDisplayMode(cm){
   const btn = (mode, label) => {
     const on = cm===mode;
-    return `<button class="lp-show-btn" data-mode="${mode}" style="flex:1;font-size:10px;font-weight:700;letter-spacing:.06em;padding:7px;border-radius:999px;cursor:pointer;transition:all .15s;border:1px solid ${on?'var(--n-cyan)':'var(--n-line)'};background:${on?'linear-gradient(180deg,rgba(var(--n-cyan-rgb),.18) 0%,rgba(var(--n-cyan-rgb),.06) 100%)':'linear-gradient(180deg,#141d33 0%,#0c1322 100%)'};color:${on?'var(--n-cyan)':'var(--text2)'};box-shadow:${on?'inset 0 0 8px rgba(var(--n-cyan-rgb),.2), 0 0 6px rgba(var(--n-cyan-rgb),.2)':'var(--n-shadow-raised)'}">${label}</button>`;
+    return `<button class="lp-show-btn" data-mode="${mode}" style="flex:1;font-size:10px;font-weight:700;letter-spacing:.06em;padding:7px;border-radius:4px;cursor:pointer;transition:all .15s;border:1px solid ${on?'var(--n-cyan)':'var(--n-line)'};background:${on?'linear-gradient(180deg,rgba(var(--n-cyan-rgb),.18) 0%,rgba(var(--n-cyan-rgb),.06) 100%)':'linear-gradient(180deg,#141d33 0%,#0c1322 100%)'};color:${on?'var(--n-cyan)':'var(--text2)'};box-shadow:${on?'inset 0 0 8px rgba(var(--n-cyan-rgb),.2), 0 0 6px rgba(var(--n-cyan-rgb),.2)':'var(--n-shadow-raised)'}">${label}</button>`;
   };
   return `
       <div style="font-size:11px;font-weight:800;color:var(--n-cyan);letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:6px"><span style="width:2px;height:10px;border-radius:1px;background:var(--n-cyan);box-shadow:0 0 4px var(--n-cyan);display:inline-block"></span>Layer Display</div>
@@ -8820,15 +8838,15 @@ function _lpNameInput(layerName, pid, sid, n){
   return `
       <div style="font-size:11px;font-weight:800;color:var(--n-cyan);letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px;display:flex;align-items:center;gap:6px"><span style="width:2px;height:10px;border-radius:1px;background:var(--n-cyan);box-shadow:0 0 4px var(--n-cyan);display:inline-block"></span>Custom Name <span style="font-weight:500;text-transform:none;color:var(--text3);letter-spacing:.04em">(optional)</span></div>
       <input class="lp-name" type="text" value="${_esc(layerName)}" placeholder="e.g. Main Cam Feed" maxlength="30"
-        style="width:100%;font-size:11px;padding:7px 14px;border:1px solid rgba(255,255,255,.06);border-radius:999px;background:var(--n-track);color:#fff;outline:none;box-sizing:border-box;margin-bottom:10px;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5);transition:all .15s"
+        style="width:100%;font-size:11px;padding:7px 14px;border:1px solid rgba(255,255,255,.06);border-radius:4px;background:var(--n-track);color:#fff;outline:none;box-sizing:border-box;margin-bottom:10px;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5);transition:all .15s"
         data-fx="cyan"
         oninput="setLayerName('${pid}','${sid}',${n},this.value)">`;
 }
 
 function _lpSizeInputs(lw, lh, sw, sh){
-  const inp = (cls, val, max) => `<input class="${cls}" type="number" value="${val}" min="67" max="${max}" style="width:100%;font-size:12px;padding:7px 12px;border:1px solid rgba(255,255,255,.06);border-radius:999px;background:var(--n-track);color:#9dd6ff;outline:none;box-sizing:border-box;appearance:textfield;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5);transition:all .15s;font-family:var(--font-mono);text-align:center" data-fx="cyan-c">`;
+  const inp = (cls, val, max) => `<input class="${cls}" type="number" value="${val}" min="67" max="${max}" style="width:100%;font-size:12px;padding:7px 12px;border:1px solid rgba(255,255,255,.06);border-radius:4px;background:var(--n-track);color:#9dd6ff;outline:none;box-sizing:border-box;appearance:textfield;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5);transition:all .15s;font-family:var(--font-mono);text-align:center" data-fx="cyan-c">`;
   return `
-      <div style="font-size:11px;font-weight:800;color:var(--n-cyan);letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:6px"><span style="width:2px;height:10px;border-radius:1px;background:var(--n-cyan);box-shadow:0 0 4px var(--n-cyan);display:inline-block"></span>Size<button class="lp-reset-pos" title="Reset this layer's position & size to default" aria-label="Reset this layer's position & size to default" style="margin-left:auto;font-size:11px;padding:2px 8px;border:1px solid rgba(var(--n-cyan-rgb),.35);border-radius:999px;background:linear-gradient(180deg,rgba(var(--n-cyan-rgb),.08) 0%,rgba(var(--n-cyan-rgb),.02) 100%);color:var(--n-cyan);cursor:pointer;font-weight:700;letter-spacing:.06em;display:flex;align-items:center;gap:3px;line-height:1;font-family:inherit">↺ Reset</button></div>
+      <div style="font-size:11px;font-weight:800;color:var(--n-cyan);letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:6px"><span style="width:2px;height:10px;border-radius:1px;background:var(--n-cyan);box-shadow:0 0 4px var(--n-cyan);display:inline-block"></span>Size<button class="lp-reset-pos" title="Reset this layer's position & size to default" aria-label="Reset this layer's position & size to default" style="margin-left:auto;font-size:11px;padding:2px 8px;border:1px solid rgba(var(--n-cyan-rgb),.35);border-radius:4px;background:linear-gradient(180deg,rgba(var(--n-cyan-rgb),.08) 0%,rgba(var(--n-cyan-rgb),.02) 100%);color:var(--n-cyan);cursor:pointer;font-weight:700;letter-spacing:.06em;display:flex;align-items:center;gap:3px;line-height:1;font-family:inherit">↺ Reset</button></div>
       <div style="display:grid;grid-template-columns:1fr 16px 1fr;gap:6px;align-items:end;margin-bottom:6px">
         <div>
           <div style="font-size:11px;color:var(--text3);margin-bottom:4px;letter-spacing:.04em">Width</div>
@@ -8885,7 +8903,7 @@ function _lpAdvancedSection(v, cr, pid, sid, n, isAdv){
   const _maxLR = Math.floor(_layerW * 0.49);
   const cropInp = (dim, label, val, maxPx) => `<div>
                 <div style="font-size:11px;color:var(--text3);margin-bottom:4px;letter-spacing:.04em">${label} <span style="opacity:.55;font-weight:400">(px)</span></div>
-                <input class="lp-cr-inp" type="number" value="${val}" min="0" max="${maxPx}" data-dim="${dim}" data-layer-w="${_layerW}" data-layer-h="${_layerH}" style="width:100%;font-size:11px;padding:6px 10px;border:1px solid rgba(255,255,255,.06);border-radius:999px;background:var(--n-track);color:#ff9aa8;outline:none;box-sizing:border-box;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5);transition:all .15s;font-family:var(--font-mono);text-align:center" data-fx="pink-c" oninput="lpCropChange(this,'${pid}','${sid}',${n})">
+                <input class="lp-cr-inp" type="number" value="${val}" min="0" max="${maxPx}" data-dim="${dim}" data-layer-w="${_layerW}" data-layer-h="${_layerH}" style="width:100%;font-size:11px;padding:6px 10px;border:1px solid rgba(255,255,255,.06);border-radius:4px;background:var(--n-track);color:#ff9aa8;outline:none;box-sizing:border-box;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5);transition:all .15s;font-family:var(--font-mono);text-align:center" data-fx="pink-c" oninput="lpCropChange(this,'${pid}','${sid}',${n})">
               </div>`;
   const ct = findContent(v);
   const innerBg = ct ? ct.c : 'var(--n-cyan)';
@@ -11171,6 +11189,16 @@ function _segScheduleMount(){
 // _segOne is a no-op when the active index is unchanged, so the extra events are cheap.
 try{ new MutationObserver(_segScheduleMount).observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['class']}); }catch(e){}
 _segScheduleMount();
+// 16fm: "working preset" marker. The last preset row the user pointed at carries .pr-current
+// (amber left bar). Stored in _currentPid so the row template re-applies it after render().
+var _currentPid=null;
+document.addEventListener('pointerdown',function(e){
+  var row=e.target&&e.target.closest?e.target.closest('.preset-row'):null;
+  if(!row||!row.dataset.pid||row.dataset.pid===_currentPid) return;
+  _currentPid=row.dataset.pid;
+  document.querySelectorAll('.preset-row.pr-current').forEach(function(r){ r.classList.remove('pr-current'); });
+  row.classList.add('pr-current');
+},true);
 function _sysRender(){
   // Retroactive sync: any source in sources[] without a customLibrary
   // entry gets one, so it's pickable on the Video Presets.
@@ -12743,6 +12771,10 @@ function _topbarMoveNavThumb(){
   _navThumbX=newX;
 }
 function _topbarSetActiveView(view){
+  // 16fm: the toolbar can wrap AFTER the load-time measure (e.g. a restored draft widens
+  // HISTORY & PRESETS), which parked the Wire/I/O Patch strip 26px under the nav row.
+  // Re-measure on every view switch so --toolbar-h matches the toolbar the user sees.
+  if(typeof _topbarMeasureHeight==='function') _topbarMeasureHeight();
   const wire = document.getElementById('topbar-nav-wire');
   const vp   = document.getElementById('topbar-nav-vp');
   const iop  = document.getElementById('topbar-nav-iop');
@@ -14446,9 +14478,9 @@ function _wireOpenIOCountModal(o){
     +'<button class="sys-modal-close" id="wire-ioc-x"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>'
     +'<div class="sys-modal-body"><div style="display:flex;gap:14px">'
     +'<label style="flex:1;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text3)">'+_esc(o.leftLabel||'Inputs')
-    +'<input id="wire-ioc-left" type="number" min="1" max="64" value="'+(o.leftDefault||16)+'" style="width:100%;margin-top:6px;font-size:14px;padding:8px 12px;border:1px solid var(--ss-border-soft);border-radius:999px;background:var(--n-track);color:var(--n-cyan);outline:none;box-sizing:border-box;text-align:center;font-family:var(--font-mono);box-shadow:inset 2px 2px 4px rgba(0,0,0,.5)"></label>'
+    +'<input id="wire-ioc-left" type="number" min="1" max="64" value="'+(o.leftDefault||16)+'" style="width:100%;margin-top:6px;font-size:14px;padding:8px 12px;border:1px solid var(--ss-border-soft);border-radius:4px;background:var(--n-track);color:var(--n-cyan);outline:none;box-sizing:border-box;text-align:center;font-family:var(--font-mono);box-shadow:inset 2px 2px 4px rgba(0,0,0,.5)"></label>'
     +'<label style="flex:1;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text3)">'+_esc(o.rightLabel||'Outputs')
-    +'<input id="wire-ioc-right" type="number" min="1" max="64" value="'+(o.rightDefault||8)+'" style="width:100%;margin-top:6px;font-size:14px;padding:8px 12px;border:1px solid var(--ss-border-soft);border-radius:999px;background:var(--n-track);color:var(--n-cyan);outline:none;box-sizing:border-box;text-align:center;font-family:var(--font-mono);box-shadow:inset 2px 2px 4px rgba(0,0,0,.5)"></label>'
+    +'<input id="wire-ioc-right" type="number" min="1" max="64" value="'+(o.rightDefault||8)+'" style="width:100%;margin-top:6px;font-size:14px;padding:8px 12px;border:1px solid var(--ss-border-soft);border-radius:4px;background:var(--n-track);color:var(--n-cyan);outline:none;box-sizing:border-box;text-align:center;font-family:var(--font-mono);box-shadow:inset 2px 2px 4px rgba(0,0,0,.5)"></label>'
     +'</div><div style="font-size:10px;color:var(--text3);margin-top:10px">1\u201364 each. Rows past the smaller side stay blank on that side.</div></div>'
     +'<div class="sys-modal-footer"><button class="sys-modal-btn" id="wire-ioc-cancel">Cancel</button>'
     +'<button class="sys-modal-btn primary" id="wire-ioc-go">'+_esc(o.confirmLabel||'Add')+'</button></div></div>';
@@ -16704,10 +16736,10 @@ function _wireRenderPageTabs(container){
   const editing = _wireState && _wireState.editingPageId;
   function esc(s){ return (s+'').replace(/[<>&"']/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',"'":'&#39;'}[c])); }
   function tabStyle(isActive){
-    return 'padding:0 14px;height:26px;font-size:10px;font-weight:700;letter-spacing:.10em;text-transform:uppercase;cursor:pointer;font-family:inherit;border:none;background:' + (isActive ? 'linear-gradient(180deg,var(--sk-pill1),var(--sk-pill2))' : 'transparent') + ';color:' + (isActive ? 'var(--n-cyan)' : 'var(--ss-t2)') + ';box-shadow:' + (isActive ? '0 1px 3px rgba(0,0,0,.45), inset 0 1px 0 rgba(var(--n-cyan-rgb),.15)' : 'none') + ';transition:all .18s;display:inline-flex;align-items:center;gap:6px;min-width:0;max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-radius:999px';
+    return 'padding:0 14px;height:26px;font-size:10px;font-weight:700;letter-spacing:.10em;text-transform:uppercase;cursor:pointer;font-family:inherit;border:none;background:' + (isActive ? 'linear-gradient(180deg,var(--sk-pill1),var(--sk-pill2))' : 'transparent') + ';color:' + (isActive ? 'var(--n-cyan)' : 'var(--ss-t2)') + ';box-shadow:' + (isActive ? '0 1px 3px rgba(0,0,0,.45), inset 0 1px 0 rgba(var(--n-cyan-rgb),.15)' : 'none') + ';transition:all .18s;display:inline-flex;align-items:center;gap:6px;min-width:0;max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-radius:4px';
   }
   // Outer wrapper \u2014 single grouped pill, matches the zoom widget
-  let html = '<div style="display:inline-flex;align-items:center;gap:2px;padding:3px 3px 3px 12px;border:1px solid var(--ss-border-soft);border-radius:999px;background:#0a0d12;box-shadow:var(--n-shadow-inset)">';
+  let html = '<div style="display:inline-flex;align-items:center;gap:2px;padding:3px 3px 3px 12px;border:1px solid var(--ss-border-soft);border-radius:4px;background:#0a0d12;box-shadow:var(--n-shadow-inset)">';
   html += '<span style="font-size:9px;font-weight:800;letter-spacing:.14em;color:var(--text3);margin-right:4px">PAGE</span>';
   wireAdvanced._pages.forEach((p, i) => {
     const isActive = p.id === active;
@@ -16795,7 +16827,7 @@ function _wireRenderStyleBar(container){
     return 'padding:6px 14px;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border-radius:6px;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;border:1px solid ' + (active ? 'var(--n-cyan)' : 'var(--n-line)') + ';background:' + (active ? 'rgba(var(--n-cyan-rgb),0.1)' : 'var(--n-track)') + ';color:' + (active ? 'var(--n-cyan)' : 'var(--text2)') + ';box-shadow:' + (active ? '0 0 8px rgba(var(--n-cyan-rgb),.22)' : 'none') + ';transition:all .12s';
   }
   function flatPillStyle(){
-    return 'height:32px;box-sizing:border-box;padding:0 14px;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border-radius:999px;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;border:1px solid var(--n-line);background:var(--n-track);color:var(--text2);transition:all .12s';
+    return 'height:32px;box-sizing:border-box;padding:0 14px;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border-radius:4px;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;border:1px solid var(--n-line);background:var(--n-track);color:var(--text2);transition:all .12s';
   }
   // Tiny SVG icons that match the style
   const orthoIcon = '<svg width="20" height="10" viewBox="0 0 20 10" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M0 8 H7 V2 H20"/></svg>';
@@ -20714,7 +20746,7 @@ function _showAutoSaveIndicator(failed,label){
   if(!el){
     el=document.createElement('div');
     el.id='bb-autosave';
-    el.style.cssText='position:fixed;right:14px;bottom:34px;z-index:900;font-size:10px;font-weight:700;letter-spacing:.06em;padding:4px 10px;border-radius:999px;pointer-events:none;opacity:0;transition:opacity .4s;font-family:var(--font-mono,monospace)';
+    el.style.cssText='position:fixed;right:14px;bottom:34px;z-index:900;font-size:10px;font-weight:700;letter-spacing:.06em;padding:4px 10px;border-radius:4px;pointer-events:none;opacity:0;transition:opacity .4s;font-family:var(--font-mono,monospace)';
     document.body.appendChild(el);
   }
   if(failed){
@@ -22845,7 +22877,7 @@ input:focus-visible, textarea:focus-visible, select:focus-visible {
 .tb-btn:focus-visible, .pill-btn:focus-visible, .ab-btn:focus-visible,
 .eng-toggle:focus-visible, button[class*="btn"]:focus-visible,
 button[class*="pill"]:focus-visible {
-  border-radius: 999px;
+  border-radius:4px;
 }
 
 
@@ -25792,7 +25824,7 @@ document.addEventListener('keydown', e => {
     </div>
     <div style="margin-bottom:22px">
       <div style="font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--n-purple);margin-bottom:6px">Version</div>
-      <input type="text" id="pdf-opt-version" placeholder="e.g. v1.0 or v2.3-draft" maxlength="24" style="width:100%;font-size:12px;padding:7px 14px;border:1px solid rgba(255,255,255,.06);border-radius:999px;background:var(--n-track);color:#fff;outline:none;box-sizing:border-box;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5);transition:all .15s">
+      <input type="text" id="pdf-opt-version" placeholder="e.g. v1.0 or v2.3-draft" maxlength="24" style="width:100%;font-size:12px;padding:7px 14px;border:1px solid rgba(255,255,255,.06);border-radius:4px;background:var(--n-track);color:#fff;outline:none;box-sizing:border-box;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5);transition:all .15s">
       <div style="font-size:10px;color:var(--text3);margin-top:4px;font-style:italic">Stamped on every content page so old printouts are obvious.</div>
     </div>
     <div style="margin-bottom:22px">
