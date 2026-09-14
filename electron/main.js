@@ -423,10 +423,11 @@ function showUpdateToast(win, stamp){
   const js = `(function(){
     if(document.getElementById('lb-native-update')) return;
     var d=document.createElement('div'); d.id='lb-native-update';
-    d.style.cssText='position:fixed;right:18px;bottom:18px;z-index:2147483647;background:#0c1a24;border:1px solid rgba(34,228,255,.45);border-radius:10px;padding:12px 14px;color:#e8e8ea;font:12px -apple-system,Helvetica,Arial,sans-serif;box-shadow:0 12px 32px rgba(0,0,0,.6);display:flex;gap:12px;align-items:center';
-    d.innerHTML='<div><div style="font-weight:800;letter-spacing:.08em;text-transform:uppercase;font-size:10px;color:#22e4ff">Update ready</div><div style="margin-top:3px">Build ${stamp} is downloaded \\u2014 restart to use it.</div></div>'
-      +'<button id="lb-nu-later" style="background:transparent;border:1px solid #2a2f3a;border-radius:6px;color:#aeb6c2;padding:6px 10px;font:inherit;cursor:pointer">Later</button>'
-      +'<button id="lb-nu-restart" style="background:#22e4ff;border:none;border-radius:6px;color:#001620;padding:6px 12px;font:inherit;font-weight:700;cursor:pointer">Restart now</button>';
+    // 2026-09-14 (shell 0.2.37): grey card + square corners, matching app build 16ge (cool-grey ramp, #252a33 hairlines, cyan #4ec3e0 accent)
+    d.style.cssText='position:fixed;right:18px;bottom:18px;z-index:2147483647;background:#14181f;border:1px solid rgba(78,195,224,.35);border-radius:4px;padding:12px 14px;color:#e2e4e8;font:12px -apple-system,Helvetica,Arial,sans-serif;box-shadow:0 12px 32px rgba(0,0,0,.6),0 0 0 1px #252a33;display:flex;gap:12px;align-items:center';
+    d.innerHTML='<div style="display:flex;align-items:center;gap:10px"><span style="width:2px;height:22px;border-radius:1px;background:#4ec3e0;box-shadow:0 0 6px #4ec3e0;flex-shrink:0"></span><div><div style="font-weight:800;letter-spacing:.1em;text-transform:uppercase;font-size:10px;color:#4ec3e0">Update ready</div><div style="margin-top:3px;color:#9aa0aa">Build ${stamp} is downloaded \\u2014 restart to use it.</div></div></div>'
+      +'<button id="lb-nu-later" style="background:#0a0d12;border:1px solid #252a33;border-radius:4px;color:#aeb6c2;padding:7px 12px;font:inherit;font-weight:600;cursor:pointer">Later</button>'
+      +'<button id="lb-nu-restart" style="background:linear-gradient(180deg,#4ec3e0 0%,#2f93ad 100%);border:1px solid #4ec3e0;border-radius:4px;color:#06222b;padding:7px 14px;font:inherit;font-weight:700;cursor:pointer;box-shadow:0 0 10px rgba(78,195,224,.35)">Restart now</button>';
     document.body.appendChild(d);
     document.getElementById('lb-nu-later').onclick=function(){ d.remove(); };
     document.getElementById('lb-nu-restart').onclick=function(){ if(window.lookbookNative&&window.lookbookNative.relaunch) window.lookbookNative.relaunch(); };
