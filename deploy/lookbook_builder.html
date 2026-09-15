@@ -701,6 +701,25 @@ body.is-mobile .dlg-btn-primary,body.is-mobile .dlg-btn-cancel{min-height:var(--
 .sys-topbar{height:52px;box-sizing:border-box;padding:0 22px;background:#10131a}
 #wire-topbar #wire-tabs{height:auto !important;padding:0 !important;background:transparent !important;border:none !important;justify-content:flex-start !important;margin-right:6px}
 #wire-overlay #wire-page-tabs{padding:6px 20px !important}
+/* 16hm: I/O Patch Simple / Advanced. Simple hides the add / remove footers (the patch follows the Video Presets; the MV
+   footer stays). Advanced shows its own wrap: page tabs (Wire idiom) + standalone Sources / Destinations tables. */
+#sys-overlay .sys-section-footer:has(button[onclick="_sysAddSource()"]),#sys-overlay .sys-section-footer:has(button[onclick="_sysAddDestination()"]){display:none}
+#io-adv{display:none}
+#sys-overlay.io-advanced>.sys-wrap:not(#io-adv){display:none}
+#sys-overlay.io-advanced #io-adv{display:block}
+#io-tabs{display:flex;align-items:center}
+.io-adv-bar{display:flex;align-items:center;gap:14px;margin:0 0 14px;flex-wrap:wrap}
+.io-adv-pages{display:inline-flex;align-items:center;gap:2px;padding:3px 3px 3px 12px;border:1px solid var(--n-line);border-radius:4px;background:#0a0d12}
+.io-adv-pages-cap{font-size:9px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);margin-right:6px}
+.io-adv-pages .lb-seg-btn{height:26px;padding:0 12px}
+.io-adv-num{font-family:var(--font-mono);opacity:.55;font-size:9px;margin-right:6px}
+.io-adv-edit{padding:0 8px;display:inline-flex;align-items:center}
+#io-page-rename{background:transparent;border:none;outline:none;color:var(--n-cyan);font:inherit;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;width:120px}
+.io-adv-rename{width:26px;height:26px;display:inline-flex;align-items:center;justify-content:center;border:none;background:transparent;color:var(--text3);cursor:pointer;border-radius:3px}
+.io-adv-rename:hover{color:var(--n-cyan);background:#1c222c}
+.io-adv-rename svg{width:11px;height:11px}
+.io-adv-bar .hint{font-size:11px;font-style:italic;color:var(--text3);flex:1;min-width:240px}
+#io-adv .sys-section+.sys-section{margin-top:18px}
 /* 2026-06-04: Wire Mode source cards (left panel) */
 /* Side-panel collapse (Wire Mode). Collapsing reduces the panel to a
    thin 38px strip that shows only the inline-toggle, centered in the
@@ -3717,7 +3736,7 @@ Also called DSM (Downstage Monitor) in broadcast and theater workflows, same thi
   <div class="bb-cell bb-pill bb-cyan" title="The largest number of layers used in any single preset, this is the figure to compare against your switcher's per-scene layer budget. (The most complex single moment in the show.)"><span class="bb-label">Layers</span><strong id="bb-layers">0</strong></div>
   <div id="bb-spacer"></div>
   <div class="bb-cell" id="bb-sel" style="font-size:10px;opacity:.5">—</div>
-  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy, hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16hl</div>
+  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy, hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16hm</div>
   <button class="bb-util" id="tb-adv" onclick="actions.advancedMenu(event)" title="Advanced features (AOI, Free Mode, Blend Zones, Dead Space)" aria-label="Advanced features (AOI, Free Mode, Blend Zones, Dead Space)" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Advanced<span class="adv-count" aria-hidden="true"></span><svg aria-hidden="true" id="tb-adv-chev" viewBox="0 0 10 10" fill="currentColor" width="8" height="8" style="opacity:.7"><path d="M2 4l3 3 3-3z"/></svg></button>
   <button class="bb-util" onclick="actions.help()" title="Help, quick reference, keyboard shortcuts, glossary, accessibility" aria-label="Help, quick reference, keyboard shortcuts, glossary, accessibility" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="4.93" y1="4.93" x2="9.17" y2="9.17"/><line x1="14.83" y1="14.83" x2="19.07" y2="19.07"/><line x1="14.83" y1="9.17" x2="19.07" y2="4.93"/><line x1="4.93" y1="19.07" x2="9.17" y2="14.83"/></svg>Help</button>
   <button class="bb-util" id="lb-skin-btn" onclick="lbToggleSkinMenu(event)" title="Color skin" aria-label="Change color skin" style="height:100%;padding:0 13px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="13.5" cy="6.5" r=".6" fill="currentColor" stroke="none"/><circle cx="17" cy="10.5" r=".6" fill="currentColor" stroke="none"/><circle cx="8.5" cy="7.5" r=".6" fill="currentColor" stroke="none"/><circle cx="6.5" cy="12" r=".6" fill="currentColor" stroke="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c.93 0 1.65-.75 1.65-1.69 0-.44-.18-.83-.44-1.12-.29-.29-.44-.65-.44-1.13a1.65 1.65 0 0 1 1.67-1.67h1.97c3.05 0 5.55-2.5 5.55-5.55C21.95 6.01 17.45 2 12 2z"/></svg></button>
@@ -3725,6 +3744,7 @@ Also called DSM (Downstage Monitor) in broadcast and theater workflows, same thi
 
 <div id="sys-overlay" class="sys-overlay" role="dialog" aria-modal="true" aria-label="I/O Patch">
   <div class="sys-topbar">
+    <div id="io-tabs"></div>   <!-- 16hm: Simple / Advanced, same idiom as Wire -->
     <!-- Title spacer, the icon + "I/O Patch" + subtitle cluster moved
          out of this sub-bar to the home toolbar's active-view info chip
          so the page identity reads consistently across all three views. -->
@@ -3738,6 +3758,7 @@ Also called DSM (Downstage Monitor) in broadcast and theater workflows, same thi
       </button>
     </div>
   </div>
+  <div id="io-adv" class="sys-wrap"></div>   <!-- 16hm: the Advanced (standalone) I/O Patch, three pages -->
   <div class="sys-wrap">
     <div class="sys-intro">
       <strong>I/O Patch</strong> is the I/O reference for engineers. Source names pull from the show's library, click the chevron next to a name to pick a common name or type your own. Destination type (Destination / AUX) is editable per row. Bandwidth warnings show as a small red pill in the row when a connector can't carry its resolution.
@@ -11642,6 +11663,12 @@ function _sysSetMeta(kind,id,field,value){
     if(field==='resolution'){ const parts=String(value||'').split('x').map(n=>parseInt(n)||0); if(parts[0]&&parts[1]){d.w=parts[0];d.h=parts[1];} }
     else { d[field]=value; }
     _isDirty=true; if(typeof _updateDirtyIndicator==='function') _updateDirtyIndicator();
+  } else if(kind==='adv-src'||kind==='adv-dst'){
+    // 16hm: standalone Advanced I/O row (ioAdvanced.pages[n].sources / .dests)
+    const r=_ioAdvRow(kind,id); if(!r) return;
+    r[field]=value;
+    _isDirty=true; if(typeof _updateDirtyIndicator==='function') _updateDirtyIndicator();
+    if(typeof scheduleAutoSave==='function') scheduleAutoSave();
   }
 }
 
@@ -11679,10 +11706,11 @@ function _sysRowHtml(opts){
       +'<svg aria-hidden="true" viewBox="0 0 10 10" fill="currentColor" width="8" height="8"><path d="M2 4l3 3 3-3z"/></svg>'
       +'</button>'
       +'</div>';
-  } else if(kind==='dest'||kind==='aux'||kind==='iodest'){
+  } else if(kind==='dest'||kind==='aux'||kind==='iodest'||kind==='adv-src'||kind==='adv-dst'){
+    const _advSrc=(kind==='adv-src');   // 16hm: Advanced rows are plain editable names; the chevron still offers the library
     nameCell='<div class="sys-name-cell">'
-      +'<input class="sys-name-input" '+dataAttrs+' value="'+_esc(name)+'" data-sys-old-name="'+_esc(name)+'" placeholder="Destination name">'
-      +'<button class="sys-name-chev" '+dataAttrs+' data-sys-field="dst-name" title="Pick from library" aria-label="Pick from library">'
+      +'<input class="sys-name-input" '+dataAttrs+' value="'+_esc(name)+'" data-sys-old-name="'+_esc(name)+'" placeholder="'+(_advSrc?'Source name':'Destination name')+'">'
+      +'<button class="sys-name-chev" '+dataAttrs+' data-sys-field="'+(_advSrc?'src-name':'dst-name')+'" title="Pick from library" aria-label="Pick from library">'
       +'<svg aria-hidden="true" viewBox="0 0 10 10" fill="currentColor" width="8" height="8"><path d="M2 4l3 3 3-3z"/></svg>'
       +'</button>'
       +'</div>';
@@ -11693,7 +11721,7 @@ function _sysRowHtml(opts){
   // ── Type cell — clickable for sources (Primary/Backup) and destinations (Destination/AUX); static for MV ──
   let typeCell;
   {
-    const isSrc=(kind==='src');
+    const isSrc=(kind==='src'||kind==='adv-src');   // 16hm
     const tfield=isSrc?'src-type':'dst-type';
     const promptTxt=isSrc?'— Set machine —':'— Set device —';
     const chipChev='<span class="chip-chev"><svg aria-hidden="true" viewBox="0 0 10 10" fill="currentColor" width="8" height="8"><path d="M2 4l3 3 3-3z"/></svg></span>';
@@ -11959,7 +11987,110 @@ document.addEventListener('pointerdown',function(e){
   if(!row||!row.dataset.pid) return;
   _setWorkingPreset(row.dataset.pid,true);
 },true);
+// ══ 16hm: ADVANCED I/O PATCH — standalone patches, three pages, outside the presets (Omar) ══════════════════════════
+// Simple = the I/O Patch that follows the Video Presets (auto-discovered rows). Advanced = a blank builder with three
+// pages; each page owns its own Sources / Destinations rows and prints as its own sheet in Export I/O. Rows use the
+// same row builder, pickers and handlers as Simple, with kinds 'adv-src' / 'adv-dst' routed to ioAdvanced.
+function _ioAdvDefault(){ return { view:'simple', page:0, pages:[1,2,3].map(function(n){ return { id:'p'+n, name:'Page '+n, sources:[], dests:[] }; }) }; }
+function _ioAdvNorm(o){
+  const d=_ioAdvDefault(); if(!o||typeof o!=='object') return d;
+  const out={ view:(o.view==='advanced')?'advanced':'simple', page:Math.min(2,Math.max(0,parseInt(o.page)||0)), pages:[] };
+  for(let i=0;i<3;i++){ const p=(Array.isArray(o.pages)&&o.pages[i]&&typeof o.pages[i]==='object')?o.pages[i]:{}; out.pages.push({ id:'p'+(i+1), name:(typeof p.name==='string'&&p.name.trim())?p.name.trim().slice(0,32):('Page '+(i+1)), sources:Array.isArray(p.sources)?p.sources:[], dests:Array.isArray(p.dests)?p.dests:[] }); }
+  return out;
+}
+function _ioAdvPage(){ return ioAdvanced.pages[ioAdvanced.page]||ioAdvanced.pages[0]; }
+function _ioAdvRow(kind,id){ const pg=_ioAdvPage(); const arr=(kind==='adv-src')?pg.sources:pg.dests; return arr.find(function(x){ return x&&x.id===id; })||null; }
+let _ioAdvEditing=null;
+function _ioRenderTabs(){
+  const c=document.getElementById('io-tabs'); if(!c) return;
+  const v=ioAdvanced.view;
+  c.innerHTML='<span class="lb-seg" data-seg="io-view">'
+    +'<button type="button" onclick="_ioSetView(\'simple\')" class="lb-seg-btn'+(v==='simple'?' on':'')+'" title="Simple, the patch follows the Video Presets">Simple</button>'
+    +'<button type="button" onclick="_ioSetView(\'advanced\')" class="lb-seg-btn'+(v==='advanced'?' on':'')+'" title="Advanced, build standalone I/O patches, one per page">Advanced</button>'
+    +'</span>';
+}
+function _ioSetView(v){
+  if(ioAdvanced.view===v) return;
+  if(typeof pushUndo==='function') pushUndo();
+  ioAdvanced.view=v; _ioAdvEditing=null;
+  _isDirty=true; if(typeof _updateDirtyIndicator==='function') _updateDirtyIndicator();
+  if(typeof scheduleAutoSave==='function') scheduleAutoSave();
+  _sysRender();
+}
+function _ioSetPage(i){ if(ioAdvanced.page===i) return; ioAdvanced.page=i; _ioAdvEditing=null; _sysRender(); }
+function _ioRenamePage(i){ ioAdvanced.page=i; _ioAdvEditing=i; _sysRender(); setTimeout(function(){ const inp=document.getElementById('io-page-rename'); if(inp){ inp.focus(); inp.select(); } },0); }
+function _ioCommitRename(i,val){
+  if(_ioAdvEditing!==i) return;
+  const pg=ioAdvanced.pages[i]; const nn=(val||'').trim().slice(0,32);
+  _ioAdvEditing=null;
+  if(pg&&nn&&nn!==pg.name){ if(typeof pushUndo==='function') pushUndo(); pg.name=nn; _isDirty=true; if(typeof _updateDirtyIndicator==='function') _updateDirtyIndicator(); if(typeof scheduleAutoSave==='function') scheduleAutoSave(); }
+  _sysRender();
+}
+function _ioRenameKeydown(ev,i){ if(ev.key==='Enter'){ ev.preventDefault(); ev.target.blur(); } else if(ev.key==='Escape'){ ev.preventDefault(); _ioAdvEditing=null; _sysRender(); } }
+function _ioAdvAdd(kind){
+  const pg=_ioAdvPage(); const isSrc=(kind==='src');
+  if(typeof pushUndo==='function') pushUndo();
+  const row={ id:'ia'+Date.now().toString(36)+Math.random().toString(36).slice(2,6), name:'', connectorType:'', customType:'', resolution:'', notes:'' };
+  if(isSrc) row.type=''; else row.deviceType='';
+  (isSrc?pg.sources:pg.dests).push(row);
+  _isDirty=true; if(typeof _updateDirtyIndicator==='function') _updateDirtyIndicator();
+  if(typeof scheduleAutoSave==='function') scheduleAutoSave();
+  _sysRender();
+  setTimeout(function(){ const inp=document.querySelector('#io-adv .sys-name-input[data-sys-id="'+row.id+'"]'); if(inp) inp.focus(); },0);
+}
+const _IO_ADV_COLS='<div></div> <div>Name</div> <div>Connector</div> <div>Type</div> <div>Resolution</div> <div></div> <div>Notes</div> <div style="text-align:right">Actions</div>';
+function _ioAdvTable(kind, rows, title){
+  const isSrc=(kind==='src'); const k=isSrc?'adv-src':'adv-dst';
+  let h='<div class="sys-section"><div class="sys-section-header"><div class="sys-section-title '+(isSrc?'sources':'destinations')+'"><div class="strip"></div><h2>'+title+'</h2><span class="count">'+rows.length+' total</span></div></div>';
+  h+='<div class="sys-cols">'+_IO_ADV_COLS+'</div><div class="io-adv-rows">';
+  if(!rows.length) h+='<div class="sys-empty-row">No '+title.toLowerCase()+' on this page yet. Add one below.</div>';
+  rows.forEach(function(r,i){
+    const raw=isSrc?_sysMachineRaw(r):_sysDeviceRaw(r); const t=isSrc?r.type:r.deviceType; const isCustom=(t==='Custom');
+    h+=_sysRowHtml({ icon:(isSrc?'S':'D')+(i+1), iconClass:isSrc?'':'dest', name:r.name||'', conn:r.connectorType||'', typeRaw:raw, typeLabel:isCustom?(r.customType||''):raw, typeClass:isSrc?_sysMachineClass(r):_sysDeviceClass(r), isCustomType:isCustom, customVal:r.customType||'', res:r.resolution||'', notes:r.notes||'', kind:k, id:r.id });
+  });
+  h+='</div><div class="sys-section-footer"><button class="sys-add-btn '+(isSrc?'green':'orange')+'" onclick="_ioAdvAdd(\''+kind+'\')">+ Add '+(isSrc?'Source':'Destination')+'</button><div class="hint">Rows here live only on this page.</div></div></div>';
+  return h;
+}
+function _ioRenderAdvanced(){
+  const c=document.getElementById('io-adv'); if(!c) return;
+  const pg=_ioAdvPage();
+  let h='<div class="io-adv-bar"><div class="io-adv-pages"><span class="io-adv-pages-cap">Page</span>';
+  ioAdvanced.pages.forEach(function(p,i){
+    const on=(i===ioAdvanced.page);
+    if(_ioAdvEditing===i){
+      h+='<span class="lb-seg-btn on io-adv-edit"><input id="io-page-rename" type="text" value="'+_esc(p.name)+'" maxlength="32" onkeydown="_ioRenameKeydown(event,'+i+')" onblur="_ioCommitRename('+i+', this.value)"></span>';
+    } else {
+      h+='<button type="button" class="lb-seg-btn'+(on?' on':'')+'" onclick="_ioSetPage('+i+')" ondblclick="_ioRenamePage('+i+')" title="'+_esc(p.name)+', click to open, double-click to rename"><span class="io-adv-num">'+(i+1)+'</span>'+_esc(p.name)+'</button>';
+    }
+  });
+  h+='<button type="button" class="io-adv-rename" onclick="_ioRenamePage('+ioAdvanced.page+')" title="Rename this page" aria-label="Rename this page"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button></div>';
+  h+='<div class="hint">A standalone patch. Nothing on these pages reads from or writes to the Video Presets, and each page with rows prints as its own sheet in Export I/O.</div></div>';
+  h+=_ioAdvTable('src', pg.sources, 'Sources');
+  h+=_ioAdvTable('dst', pg.dests, 'Destinations');
+  c.innerHTML=h;
+}
+// One sheet per Advanced page for Export I/O (same columns and style indices as the main sheet)
+function _ioAdvSheet(pg, showRaw){
+  const rows=[], styles=[];
+  rows.push([(pg.name||'Page')+', '+(showRaw||'Untitled Show')]); styles.push([8]);
+  rows.push(['Exported '+new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'})]); styles.push([9]);
+  rows.push([]); styles.push([]);
+  rows.push(['SOURCES']); styles.push([1]);
+  rows.push(['Slot','Connector','Source Name','Type','Resolution','Notes']); styles.push([1,1,1,1,1,1]);
+  if(!pg.sources.length){ rows.push(['','','(no sources on this page)','','','']); styles.push([7,7,7,7,7,7]); }
+  pg.sources.forEach(function(r,i){ const raw=_sysMachineRaw(r); rows.push(['Source '+(i+1), r.connectorType||'', r.name||'', (r.type==='Custom')?(r.customType||''):raw, r.resolution||'', r.notes||'']); styles.push([4,7,5,7,7,6]); });
+  rows.push([]); styles.push([]);
+  rows.push(['DESTINATIONS']); styles.push([1]);
+  rows.push(['Slot','Connector','Destination Name','Type','Resolution','Notes']); styles.push([1,1,1,1,1,1]);
+  if(!pg.dests.length){ rows.push(['','','(no destinations on this page)','','','']); styles.push([7,7,7,7,7,7]); }
+  pg.dests.forEach(function(r,i){ const raw=_sysDeviceRaw(r); rows.push(['Destination '+(i+1), r.connectorType||'', r.name||'', (r.deviceType==='Custom')?(r.customType||''):raw, r.resolution||'', r.notes||'']); styles.push([2,7,5,7,7,6]); });
+  return { rows:rows, styles:styles };
+}
+
 function _sysRender(){
+  _ioRenderTabs();   // 16hm: Simple / Advanced toggle in the page bar
+  const _ov=document.getElementById('sys-overlay'); if(_ov) _ov.classList.toggle('io-advanced', ioAdvanced.view==='advanced');
+  if(ioAdvanced.view==='advanced'){ _ioRenderAdvanced(); return; }
   // Retroactive sync: any source in sources[] without a customLibrary
   // entry gets one, so it's pickable on the Video Presets.
   _sysSyncAllSourcesToCustomLibrary();
@@ -12244,6 +12375,20 @@ function _sysHandlePick(trigger,opt){
   const kind=trigger.dataset.sysKind;
   const id=trigger.dataset.sysId;
   if(kind==='src-all'||kind==='dst-all'){ _sysApplyToAll(kind,field,opt); return; }
+  if(kind==='adv-src'||kind==='adv-dst'){   // 16hm: Advanced (standalone) rows write to ioAdvanced only
+    if(field==='src-name'||field==='dst-name'){
+      const cell=trigger.closest('.sys-name-cell'); const input=cell?cell.querySelector('.sys-name-input'):null; if(!input) return;
+      if(opt.custom){ input.focus(); input.select(); return; }
+      input.value=opt.value; _sysSetMeta(kind,id,'name',opt.value); _sysRender(); return;
+    }
+    if(field==='src-type'||field==='dst-type'){
+      _sysSetMeta(kind,id,(field==='src-type')?'type':'deviceType',opt.value);
+      if(opt.value!=='Custom') _sysSetMeta(kind,id,'customType','');
+      _sysRender(); if(opt.value==='Custom') _sysFocusTypeInput(id); return;
+    }
+    if(field==='resolution'&&opt.custom){ _sysOpenCustomResModal(kind,id,trigger.dataset.sysValue||''); return; }
+    _sysSetMeta(kind,id,field==='connector'?'connectorType':'resolution',opt.value); _sysRender(); return;
+  }
   if(field==='resolution'&&opt.custom){
     _sysOpenCustomResModal(kind,id,trigger.dataset.sysValue||'');
     return;
@@ -12378,7 +12523,7 @@ if(!window._sysHandlersAttached){
       // which writes the GLOBAL name (screens[].name / dsms[].name /
       // multiviewers[].name) — the same field the table + canvas read.
       const _k=e.target.dataset.sysKind;
-      if(_k==='dest'||_k==='aux'||_k==='mv'){
+      if(_k==='dest'||_k==='aux'||_k==='mv'||_k==='adv-src'||_k==='adv-dst'){   // 16hm
         const _nn=(e.target.value||'').trim();
         const _on=e.target.dataset.sysOldName||'';
         if(_nn){
@@ -12933,6 +13078,7 @@ function _sysGetRowEntity(kind,id){
   return {name:id, kindLabel:''};
 }
 function _sysRowReset(kind,id){
+  if(kind==='adv-src'||kind==='adv-dst'){ const r=_ioAdvRow(kind,id); if(r){ if(typeof pushUndo==='function') pushUndo(); r.connectorType=''; r.resolution=''; r.notes=''; _isDirty=true; if(typeof _updateDirtyIndicator==='function') _updateDirtyIndicator(); } _sysRender(); return; }   // 16hm
   if(kind==='iodest'){
     var _rd=(typeof ioDests!=='undefined'&&Array.isArray(ioDests))?ioDests.find(x=>x.id===id):null;
     if(_rd){ _rd.connectorType=''; _rd.deviceType=''; _rd.customType=''; _rd.notes=''; }
@@ -12971,6 +13117,7 @@ function _sysRowReset(kind,id){
   });
 }
 function _sysRowDelete(kind,id){
+  if(kind==='adv-src'||kind==='adv-dst'){ const pg=_ioAdvPage(); const arr=(kind==='adv-src')?pg.sources:pg.dests; const i=arr.findIndex(x=>x&&x.id===id); if(i>=0){ if(typeof pushUndo==='function') pushUndo(); arr.splice(i,1); _isDirty=true; if(typeof _updateDirtyIndicator==='function') _updateDirtyIndicator(); if(typeof scheduleAutoSave==='function') scheduleAutoSave(); } _sysRender(); return; }   // 16hm
   if(kind==='iodest'){
     if(typeof pushUndo==='function') pushUndo();
     if(typeof ioDests!=='undefined'&&Array.isArray(ioDests)){ for(var _i=ioDests.length-1;_i>=0;_i--){ if(ioDests[_i]&&ioDests[_i].id===id) ioDests.splice(_i,1); } }
@@ -13223,7 +13370,9 @@ function _sysExportIOExcel(){
     // Row heights — title + section headers a touch taller
     const rowHeights={0:24,1:16};
 
-    const blob=_buildXlsx(rows,styles,colWidths,rowHeights,'Video I-O');
+    // 16hm: every Advanced page with rows becomes its own sheet, named after the page
+    const advSheets=(ioAdvanced&&Array.isArray(ioAdvanced.pages))?ioAdvanced.pages.filter(function(p){ return p&&((p.sources&&p.sources.length)||(p.dests&&p.dests.length)); }).map(function(p){ const sh=_ioAdvSheet(p, showRaw); return {name:p.name, rows:sh.rows, styles:sh.styles, colWidths:colWidths, rowHeights:rowHeights}; }):[];
+    const blob=advSheets.length ? _buildXlsxMulti([{name:'Video I-O', rows:rows, styles:styles, colWidths:colWidths, rowHeights:rowHeights}].concat(advSheets)) : _buildXlsx(rows,styles,colWidths,rowHeights,'Video I-O');
     dl(blob,showFileName('video-io')+'.xlsx');
   } catch(err){
     if(typeof showAlert==='function'){
@@ -21089,7 +21238,8 @@ function getProjectState(){
     wireLayout,
     wireThumbnails,
     wireSettings,
-    wireAdvanced
+    wireAdvanced,
+    ioAdvanced
   };
 }
 
@@ -21297,6 +21447,7 @@ function _applyProjectText(text){
     }
     wireSettings = (s.wireSettings && typeof s.wireSettings === 'object') ? s.wireSettings : { wireView: 'simple', wireStyle: 'curved', panes: { src: true, dst: true, aux: true } };
     if(!wireSettings.panes) wireSettings.panes = { src: true, dst: true, aux: true };
+    ioAdvanced = _ioAdvNorm(s.ioAdvanced);   // 16hm
     wireAdvanced = (s.wireAdvanced && typeof s.wireAdvanced === 'object') ? {
       sources: Array.isArray(s.wireAdvanced.sources) ? s.wireAdvanced.sources : [],
       dests:   Array.isArray(s.wireAdvanced.dests)   ? s.wireAdvanced.dests   : [],
@@ -21626,6 +21777,7 @@ function restoreAutoSave(){
         } else { wireThumbnails = {}; }
         wireSettings = (s.wireSettings && typeof s.wireSettings === 'object') ? s.wireSettings : { wireView: 'simple', wireStyle: 'curved', panes: { src: true, dst: true, aux: true } };
         if(!wireSettings.panes) wireSettings.panes = { src: true, dst: true, aux: true };
+        ioAdvanced = _ioAdvNorm(s.ioAdvanced);   // 16hm
         wireAdvanced = (s.wireAdvanced && typeof s.wireAdvanced === 'object') ? {
           sources: Array.isArray(s.wireAdvanced.sources) ? s.wireAdvanced.sources : [],
           dests:   Array.isArray(s.wireAdvanced.dests)   ? s.wireAdvanced.dests   : [],
@@ -21699,6 +21851,7 @@ let wireSettings = { wireView: 'simple', wireStyle: 'curved', panes: { src: true
 // routers[]        — router-matrix instances: { id, label, size, x, y,
 //                     inputs:[{name}], outputs:[{name, assignedInput}] }.
 let wireAdvanced = { sources: [], dests: [], dsms: [], wires: [], routers: [], customSources: [], customDests: [], customDsms: [] };
+let ioAdvanced = _ioAdvDefault();   // 16hm: standalone I/O Patch pages (see _ioAdvDefault)
 // 16ee: drawing title-block info (RCM-style). Show name / date / venue keep
 // living in the toolbar inputs (#show-name / #show-date / #show-venue); these
 // are the EXTRA fields. Persisted via getProjectState() as `showMeta`; like
@@ -21712,7 +21865,7 @@ function setShowMeta(field,value){ if(_SHOW_META_KEYS.indexOf(field)<0) return; 
 function _fmtMDY(d){ return String(d.getMonth()+1).padStart(2,'0')+'/'+String(d.getDate()).padStart(2,'0')+'/'+d.getFullYear(); }
 
 function _snapshot(){
-  return JSON.stringify({screens,presets,dsms,customLibrary,multiviewers,sources,ioDests,wireLayout,wireThumbnails,wireSettings,wireAdvanced});
+  return JSON.stringify({screens,presets,dsms,customLibrary,multiviewers,sources,ioDests,wireLayout,wireThumbnails,wireSettings,wireAdvanced,ioAdvanced});
 }
 function pushUndo(){
   _undoStack.push(_snapshot());
@@ -21742,6 +21895,7 @@ function doUndo(){
   wireThumbnails=(s.wireThumbnails&&typeof s.wireThumbnails==='object')?s.wireThumbnails:{};
   wireSettings=(s.wireSettings&&typeof s.wireSettings==='object')?s.wireSettings:{wireView:'simple',wireStyle:'curved',panes:{src:true,dst:true,aux:true}};
   wireAdvanced=(s.wireAdvanced&&typeof s.wireAdvanced==='object')?s.wireAdvanced:{sources:[],dests:[],dsms:[],wires:[],routers:[],customSources:[],customDests:[],customDsms:[]};
+  ioAdvanced=_ioAdvNorm(s.ioAdvanced);   // 16hm
   sel=null;selDSM=null;
   // Close open property panels/pickers — they hold references to the
   // pre-undo objects and would silently edit dead state.
@@ -21762,6 +21916,7 @@ function doRedo(){
   wireThumbnails=(s.wireThumbnails&&typeof s.wireThumbnails==='object')?s.wireThumbnails:{};
   wireSettings=(s.wireSettings&&typeof s.wireSettings==='object')?s.wireSettings:{wireView:'simple',wireStyle:'curved',panes:{src:true,dst:true,aux:true}};
   wireAdvanced=(s.wireAdvanced&&typeof s.wireAdvanced==='object')?s.wireAdvanced:{sources:[],dests:[],dsms:[],wires:[],routers:[],customSources:[],customDests:[],customDsms:[]};
+  ioAdvanced=_ioAdvNorm(s.ioAdvanced);   // 16hm
   sel=null;selDSM=null;
   // Close open property panels/pickers — they hold references to the
   // pre-undo objects and would silently edit dead state.
@@ -21825,6 +21980,7 @@ function newShow(){
     wireThumbnails = {};
     wireSettings = { wireView: 'simple', wireStyle: 'curved', panes: { src: true, dst: true, aux: true } };
     wireAdvanced = { sources: [], dests: [], dsms: [], wires: [], routers: [], customSources: [], customDests: [], customDsms: [] };
+    ioAdvanced = _ioAdvDefault();   // 16hm
     sel=null;selLayer=null;
     _isDirty=false;   // baseline captured at the END of _doNew, after the DOM resets
     _updateDirtyIndicator();
@@ -22367,6 +22523,28 @@ function _buildXlsx(rows, cellStyles, colWidths, rowHeights, sheetName){
     {name:'xl/styles.xml', content:_xlsxStylesXml()},
     {name:'xl/worksheets/sheet1.xml', content:_xlsxSheetXml(rows, cellStyles, colWidths, rowHeights)}
   ];
+  return _zipBuild(files);
+}
+
+// 16hm: multi-sheet workbook — same parts as _buildXlsx, one worksheet per entry in sheets[{name,rows,styles,colWidths,rowHeights}]
+function _xlsxSheetSafeName(n, i, used){
+  let base=(n||('Sheet '+(i+1))).replace(/[\\\/?*:\[\]]/g,'_').slice(0,31).trim()||('Sheet '+(i+1));
+  let name=base, k=2; while(used.has(name.toLowerCase())){ const suf=' '+(k++); name=base.slice(0,31-suf.length)+suf; }
+  used.add(name.toLowerCase()); return name;
+}
+function _buildXlsxMulti(sheets){
+  const used=new Set(); const names=sheets.map(function(sh,i){ return _xlsxSheetSafeName(sh.name,i,used); });
+  let ct='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>';
+  sheets.forEach(function(_,i){ ct+='<Override PartName="/xl/worksheets/sheet'+(i+1)+'.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>'; });
+  ct+='<Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/></Types>';
+  let wb='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets>';
+  names.forEach(function(n,i){ wb+='<sheet name="'+_xmlEsc(n)+'" sheetId="'+(i+1)+'" r:id="rId'+(i+1)+'"/>'; });
+  wb+='</sheets></workbook>';
+  let rels='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">';
+  sheets.forEach(function(_,i){ rels+='<Relationship Id="rId'+(i+1)+'" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet'+(i+1)+'.xml"/>'; });
+  rels+='<Relationship Id="rId'+(sheets.length+1)+'" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>';
+  const files=[{name:'[Content_Types].xml', content:ct},{name:'_rels/.rels', content:_xlsxRels()},{name:'xl/workbook.xml', content:wb},{name:'xl/_rels/workbook.xml.rels', content:rels},{name:'xl/styles.xml', content:_xlsxStylesXml()}];
+  sheets.forEach(function(sh,i){ files.push({name:'xl/worksheets/sheet'+(i+1)+'.xml', content:_xlsxSheetXml(sh.rows, sh.styles, sh.colWidths, sh.rowHeights)}); });
   return _zipBuild(files);
 }
 
