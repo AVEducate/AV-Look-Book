@@ -764,7 +764,7 @@ body.is-mobile #vp-tabs{display:none}
 .lb-seg.lb-seg-sm .lb-seg-btn{height:22px;padding:0 11px;font-size:10px}
 .fs-tab-add{margin-left:auto;font-size:11px;width:22px;height:22px;line-height:1;display:flex;align-items:center;justify-content:center;padding:0;border:1px solid var(--n-line);border-radius:999px;background:linear-gradient(180deg,#1c222c 0%,#14181f 100%);color:var(--text2);cursor:pointer;transition:all .15s;font-family:inherit}
 .fs-tab-add:hover{color:var(--n-green);border-color:var(--n-green);box-shadow:0 0 6px rgba(77,220,138,.4)}
-#fs-right-panel[data-tab="preset"] #fs-toolbar,#fs-right-panel[data-tab="layers"] #fs-preset-list,#fs-right-panel[data-tab="layers"] #fs-prop-add,#fs-left-panel[data-tab="video"] .fs-add-btn{display:none}
+#fs-right-panel[data-tab="preset"] #fs-toolbar,#fs-right-panel[data-tab="layers"] #fs-preset-list,#fs-right-panel[data-tab="layers"] #fs-prop-add{display:none}
 .fs-pcard{background:#0e1012;border:1px solid #1e2024;border-radius:7px;padding:8px 10px;cursor:pointer;transition:border-color .15s,background .15s;box-sizing:border-box}
 .fs-pcard:hover{background:#111518;border-color:#2a2d35}
 .fs-pcard.on,.fs-pcard.on:hover{background:#1a1f28;border-color:var(--n-cyan)}
@@ -801,6 +801,51 @@ body.fs-open #ov{z-index:640 !important}
 body.fs-open #picker{z-index:641 !important}
 body.fs-open #color-pop,body.fs-open #res-warn,body.fs-open #adv-menu{z-index:642 !important}
 body.fs-open .pm{z-index:650 !important}
+/* 16hy: video. Cards on the Video tab, the <video> in the tile with overflow bands, the timeline controls, the Video section. */
+.fs-src-play{position:absolute;right:5px;top:5px;width:18px;height:18px;border-radius:50%;background:rgba(0,0,0,.6);color:#fff;font-size:8px;display:flex;align-items:center;justify-content:center}
+.fs-src-missing{opacity:.6;cursor:pointer;border-style:dashed}
+.fs-src-meta .warn,.fs-file-meta .warn{color:var(--n-red)}
+#fs-source-list.fs-files-hot{outline:2px dashed var(--n-cyan);outline-offset:-6px}
+#fs-source-list.fs-importing{opacity:.6;pointer-events:none}
+.fs-vid{display:block}
+.layer-chip.fs-vid-missing .chip-inner{outline:1px dashed var(--n-red);outline-offset:-1px}
+.fs-band{position:absolute;z-index:3;pointer-events:none;background:repeating-linear-gradient(135deg,rgba(255,77,90,.75) 0 4px,rgba(255,77,90,.25) 4px 8px);display:flex;align-items:center;justify-content:center;overflow:hidden}
+.fs-band span{font-family:var(--font-mono);font-size:8px;font-weight:700;color:#fff;background:rgba(255,77,90,.9);padding:1px 5px;border-radius:2px;white-space:nowrap}
+.fs-band.l span,.fs-band.r span{writing-mode:vertical-rl}
+.fs-tl-tr{display:inline-flex;gap:4px;flex-shrink:0}
+.fs-tl-tb{height:26px;min-width:26px;padding:0 8px;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--n-line);border-radius:4px;background:linear-gradient(180deg,#1b1b22,#13131a);color:var(--text2);font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;font-family:inherit}
+.fs-tl-tb.play{border-color:rgba(77,220,138,.5);color:var(--n-green)}
+.fs-tl-tb.on{color:var(--n-cyan);border-color:rgba(var(--n-cyan-rgb),.45)}
+.fs-tl-tb.sm{height:22px;min-width:22px;padding:0 6px;font-size:9px}
+.fs-tl-tb:hover{color:var(--text)}
+.fs-tl-track.video{cursor:pointer;justify-content:flex-start}
+.fs-tl-dim{position:absolute;top:0;bottom:0;background:rgba(0,0,0,.55);z-index:2;pointer-events:none}
+.fs-tl-dim.l{left:0}.fs-tl-dim.r{right:0}
+.fs-tl-prog{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,rgba(43,142,168,.5),rgba(78,195,224,.5));z-index:1;pointer-events:none}
+.fs-tl-head{position:absolute;top:0;bottom:0;width:2px;margin-left:-1px;background:#fff;z-index:4;pointer-events:none;box-shadow:0 0 6px rgba(255,255,255,.6)}
+.fs-tl-in,.fs-tl-out{position:absolute;top:0;bottom:0;width:2px;margin-left:-1px;background:var(--n-amber);z-index:3;pointer-events:none}
+.fs-tl-track.audio{justify-content:stretch;align-items:stretch}
+.fs-tl-wavec{width:100%;height:100%;display:block}
+.fs-tl-noaudio{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:10px;font-style:italic;color:var(--text3);pointer-events:none}
+#fs-timeline:not(.empty) .fs-tl-cover-frame{border-style:solid}
+.fs-file{display:grid;grid-template-columns:64px 1fr;gap:10px;align-items:center;margin:6px 0 8px}
+.fs-file-poster{height:40px;border-radius:4px;border:1px solid rgba(255,255,255,.12)}
+.fs-file-name{font-weight:700;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fs-file-meta{font-family:var(--font-mono);font-size:11px;font-weight:600;color:var(--text2);margin-top:2px}
+.fs-check{border:1px solid rgba(240,192,96,.35);background:rgba(240,192,96,.07);border-radius:4px;padding:8px 10px;margin-bottom:8px}
+.fs-check .t{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--n-amber);margin-bottom:4px}
+.fs-check .m{font-family:var(--font-mono);font-size:11px;font-weight:600;line-height:1.55;color:var(--text)}
+.fs-check .m b{color:var(--n-red)}
+.fs-check .m b.ok{color:var(--n-green)}
+#fs-props .fitmode{display:inline-flex;gap:2px;padding:2px;border:1px solid var(--n-line);border-radius:4px;background:#0a0d12}
+#fs-props .fitmode button{height:22px;padding:0 9px;border:none;border-radius:999px;background:transparent;color:var(--text2);font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;font-family:inherit}
+#fs-props .fitmode button.on{background:linear-gradient(180deg,#1f2530,#161b23);color:var(--n-cyan)}
+#fs-props .fs-tr{display:inline-flex;gap:4px}
+#fs-props .fs-io{font-family:var(--font-mono);font-size:11px;font-weight:600;color:var(--text2)}
+#fs-props .fs-io b{color:var(--text)}
+#fs-props .fs-io i{font-family:var(--font-ui);font-weight:500;color:var(--text3);margin-left:4px}
+#fs-props .fs-tl-level{width:110px;accent-color:var(--n-cyan);vertical-align:middle}
+.fs-pcard-play{margin-left:auto;font-size:9px;color:var(--n-green);flex-shrink:0}
 /* properties */
 .fs-crumb{display:flex;align-items:center;gap:6px;padding:0 0 10px;margin-bottom:10px;border-bottom:1px solid var(--n-line)}
 .fs-crumb-c{font-family:var(--font-mono);font-size:11px;font-weight:700;padding:3px 7px;border-radius:3px;border:1px solid var(--n-line);background:#0a0d12;flex-shrink:0}
@@ -3852,7 +3897,7 @@ Also called DSM (Downstage Monitor) in broadcast and theater workflows, same thi
   <div class="bb-cell bb-pill bb-cyan" title="The largest number of layers used in any single preset, this is the figure to compare against your switcher's per-scene layer budget. (The most complex single moment in the show.)"><span class="bb-label">Layers</span><strong id="bb-layers">0</strong></div>
   <div id="bb-spacer"></div>
   <div class="bb-cell" id="bb-sel" style="font-size:10px;opacity:.5">—</div>
-  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy, hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16hx</div>
+  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy, hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16hy</div>
   <button class="bb-util" id="tb-adv" onclick="actions.advancedMenu(event)" title="Advanced features (AOI, Free Mode, Blend Zones, Dead Space)" aria-label="Advanced features (AOI, Free Mode, Blend Zones, Dead Space)" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Advanced<span class="adv-count" aria-hidden="true"></span><svg aria-hidden="true" id="tb-adv-chev" viewBox="0 0 10 10" fill="currentColor" width="8" height="8" style="opacity:.7"><path d="M2 4l3 3 3-3z"/></svg></button>
   <button class="bb-util" onclick="actions.help()" title="Help, quick reference, keyboard shortcuts, glossary, accessibility" aria-label="Help, quick reference, keyboard shortcuts, glossary, accessibility" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="4.93" y1="4.93" x2="9.17" y2="9.17"/><line x1="14.83" y1="14.83" x2="19.07" y2="19.07"/><line x1="14.83" y1="9.17" x2="19.07" y2="4.93"/><line x1="4.93" y1="19.07" x2="9.17" y2="14.83"/></svg>Help</button>
   <button class="bb-util" id="lb-skin-btn" onclick="lbToggleSkinMenu(event)" title="Color skin" aria-label="Change color skin" style="height:100%;padding:0 13px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="13.5" cy="6.5" r=".6" fill="currentColor" stroke="none"/><circle cx="17" cy="10.5" r=".6" fill="currentColor" stroke="none"/><circle cx="8.5" cy="7.5" r=".6" fill="currentColor" stroke="none"/><circle cx="6.5" cy="12" r=".6" fill="currentColor" stroke="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c.93 0 1.65-.75 1.65-1.69 0-.44-.18-.83-.44-1.12-.29-.29-.44-.65-.44-1.13a1.65 1.65 0 0 1 1.67-1.67h1.97c3.05 0 5.55-2.5 5.55-5.55C21.95 6.01 17.45 2 12 2z"/></svg></button>
@@ -4196,10 +4241,10 @@ Also called DSM (Downstage Monitor) in broadcast and theater workflows, same thi
         <h4>All Sources</h4>
         <span id="fs-src-count" class="fs-count">0</span>
         <div class="fs-dot" style="margin-left:auto"></div>
-        <button onclick="pickerTarget=null;openCustomModal()" class="fs-add-btn" title="Add a source to the show library" aria-label="Add a source">+</button>
+        <button onclick="_fsAddSource()" class="fs-add-btn" title="Add a source: an image / file name on Images, a video or image file on Video" aria-label="Add a source">+</button>
       </div>
       <div id="fs-src-tabs" class="fs-tabs"><span class="lb-seg lb-seg-sm" data-seg="fs-src"><button type="button" class="lb-seg-btn on" data-tab="images" onclick="_fsSetSrcTab('images')" title="Images and files the show creates and uses">Images</button><button type="button" class="lb-seg-btn" data-tab="video" onclick="_fsSetSrcTab('video')" title="Video files added to the show">Video</button></span></div>
-      <div id="fs-source-list" style="flex:1;overflow-y:auto;padding:10px"></div>
+      <div id="fs-source-list" style="flex:1;overflow-y:auto;padding:10px" ondragover="_fsSrcListDragOver(event)" ondragleave="_fsSrcListDragLeave(event)" ondrop="_fsSrcListDrop(event)"></div>
     </div>
 
     <!-- Left resize handle -->
@@ -10948,6 +10993,7 @@ function confirmCustom(){
 }
 
 function deleteCustomLabel(label){
+  if(typeof _mdbDel==='function'&&typeof _fsMediaItem==='function'&&_fsMediaItem(label)){ _mdbDel(label); if(_fsMediaURL[label]){ try{ URL.revokeObjectURL(_fsMediaURL[label]); }catch(e){} delete _fsMediaURL[label]; } }   // 16hy
   customLibrary=customLibrary.filter(c=>c.l!==label);
   // Also clear from any preset/screen that used it
   presets.forEach(p=>screens.forEach(s=>{
@@ -14041,7 +14087,7 @@ function lbToggleSkinMenu(ev){
   document.body.appendChild(m);
   setTimeout(function(){ document.addEventListener('click',function _c(e){ var mm=document.getElementById('lb-skin-menu'); if(mm && !mm.contains(e.target) && !(e.target.closest&&e.target.closest('#lb-skin-btn'))){ mm.remove(); document.removeEventListener('click',_c); } }); },0);
 }
-window.addEventListener('load', function(){ _topbarMeasureHeight(); _topbarSetActiveView('vp'); _lbApplySkin(); });
+window.addEventListener('load', function(){ _topbarMeasureHeight(); _topbarSetActiveView('vp'); _lbApplySkin(); if(typeof _fsMediaRehydrate==='function') _fsMediaRehydrate(); });
 window.addEventListener('resize', function(){ if(typeof _topbarMoveNavThumb==='function') _topbarMoveNavThumb(); });
 window.addEventListener('resize', _topbarMeasureHeight);
 function closeSystem(){
@@ -19929,6 +19975,7 @@ function openFullscreen(pid){
   if(typeof _topbarMeasureHeight==='function') _topbarMeasureHeight();   // 16ht: the overlay hangs under the header like Wire / I/O Patch
   _vpSyncTabs();
   document.body.classList.add('fs-open');   // 16hx: lets the tile's popups stack above the overlay
+  _fsMediaRehydrate();   // 16hy: files back from IndexedDB, then a re-render
   _fsSetSrcTab(_fsSrcTab);   // 16hw: renders the sources for the current tab
   _fsSetPropTab('preset');
   fsPanX=0;fsPanY=0;fsZoom=1;
@@ -19951,6 +19998,7 @@ function closeFullscreen(){
   document.getElementById('fs-overlay').style.display='none';
   fsPresetId=null;
   fsUnbindEvents();
+  _fsPauseAll();   // 16hy
   document.body.classList.remove('fs-open');
   _vpSyncTabs();
   const _tb=document.getElementById('fs-toolbar'); if(_tb) _tb.innerHTML='';   // 16hu: no stale #fs-props behind the layer panel
@@ -20415,6 +20463,7 @@ function renderFsPanel(force){
         +'<span class="fs-props-srcname">'+(v?_esc(v):'<i>Empty layer, drop a source on it</i>')+'</span>'
         +'<button type="button" class="fs-props-back" onclick="_fsClearLayer()" title="Back to the preset overview">◀ Preset</button></div>'
         +_lpAdvancedSection(v,cr,p.id,s.id,n,true)
+        +_fsMediaSectionHTML(p,s,n,v)   // 16hy: Video / Image section (Advanced only)
         +'</div>';
       const fp=document.getElementById('fs-props'); if(fp) fp._rebuild=function(){ renderFsPanel(true); };
       panel.scrollTop=keepScroll;
@@ -20852,6 +20901,7 @@ function renderFullscreen(){
   const canvas=document.getElementById('fs-canvas');
   canvas.style.width=''; canvas.style.height='';
   canvas.innerHTML=html;
+  _fsMountVideos();   // 16hy: <video> in every chip / box that holds one, then the timeline
   renderFsPanel();
 }
 
@@ -21719,7 +21769,7 @@ function _applyProjectText(text){
     if(s.version&&s.version>3) console.warn('File saved with a newer version of Look Book Builder');
     screens=s.screens;
     presets=s.presets;
-    customLibrary=s.customLibrary||[];
+    customLibrary=s.customLibrary||[];if(typeof _fsMediaRehydrate==='function')_fsMediaRehydrate();
     dsms=s.dsms||[];
     wireLayout = (s.wireLayout && typeof s.wireLayout === 'object') ? s.wireLayout : {};
     // wireThumbnails legacy migration: raw source-name keys (no prefix)
@@ -22053,7 +22103,7 @@ function restoreAutoSave(){
       cancelLabel:'Start fresh',
       scrambleCancel:true,
       onConfirm:()=>{
-        screens=s.screens;presets=s.presets;dsms=s.dsms||[];customLibrary=s.customLibrary||[];
+        screens=s.screens;presets=s.presets;dsms=s.dsms||[];customLibrary=s.customLibrary||[];if(typeof _fsMediaRehydrate==='function')_fsMediaRehydrate();
         sources=Array.isArray(s.sources)?s.sources:[];
         multiviewers=Array.isArray(s.multiviewers)?s.multiviewers:[];
         ioDests=Array.isArray(s.ioDests)?s.ioDests:[];
@@ -22180,7 +22230,7 @@ function doUndo(){
   if(!_undoStack.length)return;
   _redoStack.push(_snapshot());
   const s=JSON.parse(_undoStack.pop());
-  screens=s.screens;presets=s.presets;dsms=s.dsms||[];customLibrary=s.customLibrary||[];
+  screens=s.screens;presets=s.presets;dsms=s.dsms||[];customLibrary=s.customLibrary||[];if(typeof _fsMediaRehydrate==='function')_fsMediaRehydrate();
   multiviewers=Array.isArray(s.multiviewers)?s.multiviewers:[];
   sources=Array.isArray(s.sources)?s.sources:[];
   ioDests=Array.isArray(s.ioDests)?s.ioDests:[];
@@ -22201,7 +22251,7 @@ function doRedo(){
   if(!_redoStack.length)return;
   _undoStack.push(_snapshot());
   const s=JSON.parse(_redoStack.pop());
-  screens=s.screens;presets=s.presets;dsms=s.dsms||[];customLibrary=s.customLibrary||[];
+  screens=s.screens;presets=s.presets;dsms=s.dsms||[];customLibrary=s.customLibrary||[];if(typeof _fsMediaRehydrate==='function')_fsMediaRehydrate();
   multiviewers=Array.isArray(s.multiviewers)?s.multiviewers:[];
   sources=Array.isArray(s.sources)?s.sources:[];
   ioDests=Array.isArray(s.ioDests)?s.ioDests:[];
@@ -25207,7 +25257,7 @@ function renderFsPresetList(){
     return `<div class="fs-pcard${isActive?' on':''}" onclick="fsSwitchPreset('${p.id}')" title="${_esc(p.code+' '+p.name)}">
       <div style="display:flex;align-items:center;gap:7px;margin-bottom:4px">
         <div class="fs-pcard-code">${_esc(p.code)}</div>
-        <div class="fs-pcard-name">${_esc(p.name)}</div>
+        <div class="fs-pcard-name">${_esc(p.name)}</div>${_fsPresetHasVideo(p)?'<span class="fs-pcard-play" title="Holds video">▶</span>':''}
       </div>
       <div class="fs-pcard-meta">
         <span>${resStr}</span>
@@ -25249,11 +25299,20 @@ function _fsSourceNames(){
 }
 function _fsRenderSources(force){
   const el=document.getElementById('fs-source-list'); if(!el) return;
-  if(_fsSrcTab==='video'){   // 16hw: video files, their cover frame and playback arrive with the next build
-    el.innerHTML='<div class="fs-src-empty">No videos yet. Video files, their cover frame and playback arrive with the next build.</div>';
-    const c0=document.getElementById('fs-src-count'); if(c0) c0.textContent='0'; _fsSrcSig=''; return;
+  if(_fsSrcTab==='video'){   // 16hy: video / image files (customLibrary items with a kind)
+    const items=(Array.isArray(customLibrary)?customLibrary:[]).filter(function(c){ return c&&c.kind; });
+    const c0=document.getElementById('fs-src-count'); if(c0) c0.textContent=items.length; _fsSrcSig='';
+    if(!items.length){ el.innerHTML='<div class="fs-src-empty">No videos yet. Press + or drop MP4 / MOV / WebM / image files here. The files stay in this app\'s storage, the project keeps their names and covers.</div>'; return; }
+    el.innerHTML=items.map(function(it){
+      const m=it.media||{}; const has=!!_fsMediaUrl(it.l); const isVid=it.kind==='video';
+      return '<div class="fs-src fs-src-media'+(has?'':' fs-src-missing')+'" draggable="'+(has?'true':'false')+'" data-src="'+_esc(it.l)+'" ondragstart="_fsSrcDragStart(event)" ondragend="_fsClearDropHot()" '+(has?'title="Drag onto a layer or a BG in the canvas"':'onclick="_fsPickMedia(this.dataset.src)" title="The file is not in this app\'s storage, click to relink it"')+'>'
+        +'<div class="fs-src-thumb" style="'+(it.img?'background:#000 url('+it.img+') center/cover':'background:'+it.c)+'"><span class="fs-src-kind">'+(isVid?'Video':'Image')+'</span>'+(isVid?'<span class="fs-src-play">▶</span>':'')+'</div>'
+        +'<div class="fs-src-info"><div class="fs-src-name">'+_esc(it.l)+'</div><div class="fs-src-meta"><b>'+(m.w||'?')+'×'+(m.h||'?')+'</b>'+(isVid?' · '+_fsFmtTime(m.dur):'')+'<br>'+_fsFmtType(m.type)+(isVid?' · '+(m.hasAudio?'audio':'no audio'):'')+(has?'':' · <b class="warn">relink</b>')+'</div></div>'
+        +'</div>';
+    }).join('')+'<div class="fs-src-hint">Drag a video onto a layer or a BG. It plays here, Simple shows its cover.</div>';
+    return;
   }
-  const names=_fsSourceNames();
+  const names=_fsSourceNames().filter(function(n){ return !_fsMediaItem(n); });   // media lives on the Video tab
   const sig=names.join('')+'|'+((typeof customLibrary!=='undefined'&&customLibrary)?customLibrary.length:0);
   if(!force&&sig===_fsSrcSig&&el.children.length) return;   // same list → keep the DOM (a drag may be in flight)
   _fsSrcSig=sig;
@@ -25338,6 +25397,286 @@ function _fsSetPropTab(t){
   _fsPropTab=(t==='layers')?'layers':'preset';
   const rp=document.getElementById('fs-right-panel'); if(rp) rp.dataset.tab=_fsPropTab;
   document.querySelectorAll('#fs-prop-tabs .lb-seg-btn').forEach(b=>b.classList.toggle('on',b.dataset.tab===_fsPropTab));
+}
+
+if(typeof _lfxOpen==='object'&&_lfxOpen&&_lfxOpen.video===undefined) _lfxOpen.video=true;   // the Video section starts open
+// ══════════════════════════════════════════════════════════════════════
+// 16hy (Omar): VIDEO. Video / image files become content items in customLibrary
+// ({l, c, kind:'video'|'image', img:cover, media:{w,h,dur,type,size,hasAudio,coverTime,peaks}}), so
+// they assign to layers and BGs by name like any other source and Simple shows the cover
+// through the existing ct.img path. The file bytes live in IndexedDB ('lb-media', keyed by
+// name) and come back as object URLs on load; the project file carries only the metadata +
+// cover. The Advanced tile mounts a <video> inside every chip / box that holds a video, with a
+// fit mode (fit / fill / stretch / 1:1) and hatched bands where the picture falls outside the
+// box. The timeline under the canvas follows the picked layer: transport, scrub, In / Out,
+// loop, audio level, cover frame. Per-layer playback settings: p.layerMedia[sid][n] (n=0 = BG).
+// ══════════════════════════════════════════════════════════════════════
+var _fsMediaURL={}, _fsMediaBlob={}, _fsVideoEls={}, _fsWantPlay={}, _fsTlKey='', _fsTlRaf=0, _fsPlayScope='layer';
+var _FS_LM_DEF=Object.freeze({fit:'fit',in:0,out:null,speed:100,loop:true,level:100});
+function _mdbOpen(){ return new Promise(function(res,rej){ try{ const r=indexedDB.open('lb-media',1); r.onupgradeneeded=function(){ r.result.createObjectStore('files'); }; r.onsuccess=function(){ res(r.result); }; r.onerror=function(){ rej(r.error); }; }catch(e){ rej(e); } }); }
+function _mdbPut(name,blob){ return _mdbOpen().then(function(db){ return new Promise(function(res,rej){ const tx=db.transaction('files','readwrite'); tx.objectStore('files').put(blob,name); tx.oncomplete=function(){ res(true); }; tx.onerror=function(){ rej(tx.error); }; }); }).catch(function(){ return false; }); }
+function _mdbGet(name){ return _mdbOpen().then(function(db){ return new Promise(function(res,rej){ const q=db.transaction('files','readonly').objectStore('files').get(name); q.onsuccess=function(){ res(q.result||null); }; q.onerror=function(){ rej(q.error); }; }); }).catch(function(){ return null; }); }
+function _mdbDel(name){ return _mdbOpen().then(function(db){ return new Promise(function(res){ const tx=db.transaction('files','readwrite'); tx.objectStore('files').delete(name); tx.oncomplete=function(){ res(true); }; tx.onerror=function(){ res(false); }; }); }).catch(function(){ return false; }); }
+function _fsMediaItem(name){ return (Array.isArray(customLibrary)?customLibrary:[]).find(function(c){ return c&&c.l===name&&c.kind; })||null; }
+function _fsIsVideo(name){ const it=_fsMediaItem(name); return !!(it&&it.kind==='video'); }
+function _fsMediaUrl(name){ return _fsMediaURL[name]||''; }
+function _fsAttachBlob(name,blob){ if(_fsMediaURL[name]){ try{ URL.revokeObjectURL(_fsMediaURL[name]); }catch(e){} } _fsMediaBlob[name]=blob; _fsMediaURL[name]=URL.createObjectURL(blob); }
+var _fsRehydrating=false;
+function _fsMediaRehydrate(){   // after a load: pull the files back from IndexedDB
+  if(_fsRehydrating) return Promise.resolve();
+  const items=(Array.isArray(customLibrary)?customLibrary:[]).filter(function(c){ return c&&c.kind&&!_fsMediaURL[c.l]; });
+  if(!items.length) return Promise.resolve();
+  _fsRehydrating=true;
+  return items.reduce(function(chain,it){ return chain.then(function(){ return _mdbGet(it.l).then(function(b){ if(b) _fsAttachBlob(it.l,b); }); }); },Promise.resolve())
+    .then(function(){ _fsRehydrating=false; _fsSrcSig=''; if(fsPresetId){ _fsRenderSources(true); renderFullscreen(); } })
+    .catch(function(){ _fsRehydrating=false; });
+}
+function _fsFmtTime(t){ t=Math.max(0,Math.floor(t||0)); const h=Math.floor(t/3600), m=Math.floor((t%3600)/60), s=t%60; const mm=(h?String(m).padStart(2,'0'):String(m).padStart(2,'0')), ss=String(s).padStart(2,'0'); return (h?h+':':'')+mm+':'+ss; }
+function _fsFmtType(t){ t=String(t||''); const m=t.split('/')[1]||''; return (m==='quicktime'?'MOV':m.toUpperCase()).replace('X-','').slice(0,6)||'FILE'; }
+// ── import ──────────────────────────────────────────────────────────────
+function _fsAddSource(){ if(_fsSrcTab==='video') _fsPickMedia(); else { pickerTarget=null; openCustomModal(); } }
+function _fsPickMedia(relinkName){
+  let inp=document.getElementById('fs-media-file');
+  if(!inp){ inp=document.createElement('input'); inp.type='file'; inp.id='fs-media-file'; inp.accept='video/*,image/*'; inp.style.display='none'; document.body.appendChild(inp);
+    inp.addEventListener('change',function(){ const files=inp.files; const rl=inp.dataset.relink||''; inp.dataset.relink=''; if(rl&&files&&files[0]){ _fsRelinkFile(rl,files[0]); } else { _fsImportFiles(files); } inp.value=''; }); }
+  inp.multiple=!relinkName; inp.dataset.relink=relinkName||'';
+  inp.click();
+}
+function _fsSrcListDragOver(ev){ const dt=ev.dataTransfer; if(!dt||!dt.types) return; if(Array.prototype.indexOf.call(dt.types,'Files')<0) return; ev.preventDefault(); dt.dropEffect='copy'; const el=document.getElementById('fs-source-list'); if(el) el.classList.add('fs-files-hot'); }
+function _fsSrcListDragLeave(ev){ const el=document.getElementById('fs-source-list'); if(el) el.classList.remove('fs-files-hot'); }
+function _fsSrcListDrop(ev){ const dt=ev.dataTransfer; const el=document.getElementById('fs-source-list'); if(el) el.classList.remove('fs-files-hot'); if(!dt||!dt.files||!dt.files.length) return; ev.preventDefault(); ev.stopPropagation(); _fsImportFiles(dt.files); }
+function _fsImportFiles(files){
+  const list=Array.prototype.slice.call(files||[]).filter(function(f){ return /^(video|image)\//.test(f.type); });
+  if(!list.length){ if(typeof showAlert==='function') showAlert({variant:'info',title:'Not a video or image',message:'Drop or pick video (MP4, MOV, WebM) or image files.'}); return; }
+  if(typeof pushUndo==='function') pushUndo();
+  _fsSetSrcTab('video');
+  const el=document.getElementById('fs-source-list'); if(el) el.classList.add('fs-importing');
+  return list.reduce(function(chain,f){ return chain.then(function(){ return _fsImportOne(f).catch(function(e){ console.warn('media import failed',f.name,e); }); }); },Promise.resolve())
+    .then(function(){ if(el) el.classList.remove('fs-importing'); _fsSrcSig=''; _fsRenderSources(true); _isDirty=true; if(typeof _updateDirtyIndicator==='function') _updateDirtyIndicator(); if(typeof scheduleAutoSave==='function') scheduleAutoSave(); scheduleRender(); if(fsPresetId) renderFullscreen(); });
+}
+function _fsUniqueName(base){ let nm=base, k=2; const has=function(n){ return allContent().some(function(c){ return c.l===n; }); }; while(has(nm)){ nm=base+' '+k; k++; } return nm; }
+function _fsShrink(src,w,h){ const W=480; const s=Math.min(1,W/Math.max(1,w)); const cv=document.createElement('canvas'); cv.width=Math.max(1,Math.round(w*s)); cv.height=Math.max(1,Math.round(h*s)); cv.getContext('2d').drawImage(src,0,0,cv.width,cv.height); try{ return cv.toDataURL('image/jpeg',.82); }catch(e){ return ''; } }
+function _fsFrameAt(v,t){ return new Promise(function(res){ let done=false; const fin=function(){ if(done) return; done=true; v.removeEventListener('seeked',fin); try{ res(_fsShrink(v,v.videoWidth,v.videoHeight)); }catch(e){ res(''); } }; v.addEventListener('seeked',fin); try{ v.currentTime=Math.max(0,Math.min(t,(v.duration||1)-0.05)); }catch(e){ fin(); } setTimeout(fin,3000); }); }
+function _fsProbeAudio(v){ return new Promise(function(res){ try{ if(typeof v.mozHasAudio==='boolean') return res(v.mozHasAudio); if(v.audioTracks&&typeof v.audioTracks.length==='number') return res(v.audioTracks.length>0); if(typeof v.webkitAudioDecodedByteCount==='number'){ v.muted=true; const p=v.play(); Promise.resolve(p).catch(function(){}).then(function(){ setTimeout(function(){ try{ v.pause(); }catch(e){} res(v.webkitAudioDecodedByteCount>0); },400); }); return; } }catch(e){} res(false); }); }
+function _fsAudioPeaks(file){
+  const AC=window.AudioContext||window.webkitAudioContext; if(!AC||file.size>400*1024*1024) return Promise.resolve(null);
+  const ac=new AC();
+  return file.arrayBuffer().then(function(buf){ return ac.decodeAudioData(buf); }).then(function(ab){
+    const ch=ab.getChannelData(0), N=240, step=Math.max(1,Math.floor(ch.length/N)), peaks=[];
+    for(let i=0;i<N;i++){ let m=0; const a=i*step, b=Math.min(ch.length,a+step); for(let j=a;j<b;j+=16){ const x=Math.abs(ch[j]); if(x>m) m=x; } peaks.push(Math.round(m*100)/100); }
+    return peaks;
+  }).catch(function(){ return null; }).then(function(r){ try{ ac.close(); }catch(e){} return r; });
+}
+function _fsImportOne(file){
+  const base=(file.name||'media').replace(/\.[^.]+$/,'').slice(0,40)||'media';
+  const name=_fsUniqueName(base);
+  const isVideo=/^video\//.test(file.type);
+  _fsAttachBlob(name,file);
+  const url=_fsMediaURL[name];
+  const media={type:file.type,size:file.size,w:0,h:0,dur:0,hasAudio:false,coverTime:0,peaks:null};
+  let img='';
+  let p;
+  if(isVideo){
+    const v=document.createElement('video'); v.muted=true; v.playsInline=true; v.preload='auto'; v.src=url;
+    p=new Promise(function(res,rej){ v.onloadedmetadata=function(){ res(); }; v.onerror=function(){ rej(new Error('video metadata')); }; setTimeout(res,8000); })
+      .then(function(){ media.w=v.videoWidth||0; media.h=v.videoHeight||0; media.dur=isFinite(v.duration)?v.duration:0; media.coverTime=Math.min(1,media.dur/2); return _fsFrameAt(v,media.coverTime); })
+      .then(function(im){ img=im; return _fsProbeAudio(v); })
+      .then(function(has){ media.hasAudio=!!has; return _fsAudioPeaks(file); })
+      .then(function(pk){ media.peaks=pk; if(pk&&pk.some(function(x){ return x>0.01; })) media.hasAudio=true; try{ v.removeAttribute('src'); v.load(); }catch(e){} });
+  } else {
+    const im=new Image(); im.src=url;
+    p=new Promise(function(res,rej){ im.onload=function(){ res(); }; im.onerror=function(){ rej(new Error('image')); }; }).then(function(){ media.w=im.naturalWidth; media.h=im.naturalHeight; img=_fsShrink(im,im.naturalWidth,im.naturalHeight); });
+  }
+  return p.then(function(){
+    const c=CUSTOM_COLORS[customLibrary.length%CUSTOM_COLORS.length];
+    customLibrary.push({l:name,c:c,kind:isVideo?'video':'image',img:img,media:media});
+    return _mdbPut(name,file);
+  });
+}
+function _fsRelinkFile(name,file){ _fsAttachBlob(name,file); _mdbPut(name,file); _fsSrcSig=''; _fsRenderSources(true); if(fsPresetId) renderFullscreen(); }
+// ── per-layer playback settings (n=0 = the BG) ──────────────────────────
+function getLayerMedia(pid,sid,n){ const p=presets.find(function(x){ return x.id===pid; }); const rec=(p&&p.layerMedia&&p.layerMedia[sid]&&p.layerMedia[sid][n])||{}; return Object.assign({},_FS_LM_DEF,rec); }
+function setLayerMedia(pid,sid,n,patch){ const p=presets.find(function(x){ return x.id===pid; }); if(!p) return; if(!p.layerMedia) p.layerMedia={}; if(!p.layerMedia[sid]) p.layerMedia[sid]={}; p.layerMedia[sid][n]=Object.assign({},getLayerMedia(pid,sid,n),patch||{}); _isDirty=true; if(typeof _updateDirtyIndicator==='function') _updateDirtyIndicator(); if(typeof scheduleAutoSave==='function') scheduleAutoSave(); }
+function _fsPresetHasVideo(p){ if(!p) return false; return screens.some(function(s){ const bg=(typeof getBgName==='function')?getBgName(p.id,s.id):''; if(bg&&_fsIsVideo(bg)) return true; return getLayerNums(p.id).some(function(n){ const v=getL(p.id,s.id,n); return v&&_fsIsVideo(v); }); }); }
+// ── the tile: mount a <video> in every chip / box that holds one ───────
+function _fsLayerKey(pid,sid,n){ return 'L:'+pid+':'+sid+':'+n; }
+function _fsKeyParts(key){ const a=key.split(':'); return a[0]==='BG'?{pid:a[1],sid:a[2],n:0}:{pid:a[1],sid:a[2],n:parseInt(a[3])}; }
+function _fsMakeVideo(key,url,prev,lm){
+  let vid=prev&&prev.dataset&&prev.dataset.url===url?prev:null;
+  if(!vid){ vid=document.createElement('video'); vid.className='fs-vid'; vid.dataset.url=url; vid.src=url; vid.playsInline=true; vid.preload='metadata'; vid.disablePictureInPicture=true; vid.setAttribute('playsinline',''); vid.addEventListener('timeupdate',function(){ _fsOnTime(key,vid); }); vid.addEventListener('ended',function(){ _fsOnEnded(key,vid); }); vid.addEventListener('loadedmetadata',function(){ if(_fsTlKey===key) _fsTlSync(); }); if(prev){ try{ vid.currentTime=prev.currentTime||0; }catch(e){} } }
+  vid.dataset.key=key;
+  vid.loop=!!(lm.loop&&lm.out==null);
+  vid.playbackRate=Math.max(.1,Math.min(4,(lm.speed||100)/100));
+  vid.volume=Math.max(0,Math.min(1,(lm.level==null?100:lm.level)/100)); vid.muted=(lm.level===0);
+  return vid;
+}
+function _fsMountVideos(){
+  const canvas=document.getElementById('fs-canvas'); if(!canvas||!fsPresetId) return;
+  const prev=_fsVideoEls; _fsVideoEls={};
+  const p=presets.find(function(x){ return x.id===fsPresetId; }); if(!p) return;
+  canvas.querySelectorAll('.layer-chip[data-pid][data-sid][data-lid]').forEach(function(chip){
+    const pid=chip.dataset.pid, sid=chip.dataset.sid, n=parseInt(chip.dataset.lid);
+    const v=getL(pid,sid,n); if(!v||!_fsIsVideo(v)) return;
+    const url=_fsMediaUrl(v); if(!url){ chip.classList.add('fs-vid-missing'); chip.title='Video file missing, open the Video tab to relink it'; return; }
+    const inner=chip.querySelector('.chip-inner')||chip;
+    const key=_fsLayerKey(pid,sid,n); const s=screens.find(function(x){ return x.id===sid; }); const it=_fsMediaItem(v); const lm=getLayerMedia(pid,sid,n);
+    const vid=_fsMakeVideo(key,url,prev[key],lm);
+    inner.style.position='relative'; inner.style.overflow='hidden'; inner.style.zIndex='0';
+    _fsApplyFit(vid,chip,it,lm,s,pid,sid,n);
+    inner.insertBefore(vid,inner.firstChild);
+    _fsVideoEls[key]=vid;
+    if(_fsWantPlay[key]&&vid.paused){ vid.play().catch(function(){}); }
+  });
+  screens.forEach(function(s){
+    const bg=(typeof getBgName==='function')?getBgName(p.id,s.id):''; if(!bg||!_fsIsVideo(bg)) return;
+    const url=_fsMediaUrl(bg); if(!url) return;
+    const box=canvas.querySelector('.screen-box[data-pid="'+p.id+'"][data-sid="'+s.id+'"]'); if(!box) return;
+    const key='BG:'+p.id+':'+s.id; const lm=getLayerMedia(p.id,s.id,0);
+    const vid=_fsMakeVideo(key,url,prev[key],lm);
+    vid.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:'+(lm.fit==='fill'?'cover':lm.fit==='stretch'?'fill':lm.fit==='native'?'none':'contain')+';z-index:-1;pointer-events:none;background:#000';
+    if(!box.style.zIndex) box.style.zIndex='0';
+    box.insertBefore(vid,box.firstChild);
+    _fsVideoEls[key]=vid;
+    if(_fsWantPlay[key]&&vid.paused){ vid.play().catch(function(){}); }
+  });
+  Object.keys(prev).forEach(function(k){ if(!_fsVideoEls[k]){ try{ prev[k].pause(); }catch(e){} delete _fsWantPlay[k]; } });
+  _fsRenderTimeline();
+}
+// fit: contain / cover / stretch / 1:1 in destination pixels; bands mark what falls outside the box
+function _fsApplyFit(vid,chip,it,lm,s,pid,sid,n){
+  chip.querySelectorAll('.fs-band').forEach(function(b){ b.remove(); });
+  const cw=parseFloat(chip.style.width)||chip.offsetWidth||1, ch=parseFloat(chip.style.height)||chip.offsetHeight||1;
+  const mw=(it&&it.media&&it.media.w)||0, mh=(it&&it.media&&it.media.h)||0;
+  const base='position:absolute;pointer-events:none;background:#000;z-index:-1;';
+  if(lm.fit==='native'&&mw&&mh&&s){
+    const lsz=getLayerSize(pid,sid,n)||{wf:.5,hf:.5}; const lw=Math.max(1,Math.round(lsz.wf*parseInt(s.w))), lh=Math.max(1,Math.round(lsz.hf*parseInt(s.h)));
+    const k=cw/lw; const dw=mw*k, dh=mh*k;
+    vid.style.cssText=base+'left:'+((cw-dw)/2)+'px;top:'+((ch-dh)/2)+'px;width:'+dw+'px;height:'+dh+'px;object-fit:fill';
+    _fsBands(chip,cw,ch,dw,dh,lw,lh,mw,mh);
+  } else if(lm.fit==='fill'&&mw&&mh){
+    vid.style.cssText=base+'inset:0;width:100%;height:100%;object-fit:cover';
+    const k=Math.max(cw/mw,ch/mh); const lsz=getLayerSize(pid,sid,n)||{wf:.5,hf:.5}; const lw=Math.max(1,Math.round(lsz.wf*parseInt(s.w))), lh=Math.max(1,Math.round(lsz.hf*parseInt(s.h)));
+    _fsBands(chip,cw,ch,mw*k,mh*k,lw,lh,Math.round(mw*Math.max(lw/mw,lh/mh)),Math.round(mh*Math.max(lw/mw,lh/mh)));
+  } else {
+    vid.style.cssText=base+'inset:0;width:100%;height:100%;object-fit:'+(lm.fit==='stretch'?'fill':'contain');
+  }
+}
+function _fsBands(chip,cw,ch,dw,dh,lw,lh,mw,mh){
+  const ox=Math.max(0,(dw-cw)/2), oy=Math.max(0,(dh-ch)/2);
+  const px=Math.max(0,Math.round((mw-lw)/2)), py=Math.max(0,Math.round((mh-lh)/2));
+  const mk=function(cls,style,label){ const d=document.createElement('div'); d.className='fs-band '+cls; d.style.cssText=style; if(label){ const l=document.createElement('span'); l.textContent=label; d.appendChild(l); } chip.appendChild(d); };
+  if(oy>1){ mk('top','left:0;right:0;top:0;height:'+Math.min(ch/2,oy)+'px','▲ '+py+'px off top'); mk('bot','left:0;right:0;bottom:0;height:'+Math.min(ch/2,oy)+'px','▼ '+py+'px off bottom'); }
+  if(ox>1){ mk('l','top:0;bottom:0;left:0;width:'+Math.min(cw/2,ox)+'px','◀ '+px+'px'); mk('r','top:0;bottom:0;right:0;width:'+Math.min(cw/2,ox)+'px',px+'px ▶'); }
+}
+function _fsSizeCheckText(it,pid,sid,n){
+  if(!it||!it.media||!it.media.w) return '';
+  const s=screens.find(function(x){ return x.id===sid; }); if(!s) return '';
+  const lsz=n?(getLayerSize(pid,sid,n)||{wf:.5,hf:.5}):{wf:1,hf:1};
+  const lw=Math.max(1,Math.round(lsz.wf*parseInt(s.w))), lh=Math.max(1,Math.round(lsz.hf*parseInt(s.h)));
+  const mw=it.media.w, mh=it.media.h; const lm=getLayerMedia(pid,sid,n);
+  let out=mw+'×'+mh+' into '+lw+'×'+lh;
+  if(mw===lw&&mh===lh) return out+' · <b class="ok">exact match</b>';
+  if(lm.fit==='native'){
+    const dx=mw-lw, dy=mh-lh;
+    if(dy>0) out+=' · <b>'+dy+'px taller</b> · '+Math.round(dy/2)+'px cut top &amp; bottom'; else if(dy<0) out+=' · '+(-dy)+'px shorter, '+Math.round(-dy/2)+'px bars top &amp; bottom';
+    if(dx>0) out+=' · <b>'+dx+'px wider</b> · '+Math.round(dx/2)+'px cut each side'; else if(dx<0) out+=' · '+(-dx)+'px narrower, '+Math.round(-dx/2)+'px bars each side';
+    if(dx===0) out+=' · width matches'; if(dy===0) out+=' · height matches';
+  } else if(lm.fit==='fill'){
+    const k=Math.max(lw/mw,lh/mh); const sw=Math.round(mw*k), sh=Math.round(mh*k);
+    out+=' · fills as '+sw+'×'+sh+(sh>lh?' · <b>'+Math.round((sh-lh)/2)+'px cut top &amp; bottom</b>':'')+(sw>lw?' · <b>'+Math.round((sw-lw)/2)+'px cut each side</b>':'');
+  } else if(lm.fit==='stretch'){
+    const ar=(mw/mh)/(lw/lh); out+=' · stretched'+(Math.abs(ar-1)>0.01?' · <b>'+(ar>1?'squeezed':'pulled')+' '+Math.round(Math.abs(ar-1)*100)+'%</b>':'');
+  } else {
+    const k=Math.min(lw/mw,lh/mh); const sw=Math.round(mw*k), sh=Math.round(mh*k);
+    out+=' · fits as '+sw+'×'+sh+(sh<lh?' · '+Math.round((lh-sh)/2)+'px bars top &amp; bottom':'')+(sw<lw?' · '+Math.round((lw-sw)/2)+'px bars each side':'');
+  }
+  return out;
+}
+// ── transport ───────────────────────────────────────────────────────────
+function _fsTargetKey(){ if(!fsPresetId) return ''; if(selLayer&&selLayer.pid===fsPresetId){ const v=getL(selLayer.pid,selLayer.sid,selLayer.n); if(v&&_fsIsVideo(v)) return _fsLayerKey(selLayer.pid,selLayer.sid,selLayer.n); } if(sel&&sel.pid===fsPresetId){ const bg=getBgName(sel.pid,sel.sid); if(bg&&_fsIsVideo(bg)) return 'BG:'+sel.pid+':'+sel.sid; } return ''; }
+function _fsScopeKeys(){ const t=_fsTargetKey(); if(_fsPlayScope==='preset'||!t) return Object.keys(_fsVideoEls); return _fsVideoEls[t]?[t]:[]; }
+function _fsPlayToggle(){ const keys=_fsScopeKeys(); if(!keys.length) return; const anyPlaying=keys.some(function(k){ return !_fsVideoEls[k].paused; }); if(anyPlaying) _fsPause(); else _fsPlay(); }
+function _fsPlay(){ _fsScopeKeys().forEach(function(k){ const vid=_fsVideoEls[k]; const lm=getLayerMedia.apply(null,[_fsKeyParts(k).pid,_fsKeyParts(k).sid,_fsKeyParts(k).n]); if(lm.out!=null&&vid.currentTime>=lm.out-0.05) vid.currentTime=lm.in||0; if(vid.currentTime<(lm.in||0)) vid.currentTime=lm.in||0; _fsWantPlay[k]=true; vid.play().catch(function(){}); }); _fsTlLoop(); _fsTlSync(); }
+function _fsPause(){ _fsScopeKeys().forEach(function(k){ const vid=_fsVideoEls[k]; delete _fsWantPlay[k]; try{ vid.pause(); }catch(e){} }); _fsTlSync(); }
+function _fsPauseAll(){ Object.keys(_fsVideoEls).forEach(function(k){ try{ _fsVideoEls[k].pause(); }catch(e){} }); _fsWantPlay={}; if(_fsTlRaf){ cancelAnimationFrame(_fsTlRaf); _fsTlRaf=0; } }
+function _fsStop(){ _fsScopeKeys().forEach(function(k){ const vid=_fsVideoEls[k]; delete _fsWantPlay[k]; try{ vid.pause(); const q=_fsKeyParts(k); vid.currentTime=getLayerMedia(q.pid,q.sid,q.n).in||0; }catch(e){} }); _fsTlSync(); }
+function _fsOnTime(key,vid){ const q=_fsKeyParts(key); const lm=getLayerMedia(q.pid,q.sid,q.n); if(lm.out!=null&&vid.currentTime>=lm.out){ if(lm.loop){ vid.currentTime=lm.in||0; } else { vid.pause(); delete _fsWantPlay[key]; vid.currentTime=lm.out; } } if(_fsTlKey===key) _fsTlSync(); }
+function _fsOnEnded(key,vid){ const q=_fsKeyParts(key); const lm=getLayerMedia(q.pid,q.sid,q.n); if(lm.loop){ vid.currentTime=lm.in||0; vid.play().catch(function(){}); } else { delete _fsWantPlay[key]; } if(_fsTlKey===key) _fsTlSync(); }
+function _fsSetLM(patch){ const t=_fsTargetKey(); if(!t) return; const q=_fsKeyParts(t); if(typeof pushUndo==='function') pushUndo(); setLayerMedia(q.pid,q.sid,q.n,patch); const vid=_fsVideoEls[t]; const lm=getLayerMedia(q.pid,q.sid,q.n); if(vid){ vid.loop=!!(lm.loop&&lm.out==null); vid.playbackRate=Math.max(.1,Math.min(4,(lm.speed||100)/100)); vid.volume=Math.max(0,Math.min(1,lm.level/100)); vid.muted=(lm.level===0); } }
+function _fsToggleLoop(){ const t=_fsTargetKey(); if(!t) return; const q=_fsKeyParts(t); _fsSetLM({loop:!getLayerMedia(q.pid,q.sid,q.n).loop}); _fsRenderTimeline(true); renderFsPanel(true); }
+function _fsSetLevel(v){ const t=_fsTargetKey(); if(!t) return; const q=_fsKeyParts(t); setLayerMedia(q.pid,q.sid,q.n,{level:Math.max(0,Math.min(100,parseInt(v)||0))}); const vid=_fsVideoEls[t]; const lm=getLayerMedia(q.pid,q.sid,q.n); if(vid){ vid.volume=lm.level/100; vid.muted=(lm.level===0); } const lbl=document.getElementById('fs-tl-lvl'); if(lbl) lbl.textContent=lm.level+'%'; }
+function _fsSetSpeed(v){ _fsSetLM({speed:Math.max(10,Math.min(400,parseInt(v)||100))}); renderFsPanel(true); }
+function _fsSetFit(mode){ const t=_fsTargetKey(); if(!t) return; _fsSetLM({fit:mode}); renderFullscreen(); }
+function _fsSetScope(s){ _fsPlayScope=(s==='preset')?'preset':'layer'; renderFsPanel(true); }
+function _fsSetIn(){ const t=_fsTargetKey(); const vid=_fsVideoEls[t]; if(!vid) return; const q=_fsKeyParts(t); const lm=getLayerMedia(q.pid,q.sid,q.n); const tIn=Math.max(0,vid.currentTime); _fsSetLM({in:tIn, out:(lm.out!=null&&lm.out<=tIn+0.1)?null:lm.out}); _fsRenderTimeline(true); renderFsPanel(true); }
+function _fsSetOut(){ const t=_fsTargetKey(); const vid=_fsVideoEls[t]; if(!vid) return; const q=_fsKeyParts(t); const lm=getLayerMedia(q.pid,q.sid,q.n); const tOut=Math.max((lm.in||0)+0.1,vid.currentTime); _fsSetLM({out:tOut}); _fsRenderTimeline(true); renderFsPanel(true); }
+function _fsClearInOut(){ _fsSetLM({in:0,out:null}); _fsRenderTimeline(true); renderFsPanel(true); }
+function _fsSeekFrac(f){ const t=_fsTargetKey(); const vid=_fsVideoEls[t]; if(!vid||!isFinite(vid.duration)) return; f=Math.max(0,Math.min(1,f)); const keys=_fsPlayScope==='preset'?Object.keys(_fsVideoEls):[t]; keys.forEach(function(k){ const v2=_fsVideoEls[k]; try{ v2.currentTime=f*(vid.duration||0); }catch(e){} }); _fsTlSync(); }
+function _fsTlScrubStart(ev){ const track=ev.currentTarget; const move=function(e){ const r=track.getBoundingClientRect(); _fsSeekFrac((e.clientX-r.left)/Math.max(1,r.width)); }; move(ev); const up=function(){ window.removeEventListener('mousemove',move); window.removeEventListener('mouseup',up); }; window.addEventListener('mousemove',move); window.addEventListener('mouseup',up); ev.preventDefault(); }
+function _fsSetCover(){ const t=_fsTargetKey(); const vid=_fsVideoEls[t]; if(!vid||!vid.videoWidth) return; const q=_fsKeyParts(t); const name=q.n?getL(q.pid,q.sid,q.n):getBgName(q.pid,q.sid); const it=_fsMediaItem(name); if(!it) return; if(typeof pushUndo==='function') pushUndo(); it.img=_fsShrink(vid,vid.videoWidth,vid.videoHeight); it.media.coverTime=vid.currentTime; presets.forEach(function(p){ screens.forEach(function(s){ if(getBgName(p.id,s.id)===name&&typeof setPColor==='function') setPColor(p.id,s.id,null,it.img); }); }); _isDirty=true; if(typeof _updateDirtyIndicator==='function') _updateDirtyIndicator(); scheduleRender(); renderFullscreen(); }
+// ── the timeline under the canvas ───────────────────────────────────────
+function _fsRenderTimeline(force){
+  const tl=document.getElementById('fs-timeline'); if(!tl) return;
+  const key=_fsTargetKey();
+  if(!key||!_fsVideoEls[key]){
+    if(_fsTlKey!==''||force||!tl.classList.contains('empty')){ _fsTlKey=''; tl.classList.add('empty'); tl.innerHTML=
+      '<div class="fs-tl-cover"><div class="fs-tl-cover-frame"><span>—</span></div><span class="fs-tl-cap">Cover</span><button type="button" class="fs-tl-btn" disabled>Set cover</button></div>'
+      +'<div class="fs-tl-tracks"><div class="fs-tl-row"><span class="fs-tl-lbl">Video</span><div class="fs-tl-track"><span class="fs-tl-hint">'+(Object.keys(_fsVideoEls).length?'Pick a layer that holds a video to trim it and set its cover':'Drop a video from the Video tab onto a layer or a BG, then pick it')+'</span></div><span class="fs-tl-tc">00:00 / 00:00</span></div>'
+      +'<div class="fs-tl-row"><span class="fs-tl-lbl">Audio</span><div class="fs-tl-track fs-tl-wave"></div><span class="fs-tl-tc"><input type="range" class="fs-tl-level" min="0" max="100" value="100" disabled aria-label="Overall audio level"><b>100%</b></span></div></div>'; }
+    return;
+  }
+  const q=_fsKeyParts(key); const name=q.n?getL(q.pid,q.sid,q.n):getBgName(q.pid,q.sid); const it=_fsMediaItem(name); const lm=getLayerMedia(q.pid,q.sid,q.n);
+  if(_fsTlKey!==key||force){
+    _fsTlKey=key; tl.classList.remove('empty');
+    tl.innerHTML=
+      '<div class="fs-tl-cover"><div class="fs-tl-cover-frame" style="'+(it&&it.img?'background:#000 url('+it.img+') center/cover':'')+'"></div><span class="fs-tl-cap">Cover</span><button type="button" class="fs-tl-btn" onclick="_fsSetCover()" title="Use the frame at the playhead as the cover Simple shows">Set cover</button></div>'
+      +'<div class="fs-tl-tracks">'
+      +'<div class="fs-tl-row"><span class="fs-tl-lbl">Video</span><span class="fs-tl-tr"><button type="button" class="fs-tl-tb play" id="fs-tl-play" onclick="_fsPlayToggle()" title="Play / pause">▶</button><button type="button" class="fs-tl-tb" onclick="_fsStop()" title="Stop, back to In">■</button><button type="button" class="fs-tl-tb'+(lm.loop?' on':'')+'" id="fs-tl-loop" onclick="_fsToggleLoop()" title="Loop">⟳</button></span>'
+      +'<div class="fs-tl-track video" onmousedown="_fsTlScrubStart(event)" title="Click or drag to scrub"><div class="fs-tl-dim l"></div><div class="fs-tl-dim r"></div><div class="fs-tl-prog"></div><div class="fs-tl-in"></div><div class="fs-tl-out"></div><div class="fs-tl-head"></div></div>'
+      +'<span class="fs-tl-tc"><b id="fs-tl-cur">00:00</b>&nbsp;/&nbsp;<span id="fs-tl-dur">'+_fsFmtTime(it&&it.media?it.media.dur:0)+'</span></span></div>'
+      +'<div class="fs-tl-row"><span class="fs-tl-lbl">Audio</span><span class="fs-tl-tr"><button type="button" class="fs-tl-tb sm" onclick="_fsSetIn()" title="Set In at the playhead">In</button><button type="button" class="fs-tl-tb sm" onclick="_fsSetOut()" title="Set Out at the playhead">Out</button><button type="button" class="fs-tl-tb sm" onclick="_fsClearInOut()" title="Clear In and Out">✕</button></span>'
+      +'<div class="fs-tl-track audio"><canvas class="fs-tl-wavec"></canvas>'+((it&&it.media&&it.media.hasAudio)?'':'<span class="fs-tl-noaudio">no audio</span>')+'</div>'
+      +'<span class="fs-tl-tc"><input type="range" class="fs-tl-level" min="0" max="100" value="'+lm.level+'" oninput="_fsSetLevel(this.value)" title="Overall audio level" aria-label="Overall audio level"><b id="fs-tl-lvl">'+lm.level+'%</b></span></div>'
+      +'</div>';
+    _fsDrawWave(tl.querySelector('.fs-tl-wavec'),it);
+  }
+  _fsTlSync();
+}
+function _fsDrawWave(cv,it){
+  if(!cv) return; const w=cv.clientWidth||300, h=cv.clientHeight||30; cv.width=w; cv.height=h; const g=cv.getContext('2d'); g.clearRect(0,0,w,h);
+  const peaks=(it&&it.media&&it.media.peaks)||null;
+  if(!peaks){ g.strokeStyle='rgba(78,195,224,.25)'; g.beginPath(); g.moveTo(0,h/2); g.lineTo(w,h/2); g.stroke(); return; }
+  const N=peaks.length, bw=w/N; g.fillStyle='rgba(78,195,224,.7)';
+  for(let i=0;i<N;i++){ const ph=Math.max(1,peaks[i]*(h-4)); g.fillRect(i*bw+0.5,(h-ph)/2,Math.max(1,bw-1),ph); }
+}
+function _fsTlSync(){
+  const key=_fsTlKey; const vid=_fsVideoEls[key]; const tl=document.getElementById('fs-timeline'); if(!tl||!vid) return;
+  const q=_fsKeyParts(key); const lm=getLayerMedia(q.pid,q.sid,q.n); const dur=isFinite(vid.duration)&&vid.duration>0?vid.duration:0;
+  const f=dur?Math.max(0,Math.min(1,vid.currentTime/dur)):0; const fi=dur?(lm.in||0)/dur:0; const fo=dur&&lm.out!=null?lm.out/dur:1;
+  const set=function(sel,prop,val){ const e=tl.querySelector(sel); if(e) e.style[prop]=val; };
+  set('.fs-tl-prog','width',(f*100)+'%'); set('.fs-tl-head','left',(f*100)+'%'); set('.fs-tl-dim.l','width',(fi*100)+'%'); set('.fs-tl-dim.r','width',((1-fo)*100)+'%'); set('.fs-tl-in','left',(fi*100)+'%'); set('.fs-tl-out','left',(fo*100)+'%');
+  const cur=document.getElementById('fs-tl-cur'); if(cur) cur.textContent=_fsFmtTime(vid.currentTime); const du=document.getElementById('fs-tl-dur'); if(du&&dur) du.textContent=_fsFmtTime(dur);
+  const pb=document.getElementById('fs-tl-play'); if(pb){ const playing=!vid.paused; pb.textContent=playing?'❚❚':'▶'; pb.classList.toggle('on',playing); }
+  const lp=document.getElementById('fs-tl-loop'); if(lp) lp.classList.toggle('on',!!lm.loop);
+}
+function _fsTlLoop(){ if(_fsTlRaf) cancelAnimationFrame(_fsTlRaf); const step=function(){ const any=Object.keys(_fsVideoEls).some(function(k){ return !_fsVideoEls[k].paused; }); _fsTlSync(); if(any) _fsTlRaf=requestAnimationFrame(step); else _fsTlRaf=0; }; _fsTlRaf=requestAnimationFrame(step); }
+// ── the Video section in the layer properties (Advanced only) ──────────
+function _fsMediaSectionHTML(p,s,n,v){
+  const it=v?_fsMediaItem(v):null; if(!it) return '';
+  const lm=getLayerMedia(p.id,s.id,n); const m=it.media||{}; const isVid=it.kind==='video';
+  const seg=function(cur,opts,fn){ return '<div class="fitmode">'+opts.map(function(o){ return '<button type="button" class="'+(cur===o[0]?'on':'')+'" onclick="'+fn+'(\''+o[0]+'\')" title="'+o[2]+'">'+o[1]+'</button>'; }).join('')+'</div>'; };
+  const open=(_lfxOpen.video!==false);
+  return '<div class="lfx-acc'+(open?' open':'')+'" data-sec="video"><div class="lfx-hd" onclick="_lfxToggleSec(\'video\')" title="Expand or collapse"><span class="lfx-ttl">'+(isVid?'Video':'Image')+'</span><span class="lfx-chev">▼</span></div><div class="lfx-body">'
+    +'<div class="fs-file"><div class="fs-file-poster" style="'+(it.img?'background:#000 url('+it.img+') center/cover':'background:'+it.c)+'"></div><div><div class="fs-file-name" title="'+_esc(v)+'">'+_esc(v)+'</div><div class="fs-file-meta">'+m.w+'×'+m.h+(isVid?' · '+_fsFmtTime(m.dur):'')+' · '+_fsFmtType(m.type)+(isVid?' · '+(m.hasAudio?'audio':'no audio'):'')+(_fsMediaUrl(v)?'':' · <b class="warn">file missing</b>')+'</div></div></div>'
+    +'<div class="fs-check"><div class="t">Size check</div><div class="m">'+_fsSizeCheckText(it,p.id,s.id,n)+'</div></div>'
+    +'<div class="lfx-row"><span class="lfx-lbl">Fit</span>'+seg(lm.fit,[['fit','Fit','Scale to fit inside the layer, bars if needed'],['fill','Fill','Scale to cover the layer, cropping the overflow'],['stretch','Stretch','Stretch to the layer box'],['native','1:1','Native pixels, centred, overflow cut']],'_fsSetFit')+'</div>'
+    +(isVid?('<div class="lfx-row"><span class="lfx-lbl">Play</span><span class="fs-tr"><button type="button" class="fs-tl-tb play" onclick="_fsPlayToggle()" title="Play / pause">▶</button><button type="button" class="fs-tl-tb" onclick="_fsStop()" title="Stop">■</button><button type="button" class="fs-tl-tb'+(lm.loop?' on':'')+'" onclick="_fsToggleLoop()" title="Loop">⟳</button></span></div>'
+      +'<div class="lfx-row"><span class="lfx-lbl">Scope</span>'+seg(_fsPlayScope,[['layer','This layer','Transport drives this layer only'],['preset','Whole preset','Transport drives every video in this preset together']],'_fsSetScope')+'</div>'
+      +'<div class="lfx-row"><span class="lfx-lbl">In / Out</span><span class="fs-io"><b>'+_fsFmtTime(lm.in||0)+'</b> → <b>'+(lm.out!=null?_fsFmtTime(lm.out):_fsFmtTime(m.dur))+'</b> <i>set with In / Out under the timeline</i></span></div>'
+      +'<div class="lfx-row"><span class="lfx-lbl">Speed</span><input class="lfx-inp" type="number" min="10" max="400" step="5" value="'+(lm.speed||100)+'" onchange="_fsSetSpeed(this.value)" onkeydown="if(event.key===\'Enter\'){event.preventDefault();this.blur()}"> <span class="lfx-lbl">%</span></div>'
+      +'<div class="lfx-row"><span class="lfx-lbl">Level</span><input type="range" class="fs-tl-level" min="0" max="100" value="'+lm.level+'" oninput="_fsSetLevel(this.value)" aria-label="Audio level"> <span class="lfx-lbl">'+lm.level+'%</span></div>'
+      +'<div class="lfx-hint">Playback lives here only. Simple shows the cover frame, set it under the timeline.</div>'):'<div class="lfx-hint">Images sit in the layer at the fit above. Simple shows the same picture.</div>')
+    +'</div></div>';
 }
 
 // Panel resize drag — handles both left (presets) and right (properties)
