@@ -757,20 +757,42 @@ body.is-mobile #vp-tabs{display:none}
 .fs-src-meta b{color:var(--text);font-weight:600}
 .fs-src-hint,.fs-src-empty,.fs-props-hint{font-size:11px;font-style:italic;color:var(--text2);padding:8px 10px;border:1px dashed var(--n-line);border-radius:6px;margin:4px 0 8px}
 .fs-drop-hot{outline:2px solid var(--n-cyan) !important;outline-offset:-2px;box-shadow:0 0 0 3px rgba(var(--n-cyan-rgb),.35) !important}
-/* preset strip */
-#fs-preset-strip{flex-shrink:0;height:92px;display:flex;align-items:center;gap:10px;padding:0 16px;background:#10131a;border-top:1px solid var(--n-line);overflow:hidden}
-.fs-strip-lbl{display:flex;align-items:center;gap:8px;flex-shrink:0;font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--n-green)}
-.fs-strip-lbl i{display:inline-block;width:3px;height:16px;border-radius:2px;background:var(--n-green)}
-#fs-preset-list{display:flex;gap:8px;overflow-x:auto;flex:1;min-width:0;padding:6px 2px;scrollbar-width:thin}
-.fs-pr{flex:0 0 auto;width:232px;height:52px;border:1px solid var(--n-line);border-radius:6px;background:#14181f;display:flex;align-items:center;gap:8px;padding:0 10px;cursor:pointer;transition:border-color .12s}
-.fs-pr:hover{border-color:#3a4150}
-.fs-pr.on{border-color:var(--n-green);box-shadow:0 0 0 1px rgba(77,220,138,.35),0 0 14px rgba(77,220,138,.2);background:#141c18}
-.fs-pr-code{font-family:var(--font-mono);font-size:12px;font-weight:700;width:54px;height:26px;display:inline-flex;align-items:center;justify-content:center;border-radius:999px;border:1px solid rgba(240,192,96,.3);background:linear-gradient(180deg,#1a1408 0%,#120e08 100%);color:var(--n-amber);flex-shrink:0}
-.fs-pr-txt{display:flex;flex-direction:column;min-width:0}
-.fs-pr-name{font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.fs-pr-meta{font-family:var(--font-mono);font-size:10px;font-weight:600;color:var(--text3);margin-top:2px;white-space:nowrap}
-.fs-pr-add{flex:0 0 auto;width:52px;height:52px;border:1px dashed var(--n-line);border-radius:6px;background:transparent;color:var(--text2);font-size:16px;cursor:pointer;font-family:inherit}
-.fs-pr-add:hover{color:var(--n-green);border-color:var(--n-green)}
+/* 16hw: side-panel tabs (a smaller Simple / Advanced pill), presets in the Preset tab as the old pip cards, timeline between
+   the panels under the canvas (cover / video trim / audio level) — the frame now, the works with the video build. */
+.fs-tabs{display:flex;align-items:center;gap:8px;padding:8px 10px;border-bottom:1px solid var(--n-line);flex-shrink:0}
+.lb-seg.lb-seg-sm{padding:2px}
+.lb-seg.lb-seg-sm .lb-seg-btn{height:22px;padding:0 11px;font-size:10px}
+.fs-tab-add{margin-left:auto;font-size:11px;width:22px;height:22px;line-height:1;display:flex;align-items:center;justify-content:center;padding:0;border:1px solid var(--n-line);border-radius:999px;background:linear-gradient(180deg,#1c222c 0%,#14181f 100%);color:var(--text2);cursor:pointer;transition:all .15s;font-family:inherit}
+.fs-tab-add:hover{color:var(--n-green);border-color:var(--n-green);box-shadow:0 0 6px rgba(77,220,138,.4)}
+#fs-right-panel[data-tab="preset"] #fs-toolbar,#fs-right-panel[data-tab="layers"] #fs-preset-list,#fs-right-panel[data-tab="layers"] #fs-prop-add,#fs-left-panel[data-tab="video"] .fs-add-btn{display:none}
+.fs-pcard{background:#0e1012;border:1px solid #1e2024;border-radius:7px;padding:8px 10px;cursor:pointer;transition:border-color .15s,background .15s;box-sizing:border-box}
+.fs-pcard:hover{background:#111518;border-color:#2a2d35}
+.fs-pcard.on,.fs-pcard.on:hover{background:#1a1f28;border-color:var(--n-cyan)}
+.fs-pcard-code{font-size:10px;font-weight:700;font-family:var(--font-mono);color:var(--text3);background:#111;border:1px solid #1e1e1e;border-radius:5px;padding:3px 8px;flex-shrink:0}
+.fs-pcard.on .fs-pcard-code{color:#f0c060;background:rgba(240,192,96,.1);border-color:rgba(240,192,96,.3)}
+.fs-pcard-name{font-size:11px;font-weight:600;color:var(--text2);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fs-pcard.on .fs-pcard-name{color:var(--text)}
+.fs-pcard-meta{display:flex;align-items:center;gap:6px;margin-bottom:6px;font-size:10px;color:var(--text3);font-family:var(--font-mono)}
+.fs-pcard.on .fs-pcard-meta{color:var(--text2)}
+.fs-pcard-meta .dot{color:var(--n-line)}
+.fs-pcard-meta .dsm{color:#3a5a7a}
+.fs-pcard.on .fs-pcard-meta .dsm{color:var(--n-cyan)}
+/* timeline */
+#fs-timeline{flex-shrink:0;height:112px;display:flex;align-items:stretch;gap:12px;padding:10px 14px;background:#10131a;border-top:1px solid var(--n-line)}
+.fs-tl-cover{width:96px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:4px}
+.fs-tl-cover-frame{width:96px;height:54px;border-radius:4px;border:1px dashed var(--n-line);background:#0a0d12;display:flex;align-items:center;justify-content:center;color:var(--text3);font-size:11px}
+.fs-tl-cap{font-size:9px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--text3)}
+.fs-tl-btn{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border:1px solid var(--n-line);border-radius:3px;background:#0a0d12;color:var(--text2);cursor:pointer;font-family:inherit}
+.fs-tl-btn:disabled{opacity:.45;cursor:default}
+.fs-tl-tracks{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
+.fs-tl-row{display:flex;align-items:center;gap:10px;flex:1;min-height:0}
+.fs-tl-lbl{width:44px;flex-shrink:0;font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--text3)}
+.fs-tl-track{flex:1;min-width:0;height:100%;border:1px solid var(--n-line);border-radius:4px;background:#0a0d12;box-shadow:inset 0 2px 6px rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}
+.fs-tl-hint{font-size:11px;font-style:italic;color:var(--text3);padding:0 10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fs-tl-wave{background:#0a0d12 repeating-linear-gradient(90deg,rgba(78,195,224,.14) 0 2px,transparent 2px 5px)}
+#fs-timeline.empty .fs-tl-wave{opacity:.5}
+.fs-tl-tc{width:110px;flex-shrink:0;display:flex;align-items:center;justify-content:flex-end;gap:6px;font-family:var(--font-mono);font-size:10px;font-weight:600;color:var(--text3)}
+.fs-tl-level{width:64px;margin:0;accent-color:var(--n-cyan)}
 /* properties */
 .fs-crumb{display:flex;align-items:center;gap:6px;padding:0 0 10px;margin-bottom:10px;border-bottom:1px solid var(--n-line)}
 .fs-crumb-c{font-family:var(--font-mono);font-size:11px;font-weight:700;padding:3px 7px;border-radius:3px;border:1px solid var(--n-line);background:#0a0d12;flex-shrink:0}
@@ -3822,7 +3844,7 @@ Also called DSM (Downstage Monitor) in broadcast and theater workflows, same thi
   <div class="bb-cell bb-pill bb-cyan" title="The largest number of layers used in any single preset, this is the figure to compare against your switcher's per-scene layer budget. (The most complex single moment in the show.)"><span class="bb-label">Layers</span><strong id="bb-layers">0</strong></div>
   <div id="bb-spacer"></div>
   <div class="bb-cell" id="bb-sel" style="font-size:10px;opacity:.5">—</div>
-  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy, hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16hv</div>
+  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy, hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16hw</div>
   <button class="bb-util" id="tb-adv" onclick="actions.advancedMenu(event)" title="Advanced features (AOI, Free Mode, Blend Zones, Dead Space)" aria-label="Advanced features (AOI, Free Mode, Blend Zones, Dead Space)" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Advanced<span class="adv-count" aria-hidden="true"></span><svg aria-hidden="true" id="tb-adv-chev" viewBox="0 0 10 10" fill="currentColor" width="8" height="8" style="opacity:.7"><path d="M2 4l3 3 3-3z"/></svg></button>
   <button class="bb-util" onclick="actions.help()" title="Help, quick reference, keyboard shortcuts, glossary, accessibility" aria-label="Help, quick reference, keyboard shortcuts, glossary, accessibility" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="4.93" y1="4.93" x2="9.17" y2="9.17"/><line x1="14.83" y1="14.83" x2="19.07" y2="19.07"/><line x1="14.83" y1="9.17" x2="19.07" y2="4.93"/><line x1="4.93" y1="19.07" x2="9.17" y2="14.83"/></svg>Help</button>
   <button class="bb-util" id="lb-skin-btn" onclick="lbToggleSkinMenu(event)" title="Color skin" aria-label="Change color skin" style="height:100%;padding:0 13px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="13.5" cy="6.5" r=".6" fill="currentColor" stroke="none"/><circle cx="17" cy="10.5" r=".6" fill="currentColor" stroke="none"/><circle cx="8.5" cy="7.5" r=".6" fill="currentColor" stroke="none"/><circle cx="6.5" cy="12" r=".6" fill="currentColor" stroke="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c.93 0 1.65-.75 1.65-1.69 0-.44-.18-.83-.44-1.12-.29-.29-.44-.65-.44-1.13a1.65 1.65 0 0 1 1.67-1.67h1.97c3.05 0 5.55-2.5 5.55-5.55C21.95 6.01 17.45 2 12 2z"/></svg></button>
@@ -4168,6 +4190,7 @@ Also called DSM (Downstage Monitor) in broadcast and theater workflows, same thi
         <div class="fs-dot" style="margin-left:auto"></div>
         <button onclick="pickerTarget=null;openCustomModal()" class="fs-add-btn" title="Add a source to the show library" aria-label="Add a source">+</button>
       </div>
+      <div id="fs-src-tabs" class="fs-tabs"><span class="lb-seg lb-seg-sm" data-seg="fs-src"><button type="button" class="lb-seg-btn on" data-tab="images" onclick="_fsSetSrcTab('images')" title="Images and files the show creates and uses">Images</button><button type="button" class="lb-seg-btn" data-tab="video" onclick="_fsSetSrcTab('video')" title="Video files added to the show">Video</button></span></div>
       <div id="fs-source-list" style="flex:1;overflow-y:auto;padding:10px"></div>
     </div>
 
@@ -4184,6 +4207,16 @@ Also called DSM (Downstage Monitor) in broadcast and theater workflows, same thi
       <div id="fs-viewport" style="flex:1;overflow:hidden;position:relative;background:repeating-conic-gradient(#181a1e 0% 25%,#141618 0% 50%) 0 0/20px 20px;cursor:default;min-height:0;min-width:0">
         <div id="fs-world" style="position:absolute;transform-origin:0 0;will-change:transform">
           <div id="fs-canvas" style="position:relative;display:inline-flex;gap:0;align-items:flex-start;padding:60px" ondragover="_fsCanvasDragOver(event)" ondrop="_fsCanvasDrop(event)"></div>
+        </div>
+      </div>
+
+      <!-- Timeline (16hw): between the side panels, under the canvas. Video row = trim start / end, audio row = the
+           track's overall level. Left: the cover frame Simple shows for the video. Fills in with the video build. -->
+      <div id="fs-timeline" class="empty">
+        <div class="fs-tl-cover"><div class="fs-tl-cover-frame"><span>—</span></div><span class="fs-tl-cap">Cover</span><button type="button" class="fs-tl-btn" disabled title="Pick the frame Simple shows for this video">Set cover</button></div>
+        <div class="fs-tl-tracks">
+          <div class="fs-tl-row"><span class="fs-tl-lbl">Video</span><div class="fs-tl-track"><span class="fs-tl-hint">Pick a layer that holds a video to trim its start and end</span></div><span class="fs-tl-tc">00:00 / 00:00</span></div>
+          <div class="fs-tl-row"><span class="fs-tl-lbl">Audio</span><div class="fs-tl-track fs-tl-wave"></div><span class="fs-tl-tc"><input type="range" class="fs-tl-level" min="0" max="100" value="100" disabled title="Overall audio level" aria-label="Overall audio level"><b>100%</b></span></div>
         </div>
       </div>
 
@@ -4314,22 +4347,17 @@ Also called DSM (Downstage Monitor) in broadcast and theater workflows, same thi
          onmouseout="this.style.background='rgba(var(--n-cyan-rgb),.05)'"></div>
 
     <!-- Right panel, Properties -->
-    <div id="fs-right-panel" style="width:312px;flex-shrink:0;display:flex;flex-direction:column;background:#0d0e0f;border-left:1px solid #1e1e1e;min-width:240px;max-width:520px">
+    <div id="fs-right-panel" data-tab="preset" style="width:312px;flex-shrink:0;display:flex;flex-direction:column;background:#0d0e0f;border-left:1px solid #1e1e1e;min-width:240px;max-width:520px">
       <div class="fs-panel-hdr fs-cyan">
         <div class="fs-strip"></div>
         <h4>Properties</h4>
         <div class="fs-dot" style="margin-left:auto"></div>
-        <span id="fs-props-kind" class="fs-count">Preset</span>
       </div>
-      <div id="fs-toolbar" style="flex:1;overflow-y:auto;overflow-x:hidden;padding:10px;min-height:0"></div>
+      <div id="fs-prop-tabs" class="fs-tabs"><span class="lb-seg lb-seg-sm" data-seg="fs-prop"><button type="button" class="lb-seg-btn on" data-tab="preset" onclick="_fsSetPropTab('preset')" title="Every preset in the show, click one to put it on the canvas">Preset</button><button type="button" class="lb-seg-btn" data-tab="layers" onclick="_fsSetPropTab('layers')" title="The picked layer's properties">Layers</button></span><button type="button" id="fs-prop-add" class="fs-tab-add" onclick="addPreset()" title="Add a preset" aria-label="Add a preset">+</button></div>
+      <div id="fs-preset-list" class="fs-pane" style="flex:1;overflow-y:auto;overflow-x:hidden;min-height:0"></div>
+      <div id="fs-toolbar" class="fs-pane" style="flex:1;overflow-y:auto;overflow-x:hidden;padding:10px;min-height:0"></div>
     </div>
 
-  </div>
-
-  <!-- Preset strip (16hu): one row, scrolls sideways. Click a card to put that preset on the canvas. -->
-  <div id="fs-preset-strip">
-    <span class="fs-strip-lbl"><i></i>Presets<span id="fs-strip-count" class="fs-count">0</span></span>
-    <div id="fs-preset-list"></div>
   </div>
 
   
@@ -9246,7 +9274,7 @@ function layerChipClick(e,pid,sid,n){
   // Select this layer
   selLayer={pid,sid,n};
   updateLayerSelDOM(pid,sid,n,true);
-  if(typeof fsPresetId!=='undefined'&&fsPresetId) renderFsPanel(true);   // 16hu
+  if(typeof fsPresetId!=='undefined'&&fsPresetId){ _fsSetPropTab('layers'); renderFsPanel(true); }   // 16hu / 16hw
 }
 
 // 16fy: mirror the canvas layer selection into the combinations table — the
@@ -9550,6 +9578,7 @@ function _lpSwitchMode(toAdv){
 function openLayerPanelWithMode(e,pid,sid,n,_adv){
   if(typeof fsPresetId!=='undefined'&&fsPresetId){   // 16hu: engineer mode shows the layer in the right-hand Properties panel instead
     selLayer={pid:pid,sid:sid,n:n};
+    _fsSetPropTab('layers');
     renderFullscreen();
     return;
   }
@@ -19882,7 +19911,8 @@ function openFullscreen(pid){
   fsPresetId=pid;
   if(typeof _topbarMeasureHeight==='function') _topbarMeasureHeight();   // 16ht: the overlay hangs under the header like Wire / I/O Patch
   _vpSyncTabs();
-  _fsRenderSources(true);
+  _fsSetSrcTab(_fsSrcTab);   // 16hw: renders the sources for the current tab
+  _fsSetPropTab('preset');
   fsPanX=0;fsPanY=0;fsZoom=1;
   // Always start Engineer mode LOCKED — the advanced "free-move" mode
   // requires an explicit unlock. Sync the lock-button UI to match.
@@ -25097,21 +25127,86 @@ document.addEventListener('click', function(e){
 // Preset list renderer
 // 16hu: the preset strip along the bottom — one row, scrolls sideways. Code pill + name + "N dst · N L".
 // (The old left-hand rail with mini canvases is gone; the canvas itself shows the picked preset.)
+// 16hw: the Preset tab of the right-hand panel — the pip cards Omar liked from the old rail (aspect-correct mini
+// canvas with a pip per filled layer, DSM / AUX toggles), sized to the panel. Click a card to put it on the canvas.
 function renderFsPresetList(){
   const el=document.getElementById('fs-preset-list');
   if(!el)return;
-  const cnt=document.getElementById('fs-strip-count'); if(cnt) cnt.textContent=presets.length;
-  el.innerHTML=presets.map(p=>{
-    const on=p.id===fsPresetId;
-    const nums=getLayerNums(p.id); let layers=0;
-    screens.forEach(s=>{ nums.forEach(n=>{ if(getL(p.id,s.id,n)) layers++; }); });
-    return '<div class="fs-pr'+(on?' on':'')+'" data-pid="'+_esc(p.id)+'" onclick="fsSwitchPreset(\''+_esc(p.id)+'\')" title="'+_esc((p.code||'')+' '+(p.name||''))+'">'
-      +'<span class="fs-pr-code">'+_esc(p.code||'')+'</span>'
-      +'<span class="fs-pr-txt"><span class="fs-pr-name">'+_esc(p.name||'')+'</span><span class="fs-pr-meta">'+screens.length+' dst · '+layers+'L</span></span>'
-      +'</div>';
-  }).join('')+'<button type="button" class="fs-pr-add" onclick="addPreset()" title="Add a preset" aria-label="Add a preset">+</button>';
-  const cur=el.querySelector('.fs-pr.on');
-  if(cur&&cur.scrollIntoView){ try{ cur.scrollIntoView({block:'nearest',inline:'nearest'}); }catch(e){} }
+
+  const totalW=screens.reduce((a,s)=>a+parseInt(s.w),0)||1;
+  const maxH=screens.reduce((a,s)=>Math.max(a,parseInt(s.h)),1);
+  const prevW=Math.max(172,(el.clientWidth||312)-40);
+  const sc=prevW/totalW;
+  const prevH=Math.max(20,Math.min(120,Math.round(maxH*sc)));
+
+  const resSet=new Set(screens.map(s=>parseInt(s.w)+'×'+parseInt(s.h)));
+  const resStr=[...resSet].join(', ');
+  const dsmCount=dsms.length;
+  const dsmLabel=typeof _dsmLabel!=='undefined'?_dsmLabel:'AUX';
+
+  el.innerHTML=`<div style="padding:10px;display:flex;flex-direction:column;gap:6px">`+
+  presets.map((p,idx)=>{
+    const isActive=p.id===fsPresetId;
+    const activeDSMs=dsms.filter(d=>getDSMOn(p.id,d.id)).length;
+    const layerCount=screens.reduce((sum,s)=>
+      sum+getLayerNums(p.id).filter(n=>getL(p.id,s.id,n)).length,0);
+
+    // Aspect-correct screen boxes with centred name + pip swatches
+    let xCursor=0;
+    const screenBoxes=screens.map(s=>{
+      const sw=parseInt(s.w),sh=parseInt(s.h);
+      const bw=Math.max(4,Math.round(sw*sc));
+      const bh=Math.round(sh*sc);
+      const bx=xCursor;
+      xCursor+=bw+1;
+
+      const lnums=getLayerNums(p.id).filter(n=>getL(p.id,s.id,n));
+      const pipW=Math.max(2,Math.round(bw*0.35));
+      const pipH=Math.max(2,Math.round(bh*0.35));
+      const gap=2;
+      const totalPipW=lnums.length*(pipW+gap)-gap;
+      const pipStartX=Math.round((bw-Math.max(0,totalPipW))/2);
+      const pipY=Math.round((bh-pipH)/2);
+      const pips=lnums.map((n,i)=>{
+        const ct=findContent(getL(p.id,s.id,n));
+        const px=pipStartX+i*(pipW+gap);
+        return `<div style="position:absolute;left:${px}px;top:${pipY}px;width:${pipW}px;height:${pipH}px;background:${ct.c};border-radius:1px;opacity:.9"></div>`;
+      }).join('');
+
+      const label=bw>=20?`<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:2">
+          <span style="font-size:${Math.max(5,Math.min(9,Math.round(bw*0.13)))}px;font-weight:700;color:rgba(255,255,255,.9);text-shadow:0 1px 3px rgba(0,0,0,.9);white-space:nowrap;overflow:hidden;max-width:95%;text-align:center">${_esc(s.name.replace('Destination ','D').replace('Screen ','S'))}</span>
+        </div>`:'';
+
+      return `<div style="position:absolute;left:${bx}px;top:${Math.round((prevH-bh)/2)}px;width:${bw}px;height:${bh}px;background:${s.color||'#1a1a1a'};border:1px solid rgba(255,255,255,.1);border-radius:2px;overflow:hidden" title="${_esc(s.name)} ${sw}×${sh}">${pips}${label}</div>`;
+    }).join('');
+
+    const dsmRow=dsmCount>0?`<div style="display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:3px;margin-top:6px">
+      ${dsms.map(d=>{
+        const on=getDSMOn(p.id,d.id);
+        return `<button class="dsm-toggle${on?' dsm-on':''}"
+          onclick="event.stopPropagation();actions.toggleDSM('${p.id}','${d.id}');renderFsPresetList()"
+          title="${on?'Turn off':'Turn on'} ${_esc(d.name)}" aria-label="${on?'Turn off':'Turn on'} ${_esc(d.name)}">${_esc(d.name)}</button>`;
+      }).join('')}
+    </div>`:'';
+
+    return `<div class="fs-pcard${isActive?' on':''}" onclick="fsSwitchPreset('${p.id}')" title="${_esc(p.code+' '+p.name)}">
+      <div style="display:flex;align-items:center;gap:7px;margin-bottom:4px">
+        <div class="fs-pcard-code">${_esc(p.code)}</div>
+        <div class="fs-pcard-name">${_esc(p.name)}</div>
+      </div>
+      <div class="fs-pcard-meta">
+        <span>${resStr}</span>
+        <span class="dot">·</span>
+        <span>${screens.length} dst</span>
+        ${layerCount>0?`<span class="dot">·</span><span>${layerCount}L</span>`:''}
+        ${dsmCount>0?`<span class="dot">·</span><span class="${activeDSMs>0?'dsm':''}">${activeDSMs}/${dsmCount} ${_esc(dsmLabel)}</span>`:''}
+      </div>
+      <div style="position:relative;width:${prevW}px;height:${prevH}px;background:#0a0a0c;border:1px solid #1a1a1a;border-radius:3px;overflow:hidden">
+        ${screenBoxes}
+      </div>
+      ${dsmRow}
+    </div>`;
+  }).join('')+`</div>`;
 }
 
 function fsSwitchPreset(pid){
@@ -25139,6 +25234,10 @@ function _fsSourceNames(){
 }
 function _fsRenderSources(force){
   const el=document.getElementById('fs-source-list'); if(!el) return;
+  if(_fsSrcTab==='video'){   // 16hw: video files, their cover frame and playback arrive with the next build
+    el.innerHTML='<div class="fs-src-empty">No videos yet. Video files, their cover frame and playback arrive with the next build.</div>';
+    const c0=document.getElementById('fs-src-count'); if(c0) c0.textContent='0'; _fsSrcSig=''; return;
+  }
   const names=_fsSourceNames();
   const sig=names.join('')+'|'+((typeof customLibrary!=='undefined'&&customLibrary)?customLibrary.length:0);
   if(!force&&sig===_fsSrcSig&&el.children.length) return;   // same list → keep the DOM (a drag may be in flight)
@@ -25151,7 +25250,7 @@ function _fsRenderSources(force){
     const res=(meta&&meta.resolution)?_esc(meta.resolution):'—';
     const conn=(meta&&meta.connectorType)?_esc(meta.connectorType):'';
     return '<div class="fs-src" draggable="true" data-src="'+_esc(n)+'" ondragstart="_fsSrcDragStart(event)" ondragend="_fsClearDropHot()" title="Drag onto a layer or a BG in the canvas">'
-      +'<div class="fs-src-thumb" style="'+_fsSwatchStyle(ct,'#636870')+'"><span class="fs-src-thumb-name">'+_esc(n)+'</span><span class="fs-src-kind">File</span></div>'
+      +'<div class="fs-src-thumb" style="'+_fsSwatchStyle(ct,'#636870')+'"><span class="fs-src-thumb-name">'+_esc(n)+'</span><span class="fs-src-kind">Image</span></div>'
       +'<div class="fs-src-info"><div class="fs-src-name">'+_esc(n)+'</div><div class="fs-src-meta"><b>'+res+'</b><br>library'+(conn?' · '+conn:'')+'</div></div>'
       +'</div>';
   }).join('')+'<div class="fs-src-hint">Drag a source onto a layer or a BG in the canvas, like taking an input on a switcher.</div>';
@@ -25199,6 +25298,7 @@ function _fsAssignLayer(pid,sid,n,name){
   if(!pid||!sid||!n) return;
   if(typeof homeSetL==='function') homeSetL(pid,sid,n,name); else setL(pid,sid,n,name);
   selLayer={pid:pid,sid:sid,n:n};
+  _fsSetPropTab('layers');
   scheduleRender(); renderFullscreen();
 }
 function _fsAssignBg(pid,sid,name){
@@ -25209,8 +25309,21 @@ function _fsAssignBg(pid,sid,name){
   if(ct&&typeof setPColor==='function'){ if(ct.img) setPColor(pid,sid,null,ct.img); else if(ct.c) setPColor(pid,sid,ct.c,null); }
   scheduleRender(); renderFullscreen();
 }
-function _fsSelectLayer(pid,sid,n){ selLayer={pid:pid,sid:sid,n:n}; renderFullscreen(); }
+function _fsSelectLayer(pid,sid,n){ selLayer={pid:pid,sid:sid,n:n}; _fsSetPropTab('layers'); renderFullscreen(); }
 function _fsClearLayer(){ selLayer=null; renderFullscreen(); }
+// 16hw: the side panels carry a small Simple / Advanced-style pill. Sources: Images | Video. Properties: Preset | Layers.
+var _fsSrcTab='images', _fsPropTab='preset';
+function _fsSetSrcTab(t){
+  _fsSrcTab=(t==='video')?'video':'images';
+  const lp=document.getElementById('fs-left-panel'); if(lp) lp.dataset.tab=_fsSrcTab;
+  document.querySelectorAll('#fs-src-tabs .lb-seg-btn').forEach(b=>b.classList.toggle('on',b.dataset.tab===_fsSrcTab));
+  _fsRenderSources(true);
+}
+function _fsSetPropTab(t){
+  _fsPropTab=(t==='layers')?'layers':'preset';
+  const rp=document.getElementById('fs-right-panel'); if(rp) rp.dataset.tab=_fsPropTab;
+  document.querySelectorAll('#fs-prop-tabs .lb-seg-btn').forEach(b=>b.classList.toggle('on',b.dataset.tab===_fsPropTab));
+}
 
 // Panel resize drag — handles both left (presets) and right (properties)
 let _fsPanelDragging=false;
