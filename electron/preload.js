@@ -1,6 +1,6 @@
 // Secure bridge between the web app and the native shell.
 // The HTML can detect it's running inside the desktop app via window.lookbookNative.
-const { contextBridge, ipcRenderer } = require('electron');
+const { contextBridge, ipcRenderer, webUtils } = require('electron');
 
 // Shell version arrives as a launch argument (the sandboxed preload can't
 // require() package.json).
@@ -10,6 +10,8 @@ const version = vArg ? vArg.slice('--lb-shell-version='.length) : '0.0.0';
 contextBridge.exposeInMainWorld('lookbookNative', {
   isDesktop: true,
   version: version,
+  // Where a picked / dropped File lives on this computer (the web page never knows; Media Info shows it) — 16ic
+  pathForFile: (f) => { try { return webUtils.getPathForFile(f) || ''; } catch (e) { return ''; } },
   // { shell, build, online } — shell version, running HTML build stamp, connectivity
   info: () => ipcRenderer.invoke('lb:info'),
   // Ask the shell to look for a newer app build right now.
