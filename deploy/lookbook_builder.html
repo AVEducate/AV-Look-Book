@@ -3346,7 +3346,13 @@ body.is-mobile #lb-kbviz{display:none}
 .pm-hdr .pm-close:hover,.pm-close:hover{filter:brightness(1.12)}
 /* 16gm: I/O Patch dropdown arrows = the combinations-table triangle (8px filled); resolution / picker menus on the grey square system */
 .pill-chev svg,.sys-pill .pill-chev svg,.sys-chip .pill-chev svg{width:8px !important;height:8px !important;display:block}
-.sys-dd{background:#14181f !important;border:1px solid #252a33 !important;border-radius:4px !important;box-shadow:0 8px 28px rgba(0,0,0,.6),0 0 0 1px rgba(0,0,0,.35) !important}
+/* 16gp: menu body = one chrome (I/O menus, shared resolution picker, Advanced). It hangs straight off its header:
+   corners squared on the side that touches the header; _menuPlace stamps .above when it had to flip up. */
+.sys-dd,#adv-menu{background:#14181f !important;border:1px solid var(--n-line) !important;border-radius:0 0 4px 4px !important;margin-top:0 !important;padding:4px;box-shadow:0 10px 28px rgba(0,0,0,.6) !important}
+.sys-dd.above,#adv-menu.above{border-radius:4px 4px 0 0 !important;box-shadow:0 -10px 28px rgba(0,0,0,.6) !important}
+#adv-menu.above{animation-name:advFadeInUp}
+@keyframes advFadeInUp{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+body.is-mobile .shared-res-dd.mb-res-sheet{border-radius:14px 0 0 14px !important}
 .sys-dd-item{border-radius:3px}
 .sys-dd-item:hover{background:#1c222c}
 /* 16go: every menu toggle rotates 180° while its menu / panel is open (Omar prefers the rotation) */
@@ -3356,6 +3362,67 @@ body.is-mobile #lb-kbviz{display:none}
 .del-btn svg:last-child{transition:transform .15s}
 #wire-overlay .wire-res-dropdown-btn svg{transition:transform .15s}
 #wire-overlay .wire-res-dropdown-btn.open svg{transform:rotate(180deg)}
+/* ══ 16gp: ONE menu-toggle look, app-wide — the layer-panel accordion header (blocks 5/6 of the mock; Omar: "I LOVE THIS").
+   Every select / picker is the same 30px bordered box: label left (11px/800, tracked, uppercase — data colours kept),
+   8px ▼ pinned far right, cyan + flipped while open. The menu body hangs straight off its header (no gap, joined corners),
+   below by default and above when there is no room — _menuPlace decides and stamps .above / .menu-above.
+   The combinations table keeps its 24px row height (density) but takes the same lettering + bare arrow. ══ */
+/* — the header box: I/O Patch pills + chips, name / custom-type cells, Wire cable button + resolution row — */
+body:not(.is-mobile) .sys-pill.clickable,body:not(.is-mobile) .sys-chip.clickable,
+body:not(.is-mobile) .sys-name-cell,body:not(.is-mobile) .sys-type-cell,
+#wire-overlay .wire-cable-btn,#wire-overlay .wire-res-row{display:flex;align-items:center;gap:6px;height:30px;box-sizing:border-box;padding:0 10px;min-width:0;border:1px solid var(--n-line);border-radius:4px;background:rgba(255,255,255,.015);box-shadow:none;font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;font-style:normal;white-space:nowrap;overflow:hidden;cursor:pointer;transition:background .12s,color .12s,border-color .12s}
+body:not(.is-mobile) .sys-name-cell,body:not(.is-mobile) .sys-type-cell,#wire-overlay .wire-res-row{cursor:default}
+body:not(.is-mobile) .sys-pill.clickable:hover,body:not(.is-mobile) .sys-chip.clickable:hover,
+body:not(.is-mobile) .sys-name-cell:hover,body:not(.is-mobile) .sys-type-cell:hover,
+#wire-overlay .wire-cable-btn:hover,#wire-overlay .wire-res-row:hover{background:rgba(255,255,255,.03);border-color:var(--n-line);filter:none;box-shadow:none}
+body:not(.is-mobile) .sys-pill.clickable.open,body:not(.is-mobile) .sys-chip.clickable.open,
+body:not(.is-mobile) .sys-name-cell.open,body:not(.is-mobile) .sys-type-cell.open,
+#wire-overlay .wire-cable-btn.open,#wire-overlay .wire-res-row.open{background:rgba(255,255,255,.03);border-color:var(--n-line);box-shadow:none}
+body:not(.is-mobile) .sys-name-cell:focus-within,body:not(.is-mobile) .sys-type-cell:focus-within,#wire-overlay .wire-res-row:focus-within{border-color:var(--n-cyan)}
+/* neutral lettering for plain fields — connector / type / cable family colours still win on their own rules */
+body:not(.is-mobile) .sys-pill.clickable[data-sys-field="resolution"],body:not(.is-mobile) .sys-name-cell,body:not(.is-mobile) .sys-type-cell,#wire-overlay .wire-res-row{color:var(--text2)}
+body:not(.is-mobile) .sys-pill.clickable.empty,body:not(.is-mobile) .sys-chip.clickable.empty,#wire-overlay .wire-cable-btn:not(.set){color:var(--text3);font-weight:700;font-style:normal}
+body:not(.is-mobile) .sys-res-wrap .sys-pill.clickable{letter-spacing:.04em;font-weight:700}
+/* open = the label goes cyan; a connector's dot keeps its data colour */
+body:not(.is-mobile) .sys-pill.clickable.open .pill-label>span:not(.dot),body:not(.is-mobile) .sys-pill.clickable.open.empty .pill-label,body:not(.is-mobile) .sys-pill.clickable.open[data-sys-field="resolution"] .pill-label,
+body:not(.is-mobile) .sys-chip.clickable.open .chip-label,
+#wire-overlay .wire-cable-btn.open .wire-cable-btn-label,
+body:not(.is-mobile) .sys-name-cell.open .sys-name-input,body:not(.is-mobile) .sys-type-cell.open .sys-type-input,
+#wire-overlay .wire-res-row.open .wire-source-res{color:var(--n-cyan) !important}
+/* inputs that live inside a boxed cell are bare — the box carries the border */
+body:not(.is-mobile) .sys-row .sys-name-cell .sys-name-input,body:not(.is-mobile) .sys-row .sys-type-cell .sys-type-input,#wire-overlay .wire-res-row .wire-source-res{flex:1;min-width:0;height:100%;padding:0 !important;margin:0;background:transparent !important;border:none !important;border-radius:0 !important;box-shadow:none !important;outline:none;font:inherit;font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--text2)}
+body:not(.is-mobile) .sys-row .sys-name-cell .sys-name-input:focus,body:not(.is-mobile) .sys-row .sys-type-cell .sys-type-input:focus,#wire-overlay .wire-res-row .wire-source-res:focus{background:transparent !important;border:none !important;box-shadow:none !important;color:var(--text) !important}
+#wire-overlay .wire-res-row .wire-source-res{font-family:var(--font-mono);letter-spacing:.04em;font-weight:700}
+body:not(.is-mobile) .sys-row .sys-name-cell .sys-name-input::placeholder,body:not(.is-mobile) .sys-row .sys-type-cell .sys-type-input::placeholder,#wire-overlay .wire-res-row .wire-source-res::placeholder{color:var(--text3);font-style:normal;font-family:inherit;font-weight:700}
+/* the ▼: 8px, far right, quiet grey; the 16go rotation rules still flip it while open */
+body:not(.is-mobile) .sys-pill .pill-chev,body:not(.is-mobile) .sys-chip .chip-chev,#wire-overlay .wire-cable-btn-chev{margin-left:auto;color:var(--text3);opacity:1;flex-shrink:0;display:inline-flex}
+body:not(.is-mobile) .sys-pill.open .pill-chev{color:var(--text3)}
+#wire-overlay .wire-cable-btn-chev svg{width:8px;height:8px;display:block;transition:transform .15s}
+#wire-overlay .wire-cable-btn.open .wire-cable-btn-chev svg{transform:rotate(180deg)}
+body:not(.is-mobile) .sys-row .sys-name-chev,#wire-overlay .wire-res-row .wire-res-dropdown-btn{margin-left:auto;width:auto;height:auto;min-width:0;padding:0;border:none !important;background:transparent !important;box-shadow:none;color:var(--text3);display:inline-flex;align-items:center;flex-shrink:0;border-radius:0}
+body:not(.is-mobile) .sys-row .sys-name-chev:hover,body:not(.is-mobile) .sys-row .sys-name-chev.open,#wire-overlay .wire-res-row .wire-res-dropdown-btn:hover,#wire-overlay .wire-res-row .wire-res-dropdown-btn.open{color:var(--text3);background:transparent !important;border-color:transparent}
+/* header ↔ body join: the side that faces the menu loses its corners */
+.sys-pill.clickable.open,.sys-chip.clickable.open,.sys-name-cell.open,.sys-type-cell.open,#wire-overlay .wire-cable-btn.open,#wire-overlay .wire-res-row.open,.del-btn.menu-open{border-radius:4px 4px 0 0 !important}
+.sys-pill.clickable.open.menu-above,.sys-chip.clickable.open.menu-above,.sys-name-cell.open.menu-above,.sys-type-cell.open.menu-above,#wire-overlay .wire-cable-btn.open.menu-above,#wire-overlay .wire-res-row.open.menu-above,.del-btn.menu-open.menu-above{border-radius:0 0 4px 4px !important}
+.del-btn.menu-open::before{border-radius:2px 2px 0 0 !important}
+.del-btn.menu-open.menu-above::before{border-radius:0 0 2px 2px !important}
+/* Advanced (an action menu): same ▼ and the same body; the button itself keeps its bar / pill chrome, cyan while open */
+.del-btn.menu-open,#tb-adv.menu-open{color:var(--n-cyan) !important}
+/* combinations table — same lettering + bare arrow at the table's own 24px row height */
+body:not(.is-mobile) #tbody .home-field,body:not(.is-mobile) #tbody .home-field-bg{border-radius:4px;border:1px solid var(--n-line);background:rgba(255,255,255,.015);box-shadow:none}
+body:not(.is-mobile) #tbody .home-field:hover,body:not(.is-mobile) #tbody .home-field-bg:hover{border-color:var(--n-line);background:rgba(255,255,255,.03)}
+body:not(.is-mobile) #tbody .home-field.open,body:not(.is-mobile) #tbody .home-field-bg.open{border-color:var(--n-line);background:rgba(255,255,255,.03);box-shadow:none}
+body:not(.is-mobile) #tbody .home-field:focus-within{border-color:var(--n-cyan);box-shadow:none}
+body:not(.is-mobile) #tbody .home-field:has(.home-field-chev) input{font-size:11px !important;font-weight:800 !important;letter-spacing:.1em;text-transform:uppercase;text-align:left !important;color:var(--text2) !important;padding-left:8px !important}
+body:not(.is-mobile) #tbody .home-field.open:has(.home-field-chev) input{color:var(--n-cyan) !important}
+body:not(.is-mobile) #tbody .home-field-chev{border-left:none;background:transparent;color:var(--text3);width:20px}
+body:not(.is-mobile) #tbody .home-field-chev:hover{background:transparent;color:var(--text3)}
+body:not(.is-mobile) #tbody .home-field-color-strip{border-radius:3px 0 0 3px}
+/* Wire source / destination cards: their fields are only ~90px wide, so the same look runs on compact metrics
+   (10px, tighter tracking and padding) — otherwise "1920×1080" and "HDMI 2.0" truncate */
+#wire-overlay .wire-cable-btn,#wire-overlay .wire-res-row{padding:0 6px;gap:4px;font-size:10px;letter-spacing:.06em}
+#wire-overlay .wire-res-row .wire-source-res{font-size:10px;letter-spacing:.02em;text-transform:none}   /* raw value: keep the lowercase x of 1920x1080 */
+#wire-overlay .wire-cable-btn .dot{width:6px;height:6px}
 /* 16fx: single skin — the colour-skin picker is hidden until a new skin is decided */
 #lb-skin-btn{display:none !important}
 /* ══ 16gb: Wire side panels on the I/O Patch palette (Omar: "the colour scheme seems off, left and right —
@@ -3528,8 +3595,8 @@ Also called DSM (Downstage Monitor) in broadcast and theater workflows — same 
   <div class="bb-cell bb-pill bb-cyan" title="The largest number of layers used in any single preset — this is the figure to compare against your switcher's per-scene layer budget. (The most complex single moment in the show.)"><span class="bb-label">Layers</span><strong id="bb-layers">0</strong></div>
   <div id="bb-spacer"></div>
   <div class="bb-cell" id="bb-sel" style="font-size:10px;opacity:.5">—</div>
-  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy — hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16go</div>
-  <button class="bb-util" id="tb-adv" onclick="actions.advancedMenu(event)" title="Advanced features (AOI, Free Mode, Blend Zones, Dead Space)" aria-label="Advanced features (AOI, Free Mode, Blend Zones, Dead Space)" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Advanced<span class="adv-count" aria-hidden="true"></span><svg aria-hidden="true" id="tb-adv-chev" width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="opacity:.7"><polyline points="6 9 12 15 18 9"/></svg></button>
+  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy — hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16gp</div>
+  <button class="bb-util" id="tb-adv" onclick="actions.advancedMenu(event)" title="Advanced features (AOI, Free Mode, Blend Zones, Dead Space)" aria-label="Advanced features (AOI, Free Mode, Blend Zones, Dead Space)" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Advanced<span class="adv-count" aria-hidden="true"></span><svg aria-hidden="true" id="tb-adv-chev" viewBox="0 0 10 10" fill="currentColor" width="8" height="8" style="opacity:.7"><path d="M2 4l3 3 3-3z"/></svg></button>
   <button class="bb-util" onclick="actions.help()" title="Help — quick reference, keyboard shortcuts, glossary, accessibility" aria-label="Help — quick reference, keyboard shortcuts, glossary, accessibility" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="4.93" y1="4.93" x2="9.17" y2="9.17"/><line x1="14.83" y1="14.83" x2="19.07" y2="19.07"/><line x1="14.83" y1="9.17" x2="19.07" y2="4.93"/><line x1="4.93" y1="19.07" x2="9.17" y2="14.83"/></svg>Help</button>
   <button class="bb-util" id="lb-skin-btn" onclick="lbToggleSkinMenu(event)" title="Color skin" aria-label="Change color skin" style="height:100%;padding:0 13px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="13.5" cy="6.5" r=".6" fill="currentColor" stroke="none"/><circle cx="17" cy="10.5" r=".6" fill="currentColor" stroke="none"/><circle cx="8.5" cy="7.5" r=".6" fill="currentColor" stroke="none"/><circle cx="6.5" cy="12" r=".6" fill="currentColor" stroke="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c.93 0 1.65-.75 1.65-1.69 0-.44-.18-.83-.44-1.12-.29-.29-.44-.65-.44-1.13a1.65 1.65 0 0 1 1.67-1.67h1.97c3.05 0 5.55-2.5 5.55-5.55C21.95 6.01 17.45 2 12 2z"/></svg></button>
 </div>
@@ -6980,7 +7047,7 @@ function renderCanvas(){
         +'<div style="display:flex;flex-direction:column;gap:1px;align-items:flex-end">'
           +'<span style="font-size:7px;font-weight:600;color:var(--text3);letter-spacing:.06em;text-transform:uppercase">Actions</span>'
           +'<div class="pr-actions" style="display:flex;align-items:center;gap:4px">'
-            +'<button class="del-btn v-cyan" onclick="toggleAdvancedMenu(event)" title="Advanced features (AOI, Free Position, Blend Zones, Dead Space)" aria-label="Advanced view options"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Advanced<svg aria-hidden="true" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" style="margin-left:4px;opacity:.7;vertical-align:-1px"><polyline points="6 9 12 15 18 9"/></svg></button>'
+            +'<button class="del-btn v-cyan" onclick="toggleAdvancedMenu(event)" title="Advanced features (AOI, Free Position, Blend Zones, Dead Space)" aria-label="Advanced view options"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Advanced<svg aria-hidden="true" viewBox="0 0 10 10" fill="currentColor" width="8" height="8" style="margin-left:4px;opacity:.7;vertical-align:-1px"><path d="M2 4l3 3 3-3z"/></svg></button>'
             +'<div style="width:1px;height:18px;background:var(--n-line)"></div>'
             +'<button class="del-btn '+(cp?'v-green':'v-off')+'" onclick="'+(cp?'actions.pastePreset(\''+p.id+'\')':'')+'" title="'+(cp?'Paste \''+cp.name+'\' \u2192 '+p.name+' (overwrites this preset)':'Copy a preset first')+'" aria-label="'+(cp?'Paste \''+cp.name+'\' \u2192 '+p.name+' (overwrites this preset)':'Copy a preset first')+'"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><polyline points="9 14 11 16 15 12"/></svg>Paste</button>'
             +'<button class="del-btn h-cyan" onclick="actions.copyPreset(\''+p.id+'\')" title="Copy preset (Ctrl/Cmd+C with a destination selected)" aria-label="Copy preset (Ctrl/Cmd+C with a destination selected)"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Copy</button>'
@@ -7069,7 +7136,7 @@ function renderTable(){
             onblur="setDSMContent('${p.id}','${d.id}',this.value)"
             onkeydown="if(event.key==='Enter')this.blur()"
             title="Type content name, click ▾ for common feeds (double-click for full panel)"
-            style="color:${ct?'#ccc':'var(--n-cyan)'} !important;text-align:center !important"><button type="button" class="home-field-chev" tabindex="-1" data-home-field="aux" data-home-pid="${p.id}" data-home-dsmid="${d.id}" title="Open AUX/DSM editor" aria-label="Open AUX/DSM editor"><svg aria-hidden="true" viewBox="0 0 10 10" fill="currentColor"><path d="M2 4l3 3 3-3z"/></svg></button></div></td>`;
+            style="${ct?'':'color:var(--n-cyan) !important;'}text-align:left !important"><button type="button" class="home-field-chev" tabindex="-1" data-home-field="aux" data-home-pid="${p.id}" data-home-dsmid="${d.id}" title="Open AUX/DSM editor" aria-label="Open AUX/DSM editor"><svg aria-hidden="true" viewBox="0 0 10 10" fill="currentColor"><path d="M2 4l3 3 3-3z"/></svg></button></div></td>`;
       }).join('');;
 
       html+=`<tr data-pid="${p.id}" data-sid="${s.id}" class="${isSel?'row-sel':''}${p.id===_wp?' grp-current':''}" style="${rowbg}"
@@ -11151,7 +11218,7 @@ function closeSharedResPicker(){
   if(_activeSharedResMenu.backdrop&&_activeSharedResMenu.backdrop.parentNode){
     _activeSharedResMenu.backdrop.parentNode.removeChild(_activeSharedResMenu.backdrop);
   }
-  if(_activeSharedResMenu.anchor&&_activeSharedResMenu.anchor.classList) _activeSharedResMenu.anchor.classList.remove('open');   // 16go
+  if(_activeSharedResMenu.anchor) _menuMark(_activeSharedResMenu.anchor,false);   // 16go/16gp
   _activeSharedResMenu=null;
 }
 function openSharedResPicker(opts){
@@ -11159,7 +11226,7 @@ function openSharedResPicker(opts){
   closeSharedResPicker();
   const anchor=opts.anchor;
   if(!anchor) return null;
-  if(anchor.classList) anchor.classList.add('open');   // 16go: toggle rotates while the picker is open
+  _menuMark(anchor,true);   // 16go/16gp: header + ▼ show the open state while the picker is up
   const currentValue=opts.currentValue||'';
   const showInUse=opts.showInUse!==false;
   const includeClear=opts.includeClear===true;
@@ -11279,20 +11346,7 @@ function openSharedResPicker(opts){
   // Setup modal, which scrolls INTERNALLY (window.scrollY stays 0), so a
   // position computed once would "pop out" and not follow the anchor.
   function positionMenu(){
-    const rect=anchor.getBoundingClientRect();
-    const menuW=menu.offsetWidth || 280;
-    const menuH=menu.offsetHeight || 380;
-    let left=rect.left+window.scrollX;
-    let top=rect.bottom+window.scrollY+4;
-    const safeTop=(typeof _topbarSafeTop==='function')?_topbarSafeTop():100;
-    if(left+menuW > window.innerWidth-8) left=Math.max(8, window.innerWidth-menuW-8);
-    if(top+menuH > window.scrollY+window.innerHeight-8){
-      // Flip above the anchor.
-      top=rect.top+window.scrollY-menuH-4;
-      if(top<window.scrollY+safeTop) top=window.scrollY+safeTop;
-    }
-    menu.style.left=left+'px';
-    menu.style.top=top+'px';
+    _menuPlace(menu, _menuRectEl(anchor).getBoundingClientRect(), anchor);   // 16gp: the one placement rule (below, flip above, joined corners)
   }
   positionMenu();
   // Follow the anchor on scroll (capture-phase catches scrolls from any
@@ -11518,7 +11572,7 @@ function _sysRowHtml(opts){
     const promptTxt=isSrc?'— Set machine —':'— Set device —';
     const chipChev='<span class="chip-chev"><svg aria-hidden="true" viewBox="0 0 10 10" fill="currentColor" width="8" height="8"><path d="M2 4l3 3 3-3z"/></svg></span>';
     if(opts.isCustomType){
-      const editChev='<button class="sys-name-chev" '+dataAttrs+' data-sys-field="'+tfield+'" data-sys-value="Custom" title="Change type" aria-label="Change type"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>';
+      const editChev='<button class="sys-name-chev" '+dataAttrs+' data-sys-field="'+tfield+'" data-sys-value="Custom" title="Change type" aria-label="Change type"><svg aria-hidden="true" viewBox="0 0 10 10" fill="currentColor" width="8" height="8"><path d="M2 4l3 3 3-3z"/></svg></button>';
       typeCell='<div class="sys-type-cell"><input class="sys-type-input" '+dataAttrs+' data-sys-field="custom-type" value="'+_esc(opts.customVal||'')+'" placeholder="Type name…">'+editChev+'</div>';
     } else {
       const lbl=opts.typeLabel?_esc(opts.typeLabel):promptTxt;
@@ -11907,15 +11961,14 @@ function _sysRender(){
 var _sysActiveMenu=null;
 function _sysRepositionMenu(){
   if(!_sysActiveMenu||!_sysActiveMenu.trigger) return;
-  const r=_sysActiveMenu.trigger.getBoundingClientRect();
-  _menuPlace(_sysActiveMenu.menu, r);   // 16gn
+  _menuPlace(_sysActiveMenu.menu, _menuRectEl(_sysActiveMenu.trigger).getBoundingClientRect(), _sysActiveMenu.trigger);   // 16gn/16gp
 }
 function _sysCloseMenu(){
   if(_sysActiveMenu){
     window.removeEventListener('scroll',_sysRepositionMenu,true);
     window.removeEventListener('resize',_sysRepositionMenu);
     _sysActiveMenu.menu.remove();
-    if(_sysActiveMenu.trigger) _sysActiveMenu.trigger.classList.remove('open');
+    if(_sysActiveMenu.trigger) _menuMark(_sysActiveMenu.trigger,false);   // 16gp: header + its ▼ both drop the open state
     _sysActiveMenu=null;
   }
 }
@@ -11951,12 +12004,23 @@ function _sysBuildResOptions(){
 // 16gn: ONE placement rule for dropdown menus (Clarity logic): open below the
 // toggle, left-aligned; flip above when there's no room below; never off the
 // sides. Call after the menu is in the DOM so its size is real.
-function _menuPlace(menu, rect){
+// 16gp: the "header" of a menu is sometimes bigger than the element that was clicked (the ▼ button inside the
+// I/O name cell, the custom-type cell, or the Wire resolution row). These two helpers resolve that header so the
+// body can hang off the whole box and the whole box can show the open state.
+function _menuRectEl(anchor){ return (anchor&&anchor.closest&&anchor.closest('.wire-res-row,.sys-name-cell,.sys-type-cell'))||anchor; }
+function _menuMark(anchor, on){ const hd=_menuRectEl(anchor); [anchor,hd].forEach(function(el){ if(!el||!el.classList) return; if(on) el.classList.add('open'); else el.classList.remove('open','menu-above'); }); }
+function _menuPlace(menu, rect, anchor){
+  // 16gp: the body is at least as wide as its header, sits flush on it (1px overlap so the two hairlines read as one),
+  // flips above when there is no room below, and never goes off the sides or under the top bar.
+  if(rect&&rect.width){ const cur=parseFloat(menu.style.minWidth)||parseFloat(getComputedStyle(menu).minWidth)||0; menu.style.minWidth=Math.round(Math.max(cur, rect.width))+'px'; }
   const mw=menu.offsetWidth||220, mh=menu.offsetHeight||200, vw=window.innerWidth, vh=window.innerHeight;
-  let left=rect.left, top=rect.bottom+4;
+  const safeTop=Math.max(8,(typeof _topbarSafeTop==='function')?_topbarSafeTop():8);
+  let left=rect.left, top=rect.bottom-1, above=false;
   if(left+mw>vw-8) left=Math.max(8, vw-mw-8);
-  if(top+mh>vh-8){ const above=rect.top-4-mh; top=(above>=8)?above:Math.max(8, vh-mh-8); }
+  if(top+mh>vh-8){ const up=rect.top+1-mh; if(up>=safeTop){ top=up; above=true; } else top=Math.max(safeTop, vh-mh-8); }
   menu.style.left=Math.round(left)+'px'; menu.style.top=Math.round(top)+'px';
+  menu.classList.toggle('above', above);
+  const hd=_menuRectEl(anchor); [anchor,hd].forEach(function(el){ if(el&&el.classList) el.classList.toggle('menu-above', above); });
 }
 function _sysOpenDropdown(trigger){
   if(_sysActiveMenu&&_sysActiveMenu.trigger===trigger){_sysCloseMenu();return;}
@@ -12033,8 +12097,8 @@ function _sysOpenDropdown(trigger){
     menu.appendChild(item);
   });
   document.body.appendChild(menu);
-  _menuPlace(menu, trigger.getBoundingClientRect());   // 16gn: after attach — needs the real size
-  trigger.classList.add('open');
+  _menuMark(trigger,true);   // 16gp: the whole header shows the open state (colour, flipped ▼, joined corners)
+  _menuPlace(menu, _menuRectEl(trigger).getBoundingClientRect(), trigger);   // 16gn: after attach — needs the real size
   _sysActiveMenu={trigger:trigger,menu:menu};
   // Menu is position:fixed on <body>; keep it glued to its trigger when the
   // I/O Patch scrolls or the window resizes (capture:true catches nested scroll).
@@ -18267,7 +18331,7 @@ function _wireCableBtnHTML(kind, id, connectorType){
   return '<button type="button" class="wire-cable-btn' + (spec ? ' set ' + fam : '') + '" data-sys-kind="' + _esc(kind) + '" data-sys-id="' + _esc(String(id)) + '" data-sys-field="connector" data-sys-value="' + _esc(connectorType || '') + '" data-wire-origin="1" onclick="event.stopPropagation();_sysOpenDropdown(this)" title="' + (spec ? 'Cable type: ' + _esc(spec.type) + ' \u2014 click to change' : 'Pick the cable / connector type \u2014 sets the wire colour + line pattern') + '" aria-label="Cable type">'
        + '<span class="dot"></span>'
        + '<span class="wire-cable-btn-label">' + _esc(label) + '</span>'
-       + '<span class="wire-cable-btn-chev"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></span>'
+       + '<span class="wire-cable-btn-chev"><svg aria-hidden="true" viewBox="0 0 10 10" fill="currentColor" width="8" height="8"><path d="M2 4l3 3 3-3z"/></svg></span>'
        + '</button>';
 }
 function _wireSourceCardHTML_panel(n, isAdvanced){
@@ -25045,19 +25109,9 @@ function toggleAdvancedMenu(ev){
     _advClearToggles();
     return;
   }
-  const r = btn.getBoundingClientRect();
-  menu.style.top  = (r.bottom + 6) + 'px';
-  menu.style.left = r.left + 'px';
   menu.classList.add('open');
-  _advClearToggles(); btn.classList.add('menu-open');   // 16go: chevron rotates while the menu is open
-  const m = menu.getBoundingClientRect();
-  if(m.right > window.innerWidth - 8){
-    menu.style.left = (window.innerWidth - m.width - 8) + 'px';
-  }
-  // Clamp to bottom too
-  if(m.bottom > window.innerHeight - 8){
-    menu.style.top = (window.innerHeight - m.height - 8) + 'px';
-  }
+  _advClearToggles(); btn.classList.add('menu-open');   // 16go: the ▼ flips while the menu is open
+  _menuPlace(menu, btn.getBoundingClientRect(), btn);   // 16gp: body hangs off the button — below, or above from the status bar
   _advReflectMenu();
 }
 function closeAdvancedMenu(){
@@ -25065,7 +25119,7 @@ function closeAdvancedMenu(){
   if(menu) menu.classList.remove('open');
   _advClearToggles();
 }
-function _advClearToggles(){ document.querySelectorAll('.menu-open').forEach(b=>b.classList.remove('menu-open')); }
+function _advClearToggles(){ document.querySelectorAll('.menu-open').forEach(b=>b.classList.remove('menu-open','menu-above')); }
 
 function toggleAdvFeature(feature){
   // 2026-06-02: default-OFF for all features. AOI/Blend/Dead use
