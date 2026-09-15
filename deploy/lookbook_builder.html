@@ -709,8 +709,8 @@ body.is-mobile .dlg-btn-primary,body.is-mobile .dlg-btn-cancel{min-height:var(--
 #sys-overlay.io-advanced #io-adv{display:block}
 #io-tabs{display:flex;align-items:center}
 .io-adv-bar{display:flex;align-items:center;gap:14px;margin:0 0 14px;flex-wrap:wrap}
-.io-adv-pages{display:inline-flex;align-items:center;gap:2px;padding:3px;border:1px solid var(--n-line);border-radius:4px;background:#0a0d12}
-#io-page-tabs{display:none;align-items:center;margin-left:6px;flex-shrink:0}
+.io-adv-pages{display:inline-flex;align-items:center;gap:2px;padding:3px;border:1px solid var(--ss-border-soft);border-radius:4px;background:#0a0d12;box-shadow:var(--n-shadow-inset)}
+#io-page-tabs{display:none;align-items:center;margin-left:6px;min-width:0;overflow-x:auto;scrollbar-width:thin}
 .io-adv-pages .lb-seg-btn{height:26px;padding:0 12px}
 .io-adv-num{font-family:var(--font-mono);opacity:.55;font-size:9px;margin-right:6px}
 .io-adv-edit{padding:0 8px;display:inline-flex;align-items:center}
@@ -3736,7 +3736,7 @@ Also called DSM (Downstage Monitor) in broadcast and theater workflows, same thi
   <div class="bb-cell bb-pill bb-cyan" title="The largest number of layers used in any single preset, this is the figure to compare against your switcher's per-scene layer budget. (The most complex single moment in the show.)"><span class="bb-label">Layers</span><strong id="bb-layers">0</strong></div>
   <div id="bb-spacer"></div>
   <div class="bb-cell" id="bb-sel" style="font-size:10px;opacity:.5">—</div>
-  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy, hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16hn</div>
+  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy, hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16ho</div>
   <button class="bb-util" id="tb-adv" onclick="actions.advancedMenu(event)" title="Advanced features (AOI, Free Mode, Blend Zones, Dead Space)" aria-label="Advanced features (AOI, Free Mode, Blend Zones, Dead Space)" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Advanced<span class="adv-count" aria-hidden="true"></span><svg aria-hidden="true" id="tb-adv-chev" viewBox="0 0 10 10" fill="currentColor" width="8" height="8" style="opacity:.7"><path d="M2 4l3 3 3-3z"/></svg></button>
   <button class="bb-util" onclick="actions.help()" title="Help, quick reference, keyboard shortcuts, glossary, accessibility" aria-label="Help, quick reference, keyboard shortcuts, glossary, accessibility" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="4.93" y1="4.93" x2="9.17" y2="9.17"/><line x1="14.83" y1="14.83" x2="19.07" y2="19.07"/><line x1="14.83" y1="9.17" x2="19.07" y2="4.93"/><line x1="4.93" y1="19.07" x2="9.17" y2="14.83"/></svg>Help</button>
   <button class="bb-util" id="lb-skin-btn" onclick="lbToggleSkinMenu(event)" title="Color skin" aria-label="Change color skin" style="height:100%;padding:0 13px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="13.5" cy="6.5" r=".6" fill="currentColor" stroke="none"/><circle cx="17" cy="10.5" r=".6" fill="currentColor" stroke="none"/><circle cx="8.5" cy="7.5" r=".6" fill="currentColor" stroke="none"/><circle cx="6.5" cy="12" r=".6" fill="currentColor" stroke="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c.93 0 1.65-.75 1.65-1.69 0-.44-.18-.83-.44-1.12-.29-.29-.44-.65-.44-1.13a1.65 1.65 0 0 1 1.67-1.67h1.97c3.05 0 5.55-2.5 5.55-5.55C21.95 6.01 17.45 2 12 2z"/></svg></button>
@@ -11664,7 +11664,7 @@ function _sysSetMeta(kind,id,field,value){
     if(field==='resolution'){ const parts=String(value||'').split('x').map(n=>parseInt(n)||0); if(parts[0]&&parts[1]){d.w=parts[0];d.h=parts[1];} }
     else { d[field]=value; }
     _isDirty=true; if(typeof _updateDirtyIndicator==='function') _updateDirtyIndicator();
-  } else if(kind==='adv-src'||kind==='adv-dst'){
+  } else if(kind==='adv-src'||kind==='adv-dst'||kind==='adv-mv'){
     // 16hm: standalone Advanced I/O row (ioAdvanced.pages[n].sources / .dests)
     const r=_ioAdvRow(kind,id); if(!r) return;
     r[field]=value;
@@ -11707,7 +11707,7 @@ function _sysRowHtml(opts){
       +'<svg aria-hidden="true" viewBox="0 0 10 10" fill="currentColor" width="8" height="8"><path d="M2 4l3 3 3-3z"/></svg>'
       +'</button>'
       +'</div>';
-  } else if(kind==='dest'||kind==='aux'||kind==='iodest'||kind==='adv-src'||kind==='adv-dst'){
+  } else if(kind==='dest'||kind==='aux'||kind==='iodest'||kind==='adv-src'||kind==='adv-dst'||kind==='adv-mv'){
     const _advSrc=(kind==='adv-src');   // 16hm: Advanced rows are plain editable names; the chevron still offers the library
     nameCell='<div class="sys-name-cell">'
       +'<input class="sys-name-input" '+dataAttrs+' value="'+_esc(name)+'" data-sys-old-name="'+_esc(name)+'" placeholder="'+(_advSrc?'Source name':'Destination name')+'">'
@@ -11992,15 +11992,61 @@ document.addEventListener('pointerdown',function(e){
 // Simple = the I/O Patch that follows the Video Presets (auto-discovered rows). Advanced = a blank builder with three
 // pages; each page owns its own Sources / Destinations rows and prints as its own sheet in Export I/O. Rows use the
 // same row builder, pickers and handlers as Simple, with kinds 'adv-src' / 'adv-dst' routed to ioAdvanced.
-function _ioAdvDefault(){ return { view:'simple', page:0, pages:[1,2,3].map(function(n){ return { id:'p'+n, name:'Page '+n, sources:[], dests:[] }; }) }; }
+const _IO_ADV_MAX_PAGES=25;
+function _ioAdvBlank(kind){ const r={ id:'ia'+Date.now().toString(36)+Math.random().toString(36).slice(2,6), name:'', connectorType:'', customType:'', resolution:'', notes:'' }; if(kind==='src') r.type=''; else r.deviceType=''; return r; }
+// 16ho: every page starts with the Set-for-all row (rendered) plus one blank row in Sources and Destinations; the
+// Multiviewers table starts empty, it's there when a show needs it.
+function _ioAdvNewPage(n){ return { id:'p'+n, name:'Page '+n, sources:[_ioAdvBlank('src')], dests:[_ioAdvBlank('dst')], mvs:[] }; }
+function _ioAdvDefault(){ return { view:'simple', page:0, pages:[1,2,3].map(_ioAdvNewPage) }; }
 function _ioAdvNorm(o){
   const d=_ioAdvDefault(); if(!o||typeof o!=='object') return d;
-  const out={ view:(o.view==='advanced')?'advanced':'simple', page:Math.min(2,Math.max(0,parseInt(o.page)||0)), pages:[] };
-  for(let i=0;i<3;i++){ const p=(Array.isArray(o.pages)&&o.pages[i]&&typeof o.pages[i]==='object')?o.pages[i]:{}; out.pages.push({ id:'p'+(i+1), name:(typeof p.name==='string'&&p.name.trim())?p.name.trim().slice(0,32):('Page '+(i+1)), sources:Array.isArray(p.sources)?p.sources:[], dests:Array.isArray(p.dests)?p.dests:[] }); }
+  const src=Array.isArray(o.pages)?o.pages:[]; const n=Math.min(_IO_ADV_MAX_PAGES, Math.max(3, src.length));
+  const out={ view:(o.view==='advanced')?'advanced':'simple', page:0, pages:[] };
+  for(let i=0;i<n;i++){ const p=(src[i]&&typeof src[i]==='object')?src[i]:{}; out.pages.push({ id:'p'+(i+1), name:(typeof p.name==='string'&&p.name.trim())?p.name.trim().slice(0,32):('Page '+(i+1)), sources:Array.isArray(p.sources)?p.sources:[_ioAdvBlank('src')], dests:Array.isArray(p.dests)?p.dests:[_ioAdvBlank('dst')], mvs:Array.isArray(p.mvs)?p.mvs:[] }); }
+  out.page=Math.min(out.pages.length-1, Math.max(0, parseInt(o.page)||0));
   return out;
 }
+function _ioAdvRowUsed(r){ return !!(r&&((r.name||'').trim()||r.connectorType||r.type||r.deviceType||r.customType||r.resolution||(r.notes||'').trim())); }
+function _ioAdvPageUsed(pg){ return !!pg&&[].concat(pg.sources||[],pg.dests||[],pg.mvs||[]).some(_ioAdvRowUsed); }
+// 16ho: the last page is always a spare — once it's used, the next one appears (up to 25)
+function _ioAdvEnsurePages(){ const ps=ioAdvanced.pages; while(ps.length<3) ps.push(_ioAdvNewPage(ps.length+1)); while(ps.length<_IO_ADV_MAX_PAGES && _ioAdvPageUsed(ps[ps.length-1])) ps.push(_ioAdvNewPage(ps.length+1)); }
 function _ioAdvPage(){ return ioAdvanced.pages[ioAdvanced.page]||ioAdvanced.pages[0]; }
-function _ioAdvRow(kind,id){ const pg=_ioAdvPage(); const arr=(kind==='adv-src')?pg.sources:pg.dests; return arr.find(function(x){ return x&&x.id===id; })||null; }
+function _ioAdvArr(pg,kind){ if(!pg.mvs) pg.mvs=[]; return (kind==='adv-src'||kind==='src')?pg.sources:(kind==='adv-mv'||kind==='mv')?pg.mvs:pg.dests; }
+function _ioAdvRow(kind,id){ const arr=_ioAdvArr(_ioAdvPage(),kind); return arr.find(function(x){ return x&&x.id===id; })||null; }
+// Set-for-all on an Advanced page: the whole table takes the pick (one undo step), like the Simple rows
+function _ioAdvApplyToAll(allKind, field, opt){
+  const kind=allKind.replace('-all','').replace('adv','adv-');   // advsrc-all → adv-src
+  if(field==='resolution' && opt && opt.custom){ _sysOpenCustomResModal(allKind,'*','',{onSave:function(val){ _ioAdvApplyToAll(allKind,'resolution',{value:val}); }}); return; }
+  if(typeof pushUndo==='function') pushUndo();
+  const rows=_ioAdvArr(_ioAdvPage(),kind);
+  rows.forEach(function(r){
+    if(field==='connector') r.connectorType=opt.value;
+    else if(field==='resolution') r.resolution=opt.value;
+    else if(field==='src-type'){ r.type=opt.value; if(opt.value!=='Custom') r.customType=''; }
+    else if(field==='dst-type'){ r.deviceType=opt.value; if(opt.value!=='Custom') r.customType=''; }
+  });
+  _isDirty=true; if(typeof _updateDirtyIndicator==='function') _updateDirtyIndicator();
+  if(typeof scheduleAutoSave==='function') scheduleAutoSave();
+  _sysRender();
+}
+function _ioAdvGlobalRowHtml(kind){
+  const isSrc=(kind==='src'), isMv=(kind==='mv');
+  const allKind='adv'+kind+'-all', tfield=isSrc?'src-type':'dst-type';
+  const badge=isSrc?'S0':(isMv?'M0':'D0'), label='Set for all '+(isSrc?'sources':(isMv?'multiviewers':'destinations'));
+  const da='data-sys-kind="'+allKind+'" data-sys-id="*"';
+  const chev='<span class="pill-chev"><svg aria-hidden="true" viewBox="0 0 10 10" fill="currentColor"><path d="M2 4l3 3 3-3z"/></svg></span>';
+  const chipChev='<span class="chip-chev"><svg aria-hidden="true" viewBox="0 0 10 10" fill="currentColor" width="8" height="8"><path d="M2 4l3 3 3-3z"/></svg></span>';
+  return '<div class="sys-row sys-row-global">'
+    +'<div class="sys-row-icon '+(isSrc?'src-global':'dst-global')+'">'+badge+'</div>'
+    +'<div class="sys-global-name">'+label+'</div>'
+    +'<div><div class="sys-pill clickable empty" '+da+' data-sys-field="connector" data-sys-value=""><span class="pill-label">\u2014 Set all \u2014</span>'+chev+'</div></div>'
+    +'<div><div class="sys-chip clickable empty" '+da+' data-sys-field="'+tfield+'" data-sys-value=""><span class="chip-label">\u2014 Set all \u2014</span>'+chipChev+'</div></div>'
+    +'<div class="sys-res-wrap"><div class="sys-pill clickable empty" '+da+' data-sys-field="resolution" data-sys-value=""><span class="pill-label">\u2014 Set all \u2014</span>'+chev+'</div></div>'
+    +'<div class="sys-warn-cell"></div>'
+    +'<div class="sys-global-note">Set a value here to apply it to every row below, then change any row on its own.</div>'
+    +'<div class="sys-row-actions"></div>'
+    +'</div>';
+}
 let _ioAdvEditing=null;
 function _ioRenderTabs(){
   const c=document.getElementById('io-tabs'); if(!c) return;
@@ -12009,22 +12055,26 @@ function _ioRenderTabs(){
     +'<button type="button" onclick="_ioSetView(\'simple\')" class="lb-seg-btn'+(v==='simple'?' on':'')+'" title="Simple, the patch follows the Video Presets">Simple</button>'
     +'<button type="button" onclick="_ioSetView(\'advanced\')" class="lb-seg-btn'+(v==='advanced'?' on':'')+'" title="Advanced, build standalone I/O patches, one per page">Advanced</button>'
     +'</span>';
-  // 16hn: Advanced page tabs sit in the page bar next to the toggle (same as Wire)
+  // 16hn/16ho: Advanced page tabs sit in the page bar next to the toggle, in the Wire look; the last page is a spare
   const pc=document.getElementById('io-page-tabs');
   if(pc){
     if(v!=='advanced'){ pc.innerHTML=''; pc.style.display='none'; }
     else {
+      _ioAdvEnsurePages();
+      const num=function(i){ return '<span style="font-family:var(--font-mono);opacity:.55;font-size:9px;margin-right:4px">'+(i+1)+'</span>'; };
       let h='<div class="io-adv-pages">';
       ioAdvanced.pages.forEach(function(p,i){
         const on=(i===ioAdvanced.page);
         if(_ioAdvEditing===i){
-          h+='<span class="lb-seg-btn on io-adv-edit"><input id="io-page-rename" type="text" value="'+_esc(p.name)+'" maxlength="32" onkeydown="_ioRenameKeydown(event,'+i+')" onblur="_ioCommitRename('+i+', this.value)"></span>';
+          h+='<span style="'+_pageTabStyle(true)+';padding:3px 8px">'+num(i)+'<input id="io-page-rename" type="text" value="'+_esc(p.name)+'" maxlength="32" onkeydown="_ioRenameKeydown(event,'+i+')" onblur="_ioCommitRename('+i+', this.value)"></span>';
         } else {
-          h+='<button type="button" class="lb-seg-btn'+(on?' on':'')+'" onclick="_ioSetPage('+i+')" ondblclick="_ioRenamePage('+i+')" title="'+_esc(p.name)+', click to open, double-click to rename"><span class="io-adv-num">'+(i+1)+'</span>'+_esc(p.name)+'</button>';
+          const pencil=on?'<span onclick="event.stopPropagation();_ioRenamePage('+i+')" title="Rename" style="opacity:.55;cursor:pointer;display:inline-flex;align-items:center;margin-left:2px"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="10" height="10"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></span>':'';
+          h+='<button type="button" onclick="_ioSetPage('+i+')" ondblclick="_ioRenamePage('+i+')" style="'+_pageTabStyle(on)+'" title="'+_esc(p.name)+', click to open, double-click to rename">'+num(i)+_esc(p.name)+pencil+'</button>';
         }
       });
-      h+='<button type="button" class="io-adv-rename" onclick="_ioRenamePage('+ioAdvanced.page+')" title="Rename this page" aria-label="Rename this page"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg></button></div>';
+      h+='</div>';
       pc.innerHTML=h; pc.style.display='flex';
+      const onTab=pc.querySelector('button[style*="var(--n-cyan)"]'); if(onTab&&onTab.scrollIntoView) onTab.scrollIntoView({block:'nearest',inline:'nearest'});
     }
   }
 }
@@ -12047,11 +12097,10 @@ function _ioCommitRename(i,val){
 }
 function _ioRenameKeydown(ev,i){ if(ev.key==='Enter'){ ev.preventDefault(); ev.target.blur(); } else if(ev.key==='Escape'){ ev.preventDefault(); _ioAdvEditing=null; _sysRender(); } }
 function _ioAdvAdd(kind){
-  const pg=_ioAdvPage(); const isSrc=(kind==='src');
+  const pg=_ioAdvPage();
   if(typeof pushUndo==='function') pushUndo();
-  const row={ id:'ia'+Date.now().toString(36)+Math.random().toString(36).slice(2,6), name:'', connectorType:'', customType:'', resolution:'', notes:'' };
-  if(isSrc) row.type=''; else row.deviceType='';
-  (isSrc?pg.sources:pg.dests).push(row);
+  const row=_ioAdvBlank(kind);
+  _ioAdvArr(pg,kind).push(row);
   _isDirty=true; if(typeof _updateDirtyIndicator==='function') _updateDirtyIndicator();
   if(typeof scheduleAutoSave==='function') scheduleAutoSave();
   _sysRender();
@@ -12059,23 +12108,26 @@ function _ioAdvAdd(kind){
 }
 const _IO_ADV_COLS='<div></div> <div>Name</div> <div>Connector</div> <div>Type</div> <div>Resolution</div> <div></div> <div>Notes</div> <div style="text-align:right">Actions</div>';
 function _ioAdvTable(kind, rows, title){
-  const isSrc=(kind==='src'); const k=isSrc?'adv-src':'adv-dst';
-  let h='<div class="sys-section"><div class="sys-section-header"><div class="sys-section-title '+(isSrc?'sources':'destinations')+'"><div class="strip"></div><h2>'+title+'</h2><span class="count">'+rows.length+' total</span></div></div>';
-  h+='<div class="sys-cols">'+_IO_ADV_COLS+'</div><div class="io-adv-rows">';
+  const isSrc=(kind==='src'), isMv=(kind==='mv'); const k='adv-'+kind;
+  const titleCls=isSrc?'sources':(isMv?'destinations':'destinations'); const badge=isSrc?'S':(isMv?'M':'D'); const one=isSrc?'Source':(isMv?'Multiviewer':'Destination');
+  let h='<div class="sys-section"><div class="sys-section-header"><div class="sys-section-title '+titleCls+'"><div class="strip"></div><h2>'+title+'</h2><span class="count">'+rows.length+' total</span></div></div>';
+  h+='<div class="sys-cols">'+_IO_ADV_COLS+'</div><div class="io-adv-rows">'+_ioAdvGlobalRowHtml(kind);
   if(!rows.length) h+='<div class="sys-empty-row">No '+title.toLowerCase()+' on this page yet. Add one below.</div>';
   rows.forEach(function(r,i){
     const raw=isSrc?_sysMachineRaw(r):_sysDeviceRaw(r); const t=isSrc?r.type:r.deviceType; const isCustom=(t==='Custom');
-    h+=_sysRowHtml({ icon:(isSrc?'S':'D')+(i+1), iconClass:isSrc?'':'dest', name:r.name||'', conn:r.connectorType||'', typeRaw:raw, typeLabel:isCustom?(r.customType||''):raw, typeClass:isSrc?_sysMachineClass(r):_sysDeviceClass(r), isCustomType:isCustom, customVal:r.customType||'', res:r.resolution||'', notes:r.notes||'', kind:k, id:r.id });
+    h+=_sysRowHtml({ icon:badge+(i+1), iconClass:isSrc?'':'dest', name:r.name||'', conn:r.connectorType||'', typeRaw:raw, typeLabel:isCustom?(r.customType||''):raw, typeClass:isSrc?_sysMachineClass(r):_sysDeviceClass(r), isCustomType:isCustom, customVal:r.customType||'', res:r.resolution||'', notes:r.notes||'', kind:k, id:r.id });
   });
-  h+='</div><div class="sys-section-footer"><button class="sys-add-btn '+(isSrc?'green':'orange')+'" onclick="_ioAdvAdd(\''+kind+'\')">+ Add '+(isSrc?'Source':'Destination')+'</button><div class="hint">Rows here live only on this page.</div></div></div>';
+  h+='</div><div class="sys-section-footer"><button class="sys-add-btn '+(isSrc?'green':(isMv?'':'orange'))+'" onclick="_ioAdvAdd(\''+kind+'\')">+ Add '+one+'</button><div class="hint">Rows here live only on this page.</div></div></div>';
   return h;
 }
 function _ioRenderAdvanced(){
   const c=document.getElementById('io-adv'); if(!c) return;
   const pg=_ioAdvPage();
   let h='<div class="io-adv-bar"><div class="hint">A standalone patch. Nothing on these pages reads from or writes to the Video Presets, and each page with rows prints as its own sheet in Export I/O.</div></div>';
+  _ioAdvEnsurePages();
   h+=_ioAdvTable('src', pg.sources, 'Sources');
   h+=_ioAdvTable('dst', pg.dests, 'Destinations');
+  h+=_ioAdvTable('mv', pg.mvs||[], 'Multiviewers');
   c.innerHTML=h;
 }
 // One sheet per Advanced page for Export I/O (same columns and style indices as the main sheet)
@@ -12093,6 +12145,7 @@ function _ioAdvSheet(pg, showRaw){
   rows.push(['Slot','Connector','Destination Name','Type','Resolution','Notes']); styles.push([1,1,1,1,1,1]);
   if(!pg.dests.length){ rows.push(['','','(no destinations on this page)','','','']); styles.push([7,7,7,7,7,7]); }
   pg.dests.forEach(function(r,i){ const raw=_sysDeviceRaw(r); rows.push(['Destination '+(i+1), r.connectorType||'', r.name||'', (r.deviceType==='Custom')?(r.customType||''):raw, r.resolution||'', r.notes||'']); styles.push([2,7,5,7,7,6]); });
+  (pg.mvs||[]).forEach(function(r,i){ const raw=_sysDeviceRaw(r); rows.push(['Multiviewer '+(i+1), r.connectorType||'MV', r.name||'', (r.deviceType==='Custom')?(r.customType||''):raw, r.resolution||'', r.notes||'']); styles.push([3,7,5,7,7,6]); });
   return { rows:rows, styles:styles };
 }
 
@@ -12384,7 +12437,8 @@ function _sysHandlePick(trigger,opt){
   const kind=trigger.dataset.sysKind;
   const id=trigger.dataset.sysId;
   if(kind==='src-all'||kind==='dst-all'){ _sysApplyToAll(kind,field,opt); return; }
-  if(kind==='adv-src'||kind==='adv-dst'){   // 16hm: Advanced (standalone) rows write to ioAdvanced only
+  if(/^adv(src|dst|mv)-all$/.test(kind)){ _ioAdvApplyToAll(kind,field,opt); return; }   // 16ho: Set-for-all rows on the Advanced pages
+  if(kind==='adv-src'||kind==='adv-dst'||kind==='adv-mv'){   // 16hm: Advanced (standalone) rows write to ioAdvanced only
     if(field==='src-name'||field==='dst-name'){
       const cell=trigger.closest('.sys-name-cell'); const input=cell?cell.querySelector('.sys-name-input'):null; if(!input) return;
       if(opt.custom){ input.focus(); input.select(); return; }
@@ -12532,7 +12586,7 @@ if(!window._sysHandlersAttached){
       // which writes the GLOBAL name (screens[].name / dsms[].name /
       // multiviewers[].name) — the same field the table + canvas read.
       const _k=e.target.dataset.sysKind;
-      if(_k==='dest'||_k==='aux'||_k==='mv'||_k==='adv-src'||_k==='adv-dst'){   // 16hm
+      if(_k==='dest'||_k==='aux'||_k==='mv'||_k==='adv-src'||_k==='adv-dst'||_k==='adv-mv'){   // 16hm
         const _nn=(e.target.value||'').trim();
         const _on=e.target.dataset.sysOldName||'';
         if(_nn){
@@ -13087,7 +13141,7 @@ function _sysGetRowEntity(kind,id){
   return {name:id, kindLabel:''};
 }
 function _sysRowReset(kind,id){
-  if(kind==='adv-src'||kind==='adv-dst'){ const r=_ioAdvRow(kind,id); if(r){ if(typeof pushUndo==='function') pushUndo(); r.connectorType=''; r.resolution=''; r.notes=''; _isDirty=true; if(typeof _updateDirtyIndicator==='function') _updateDirtyIndicator(); } _sysRender(); return; }   // 16hm
+  if(kind==='adv-src'||kind==='adv-dst'||kind==='adv-mv'){ const r=_ioAdvRow(kind,id); if(r){ if(typeof pushUndo==='function') pushUndo(); r.connectorType=''; r.resolution=''; r.notes=''; _isDirty=true; if(typeof _updateDirtyIndicator==='function') _updateDirtyIndicator(); } _sysRender(); return; }   // 16hm
   if(kind==='iodest'){
     var _rd=(typeof ioDests!=='undefined'&&Array.isArray(ioDests))?ioDests.find(x=>x.id===id):null;
     if(_rd){ _rd.connectorType=''; _rd.deviceType=''; _rd.customType=''; _rd.notes=''; }
@@ -13126,7 +13180,7 @@ function _sysRowReset(kind,id){
   });
 }
 function _sysRowDelete(kind,id){
-  if(kind==='adv-src'||kind==='adv-dst'){ const pg=_ioAdvPage(); const arr=(kind==='adv-src')?pg.sources:pg.dests; const i=arr.findIndex(x=>x&&x.id===id); if(i>=0){ if(typeof pushUndo==='function') pushUndo(); arr.splice(i,1); _isDirty=true; if(typeof _updateDirtyIndicator==='function') _updateDirtyIndicator(); if(typeof scheduleAutoSave==='function') scheduleAutoSave(); } _sysRender(); return; }   // 16hm
+  if(kind==='adv-src'||kind==='adv-dst'||kind==='adv-mv'){ const pg=_ioAdvPage(); const arr=_ioAdvArr(pg,kind); const i=arr.findIndex(x=>x&&x.id===id); if(i>=0){ if(typeof pushUndo==='function') pushUndo(); arr.splice(i,1); _isDirty=true; if(typeof _updateDirtyIndicator==='function') _updateDirtyIndicator(); if(typeof scheduleAutoSave==='function') scheduleAutoSave(); } _sysRender(); return; }   // 16hm
   if(kind==='iodest'){
     if(typeof pushUndo==='function') pushUndo();
     if(typeof ioDests!=='undefined'&&Array.isArray(ioDests)){ for(var _i=ioDests.length-1;_i>=0;_i--){ if(ioDests[_i]&&ioDests[_i].id===id) ioDests.splice(_i,1); } }
@@ -13380,7 +13434,7 @@ function _sysExportIOExcel(){
     const rowHeights={0:24,1:16};
 
     // 16hm: every Advanced page with rows becomes its own sheet, named after the page
-    const advSheets=(ioAdvanced&&Array.isArray(ioAdvanced.pages))?ioAdvanced.pages.filter(function(p){ return p&&((p.sources&&p.sources.length)||(p.dests&&p.dests.length)); }).map(function(p){ const sh=_ioAdvSheet(p, showRaw); return {name:p.name, rows:sh.rows, styles:sh.styles, colWidths:colWidths, rowHeights:rowHeights}; }):[];
+    const advSheets=(ioAdvanced&&Array.isArray(ioAdvanced.pages))?ioAdvanced.pages.filter(_ioAdvPageUsed).map(function(p){ const sh=_ioAdvSheet(p, showRaw); return {name:p.name, rows:sh.rows, styles:sh.styles, colWidths:colWidths, rowHeights:rowHeights}; }):[];
     const blob=advSheets.length ? _buildXlsxMulti([{name:'Video I-O', rows:rows, styles:styles, colWidths:colWidths, rowHeights:rowHeights}].concat(advSheets)) : _buildXlsx(rows,styles,colWidths,rowHeights,'Video I-O');
     dl(blob,showFileName('video-io')+'.xlsx');
   } catch(err){
@@ -17660,6 +17714,9 @@ function _wireRenderTabs(container){
 // to switch; double-click (or click the small pencil on the active tab)
 // to rename inline. The framed strip also reserves room for future
 // Advanced-only controls (e.g. duplicate page, snap-to-grid).
+// 16ho: ONE page-tab look for Wire and the I/O Patch (Omar: the patch tabs must match Wire)
+function _pageTabStyle(isActive){ return 'padding:0 14px;height:26px;font-size:10px;font-weight:700;letter-spacing:.10em;text-transform:uppercase;cursor:pointer;font-family:inherit;border:none;background:' + (isActive ? 'linear-gradient(180deg,var(--sk-pill1),var(--sk-pill2))' : 'transparent') + ';color:' + (isActive ? 'var(--n-cyan)' : 'var(--ss-t2)') + ';box-shadow:' + (isActive ? '0 1px 3px rgba(0,0,0,.45), inset 0 1px 0 rgba(var(--n-cyan-rgb),.15)' : 'none') + ';transition:all .18s;display:inline-flex;align-items:center;gap:6px;min-width:0;max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-radius:4px'; }
+
 function _wireRenderPageTabs(container){
   if(!container) return;
   const view = (wireSettings && wireSettings.wireView) || 'simple';
@@ -17680,9 +17737,7 @@ function _wireRenderPageTabs(container){
   const active = wireAdvanced._activePageId;
   const editing = _wireState && _wireState.editingPageId;
   function esc(s){ return (s+'').replace(/[<>&"']/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',"'":'&#39;'}[c])); }
-  function tabStyle(isActive){
-    return 'padding:0 14px;height:26px;font-size:10px;font-weight:700;letter-spacing:.10em;text-transform:uppercase;cursor:pointer;font-family:inherit;border:none;background:' + (isActive ? 'linear-gradient(180deg,var(--sk-pill1),var(--sk-pill2))' : 'transparent') + ';color:' + (isActive ? 'var(--n-cyan)' : 'var(--ss-t2)') + ';box-shadow:' + (isActive ? '0 1px 3px rgba(0,0,0,.45), inset 0 1px 0 rgba(var(--n-cyan-rgb),.15)' : 'none') + ';transition:all .18s;display:inline-flex;align-items:center;gap:6px;min-width:0;max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-radius:4px';
-  }
+  function tabStyle(isActive){ return _pageTabStyle(isActive); }   // 16ho: shared with the I/O Patch pages
   // Outer wrapper \u2014 single grouped pill, matches the zoom widget
   let html = '<div style="display:inline-flex;align-items:center;gap:2px;padding:3px;border:1px solid var(--ss-border-soft);border-radius:4px;background:#0a0d12;box-shadow:var(--n-shadow-inset)">';
   wireAdvanced._pages.forEach((p, i) => {
