@@ -171,34 +171,39 @@ button,input,select,textarea{font-family:inherit}   /* 16gy: form controls take 
 /* Layer panel ADVANCED accordion + FX controls (2026-09-13, 16fo). Modelled on a
    switcher's layer Properties panel: one collapsible row per section, header tools
    (copy / paste / reset) on hover, square 4px corners per the 16fm shape system. */
-.lfx-acc{border:1px solid var(--n-line);border-radius:4px;background:rgba(255,255,255,.015);margin-bottom:6px;overflow:hidden}
-.lfx-hd{display:flex;align-items:center;gap:6px;padding:7px 10px;cursor:pointer;user-select:none;font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--text2)}
-.lfx-hd:hover{background:rgba(255,255,255,.03);color:var(--text)}
-.lfx-acc.open>.lfx-hd{color:var(--n-cyan)}
+/* 16ia: the accordion brought to the current design language (block-6 header: 30px hairline box, LABEL type, 8px ▼ far
+   right, cyan + flipped while open, #1a1f28 when open; fields = the dark table-cell field with mono numbers; toggles =
+   CONTROL caps, cyan when on). Shared by the floating layer panel (Simple) and the Advanced Properties panel. */
+.lfx-acc{border:1px solid var(--n-line);border-radius:4px;background:#10131a;margin-bottom:6px;overflow:hidden}
+.lfx-hd{display:flex;align-items:center;gap:6px;height:30px;padding:0 10px;cursor:pointer;user-select:none;font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--text2);transition:background .12s,color .12s}
+.lfx-hd:hover{background:#1c222c;color:var(--text)}
+.lfx-acc.open>.lfx-hd{background:#1a1f28;color:var(--n-cyan)}
 .lfx-ttl{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .lfx-tools{display:none;gap:2px}
 .lfx-hd:hover .lfx-tools,.lfx-acc.open>.lfx-hd .lfx-tools{display:inline-flex}
-.lfx-tools button{width:20px;height:20px;padding:0;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--n-line);border-radius:3px;background:var(--n-track);color:var(--text3);cursor:pointer;font-family:inherit}   /* 16hc: same icons as the preset-row Copy / Paste / Reset; the words live in the tooltip */
+.lfx-tools button{width:20px;height:20px;padding:0;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--n-line);border-radius:3px;background:#0a0d12;color:var(--text3);cursor:pointer;font-family:inherit}   /* 16hc: same icons as the preset-row Copy / Paste / Reset; the words live in the tooltip */
 .lfx-tools button svg{width:12px;height:12px;display:block}
 .lfx-tools button:hover{color:var(--n-cyan);border-color:rgba(var(--n-cyan-rgb),.4)}
-.lfx-chev{font-size:8px;color:var(--text3);transition:transform .15s}
-.lfx-acc.open>.lfx-hd .lfx-chev{transform:rotate(180deg)}
-.lfx-body{display:none;padding:2px 10px 10px;border-top:1px solid var(--n-line)}
+.lfx-chev{font-size:8px;color:var(--text3);transition:transform .15s,color .15s;margin-left:2px}
+.lfx-acc.open>.lfx-hd .lfx-chev{transform:rotate(180deg);color:var(--n-cyan)}
+.lfx-body{display:none;padding:4px 10px 10px;border-top:1px solid var(--n-line);background:#14181f}
 .lfx-acc.open>.lfx-body{display:block}
-.lfx-row{display:grid;grid-template-columns:62px 1fr;gap:6px;align-items:center;margin-top:6px}
-.lfx-lbl{font-size:11px;color:var(--text3);letter-spacing:.04em}
-.lfx-inp{width:100%;font-size:11px;padding:6px 8px;border:1px solid rgba(255,255,255,.06);border-radius:4px;background:var(--n-track);color:#9dd6ff;outline:none;box-sizing:border-box;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5);font-family:var(--font-mono);text-align:center;transition:all .15s}
-.lfx-inp:focus{border-color:rgba(var(--n-cyan-rgb),.5)}
-.lfx-tog{font-size:10px;font-weight:800;letter-spacing:.08em;padding:5px 10px;border:1px solid rgba(255,255,255,.1);border-radius:4px;background:var(--n-track);color:var(--text3);cursor:pointer;font-family:inherit;min-width:52px;justify-self:start;transition:all .15s}
-.lfx-tog:hover{color:var(--text)}
-.lfx-tog.on{border-color:var(--n-green);color:var(--n-green);background:#0a1f14;box-shadow:inset 0 0 6px rgba(77,220,138,.2)}
-.lfx-sub{margin-top:8px;padding:6px 8px 8px;border:1px solid var(--n-line);border-radius:4px;transition:opacity .15s}
+.lfx-row{display:grid;grid-template-columns:64px 1fr;gap:6px;align-items:center;margin-top:6px}
+.lfx-lbl{font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--text3)}
+.lfx-lbl span{font-weight:500;letter-spacing:0;text-transform:none;opacity:.7}
+.lfx-inp{width:100%;height:26px;font-size:11px;font-weight:600;padding:0 8px;border:1px solid var(--n-line);border-radius:4px;background:#0a0d12;color:var(--text);outline:none;box-sizing:border-box;font-family:var(--font-mono);text-align:center;transition:border-color .12s}
+.lfx-inp:focus{border-color:var(--n-cyan)}
+.lfx-inp.lfx-hex{text-align:left}
+.lfx-tog{height:26px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:0 10px;border:1px solid var(--n-line);border-radius:4px;background:#0a0d12;color:var(--text3);cursor:pointer;font-family:inherit;min-width:52px;justify-self:start;transition:all .15s}
+.lfx-tog:hover{color:var(--text);border-color:#3a4150}
+.lfx-tog.on{border-color:rgba(var(--n-cyan-rgb),.45);color:var(--n-cyan);background:linear-gradient(180deg,#1f2530,#161b23);box-shadow:inset 0 1px 0 rgba(var(--n-cyan-rgb),.15)}
+.lfx-sub{margin-top:8px;padding:6px 8px 8px;border:1px solid var(--n-line);border-radius:4px;background:#10131a;transition:opacity .15s}
 .lfx-sub.off{opacity:.45}
-.lfx-subttl{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3)}
+.lfx-subttl{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-bottom:2px}
 .lfx-range{width:100%;accent-color:var(--n-cyan);margin:8px 0 0;cursor:pointer}
-.lfx-swatch{width:36px;height:27px;padding:0;border:1px solid rgba(255,255,255,.18);border-radius:4px;cursor:pointer;flex-shrink:0;box-shadow:0 1px 4px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.06);transition:box-shadow .15s}
-.lfx-swatch:hover{box-shadow:0 0 0 2px rgba(var(--n-cyan-rgb),.45),0 1px 4px rgba(0,0,0,.5)}
-.lfx-hint{font-size:10px;color:#777;margin-top:6px;line-height:1.4}
+.lfx-swatch{width:36px;height:26px;padding:0;border:1px solid var(--n-line);border-radius:4px;cursor:pointer;flex-shrink:0;box-shadow:inset 0 1px 0 rgba(255,255,255,.06);transition:box-shadow .15s}
+.lfx-swatch:hover{box-shadow:0 0 0 2px rgba(var(--n-cyan-rgb),.45)}
+.lfx-hint{font-size:11px;font-style:italic;color:var(--text2);margin-top:6px;line-height:1.4}
 
 .dsm-toggle{font-size:11px;padding:3px 9px;border-radius:999px;border:1px solid rgba(255,77,90,.35);background:#1a0c10;color:#a04050;cursor:pointer;transition:all .15s;white-space:nowrap;letter-spacing:.04em;text-transform:uppercase;font-weight:700}
 .dsm-toggle.dsm-on{border-color:var(--n-green);background:#0a1f14;color:var(--n-green);box-shadow:inset 0 0 6px rgba(77,220,138,.2), 0 0 6px rgba(77,220,138,.35)}
@@ -851,6 +856,22 @@ body.fs-open .pm{z-index:650 !important}
 .fs-range{flex:1;min-width:0;margin:0;accent-color:var(--n-cyan)}
 #fs-props .fs-num{width:58px !important;flex:0 0 auto}
 .fs-img{display:block}
+/* 16ia: Source block (thumbnail + swap) above the sections, Media Info rows, General fields */
+.fs-srcblk{margin:0 0 8px}
+.fs-srcblk-thumb{position:relative;width:100%;aspect-ratio:16/9;border:1px solid var(--n-line);border-radius:4px;overflow:hidden;display:flex;align-items:center;justify-content:center;background:#0a0d12}
+.fs-srcblk-name{font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.7);padding:0 8px;text-align:center}
+.fs-srcblk-empty{font-size:11px;font-style:italic;color:var(--text3)}
+.fs-srcblk-row{display:grid;grid-template-columns:64px 1fr;gap:6px;align-items:center;margin-top:8px}
+.fs-sel-wrap{position:relative;display:block}
+.fs-sel{width:100%;height:30px;appearance:none;-webkit-appearance:none;padding:0 26px 0 10px;border:1px solid var(--n-line);border-radius:4px;background:#0a0d12;color:var(--text);font-family:inherit;font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;outline:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fs-sel:focus{border-color:var(--n-cyan);color:var(--n-cyan);background:#1a1f28}
+.fs-sel-wrap::after{content:'▼';position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:8px;color:var(--text3);pointer-events:none}
+.fs-sel-wrap:focus-within::after{color:var(--n-cyan);transform:translateY(-50%) rotate(180deg)}
+.fs-info{font-family:var(--font-mono);font-size:11px;font-weight:600;color:var(--text);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fs-info .warn{color:var(--n-red);font-weight:700}
+.fs-info-sw{display:inline-block;width:14px;height:11px;border-radius:2px;border:1px solid rgba(255,255,255,.15);vertical-align:-1px;margin-right:6px}
+#fs-props .fs-text{text-align:left;font-family:var(--font-ui);font-weight:600}
+.fs-color{width:36px;height:26px;padding:0;border:1px solid var(--n-line);border-radius:4px;background:#0a0d12;cursor:pointer}
 /* properties */
 .fs-crumb{display:flex;align-items:center;gap:6px;padding:0 0 10px;margin-bottom:10px;border-bottom:1px solid var(--n-line)}
 .fs-crumb-c{font-family:var(--font-mono);font-size:11px;font-weight:700;padding:3px 7px;border-radius:3px;border:1px solid var(--n-line);background:#0a0d12;flex-shrink:0}
@@ -3902,7 +3923,7 @@ Also called DSM (Downstage Monitor) in broadcast and theater workflows, same thi
   <div class="bb-cell bb-pill bb-cyan" title="The largest number of layers used in any single preset, this is the figure to compare against your switcher's per-scene layer budget. (The most complex single moment in the show.)"><span class="bb-label">Layers</span><strong id="bb-layers">0</strong></div>
   <div id="bb-spacer"></div>
   <div class="bb-cell" id="bb-sel" style="font-size:10px;opacity:.5">—</div>
-  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy, hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16hz</div>
+  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy, hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16ia</div>
   <button class="bb-util" id="tb-adv" onclick="actions.advancedMenu(event)" title="Advanced features (AOI, Free Mode, Blend Zones, Dead Space)" aria-label="Advanced features (AOI, Free Mode, Blend Zones, Dead Space)" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Advanced<span class="adv-count" aria-hidden="true"></span><svg aria-hidden="true" id="tb-adv-chev" viewBox="0 0 10 10" fill="currentColor" width="8" height="8" style="opacity:.7"><path d="M2 4l3 3 3-3z"/></svg></button>
   <button class="bb-util" onclick="actions.help()" title="Help, quick reference, keyboard shortcuts, glossary, accessibility" aria-label="Help, quick reference, keyboard shortcuts, glossary, accessibility" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="4.93" y1="4.93" x2="9.17" y2="9.17"/><line x1="14.83" y1="14.83" x2="19.07" y2="19.07"/><line x1="14.83" y1="9.17" x2="19.07" y2="4.93"/><line x1="4.93" y1="19.07" x2="9.17" y2="14.83"/></svg>Help</button>
   <button class="bb-util" id="lb-skin-btn" onclick="lbToggleSkinMenu(event)" title="Color skin" aria-label="Change color skin" style="height:100%;padding:0 13px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="13.5" cy="6.5" r=".6" fill="currentColor" stroke="none"/><circle cx="17" cy="10.5" r=".6" fill="currentColor" stroke="none"/><circle cx="8.5" cy="7.5" r=".6" fill="currentColor" stroke="none"/><circle cx="6.5" cy="12" r=".6" fill="currentColor" stroke="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c.93 0 1.65-.75 1.65-1.69 0-.44-.18-.83-.44-1.12-.29-.29-.44-.65-.44-1.13a1.65 1.65 0 0 1 1.67-1.67h1.97c3.05 0 5.55-2.5 5.55-5.55C21.95 6.01 17.45 2 12 2z"/></svg></button>
@@ -20462,13 +20483,16 @@ function renderFsPanel(force){
       if(kind) kind.textContent='Layer';
       const v=getL(p.id,s.id,n)||'', cr=getCrop(p.id,s.id,n);
       const ct=v?findContent(v):null;
-      panel.innerHTML=_fsCrumb(p,s,n)
+      const it=v?_fsMediaItem(v):null; const lm=it?getLayerMedia(p.id,s.id,n):null;
+      // 16ia (Omar's order): Source block, Media Info, General, Position & Size, Opacity, Crop, Border, Effects, Filters, Color, Video, Transition
+      panel.innerHTML=_fsCrumb(p,s,n).replace(/<\/div>$/,'<button type="button" class="fs-props-back" onclick="_fsClearLayer()" title="Back to the preset overview">◀ Preset</button></div>')
         +'<div id="fs-props" data-pid="'+_esc(p.id)+'" data-sid="'+_esc(s.id)+'" data-n="'+n+'">'
-        +'<div class="fs-props-src"><span class="fs-props-swatch" style="'+_fsSwatchStyle(ct,'#2a2f3a')+'"></span>'
-        +'<span class="fs-props-srcname">'+(v?_esc(v):'<i>Empty layer, drop a source on it</i>')+'</span>'
-        +'<button type="button" class="fs-props-back" onclick="_fsClearLayer()" title="Back to the preset overview">◀ Preset</button></div>'
+        +_fsSourceBlockHTML(p,s,n,v)
+        +_fsInfoSectionsHTML(p,s,n,v)
         +_lpAdvancedSection(v,cr,p.id,s.id,n,true)
-        +_fsMediaSectionHTML(p,s,n,v)   // 16hy: Video / Image section (Advanced only)
+        +(it?_fsLookSectionsHTML(p,s,n,it,lm):'')
+        +_fsMediaSectionHTML(p,s,n,v)
+        +(it&&it.kind==='video'?_fsTransitionSectionHTML(lm):'')
         +'</div>';
       const fp=document.getElementById('fs-props'); if(fp) fp._rebuild=function(){ renderFsPanel(true); };
       panel.scrollTop=keepScroll;
@@ -25404,7 +25428,7 @@ function _fsSetPropTab(t){
   document.querySelectorAll('#fs-prop-tabs .lb-seg-btn').forEach(b=>b.classList.toggle('on',b.dataset.tab===_fsPropTab));
 }
 
-if(typeof _lfxOpen==='object'&&_lfxOpen&&_lfxOpen.video===undefined) _lfxOpen.video=true;   // the Video section starts open
+if(typeof _lfxOpen==='object'&&_lfxOpen){ if(_lfxOpen.video===undefined) _lfxOpen.video=true; if(_lfxOpen.info===undefined) _lfxOpen.info=true; if(_lfxOpen.general===undefined) _lfxOpen.general=false; }   // Video + Media Info start open
 // ══════════════════════════════════════════════════════════════════════
 // 16hy (Omar): VIDEO. Video / image files become content items in customLibrary
 // ({l, c, kind:'video'|'image', img:cover, media:{w,h,dur,type,size,hasAudio,coverTime,peaks}}), so
@@ -25478,7 +25502,7 @@ function _fsImportOne(file){
   const isVideo=/^video\//.test(file.type);
   _fsAttachBlob(name,file);
   const url=_fsMediaURL[name];
-  const media={type:file.type,size:file.size,w:0,h:0,dur:0,hasAudio:false,coverTime:0,peaks:null};
+  const media={type:file.type,size:file.size,fileName:file.name||'',w:0,h:0,dur:0,hasAudio:false,coverTime:0,peaks:null};
   let img='';
   let p;
   if(isVideo){
@@ -25611,7 +25635,7 @@ function _fsOnTime(key,vid){ const q=_fsKeyParts(key); const lm=getLayerMedia(q.
 function _fsOnEnded(key,vid){ const q=_fsKeyParts(key); const lm=getLayerMedia(q.pid,q.sid,q.n); if(lm.loop){ vid.currentTime=lm.in||0; vid.play().catch(function(){}); } else { delete _fsWantPlay[key]; } if(_fsTlKey===key) _fsTlSync(); }
 function _fsSetLM(patch){ const pm=_fsPickedMedia(); if(!pm) return; if(typeof pushUndo==='function') pushUndo(); setLayerMedia(pm.pid,pm.sid,pm.n,patch); const t=pm.n?_fsLayerKey(pm.pid,pm.sid,pm.n):'BG:'+pm.pid+':'+pm.sid; const vid=_fsVideoEls[t]; const lm=getLayerMedia(pm.pid,pm.sid,pm.n); if(vid){ vid.loop=!!(lm.loop&&lm.out==null); vid.playbackRate=Math.max(.1,Math.min(4,(lm.speed||100)/100)); vid.volume=Math.max(0,Math.min(1,lm.level/100)); vid.muted=(lm.level===0); } }
 function _fsToggleLoop(){ const t=_fsTargetKey(); if(!t) return; const q=_fsKeyParts(t); _fsSetLM({loop:!getLayerMedia(q.pid,q.sid,q.n).loop}); _fsRenderTimeline(true); renderFsPanel(true); }
-function _fsSetLevel(v){ const t=_fsTargetKey(); if(!t) return; const q=_fsKeyParts(t); setLayerMedia(q.pid,q.sid,q.n,{level:Math.max(0,Math.min(100,parseInt(v)||0))}); const vid=_fsVideoEls[t]; const lm=getLayerMedia(q.pid,q.sid,q.n); if(vid){ vid.volume=lm.level/100; vid.muted=(lm.level===0); } const lbl=document.getElementById('fs-tl-lvl'); if(lbl) lbl.textContent=lm.level+'%'; }
+function _fsSetLevel(v){ const t=_fsTargetKey(); if(!t) return; const q=_fsKeyParts(t); setLayerMedia(q.pid,q.sid,q.n,{level:Math.max(0,Math.min(100,parseInt(v)||0))}); const vid=_fsVideoEls[t]; const lm=getLayerMedia(q.pid,q.sid,q.n); if(vid){ vid.volume=lm.level/100; vid.muted=(lm.level===0); } const lbl=document.getElementById('fs-tl-lvl'); if(lbl) lbl.textContent=lm.level+'%'; const l2=document.getElementById('fs-props-lvl'); if(l2) l2.textContent=lm.level+'%'; }
 function _fsSetSpeed(v){ _fsSetLM({speed:Math.max(10,Math.min(400,parseInt(v)||100))}); renderFsPanel(true); }
 function _fsSetFit(mode){ const t=_fsTargetKey(); if(!t) return; _fsSetLM({fit:mode}); renderFullscreen(); }
 function _fsSetScope(s){ _fsPlayScope=(s==='preset')?'preset':'layer'; renderFsPanel(true); }
@@ -25668,25 +25692,6 @@ function _fsTlSync(){
 }
 function _fsTlLoop(){ if(_fsTlRaf) cancelAnimationFrame(_fsTlRaf); const step=function(){ const any=Object.keys(_fsVideoEls).some(function(k){ return !_fsVideoEls[k].paused; }); _fsFadeTick(); _fsTlSync(); if(any) _fsTlRaf=requestAnimationFrame(step); else { _fsTlRaf=0; _fsResetFades(); } }; _fsTlRaf=requestAnimationFrame(step); }
 // ── the Video section in the layer properties (Advanced only) ──────────
-function _fsMediaSectionHTML(p,s,n,v){
-  const it=v?_fsMediaItem(v):null; if(!it) return '';
-  const lm=getLayerMedia(p.id,s.id,n); const m=it.media||{}; const isVid=it.kind==='video';
-  const seg=function(cur,opts,fn){ return '<div class="fitmode">'+opts.map(function(o){ return '<button type="button" class="'+(cur===o[0]?'on':'')+'" onclick="'+fn+'(\''+o[0]+'\')" title="'+o[2]+'">'+o[1]+'</button>'; }).join('')+'</div>'; };
-  const open=(_lfxOpen.video!==false);
-  return '<div class="lfx-acc'+(open?' open':'')+'" data-sec="video"><div class="lfx-hd" onclick="_lfxToggleSec(\'video\')" title="Expand or collapse"><span class="lfx-ttl">'+(isVid?'Video':'Image')+'</span><span class="lfx-chev">▼</span></div><div class="lfx-body">'
-    +'<div class="fs-file"><div class="fs-file-poster" style="'+(it.img?'background:#000 url('+it.img+') center/cover':'background:'+it.c)+'"></div><div><div class="fs-file-name" title="'+_esc(v)+'">'+_esc(v)+'</div><div class="fs-file-meta">'+m.w+'×'+m.h+(isVid?' · '+_fsFmtTime(m.dur):'')+' · '+_fsFmtType(m.type)+(isVid?' · '+(m.hasAudio?'audio':'no audio'):'')+(_fsMediaUrl(v)?'':' · <b class="warn">file missing</b>')+'</div></div></div>'
-    +'<div class="fs-check"><div class="t">Size check</div><div class="m">'+_fsSizeCheckText(it,p.id,s.id,n)+'</div></div>'
-    +'<div class="lfx-row"><span class="lfx-lbl">Fit</span>'+seg(lm.fit,[['fit','Fit','Scale to fit inside the layer, bars if needed'],['fill','Fill','Scale to cover the layer, cropping the overflow'],['stretch','Stretch','Stretch to the layer box'],['native','1:1','Native pixels, centred, overflow cut']],'_fsSetFit')+'</div>'
-    +(isVid?('<div class="lfx-row"><span class="lfx-lbl">Play</span><span class="fs-tr"><button type="button" class="fs-tl-tb play" onclick="_fsPlayToggle()" title="Play / pause">▶</button><button type="button" class="fs-tl-tb" onclick="_fsStop()" title="Stop">■</button><button type="button" class="fs-tl-tb'+(lm.loop?' on':'')+'" onclick="_fsToggleLoop()" title="Loop">⟳</button></span></div>'
-      +'<div class="lfx-row"><span class="lfx-lbl">Scope</span>'+seg(_fsPlayScope,[['layer','This layer','Transport drives this layer only'],['preset','Whole preset','Transport drives every video in this preset together']],'_fsSetScope')+'</div>'
-      +'<div class="lfx-row"><span class="lfx-lbl">In / Out</span><span class="fs-io"><b>'+_fsFmtTime(lm.in||0)+'</b> → <b>'+(lm.out!=null?_fsFmtTime(lm.out):_fsFmtTime(m.dur))+'</b> <i>set with In / Out under the timeline</i></span></div>'
-      +'<div class="lfx-row"><span class="lfx-lbl">Speed</span><input class="lfx-inp" type="number" min="10" max="400" step="5" value="'+(lm.speed||100)+'" onchange="_fsSetSpeed(this.value)" onkeydown="if(event.key===\'Enter\'){event.preventDefault();this.blur()}"> <span class="lfx-lbl">%</span></div>'
-      +'<div class="lfx-row"><span class="lfx-lbl">Level</span><input type="range" class="fs-tl-level" min="0" max="100" value="'+lm.level+'" oninput="_fsSetLevel(this.value)" aria-label="Audio level"> <span class="lfx-lbl">'+lm.level+'%</span></div>'
-      +'<div class="lfx-hint">Playback lives here only. Simple shows the cover frame, set it under the timeline.</div>'):'<div class="lfx-hint">Images sit in the layer at the fit above. Simple shows the same picture.</div>')
-    +'</div></div>'
-    +_fsLookSectionsHTML(p,s,n,it,lm);   // 16hz: Color / Filters / Transition
-}
-
 // ── 16hz: the look (Color / Filters / Transition), a scaler's colour controls on the mounted media ──
 function _fsMakeImg(url){ const im=document.createElement('img'); im.className='fs-vid fs-img'; im.src=url; im.draggable=false; im.alt=''; return im; }
 // the chip's effects layer (opacity / flips) paints a .chip-bg over the cover; the media takes its opacity + flip and the
@@ -25727,19 +25732,127 @@ function _fsFadeTick(){
   });
 }
 function _fsResetFades(){ Object.keys(_fsVideoEls).forEach(function(key){ const vid=_fsVideoEls[key]; vid.style.opacity=vid.dataset.baseOp||'1'; }); }
+// ── 16ia: Source block, Media Info, General, per-section tools; Filters / Color / Video / Transition in Omar's order ──
+var _fsLookClip={};
+var _FS_SEC_FIELDS={video:['fit','in','out','speed','loop','level'],color:['hue','sat','bri','con'],filters:['bw','neg','sepia'],transition:['fadeIn','fadeOut']};
+var _FS_TOOLS_SVG={
+  copy:'<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>',
+  paste:'<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><polyline points="9 14 11 16 15 12"/></svg>',
+  reset:'<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>'
+};
+// one accordion section in the layer panel's idiom (.lfx-acc), optionally with copy / paste / reset
+function _fsAccHTML(key,title,body,tools){
+  const t=tools?'<span class="lfx-tools" onclick="event.stopPropagation()"><button type="button" title="Copy this section" aria-label="Copy section" onclick="_fsSecAction(\'copy\',\''+key+'\')">'+_FS_TOOLS_SVG.copy+'</button><button type="button" title="Paste into this section" aria-label="Paste section" onclick="_fsSecAction(\'paste\',\''+key+'\')">'+_FS_TOOLS_SVG.paste+'</button><button type="button" title="Reset this section" aria-label="Reset section" onclick="_fsSecAction(\'reset\',\''+key+'\')">'+_FS_TOOLS_SVG.reset+'</button></span>':'';
+  return '<div class="lfx-acc'+(_lfxOpen[key]?' open':'')+'" data-sec="'+key+'"><div class="lfx-hd" onclick="_lfxToggleSec(\''+key+'\')" title="Expand or collapse"><span class="lfx-ttl">'+title+'</span>'+t+'<span class="lfx-chev" aria-hidden="true">&#9660;</span></div><div class="lfx-body">'+body+'</div></div>';
+}
+function _fsSecAction(action,key){
+  const pm=_fsPickedMedia(); if(!pm) return; const fields=_FS_SEC_FIELDS[key]; if(!fields) return;
+  const lm=getLayerMedia(pm.pid,pm.sid,pm.n);
+  if(action==='copy'){ const c={}; fields.forEach(function(f){ c[f]=lm[f]; }); _fsLookClip[key]=c; return; }
+  const patch={};
+  if(action==='paste'){ const c=_fsLookClip[key]; if(!c) return; fields.forEach(function(f){ patch[f]=c[f]; }); }
+  else fields.forEach(function(f){ patch[f]=_FS_LM_DEF[f]; });
+  if(typeof pushUndo==='function') pushUndo();
+  setLayerMedia(pm.pid,pm.sid,pm.n,patch);
+  renderFullscreen();
+}
+// the Video / Image section: size check, fit, transport, scope, In / Out, speed, level
+function _fsMediaSectionHTML(p,s,n,v){
+  const it=v?_fsMediaItem(v):null; if(!it) return '';
+  const lm=getLayerMedia(p.id,s.id,n); const m=it.media||{}; const isVid=it.kind==='video';
+  const seg=function(cur,opts,fn){ return '<div class="fitmode">'+opts.map(function(o){ return '<button type="button" class="'+(cur===o[0]?'on':'')+'" onclick="'+fn+'(\''+o[0]+'\')" title="'+o[2]+'">'+o[1]+'</button>'; }).join('')+'</div>'; };
+  let body='<div class="fs-check"><div class="t">Size check</div><div class="m">'+_fsSizeCheckText(it,p.id,s.id,n)+'</div></div>'
+    +'<div class="lfx-row"><span class="lfx-lbl">Fit</span>'+seg(lm.fit,[['fit','Fit','Scale to fit inside the layer, bars if needed'],['fill','Fill','Scale to cover the layer, cropping the overflow'],['stretch','Stretch','Stretch to the layer box'],['native','1:1','Native pixels, centred, overflow cut']],'_fsSetFit')+'</div>';
+  if(isVid){
+    body+='<div class="lfx-row"><span class="lfx-lbl">Play</span><span class="fs-tr"><button type="button" class="fs-tl-tb play" onclick="_fsPlayToggle()" title="Play / pause">▶</button><button type="button" class="fs-tl-tb" onclick="_fsStop()" title="Stop">■</button><button type="button" class="fs-tl-tb'+(lm.loop?' on':'')+'" onclick="_fsToggleLoop()" title="Loop">⟳</button></span></div>'
+      +'<div class="lfx-row"><span class="lfx-lbl">Scope</span>'+seg(_fsPlayScope,[['layer','This layer','Transport drives this layer only'],['preset','Whole preset','Transport drives every video in this preset together']],'_fsSetScope')+'</div>'
+      +'<div class="lfx-row"><span class="lfx-lbl">In / Out</span><span class="fs-io"><b>'+_fsFmtTime(lm.in||0)+'</b> → <b>'+(lm.out!=null?_fsFmtTime(lm.out):_fsFmtTime(m.dur))+'</b> <i>set with In / Out under the timeline</i></span></div>'
+      +'<div class="lfx-row"><span class="lfx-lbl">Speed</span><span class="fs-sl"><input class="lfx-inp fs-num" type="number" min="10" max="400" step="5" value="'+(lm.speed||100)+'" onchange="_fsSetSpeed(this.value)" onkeydown="if(event.key===\'Enter\'){event.preventDefault();this.blur()}"><span class="lfx-lbl">%</span></span></div>'
+      +'<div class="lfx-row"><span class="lfx-lbl">Level</span><span class="fs-sl"><input type="range" class="fs-range" min="0" max="100" value="'+lm.level+'" oninput="_fsSetLevel(this.value)" aria-label="Audio level"><span class="lfx-lbl" id="fs-props-lvl">'+lm.level+'%</span></span></div>'
+      +'<div class="lfx-hint">Playback lives here only. Simple shows the cover frame, set it under the timeline.</div>';
+  } else {
+    body+='<div class="lfx-hint">Images sit in the layer at the fit above. Simple shows the same picture.</div>';
+  }
+  return _fsAccHTML('video',isVid?'Video':'Image',body,true);
+}
+// Filters then Color (Omar's order), each with copy / paste / reset
 function _fsLookSectionsHTML(p,s,n,it,lm){
-  const isVid=it.kind==='video';
-  const acc=function(key,title,body){ return '<div class="lfx-acc'+(_lfxOpen[key]?' open':'')+'" data-sec="'+key+'"><div class="lfx-hd" onclick="_lfxToggleSec(\''+key+'\')" title="Expand or collapse"><span class="lfx-ttl">'+title+'</span><span class="lfx-chev">▼</span></div><div class="lfx-body">'+body+'</div></div>'; };
   const slider=function(k,label,min,max,unit,val){ return '<div class="lfx-row"><span class="lfx-lbl">'+label+'</span><span class="fs-sl"><input type="range" class="fs-range" data-k="'+k+'" min="'+min+'" max="'+max+'" value="'+val+'" oninput="_fsLook(this)" onchange="_lfxCommit()" aria-label="'+label+'"><input class="lfx-inp fs-num" data-k="'+k+'" type="number" min="'+min+'" max="'+max+'" value="'+val+'" oninput="_fsLook(this)" onchange="_lfxCommit()" onkeydown="if(event.key===\'Enter\'){event.preventDefault();this.blur()}"><span class="lfx-lbl">'+unit+'</span></span></div>'; };
   const tog=function(k,label,on){ return '<div class="lfx-row"><span class="lfx-lbl">'+label+'</span><button type="button" class="lfx-tog'+(on?' on':'')+'" onclick="_fsToggleLook(\''+k+'\')" aria-pressed="'+on+'">'+(on?'ON':'OFF')+'</button></div>'; };
-  const num=function(k,label,val){ return '<div class="lfx-row"><span class="lfx-lbl">'+label+'</span><span class="fs-sl"><input class="lfx-inp fs-num" type="number" min="0" max="10" step="0.1" value="'+val+'" onchange="_fsSetFade(\''+k+'\',this.value)" onkeydown="if(event.key===\'Enter\'){event.preventDefault();this.blur()}"><span class="lfx-lbl">s</span></span></div>'; };
-  const colorBody=slider('hue','Hue',-180,180,'°',lm.hue)+slider('sat','Saturation',-100,100,'%',lm.sat)+slider('bri','Brightness',-100,100,'%',lm.bri)+slider('con','Contrast',-100,100,'%',lm.con)
-    +'<div class="lfx-row"><span class="lfx-lbl"></span><button type="button" class="lfx-tog" onclick="_fsResetColor()" title="Back to neutral">RESET</button></div>'
-    +'<div class="lfx-hint">A scaler\'s colour controls, shown here only. Simple keeps the plain picture.</div>';
   const filterBody=tog('bw','B&amp;W',lm.bw)+tog('neg','Negative',lm.neg)+tog('sepia','Sepia',lm.sepia)+'<div class="lfx-hint">Solarize has no browser equivalent, so it is not offered.</div>';
-  const transBody=num('fadeIn','Fade in',lm.fadeIn||0)+num('fadeOut','Fade out',lm.fadeOut||0)+'<div class="lfx-hint">Fades from and to black across the In / Out points while it plays.</div>';
-  return acc('color','Color',colorBody)+acc('filters','Filters',filterBody)+(isVid?acc('transition','Transition',transBody):'');
+  const colorBody=slider('hue','Hue',-180,180,'°',lm.hue)+slider('sat','Saturation',-100,100,'%',lm.sat)+slider('bri','Brightness',-100,100,'%',lm.bri)+slider('con','Contrast',-100,100,'%',lm.con)
+    +'<div class="lfx-hint">A scaler\'s colour controls, shown here only. Simple keeps the plain picture.</div>';
+  return _fsAccHTML('filters','Filters',filterBody,true)+_fsAccHTML('color','Color',colorBody,true);
 }
+function _fsTransitionSectionHTML(lm){
+  const num=function(k,label,val){ return '<div class="lfx-row"><span class="lfx-lbl">'+label+'</span><span class="fs-sl"><input class="lfx-inp fs-num" type="number" min="0" max="10" step="0.1" value="'+val+'" onchange="_fsSetFade(\''+k+'\',this.value)" onkeydown="if(event.key===\'Enter\'){event.preventDefault();this.blur()}"><span class="lfx-lbl">s</span></span></div>'; };
+  return _fsAccHTML('transition','Transition',num('fadeIn','Fade in',lm.fadeIn||0)+num('fadeOut','Fade out',lm.fadeOut||0)+'<div class="lfx-hint">Fades from and to black across the In / Out points while it plays.</div>',true);
+}
+// the Source block pinned above the sections: big thumbnail + a dropdown to swap the layer's source in place
+function _fsSourceBlockHTML(p,s,n,v){
+  const ct=v?findContent(v):null; const it=v?_fsMediaItem(v):null; const isVid=!!(it&&it.kind==='video');
+  const pic=(it&&it.img)?it.img:((ct&&ct.img)?ct.img:'');
+  const thumb=pic?('background:#000 url('+pic+') center/cover'):(ct?'background:'+(ct.c||'#636870'):'background:#0a0d12');
+  const names=_fsSourceNames(); const media=(Array.isArray(customLibrary)?customLibrary:[]).filter(function(c){ return c&&c.kind; }).map(function(c){ return c.l; });
+  const common=CONTENT.map(function(c){ return c.l; }); const images=names.filter(function(x){ return media.indexOf(x)<0&&common.indexOf(x)<0; });
+  const opt=function(nm){ return '<option value="'+_esc(nm)+'"'+(nm===v?' selected':'')+'>'+_esc(nm)+'</option>'; };
+  const grp=function(label,list){ return list.length?'<optgroup label="'+label+'">'+list.map(opt).join('')+'</optgroup>':''; };
+  return '<div class="fs-srcblk"><div class="fs-srcblk-thumb" style="'+thumb+'">'+(v?'':'<span class="fs-srcblk-empty">Empty layer</span>')+(isVid?'<span class="fs-src-play">▶</span>':'')+(v&&!pic?'<span class="fs-srcblk-name">'+_esc(v)+'</span>':'')+'</div>'
+    +'<div class="fs-srcblk-row"><span class="lfx-lbl">Source</span><span class="fs-sel-wrap"><select class="fs-sel" onchange="_fsSwapSource(this.value)" aria-label="Source"><option value=""'+(v?'':' selected')+'>— none —</option>'+grp('Video',media)+grp('Images',images)+grp('Common',common)+'</select></span></div></div>';
+}
+function _fsSwapSource(val){ if(!selLayer||!fsPresetId) return; const nm=val||null; if((getL(selLayer.pid,selLayer.sid,selLayer.n)||null)===nm) return; homeSetL(selLayer.pid,selLayer.sid,selLayer.n,nm); scheduleRender(); renderFullscreen(); }
+// Media Info (read-only) and General (layer name, source name, colour tag, notes)
+function _fsInfoSectionsHTML(p,s,n,v){
+  const it=v?_fsMediaItem(v):null; const ct=v?findContent(v):null; const m=(it&&it.media)||null;
+  const row=function(label,val){ return '<div class="lfx-row"><span class="lfx-lbl">'+label+'</span><span class="fs-info">'+val+'</span></div>'; };
+  let info='';
+  if(m){
+    info=row('Kind',it.kind==='video'?'Video':'Image')+row('Dimension',(m.w||'?')+'×'+(m.h||'?'))
+      +(it.kind==='video'?row('Duration',m.dur?_fsFmtTime(m.dur):'—')+row('Audio',m.hasAudio?'yes':'no'):'')
+      +row('Type',_fsFmtType(m.type))+row('Size',m.size?(m.size/1048576).toFixed(1)+' MB':'—')+row('File',_esc(m.fileName||'—'))
+      +row('Storage',_fsMediaUrl(v)?'in this app':'<b class="warn">missing, relink on the Video tab</b>');
+  } else if(v){
+    const meta=(typeof _wireGetSourceMeta==='function')?_wireGetSourceMeta(v):{}; const isCommon=CONTENT.some(function(c){ return c.l===v; });
+    info=row('Kind',isCommon?'Common content':'Library item')+row('Resolution',_esc(meta.resolution||'—'))+row('Connector',_esc(meta.connectorType||'—'))
+      +row('Colour','<span class="fs-info-sw" style="background:'+((ct&&ct.c)||'#636870')+'"></span>'+_esc((ct&&ct.c)||'—'));
+  } else info='<div class="lfx-hint">Empty layer. Pick a source above or drop one on it.</div>';
+  const cust=(Array.isArray(customLibrary)?customLibrary:[]).find(function(c){ return c&&c.l===v; });
+  const lsz=getLayerSize(p.id,s.id,n)||{}; const lname=lsz.name||'';
+  const inp=function(val,fn,ph){ return '<input class="lfx-inp fs-text" type="text" value="'+_esc(val)+'" placeholder="'+ph+'" onchange="'+fn+'" onkeydown="if(event.key===\'Enter\'){event.preventDefault();this.blur()}">'; };
+  let gen=row('Layer',inp(lname,'_fsSetLayerNameUI(this.value)','Custom layer name…'))
+    +row('Source',cust?inp(v,'_fsRenameContentUI(this.value)','Source name'):'<span class="fs-info">'+(v?_esc(v):'—')+'</span>');
+  if(cust) gen+=row('Colour tag','<span class="fs-sl"><input type="color" class="fs-color" value="'+((cust.c&&/^#[0-9a-f]{6}$/i.test(cust.c))?cust.c:'#636870')+'" oninput="_fsSetContentColor(this.value)" onchange="_lfxCommit()" aria-label="Colour tag"><span class="fs-info">'+_esc(cust.c||'')+'</span></span>')
+    +row('Notes',inp(cust.notes||'','_fsSetContentNotes(this.value)','Notes for this source…'));
+  else if(v) gen+='<div class="lfx-hint">Common content keeps its name and colour. Custom sources can be renamed, coloured and annotated here.</div>';
+  return _fsAccHTML('info','Media Info',info,false)+_fsAccHTML('general','General',gen,false);
+}
+function _fsSetLayerNameUI(val){ if(!selLayer) return; if(typeof pushUndo==='function') pushUndo(); setLayerName(selLayer.pid,selLayer.sid,selLayer.n,(val||'').trim().slice(0,40)); scheduleRender(); renderFullscreen(); }
+function _fsRenameContentUI(val){
+  if(!selLayer) return; const old=getL(selLayer.pid,selLayer.sid,selLayer.n); if(!old) return;
+  const nn=(val||'').trim().slice(0,40);
+  if(!nn||nn===old){ renderFsPanel(true); return; }
+  if(allContent().some(function(c){ return c.l===nn; })){ if(typeof showAlert==='function') showAlert({variant:'warning',title:'Name in use',message:'"'+nn+'" is already a source in this show. Pick another name.'}); renderFsPanel(true); return; }
+  _fsRenameContent(old,nn);
+}
+// rename a custom source everywhere it is used (layers, BGs, DSM content, sources[]) and move its file under the new key
+function _fsRenameContent(old,nn){
+  const it=(Array.isArray(customLibrary)?customLibrary:[]).find(function(c){ return c&&c.l===old; }); if(!it) return;
+  if(typeof pushUndo==='function') pushUndo();
+  it.l=nn;
+  presets.forEach(function(p){
+    if(p.layers) Object.keys(p.layers).forEach(function(sid){ const L=p.layers[sid]; if(L) Object.keys(L).forEach(function(k){ if(L[k]===old) L[k]=nn; }); });
+    if(p.bgNames) Object.keys(p.bgNames).forEach(function(sid){ if(p.bgNames[sid]===old) p.bgNames[sid]=nn; });
+    if(p.dsmContent) Object.keys(p.dsmContent).forEach(function(k){ if(p.dsmContent[k]===old) p.dsmContent[k]=nn; });
+  });
+  if(Array.isArray(sources)) sources.forEach(function(x){ if(x&&x.name===old) x.name=nn; });
+  if(_fsMediaURL[old]){ _fsMediaURL[nn]=_fsMediaURL[old]; delete _fsMediaURL[old]; }
+  if(_fsMediaBlob[old]){ _fsMediaBlob[nn]=_fsMediaBlob[old]; delete _fsMediaBlob[old]; _mdbPut(nn,_fsMediaBlob[nn]).then(function(){ _mdbDel(old); }); }
+  else if(it.kind){ _mdbGet(old).then(function(b){ if(b){ _fsAttachBlob(nn,b); return _mdbPut(nn,b).then(function(){ _mdbDel(old); }); } }); }
+  _fsSrcSig=''; _isDirty=true; if(typeof _updateDirtyIndicator==='function') _updateDirtyIndicator();
+  scheduleRender(); renderFullscreen();
+}
+function _fsSetContentColor(hex){ if(!selLayer) return; const v=getL(selLayer.pid,selLayer.sid,selLayer.n); const it=(Array.isArray(customLibrary)?customLibrary:[]).find(function(c){ return c&&c.l===v; }); if(!it) return; if(!_lfxSnap) _lfxSnap=_snapshot(); it.c=hex; _isDirty=true; scheduleRender(); const sw=document.querySelector('#fs-props .fs-color+.fs-info'); if(sw) sw.textContent=hex; }
+function _fsSetContentNotes(val){ if(!selLayer) return; const v=getL(selLayer.pid,selLayer.sid,selLayer.n); const it=(Array.isArray(customLibrary)?customLibrary:[]).find(function(c){ return c&&c.l===v; }); if(!it) return; if(typeof pushUndo==='function') pushUndo(); it.notes=(val||'').slice(0,200); _isDirty=true; if(typeof _updateDirtyIndicator==='function') _updateDirtyIndicator(); }
 
 // Panel resize drag — handles both left (presets) and right (properties)
 let _fsPanelDragging=false;
