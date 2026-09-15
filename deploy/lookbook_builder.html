@@ -873,6 +873,16 @@ body.fs-open .pm{z-index:650 !important}
 #fs-props .fs-text{text-align:left;font-family:var(--font-ui);font-weight:600}
 .fs-color{width:36px;height:26px;padding:0;border:1px solid var(--n-line);border-radius:4px;background:#0a0d12;cursor:pointer}
 #fs-props .fs-srcpill{width:100%;box-sizing:border-box;min-width:0}
+#fs-props .fs-fitpill{width:100%;box-sizing:border-box;min-width:0}
+/* 16ie: faders (Omar) — the Mitti look: a thin dark track and a small light pill thumb, no cyan fill, no big circle */
+input[type=range].fs-range,input[type=range].lfx-range,input[type=range].fs-tl-level{-webkit-appearance:none;appearance:none;height:14px;background:transparent;cursor:pointer;accent-color:auto}
+input[type=range].fs-range::-webkit-slider-runnable-track,input[type=range].lfx-range::-webkit-slider-runnable-track,input[type=range].fs-tl-level::-webkit-slider-runnable-track{height:4px;border-radius:2px;background:#2a3038;border:1px solid #1a1f28}
+input[type=range].fs-range::-webkit-slider-thumb,input[type=range].lfx-range::-webkit-slider-thumb,input[type=range].fs-tl-level::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:8px;height:14px;margin-top:-6px;border-radius:2px;background:#e2e4e8;border:1px solid #0a0d12;box-shadow:0 1px 3px rgba(0,0,0,.6)}
+input[type=range].fs-range:hover::-webkit-slider-thumb,input[type=range].lfx-range:hover::-webkit-slider-thumb,input[type=range].fs-tl-level:hover::-webkit-slider-thumb{background:#fff}
+input[type=range].fs-range:focus-visible,input[type=range].lfx-range:focus-visible,input[type=range].fs-tl-level:focus-visible{outline:none}
+input[type=range].fs-range:focus-visible::-webkit-slider-thumb,input[type=range].lfx-range:focus-visible::-webkit-slider-thumb,input[type=range].fs-tl-level:focus-visible::-webkit-slider-thumb{box-shadow:0 0 0 2px rgba(var(--n-cyan-rgb),.5)}
+input[type=range].fs-range::-moz-range-track,input[type=range].lfx-range::-moz-range-track,input[type=range].fs-tl-level::-moz-range-track{height:4px;border-radius:2px;background:#2a3038;border:1px solid #1a1f28}
+input[type=range].fs-range::-moz-range-thumb,input[type=range].lfx-range::-moz-range-thumb,input[type=range].fs-tl-level::-moz-range-thumb{width:8px;height:14px;border-radius:2px;background:#e2e4e8;border:1px solid #0a0d12}
 #fs-props .fs-srcpill .pill-label{min-width:0;overflow:hidden;text-overflow:ellipsis}
 /* properties */
 .fs-crumb{display:flex;align-items:center;gap:6px;padding:0 0 10px;margin-bottom:10px;border-bottom:1px solid var(--n-line)}
@@ -3925,7 +3935,7 @@ Also called DSM (Downstage Monitor) in broadcast and theater workflows, same thi
   <div class="bb-cell bb-pill bb-cyan" title="The largest number of layers used in any single preset, this is the figure to compare against your switcher's per-scene layer budget. (The most complex single moment in the show.)"><span class="bb-label">Layers</span><strong id="bb-layers">0</strong></div>
   <div id="bb-spacer"></div>
   <div class="bb-cell" id="bb-sel" style="font-size:10px;opacity:.5">—</div>
-  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy, hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16id</div>
+  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy, hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16ie</div>
   <button class="bb-util" id="tb-adv" onclick="actions.advancedMenu(event)" title="Advanced features (AOI, Free Mode, Blend Zones, Dead Space)" aria-label="Advanced features (AOI, Free Mode, Blend Zones, Dead Space)" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Advanced<span class="adv-count" aria-hidden="true"></span><svg aria-hidden="true" id="tb-adv-chev" viewBox="0 0 10 10" fill="currentColor" width="8" height="8" style="opacity:.7"><path d="M2 4l3 3 3-3z"/></svg></button>
   <button class="bb-util" onclick="actions.help()" title="Help, quick reference, keyboard shortcuts, glossary, accessibility" aria-label="Help, quick reference, keyboard shortcuts, glossary, accessibility" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="4.93" y1="4.93" x2="9.17" y2="9.17"/><line x1="14.83" y1="14.83" x2="19.07" y2="19.07"/><line x1="14.83" y1="9.17" x2="19.07" y2="4.93"/><line x1="4.93" y1="19.07" x2="9.17" y2="14.83"/></svg>Help</button>
   <button class="bb-util" id="lb-skin-btn" onclick="lbToggleSkinMenu(event)" title="Color skin" aria-label="Change color skin" style="height:100%;padding:0 13px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="13.5" cy="6.5" r=".6" fill="currentColor" stroke="none"/><circle cx="17" cy="10.5" r=".6" fill="currentColor" stroke="none"/><circle cx="8.5" cy="7.5" r=".6" fill="currentColor" stroke="none"/><circle cx="6.5" cy="12" r=".6" fill="currentColor" stroke="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c.93 0 1.65-.75 1.65-1.69 0-.44-.18-.83-.44-1.12-.29-.29-.44-.65-.44-1.13a1.65 1.65 0 0 1 1.67-1.67h1.97c3.05 0 5.55-2.5 5.55-5.55C21.95 6.01 17.45 2 12 2z"/></svg></button>
@@ -8523,6 +8533,7 @@ document.addEventListener('click',e=>{
   // Color picker — close if outside picker and not on a swatch or lp-color-swatch
   if(!e.target.closest('#color-pop')&&
      !e.target.classList.contains('color-swatch')&&
+     !e.target.closest('.lfx-swatch')&&   // 16ie: the accordion's swatches (Advanced panel is not a .pm popup)
      !e.target.closest('.lp-color-swatch')) closeColorPop();
 
   // Content type picker — close if outside picker overlay and not on a layer dot/chip
@@ -9583,7 +9594,7 @@ function _lpAdvancedSection(v, cr, pid, sid, n, isAdv){
                 <input class="lp-cr-inp lfx-inp" type="number" value="${val}" min="0" max="${maxPx}" data-dim="${dim}" data-layer-w="${_layerW}" data-layer-h="${_layerH}" style="color:#ff9aa8" data-fx="pink-c" oninput="lpCropChange(this,'${pid}','${sid}',${n})">
               </div>`;
   const ct = findContent(v);
-  const innerBg = ct ? ct.c : 'var(--n-cyan)';
+  const innerBg = ct ? (ct.img ? '#000 url('+ct.img+') center/cover no-repeat' : ct.c) : 'var(--n-cyan)';   // 16ie: the cover / picture, not just the colour
   const geo = _lfxGeo(pid,sid,n,_sw,_sh);
   const fx = getLayerFx(pid,sid,n);
   const num = (path,val,min,max) => `<input class="lfx-inp lfx-num" data-path="${path}" type="number" value="${val}" min="${min}" max="${max}" oninput="_lfxNumInput(this)" onfocus="_lfxFocus()" onchange="_lfxCommit()">`;
@@ -9642,7 +9653,7 @@ function _lpAdvancedSection(v, cr, pid, sid, n, isAdv){
           ${sec('pos','Position &amp; Size',posBody)}
           ${sec('op','Opacity',opBody)}
           ${sec('crop','Crop',cropBody)}
-          ${sec('border','Border',borderBody)}
+          ${sec('border','Border &amp; Shadow',borderBody)}
           ${sec('fx','Effects',fxBody)}
         </div>
         <button class="lp-remove-global pm-btn-danger">✕ Remove from ALL presets</button>
@@ -9926,7 +9937,7 @@ function lpCropChange(inp,pid,sid,n){
   scheduleRender();
   if(fsPresetId) renderFullscreen();
   // Update preview box (still uses percentages)
-  const pop = document.getElementById('layer-panel');
+  const pop = document.getElementById('layer-panel')||document.getElementById('fs-props');   // 16ie
   if(pop){
     const inner = pop.querySelector('#lp-crop-inner');
     if(inner){
@@ -10211,7 +10222,7 @@ function closeLayerPanel(){
   if(typeof _homeClearOpen==='function') _homeClearOpen();   // 16go
   const p=document.getElementById('layer-panel');
   if(p) p.remove();
-  if(colorPopTarget&&colorPopTarget.lfx&&typeof closeColorPop==='function') closeColorPop();   // 16fq
+  if(p&&colorPopTarget&&colorPopTarget.lfx&&typeof closeColorPop==='function') closeColorPop();   // 16fq; 16ie: only when a floating panel really closed (the Advanced panel keeps its picker)
   // Clear the mobile inline flag even if is-mobile flipped off mid-session —
   // a stranded true suppresses the desktop outside-click closers forever.
   if(window._mbInlinePanelOpen && typeof window._mbInlineClose==='function'){ window._mbInlineClose(); }
@@ -12597,6 +12608,7 @@ function _sysOpenDropdown(trigger){
     {value:"Custom",label:"Custom…",family:"custom",meta:"your own"}
   ];
   else if(field==='fs-source') opts=_fsBuildSourceOptions();   // 16ib: the Advanced layer Source picker is one of these menus
+  else if(field==='fs-fit') opts=[{value:'fit',label:'Scale to fit',meta:'bars if needed'},{value:'fill',label:'Scale to fill',meta:'crops the overflow'},{value:'stretch',label:'Stretch',meta:'to the layer box'},{value:'native',label:'1:1 native',meta:'overflow cut'}];   // 16ie: Geometry resize mode
   else return;
   const menu=document.createElement('div');
   menu.className='sys-dd';
@@ -12666,6 +12678,7 @@ function _sysHandlePick(trigger,opt){
   const kind=trigger.dataset.sysKind;
   const id=trigger.dataset.sysId;
   if(field==='fs-source'){ _fsSwapSource(opt.value||''); return; }   // 16ib
+  if(field==='fs-fit'){ _fsSetFit(opt.value||'fit'); return; }   // 16ie
   if(kind==='src-all'||kind==='dst-all'){ _sysApplyToAll(kind,field,opt); return; }
   if(/^adv(src|dst|mv)-all$/.test(kind)){ _ioAdvApplyToAll(kind,field,opt); return; }   // 16ho: Set-for-all rows on the Advanced pages
   if(kind==='adv-src'||kind==='adv-dst'||kind==='adv-mv'){   // 16hm: Advanced (standalone) rows write to ioAdvanced only
@@ -20496,9 +20509,10 @@ function renderFsPanel(force){
         +_lpAdvancedSection(v,cr,p.id,s.id,n,true)
         +(it?_fsLookSectionsHTML(p,s,n,it,lm):'')
         +_fsMediaSectionHTML(p,s,n,v)
-        +(it&&it.kind==='video'?_fsTransitionSectionHTML(lm):'')
+        +(it&&it.kind==='video'?_fsTransitionSectionHTML(it,lm):'')   // 16ie: fades + In / Out
         +'</div>';
       const fp=document.getElementById('fs-props'); if(fp) fp._rebuild=function(){ renderFsPanel(true); };
+      _fsSizeCropPreview(p.id,s.id,n);   // 16ie
       panel.scrollTop=keepScroll;
       return;
     }
@@ -25432,7 +25446,7 @@ function _fsSetPropTab(t){
   document.querySelectorAll('#fs-prop-tabs .lb-seg-btn').forEach(b=>b.classList.toggle('on',b.dataset.tab===_fsPropTab));
 }
 
-if(typeof _lfxOpen==='object'&&_lfxOpen){ if(_lfxOpen.video===undefined) _lfxOpen.video=true; if(_lfxOpen.source===undefined) _lfxOpen.source=true; if(_lfxOpen.info===undefined) _lfxOpen.info=true; if(_lfxOpen.general===undefined) _lfxOpen.general=false; }   // Video + Media Info start open
+if(typeof _lfxOpen==='object'&&_lfxOpen){ if(_lfxOpen.geometry===undefined) _lfxOpen.geometry=true; if(_lfxOpen.source===undefined) _lfxOpen.source=true; if(_lfxOpen.info===undefined) _lfxOpen.info=true; if(_lfxOpen.general===undefined) _lfxOpen.general=false; }   // Video + Media Info start open
 // ══════════════════════════════════════════════════════════════════════
 // 16hy (Omar): VIDEO. Video / image files become content items in customLibrary
 // ({l, c, kind:'video'|'image', img:cover, media:{w,h,dur,type,size,hasAudio,coverTime,peaks}}), so
@@ -25744,7 +25758,7 @@ function _fsFadeTick(){
 function _fsResetFades(){ Object.keys(_fsVideoEls).forEach(function(key){ const vid=_fsVideoEls[key]; vid.style.opacity=vid.dataset.baseOp||'1'; }); }
 // ── 16ia: Source block, Media Info, General, per-section tools; Filters / Color / Video / Transition in Omar's order ──
 var _fsLookClip={};
-var _FS_SEC_FIELDS={video:['fit','in','out','speed','loop','level'],color:['hue','sat','bri','con'],filters:['bw','neg','sepia'],transition:['fadeIn','fadeOut']};
+var _FS_SEC_FIELDS={geometry:['fit'],color:['hue','sat','bri','con'],filters:['bw','neg','sepia'],transition:['fadeIn','fadeOut','in','out']};
 var _FS_TOOLS_SVG={
   copy:'<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>',
   paste:'<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><polyline points="9 14 11 16 15 12"/></svg>',
@@ -25767,24 +25781,58 @@ function _fsSecAction(action,key){
   renderFullscreen();
 }
 // the Video / Image section: size check, fit, transport, scope, In / Out, speed, level
+// 16ie: Geometry (Omar: "video should technically be geometry") — resize mode + size check. Playback lives in the timeline.
 function _fsMediaSectionHTML(p,s,n,v){
   const it=v?_fsMediaItem(v):null; if(!it) return '';
-  const lm=getLayerMedia(p.id,s.id,n); const m=it.media||{}; const isVid=it.kind==='video';
-  const seg=function(cur,opts,fn){ return '<div class="fitmode">'+opts.map(function(o){ return '<button type="button" class="'+(cur===o[0]?'on':'')+'" onclick="'+fn+'(\''+o[0]+'\')" title="'+o[2]+'">'+o[1]+'</button>'; }).join('')+'</div>'; };
-  let body='<div class="fs-check"><div class="t">Size check</div><div class="m">'+_fsSizeCheckText(it,p.id,s.id,n)+'</div></div>'
-    +'<div class="lfx-row"><span class="lfx-lbl">Fit</span>'+seg(lm.fit,[['fit','Fit','Scale to fit inside the layer, bars if needed'],['fill','Fill','Scale to cover the layer, cropping the overflow'],['stretch','Stretch','Stretch to the layer box'],['native','1:1','Native pixels, centred, overflow cut']],'_fsSetFit')+'</div>';
-  if(isVid){
-    body+='<div class="lfx-row"><span class="lfx-lbl">Play</span><span class="fs-tr"><button type="button" class="fs-tl-tb play" onclick="_fsPlayToggle()" title="Play / pause">▶</button><button type="button" class="fs-tl-tb" onclick="_fsStop()" title="Stop">■</button><button type="button" class="fs-tl-tb'+(lm.loop?' on':'')+'" onclick="_fsToggleLoop()" title="Loop">⟳</button></span></div>'
-      +'<div class="lfx-row"><span class="lfx-lbl">Scope</span>'+seg(_fsPlayScope,[['layer','This layer','Transport drives this layer only'],['preset','Whole preset','Transport drives every video in this preset together']],'_fsSetScope')+'</div>'
-      +'<div class="lfx-row"><span class="lfx-lbl">In / Out</span><span class="fs-io"><b>'+_fsFmtTime(lm.in||0)+'</b> → <b>'+(lm.out!=null?_fsFmtTime(lm.out):_fsFmtTime(m.dur))+'</b> <i>set with In / Out under the timeline</i></span></div>'
-      +'<div class="lfx-row"><span class="lfx-lbl">Speed</span><span class="fs-sl"><input class="lfx-inp fs-num" type="number" min="10" max="400" step="5" value="'+(lm.speed||100)+'" onchange="_fsSetSpeed(this.value)" onkeydown="if(event.key===\'Enter\'){event.preventDefault();this.blur()}"><span class="lfx-lbl">%</span></span></div>'
-      +'<div class="lfx-row"><span class="lfx-lbl">Level</span><span class="fs-sl"><input type="range" class="fs-range" min="0" max="100" value="'+lm.level+'" oninput="_fsSetLevel(this.value)" aria-label="Audio level"><span class="lfx-lbl" id="fs-props-lvl">'+lm.level+'%</span></span></div>'
-      +'<div class="lfx-hint">Playback lives here only. Simple shows the cover frame, set it under the timeline.</div>';
-  } else {
-    body+='<div class="lfx-hint">Images sit in the layer at the fit above. Simple shows the same picture.</div>';
-  }
-  return _fsAccHTML('video',isVid?'Video':'Image',body,true);
+  const lm=getLayerMedia(p.id,s.id,n); const isVid=it.kind==='video';
+  const fitLabel={fit:'Scale to fit',fill:'Scale to fill',stretch:'Stretch',native:'1:1 native'}[lm.fit]||'Scale to fit';
+  const chev='<span class="pill-chev"><svg aria-hidden="true" viewBox="0 0 10 10" fill="currentColor"><path d="M2 4l3 3 3-3z"/></svg></span>';
+  const body='<div class="lfx-row"><span class="lfx-lbl">Resize</span><div class="sys-pill clickable fs-fitpill" data-sys-field="fs-fit" data-sys-value="'+_esc(lm.fit||'fit')+'" onclick="_sysOpenDropdown(this)" title="How the picture sits in the layer box"><span class="pill-label">'+fitLabel+'</span>'+chev+'</div></div>'
+    +'<div class="fs-check"><div class="t">Size check</div><div class="m">'+_fsSizeCheckText(it,p.id,s.id,n)+'</div></div>'
+    +'<div class="lfx-hint">'+(isVid?'Position, size and crop live in their own sections; playback in the timeline under the canvas.':'Position, size and crop live in their own sections. Simple shows the same picture.')+'</div>';
+  return _fsAccHTML('geometry','Geometry',body,true);
 }
+function _fsTransitionSectionHTML(it,lm){
+  const m=(it&&it.media)||{};
+  const num=function(k,label,val){ return '<div class="lfx-row"><span class="lfx-lbl">'+label+'</span><span class="fs-sl"><input class="lfx-inp fs-num" type="number" min="0" max="10" step="0.1" value="'+val+'" onchange="_fsSetFade(\''+k+'\',this.value)" onkeydown="if(event.key===\'Enter\'){event.preventDefault();this.blur()}"><span class="lfx-lbl">s</span></span></div>'; };
+  const io='<div class="lfx-row"><span class="lfx-lbl">In / Out</span><span class="fs-io"><b>'+_fsFmtTime(lm.in||0)+'</b> → <b>'+(lm.out!=null?_fsFmtTime(lm.out):_fsFmtTime(m.dur))+'</b> <i>set with In / Out under the timeline</i></span></div>';
+  return _fsAccHTML('transition','Transition',io+num('fadeIn','Fade in',lm.fadeIn||0)+num('fadeOut','Fade out',lm.fadeOut||0)+'<div class="lfx-hint">Fades from and to black across the In / Out points while it plays.</div>',true);
+}
+// the crop preview box in the Advanced panel is sized from the stored crop (the floating panel does this in its own wiring)
+function _fsSizeCropPreview(pid,sid,n){
+  const fp=document.getElementById('fs-props'); if(!fp) return;
+  const inner=fp.querySelector('#lp-crop-inner'); if(!inner) return;
+  const cr=getCrop(pid,sid,n)||{};
+  inner.style.top=(cr.t||0)+'%'; inner.style.left=(cr.l||0)+'%'; inner.style.width=(100-(cr.l||0)-(cr.r||0))+'%'; inner.style.height=(100-(cr.t||0)-(cr.b||0))+'%';
+}
+// bit depth of the video track: hvcC / avcC (high profiles carry it), the sample entry's depth field, or the ProRes flavour
+function _fsVideoBits(dv,e,ee,fourcc){
+  const pr={apch:10,apcn:10,apcs:10,apco:10,ap4h:12,ap4x:12};
+  let bits=0;
+  try{
+    const str=function(o){ return String.fromCharCode(dv.getUint8(o),dv.getUint8(o+1),dv.getUint8(o+2),dv.getUint8(o+3)); };
+    let o=e+86;
+    while(o+8<=ee){
+      const sz=dv.getUint32(o); const t=str(o+4); if(sz<8) break; const b=o+8, end=Math.min(ee,o+sz);
+      if(t==='hvcC'&&b+18<=end){ bits=(dv.getUint8(b+17)&7)+8; break; }
+      if(t==='avcC'&&b+6<=end){
+        const prof=dv.getUint8(b+1);
+        if([100,110,122,244,44,83,86,118,128,138,139,134,135].indexOf(prof)>=0){
+          let p=b+5; const nS=dv.getUint8(p)&31; p++;
+          for(let i=0;i<nS&&p+2<=end;i++){ p+=2+dv.getUint16(p); }
+          if(p<end){ const nP=dv.getUint8(p); p++; for(let i=0;i<nP&&p+2<=end;i++){ p+=2+dv.getUint16(p); } if(p+2<=end) bits=(dv.getUint8(p+1)&7)+8; }
+        }
+        if(!bits) bits=8;
+        break;
+      }
+      o+=sz;
+    }
+    if(!bits&&e+84<=ee){ const d=dv.getUint16(e+82); bits=(d===24||d===32)?8:((d===30||d===40)?10:(d===36?12:(d===48?16:0))); }
+  }catch(x){}
+  if(!bits&&pr[fourcc]) bits=pr[fourcc];
+  return bits||0;
+}
+
 // Filters then Color (Omar's order), each with copy / paste / reset
 function _fsLookSectionsHTML(p,s,n,it,lm){
   const slider=function(k,label,min,max,unit,val){ return '<div class="lfx-row"><span class="lfx-lbl">'+label+'</span><span class="fs-sl"><input type="range" class="fs-range" data-k="'+k+'" min="'+min+'" max="'+max+'" value="'+val+'" oninput="_fsLook(this)" onchange="_lfxCommit()" aria-label="'+label+'"><input class="lfx-inp fs-num" data-k="'+k+'" type="number" min="'+min+'" max="'+max+'" value="'+val+'" oninput="_fsLook(this)" onchange="_lfxCommit()" onkeydown="if(event.key===\'Enter\'){event.preventDefault();this.blur()}"><span class="lfx-lbl">'+unit+'</span></span></div>'; };
@@ -25793,10 +25841,6 @@ function _fsLookSectionsHTML(p,s,n,it,lm){
   const colorBody=slider('hue','Hue',-180,180,'°',lm.hue)+slider('sat','Saturation',-100,100,'%',lm.sat)+slider('bri','Brightness',-100,100,'%',lm.bri)+slider('con','Contrast',-100,100,'%',lm.con)
     +'<div class="lfx-hint">A scaler\'s colour controls, shown here only. Simple keeps the plain picture.</div>';
   return _fsAccHTML('filters','Filters',filterBody,true)+_fsAccHTML('color','Color',colorBody,true);
-}
-function _fsTransitionSectionHTML(lm){
-  const num=function(k,label,val){ return '<div class="lfx-row"><span class="lfx-lbl">'+label+'</span><span class="fs-sl"><input class="lfx-inp fs-num" type="number" min="0" max="10" step="0.1" value="'+val+'" onchange="_fsSetFade(\''+k+'\',this.value)" onkeydown="if(event.key===\'Enter\'){event.preventDefault();this.blur()}"><span class="lfx-lbl">s</span></span></div>'; };
-  return _fsAccHTML('transition','Transition',num('fadeIn','Fade in',lm.fadeIn||0)+num('fadeOut','Fade out',lm.fadeOut||0)+'<div class="lfx-hint">Fades from and to black across the In / Out points while it plays.</div>',true);
 }
 // the Source block pinned above the sections: big thumbnail + a dropdown to swap the layer's source in place
 function _fsSourceBlockHTML(p,s,n,v){
@@ -25834,7 +25878,7 @@ function _fsInfoSectionsHTML(p,s,n,v){
     const audio=m.hasAudio?('yes'+(m.acodec?' · '+m.acodec:'')+(m.channels?' · '+m.channels+' ch':'')+(m.sampleRate?' · '+(Math.round(m.sampleRate/100)/10)+' kHz':'')):'no';
     const store=m.path?'<span class="fs-info" title="'+_esc(m.path)+'">'+_esc(m.path)+'</span>':(_fsMediaUrl(v)?'<span class="fs-info">'+((window.lookbookNative&&window.lookbookNative.isDesktop)?'in this app (added before paths were recorded, re-add to record it)':'in this app (browser storage, no path)')+'</span>':'<span class="fs-info"><b class="warn">missing, relink on the Video tab</b></span>');
     info=row('Kind',isV?'Video':'Image')+row('Dimension',(m.w||'?')+'×'+(m.h||'?')+(isV&&m.fps?' · '+m.fps:''))
-      +(isV?row('Duration',m.dur?_fsFmtTime(m.dur):'—')+row('Codecs',(m.vcodec||'—')+(m.acodec?' / '+m.acodec+(m.channels?' ('+m.channels+' ch)':''):''))+row('Audio',audio):'')
+      +(isV?row('Duration',m.dur?_fsFmtTime(m.dur):'—')+row('Codecs',(m.vcodec||'—')+(m.acodec?' / '+m.acodec+(m.channels?' ('+m.channels+' ch)':''):''))+row('Bit depth',m.bitDepth?m.bitDepth+'-bit':'—')+row('Audio',audio):'')
       +row('Type',_fsFmtType(m.type))+row('Size',m.size?(m.size/1048576).toFixed(1)+' MB':'—')+row('File',_esc(m.fileName||'—'))
       +'<div class="lfx-row"><span class="lfx-lbl">Storage</span>'+store+'</div>';
   } else if(v){
@@ -25850,6 +25894,7 @@ function _fsInfoSectionsHTML(p,s,n,v){
   if(cust) gen+=row('Colour tag','<span class="fs-sl"><input type="color" class="fs-color" value="'+((cust.c&&/^#[0-9a-f]{6}$/i.test(cust.c))?cust.c:'#636870')+'" oninput="_fsSetContentColor(this.value)" onchange="_lfxCommit()" aria-label="Colour tag"><span class="fs-info">'+_esc(cust.c||'')+'</span></span>')
     +row('Notes',inp(cust.notes||'','_fsSetContentNotes(this.value)','Notes for this source…'));
   else if(v) gen+='<div class="lfx-hint">Common content keeps its name and colour. Custom sources can be renamed, coloured and annotated here.</div>';
+  if(it&&it.kind==='video'){ const lmG=getLayerMedia(p.id,s.id,n); gen+=row('Speed','<span class="fs-sl"><input class="lfx-inp fs-num" type="number" min="10" max="400" step="5" value="'+(lmG.speed||100)+'" onchange="_fsSetSpeed(this.value)" onkeydown="if(event.key===\'Enter\'){event.preventDefault();this.blur()}"><span class="lfx-lbl">%</span></span>'); }   // 16ie: playback speed
   return _fsAccHTML('info','Media Info',info,false)+_fsAccHTML('general','General',gen,false);
 }
 function _fsSetLayerNameUI(val){ if(!selLayer) return; if(typeof pushUndo==='function') pushUndo(); setLayerName(selLayer.pid,selLayer.sid,selLayer.n,(val||'').trim().slice(0,40)); scheduleRender(); renderFullscreen(); }
@@ -25906,9 +25951,9 @@ function _fsParseIsoBmff(file){
   };
   return rd(0,12).then(function(dv){ const t=str(dv,4); if(['ftyp','moov','mdat','wide','free','skip','pnot'].indexOf(t)<0) return null; return findMoov(0); }).then(function(moov){
     if(!moov) return null;
-    const out={vcodec:null,acodec:null,channels:0,sampleRate:0,fps:0,w:0,h:0};
+    const out={vcodec:null,acodec:null,channels:0,sampleRate:0,fps:0,w:0,h:0,bits:0};
     const commit=function(c){
-      if(c.handler==='vide'||c.vcodec){ if(!out.vcodec&&!out.fps){ out.vcodec=c.vcodec||null; out.w=c.w||0; out.h=c.h||0; if(c.timescale&&c.delta) out.fps=_fsSnapFps(c.timescale/c.delta); } }
+      if(c.handler==='vide'||c.vcodec){ if(!out.vcodec&&!out.fps){ out.vcodec=c.vcodec||null; out.w=c.w||0; out.h=c.h||0; out.bits=c.bits||0; if(c.timescale&&c.delta) out.fps=_fsSnapFps(c.timescale/c.delta); } }
       else if(c.handler==='soun'||c.acodec){ if(!out.acodec){ out.acodec=c.acodec||null; out.channels=c.channels||0; out.sampleRate=c.sampleRate||0; } }
     };
     const walk=function(start,end,ctx){
@@ -25922,7 +25967,7 @@ function _fsParseIsoBmff(file){
         else if(type==='mdia'||type==='minf'||type==='stbl'){ walk(bs,be,ctx); }
         else if(type==='mdhd'&&bs+24<=be){ const ver=moov.getUint8(bs); ctx.timescale=(ver===1&&bs+24<=be)?moov.getUint32(bs+20):moov.getUint32(bs+12); }
         else if(type==='hdlr'&&bs+12<=be){ ctx.handler=str(moov,bs+8); }
-        else if(type==='stsd'&&bs+16<=be){ const n=moov.getUint32(bs+4); if(n>0){ const e=bs+8; const fourcc=str(moov,e+4); const c=_fsBoxCodec(fourcc); if((ctx.handler==='vide'||c.v)&&e+36<=be){ ctx.vcodec=c.v||fourcc; ctx.w=moov.getUint16(e+32); ctx.h=moov.getUint16(e+34); } else if((ctx.handler==='soun'||c.a)&&e+34<=be){ ctx.acodec=c.a||fourcc; ctx.channels=moov.getUint16(e+24); ctx.sampleRate=moov.getUint16(e+32); } } }
+        else if(type==='stsd'&&bs+16<=be){ const n=moov.getUint32(bs+4); if(n>0){ const e=bs+8; const fourcc=str(moov,e+4); const c=_fsBoxCodec(fourcc); if((ctx.handler==='vide'||c.v)&&e+36<=be){ ctx.vcodec=c.v||fourcc; ctx.w=moov.getUint16(e+32); ctx.h=moov.getUint16(e+34); ctx.bits=_fsVideoBits(moov,e,Math.min(be,e+moov.getUint32(e)),fourcc); } else if((ctx.handler==='soun'||c.a)&&e+34<=be){ ctx.acodec=c.a||fourcc; ctx.channels=moov.getUint16(e+24); ctx.sampleRate=moov.getUint16(e+32); } } }
         else if(type==='stts'&&bs+16<=be){ const n=moov.getUint32(bs+4); if(n>0) ctx.delta=moov.getUint32(bs+12); }
         o+=size;
       }
@@ -25932,7 +25977,7 @@ function _fsParseIsoBmff(file){
     return (out.vcodec||out.acodec||out.fps)?out:null;
   }).catch(function(){ return null; });
 }
-function _fsApplyBoxInfo(media,info){ if(!info) return; if(info.vcodec) media.vcodec=info.vcodec; if(info.acodec){ media.acodec=info.acodec; media.hasAudio=true; } if(info.channels) media.channels=info.channels; if(info.sampleRate) media.sampleRate=info.sampleRate; if(info.fps) media.fps=info.fps; if(media.vcodec===undefined) media.vcodec=null; }
+function _fsApplyBoxInfo(media,info){ if(info&&info.bits) media.bitDepth=info.bits; if(media.bitDepth===undefined) media.bitDepth=null; if(!info) return; if(info.vcodec) media.vcodec=info.vcodec; if(info.acodec){ media.acodec=info.acodec; media.hasAudio=true; } if(info.channels) media.channels=info.channels; if(info.sampleRate) media.sampleRate=info.sampleRate; if(info.fps) media.fps=info.fps; if(media.vcodec===undefined) media.vcodec=null; }
 // measured frame rate for containers we do not parse (WebM): frames presented over ~1.5 s of muted playback
 function _fsProbeFps(v){
   return new Promise(function(res){
@@ -25945,13 +25990,13 @@ function _fsProbeFps(v){
   });
 }
 function _fsPathFor(f){ try{ const nat=window.lookbookNative; if(nat&&typeof nat.pathForFile==='function') return nat.pathForFile(f)||''; }catch(e){} return ''; }
-function _fsMediaLacksInfo(it){ const m=it.media||{}; if(!m.fileName) return true; if(it.kind==='video'&&(m.vcodec===undefined||!m.fps)) return true; return false; }
+function _fsMediaLacksInfo(it){ const m=it.media||{}; if(!m.fileName) return true; if(it.kind==='video'&&(m.vcodec===undefined||m.bitDepth===undefined||!m.fps)) return true; return false; }
 // older items: the file name comes back with the stored File, codecs / fps / channels from the file itself
 function _fsEnrichMedia(it,blob){
   const m=it.media=it.media||{}; const todo=[];
   if(!m.fileName&&blob&&blob.name) m.fileName=blob.name;
   if(it.kind==='video'){
-    if(m.vcodec===undefined||!m.fps){
+    if(m.vcodec===undefined||m.bitDepth===undefined||!m.fps){
       todo.push(_fsParseIsoBmff(blob).then(function(info){ _fsApplyBoxInfo(m,info); if(m.vcodec===undefined) m.vcodec=null; if(m.fps) return;
         const v=document.createElement('video'); v.playsInline=true; v.muted=true; v.preload='auto'; v.src=_fsMediaUrl(it.l);
         return new Promise(function(r){ v.oncanplay=function(){ r(); }; v.onerror=function(){ r(); }; setTimeout(r,6000); }).then(function(){ return _fsProbeFps(v); }).then(function(f){ m.fps=f||0; try{ v.removeAttribute('src'); v.load(); }catch(e){} }); }));
