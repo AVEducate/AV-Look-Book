@@ -1396,6 +1396,8 @@ body.is-mobile #wire-overlay #wire-align-panel{display:none !important}
    exact rows. Matches R_TITLE_H=56, R_SUBTITLE_H=44, R_HEADER_H=44,
    R_ROW_H=44 in _wireRenderAdvancedDiagram. */
 #wire-overlay .wire-router-title{background:#0a0e16;color:#e8e8ea;font-weight:800;letter-spacing:.18em;font-size:18px;text-transform:uppercase;text-align:center;height:56px;padding:0 12px;border-bottom:1px solid rgba(var(--n-cyan-rgb),.25);display:flex;align-items:center;justify-content:center;box-sizing:border-box}
+#wire-overlay .wire-router-title.wire-title-locked{display:flex;align-items:center;justify-content:center;gap:8px;cursor:default}
+#wire-overlay .wire-router-title.wire-title-locked svg{opacity:.55}
 #wire-overlay .wire-router-title input{background:transparent;border:none;color:inherit;font-weight:inherit;letter-spacing:inherit;font-size:inherit;text-align:center;outline:none;width:90%;text-transform:uppercase;height:40px;line-height:1}
 #wire-overlay .wire-router-title input:focus{outline:1px solid var(--n-cyan);outline-offset:1px;background:#181c25}
 #wire-overlay .wire-router-subtitle{background:#000;color:#e8e8ea;font-weight:700;letter-spacing:.1em;font-size:14px;text-transform:uppercase;text-align:center;height:44px;padding:0 12px;border-bottom:1px solid rgba(var(--n-cyan-rgb),.18);display:flex;align-items:center;justify-content:center;box-sizing:border-box}
@@ -3986,7 +3988,7 @@ Also called DSM (Downstage Monitor) in broadcast and theater workflows, same thi
   <div class="bb-cell bb-pill bb-cyan" title="The largest number of layers used in any single preset, this is the figure to compare against your switcher's per-scene layer budget. (The most complex single moment in the show.)"><span class="bb-label">Layers</span><strong id="bb-layers">0</strong></div>
   <div id="bb-spacer"></div>
   <div class="bb-cell" id="bb-sel" style="font-size:10px;opacity:.5">—</div>
-  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy, hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16iz</div>
+  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy, hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16ja</div>
   <button class="bb-util" id="tb-adv" onclick="actions.advancedMenu(event)" title="Advanced features (AOI, Free Mode, Blend Zones, Dead Space)" aria-label="Advanced features (AOI, Free Mode, Blend Zones, Dead Space)" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Advanced<span class="adv-count" aria-hidden="true"></span><svg aria-hidden="true" id="tb-adv-chev" viewBox="0 0 10 10" fill="currentColor" width="8" height="8" style="opacity:.7"><path d="M2 4l3 3 3-3z"/></svg></button>
   <button class="bb-util" onclick="actions.help()" title="Help, quick reference, keyboard shortcuts, glossary, accessibility" aria-label="Help, quick reference, keyboard shortcuts, glossary, accessibility" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="4.93" y1="4.93" x2="9.17" y2="9.17"/><line x1="14.83" y1="14.83" x2="19.07" y2="19.07"/><line x1="14.83" y1="9.17" x2="19.07" y2="4.93"/><line x1="4.93" y1="19.07" x2="9.17" y2="14.83"/></svg>Help</button>
   <button class="bb-util" id="lb-skin-btn" onclick="lbToggleSkinMenu(event)" title="Color skin" aria-label="Change color skin" style="height:100%;padding:0 13px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="13.5" cy="6.5" r=".6" fill="currentColor" stroke="none"/><circle cx="17" cy="10.5" r=".6" fill="currentColor" stroke="none"/><circle cx="8.5" cy="7.5" r=".6" fill="currentColor" stroke="none"/><circle cx="6.5" cy="12" r=".6" fill="currentColor" stroke="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c.93 0 1.65-.75 1.65-1.69 0-.44-.18-.83-.44-1.12-.29-.29-.44-.65-.44-1.13a1.65 1.65 0 0 1 1.67-1.67h1.97c3.05 0 5.55-2.5 5.55-5.55C21.95 6.01 17.45 2 12 2z"/></svg></button>
@@ -12276,13 +12278,13 @@ const _IO_ADV_MAX_PAGES=25;
 function _ioAdvBlank(kind){ const r={ id:'ia'+Date.now().toString(36)+Math.random().toString(36).slice(2,6), name:'', connectorType:'', customType:'', resolution:'', notes:'' }; if(kind==='src') r.type=''; else r.deviceType=''; return r; }
 // 16ho: every page starts with the Set-for-all row (rendered) plus one blank row in Sources and Destinations; the
 // Multiviewers table starts empty, it's there when a show needs it.
-function _ioAdvNewPage(n){ return { id:'p'+n, name:'Page '+n, sources:[_ioAdvBlank('src')], dests:[_ioAdvBlank('dst')], mvs:[] }; }
+function _ioAdvNewPage(n){ return { id:'p'+n, uid:uid(), name:'Page '+n, sources:[_ioAdvBlank('src')], dests:[_ioAdvBlank('dst')], mvs:[] }; }   // 16ja: uid survives renumbering
 function _ioAdvDefault(){ return { view:'simple', page:0, pages:[1,2,3].map(_ioAdvNewPage) }; }
 function _ioAdvNorm(o){
   const d=_ioAdvDefault(); if(!o||typeof o!=='object') return d;
   const src=Array.isArray(o.pages)?o.pages:[]; const n=Math.min(_IO_ADV_MAX_PAGES, Math.max(3, src.length));
   const out={ view:(o.view==='advanced')?'advanced':'simple', page:0, pages:[] };
-  for(let i=0;i<n;i++){ const p=(src[i]&&typeof src[i]==='object')?src[i]:{}; out.pages.push({ id:'p'+(i+1), name:(typeof p.name==='string'&&p.name.trim())?p.name.trim().slice(0,32):('Page '+(i+1)), seed:(typeof p.seed==='string')?p.seed:'', seedAsked:(typeof p.seedAsked==='string')?p.seedAsked:'', sources:Array.isArray(p.sources)?p.sources:[_ioAdvBlank('src')], dests:Array.isArray(p.dests)?p.dests:[_ioAdvBlank('dst')], mvs:Array.isArray(p.mvs)?p.mvs:[] }); }
+  for(let i=0;i<n;i++){ const p=(src[i]&&typeof src[i]==='object')?src[i]:{}; out.pages.push({ id:'p'+(i+1), uid:(typeof p.uid==='string'&&p.uid)?p.uid:uid(), name:(typeof p.name==='string'&&p.name.trim())?p.name.trim().slice(0,32):('Page '+(i+1)), seed:(typeof p.seed==='string')?p.seed:'', seedAsked:(typeof p.seedAsked==='string')?p.seedAsked:'', sources:Array.isArray(p.sources)?p.sources:[_ioAdvBlank('src')], dests:Array.isArray(p.dests)?p.dests:[_ioAdvBlank('dst')], mvs:Array.isArray(p.mvs)?p.mvs:[] }); }
   out.page=Math.min(out.pages.length-1, Math.max(0, parseInt(o.page)||0));
   return out;
 }
@@ -12515,6 +12517,7 @@ function _ioClosePage(i){
     let a=ioAdvanced.page; if(i<a) a=a-1; else if(i===a) a=Math.max(0,i-1);
     ps.forEach(function(x,k){ x.id='p'+(k+1); if(/^page\s*\d+$/i.test(x.name||'')) x.name='Page '+(k+1); });
     _ioAdvEnsurePages(); ioAdvanced.page=Math.min(a, ps.length-1); _ioAdvEditing=null;
+    if(typeof _wireAdvSyncPatchTitles==='function') _wireAdvSyncPatchTitles();   // 16ja: a tile whose page closed unlocks
     _isDirty=true; if(typeof _updateDirtyIndicator==='function') _updateDirtyIndicator(); if(typeof scheduleAutoSave==='function') scheduleAutoSave();
     _sysRender();
   };
@@ -12526,7 +12529,7 @@ function _ioCommitRename(i,val){
   if(_ioAdvEditing!==i) return;
   const pg=ioAdvanced.pages[i]; const nn=(val||'').trim().slice(0,32);
   _ioAdvEditing=null;
-  if(pg&&nn&&nn!==pg.name){ if(typeof pushUndo==='function') pushUndo(); pg.name=nn; _isDirty=true; if(typeof _updateDirtyIndicator==='function') _updateDirtyIndicator(); if(typeof scheduleAutoSave==='function') scheduleAutoSave(); }
+  if(pg&&nn&&nn!==pg.name){ if(typeof pushUndo==='function') pushUndo(); pg.name=nn; if(typeof _wireAdvSyncPatchTitles==='function') _wireAdvSyncPatchTitles(); _isDirty=true; if(typeof _updateDirtyIndicator==='function') _updateDirtyIndicator(); if(typeof scheduleAutoSave==='function') scheduleAutoSave(); }
   _sysRender();
 }
 function _ioRenameKeydown(ev,i){ if(ev.key==='Enter'){ ev.preventDefault(); ev.target.blur(); } else if(ev.key==='Escape'){ ev.preventDefault(); _ioAdvEditing=null; _sysRender(); } }
@@ -15959,10 +15962,21 @@ function _wireAdvAddPatchTile(pageIdx){
   const SW_W=820, SW_GAP=40; let cx, cy;
   if(wireAdvanced.routers.length>0){ let lm=wireAdvanced.routers[0]; for(let i=1;i<wireAdvanced.routers.length;i++){ if(wireAdvanced.routers[i].x<lm.x) lm=wireAdvanced.routers[i]; } cx=lm.x-SW_W-SW_GAP; cy=lm.y; } else { cx=80; cy=80; }
   if(typeof pushUndo==='function') pushUndo();
-  wireAdvanced.routers.push({ id: 'r'+Date.now().toString(36)+Math.random().toString(36).slice(2,6), kind: 'switcher', title: String(pg.name||'PATCH').toUpperCase(), label: inC+' IN \u00b7 '+outC+' OUT', size: size, inC: inC, outC: outC, x: cx, y: cy, inputs: inputs, outputs: outputs, patchPage: pg.id });
+  wireAdvanced.routers.push({ id: 'r'+Date.now().toString(36)+Math.random().toString(36).slice(2,6), kind: 'switcher', title: String(pg.name||'PATCH').toUpperCase(), label: inC+' IN \u00b7 '+outC+' OUT', size: size, inC: inC, outC: outC, x: cx, y: cy, inputs: inputs, outputs: outputs, patchPage: pg.id, patchUid: pg.uid || '' });
   if(typeof scheduleAutoSave==='function') scheduleAutoSave();
   _wireRender();
   requestAnimationFrame(function(){ if(typeof _wireZoomFit==='function') _wireZoomFit(); });
+}
+// 16ja (Omar): a tile built from a patch page keeps that page's name — the tile's name box is locked and a rename on the
+// patch side flows here (and to the I/O Tools list, which reads the page name live). A tile whose page is gone unlocks.
+function _wireAdvSyncPatchTitles(){
+  if(typeof ioAdvanced==='undefined'||!ioAdvanced||!Array.isArray(ioAdvanced.pages)) return false;
+  _wireAdvHelpers();
+  const pages=ioAdvanced.pages; let changed=false;
+  const fix=function(list){ (list||[]).forEach(function(r){ if(!r||!(r.patchUid||r.patchPage)) return; let pg=r.patchUid?pages.find(function(p){ return p&&p.uid===r.patchUid; }):null; if(!pg&&!r.patchUid) pg=pages.find(function(p){ return p&&p.id===r.patchPage; }); if(!pg){ delete r.patchUid; delete r.patchPage; changed=true; return; } if(!r.patchUid&&pg.uid){ r.patchUid=pg.uid; changed=true; } const want=String(pg.name||'PATCH').toUpperCase(); if(r.title!==want){ r.title=want; changed=true; } }); };
+  fix(wireAdvanced.routers);
+  Object.keys(wireAdvanced._pageData||{}).forEach(function(k){ fix(wireAdvanced._pageData[k]&&wireAdvanced._pageData[k].routers); });
+  return changed;
 }
 function _wireAdvAddSwitcherCustom(){
   _wireOpenIOCountModal({
@@ -16182,6 +16196,8 @@ function _wireAdvRouterTileHTML(router, isSelected, o){
   if(o.hub){
     h += '<div class="wire-router-title"><input type="text" class="wire-hub-name" value="' + safeTitle + '" onchange="_wireSetHubName(this.value)" onmousedown="event.stopPropagation()" placeholder="' + _esc(o.titlePlaceholder || 'SWITCHER') + '" maxlength="40" /></div>';
     h += '<div class="wire-router-subtitle"><span>' + safeLabel + '</span></div>';
+  } else if(router.patchUid || router.patchPage){   // 16ja: named by its I/O Patch page
+    h += '<div class="wire-router-title wire-title-locked" title="Named by its I/O Patch page \u2014 rename it there"><span>' + safeTitle + '</span><svg aria-hidden="true" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></div>';
   } else {
     h += '<div class="wire-router-title"><input type="text" value="' + safeTitle + '" onchange="_wireAdvRouterField(\'' + router.id + '\', \'title\', this.value)" onmousedown="event.stopPropagation()" placeholder="ROUTER I/O" /></div>';
     h += '<div class="wire-router-subtitle"><input type="text" value="' + safeLabel + '" onchange="_wireAdvRouterField(\'' + router.id + '\', \'label\', this.value)" onmousedown="event.stopPropagation()" placeholder="Model / rack name" /></div>';
@@ -16287,6 +16303,7 @@ function _wireAdvSrcTileH(s){
 function _wireRenderAdvancedDiagram(container){
   _wireAdvHelpers();
   _wireAdvSyncRouterCells();   // 16et: cells follow the wiring
+  _wireAdvSyncPatchTitles();   // 16ja: patch tiles follow their page's name
   // One-time migration of legacy 'dst:'/'dsm:' wire endpoints into
   // Advanced instance form. No-op once everything's already migrated.
   _wireAdvMigrateLegacyWires();
