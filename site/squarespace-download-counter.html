@@ -2,13 +2,15 @@
      Paste this whole block into a Code Block (Squarespace: Add Block → Code, leave it on HTML).
      It reads the public GitHub release list in the visitor's browser (no key, no login),
      keeps the number for an hour in the visitor's browser, and shows nothing if GitHub is unreachable. -->
-<div id="avlb-downloads" style="font:600 15px/1.4 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#9aa0aa;letter-spacing:.02em;min-height:1.4em"></div>
+<div id="avlb-downloads" style="font:600 15px/1.4 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#9aa0aa;letter-spacing:.02em;min-height:1.4em;text-align:center;margin-top:10px"></div>
 <script>
 (function(){
   var MODE='estimate';      // 'estimate' ignores the one automatic fetch every installer gets when a release is published; 'raw' shows GitHub's plain total
   var SINCE='2026-09-14';   // only releases published on or after this date (the day the site went public); '' = all time
   var TEXT=function(n){ return n.toLocaleString()+(n===1?' download':' downloads')+' and counting'; };
   var el=document.getElementById('avlb-downloads'); if(!el) return;
+  // sit right under the email form: move out of this block, whose grid cell then collapses
+  try{ var nl=document.querySelector('.sqs-block-newsletter .sqs-block-content'); var fe=el.closest('.fe-block'); if(nl){ nl.appendChild(el); if(fe) fe.style.display='none'; } }catch(e){}
   var KEY='avlb-dl-cache', HOUR=3600000;
   try{ var c=JSON.parse(localStorage.getItem(KEY)||'null'); if(c&&Date.now()-c.t<HOUR){ el.textContent=TEXT(c.n); return; } }catch(e){}
   var total=0;
