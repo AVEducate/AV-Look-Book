@@ -439,7 +439,23 @@ function showUpdateToast(win, stamp){
 let pendingOpen = null;                                   // .avlb double-clicked before ready
 app.on('open-file', (e, p) => { e.preventDefault(); if (app.isReady()) openProjectPath(p); else pendingOpen = p; });
 
-app.whenReady().then(() => {
+// One running copy at a time (shell 0.2.96). A second launch hands its file to the first copy and exits. app.relaunch()
+// starts the new copy while the old one is still on its way out, so a new copy retries the lock for a few seconds
+// before giving up instead of exiting on the first miss.
+const _primaryReady = new Promise((resolve) => {
+  if (app.requestSingleInstanceLock()) return resolve();
+  const t0 = Date.now();
+  const retry = () => { if (app.requestSingleInstanceLock()) return resolve(); if (Date.now() - t0 < 6000) setTimeout(retry, 250); else app.exit(0); };
+  setTimeout(retry, 250);
+});
+app.on('second-instance', (e, argv) => {
+  const f = (argv || []).slice(1).find(a => /\.avlb$/i.test(a) && fs.existsSync(a));
+  if (f) { openProjectPath(f); return; }
+  const w = BrowserWindow.getAllWindows()[0];
+  if (w) { if (w.isMinimized()) w.restore(); w.focus(); } else showWelcome();
+});
+
+Promise.all([app.whenReady(), _primaryReady]).then(() => {
   loadSettings();
   protocol.handle('app', (req) => {
     const url = new URL(req.url);
@@ -471,7 +487,11 @@ app.whenReady().then(() => {
   // Content check now + periodically; shell update check (packaged builds only).
   setTimeout(checkForContentUpdate, 4000);
   setInterval(checkForContentUpdate, CHECK_EVERY_MS);
-  if (autoUpdater && app.isPackaged) { try { autoUpdater.checkForUpdatesAndNotify(); } catch (e) {} }
+  // Shell self-update: Windows only (shell 0.2.96). The Mac build is unsigned, so electron-updater could download a
+  // newer shell but never install it — on quit the failed install relaunched the old app, and every quit spawned
+  // another copy (Omar's "a bunch of AV Look Books"). Mac users update from the release DMG; the HTML app still
+  // updates itself through checkForContentUpdate above.
+  if (autoUpdater && app.isPackaged && process.platform !== 'darwin') { try { autoUpdater.checkForUpdatesAndNotify(); } catch (e) {} }
   app.on('activate', () => { if (BrowserWindow.getAllWindows().length === 0) showWelcome(); });
 });
 
