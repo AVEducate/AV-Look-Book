@@ -1249,7 +1249,7 @@ button[onclick="_wireDownloadAllThumbnails()"]:hover::before{filter:brightness(1
 #wire-overlay .wire-card-delete{position:absolute;top:4px;right:4px;width:18px;height:18px;background:rgba(255,77,90,.2);border:1px solid rgba(255,77,90,.45);border-radius:50%;color:var(--n-red);cursor:pointer;font-size:14px;line-height:1;padding:0;display:flex;align-items:center;justify-content:center;font-family:inherit;font-weight:700;z-index:2;opacity:0;transition:all .12s}
 #wire-overlay .wire-source-card.wire-custom-card:hover .wire-card-delete{opacity:1}
 #wire-overlay .wire-card-delete:hover{background:rgba(255,77,90,.4);box-shadow:0 0 6px rgba(255,77,90,.4)}
-#wire-overlay .wire-custom-name{width:100%;font-size:11px;font-weight:700;color:var(--text);background:var(--n-track);border:1px solid #2a2f3a;border-radius:4px;padding:4px 6px;font-family:inherit;letter-spacing:.02em;outline:none;transition:border-color .12s}
+#wire-overlay .wire-custom-name{width:100%;font-size:11px;font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:.06em;background:var(--n-track);border:1px solid #2a2f3a;border-radius:4px;padding:4px 6px;font-family:inherit;letter-spacing:.02em;outline:none;transition:border-color .12s}
 #wire-overlay .wire-custom-name:focus{border-color:var(--n-cyan)}
 #wire-overlay .wire-custom-name::placeholder{color:var(--text3);font-style:italic;font-weight:500}
 #wire-overlay .wire-pane-body{overflow:hidden}
@@ -1594,6 +1594,8 @@ body.is-mobile #wire-overlay #wire-align-panel{display:none !important}
 .qs-res-btn:focus{border-color:var(--n-cyan);box-shadow:inset 2px 2px 4px rgba(0,0,0,.5), 0 0 0 1px var(--n-cyan), 0 0 10px rgba(var(--n-cyan-rgb),.3)}
 .qs-res-btn .qs-res-val{font-family:var(--font-mono);font-weight:700;color:#fff;letter-spacing:.02em}
 .qs-res-btn .qs-res-meta{flex:1;font-size:11px;color:var(--text3);font-style:italic;letter-spacing:.02em;margin-left:6px}
+.qs-res-btn .qs-res-meta.custom,#qs-modal .qs-res-btn .qs-res-meta.custom{color:#fff;font-style:normal;font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+#sys-overlay .sys-type-input,.sys-type-input{color:#fff !important;text-transform:uppercase}   /* 16jb: typed custom names read white everywhere */
 .qs-res-btn svg{color:var(--text3);flex-shrink:0;transition:transform .15s}
 .qs-res-sel:focus{border-color:var(--n-cyan)}
   .qs-pn-inp{background:#111;border:1px solid #2a2a2a;border-radius:5px;color:#fff;padding:6px 10px;font-size:11px;width:100%;box-sizing:border-box;outline:none}
@@ -1713,7 +1715,7 @@ body.is-mobile .sys-btn{min-height:var(--ss-touch)}
 .sys-chip.mv{color:var(--n-yellow);border-color:rgba(255,224,74,0.4);background:rgba(255,224,74,0.07)}
 .sys-chip.mtype-pc{color:var(--n-cyan);border-color:rgba(var(--n-cyan-rgb),0.4);background:rgba(var(--n-cyan-rgb),0.07)}
 .sys-chip.mtype-mac{color:var(--n-purple);border-color:rgba(167,139,250,0.4);background:rgba(167,139,250,0.07)}
-.sys-chip.mtype-custom{color:var(--text2);border-color:var(--n-line);background:#1a1f28}
+.sys-chip.mtype-custom{color:#fff;border-color:var(--n-line);background:#1a1f28}
 .sys-chip.mtype-camera{color:var(--n-green);border-color:rgba(77,220,138,0.4);background:rgba(77,220,138,0.07)}
 .sys-chip.mtype-media-server{color:var(--n-yellow);border-color:rgba(255,224,74,0.4);background:rgba(255,224,74,0.07)}
 .sys-chip.mtype-switcher{color:var(--n-red);border-color:rgba(255,77,90,0.4);background:rgba(255,77,90,0.07)}
@@ -1746,11 +1748,11 @@ body.is-mobile .sys-btn{min-height:var(--ss-touch)}
 .sys-chip.dtype-led{color:var(--n-orange);border-color:rgba(255,138,61,0.4);background:rgba(255,138,61,0.07)}
 .sys-chip.dtype-projection{color:var(--n-purple);border-color:rgba(167,139,250,0.4);background:rgba(167,139,250,0.07)}
 .sys-chip.dtype-monitor{color:var(--n-amber);border-color:rgba(240,192,96,0.4);background:rgba(240,192,96,0.07)}
-.sys-chip.dtype-custom{color:var(--text2);border-color:var(--n-line);background:#1a1f28}
+.sys-chip.dtype-custom{color:#fff;border-color:var(--n-line);background:#1a1f28}
 .sys-chip.dtype-stream{color:var(--n-cyan);border-color:rgba(var(--n-cyan-rgb),0.4);background:rgba(var(--n-cyan-rgb),0.07)}
 .sys-chip.empty{color:var(--text3);border-style:dashed;font-weight:600}
 .sys-type-cell{display:inline-flex;align-items:center;gap:4px;min-width:88px}
-.sys-type-input{flex:1;min-width:0;background:#1a1f28;border:1px solid var(--n-line);border-radius:999px;color:var(--text);font-size:10px;font-weight:700;letter-spacing:.04em;padding:4px 10px;outline:none}
+.sys-type-input{flex:1;min-width:0;background:#1a1f28;border:1px solid var(--n-line);border-radius:999px;color:#fff;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:4px 10px;outline:none}
 .sys-type-input:focus{border-color:var(--n-cyan);box-shadow:0 0 0 1px var(--n-cyan)}
 .sys-notes-cell{font-size:12px;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .sys-notes-cell.empty{color:var(--text3);font-style:italic}
@@ -1816,7 +1818,9 @@ body.is-mobile .sys-btn{min-height:var(--ss-touch)}
 .sys-dd-item{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:5px;font-size:12px;font-weight:500;color:var(--text);cursor:pointer;transition:background .1s}
 .sys-dd-item:hover{background:#1a1f28}
 .sys-dd-item.selected{background:rgba(var(--n-cyan-rgb),0.08);color:var(--n-cyan)}
-.sys-dd-item.custom{color:var(--n-cyan);font-weight:600}
+/* 16jb (Omar): everything the user typed themselves reads the same way across Layer, Patch and Wire — white, bold caps */
+.sys-dd-item.custom{color:#fff;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+.sys-dd-item.custom-val .item-text{color:#fff;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
 .sys-dd-item .dot{width:8px;height:8px;border-radius:50%;background:currentColor;box-shadow:0 0 4px currentColor;flex-shrink:0}
 .sys-dd-item .item-text{flex:1}
 .sys-dd-item .item-meta{font-size:10px;color:var(--text3);font-weight:400}
@@ -1829,7 +1833,7 @@ body.is-mobile .sys-btn{min-height:var(--ss-touch)}
 .shared-res-dd .sys-dd-item .item-text{font-family:var(--font-mono);font-weight:600;font-size:12px;letter-spacing:.02em;color:var(--text)}
 .shared-res-dd .sys-dd-item .item-meta{font-size:11px;color:var(--text3);font-weight:500;letter-spacing:.02em;margin-left:14px}
 .shared-res-dd .sys-dd-item.selected .item-text{color:var(--n-cyan)}
-.shared-res-dd .sys-dd-item.custom .item-text{color:var(--n-cyan);font-family:inherit;font-weight:700;font-size:12px;letter-spacing:.04em}
+.shared-res-dd .sys-dd-item.custom .item-text{color:#fff;font-family:inherit;font-weight:700;font-size:12px;letter-spacing:.06em;text-transform:uppercase}
 .shared-res-dd .sys-dd-item.custom .item-meta{color:var(--text3);font-style:italic}
 /* ── Mobile resolution sheet (Layer 3) + its blurred backdrop ─────────── */
 /* NB: class is mb-res-backdrop, NOT mb-sheet-backdrop — the latter is the
@@ -3988,7 +3992,7 @@ Also called DSM (Downstage Monitor) in broadcast and theater workflows, same thi
   <div class="bb-cell bb-pill bb-cyan" title="The largest number of layers used in any single preset, this is the figure to compare against your switcher's per-scene layer budget. (The most complex single moment in the show.)"><span class="bb-label">Layers</span><strong id="bb-layers">0</strong></div>
   <div id="bb-spacer"></div>
   <div class="bb-cell" id="bb-sel" style="font-size:10px;opacity:.5">—</div>
-  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy, hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16ja</div>
+  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy, hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16jb</div>
   <button class="bb-util" id="tb-adv" onclick="actions.advancedMenu(event)" title="Advanced features (AOI, Free Mode, Blend Zones, Dead Space)" aria-label="Advanced features (AOI, Free Mode, Blend Zones, Dead Space)" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Advanced<span class="adv-count" aria-hidden="true"></span><svg aria-hidden="true" id="tb-adv-chev" viewBox="0 0 10 10" fill="currentColor" width="8" height="8" style="opacity:.7"><path d="M2 4l3 3 3-3z"/></svg></button>
   <button class="bb-util" onclick="actions.help()" title="Help, quick reference, keyboard shortcuts, glossary, accessibility" aria-label="Help, quick reference, keyboard shortcuts, glossary, accessibility" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="4.93" y1="4.93" x2="9.17" y2="9.17"/><line x1="14.83" y1="14.83" x2="19.07" y2="19.07"/><line x1="14.83" y1="9.17" x2="19.07" y2="4.93"/><line x1="4.93" y1="19.07" x2="9.17" y2="14.83"/></svg>Help</button>
   <button class="bb-util" id="lb-skin-btn" onclick="lbToggleSkinMenu(event)" title="Color skin" aria-label="Change color skin" style="height:100%;padding:0 13px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="13.5" cy="6.5" r=".6" fill="currentColor" stroke="none"/><circle cx="17" cy="10.5" r=".6" fill="currentColor" stroke="none"/><circle cx="8.5" cy="7.5" r=".6" fill="currentColor" stroke="none"/><circle cx="6.5" cy="12" r=".6" fill="currentColor" stroke="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c.93 0 1.65-.75 1.65-1.69 0-.44-.18-.83-.44-1.12-.29-.29-.44-.65-.44-1.13a1.65 1.65 0 0 1 1.67-1.67h1.97c3.05 0 5.55-2.5 5.55-5.55C21.95 6.01 17.45 2 12 2z"/></svg></button>
@@ -8180,7 +8184,7 @@ function qsRebuildScreenRows(){
           const metaLabel=match?match.label:'Custom';
           return `<button type="button" class="qs-res-btn" id="qs-res-${i}" onclick="qsOpenResPicker(event, ${i})" aria-label="Pick resolution for destination ${i+1}">
             <span class="qs-res-val">${r.w}×${r.h}</span>
-            <span class="qs-res-meta">${metaLabel}</span>
+            <span class="qs-res-meta${match?'':' custom'}">${metaLabel}</span>
             <svg aria-hidden="true" viewBox="0 0 10 10" fill="currentColor" width="8" height="8"><path d="M2 4l3 3 3-3z"/></svg>
           </button>`;
         })()}
@@ -8229,7 +8233,7 @@ function qsRefreshAllResBtns(){
     const valEl=btn.querySelector('.qs-res-val');
     const metaEl=btn.querySelector('.qs-res-meta');
     if(valEl) valEl.textContent=rj.w+'×'+rj.h;
-    if(metaEl) metaEl.textContent=m?m.label:'Custom';
+    if(metaEl){ metaEl.textContent=m?m.label:'Custom'; metaEl.classList.toggle('custom',!m); }   // 16jb
     const lbl=document.getElementById('qs-sr-lbl-'+j);
     if(lbl) lbl.textContent=rj.w+'×'+rj.h;
   }
@@ -11500,7 +11504,7 @@ function _sysDeviceClass(obj){ const t=_sysDeviceRaw(obj); return t?('dtype-'+t.
 var customTypes={machines:[],devices:[]};
 function _sysCustomTypeList(isSrc){ if(!customTypes||typeof customTypes!=='object') customTypes={machines:[],devices:[]}; const key=isSrc?'machines':'devices'; if(!Array.isArray(customTypes[key])) customTypes[key]=[]; return customTypes[key]; }
 function _sysRememberType(isSrc,name){ name=String(name||'').trim(); if(!name) return; const low=name.toLowerCase(); const sys=isSrc?_SYS_MACHINE_TYPES:_SYS_DEVICE_TYPES; if(sys.some(function(t){ return t.toLowerCase()===low; })) return; const list=_sysCustomTypeList(isSrc); if(list.some(function(t){ return String(t).toLowerCase()===low; })) return; list.push(name); _isDirty=true; if(typeof _updateDirtyIndicator==='function') _updateDirtyIndicator(); if(typeof scheduleAutoSave==='function') scheduleAutoSave(); }
-function _sysInUseTypes(isSrc){ const out=[]; const add=function(o){ if(!o||typeof o!=='object') return; const t=isSrc?o.type:o.deviceType; if(t==='Custom'&&o.customType) out.push(String(o.customType).trim()); }; const each=function(x){ if(Array.isArray(x)) x.forEach(add); else if(x&&typeof x==='object') Object.keys(x).forEach(function(k){ add(x[k]); }); }; try{ const adv=(typeof ioAdvanced!=='undefined'&&ioAdvanced)||{}; if(isSrc){ each(typeof sources!=='undefined'?sources:null); each(adv.sources); } else { each(typeof ioDests!=='undefined'?ioDests:null); each(typeof multiviewers!=='undefined'?multiviewers:null); each(typeof screens!=='undefined'?screens:null); each(typeof dsms!=='undefined'?dsms:null); each(adv.dests); each(adv.mvs); } }catch(e){} return out; }
+function _sysInUseTypes(isSrc){ const out=[]; const add=function(o){ if(!o||typeof o!=='object') return; const t=isSrc?o.type:o.deviceType; if(t==='Custom'&&o.customType) out.push(String(o.customType).trim()); }; const each=function(x){ if(Array.isArray(x)) x.forEach(add); else if(x&&typeof x==='object') Object.keys(x).forEach(function(k){ add(x[k]); }); }; try{ const adv=(typeof ioAdvanced!=='undefined'&&ioAdvanced)||{}; const pages=Array.isArray(adv.pages)?adv.pages:[]; if(isSrc){ each(typeof sources!=='undefined'?sources:null); pages.forEach(function(pg){ each(pg&&pg.sources); }); } else { each(typeof ioDests!=='undefined'?ioDests:null); each(typeof multiviewers!=='undefined'?multiviewers:null); each(typeof screens!=='undefined'?screens:null); each(typeof dsms!=='undefined'?dsms:null); pages.forEach(function(pg){ each(pg&&pg.dests); each(pg&&pg.mvs); }); } }catch(e){} /* 16jb: Advanced pages count too */ return out; }
 function _sysTypeOptions(isSrc){
   const base=isSrc?[
     {value:"PC",label:"PC",family:"pc",meta:"Windows"},
@@ -11518,7 +11522,7 @@ function _sysTypeOptions(isSrc){
   const seen={}; base.forEach(function(o){ seen[o.value.toLowerCase()]=1; });
   const customs=[]; _sysCustomTypeList(isSrc).concat(_sysInUseTypes(isSrc)).forEach(function(n){ n=String(n||'').trim(); const k=n.toLowerCase(); if(!n||seen[k]) return; seen[k]=1; customs.push({value:"Custom",label:n,family:"custom",meta:"custom",customName:n}); });
   customs.sort(function(a,b){ return a.label.localeCompare(b.label); });
-  return base.concat(customs,[{value:"Custom",label:"Custom…",family:"custom",meta:"your own"}]);
+  return base.concat(customs,[{value:"Custom",label:"Custom…",family:"custom",meta:"your own",custom:true}]);   // 16jb: the custom look in the menu
 }
 function _sysFocusTypeInput(id){ setTimeout(function(){ const inps=document.querySelectorAll('#sys-overlay .sys-type-input'); for(const inp of inps){ if(inp.dataset.sysId===String(id)){ inp.focus(); inp.select(); break; } } },0); }
 function _sysResolveDsmType(d){
@@ -12830,7 +12834,7 @@ function _sysOpenDropdown(trigger){
     }
     const item=document.createElement('div');
     const curCustom=trigger.dataset.sysCustom; const isSel=opt.customName?(currentVal==='Custom'&&curCustom!==undefined&&opt.customName.toLowerCase()===String(curCustom).toLowerCase()):(opt.value===currentVal&&!(opt.value==='Custom'&&curCustom));
-    item.className='sys-dd-item'+(isSel?' selected':'')+(opt.custom?' custom':'');
+    item.className='sys-dd-item'+(isSel?' selected':'')+(opt.custom?' custom':'')+(opt.customName?' custom-val':'');   // 16jb: a user's own name reads white, caps
     if(field==='connector'){
       const dot=document.createElement('span');
       dot.className='dot';
