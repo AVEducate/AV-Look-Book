@@ -782,22 +782,45 @@ body.is-mobile #vp-tabs{display:none}
 .fs-pcard-meta .dot{color:var(--n-line)}
 .fs-pcard-meta .dsm{color:#3a5a7a}
 .fs-pcard.on .fs-pcard-meta .dsm{color:var(--n-cyan)}
-/* timeline */
-#fs-timeline{flex-shrink:0;height:112px;display:flex;align-items:stretch;gap:12px;padding:10px 14px;background:#10131a;border-top:1px solid var(--n-line)}
-.fs-tl-cover{width:96px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:4px}
-.fs-tl-cover-frame{width:96px;height:54px;border-radius:4px;border:1px dashed var(--n-line);background:#0a0d12;display:flex;align-items:center;justify-content:center;color:var(--text3);font-size:11px}
-.fs-tl-cap{font-size:9px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--text3)}
-.fs-tl-btn{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border:1px solid var(--n-line);border-radius:3px;background:#0a0d12;color:var(--text2);cursor:pointer;font-family:inherit}
-.fs-tl-btn:disabled{opacity:.45;cursor:default}
-.fs-tl-tracks{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
-.fs-tl-row{display:flex;align-items:center;gap:10px;flex:1;min-height:0}
-.fs-tl-lbl{width:44px;flex-shrink:0;font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--text3)}
-.fs-tl-track{flex:1;min-width:0;height:100%;border:1px solid var(--n-line);border-radius:4px;background:#0a0d12;box-shadow:inset 0 2px 6px rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}
+/* timeline (16ij: Mitti-style — transport strip, ruler with trim handles, a track of real frames, the waveform, one blue playhead) */
+#fs-timeline{flex-shrink:0;display:flex;flex-direction:column;gap:8px;padding:8px 14px 10px;background:#10131a;border-top:1px solid var(--n-line)}
+.fs-tl-bar{display:flex;align-items:center;gap:6px;height:34px;flex-shrink:0}
+.fs-tl-sep{width:1px;height:20px;background:var(--n-line);flex-shrink:0}
+.fs-tl-lcds{flex:1;display:flex;align-items:center;justify-content:center;gap:10px;min-width:0}
+.fs-tl-lcd{font-family:var(--font-mono);font-size:13px;font-weight:600;letter-spacing:.04em;color:#fff;background:#000;padding:3px 8px;border-radius:3px;border:1px solid #000;box-shadow:inset 0 1px 3px rgba(0,0,0,.8);font-variant-numeric:tabular-nums;white-space:nowrap}
+.fs-tl-lcd.dim{color:#d8dbe0}
+#fs-timeline.empty .fs-tl-lcd{color:#4a505a}
+.fs-tl-cover{display:inline-flex;align-items:center;gap:8px;flex-shrink:0;padding:2px 8px 2px 2px;border:1px solid var(--n-line);border-radius:4px;background:#0a0d12;color:var(--text2);cursor:pointer;font-family:inherit}
+.fs-tl-cover:hover:not(:disabled){border-color:var(--n-cyan);color:var(--text)}
+.fs-tl-cover:disabled{opacity:.45;cursor:default}
+.fs-tl-cover-frame{width:44px;height:26px;border-radius:3px;background:#000;display:block;border:1px solid #1a1f28}
+.fs-tl-cap{font-size:9px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:inherit;white-space:nowrap}
+.fs-tl-tc{flex-shrink:0;display:flex;align-items:center;gap:6px;font-family:var(--font-mono);font-size:10px;font-weight:600;color:var(--text3)}
+.fs-tl-level{width:56px;margin:0;accent-color:var(--n-cyan)}
+.fs-tl-body{display:flex;align-items:stretch;gap:8px}
+.fs-tl-labels{width:54px;flex-shrink:0;display:flex;flex-direction:column;gap:3px}
+.fs-tl-lbl{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);display:flex;align-items:center}
+.fs-tl-labels .fs-tl-lbl.fps{height:28px;font-family:var(--font-mono);font-size:9px;letter-spacing:0;text-transform:none;font-weight:600;white-space:nowrap}
+.fs-tl-labels .fs-tl-lbl:nth-child(2){height:64px}
+.fs-tl-labels .fs-tl-lbl:nth-child(3){height:44px}
+.fs-tl-lanes{flex:1;min-width:0;position:relative;display:flex;flex-direction:column;gap:3px}
+.fs-tl-ruler{height:28px;position:relative;flex-shrink:0}
+.fs-tl-rulerc{position:absolute;left:0;top:0;width:100%;height:20px;display:block}
+.fs-tl-range{position:absolute;left:0;right:0;bottom:0;height:8px;background:#262b34;border-radius:1px}
+.fs-tl-range-in{position:absolute;top:0;bottom:0;left:0;width:0;background:#4b525e}
+.fs-tl-hdl{position:absolute;top:-3px;width:8px;height:14px;margin-left:-4px;background:#c9cdd5;border-radius:2px;cursor:ew-resize;z-index:6;box-shadow:0 1px 2px rgba(0,0,0,.6)}
+.fs-tl-hdl:hover{background:#fff}
+.fs-tl-tracks{position:relative;display:flex;flex-direction:column;gap:3px}
+.fs-tl-track{position:relative;border:1px solid var(--n-line);border-radius:4px;background:#0a0d12;box-shadow:inset 0 2px 6px rgba(0,0,0,.5);overflow:hidden;display:flex;align-items:center;justify-content:center}
+.fs-tl-track.video{height:64px}
+.fs-tl-track.audio{height:44px;justify-content:stretch;align-items:stretch}
+.fs-tl-stripc,.fs-tl-wavec{width:100%;height:100%;display:block}
 .fs-tl-hint{font-size:11px;font-style:italic;color:var(--text3);padding:0 10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.fs-tl-wave{background:#0a0d12 repeating-linear-gradient(90deg,rgba(78,195,224,.14) 0 2px,transparent 2px 5px)}
-#fs-timeline.empty .fs-tl-wave{opacity:.5}
-.fs-tl-tc{width:158px;flex-shrink:0;display:flex;align-items:center;justify-content:flex-end;gap:6px;font-family:var(--font-mono);font-size:10px;font-weight:600;color:var(--text3)}
-.fs-tl-level{width:64px;margin:0;accent-color:var(--n-cyan)}
+.fs-tl-noaudio{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:10px;font-style:italic;color:var(--text3);pointer-events:none}
+.fs-tl-dim{position:absolute;top:0;bottom:0;background:rgba(0,0,0,.55);z-index:2;pointer-events:none}
+.fs-tl-dim.l{left:0;width:0}.fs-tl-dim.r{right:0;width:0}
+.fs-tl-head{position:absolute;top:0;bottom:0;left:0;width:2px;margin-left:-1px;background:var(--n-blue);z-index:5;pointer-events:none;box-shadow:0 0 6px rgba(var(--n-blue-rgb),.6)}
+.fs-tl-head::before{content:'';position:absolute;top:0;left:-6px;width:0;height:0;border-left:7px solid transparent;border-right:7px solid transparent;border-top:10px solid var(--n-blue)}
 /* 16hx: the Advanced centre IS the Simple preset tile. No reorder grip or minimize chevron there, and the popups the tile
    opens (picker, colour, Advanced menu, the panels) stack above the engineer overlay (z 500). */
 #fs-canvas .preset-row{margin:0}
@@ -822,17 +845,8 @@ body.fs-open .pm{z-index:650 !important}
 .fs-tl-tb.play{border-color:rgba(77,220,138,.5);color:var(--n-green)}
 .fs-tl-tb.on{color:var(--n-cyan);border-color:rgba(var(--n-cyan-rgb),.45)}
 .fs-tl-tb.sm{height:22px;min-width:22px;padding:0 6px;font-size:9px}
+.fs-tl-tb:disabled{opacity:.45;cursor:default}
 .fs-tl-tb:hover{color:var(--text)}
-.fs-tl-track.video{cursor:pointer;justify-content:flex-start}
-.fs-tl-dim{position:absolute;top:0;bottom:0;background:rgba(0,0,0,.55);z-index:2;pointer-events:none}
-.fs-tl-dim.l{left:0}.fs-tl-dim.r{right:0}
-.fs-tl-prog{position:absolute;left:0;top:0;bottom:0;background:linear-gradient(90deg,rgba(43,142,168,.5),rgba(78,195,224,.5));z-index:1;pointer-events:none}
-.fs-tl-head{position:absolute;top:0;bottom:0;width:2px;margin-left:-1px;background:#fff;z-index:4;pointer-events:none;box-shadow:0 0 6px rgba(255,255,255,.6)}
-.fs-tl-in,.fs-tl-out{position:absolute;top:0;bottom:0;width:2px;margin-left:-1px;background:var(--n-amber);z-index:3;pointer-events:none}
-.fs-tl-track.audio{justify-content:stretch;align-items:stretch}
-.fs-tl-wavec{width:100%;height:100%;display:block}
-.fs-tl-noaudio{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:10px;font-style:italic;color:var(--text3);pointer-events:none}
-#fs-timeline:not(.empty) .fs-tl-cover-frame{border-style:solid}
 .fs-file{display:grid;grid-template-columns:64px 1fr;gap:10px;align-items:center;margin:6px 0 8px}
 .fs-file-poster{height:40px;border-radius:4px;border:1px solid rgba(255,255,255,.12)}
 .fs-file-name{font-weight:700;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -3938,7 +3952,7 @@ Also called DSM (Downstage Monitor) in broadcast and theater workflows, same thi
   <div class="bb-cell bb-pill bb-cyan" title="The largest number of layers used in any single preset, this is the figure to compare against your switcher's per-scene layer budget. (The most complex single moment in the show.)"><span class="bb-label">Layers</span><strong id="bb-layers">0</strong></div>
   <div id="bb-spacer"></div>
   <div class="bb-cell" id="bb-sel" style="font-size:10px;opacity:.5">—</div>
-  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy, hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16ii</div>
+  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy, hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16ij</div>
   <button class="bb-util" id="tb-adv" onclick="actions.advancedMenu(event)" title="Advanced features (AOI, Free Mode, Blend Zones, Dead Space)" aria-label="Advanced features (AOI, Free Mode, Blend Zones, Dead Space)" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Advanced<span class="adv-count" aria-hidden="true"></span><svg aria-hidden="true" id="tb-adv-chev" viewBox="0 0 10 10" fill="currentColor" width="8" height="8" style="opacity:.7"><path d="M2 4l3 3 3-3z"/></svg></button>
   <button class="bb-util" onclick="actions.help()" title="Help, quick reference, keyboard shortcuts, glossary, accessibility" aria-label="Help, quick reference, keyboard shortcuts, glossary, accessibility" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="4.93" y1="4.93" x2="9.17" y2="9.17"/><line x1="14.83" y1="14.83" x2="19.07" y2="19.07"/><line x1="14.83" y1="9.17" x2="19.07" y2="4.93"/><line x1="4.93" y1="19.07" x2="9.17" y2="14.83"/></svg>Help</button>
   <button class="bb-util" id="lb-skin-btn" onclick="lbToggleSkinMenu(event)" title="Color skin" aria-label="Change color skin" style="height:100%;padding:0 13px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="13.5" cy="6.5" r=".6" fill="currentColor" stroke="none"/><circle cx="17" cy="10.5" r=".6" fill="currentColor" stroke="none"/><circle cx="8.5" cy="7.5" r=".6" fill="currentColor" stroke="none"/><circle cx="6.5" cy="12" r=".6" fill="currentColor" stroke="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c.93 0 1.65-.75 1.65-1.69 0-.44-.18-.83-.44-1.12-.29-.29-.44-.65-.44-1.13a1.65 1.65 0 0 1 1.67-1.67h1.97c3.05 0 5.55-2.5 5.55-5.55C21.95 6.01 17.45 2 12 2z"/></svg></button>
@@ -4306,13 +4320,7 @@ Also called DSM (Downstage Monitor) in broadcast and theater workflows, same thi
 
       <!-- Timeline (16hw): between the side panels, under the canvas. Video row = trim start / end, audio row = the
            track's overall level. Left: the cover frame Simple shows for the video. Fills in with the video build. -->
-      <div id="fs-timeline" class="empty">
-        <div class="fs-tl-cover"><div class="fs-tl-cover-frame"><span>—</span></div><span class="fs-tl-cap">Cover</span><button type="button" class="fs-tl-btn" disabled title="Pick the frame Simple shows for this video">Set cover</button></div>
-        <div class="fs-tl-tracks">
-          <div class="fs-tl-row"><span class="fs-tl-lbl">Video</span><div class="fs-tl-track"><span class="fs-tl-hint">Pick a layer that holds a video to trim its start and end</span></div><span class="fs-tl-tc">00:00 / 00:00</span></div>
-          <div class="fs-tl-row"><span class="fs-tl-lbl">Audio</span><div class="fs-tl-track fs-tl-wave"></div><span class="fs-tl-tc"><input type="range" class="fs-tl-level" min="0" max="100" value="100" disabled title="Overall audio level" aria-label="Overall audio level"><b>100%</b></span></div>
-        </div>
-      </div>
+      <div id="fs-timeline" class="empty"></div>
 
       <!-- Dead space and blend zone bars, above action bar -->
       <div id="fs-dead-bar"  class="fs-bottom-bar" style="display:none;flex-shrink:0"></div>
@@ -25561,7 +25569,7 @@ function _fsLayerKey(pid,sid,n){ return 'L:'+pid+':'+sid+':'+n; }
 function _fsKeyParts(key){ const a=key.split(':'); return a[0]==='BG'?{pid:a[1],sid:a[2],n:0}:{pid:a[1],sid:a[2],n:parseInt(a[3])}; }
 function _fsMakeVideo(key,url,prev,lm){
   let vid=prev&&prev.dataset&&prev.dataset.url===url?prev:null;
-  if(!vid){ vid=document.createElement('video'); vid.className='fs-vid'; vid.dataset.url=url; vid.src=url; vid.playsInline=true; vid.preload='metadata'; vid.disablePictureInPicture=true; vid.setAttribute('playsinline',''); vid.addEventListener('timeupdate',function(){ _fsOnTime(key,vid); }); vid.addEventListener('ended',function(){ _fsOnEnded(key,vid); }); vid.addEventListener('loadedmetadata',function(){ if(_fsTlKey===key) _fsTlSync(); }); if(prev){ try{ vid.currentTime=prev.currentTime||0; }catch(e){} } }
+  if(!vid){ vid=document.createElement('video'); vid.className='fs-vid'; vid.dataset.url=url; vid.src=url; vid.playsInline=true; vid.preload='metadata'; vid.disablePictureInPicture=true; vid.setAttribute('playsinline',''); vid.addEventListener('timeupdate',function(){ _fsOnTime(key,vid); }); vid.addEventListener('ended',function(){ _fsOnEnded(key,vid); }); vid.addEventListener('loadedmetadata',function(){ if(!isFinite(vid.duration)){ const back=vid.currentTime||0; vid.addEventListener('durationchange',function(){ if(isFinite(vid.duration)){ try{ vid.currentTime=back; }catch(e){} if(_fsTlKey===key) _fsTlSync(); } },{once:true}); try{ vid.currentTime=1e101; }catch(e){} } if(_fsTlKey===key) _fsTlSync(); });   /* 16ij: endless-duration WebMs get a real length */ if(prev){ try{ vid.currentTime=prev.currentTime||0; }catch(e){} } }
   vid.dataset.key=key;
   vid.loop=!!(lm.loop&&lm.out==null);
   vid.playbackRate=Math.max(.1,Math.min(4,(lm.speed||100)/100));
@@ -25672,35 +25680,109 @@ function _fsSetIn(){ const t=_fsTargetKey(); const vid=_fsVideoEls[t]; if(!vid) 
 function _fsSetOut(){ const t=_fsTargetKey(); const vid=_fsVideoEls[t]; if(!vid) return; const q=_fsKeyParts(t); const lm=getLayerMedia(q.pid,q.sid,q.n); const tOut=Math.max((lm.in||0)+0.1,vid.currentTime); _fsSetLM({out:tOut}); _fsRenderTimeline(true); renderFsPanel(true); }
 function _fsClearInOut(){ _fsSetLM({in:0,out:null}); _fsRenderTimeline(true); renderFsPanel(true); }
 function _fsSeekFrac(f){ const t=_fsTargetKey(); const vid=_fsVideoEls[t]; if(!vid||!isFinite(vid.duration)) return; f=Math.max(0,Math.min(1,f)); const q=_fsKeyParts(t); const fps=_fsClipFps(_fsMediaItem(q.n?getL(q.pid,q.sid,q.n):getBgName(q.pid,q.sid))); const tt=_fsSnapFrame(f*(vid.duration||0),fps); const keys=_fsPlayScope==='preset'?Object.keys(_fsVideoEls):[t]; keys.forEach(function(k){ const v2=_fsVideoEls[k]; try{ v2.currentTime=tt; }catch(e){} }); _fsTlSync(); }
-function _fsTlScrubStart(ev){ const track=ev.currentTarget; const move=function(e){ const r=track.getBoundingClientRect(); _fsSeekFrac((e.clientX-r.left)/Math.max(1,r.width)); }; move(ev); const up=function(){ window.removeEventListener('mousemove',move); window.removeEventListener('mouseup',up); }; window.addEventListener('mousemove',move); window.addEventListener('mouseup',up); ev.preventDefault(); }
-function _fsSetCover(){ const t=_fsTargetKey(); const vid=_fsVideoEls[t]; if(!vid||!vid.videoWidth) return; const q=_fsKeyParts(t); const name=q.n?getL(q.pid,q.sid,q.n):getBgName(q.pid,q.sid); const it=_fsMediaItem(name); if(!it) return; if(typeof pushUndo==='function') pushUndo(); it.img=_fsShrink(vid,vid.videoWidth,vid.videoHeight); it.media.coverTime=vid.currentTime; presets.forEach(function(p){ screens.forEach(function(s){ if(getBgName(p.id,s.id)===name&&typeof setPColor==='function') setPColor(p.id,s.id,null,it.img); }); }); _isDirty=true; if(typeof _updateDirtyIndicator==='function') _updateDirtyIndicator(); scheduleRender(); renderFullscreen(); }
-// ── the timeline under the canvas ───────────────────────────────────────
+function _fsSetCover(){ const t=_fsTargetKey(); const vid=_fsVideoEls[t]; if(!vid||!vid.videoWidth) return; const q=_fsKeyParts(t); const name=q.n?getL(q.pid,q.sid,q.n):getBgName(q.pid,q.sid); const it=_fsMediaItem(name); if(!it) return; if(typeof pushUndo==='function') pushUndo(); it.img=_fsShrink(vid,vid.videoWidth,vid.videoHeight); it.media.coverTime=vid.currentTime; presets.forEach(function(p){ screens.forEach(function(s){ if(getBgName(p.id,s.id)===name&&typeof setPColor==='function') setPColor(p.id,s.id,null,it.img); }); }); _isDirty=true; if(typeof _updateDirtyIndicator==='function') _updateDirtyIndicator(); scheduleRender(); renderFullscreen(); _fsRenderTimeline(true); }   // 16ij: the Cover thumb in the transport strip
+// ── the timeline under the canvas (16ij: Mitti-style) ───────────────────
+// A transport strip on top (Stop / Play / Pause, frame steps, loop, In / Out, the two LCD timecodes, the level fader and
+// Cover at the far right like CapCut), then a ruler with the trimmed range and its two drag handles, a video track made of
+// real frames and the audio waveform. One blue playhead runs through all three. Click or drag anywhere on the lanes to
+// scrub; drag a handle to trim — the tile follows the handle so you see the frame you are trimming to.
+var _fsStrips={}, _fsStripGen=0;
+function _fsTlLanes(){ const tl=document.getElementById('fs-timeline'); return tl?tl.querySelector('.fs-tl-lanes'):null; }
+function _fsTlFrac(e){ const ln=_fsTlLanes(); if(!ln) return 0; const r=ln.getBoundingClientRect(); return Math.max(0,Math.min(1,(e.clientX-r.left)/Math.max(1,r.width))); }
+function _fsTlScrubStart(ev){ if(ev.button!==0) return; const move=function(e){ _fsSeekFrac(_fsTlFrac(e)); }; move(ev); const up=function(){ window.removeEventListener('mousemove',move); window.removeEventListener('mouseup',up); }; window.addEventListener('mousemove',move); window.addEventListener('mouseup',up); ev.preventDefault(); }
+function _fsTlTrimStart(ev,which){
+  if(ev.button!==0) return; ev.stopPropagation(); ev.preventDefault();
+  const t=_fsTargetKey(); const vid=_fsVideoEls[t]; if(!vid||!isFinite(vid.duration)||!vid.duration) return;
+  const q=_fsKeyParts(t); const it=_fsMediaItem(q.n?getL(q.pid,q.sid,q.n):getBgName(q.pid,q.sid)); const fps=_fsClipFps(it); const dur=vid.duration;
+  if(typeof pushUndo==='function') pushUndo();
+  delete _fsWantPlay[t]; try{ vid.pause(); }catch(e){}
+  const move=function(e){
+    const lm=getLayerMedia(q.pid,q.sid,q.n); let tt=_fsSnapFrame(_fsTlFrac(e)*dur,fps);
+    if(which==='in'){ const hi=(lm.out!=null?lm.out:dur)-1/fps; tt=Math.max(0,Math.min(hi,tt)); setLayerMedia(q.pid,q.sid,q.n,{in:tt}); }
+    else { tt=Math.max((lm.in||0)+1/fps,tt); setLayerMedia(q.pid,q.sid,q.n,{out:(tt>=dur-0.5/fps)?null:tt}); }
+    try{ vid.currentTime=Math.max(0,Math.min(dur-0.001,tt)); }catch(e){}
+    _fsTlSync();
+  };
+  move(ev);
+  const up=function(){ window.removeEventListener('mousemove',move); window.removeEventListener('mouseup',up); const lm=getLayerMedia(q.pid,q.sid,q.n); vid.loop=!!(lm.loop&&lm.out==null); renderFsPanel(true); _fsTlSync(); };
+  window.addEventListener('mousemove',move); window.addEventListener('mouseup',up);
+}
+function _fsTlBarHTML(on,lm,lvl,it){
+  const d=on?'':' disabled';
+  return '<div class="fs-tl-bar">'
+    +'<span class="fs-tl-tr"><button type="button" class="fs-tl-tb" onclick="_fsStop()" title="Stop, back to In"'+d+'>■</button><button type="button" class="fs-tl-tb play" id="fs-tl-play" onclick="_fsPlay()" title="Play"'+d+'>▶</button><button type="button" class="fs-tl-tb" id="fs-tl-pause" onclick="_fsPause()" title="Pause"'+d+'>❚❚</button></span>'
+    +'<span class="fs-tl-sep"></span>'
+    +'<span class="fs-tl-tr"><button type="button" class="fs-tl-tb sm" onclick="_fsStepFrame(-1)" title="Back one frame (,)"'+d+'>◀|</button><button type="button" class="fs-tl-tb sm" onclick="_fsStepFrame(1)" title="Forward one frame (.)"'+d+'>|▶</button><button type="button" class="fs-tl-tb sm'+(lm&&lm.loop?' on':'')+'" id="fs-tl-loop" onclick="_fsToggleLoop()" title="Loop"'+d+'>⟳</button></span>'
+    +'<span class="fs-tl-sep"></span>'
+    +'<span class="fs-tl-tr"><button type="button" class="fs-tl-tb sm" onclick="_fsSetIn()" title="Set In at the playhead"'+d+'>In</button><button type="button" class="fs-tl-tb sm" onclick="_fsSetOut()" title="Set Out at the playhead"'+d+'>Out</button><button type="button" class="fs-tl-tb sm" onclick="_fsClearInOut()" title="Clear In and Out"'+d+'>✕</button></span>'
+    +'<span class="fs-tl-lcds"><b class="fs-tl-lcd" id="fs-tl-cur" title="Playhead">00:00:00:00</b><b class="fs-tl-lcd dim" id="fs-tl-rem" title="Time left to Out">-00:00:00:00</b></span>'
+    +'<span class="fs-tl-tc"><input type="range" class="fs-tl-level" min="0" max="100" value="'+lvl+'" oninput="_fsSetLevel(this.value)" title="Overall audio level" aria-label="Overall audio level"'+d+'><b id="fs-tl-lvl">'+lvl+'%</b></span>'
+    +'<button type="button" class="fs-tl-cover" onclick="_fsSetCover()" title="Use the frame at the playhead as the cover Simple shows"'+d+'><span class="fs-tl-cover-frame"'+(it&&it.img?' style="background:#000 url('+it.img+') center/cover"':'')+'></span><span class="fs-tl-cap">Cover ✎</span></button>'
+    +'</div>';
+}
+function _fsTlBodyHTML(it,hint){
+  const fps=it&&it.media&&it.media.fps?String(Math.round(it.media.fps*100)/100):'';
+  return '<div class="fs-tl-body"><div class="fs-tl-labels"><span class="fs-tl-lbl fps" title="Frame rate">'+(fps?fps+' fps':'')+'</span><span class="fs-tl-lbl">Video</span><span class="fs-tl-lbl">Audio</span></div>'
+    +'<div class="fs-tl-lanes"'+(it?' onmousedown="_fsTlScrubStart(event)" title="Click or drag to scrub"':'')+'>'
+    +'<div class="fs-tl-ruler"><canvas class="fs-tl-rulerc"></canvas><div class="fs-tl-range"><div class="fs-tl-range-in"></div>'+(it?'<div class="fs-tl-hdl in" onmousedown="_fsTlTrimStart(event,\'in\')" title="Drag to set In"></div><div class="fs-tl-hdl out" onmousedown="_fsTlTrimStart(event,\'out\')" title="Drag to set Out"></div>':'')+'</div></div>'
+    +'<div class="fs-tl-tracks"><div class="fs-tl-track video">'+(it?'<canvas class="fs-tl-stripc"></canvas>':'<span class="fs-tl-hint">'+hint+'</span>')+'</div>'
+    +'<div class="fs-tl-track audio"><canvas class="fs-tl-wavec"></canvas>'+((it&&it.media&&it.media.hasAudio)?'':'<span class="fs-tl-noaudio">'+(it?'no audio':'')+'</span>')+'</div>'
+    +'<div class="fs-tl-dim l"></div><div class="fs-tl-dim r"></div></div>'
+    +(it?'<div class="fs-tl-head"></div>':'')+'</div></div>';
+}
 function _fsRenderTimeline(force){
   const tl=document.getElementById('fs-timeline'); if(!tl) return;
   const key=_fsTargetKey();
   if(!key||!_fsVideoEls[key]){
-    if(_fsTlKey!==''||force||!tl.classList.contains('empty')){ _fsTlKey=''; tl.classList.add('empty'); tl.innerHTML=
-      '<div class="fs-tl-cover"><div class="fs-tl-cover-frame"><span>—</span></div><span class="fs-tl-cap">Cover</span><button type="button" class="fs-tl-btn" disabled>Set cover</button></div>'
-      +'<div class="fs-tl-tracks"><div class="fs-tl-row"><span class="fs-tl-lbl">Video</span><div class="fs-tl-track"><span class="fs-tl-hint">'+(Object.keys(_fsVideoEls).length?'Pick a layer that holds a video to trim it and set its cover':'Drop a video from the Video tab onto a layer or a BG, then pick it')+'</span></div><span class="fs-tl-tc">00:00 / 00:00</span></div>'
-      +'<div class="fs-tl-row"><span class="fs-tl-lbl">Audio</span><div class="fs-tl-track fs-tl-wave"></div><span class="fs-tl-tc"><input type="range" class="fs-tl-level" min="0" max="100" value="100" disabled aria-label="Overall audio level"><b>100%</b></span></div></div>'; }
+    if(_fsTlKey!==''||force||!tl.classList.contains('empty')||!tl.firstElementChild){ _fsTlKey=''; _fsStripGen++; tl.classList.add('empty'); delete tl.dataset.dur;
+      tl.innerHTML=_fsTlBarHTML(false,null,100,null)+_fsTlBodyHTML(null,Object.keys(_fsVideoEls).length?'Pick a layer that holds a video to trim it and set its cover':'Drop a video from the Video tab onto a layer or a BG, then pick it');
+      _fsDrawWave(tl.querySelector('.fs-tl-wavec'),null); }
     return;
   }
   const q=_fsKeyParts(key); const name=q.n?getL(q.pid,q.sid,q.n):getBgName(q.pid,q.sid); const it=_fsMediaItem(name); const lm=getLayerMedia(q.pid,q.sid,q.n);
   if(_fsTlKey!==key||force){
-    _fsTlKey=key; tl.classList.remove('empty');
-    tl.innerHTML=
-      '<div class="fs-tl-cover"><div class="fs-tl-cover-frame" style="'+(it&&it.img?'background:#000 url('+it.img+') center/cover':'')+'"></div><span class="fs-tl-cap">Cover</span><button type="button" class="fs-tl-btn" onclick="_fsSetCover()" title="Use the frame at the playhead as the cover Simple shows">Set cover</button></div>'
-      +'<div class="fs-tl-tracks">'
-      +'<div class="fs-tl-row"><span class="fs-tl-lbl">Video</span><span class="fs-tl-tr"><button type="button" class="fs-tl-tb play" id="fs-tl-play" onclick="_fsPlayToggle()" title="Play / pause">▶</button><button type="button" class="fs-tl-tb" onclick="_fsStop()" title="Stop, back to In">■</button><button type="button" class="fs-tl-tb sm" onclick="_fsStepFrame(-1)" title="Back one frame (,)">◀|</button><button type="button" class="fs-tl-tb sm" onclick="_fsStepFrame(1)" title="Forward one frame (.)">|▶</button><button type="button" class="fs-tl-tb'+(lm.loop?' on':'')+'" id="fs-tl-loop" onclick="_fsToggleLoop()" title="Loop">⟳</button></span>'
-      +'<div class="fs-tl-track video" onmousedown="_fsTlScrubStart(event)" title="Click or drag to scrub"><div class="fs-tl-dim l"></div><div class="fs-tl-dim r"></div><div class="fs-tl-prog"></div><div class="fs-tl-in"></div><div class="fs-tl-out"></div><div class="fs-tl-head"></div></div>'
-      +'<span class="fs-tl-tc"><b id="fs-tl-cur">00:00</b>&nbsp;/&nbsp;<span id="fs-tl-dur">'+_fsFmtTC(it&&it.media?it.media.dur:0,_fsClipFps(it))+'</span></span></div>'
-      +'<div class="fs-tl-row"><span class="fs-tl-lbl">Audio</span><span class="fs-tl-tr"><button type="button" class="fs-tl-tb sm" onclick="_fsSetIn()" title="Set In at the playhead">In</button><button type="button" class="fs-tl-tb sm" onclick="_fsSetOut()" title="Set Out at the playhead">Out</button><button type="button" class="fs-tl-tb sm" onclick="_fsClearInOut()" title="Clear In and Out">✕</button></span>'
-      +'<div class="fs-tl-track audio"><canvas class="fs-tl-wavec"></canvas>'+((it&&it.media&&it.media.hasAudio)?'':'<span class="fs-tl-noaudio">no audio</span>')+'</div>'
-      +'<span class="fs-tl-tc"><input type="range" class="fs-tl-level" min="0" max="100" value="'+lm.level+'" oninput="_fsSetLevel(this.value)" title="Overall audio level" aria-label="Overall audio level"><b id="fs-tl-lvl">'+lm.level+'%</b></span></div>'
-      +'</div>';
+    _fsTlKey=key; tl.classList.remove('empty'); delete tl.dataset.dur;
+    tl.innerHTML=_fsTlBarHTML(true,lm,lm.level,it)+_fsTlBodyHTML(it,'');
     _fsDrawWave(tl.querySelector('.fs-tl-wavec'),it);
+    _fsStripStart(name);
   }
   _fsTlSync();
+}
+// the ruler: Mitti's labels — minutes at whole minutes, seconds inside the minute — with a tick every fifth of a step
+function _fsRulerLbl(t,step){ t=Math.round(t); if(t%60===0||step>=60) return (t/60)+'m'; return (t%60)+'s'; }
+function _fsDrawRuler(cv,dur){
+  if(!cv) return; const w=cv.clientWidth||300, h=cv.clientHeight||20; const dpr=window.devicePixelRatio||1; cv.width=Math.round(w*dpr); cv.height=Math.round(h*dpr); const g=cv.getContext('2d'); g.scale(dpr,dpr); g.clearRect(0,0,w,h);
+  if(!dur||!isFinite(dur)) return;
+  const steps=[1,2,5,10,15,30,60,120,300,600,1800,3600]; let step=steps[steps.length-1]; for(let i=0;i<steps.length;i++){ if(w*steps[i]/dur>=56){ step=steps[i]; break; } }
+  const minor=step/5; g.font='700 9px '+'ui-monospace,SF Mono,Menlo,monospace'; g.fillStyle='#8a93a8'; g.strokeStyle='#454c58'; g.lineWidth=1; g.textBaseline='top';
+  for(let k=0;k*minor<=dur+1e-6;k++){ const t=k*minor; const x=Math.round(t/dur*w)+.5; const major=(k%5===0); g.beginPath(); g.moveTo(x,h-(major?10:5)); g.lineTo(x,h); g.stroke(); if(major&&x<w-24) g.fillText(_fsRulerLbl(t,step),x+3,0); }
+}
+// the video track: frames pulled from a second <video> on the same file, drawn side by side (wide clips crop to 4:3 so
+// more of them fit). Cached per file; a lane that changes a lot regenerates
+function _fsStripStart(name){
+  const tl=document.getElementById('fs-timeline'); const cv=tl&&tl.querySelector('.fs-tl-stripc'); if(!cv) return;
+  const laneW=cv.clientWidth||600, laneH=cv.clientHeight||64; const url=_fsMediaUrl(name); if(!url) return;
+  const gen=++_fsStripGen; const dpr=Math.min(2,window.devicePixelRatio||1);
+  cv.width=Math.round(laneW*dpr); cv.height=Math.round(laneH*dpr); const g=cv.getContext('2d');
+  const cached=_fsStrips[name];
+  if(cached&&cached.url===url){ g.drawImage(cached.cv,0,0,cv.width,cv.height); if(Math.abs(cached.laneW-laneW)<laneW*0.25) return; }
+  else { g.fillStyle='#0a0d12'; g.fillRect(0,0,cv.width,cv.height); }
+  const v=document.createElement('video'); v.muted=true; v.playsInline=true; v.preload='auto'; v.src=url;
+  let done=false; const finish=function(){ if(done) return; done=true; try{ v.removeAttribute('src'); v.load(); }catch(e){} };
+  v.addEventListener('error',finish,{once:true});
+  const go=function(){
+    if(gen!==_fsStripGen) return finish();
+    const dur=v.duration; if(!isFinite(dur)||!dur||!v.videoWidth) return finish();
+    const asp=Math.max(.75,Math.min(4/3,v.videoWidth/v.videoHeight));
+    const th=cv.height, tw=Math.max(8,Math.round(th*asp)); const n=Math.max(1,Math.min(60,Math.ceil(cv.width/tw))); const tw2=cv.width/n;
+    const sh=v.videoHeight, sw=Math.min(v.videoWidth,Math.round(sh*asp)); const sx=Math.round((v.videoWidth-sw)/2);
+    const strip=document.createElement('canvas'); strip.width=cv.width; strip.height=cv.height; const sg=strip.getContext('2d'); sg.fillStyle='#0a0d12'; sg.fillRect(0,0,strip.width,strip.height);
+    let i=0, armed=false, wd=0;
+    const next=function(){ clearTimeout(wd); if(gen!==_fsStripGen) return finish(); if(i>=n){ _fsStrips[name]={url:url,cv:strip,laneW:laneW}; return finish(); } armed=true; wd=setTimeout(function(){ armed=false; i++; next(); },1500); try{ v.currentTime=Math.max(0,Math.min(dur-0.05,(i+0.5)/n*dur)); }catch(e){ finish(); } };
+    v.addEventListener('seeked',function(){ if(!armed||gen!==_fsStripGen) return; armed=false; clearTimeout(wd); try{ sg.drawImage(v,sx,0,sw,sh,Math.round(i*tw2),0,Math.ceil(tw2),th); }catch(e){} g.drawImage(strip,0,0); i++; next(); });
+    next();
+  };
+  v.addEventListener('loadedmetadata',function(){ if(isFinite(v.duration)) return go(); v.addEventListener('durationchange',function(){ if(isFinite(v.duration)) go(); else finish(); },{once:true}); try{ v.currentTime=1e101; }catch(e){ finish(); } },{once:true});
 }
 function _fsDrawWave(cv,it){
   if(!cv) return; const w=cv.clientWidth||300, h=cv.clientHeight||30; cv.width=w; cv.height=h; const g=cv.getContext('2d'); g.clearRect(0,0,w,h);
@@ -25714,12 +25796,15 @@ function _fsTlSync(){
   const q=_fsKeyParts(key); const lm=getLayerMedia(q.pid,q.sid,q.n); const dur=isFinite(vid.duration)&&vid.duration>0?vid.duration:0;
   const f=dur?Math.max(0,Math.min(1,vid.currentTime/dur)):0; const fi=dur?(lm.in||0)/dur:0; const fo=dur&&lm.out!=null?lm.out/dur:1;
   const set=function(sel,prop,val){ const e=tl.querySelector(sel); if(e) e.style[prop]=val; };
-  set('.fs-tl-prog','width',(f*100)+'%'); set('.fs-tl-head','left',(f*100)+'%'); set('.fs-tl-dim.l','width',(fi*100)+'%'); set('.fs-tl-dim.r','width',((1-fo)*100)+'%'); set('.fs-tl-in','left',(fi*100)+'%'); set('.fs-tl-out','left',(fo*100)+'%');
+  set('.fs-tl-head','left',(f*100)+'%'); set('.fs-tl-dim.l','width',(fi*100)+'%'); set('.fs-tl-dim.r','width',((1-fo)*100)+'%'); set('.fs-tl-hdl.in','left',(fi*100)+'%'); set('.fs-tl-hdl.out','left',(fo*100)+'%'); set('.fs-tl-range-in','left',(fi*100)+'%'); set('.fs-tl-range-in','width',(Math.max(0,fo-fi)*100)+'%');
+  if(dur&&tl.dataset.dur!==String(dur)){ tl.dataset.dur=String(dur); _fsDrawRuler(tl.querySelector('.fs-tl-rulerc'),dur); }
   const fpsTC=_fsClipFps(_fsMediaItem(q.n?getL(q.pid,q.sid,q.n):getBgName(q.pid,q.sid)));   // 16ii: frames in the readout
-  const cur=document.getElementById('fs-tl-cur'); if(cur) cur.textContent=_fsFmtTC(vid.currentTime,fpsTC); const du=document.getElementById('fs-tl-dur'); if(du&&dur) du.textContent=_fsFmtTC(dur,fpsTC);
-  const pb=document.getElementById('fs-tl-play'); if(pb){ const playing=!vid.paused; pb.textContent=playing?'❚❚':'▶'; pb.classList.toggle('on',playing); }
+  const cur=document.getElementById('fs-tl-cur'); if(cur) cur.textContent=_fsFmtTC(vid.currentTime,fpsTC);
+  const rem=document.getElementById('fs-tl-rem'); if(rem) rem.textContent='-'+_fsFmtTC(Math.max(0,(lm.out!=null?lm.out:dur)-vid.currentTime),fpsTC);
+  const playing=!vid.paused; const pb=document.getElementById('fs-tl-play'); if(pb) pb.classList.toggle('on',playing); const pz=document.getElementById('fs-tl-pause'); if(pz) pz.classList.toggle('on',!playing&&vid.currentTime>(lm.in||0)+0.01);
   const lp=document.getElementById('fs-tl-loop'); if(lp) lp.classList.toggle('on',!!lm.loop);
 }
+window.addEventListener('resize',function(){ clearTimeout(window._fsTlRz); window._fsTlRz=setTimeout(function(){ if(typeof fsPresetId!=='undefined'&&fsPresetId&&document.getElementById('fs-timeline')) _fsRenderTimeline(true); },200); });
 function _fsTlLoop(){ if(_fsTlRaf) cancelAnimationFrame(_fsTlRaf); const step=function(){ const any=Object.keys(_fsVideoEls).some(function(k){ return !_fsVideoEls[k].paused; }); _fsFadeTick(); _fsTlSync(); if(any) _fsTlRaf=requestAnimationFrame(step); else { _fsTlRaf=0; _fsResetFades(); } }; _fsTlRaf=requestAnimationFrame(step); }
 // ── the Video section in the layer properties (Advanced only) ──────────
 // ── 16hz: the look (Color / Filters / Transition), a scaler's colour controls on the mounted media ──
