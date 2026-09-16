@@ -778,8 +778,11 @@ body.is-mobile #vp-tabs{display:none}
 .fs-pcard-name{font-size:11px;font-weight:600;color:var(--text2);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .fs-pcard.on .fs-pcard-name{color:var(--text)}
 .fs-pcard-clone{position:relative;overflow:hidden;border-radius:6px;pointer-events:none}
-.fs-pcard-clone .preset-row{box-shadow:none;border-left-width:1px}
+.fs-pcard-clone .preset-row{box-shadow:none;border-left-width:1px;color:transparent}
 .fs-pcard-clone .screens-visual{border-radius:0}
+/* 16ip: the card is shapes only — the tile's geometry without its text, handles or AOI chrome */
+.fs-pcard-clone .screen-lbl,.fs-pcard-clone .screen-res,.fs-pcard-clone .chip-res,.fs-pcard-clone .rh,.fs-pcard-clone .lrh,.fs-pcard-clone .aoi-actions,.fs-pcard-clone .aoi-btn,.fs-pcard-clone .aoi-dim-row,.fs-pcard-clone .lc-reset,.fs-pcard-clone .aoi-drag,.fs-pcard-clone .bg-tag{display:none !important}
+.fs-pcard-clone .preset-row *{color:transparent !important;text-shadow:none !important}
 /* timeline (16ij: Mitti-style — transport strip, ruler with trim handles, a track of real frames, the waveform, one blue playhead) */
 #fs-timeline{flex-shrink:0;display:flex;flex-direction:column;gap:8px;padding:8px 14px 10px;background:#10131a;border-top:1px solid var(--n-line)}
 .fs-tl-bar{display:flex;align-items:center;gap:5px;height:34px;flex-shrink:0}
@@ -3949,7 +3952,7 @@ Also called DSM (Downstage Monitor) in broadcast and theater workflows, same thi
   <div class="bb-cell bb-pill bb-cyan" title="The largest number of layers used in any single preset, this is the figure to compare against your switcher's per-scene layer budget. (The most complex single moment in the show.)"><span class="bb-label">Layers</span><strong id="bb-layers">0</strong></div>
   <div id="bb-spacer"></div>
   <div class="bb-cell" id="bb-sel" style="font-size:10px;opacity:.5">—</div>
-  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy, hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16io</div>
+  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy, hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16ip</div>
   <button class="bb-util" id="tb-adv" onclick="actions.advancedMenu(event)" title="Advanced features (AOI, Free Mode, Blend Zones, Dead Space)" aria-label="Advanced features (AOI, Free Mode, Blend Zones, Dead Space)" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Advanced<span class="adv-count" aria-hidden="true"></span><svg aria-hidden="true" id="tb-adv-chev" viewBox="0 0 10 10" fill="currentColor" width="8" height="8" style="opacity:.7"><path d="M2 4l3 3 3-3z"/></svg></button>
   <button class="bb-util" onclick="actions.help()" title="Help, quick reference, keyboard shortcuts, glossary, accessibility" aria-label="Help, quick reference, keyboard shortcuts, glossary, accessibility" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="4.93" y1="4.93" x2="9.17" y2="9.17"/><line x1="14.83" y1="14.83" x2="19.07" y2="19.07"/><line x1="14.83" y1="9.17" x2="19.07" y2="4.93"/><line x1="4.93" y1="19.07" x2="9.17" y2="14.83"/></svg>Help</button>
   <button class="bb-util" id="lb-skin-btn" onclick="lbToggleSkinMenu(event)" title="Color skin" aria-label="Change color skin" style="height:100%;padding:0 13px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="13.5" cy="6.5" r=".6" fill="currentColor" stroke="none"/><circle cx="17" cy="10.5" r=".6" fill="currentColor" stroke="none"/><circle cx="8.5" cy="7.5" r=".6" fill="currentColor" stroke="none"/><circle cx="6.5" cy="12" r=".6" fill="currentColor" stroke="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c.93 0 1.65-.75 1.65-1.69 0-.44-.18-.83-.44-1.12-.29-.29-.44-.65-.44-1.13a1.65 1.65 0 0 1 1.67-1.67h1.97c3.05 0 5.55-2.5 5.55-5.55C21.95 6.01 17.45 2 12 2z"/></svg></button>
@@ -6745,7 +6748,7 @@ function _rcScreenBox(p,s,pos,sc,bgF){
     // Small centred content tag — sized to not visually compete with layer
     // chips. (Earlier large stamp made a BG + 1 layer look like 2 layers.)
     const fsz=Math.max(7,Math.round(ih*0.08));
-    return '<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:2">'
+    return '<div class="bg-tag" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;z-index:2">'
       +'<div style="font-size:'+fsz+'px;font-weight:700;color:#fff;background:'+(ct.c||'rgba(0,0,0,.55)')+';padding:2px 6px;border-radius:3px;letter-spacing:.03em;white-space:nowrap;max-width:80%;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 2px rgba(0,0,0,.5);opacity:.92">'+bgn+'</div></div>';
   })();
   const pid=p.id, sid=s.id;
@@ -25290,12 +25293,12 @@ function renderFsPresetList(){
         <div class="fs-pcard-code">${_esc(p.code)}</div>
         <div class="fs-pcard-name">${_esc(p.name)}</div>${_fsPresetHasVideo(p)?'<span class="fs-pcard-play" title="Holds video">▶</span>':''}
       </div>
-      <div class="fs-pcard-clone" style="width:${prevW}px"><div class="preset-row fs-pcard-row" style="width:${rowW}px;min-width:0;margin:0;transform:scale(${k});transform-origin:0 0">${vis}</div></div>
+      <div class="fs-pcard-clone" style="width:${prevW}px"><div class="preset-row fs-pcard-row" style="width:${rowW}px;min-width:0;margin:0;zoom:${k}">${vis}</div></div>
       ${dsmRow}
     </div>`;
   }).join('')+`</div>`;
-  // the frame takes the height of its shrunken content (offsetHeight ignores the transform)
-  el.querySelectorAll('.fs-pcard-clone').forEach(function(f){ const inner=f.firstElementChild; if(inner) f.style.height=Math.round(inner.offsetHeight*k)+'px'; });
+  // shapes only: no selection outlines carried over from the tile
+  el.querySelectorAll('.fs-pcard-clone .sel,.fs-pcard-clone .lsel').forEach(function(e){ e.classList.remove('sel','lsel'); });
 }
 
 function fsSwitchPreset(pid){
