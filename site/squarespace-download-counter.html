@@ -1,0 +1,33 @@
+<!-- AV Look Book · live download counter for the Squarespace landing page.
+     Paste this whole block into a Code Block (Squarespace: Add Block → Code, leave it on HTML).
+     It reads the public GitHub release list in the visitor's browser (no key, no login),
+     keeps the number for an hour in the visitor's browser, and shows nothing if GitHub is unreachable. -->
+<div id="avlb-downloads" style="font:600 15px/1.4 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#9aa0aa;letter-spacing:.02em;min-height:1.4em"></div>
+<script>
+(function(){
+  var MODE='estimate';      // 'estimate' ignores the one automatic fetch every installer gets when a release is published; 'raw' shows GitHub's plain total
+  var SINCE='2026-09-14';   // only releases published on or after this date (the day the site went public); '' = all time
+  var TEXT=function(n){ return n.toLocaleString()+(n===1?' download':' downloads')+' and counting'; };
+  var el=document.getElementById('avlb-downloads'); if(!el) return;
+  var KEY='avlb-dl-cache', HOUR=3600000;
+  try{ var c=JSON.parse(localStorage.getItem(KEY)||'null'); if(c&&Date.now()-c.t<HOUR){ el.textContent=TEXT(c.n); return; } }catch(e){}
+  var total=0;
+  function page(p){
+    return fetch('https://api.github.com/repos/AVEducate/AV-Look-Book/releases?per_page=100&page='+p,{headers:{Accept:'application/vnd.github+json'}})
+      .then(function(r){ if(!r.ok) throw new Error('GitHub '+r.status); return r.json(); })
+      .then(function(rels){
+        rels.forEach(function(rel){
+          if(SINCE&&String(rel.published_at||'').slice(0,10)<SINCE) return;
+          (rel.assets||[]).forEach(function(a){
+            if(!/\.(dmg|exe|AppImage)$/i.test(a.name)) return;
+            var n=a.download_count||0;
+            total+=(MODE==='estimate')?Math.max(0,n-1):n;
+          });
+        });
+        if(rels.length===100) return page(p+1);
+      });
+  }
+  page(1).then(function(){ el.textContent=TEXT(total); try{ localStorage.setItem(KEY,JSON.stringify({n:total,t:Date.now()})); }catch(e){} })
+         .catch(function(){ try{ var c=JSON.parse(localStorage.getItem(KEY)||'null'); if(c) el.textContent=TEXT(c.n); }catch(e){} });
+})();
+</script>
