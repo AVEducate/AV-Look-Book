@@ -1,0 +1,78 @@
+<!-- AV Look Book landing page, PART 5 (who it is for, local first, handoff, fits your workflow) for a Squarespace CODE BLOCK (HTML mode, "Display Source" OFF).
+     2026-09-16, from the landing brief sections 5-12, 15-22. Every technical claim checked against the app: no analytics,
+     no telemetry, no AI, no cloud; the only outbound traffic is the launch-time update check on GitHub. Script-free. -->
+<div id="avlb-local" style="font:15px/1.55 'Helvetica Neue',Arial,sans-serif;color:#d0d0d0;background:transparent;padding:10px 0">
+  <style>
+    #avlb-local *{box-sizing:border-box}
+    #avlb-local a{color:#fff;text-decoration:underline;text-underline-offset:3px}
+    #avlb-local .k{font-family:rama-gothic-e,'Helvetica Neue',Arial,sans-serif;font-weight:400;font-size:18px;letter-spacing:.14em;text-transform:uppercase;color:#fff;margin-bottom:8px}
+    #avlb-local h2{font-family:rama-gothic-e,'Helvetica Neue',Arial,sans-serif;font-weight:600;font-size:42px;line-height:1.05;letter-spacing:.12em;text-transform:uppercase;color:#d0d0d0;margin:0 0 12px}
+    #avlb-local p{margin:0 0 12px;color:#9a9a9a;max-width:760px;font-size:16px}
+    #avlb-local .sep{height:1px;background:rgba(255,255,255,.12);margin:34px 0}
+    #avlb-local .who{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin:18px 0 8px}
+    #avlb-local .who a,#avlb-local .who div.w{display:block;border:1px solid rgba(255,255,255,.18);border-radius:8px;padding:18px 16px;text-decoration:none;color:#d0d0d0;transition:border-color .15s,background .15s}
+    #avlb-local .who a:hover{border-color:#fff;background:rgba(255,255,255,.06)}
+    #avlb-local .who b{display:block;margin-bottom:6px;font-family:rama-gothic-e,'Helvetica Neue',Arial,sans-serif;font-weight:400;font-size:19px;letter-spacing:.1em;text-transform:uppercase;color:#fff}
+    #avlb-local .who span{display:block;font-size:13px;color:#9a9a9a}
+    #avlb-local .who a span.more{margin-top:8px;color:#fff;font-size:12px;letter-spacing:.1em;text-transform:uppercase}
+    #avlb-local .two{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start}
+    #avlb-local ul{margin:0 0 12px;padding-left:20px;color:#9a9a9a;max-width:760px}
+    #avlb-local li{margin:0 0 6px}
+    #avlb-local li b{color:#d0d0d0;font-weight:600}
+    #avlb-local .folder{font-family:Menlo,Consolas,monospace;font-size:13px;line-height:1.6;color:#b5b5b5;border:1px solid rgba(255,255,255,.18);border-radius:8px;padding:14px 18px;display:inline-block}
+    #avlb-local .folder b{color:#fff;font-weight:600}
+    #avlb-local .big{font-family:rama-gothic-e,'Helvetica Neue',Arial,sans-serif;font-size:24px;letter-spacing:.08em;text-transform:uppercase;color:#fff;margin:8px 0 6px}
+    #avlb-local .brands{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 14px}
+    #avlb-local .brand{font-family:rama-gothic-e,'Helvetica Neue',Arial,sans-serif;font-size:16px;letter-spacing:.12em;text-transform:uppercase;padding:6px 12px;border:1px solid rgba(255,255,255,.22);border-radius:4px;color:#b5b5b5}
+    @media (max-width:900px){ #avlb-local .who{grid-template-columns:repeat(2,1fr)} }
+    @media (max-width:760px){ #avlb-local h2{font-size:32px} #avlb-local .who,#avlb-local .two{grid-template-columns:1fr} }
+  </style>
+  <div class="k">Who it is for</div>
+  <h2>One show. Different views for the people who need them.</h2>
+  <p>A Producer asks what the audience sees. A Show Caller asks which preset to call. A Video Engineer asks how it is routed and connected. The operator asks what happens when P07 is called. AV Look Book is the common reference between them.</p>
+  <div class="who">
+    <a href="/av-look-book-engineers"><b>Video Engineers</b><span>Engineer the show before show site. I/O, routing, wire drawings.</span><span class="more">Read more &rarr;</span></a>
+    <a href="/av-look-book-show-callers"><b>Show Callers</b><span>Know exactly what every preset should look like.</span><span class="more">Read more &rarr;</span></a>
+    <a href="/av-look-book-producers"><b>Producers</b><span>Get everyone aligned on what goes to every screen.</span><span class="more">Read more &rarr;</span></a>
+    <div class="w"><b>Production Companies</b><span>Every show gets an AV Look Book. A repeatable documentation standard for staff and freelancers.</span></div>
+    <div class="w"><b>In-House and Venue AV</b><span>Board Meeting, Town Hall, All Hands, Awards: operational documentation for the rooms you run every week.</span></div>
+  </div>
+
+  <div class="sep"></div>
+  <div class="two">
+    <div>
+      <div class="k">Local first</div>
+      <h2>Your show stays yours.</h2>
+      <p>AV Look Book works on your computer, with your files. Nothing about your show goes anywhere unless you export it or send it.</p>
+      <ul>
+        <li><b>Your project files stay on your computer.</b> A show is a single .avlb file you control.</li>
+        <li><b>Works offline.</b> No Internet needed to build the show, no dependence on ballroom Wi-Fi, fine on isolated production networks. When online, the app only checks for a newer version at launch.</li>
+        <li><b>No cloud workspace, no account.</b> Projects are not tied to a login and are not stored in an online workspace.</li>
+        <li><b>No analytics, no AI.</b> The app collects no usage data and sends no project information through AI systems.</li>
+        <li><b>Back it up your way.</b> Copy the file to the show drive, a USB stick, the company server or your approved cloud folder, like the rest of the show.</li>
+      </ul>
+      <p>Companies keep their own software and IT rules, of course. Local, offline operation just means there is a lot less to review.</p>
+    </div>
+    <div>
+      <div class="k">Where it lives</div>
+      <div class="folder">CLIENT SHOW/<br>&nbsp;&nbsp;Graphics/<br>&nbsp;&nbsp;Playback/<br>&nbsp;&nbsp;PowerPoint/<br>&nbsp;&nbsp;Switcher/<br>&nbsp;&nbsp;Documents/<br>&nbsp;&nbsp;<b>AV Look Book/</b><br>&nbsp;&nbsp;&nbsp;&nbsp;<b>Client Show.avlb</b><br>&nbsp;&nbsp;&nbsp;&nbsp;Client Show, Look Book.pdf<br>&nbsp;&nbsp;&nbsp;&nbsp;Client Show, Cue Sheet.xlsx</div>
+      <p style="margin-top:12px;font-size:14px">Your project is a show file. Back it up like the rest of your show, and it never depends on anyone else's server.</p>
+    </div>
+  </div>
+
+  <div class="sep"></div>
+  <div class="k">Handoff</div>
+  <h2>Turn show knowledge into company knowledge.</h2>
+  <p>"John knows how that room works." "Ask Sarah what P08 does." "The engineer who built it isn't here today." Corporate AV runs on freelancers, rotating crews and last-minute substitutions, and the show shouldn't disappear when the engineer goes home.</p>
+  <p>With the project file, the Day 2 operator, the replacement Show Caller, the Technical Director reviewing the show or the Producer checking the screen layouts all open the same show. No user provisioning, no seats, no passwords, no freelancer account setup, nobody to remove after the show.</p>
+  <div class="big">Send the show. Not another login.</div>
+  <p>Recurring client? Open last year's file, Save As, change what is different. Don't rebuild recurring shows from memory.</p>
+
+  <div class="sep"></div>
+  <div class="k">Fits your workflow</div>
+  <h2>Use it with the workflow you already have.</h2>
+  <p>Build it in AV Look Book, share it in the format your crew needs. The PDF look book and the Excel cue sheet go to everyone; the project file goes to anyone with the app. The whole crew does not have to adopt another platform to read the show, and the documentation stays usable outside the app.</p>
+  <p>The show comes first, not the switcher brand. Plan it the same way whether it ends up running on:</p>
+  <div class="brands"><span class="brand">Barco</span><span class="brand">Analog Way</span><span class="brand">Pixelhue</span><span class="brand">Spyder</span><span class="brand">Ross</span><span class="brand">something else</span></div>
+  <p>AV Look Book plans and documents the show. It does not control the switcher, and it is not a replacement for Vectorworks, ConnectCAD or AutoCAD: the integrator documents how the system is built, AV Look Book documents how it is being used for this event. If you already speak sources, destinations, presets, AUX and signal flow, you already speak its language.</p>
+</div>
