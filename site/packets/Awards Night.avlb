@@ -1,0 +1,594 @@
+{
+  "version": 3,
+  "dsmLabel": "AUX",
+  "showName": "Awards Night",
+  "showDate": "2026-11-06",
+  "showVenue": "Main Hall",
+  "showMeta": {
+    "client": "Example Corp",
+    "jobNo": "EX-1002",
+    "designer": "AV Educate",
+    "drawnBy": "AVE",
+    "projectVer": "V1",
+    "logo": ""
+  },
+  "canvasW": "7680",
+  "canvasH": "1200",
+  "screens": [
+    {
+      "id": "xt1n40",
+      "name": "SIDE L PROJ",
+      "w": 1920,
+      "h": 1200,
+      "color": "#1a1a1a",
+      "connectorType": "HDMI 2.0",
+      "deviceType": "Projection",
+      "notes": "20K laser, 16:10"
+    },
+    {
+      "id": "xp292f",
+      "name": "STAGE LED",
+      "w": 3840,
+      "h": 1080,
+      "color": "#1a1a1a",
+      "connectorType": "12G-SDI",
+      "deviceType": "LED",
+      "notes": "Two 12G feeds, 32:9 wall"
+    },
+    {
+      "id": "x9fkjf",
+      "name": "SIDE R PROJ",
+      "w": 1920,
+      "h": 1200,
+      "color": "#1a1a1a",
+      "connectorType": "HDMI 2.0",
+      "deviceType": "Projection",
+      "notes": "20K laser, 16:10"
+    }
+  ],
+  "presets": [
+    {
+      "id": "xkxyl8",
+      "code": "P01",
+      "name": "WALK-IN",
+      "layers": {
+        "xt1n40": {},
+        "xp292f": {},
+        "x9fkjf": {}
+      },
+      "active": {},
+      "positions": {
+        "xt1n40": {
+          "x": 0,
+          "y": 0
+        },
+        "xp292f": {
+          "x": 1920,
+          "y": 60
+        },
+        "x9fkjf": {
+          "x": 5760,
+          "y": 0
+        }
+      },
+      "dsmOn": {
+        "xoc8mj": true,
+        "xrviwz": true
+      },
+      "notes": "Sponsor loop everywhere while guests are seated.",
+      "bgNames": {
+        "xt1n40": "SPONSOR LOOP",
+        "xp292f": "SPONSOR LOOP",
+        "x9fkjf": "SPONSOR LOOP"
+      },
+      "colors": {
+        "xt1n40": "#22c55e",
+        "xp292f": "#22c55e",
+        "x9fkjf": "#22c55e"
+      },
+      "bgs": {},
+      "dsmContent": {
+        "xoc8mj": "CLOCK",
+        "xrviwz": "PGM"
+      },
+      "layerSizes": {}
+    },
+    {
+      "id": "xdsjoo",
+      "code": "P02",
+      "name": "HOST",
+      "layers": {
+        "xt1n40": {
+          "1": "CAM 1"
+        },
+        "xp292f": {
+          "1": "LOWER 3RD"
+        },
+        "x9fkjf": {
+          "1": "CAM 1"
+        }
+      },
+      "active": {},
+      "positions": {
+        "xt1n40": {
+          "x": 0,
+          "y": 0
+        },
+        "xp292f": {
+          "x": 1920,
+          "y": 60
+        },
+        "x9fkjf": {
+          "x": 5760,
+          "y": 0
+        }
+      },
+      "dsmOn": {
+        "xoc8mj": true,
+        "xrviwz": true
+      },
+      "notes": "Host at center. Logo on the wall with a name key, IMAG on the sides.",
+      "bgNames": {
+        "xp292f": "LOGO"
+      },
+      "colors": {
+        "xp292f": "#ff4d5a"
+      },
+      "bgs": {},
+      "layerSizes": {
+        "xp292f": {
+          "1": {
+            "wf": 0.5,
+            "hf": 0.22,
+            "xf": 0.25,
+            "yf": 0.78
+          }
+        },
+        "xt1n40": {
+          "1": {
+            "wf": 1,
+            "hf": 1,
+            "xf": 0,
+            "yf": 0
+          }
+        },
+        "x9fkjf": {
+          "1": {
+            "wf": 1,
+            "hf": 1,
+            "xf": 0,
+            "yf": 0
+          }
+        }
+      },
+      "dsmContent": {
+        "xoc8mj": "PROMPTER",
+        "xrviwz": "PGM"
+      }
+    },
+    {
+      "id": "x0tzzi",
+      "code": "P03",
+      "name": "NOMINEES",
+      "layers": {
+        "xt1n40": {
+          "1": "CAM 2"
+        },
+        "xp292f": {},
+        "x9fkjf": {
+          "1": "CAM 2"
+        }
+      },
+      "active": {},
+      "positions": {
+        "xt1n40": {
+          "x": 0,
+          "y": 0
+        },
+        "xp292f": {
+          "x": 1920,
+          "y": 60
+        },
+        "x9fkjf": {
+          "x": 5760,
+          "y": 0
+        }
+      },
+      "dsmOn": {
+        "xoc8mj": true,
+        "xrviwz": true
+      },
+      "notes": "Category reel on the wall. Reaction camera on the sides.",
+      "bgNames": {
+        "xp292f": "NOMINEE REEL"
+      },
+      "colors": {
+        "xp292f": "#8b5cf6"
+      },
+      "bgs": {},
+      "dsmContent": {
+        "xoc8mj": "CLOCK",
+        "xrviwz": "PGM"
+      },
+      "layerSizes": {
+        "xt1n40": {
+          "1": {
+            "wf": 1,
+            "hf": 1,
+            "xf": 0,
+            "yf": 0
+          }
+        },
+        "x9fkjf": {
+          "1": {
+            "wf": 1,
+            "hf": 1,
+            "xf": 0,
+            "yf": 0
+          }
+        }
+      }
+    },
+    {
+      "id": "xc6x3z",
+      "code": "P04",
+      "name": "WINNER",
+      "layers": {
+        "xt1n40": {
+          "1": "CAM 1"
+        },
+        "xp292f": {
+          "1": "CAM 1"
+        },
+        "x9fkjf": {
+          "1": "CAM 1"
+        }
+      },
+      "active": {},
+      "positions": {
+        "xt1n40": {
+          "x": 0,
+          "y": 0
+        },
+        "xp292f": {
+          "x": 1920,
+          "y": 60
+        },
+        "x9fkjf": {
+          "x": 5760,
+          "y": 0
+        }
+      },
+      "dsmOn": {
+        "xoc8mj": true,
+        "xrviwz": true
+      },
+      "notes": "Winner card full on the wall with a camera PIP top right. Sides on the walk-up camera.",
+      "bgNames": {
+        "xp292f": "WINNER GFX"
+      },
+      "colors": {
+        "xp292f": "#f0c060"
+      },
+      "bgs": {},
+      "layerSizes": {
+        "xp292f": {
+          "1": {
+            "wf": 0.3,
+            "hf": 0.5,
+            "xf": 0.66,
+            "yf": 0.08
+          }
+        },
+        "xt1n40": {
+          "1": {
+            "wf": 1,
+            "hf": 1,
+            "xf": 0,
+            "yf": 0
+          }
+        },
+        "x9fkjf": {
+          "1": {
+            "wf": 1,
+            "hf": 1,
+            "xf": 0,
+            "yf": 0
+          }
+        }
+      },
+      "dsmContent": {
+        "xoc8mj": "CLOCK",
+        "xrviwz": "PGM"
+      }
+    },
+    {
+      "id": "xlthf3",
+      "code": "P05",
+      "name": "SPEECH",
+      "layers": {
+        "xt1n40": {
+          "1": "CAM 1"
+        },
+        "xp292f": {
+          "1": "CAM 1"
+        },
+        "x9fkjf": {
+          "1": "CAM 1"
+        }
+      },
+      "active": {},
+      "positions": {
+        "xt1n40": {
+          "x": 0,
+          "y": 0
+        },
+        "xp292f": {
+          "x": 1920,
+          "y": 60
+        },
+        "x9fkjf": {
+          "x": 5760,
+          "y": 0
+        }
+      },
+      "dsmOn": {
+        "xoc8mj": true,
+        "xrviwz": true
+      },
+      "notes": "Acceptance speech. Camera everywhere, name key on the wall.",
+      "bgNames": {},
+      "colors": {},
+      "bgs": {},
+      "dsmContent": {
+        "xoc8mj": "TIMER",
+        "xrviwz": "PGM"
+      },
+      "layerSizes": {
+        "xt1n40": {
+          "1": {
+            "wf": 1,
+            "hf": 1,
+            "xf": 0,
+            "yf": 0
+          }
+        },
+        "xp292f": {
+          "1": {
+            "wf": 1,
+            "hf": 1,
+            "xf": 0,
+            "yf": 0
+          }
+        },
+        "x9fkjf": {
+          "1": {
+            "wf": 1,
+            "hf": 1,
+            "xf": 0,
+            "yf": 0
+          }
+        }
+      }
+    }
+  ],
+  "customLibrary": [
+    {
+      "l": "NOMINEE REEL",
+      "c": "#8b5cf6"
+    },
+    {
+      "l": "WINNER GFX",
+      "c": "#f0c060"
+    },
+    {
+      "l": "SPONSOR LOOP",
+      "c": "#22c55e"
+    },
+    {
+      "l": "CAM 1",
+      "c": "#e05a4f"
+    },
+    {
+      "l": "CAM 2",
+      "c": "#b03a30"
+    }
+  ],
+  "customTypes": {
+    "machines": [],
+    "devices": []
+  },
+  "dsms": [
+    {
+      "id": "xoc8mj",
+      "name": "DSM 1",
+      "w": 1920,
+      "h": 1080,
+      "connectorType": "HDMI 2.0",
+      "deviceType": "Monitor",
+      "notes": "Presenter confidence"
+    },
+    {
+      "id": "xrviwz",
+      "name": "AUX 1",
+      "w": 1920,
+      "h": 1080,
+      "connectorType": "12G-SDI",
+      "deviceType": "Stream",
+      "notes": "Clean feed to stream encoder"
+    }
+  ],
+  "multiviewers": [
+    {
+      "id": "xaaq2i",
+      "name": "MV 1",
+      "connectorType": "MV",
+      "resolution": "1920x1080",
+      "deviceType": "Monitor",
+      "notes": "Operator monitor"
+    }
+  ],
+  "sources": [
+    {
+      "name": "NOMINEE REEL",
+      "type": "Media Server",
+      "connectorType": "12G-SDI",
+      "resolution": "3840x1080",
+      "notes": "Category reels, wall aspect"
+    },
+    {
+      "name": "WINNER GFX",
+      "type": "Media Server",
+      "connectorType": "12G-SDI",
+      "resolution": "3840x1080",
+      "notes": "Winner card per category"
+    },
+    {
+      "name": "SPONSOR LOOP",
+      "type": "Media Server",
+      "connectorType": "HDMI 2.0",
+      "resolution": "1920x1080",
+      "notes": "Sponsor loop, silent"
+    },
+    {
+      "name": "CAM 1",
+      "type": "Camera",
+      "connectorType": "12G-SDI",
+      "resolution": "1920x1080",
+      "notes": "Center camera"
+    },
+    {
+      "name": "CAM 2",
+      "type": "Camera",
+      "connectorType": "12G-SDI",
+      "resolution": "1920x1080",
+      "notes": "Audience reaction"
+    },
+    {
+      "name": "LOGO",
+      "type": "Media Server",
+      "connectorType": "HDMI 2.0",
+      "resolution": "1920x1080",
+      "notes": "Show logo"
+    },
+    {
+      "name": "LOWER 3RD",
+      "type": "Media Server",
+      "connectorType": "HDMI 2.0",
+      "resolution": "1920x1080",
+      "notes": "Name keys"
+    }
+  ],
+  "ioDests": [],
+  "wireLayout": {},
+  "wireThumbnails": {},
+  "wireSettings": {
+    "wireView": "simple",
+    "wireStyle": "curved",
+    "panes": {
+      "src": true,
+      "dst": true,
+      "aux": true
+    }
+  },
+  "wireAdvanced": {
+    "sources": [],
+    "dests": [],
+    "dsms": [],
+    "wires": [],
+    "routers": [],
+    "customSources": [],
+    "customDests": [],
+    "customDsms": []
+  },
+  "ioAdvanced": {
+    "view": "simple",
+    "page": 0,
+    "pages": [
+      {
+        "id": "p1",
+        "uid": "xx4geh",
+        "name": "Page 1",
+        "sources": [
+          {
+            "id": "iamu4kifj9c02x",
+            "name": "",
+            "connectorType": "",
+            "customType": "",
+            "resolution": "",
+            "notes": "",
+            "type": ""
+          }
+        ],
+        "dests": [
+          {
+            "id": "iamu4kifj9527j",
+            "name": "",
+            "connectorType": "",
+            "customType": "",
+            "resolution": "",
+            "notes": "",
+            "deviceType": ""
+          }
+        ],
+        "mvs": []
+      },
+      {
+        "id": "p2",
+        "uid": "xpktkw",
+        "name": "Page 2",
+        "sources": [
+          {
+            "id": "iamu4kifj9s574",
+            "name": "",
+            "connectorType": "",
+            "customType": "",
+            "resolution": "",
+            "notes": "",
+            "type": ""
+          }
+        ],
+        "dests": [
+          {
+            "id": "iamu4kifj9y43j",
+            "name": "",
+            "connectorType": "",
+            "customType": "",
+            "resolution": "",
+            "notes": "",
+            "deviceType": ""
+          }
+        ],
+        "mvs": []
+      },
+      {
+        "id": "p3",
+        "uid": "x2kz2q",
+        "name": "Page 3",
+        "sources": [
+          {
+            "id": "iamu4kifj9fp0s",
+            "name": "",
+            "connectorType": "",
+            "customType": "",
+            "resolution": "",
+            "notes": "",
+            "type": ""
+          }
+        ],
+        "dests": [
+          {
+            "id": "iamu4kifj9lgh2",
+            "name": "",
+            "connectorType": "",
+            "customType": "",
+            "resolution": "",
+            "notes": "",
+            "deviceType": ""
+          }
+        ],
+        "mvs": []
+      }
+    ]
+  }
+}

@@ -1,0 +1,576 @@
+{
+  "version": 3,
+  "dsmLabel": "AUX",
+  "showName": "General Session",
+  "showDate": "2026-10-14",
+  "showVenue": "Grand Ballroom",
+  "showMeta": {
+    "client": "Example Corp",
+    "jobNo": "EX-1001",
+    "designer": "AV Educate",
+    "drawnBy": "AVE",
+    "projectVer": "V1",
+    "logo": ""
+  },
+  "canvasW": "5760",
+  "canvasH": "1080",
+  "screens": [
+    {
+      "id": "x9j0fy",
+      "name": "LEFT LED",
+      "w": 1920,
+      "h": 1080,
+      "color": "#1a1a1a",
+      "connectorType": "12G-SDI",
+      "deviceType": "LED",
+      "notes": "2.6 mm, stage left"
+    },
+    {
+      "id": "x9s9nr",
+      "name": "CENTER LED",
+      "w": 1920,
+      "h": 1080,
+      "color": "#1a1a1a",
+      "connectorType": "12G-SDI",
+      "deviceType": "LED",
+      "notes": "2.6 mm, center"
+    },
+    {
+      "id": "xpqn9w",
+      "name": "RIGHT LED",
+      "w": 1920,
+      "h": 1080,
+      "color": "#1a1a1a",
+      "connectorType": "12G-SDI",
+      "deviceType": "LED",
+      "notes": "2.6 mm, stage right"
+    }
+  ],
+  "presets": [
+    {
+      "id": "xtwm1j",
+      "code": "P01",
+      "name": "WALK-IN",
+      "layers": {
+        "x9j0fy": {},
+        "x9s9nr": {},
+        "xpqn9w": {}
+      },
+      "active": {},
+      "positions": {
+        "x9j0fy": {
+          "x": 0,
+          "y": 0
+        },
+        "x9s9nr": {
+          "x": 1920,
+          "y": 0
+        },
+        "xpqn9w": {
+          "x": 3840,
+          "y": 0
+        }
+      },
+      "dsmOn": {
+        "xv5pno": true,
+        "xyw476": true
+      },
+      "notes": "Doors open. Logo on all walls, house music.",
+      "bgNames": {
+        "x9j0fy": "LOGO",
+        "x9s9nr": "LOGO",
+        "xpqn9w": "LOGO"
+      },
+      "colors": {
+        "x9j0fy": "#ff4d5a",
+        "x9s9nr": "#ff4d5a",
+        "xpqn9w": "#ff4d5a"
+      },
+      "bgs": {},
+      "dsmContent": {
+        "xv5pno": "CLOCK",
+        "xyw476": "PGM"
+      },
+      "layerSizes": {}
+    },
+    {
+      "id": "xe6scx",
+      "code": "P02",
+      "name": "WELCOME",
+      "layers": {
+        "x9j0fy": {
+          "1": "CAM 1"
+        },
+        "x9s9nr": {
+          "1": "LOWER 3RD"
+        },
+        "xpqn9w": {
+          "1": "CAM 1"
+        }
+      },
+      "active": {},
+      "positions": {
+        "x9j0fy": {
+          "x": 0,
+          "y": 0
+        },
+        "x9s9nr": {
+          "x": 1920,
+          "y": 0
+        },
+        "xpqn9w": {
+          "x": 3840,
+          "y": 0
+        }
+      },
+      "dsmOn": {
+        "xv5pno": true,
+        "xyw476": true
+      },
+      "notes": "Emcee at podium. IMAG on the sides, logo and name key on center.",
+      "bgNames": {
+        "x9s9nr": "LOGO"
+      },
+      "colors": {
+        "x9s9nr": "#ff4d5a"
+      },
+      "bgs": {},
+      "layerSizes": {
+        "x9s9nr": {
+          "1": {
+            "wf": 1,
+            "hf": 0.22,
+            "xf": 0,
+            "yf": 0.78
+          }
+        },
+        "x9j0fy": {
+          "1": {
+            "wf": 1,
+            "hf": 1,
+            "xf": 0,
+            "yf": 0
+          }
+        },
+        "xpqn9w": {
+          "1": {
+            "wf": 1,
+            "hf": 1,
+            "xf": 0,
+            "yf": 0
+          }
+        }
+      },
+      "dsmContent": {
+        "xv5pno": "PROMPTER",
+        "xyw476": "PGM"
+      }
+    },
+    {
+      "id": "x8vrsj",
+      "code": "P03",
+      "name": "KEYNOTE",
+      "layers": {
+        "x9j0fy": {
+          "1": "CAM 1"
+        },
+        "x9s9nr": {
+          "1": "PPT A"
+        },
+        "xpqn9w": {
+          "1": "CAM 1"
+        }
+      },
+      "active": {},
+      "positions": {
+        "x9j0fy": {
+          "x": 0,
+          "y": 0
+        },
+        "x9s9nr": {
+          "x": 1920,
+          "y": 0
+        },
+        "xpqn9w": {
+          "x": 3840,
+          "y": 0
+        }
+      },
+      "dsmOn": {
+        "xv5pno": true,
+        "xyw476": true
+      },
+      "notes": "Slides center, IMAG sides. PPT B is the hot backup for PPT A.",
+      "bgNames": {},
+      "colors": {},
+      "bgs": {},
+      "dsmContent": {
+        "xv5pno": "NOTES",
+        "xyw476": "PGM"
+      },
+      "layerSizes": {
+        "x9j0fy": {
+          "1": {
+            "wf": 1,
+            "hf": 1,
+            "xf": 0,
+            "yf": 0
+          }
+        },
+        "x9s9nr": {
+          "1": {
+            "wf": 1,
+            "hf": 1,
+            "xf": 0,
+            "yf": 0
+          }
+        },
+        "xpqn9w": {
+          "1": {
+            "wf": 1,
+            "hf": 1,
+            "xf": 0,
+            "yf": 0
+          }
+        }
+      }
+    },
+    {
+      "id": "xe39fd",
+      "code": "P04",
+      "name": "PANEL",
+      "layers": {
+        "x9j0fy": {
+          "1": "CAM 2"
+        },
+        "x9s9nr": {
+          "1": "PPT A"
+        },
+        "xpqn9w": {
+          "1": "CAM 1"
+        }
+      },
+      "active": {},
+      "positions": {
+        "x9j0fy": {
+          "x": 0,
+          "y": 0
+        },
+        "x9s9nr": {
+          "x": 1920,
+          "y": 0
+        },
+        "xpqn9w": {
+          "x": 3840,
+          "y": 0
+        }
+      },
+      "dsmOn": {
+        "xv5pno": true,
+        "xyw476": true
+      },
+      "notes": "Four chairs. Wide two-shot house left, tight house right.",
+      "bgNames": {},
+      "colors": {},
+      "bgs": {},
+      "dsmContent": {
+        "xv5pno": "CLOCK",
+        "xyw476": "PGM"
+      },
+      "layerSizes": {
+        "x9j0fy": {
+          "1": {
+            "wf": 1,
+            "hf": 1,
+            "xf": 0,
+            "yf": 0
+          }
+        },
+        "x9s9nr": {
+          "1": {
+            "wf": 1,
+            "hf": 1,
+            "xf": 0,
+            "yf": 0
+          }
+        },
+        "xpqn9w": {
+          "1": {
+            "wf": 1,
+            "hf": 1,
+            "xf": 0,
+            "yf": 0
+          }
+        }
+      }
+    },
+    {
+      "id": "xtf78t",
+      "code": "P05",
+      "name": "VIDEO",
+      "layers": {
+        "x9j0fy": {},
+        "x9s9nr": {},
+        "xpqn9w": {}
+      },
+      "active": {},
+      "positions": {
+        "x9j0fy": {
+          "x": 0,
+          "y": 0
+        },
+        "x9s9nr": {
+          "x": 1920,
+          "y": 0
+        },
+        "xpqn9w": {
+          "x": 3840,
+          "y": 0
+        }
+      },
+      "dsmOn": {
+        "xv5pno": true,
+        "xyw476": true
+      },
+      "notes": "Full-bleed playback on all three walls. Audio from playback.",
+      "bgNames": {
+        "x9j0fy": "PLAYBACK",
+        "x9s9nr": "PLAYBACK",
+        "xpqn9w": "PLAYBACK"
+      },
+      "colors": {
+        "x9j0fy": "#1d6244",
+        "x9s9nr": "#1d6244",
+        "xpqn9w": "#1d6244"
+      },
+      "bgs": {},
+      "dsmContent": {
+        "xv5pno": "CLOCK",
+        "xyw476": "PGM"
+      },
+      "layerSizes": {}
+    }
+  ],
+  "customLibrary": [
+    {
+      "l": "PPT A",
+      "c": "#3b82f6"
+    },
+    {
+      "l": "PPT B",
+      "c": "#2563eb"
+    },
+    {
+      "l": "CAM 1",
+      "c": "#e05a4f"
+    },
+    {
+      "l": "CAM 2",
+      "c": "#b03a30"
+    }
+  ],
+  "customTypes": {
+    "machines": [],
+    "devices": []
+  },
+  "dsms": [
+    {
+      "id": "xv5pno",
+      "name": "DSM 1",
+      "w": 1920,
+      "h": 1080,
+      "connectorType": "HDMI 2.0",
+      "deviceType": "Monitor",
+      "notes": "Downstage confidence monitor"
+    },
+    {
+      "id": "xyw476",
+      "name": "AUX 1",
+      "w": 1920,
+      "h": 1080,
+      "connectorType": "12G-SDI",
+      "deviceType": "Stream",
+      "notes": "Program feed to record / stream"
+    }
+  ],
+  "multiviewers": [
+    {
+      "id": "xt28yx",
+      "name": "MV 1",
+      "connectorType": "MV",
+      "resolution": "1920x1080",
+      "deviceType": "Monitor",
+      "notes": "Operator monitor"
+    }
+  ],
+  "sources": [
+    {
+      "name": "PPT A",
+      "type": "PC",
+      "connectorType": "HDMI 2.0",
+      "resolution": "1920x1080",
+      "notes": "Presenter laptop A"
+    },
+    {
+      "name": "PPT B",
+      "type": "PC",
+      "connectorType": "HDMI 2.0",
+      "resolution": "1920x1080",
+      "notes": "Presenter laptop B, backup of PPT A"
+    },
+    {
+      "name": "CAM 1",
+      "type": "Camera",
+      "connectorType": "12G-SDI",
+      "resolution": "1920x1080",
+      "notes": "Center camera, IMAG"
+    },
+    {
+      "name": "CAM 2",
+      "type": "Camera",
+      "connectorType": "12G-SDI",
+      "resolution": "1920x1080",
+      "notes": "House left camera"
+    },
+    {
+      "name": "PLAYBACK",
+      "type": "Media Server",
+      "connectorType": "12G-SDI",
+      "resolution": "1920x1080",
+      "notes": "Walk-in loop and videos"
+    },
+    {
+      "name": "LOGO",
+      "type": "Media Server",
+      "connectorType": "HDMI 2.0",
+      "resolution": "1920x1080",
+      "notes": "Event logo, still"
+    },
+    {
+      "name": "PROMPTER",
+      "type": "Teleprompter",
+      "connectorType": "3G-SDI",
+      "resolution": "1920x1080",
+      "notes": "Prompter feed for DSM"
+    },
+    {
+      "name": "LOWER 3RD",
+      "type": "Media Server",
+      "connectorType": "HDMI 2.0",
+      "resolution": "1920x1080",
+      "notes": "Name keys"
+    }
+  ],
+  "ioDests": [],
+  "wireLayout": {},
+  "wireThumbnails": {},
+  "wireSettings": {
+    "wireView": "simple",
+    "wireStyle": "curved",
+    "panes": {
+      "src": true,
+      "dst": true,
+      "aux": true
+    }
+  },
+  "wireAdvanced": {
+    "sources": [],
+    "dests": [],
+    "dsms": [],
+    "wires": [],
+    "routers": [],
+    "customSources": [],
+    "customDests": [],
+    "customDsms": []
+  },
+  "ioAdvanced": {
+    "view": "simple",
+    "page": 0,
+    "pages": [
+      {
+        "id": "p1",
+        "uid": "xe4ugo",
+        "name": "Page 1",
+        "sources": [
+          {
+            "id": "iamu4kif6d7vdm",
+            "name": "",
+            "connectorType": "",
+            "customType": "",
+            "resolution": "",
+            "notes": "",
+            "type": ""
+          }
+        ],
+        "dests": [
+          {
+            "id": "iamu4kif6dxyex",
+            "name": "",
+            "connectorType": "",
+            "customType": "",
+            "resolution": "",
+            "notes": "",
+            "deviceType": ""
+          }
+        ],
+        "mvs": []
+      },
+      {
+        "id": "p2",
+        "uid": "xidrca",
+        "name": "Page 2",
+        "sources": [
+          {
+            "id": "iamu4kif6dgywh",
+            "name": "",
+            "connectorType": "",
+            "customType": "",
+            "resolution": "",
+            "notes": "",
+            "type": ""
+          }
+        ],
+        "dests": [
+          {
+            "id": "iamu4kif6d3urm",
+            "name": "",
+            "connectorType": "",
+            "customType": "",
+            "resolution": "",
+            "notes": "",
+            "deviceType": ""
+          }
+        ],
+        "mvs": []
+      },
+      {
+        "id": "p3",
+        "uid": "x7rm37",
+        "name": "Page 3",
+        "sources": [
+          {
+            "id": "iamu4kif6d2jab",
+            "name": "",
+            "connectorType": "",
+            "customType": "",
+            "resolution": "",
+            "notes": "",
+            "type": ""
+          }
+        ],
+        "dests": [
+          {
+            "id": "iamu4kif6dfqdz",
+            "name": "",
+            "connectorType": "",
+            "customType": "",
+            "resolution": "",
+            "notes": "",
+            "deviceType": ""
+          }
+        ],
+        "mvs": []
+      }
+    ]
+  }
+}

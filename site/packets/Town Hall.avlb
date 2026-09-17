@@ -1,0 +1,508 @@
+{
+  "version": 3,
+  "dsmLabel": "AUX",
+  "showName": "Town Hall",
+  "showDate": "2026-10-02",
+  "showVenue": "HQ Auditorium",
+  "showMeta": {
+    "client": "Example Corp",
+    "jobNo": "EX-1003",
+    "designer": "AV Educate",
+    "drawnBy": "AVE",
+    "projectVer": "V1",
+    "logo": ""
+  },
+  "canvasW": "3840",
+  "canvasH": "1080",
+  "screens": [
+    {
+      "id": "x2jidq",
+      "name": "MAIN LED",
+      "w": 1920,
+      "h": 1080,
+      "color": "#1a1a1a",
+      "connectorType": "12G-SDI",
+      "deviceType": "LED",
+      "notes": "Auditorium wall"
+    },
+    {
+      "id": "xl3rba",
+      "name": "OVERFLOW",
+      "w": 1920,
+      "h": 1080,
+      "color": "#1a1a1a",
+      "connectorType": "HDMI 2.0",
+      "deviceType": "Monitor",
+      "notes": "Lobby overflow displays, mirrors main"
+    }
+  ],
+  "presets": [
+    {
+      "id": "xdruuy",
+      "code": "P01",
+      "name": "WALK-IN",
+      "layers": {
+        "x2jidq": {},
+        "xl3rba": {}
+      },
+      "active": {},
+      "positions": {
+        "x2jidq": {
+          "x": 0,
+          "y": 0
+        },
+        "xl3rba": {
+          "x": 1920,
+          "y": 0
+        }
+      },
+      "dsmOn": {
+        "xi6ipp": true,
+        "x9tvlp": true
+      },
+      "notes": "Logo on the wall and overflow.",
+      "bgNames": {
+        "x2jidq": "LOGO",
+        "xl3rba": "LOGO"
+      },
+      "colors": {
+        "x2jidq": "#ff4d5a",
+        "xl3rba": "#ff4d5a"
+      },
+      "bgs": {},
+      "dsmContent": {
+        "xi6ipp": "CLOCK",
+        "x9tvlp": "PGM"
+      },
+      "layerSizes": {}
+    },
+    {
+      "id": "xx80ap",
+      "code": "P02",
+      "name": "CEO ADDRESS",
+      "layers": {
+        "x2jidq": {
+          "1": "CAM 1"
+        },
+        "xl3rba": {
+          "1": "CAM 1"
+        }
+      },
+      "active": {},
+      "positions": {
+        "x2jidq": {
+          "x": 0,
+          "y": 0
+        },
+        "xl3rba": {
+          "x": 1920,
+          "y": 0
+        }
+      },
+      "dsmOn": {
+        "xi6ipp": true,
+        "x9tvlp": true
+      },
+      "notes": "Slides full with the CEO in a PIP bottom right. Overflow mirrors main.",
+      "bgNames": {
+        "x2jidq": "CEO PPT",
+        "xl3rba": "CEO PPT"
+      },
+      "colors": {
+        "x2jidq": "#3b82f6",
+        "xl3rba": "#3b82f6"
+      },
+      "bgs": {},
+      "layerSizes": {
+        "x2jidq": {
+          "1": {
+            "wf": 0.3,
+            "hf": 0.3,
+            "xf": 0.68,
+            "yf": 0.66
+          }
+        },
+        "xl3rba": {
+          "1": {
+            "wf": 0.3,
+            "hf": 0.3,
+            "xf": 0.68,
+            "yf": 0.66
+          }
+        }
+      },
+      "dsmContent": {
+        "xi6ipp": "PROMPTER",
+        "x9tvlp": "PGM"
+      }
+    },
+    {
+      "id": "xt8jqa",
+      "code": "P03",
+      "name": "REMOTE GUEST",
+      "layers": {
+        "x2jidq": {
+          "1": "TEAMS",
+          "2": "LOWER 3RD"
+        },
+        "xl3rba": {
+          "1": "TEAMS"
+        }
+      },
+      "active": {},
+      "positions": {
+        "x2jidq": {
+          "x": 0,
+          "y": 0
+        },
+        "xl3rba": {
+          "x": 1920,
+          "y": 0
+        }
+      },
+      "dsmOn": {
+        "xi6ipp": true,
+        "x9tvlp": true
+      },
+      "notes": "Teams full with a name key.",
+      "bgNames": {},
+      "colors": {},
+      "bgs": {},
+      "layerSizes": {
+        "x2jidq": {
+          "2": {
+            "wf": 1,
+            "hf": 0.22,
+            "xf": 0,
+            "yf": 0.78
+          },
+          "1": {
+            "wf": 1,
+            "hf": 1,
+            "xf": 0,
+            "yf": 0
+          }
+        },
+        "xl3rba": {
+          "1": {
+            "wf": 1,
+            "hf": 1,
+            "xf": 0,
+            "yf": 0
+          }
+        }
+      },
+      "dsmContent": {
+        "xi6ipp": "NOTES",
+        "x9tvlp": "PGM"
+      }
+    },
+    {
+      "id": "x00lrf",
+      "code": "P04",
+      "name": "Q&A",
+      "layers": {
+        "x2jidq": {
+          "1": "HANDYCAM"
+        },
+        "xl3rba": {
+          "1": "HANDYCAM"
+        }
+      },
+      "active": {},
+      "positions": {
+        "x2jidq": {
+          "x": 0,
+          "y": 0
+        },
+        "xl3rba": {
+          "x": 1920,
+          "y": 0
+        }
+      },
+      "dsmOn": {
+        "xi6ipp": true,
+        "x9tvlp": true
+      },
+      "notes": "Audience camera full.",
+      "bgNames": {},
+      "colors": {},
+      "bgs": {},
+      "dsmContent": {
+        "xi6ipp": "CLOCK",
+        "x9tvlp": "PGM"
+      },
+      "layerSizes": {
+        "x2jidq": {
+          "1": {
+            "wf": 1,
+            "hf": 1,
+            "xf": 0,
+            "yf": 0
+          }
+        },
+        "xl3rba": {
+          "1": {
+            "wf": 1,
+            "hf": 1,
+            "xf": 0,
+            "yf": 0
+          }
+        }
+      }
+    },
+    {
+      "id": "xgdgl4",
+      "code": "P05",
+      "name": "VIDEO",
+      "layers": {
+        "x2jidq": {},
+        "xl3rba": {}
+      },
+      "active": {},
+      "positions": {
+        "x2jidq": {
+          "x": 0,
+          "y": 0
+        },
+        "xl3rba": {
+          "x": 1920,
+          "y": 0
+        }
+      },
+      "dsmOn": {
+        "xi6ipp": true,
+        "x9tvlp": true
+      },
+      "notes": "Recap video, full bleed.",
+      "bgNames": {
+        "x2jidq": "PLAYBACK",
+        "xl3rba": "PLAYBACK"
+      },
+      "colors": {
+        "x2jidq": "#1d6244",
+        "xl3rba": "#1d6244"
+      },
+      "bgs": {},
+      "dsmContent": {
+        "xi6ipp": "CLOCK",
+        "x9tvlp": "PGM"
+      },
+      "layerSizes": {}
+    }
+  ],
+  "customLibrary": [
+    {
+      "l": "CEO PPT",
+      "c": "#3b82f6"
+    },
+    {
+      "l": "CAM 1",
+      "c": "#e05a4f"
+    }
+  ],
+  "customTypes": {
+    "machines": [],
+    "devices": []
+  },
+  "dsms": [
+    {
+      "id": "xi6ipp",
+      "name": "DSM 1",
+      "w": 1920,
+      "h": 1080,
+      "connectorType": "HDMI 2.0",
+      "deviceType": "Monitor",
+      "notes": "CEO confidence monitor"
+    },
+    {
+      "id": "x9tvlp",
+      "name": "AUX 1",
+      "w": 1920,
+      "h": 1080,
+      "connectorType": "12G-SDI",
+      "deviceType": "Stream",
+      "notes": "Program to the hybrid stream"
+    }
+  ],
+  "multiviewers": [
+    {
+      "id": "x2njuy",
+      "name": "MV 1",
+      "connectorType": "MV",
+      "resolution": "1920x1080",
+      "deviceType": "Monitor",
+      "notes": "Operator monitor"
+    }
+  ],
+  "sources": [
+    {
+      "name": "CEO PPT",
+      "type": "PC",
+      "connectorType": "HDMI 2.0",
+      "resolution": "1920x1080",
+      "notes": "Exec laptop"
+    },
+    {
+      "name": "CAM 1",
+      "type": "Camera",
+      "connectorType": "12G-SDI",
+      "resolution": "1920x1080",
+      "notes": "Podium camera"
+    },
+    {
+      "name": "HANDYCAM",
+      "type": "Camera",
+      "connectorType": "3G-SDI",
+      "resolution": "1920x1080",
+      "notes": "Audience Q&A camera"
+    },
+    {
+      "name": "TEAMS",
+      "type": "PC",
+      "connectorType": "HDMI 2.0",
+      "resolution": "1920x1080",
+      "notes": "Remote guests via Teams"
+    },
+    {
+      "name": "PROMPTER",
+      "type": "Teleprompter",
+      "connectorType": "3G-SDI",
+      "resolution": "1920x1080",
+      "notes": "Prompter feed"
+    },
+    {
+      "name": "LOGO",
+      "type": "Media Server",
+      "connectorType": "HDMI 2.0",
+      "resolution": "1920x1080",
+      "notes": "Company logo"
+    },
+    {
+      "name": "PLAYBACK",
+      "type": "Media Server",
+      "connectorType": "12G-SDI",
+      "resolution": "1920x1080",
+      "notes": "Quarter recap video"
+    },
+    {
+      "name": "LOWER 3RD",
+      "type": "Media Server",
+      "connectorType": "HDMI 2.0",
+      "resolution": "1920x1080",
+      "notes": "Name keys"
+    }
+  ],
+  "ioDests": [],
+  "wireLayout": {},
+  "wireThumbnails": {},
+  "wireSettings": {
+    "wireView": "simple",
+    "wireStyle": "curved",
+    "panes": {
+      "src": true,
+      "dst": true,
+      "aux": true
+    }
+  },
+  "wireAdvanced": {
+    "sources": [],
+    "dests": [],
+    "dsms": [],
+    "wires": [],
+    "routers": [],
+    "customSources": [],
+    "customDests": [],
+    "customDsms": []
+  },
+  "ioAdvanced": {
+    "view": "simple",
+    "page": 0,
+    "pages": [
+      {
+        "id": "p1",
+        "uid": "xmz5g6",
+        "name": "Page 1",
+        "sources": [
+          {
+            "id": "iamu4kifw5mdu4",
+            "name": "",
+            "connectorType": "",
+            "customType": "",
+            "resolution": "",
+            "notes": "",
+            "type": ""
+          }
+        ],
+        "dests": [
+          {
+            "id": "iamu4kifw5lge1",
+            "name": "",
+            "connectorType": "",
+            "customType": "",
+            "resolution": "",
+            "notes": "",
+            "deviceType": ""
+          }
+        ],
+        "mvs": []
+      },
+      {
+        "id": "p2",
+        "uid": "xhzxog",
+        "name": "Page 2",
+        "sources": [
+          {
+            "id": "iamu4kifw5y4h7",
+            "name": "",
+            "connectorType": "",
+            "customType": "",
+            "resolution": "",
+            "notes": "",
+            "type": ""
+          }
+        ],
+        "dests": [
+          {
+            "id": "iamu4kifw5lyu7",
+            "name": "",
+            "connectorType": "",
+            "customType": "",
+            "resolution": "",
+            "notes": "",
+            "deviceType": ""
+          }
+        ],
+        "mvs": []
+      },
+      {
+        "id": "p3",
+        "uid": "xlfyxc",
+        "name": "Page 3",
+        "sources": [
+          {
+            "id": "iamu4kifw5c64p",
+            "name": "",
+            "connectorType": "",
+            "customType": "",
+            "resolution": "",
+            "notes": "",
+            "type": ""
+          }
+        ],
+        "dests": [
+          {
+            "id": "iamu4kifw5h5lp",
+            "name": "",
+            "connectorType": "",
+            "customType": "",
+            "resolution": "",
+            "notes": "",
+            "deviceType": ""
+          }
+        ],
+        "mvs": []
+      }
+    ]
+  }
+}
