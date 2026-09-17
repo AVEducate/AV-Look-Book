@@ -41,6 +41,7 @@ contextBridge.exposeInMainWorld('lookbookNative', {
     // Bring the Welcome window back.
     welcome: () => ipcRenderer.invoke('lb:welcome:show'),
     // Send show: { show, html, xlsxB64, avlb, downloadUrl, mode? } → { ok, mailed, folder, files }
+    // 16jk Report a bug: { kind:'bug', show, avlb, fileName, to, subject, body } → same shape (only the .avlb is written)
     sendShow: (payload) => ipcRenderer.invoke('lb:project:sendShow', payload)
   },
   // Menu commands from the shell: 'save' | 'saveAs'

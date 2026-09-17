@@ -592,13 +592,13 @@ async function renderLookBookPdf(html){
     return await w.webContents.printToPDF({ printBackground: true, preferCSSPageSize: true });
   } finally { try { w.destroy(); } catch (e) {} try { fs.unlinkSync(tmp); } catch (e) {} }
 }
-function mailViaAppleMail(subject, body, files){
+function mailViaAppleMail(subject, body, files, to){
   const esc = v => String(v).replace(/\\/g, '\\\\').replace(/"/g, '\\"');
   const content = esc(body).split('\n').join('" & return & "');
   const attach = files.map(f => '    make new attachment with properties {file name:POSIX file "' + esc(f) + '"} at after the last paragraph').join('\n');
   const script = 'tell application "Mail"\n'
     + '  set m to make new outgoing message with properties {subject:"' + esc(subject) + '", content:"' + content + '" & return & return, visible:true}\n'
-    + '  tell m\n' + attach + '\n  end tell\n'
+    + '  tell m\n' + (to ? '    make new to recipient at end of to recipients with properties {address:"' + esc(to) + '"}\n' : '') + attach + '\n  end tell\n'
     + '  activate\n'
     + 'end tell';
   return new Promise(res => { execFile('osascript', ['-e', script], { timeout: 25000 }, (err) => { if (err) console.log('[lb] Apple Mail hand-off failed:', err.message); res(!err); }); });
@@ -608,15 +608,16 @@ ipcMain.handle('lb:project:sendShow', async (e, p) => {
   try {
     const showRaw = String(p.show || 'Untitled Show').trim() || 'Untitled Show';
     const show = safeFileName(showRaw);
-    const dir = path.join(projectsDir(), 'Outbox', show + ' ' + stampNow());
+    const isBug = p.kind === 'bug';   // 16jk: Report a bug — only the .avlb, addressed to AVE, text from the app
+    const dir = path.join(projectsDir(), 'Outbox', (isBug ? 'Bug report - ' : '') + show + ' ' + stampNow());
     fs.mkdirSync(dir, { recursive: true });
     const files = [];
     if (p.html) { const f = path.join(dir, show + ' - Look Book.pdf'); fs.writeFileSync(f, await renderLookBookPdf(String(p.html))); files.push(f); }
     if (p.xlsxB64) { const f = path.join(dir, show + ' - Cue Sheet.xlsx'); fs.writeFileSync(f, Buffer.from(String(p.xlsxB64), 'base64')); files.push(f); }
-    if (p.avlb) { const f = path.join(dir, show + ' (open with AV Look Book).avlb'); fs.writeFileSync(f, String(p.avlb), 'utf8'); files.push(f); }
+    if (p.avlb) { const f = path.join(dir, isBug ? String(p.fileName || (show + '.avlb')).replace(/[\\/:]/g, '_') : show + ' (open with AV Look Book).avlb'); fs.writeFileSync(f, String(p.avlb), 'utf8'); files.push(f); }
     const link = p.downloadUrl || DOWNLOAD_PAGE_URL;
-    const subject = 'Look Book — ' + showRaw;
-    const body = [
+    const subject = isBug ? String(p.subject || ('AV Look Book bug report — ' + showRaw)) : 'Look Book — ' + showRaw;
+    const body = isBug ? String(p.body || '') : [
       'Hi,',
       '',
       'Here’s the look book for “' + showRaw + '”. Attached:',
@@ -629,10 +630,10 @@ ipcMain.handle('lb:project:sendShow', async (e, p) => {
     ].join('\n');
     let mailed = false;
     if (p.mode !== 'files') {
-      if (process.platform === 'darwin') mailed = await mailViaAppleMail(subject, body, files);
+      if (process.platform === 'darwin') mailed = await mailViaAppleMail(subject, body, files, isBug ? String(p.to || '') : '');
       if (!mailed) {
         try { clipboard.writeText(body); } catch (err) {}
-        try { await shell.openExternal('mailto:?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body)); } catch (err) {}
+        try { await shell.openExternal('mailto:' + (isBug ? String(p.to || '') : '') + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body)); } catch (err) {}
         if (files[0]) shell.showItemInFolder(files[0]);
       }
     }
