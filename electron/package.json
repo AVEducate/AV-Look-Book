@@ -1,7 +1,7 @@
 {
   "name": "av-look-book-desktop",
-  "version": "0.2.124",
-  "description": "AV Look Book \u2014 desktop shell (Electron; one-home loader with GitHub Release content updates)",
+  "version": "0.2.125",
+  "description": "AV Look Book — desktop shell (Electron; one-home loader with GitHub Release content updates)",
   "author": "AV Educate <Info@aveducate.com>",
   "license": "UNLICENSED",
   "main": "main.js",
@@ -47,7 +47,28 @@
             "x64"
           ]
         }
-      ]
+      ],
+      "extendInfo": {
+        "UTExportedTypeDeclarations": [
+          {
+            "UTTypeIdentifier": "com.aveducate.avlookbook.project",
+            "UTTypeDescription": "AV Look Book Project",
+            "UTTypeConformsTo": [
+              "public.json",
+              "public.data"
+            ],
+            "UTTypeIconFile": "avlb.icns",
+            "UTTypeTagSpecification": {
+              "public.filename-extension": [
+                "avlb"
+              ],
+              "public.mime-type": [
+                "application/x-avlookbook"
+              ]
+            }
+          }
+        ]
+      }
     },
     "win": {
       "icon": "build/icon.ico",
@@ -78,7 +99,8 @@
         "ext": "avlb",
         "name": "AV Look Book Project",
         "description": "AV Look Book Project",
-        "role": "Editor"
+        "role": "Editor",
+        "icon": "build/avlb.icns"
       }
     ],
     "dmg": {
