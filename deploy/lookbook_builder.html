@@ -1304,6 +1304,9 @@ button[onclick="_wireDownloadAllThumbnails()"]:hover::before{filter:brightness(1
 #wire-overlay .wire-cable-btn.set.ndi,#wire-overlay .wire-cable-btn.set.fiber,#wire-overlay .wire-cable-btn.set.st2110{color:var(--n-cyan)}
 #wire-overlay .wire-cable-btn.set.dante{color:var(--n-orange)}
 #wire-overlay .wire-cable-btn.set.mv{color:var(--n-yellow)}
+#wire-overlay .wire-cable-btn.set.ethernet{color:#5aa9ff}
+#wire-overlay .wire-cable-btn.set.genlock{color:#c3ccd8}
+#wire-overlay .wire-cable-btn.set.ltc{color:#ff4e8b}
 #wire-overlay .wire-cable-btn-label{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 #wire-overlay .wire-cable-btn-chev{flex-shrink:0;color:var(--text3);display:inline-flex}
 /* 16ei: Details — Cable Colour Code key */
@@ -1426,6 +1429,25 @@ body.is-mobile #wire-overlay #wire-align-panel{display:none !important}
 #wire-overlay .wire-router-grid input:focus{outline:1px solid rgba(var(--n-cyan-rgb),.5);background:rgba(var(--n-cyan-rgb),.06)}
 #wire-overlay .wire-router-grid select{background:#0a0e16;border:1px solid rgba(255,255,255,0.1);color:var(--text);font-family:inherit;font-size:inherit;outline:none;width:100%;height:18px;padding:0 4px;cursor:pointer;border-radius:3px;line-height:1;box-sizing:border-box}
 #wire-overlay .wire-router-grid select:focus{border-color:var(--n-cyan)}
+/* 16jd: converter / network-switch device tiles (Omar, Sibos drawing) — router chrome, smaller rows, a cable type per port */
+#wire-overlay .wire-device-tile{border-color:rgba(90,169,255,.45)}
+#wire-overlay .wire-device-tile.selected{border-color:#5aa9ff;box-shadow:0 0 14px rgba(90,169,255,.4)}
+#wire-overlay .wire-device-tile:hover{border-color:rgba(90,169,255,.75)}
+#wire-overlay .wire-device-title{height:44px;font-size:15px;letter-spacing:.12em;border-bottom-color:rgba(90,169,255,.3)}
+#wire-overlay .wire-device-title input{height:34px}
+#wire-overlay .wire-device-title input::placeholder{color:rgba(232,232,234,.32);letter-spacing:.12em}
+#wire-overlay .wire-device-grid{grid-template-columns:1fr 1fr !important;grid-auto-rows:36px;font-size:13px}
+#wire-overlay .wire-device-grid.one{grid-template-columns:1fr !important}
+#wire-overlay .wire-device-grid .r-hdr{height:36px;font-size:12px;letter-spacing:.08em;background:#d6e4f5}
+#wire-overlay .wire-device-grid .rc{height:36px;padding:0 6px;gap:6px;font-size:13px;display:flex;align-items:center}
+#wire-overlay .wire-device-grid .rc input.dv-name{height:28px;font-size:13px;flex:1;min-width:0;width:auto}
+#wire-overlay .wire-device-grid .rc input.dv-name::placeholder{color:var(--text3);font-style:italic}
+#wire-overlay .wire-device-grid .dv-conn{width:104px;flex-shrink:0;height:24px;font-size:10px}
+#wire-overlay .wire-device-grid .dv-x{flex-shrink:0;width:20px;height:20px;border:none;border-radius:4px;background:transparent;color:var(--text3);font-size:14px;line-height:1;cursor:pointer;padding:0;font-family:inherit}
+#wire-overlay .wire-device-grid .dv-x:hover{background:rgba(255,80,80,.18);color:#ff6b6b}
+#wire-overlay .wire-device-grid .dv-foot{display:flex;align-items:center;justify-content:center;height:36px;border-right:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02)}
+#wire-overlay .wire-device-grid .dv-add{height:22px;padding:0 12px;border:1px solid rgba(90,169,255,.45);border-radius:11px;background:transparent;color:#5aa9ff;font-size:11px;font-weight:700;letter-spacing:.06em;cursor:pointer;font-family:inherit;line-height:1}
+#wire-overlay .wire-device-grid .dv-add:hover{background:rgba(90,169,255,.14)}
 
 /* 2026-06-04: blend zone double-click popup */
 .blend-popup{position:fixed;z-index:9999;background:linear-gradient(180deg,#161a22 0%,#0a0e16 100%);border:1px solid rgba(255,138,61,.4);border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.6),0 0 16px rgba(255,138,61,.2);padding:14px 14px 12px;min-width:220px;font-family:inherit;color:var(--text)}
@@ -1720,6 +1742,9 @@ body.is-mobile .sys-btn{min-height:var(--ss-touch)}
 .sys-pill.ndi,.sys-pill.fiber,.sys-pill.st2110{color:var(--n-cyan)}
 .sys-pill.dante{color:var(--n-orange)}
 .sys-pill.mv{color:var(--n-yellow)}
+.sys-pill.ethernet{color:#5aa9ff}
+.sys-pill.genlock{color:#c3ccd8}
+.sys-pill.ltc{color:#ff4e8b}
 .sys-chip{display:inline-flex;align-items:center;padding:4px 10px;border-radius:8px;font-size:10px;font-weight:700;letter-spacing:.06em;border:1px solid var(--n-line);background:#1a1f28;white-space:nowrap}
 .sys-chip.dsm{color:var(--n-amber);border-color:rgba(240,192,96,0.4);background:rgba(240,192,96,0.07)}
 .sys-chip.mv{color:var(--n-yellow);border-color:rgba(255,224,74,0.4);background:rgba(255,224,74,0.07)}
@@ -4002,7 +4027,7 @@ Also called DSM (Downstage Monitor) in broadcast and theater workflows, same thi
   <div class="bb-cell bb-pill bb-cyan" title="The largest number of layers used in any single preset, this is the figure to compare against your switcher's per-scene layer budget. (The most complex single moment in the show.)"><span class="bb-label">Layers</span><strong id="bb-layers">0</strong></div>
   <div id="bb-spacer"></div>
   <div class="bb-cell" id="bb-sel" style="font-size:10px;opacity:.5">—</div>
-  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy, hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16jc</div>
+  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy, hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16jd</div>
   <button class="bb-util" id="tb-adv" onclick="actions.advancedMenu(event)" title="Advanced features (AOI, Free Mode, Blend Zones, Dead Space)" aria-label="Advanced features (AOI, Free Mode, Blend Zones, Dead Space)" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Advanced<span class="adv-count" aria-hidden="true"></span><svg aria-hidden="true" id="tb-adv-chev" viewBox="0 0 10 10" fill="currentColor" width="8" height="8" style="opacity:.7"><path d="M2 4l3 3 3-3z"/></svg></button>
   <button class="bb-util" onclick="actions.help()" title="Help, quick reference, keyboard shortcuts, glossary, accessibility" aria-label="Help, quick reference, keyboard shortcuts, glossary, accessibility" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="4.93" y1="4.93" x2="9.17" y2="9.17"/><line x1="14.83" y1="14.83" x2="19.07" y2="19.07"/><line x1="14.83" y1="9.17" x2="19.07" y2="4.93"/><line x1="4.93" y1="19.07" x2="9.17" y2="14.83"/></svg>Help</button>
   <button class="bb-util" id="lb-skin-btn" onclick="lbToggleSkinMenu(event)" title="Color skin" aria-label="Change color skin" style="height:100%;padding:0 13px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="13.5" cy="6.5" r=".6" fill="currentColor" stroke="none"/><circle cx="17" cy="10.5" r=".6" fill="currentColor" stroke="none"/><circle cx="8.5" cy="7.5" r=".6" fill="currentColor" stroke="none"/><circle cx="6.5" cy="12" r=".6" fill="currentColor" stroke="none"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c.93 0 1.65-.75 1.65-1.69 0-.44-.18-.83-.44-1.12-.29-.29-.44-.65-.44-1.13a1.65 1.65 0 0 1 1.67-1.67h1.97c3.05 0 5.55-2.5 5.55-5.55C21.95 6.01 17.45 2 12 2z"/></svg></button>
@@ -4606,7 +4631,7 @@ Also called DSM (Downstage Monitor) in broadcast and theater workflows, same thi
     </div>
     <div id="help-online" style="display:flex;flex-wrap:wrap;gap:6px 18px;align-items:center;padding:9px 24px;border-bottom:1px solid var(--n-line);font-size:11px;color:#8a93a8;flex-shrink:0"><span style="font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase">Online</span><a href="https://www.aveducate.com/feedback" target="_blank" rel="noopener" style="color:var(--n-cyan);text-decoration:none">Feedback &amp; vote on what we build next</a><a href="https://www.aveducate.com/support" target="_blank" rel="noopener" style="color:var(--n-cyan);text-decoration:none">Support The AVE Mission</a><span style="color:#5d6575">AV Educate Inc is a 501(c)(3) nonprofit</span></div>
     <div id="hpanel-ref" style="overflow-y:auto;padding:20px 24px 24px;max-height:calc(90vh - 150px);min-height:calc(90vh - 150px)">
-      <div style="display:flex;flex-direction:column;gap:0"><div style="font-size:10px;font-weight:700;color:#8a93a8;letter-spacing:.08em;text-transform:uppercase;padding:10px 0 4px;border-bottom:1px solid #252830;margin-bottom:8px;margin-top:0px">The Basics</div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Show</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">The top-level project. One show file (<code>.avlb</code>) holds all screens, presets, DSM outputs, and settings for a single event.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Screen / Destination</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">A physical display output, IMAG, LED wall, confidence monitor, etc. Each has a name, resolution, and position on the canvas.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Preset</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">One look or moment in the show. A preset defines what content appears on every screen simultaneously. Think of it as one row in your runsheet.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">P-Code</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">The short identifier for a preset (P01, P02…). Used in the table, exports, and show calling.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Layer (L1–L64)</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Up to 64 content sources can be assigned per destination per preset. L1 is the primary source, higher layers sit on top.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Content Type</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">What is playing on a layer, IMAG, CAM, GFX, PROMPTER, etc. Each type has a colour used throughout the UI.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">DSM / AUX</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Downstage monitor or auxiliary output, a separate feed sent to a specific destination (confidence monitor, broadcast, record, etc.). Switched per preset in the AUX band under each preset tile.</div></div><div style="font-size:10px;font-weight:700;color:#8a93a8;letter-spacing:.08em;text-transform:uppercase;padding:10px 0 4px;border-bottom:1px solid #252830;margin-bottom:8px;margin-top:6px">Canvas, Video Presets</div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Canvas</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">The visual representation of your total output resolution. All destinations sit inside it side by side.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Destination box</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Drag a corner handle to resize, adjacent destinations shift automatically. Click to select, then <b style="color:#c8dff5">Arrow keys</b> resize 1px (<b style="color:#c8dff5">Shift + Arrow</b> = 10px).</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Layer chip</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Coloured rectangle inside a destination box representing an active layer. Click to open Layer Properties (Simple). Double-click for Advanced (with crop).</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Overlap hatch</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Orange diagonal pattern between two destinations that share canvas area, indicates a blend zone.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Dead space arrow</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Blue double-headed arrow between destinations with a gap, shows the pixel distance of unused canvas.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Preset header</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Double-click the background of the header bar to collapse/expand. Double-clicking inside a text field selects text as normal.</div></div><div style="font-size:10px;font-weight:700;color:#8a93a8;letter-spacing:.08em;text-transform:uppercase;padding:10px 0 4px;border-bottom:1px solid #252830;margin-bottom:8px;margin-top:6px">Layers, Detail</div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Assigning content</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Click a layer cell in the table or a chip on the canvas. The Layer Properties panel opens.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Custom name</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Each layer can have a custom name independent of its content type, used in exports.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Size & position</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">W × H sets layer size in pixels. Full Destination fills 100%.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Crop</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">(Advanced panel) Trims the layer by percentage from each edge, T/B/L/R. Live preview updates instantly.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Remove from preset</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Deletes the layer assignment for the current preset only. Other presets keep their layer.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Remove globally</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Deletes this layer from every preset in the show. Requires confirmation.</div></div><div style="font-size:10px;font-weight:700;color:#8a93a8;letter-spacing:.08em;text-transform:uppercase;padding:10px 0 4px;border-bottom:1px solid #252830;margin-bottom:8px;margin-top:6px">I/O Patch &mdash; Sources &amp; Destinations</div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">What it is</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">The engineer&rsquo;s I/O sheet &mdash; every source and destination with its connector, machine type, resolution, notes and a bandwidth check. Open it from the top nav or the per-preset I/O Patch button.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Set for all</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">The first row of each section bulk-sets connector / type / resolution for every row below at once &mdash; then change any individual row on its own.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Edit a row</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Click a pill to set the connector, machine type (PC / Mac / Camera&hellip;) or resolution. Type a name and press <b style="color:#c8dff5">Enter</b> (or click away) to confirm it. A custom machine or device name you type is remembered and offered in that menu next time.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Bandwidth warning</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">A red pill on a row means the chosen connector can&rsquo;t carry that resolution (e.g. 4K over a single HD link). Fix the connector or the resolution to clear it.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Apply to (scope)</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">The footer pill sets scope. <b style="color:#c8dff5">Globally</b> adds / renames across the whole show (presets + canvas + library); <b style="color:#c8dff5">Only Here</b> keeps it as an I/O-Patch-only reference &mdash; handy for a PPT back-up that shouldn&rsquo;t clutter the canvas.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Add &amp; remove</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">New sources and destinations always append at the <b style="color:#c8dff5">bottom</b> of the list. Add Source / Destination / AUX / MV sit under each section; the matching Remove buttons open a picker.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Multiviewer (MV)</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">An operator-monitor reference. It lives only in the I/O Patch and the I/O export &mdash; never drawn on the canvas or in presets.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Advanced pages</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">A standalone patch builder, one patch per page. Page 1 opens as your show: the Simple rows under the show name; if Simple changes later you are offered a rebuild. The last page is always a spare, &times; on a tab closes it, double-click renames. The loop icon beside a source name pairs it with a backup source (one per primary); the backup row lines up under its primary and names ending in A and B pair on their own. A page with rows also appears in Wire&rsquo;s I/O Tools as a tile with every input and output already labelled.</div></div><div style="font-size:10px;font-weight:700;color:#8a93a8;letter-spacing:.08em;text-transform:uppercase;padding:10px 0 4px;border-bottom:1px solid #252830;margin-bottom:8px;margin-top:6px">Wire &mdash; Signal Flow</div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">What it is</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">A diagram of every signal path that exists in any preset &mdash; sources on the left, destinations and AUX on the right, lines showing what feeds what.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Simple vs Advanced</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5"><b style="color:#c8dff5">Simple</b> auto-draws every path in the show. <b style="color:#c8dff5">Advanced</b> is a free-form builder with routers and multiple pages. Page 1 opens as your show, the Simple wiring under the show name; if Simple changes later you are offered a rebuild. The last page is always a spare, and &times; on a tab closes it.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Source thumbnails</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Each source card carries a thumbnail tile (camera, slides, prompter&hellip;). Click the shuffle icon to swap the auto-tile, or upload your own image.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Export &amp; asset pack</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Save the diagram as PDF / SVG / PNG. The <b style="color:#c8dff5">Asset Pack</b> downloads every 1920&times;1080 thumbnail as one ZIP (sources / destinations / aux-dsm) &mdash; a ready-made image packet to hand your operators.</div></div><div style="font-size:10px;font-weight:700;color:#8a93a8;letter-spacing:.08em;text-transform:uppercase;padding:10px 0 4px;border-bottom:1px solid #252830;margin-bottom:8px;margin-top:6px">Preset tile &mdash; Advanced &#9662; menu (Blend &amp; AOI)</div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Turn it on</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Open the <b style="color:#c8dff5">Advanced &#9662;</b> menu at the top of a preset to reveal blend zones, area-of-interest, dead-space and free-positioning on the canvas.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Make a blend</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Drag one destination over its neighbour. The overlap shows as an orange hatch and the canvas reports the combined <b style="color:#c8dff5">Blend Group</b> resolution (e.g. 3240&times;1080).</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Edit the overlap</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Double-click the px number in the middle of the blend zone to type an exact overlap &mdash; it highlights for editing. A blended pair stays locked together and will not pull a third destination in on its own.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Area of Interest</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Select a destination and activate <b style="color:#c8dff5">AOI</b> to capture only part of it &mdash; drag the red box or type exact X / Y / W / H.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Dead space</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">A blue double-arrow between two destinations shows the pixel gap of unused canvas between them.</div></div><div style="font-size:10px;font-weight:700;color:#8a93a8;letter-spacing:.08em;text-transform:uppercase;padding:10px 0 4px;border-bottom:1px solid #252830;margin-bottom:8px;margin-top:6px">Video Presets &mdash; Advanced page (video)</div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Simple / Advanced</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">The pill at the top of Video Presets. Simple is the tile view. Advanced is the engineer page: the same preset tile in the centre, All Sources on the left, Properties on the right and the video timeline underneath.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">All Sources</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Images and Video tabs. Press + to import video files (MP4, MOV, WebM). Drag a card onto a layer chip, a layer row in Properties, or a destination&rsquo;s background (BG).</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Properties &rsaquo; Preset</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Every preset as a card, a scaled clone of the tile. Click one to bring it to the centre. The AUX pills switch that preset&rsquo;s outputs.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Properties &rsaquo; Layers</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Pick a layer to edit it. Sections: Source, Media Info (file, path, resolution, frame rate, codecs, audio, bit depth), General (name, colour, notes, speed, loop), Position &amp; Size, Opacity, Crop, Border &amp; Shadow, Effects, Filters, Color, Geometry (fit), Transition (In / Out, fades). Each section has copy, paste and reset.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Timeline</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Shows the picked layer&rsquo;s video: a ruler with drag handles for In and Out, a strip of real frames, the audio waveform and a blue playhead. Click or drag anywhere on it to scrub.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Transport</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Count-up from In &middot; CLIP Stop / Play / Pause for the picked layer &middot; 30 / 20 / 10 jump to the last seconds before Out &middot; PRESET Stop / Play / Pause for every video in the preset together &middot; Cover &middot; count-down to Out. Picking another layer stops whatever was playing.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Audio level</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">The white line across the waveform is the level: bottom 0 %, middle 100 %, top 200 %. Drag it, double-click for 100 %. The L / R meters at both ends read the picked clip while it plays.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Cover</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Uses the frame under the playhead as the picture Simple and the preset cards show for that video.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Keys</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Space play / pause &middot; , and . step one frame &middot; [ and ] previous / next preset &middot; Escape back to Simple. See the Keyboard tab.</div></div><div style="font-size:10px;font-weight:700;color:#8a93a8;letter-spacing:.08em;text-transform:uppercase;padding:10px 0 4px;border-bottom:1px solid #252830;margin-bottom:8px;margin-top:6px">DSM / AUX Outputs</div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Adding</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Click + in the DSM toolbar below any preset. Each DSM has a name, resolution, and on/off state per preset.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Per-preset override</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Double-click a DSM box to open its panel. Name and Type (DSM / AUX) can be set per preset, other presets are unaffected.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Content assignment</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">When a DSM is ON for a preset, assign a content type. This appears in the Excel export.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Global label</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">The DSM / AUX pill in the toolbar sets the global default label. Individual presets can override it.</div></div><div style="font-size:10px;font-weight:700;color:#8a93a8;letter-spacing:.08em;text-transform:uppercase;padding:10px 0 4px;border-bottom:1px solid #252830;margin-bottom:8px;margin-top:6px">Destination Names, Per Preset</div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Global name</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Set in the Destination Combinations table or Destination Properties panel. Default across all presets.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Per-preset override</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">In the Destination Properties panel the Name field saves for that preset only. Other presets keep their own names.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Fallback</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">If no override is set for a preset, the destination shows its global name everywhere.</div></div><div style="font-size:10px;font-weight:700;color:#8a93a8;letter-spacing:.08em;text-transform:uppercase;padding:10px 0 4px;border-bottom:1px solid #252830;margin-bottom:8px;margin-top:6px">Save, Load & Export</div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">.avlb file</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">The project file format. JSON-based, version 2. Saves all destinations, presets, DSM outputs, canvas size, and custom content types.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Autosave</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Changes are saved automatically: the desktop app keeps a draft in its data folder, the browser version uses localStorage. On the next open you are offered the draft or a fresh start.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Unsaved indicator</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Gold dot on the Save button means you have changes not yet written to a file.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">↓ Excel</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Exports a .tsv file with one column per destination and one column per DSM. Shows actual content per preset. Opens in Excel, Numbers, Sheets.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">↓ Look Book</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Exports a print-ready visual. Opens browser print dialog, choose Save as PDF.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Preflight check</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Both exports run a validation check first. Errors block export. Warnings let you proceed.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">New Show</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Clears everything and opens Quick Setup. Warns if you have unsaved changes.</div></div><div style="font-size:10px;font-weight:700;color:#8a93a8;letter-spacing:.08em;text-transform:uppercase;padding:10px 0 4px;border-bottom:1px solid #252830;margin-bottom:8px;margin-top:6px">Quick Setup Wizard</div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Opening</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Appears automatically on first load. Re-open with Project &rsaquo; New (Ctrl / Cmd + N).</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Start from an example</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Three finished shows ship inside the app: General Session, Awards Night and Town Hall. Open one from Quick Start (or the empty canvas), explore the presets, I/O and wiring, then Save As to make it yours. The same shows are on the website as training packets with their PDF and Excel.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Destination Names</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Expand each destination row to give it a custom name before building. Falls back to Destination 01, 02… if blank.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Set default for all</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">When ON (blue), changing Destination 1's resolution cascades to all others. Turn OFF to set independently.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">After setup</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">All destinations, one preset (GLOBAL PRESET 00), and any DSM outputs are created. Everything can be changed afterwards.</div></div><div style="font-size:10px;font-weight:700;color:#8a93a8;letter-spacing:.08em;text-transform:uppercase;padding:10px 0 4px;border-bottom:1px solid #252830;margin-bottom:8px;margin-top:6px">Pixel ↔ Feet Conversion</div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Reference standard</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5"><b style="color:#c8dff5">96 PPI</b> — standard pixels-per-inch used by design software (Photoshop, After Effects, etc.) for screen output.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Default conversion</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5"><b style="color:#c8dff5">1 foot = 1,152 pixels</b> (96 PPI × 12 inches). Adjust below if your venue uses LED panels with a different pixel density.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">When it applies</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Dead Space labels show FT values computed from the current PPI (visible when <b style="color:#c8dff5">Advanced ▾ Show Dead Space</b> is on).</div></div><div style="display:flex;gap:12px;padding:8px 0 6px;align-items:center"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Adjust PPI</div><div style="flex:1;display:flex;align-items:center;gap:10px"><input type="number" min="1" step="1" id="a11y-ppi-input" value="96" onchange="setA11yPPI(this)" style="width:80px;padding:5px 10px;font-size:11px;font-family:var(--font-mono);border:1px solid var(--n-line);border-radius:6px;background:var(--n-track);color:var(--text);text-align:center;outline:none"><span style="font-size:11px;color:var(--text2);font-family:var(--font-mono)">1 ft = <span id="a11y-px-per-ft" style="color:var(--n-cyan);font-weight:600">1152</span> px</span></div></div></div>
+      <div style="display:flex;flex-direction:column;gap:0"><div style="font-size:10px;font-weight:700;color:#8a93a8;letter-spacing:.08em;text-transform:uppercase;padding:10px 0 4px;border-bottom:1px solid #252830;margin-bottom:8px;margin-top:0px">The Basics</div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Show</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">The top-level project. One show file (<code>.avlb</code>) holds all screens, presets, DSM outputs, and settings for a single event.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Screen / Destination</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">A physical display output, IMAG, LED wall, confidence monitor, etc. Each has a name, resolution, and position on the canvas.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Preset</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">One look or moment in the show. A preset defines what content appears on every screen simultaneously. Think of it as one row in your runsheet.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">P-Code</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">The short identifier for a preset (P01, P02…). Used in the table, exports, and show calling.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Layer (L1–L64)</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Up to 64 content sources can be assigned per destination per preset. L1 is the primary source, higher layers sit on top.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Content Type</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">What is playing on a layer, IMAG, CAM, GFX, PROMPTER, etc. Each type has a colour used throughout the UI.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">DSM / AUX</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Downstage monitor or auxiliary output, a separate feed sent to a specific destination (confidence monitor, broadcast, record, etc.). Switched per preset in the AUX band under each preset tile.</div></div><div style="font-size:10px;font-weight:700;color:#8a93a8;letter-spacing:.08em;text-transform:uppercase;padding:10px 0 4px;border-bottom:1px solid #252830;margin-bottom:8px;margin-top:6px">Canvas, Video Presets</div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Canvas</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">The visual representation of your total output resolution. All destinations sit inside it side by side.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Destination box</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Drag a corner handle to resize, adjacent destinations shift automatically. Click to select, then <b style="color:#c8dff5">Arrow keys</b> resize 1px (<b style="color:#c8dff5">Shift + Arrow</b> = 10px).</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Layer chip</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Coloured rectangle inside a destination box representing an active layer. Click to open Layer Properties (Simple). Double-click for Advanced (with crop).</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Overlap hatch</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Orange diagonal pattern between two destinations that share canvas area, indicates a blend zone.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Dead space arrow</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Blue double-headed arrow between destinations with a gap, shows the pixel distance of unused canvas.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Preset header</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Double-click the background of the header bar to collapse/expand. Double-clicking inside a text field selects text as normal.</div></div><div style="font-size:10px;font-weight:700;color:#8a93a8;letter-spacing:.08em;text-transform:uppercase;padding:10px 0 4px;border-bottom:1px solid #252830;margin-bottom:8px;margin-top:6px">Layers, Detail</div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Assigning content</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Click a layer cell in the table or a chip on the canvas. The Layer Properties panel opens.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Custom name</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Each layer can have a custom name independent of its content type, used in exports.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Size & position</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">W × H sets layer size in pixels. Full Destination fills 100%.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Crop</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">(Advanced panel) Trims the layer by percentage from each edge, T/B/L/R. Live preview updates instantly.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Remove from preset</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Deletes the layer assignment for the current preset only. Other presets keep their layer.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Remove globally</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Deletes this layer from every preset in the show. Requires confirmation.</div></div><div style="font-size:10px;font-weight:700;color:#8a93a8;letter-spacing:.08em;text-transform:uppercase;padding:10px 0 4px;border-bottom:1px solid #252830;margin-bottom:8px;margin-top:6px">I/O Patch &mdash; Sources &amp; Destinations</div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">What it is</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">The engineer&rsquo;s I/O sheet &mdash; every source and destination with its connector, machine type, resolution, notes and a bandwidth check. Open it from the top nav or the per-preset I/O Patch button.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Set for all</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">The first row of each section bulk-sets connector / type / resolution for every row below at once &mdash; then change any individual row on its own.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Edit a row</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Click a pill to set the connector, machine type (PC / Mac / Camera&hellip;) or resolution. Type a name and press <b style="color:#c8dff5">Enter</b> (or click away) to confirm it. A custom machine or device name you type is remembered and offered in that menu next time.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Bandwidth warning</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">A red pill on a row means the chosen connector can&rsquo;t carry that resolution (e.g. 4K over a single HD link). Fix the connector or the resolution to clear it.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Apply to (scope)</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">The footer pill sets scope. <b style="color:#c8dff5">Globally</b> adds / renames across the whole show (presets + canvas + library); <b style="color:#c8dff5">Only Here</b> keeps it as an I/O-Patch-only reference &mdash; handy for a PPT back-up that shouldn&rsquo;t clutter the canvas.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Add &amp; remove</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">New sources and destinations always append at the <b style="color:#c8dff5">bottom</b> of the list. Add Source / Destination / AUX / MV sit under each section; the matching Remove buttons open a picker.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Multiviewer (MV)</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">An operator-monitor reference. It lives only in the I/O Patch and the I/O export &mdash; never drawn on the canvas or in presets.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Advanced pages</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">A standalone patch builder, one patch per page. Page 1 opens as your show: the Simple rows under the show name; if Simple changes later you are offered a rebuild. The last page is always a spare, &times; on a tab closes it, double-click renames. The loop icon beside a source name pairs it with a backup source (one per primary); the backup row lines up under its primary and names ending in A and B pair on their own. A page with rows also appears in Wire&rsquo;s I/O Tools as a tile with every input and output already labelled.</div></div><div style="font-size:10px;font-weight:700;color:#8a93a8;letter-spacing:.08em;text-transform:uppercase;padding:10px 0 4px;border-bottom:1px solid #252830;margin-bottom:8px;margin-top:6px">Wire &mdash; Signal Flow</div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">What it is</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">A diagram of every signal path that exists in any preset &mdash; sources on the left, destinations and AUX on the right, lines showing what feeds what.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Simple vs Advanced</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5"><b style="color:#c8dff5">Simple</b> auto-draws every path in the show. <b style="color:#c8dff5">Advanced</b> is a free-form builder with routers, switchers, converters and network switches (the I/O Tools menu) across multiple pages. Page 1 opens as your show, the Simple wiring under the show name; if Simple changes later you are offered a rebuild. The last page is always a spare, and &times; on a tab closes it.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Source thumbnails</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Each source card carries a thumbnail tile (camera, slides, prompter&hellip;). Click the shuffle icon to swap the auto-tile, or upload your own image.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Export &amp; asset pack</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Save the diagram as PDF / SVG / PNG. The <b style="color:#c8dff5">Asset Pack</b> downloads every 1920&times;1080 thumbnail as one ZIP (sources / destinations / aux-dsm) &mdash; a ready-made image packet to hand your operators.</div></div><div style="font-size:10px;font-weight:700;color:#8a93a8;letter-spacing:.08em;text-transform:uppercase;padding:10px 0 4px;border-bottom:1px solid #252830;margin-bottom:8px;margin-top:6px">Preset tile &mdash; Advanced &#9662; menu (Blend &amp; AOI)</div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Turn it on</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Open the <b style="color:#c8dff5">Advanced &#9662;</b> menu at the top of a preset to reveal blend zones, area-of-interest, dead-space and free-positioning on the canvas.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Make a blend</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Drag one destination over its neighbour. The overlap shows as an orange hatch and the canvas reports the combined <b style="color:#c8dff5">Blend Group</b> resolution (e.g. 3240&times;1080).</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Edit the overlap</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Double-click the px number in the middle of the blend zone to type an exact overlap &mdash; it highlights for editing. A blended pair stays locked together and will not pull a third destination in on its own.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Area of Interest</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Select a destination and activate <b style="color:#c8dff5">AOI</b> to capture only part of it &mdash; drag the red box or type exact X / Y / W / H.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Dead space</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">A blue double-arrow between two destinations shows the pixel gap of unused canvas between them.</div></div><div style="font-size:10px;font-weight:700;color:#8a93a8;letter-spacing:.08em;text-transform:uppercase;padding:10px 0 4px;border-bottom:1px solid #252830;margin-bottom:8px;margin-top:6px">Video Presets &mdash; Advanced page (video)</div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Simple / Advanced</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">The pill at the top of Video Presets. Simple is the tile view. Advanced is the engineer page: the same preset tile in the centre, All Sources on the left, Properties on the right and the video timeline underneath.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">All Sources</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Images and Video tabs. Press + to import video files (MP4, MOV, WebM). Drag a card onto a layer chip, a layer row in Properties, or a destination&rsquo;s background (BG).</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Properties &rsaquo; Preset</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Every preset as a card, a scaled clone of the tile. Click one to bring it to the centre. The AUX pills switch that preset&rsquo;s outputs.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Properties &rsaquo; Layers</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Pick a layer to edit it. Sections: Source, Media Info (file, path, resolution, frame rate, codecs, audio, bit depth), General (name, colour, notes, speed, loop), Position &amp; Size, Opacity, Crop, Border &amp; Shadow, Effects, Filters, Color, Geometry (fit), Transition (In / Out, fades). Each section has copy, paste and reset.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Timeline</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Shows the picked layer&rsquo;s video: a ruler with drag handles for In and Out, a strip of real frames, the audio waveform and a blue playhead. Click or drag anywhere on it to scrub.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Transport</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Count-up from In &middot; CLIP Stop / Play / Pause for the picked layer &middot; 30 / 20 / 10 jump to the last seconds before Out &middot; PRESET Stop / Play / Pause for every video in the preset together &middot; Cover &middot; count-down to Out. Picking another layer stops whatever was playing.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Audio level</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">The white line across the waveform is the level: bottom 0 %, middle 100 %, top 200 %. Drag it, double-click for 100 %. The L / R meters at both ends read the picked clip while it plays.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Cover</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Uses the frame under the playhead as the picture Simple and the preset cards show for that video.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Keys</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Space play / pause &middot; , and . step one frame &middot; [ and ] previous / next preset &middot; Escape back to Simple. See the Keyboard tab.</div></div><div style="font-size:10px;font-weight:700;color:#8a93a8;letter-spacing:.08em;text-transform:uppercase;padding:10px 0 4px;border-bottom:1px solid #252830;margin-bottom:8px;margin-top:6px">DSM / AUX Outputs</div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Adding</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Click + in the DSM toolbar below any preset. Each DSM has a name, resolution, and on/off state per preset.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Per-preset override</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Double-click a DSM box to open its panel. Name and Type (DSM / AUX) can be set per preset, other presets are unaffected.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Content assignment</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">When a DSM is ON for a preset, assign a content type. This appears in the Excel export.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Global label</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">The DSM / AUX pill in the toolbar sets the global default label. Individual presets can override it.</div></div><div style="font-size:10px;font-weight:700;color:#8a93a8;letter-spacing:.08em;text-transform:uppercase;padding:10px 0 4px;border-bottom:1px solid #252830;margin-bottom:8px;margin-top:6px">Destination Names, Per Preset</div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Global name</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Set in the Destination Combinations table or Destination Properties panel. Default across all presets.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Per-preset override</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">In the Destination Properties panel the Name field saves for that preset only. Other presets keep their own names.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Fallback</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">If no override is set for a preset, the destination shows its global name everywhere.</div></div><div style="font-size:10px;font-weight:700;color:#8a93a8;letter-spacing:.08em;text-transform:uppercase;padding:10px 0 4px;border-bottom:1px solid #252830;margin-bottom:8px;margin-top:6px">Save, Load & Export</div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">.avlb file</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">The project file format. JSON-based, version 2. Saves all destinations, presets, DSM outputs, canvas size, and custom content types.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Autosave</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Changes are saved automatically: the desktop app keeps a draft in its data folder, the browser version uses localStorage. On the next open you are offered the draft or a fresh start.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Unsaved indicator</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Gold dot on the Save button means you have changes not yet written to a file.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">↓ Excel</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Exports a .tsv file with one column per destination and one column per DSM. Shows actual content per preset. Opens in Excel, Numbers, Sheets.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">↓ Look Book</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Exports a print-ready visual. Opens browser print dialog, choose Save as PDF.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Preflight check</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Both exports run a validation check first. Errors block export. Warnings let you proceed.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">New Show</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Clears everything and opens Quick Setup. Warns if you have unsaved changes.</div></div><div style="font-size:10px;font-weight:700;color:#8a93a8;letter-spacing:.08em;text-transform:uppercase;padding:10px 0 4px;border-bottom:1px solid #252830;margin-bottom:8px;margin-top:6px">Quick Setup Wizard</div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Opening</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Appears automatically on first load. Re-open with Project &rsaquo; New (Ctrl / Cmd + N).</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Start from an example</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Three finished shows ship inside the app: General Session, Awards Night and Town Hall. Open one from Quick Start (or the empty canvas), explore the presets, I/O and wiring, then Save As to make it yours. The same shows are on the website as training packets with their PDF and Excel.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Destination Names</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Expand each destination row to give it a custom name before building. Falls back to Destination 01, 02… if blank.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Set default for all</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">When ON (blue), changing Destination 1's resolution cascades to all others. Turn OFF to set independently.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">After setup</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">All destinations, one preset (GLOBAL PRESET 00), and any DSM outputs are created. Everything can be changed afterwards.</div></div><div style="font-size:10px;font-weight:700;color:#8a93a8;letter-spacing:.08em;text-transform:uppercase;padding:10px 0 4px;border-bottom:1px solid #252830;margin-bottom:8px;margin-top:6px">Pixel ↔ Feet Conversion</div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Reference standard</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5"><b style="color:#c8dff5">96 PPI</b> — standard pixels-per-inch used by design software (Photoshop, After Effects, etc.) for screen output.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Default conversion</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5"><b style="color:#c8dff5">1 foot = 1,152 pixels</b> (96 PPI × 12 inches). Adjust below if your venue uses LED panels with a different pixel density.</div></div><div style="display:flex;gap:12px;padding:6px 0;border-bottom:1px solid #1e2024"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">When it applies</div><div style="font-size:11px;color:#9aa0aa;flex:1;line-height:1.5">Dead Space labels show FT values computed from the current PPI (visible when <b style="color:#c8dff5">Advanced ▾ Show Dead Space</b> is on).</div></div><div style="display:flex;gap:12px;padding:8px 0 6px;align-items:center"><div style="font-size:11px;color:#c8dff5;font-weight:600;width:160px;flex-shrink:0;letter-spacing:.02em">Adjust PPI</div><div style="flex:1;display:flex;align-items:center;gap:10px"><input type="number" min="1" step="1" id="a11y-ppi-input" value="96" onchange="setA11yPPI(this)" style="width:80px;padding:5px 10px;font-size:11px;font-family:var(--font-mono);border:1px solid var(--n-line);border-radius:6px;background:var(--n-track);color:var(--text);text-align:center;outline:none"><span style="font-size:11px;color:var(--text2);font-family:var(--font-mono)">1 ft = <span id="a11y-px-per-ft" style="color:var(--n-cyan);font-weight:600">1152</span> px</span></div></div></div>
     </div>
     
     <div id="hpanel-kbd" style="display:none;overflow-y:auto;padding:20px 24px 24px;max-height:calc(90vh - 150px);min-height:calc(90vh - 150px)">
@@ -11568,6 +11593,9 @@ function _sysClassifyConnector(t){
   if(/Fiber/i.test(s)) return 'fiber';
   if(/ST-?2110/i.test(s)) return 'st2110';
   if(/Dante/i.test(s)) return 'dante';
+  if(/Ethernet|RJ-?45|\bCat ?[5-8]/i.test(s)) return 'ethernet';   // 16jd
+  if(/Genlock|Tri-?level|Black ?burst|\bRef\b/i.test(s)) return 'genlock';
+  if(/\bLTC\b|Timecode/i.test(s)) return 'ltc';
   if(/^MV$/i.test(s)) return 'mv';
   return 'empty';
 }
@@ -11629,6 +11657,10 @@ var _SYS_CONNECTORS=[
   {value:"Fiber",label:"Fiber",family:"ndi",meta:"depends on transceiver"},
   {value:"Dante",label:"Dante",family:"dante",meta:"audio over IP"},
   {value:"MV",label:"MV (Multiviewer)",family:"mv"},
+  {group:"Network / Sync"},   /* 16jd (Sibos drawing): network + sync lines get their own colours */
+  {value:"Ethernet",label:"Ethernet",family:"ethernet",meta:"RJ45 · Cat6"},
+  {value:"Genlock",label:"Genlock",family:"genlock",meta:"ref · tri-level"},
+  {value:"LTC",label:"LTC",family:"ltc",meta:"timecode"},
   {value:"",label:"— Clear —",family:""}
 ];
 // ── Shared categorized resolution picker ───────────────────────────
@@ -12860,7 +12892,7 @@ function _sysOpenDropdown(trigger){
     if(field==='connector'){
       const dot=document.createElement('span');
       dot.className='dot';
-      const famColors={hdmi:'#6ee7a8',dp:'var(--n-purple)',sdi:'var(--n-amber)',ndi:'var(--n-cyan)',dante:'var(--n-orange)',mv:'var(--n-yellow)','':'var(--text3)'};
+      const famColors={hdmi:'#6ee7a8',dp:'var(--n-purple)',sdi:'var(--n-amber)',ndi:'var(--n-cyan)',dante:'var(--n-orange)',mv:'var(--n-yellow)',ethernet:'#5aa9ff',genlock:'#c3ccd8',ltc:'#ff4e8b','':'var(--text3)'};
       dot.style.color=famColors[opt.family]||'var(--text3)';
       if(opt.value) item.appendChild(dot);
     } else if(field==='src-type'){
@@ -12977,6 +13009,7 @@ function _sysHandlePick(trigger,opt){
   // 16ei: picks that came from a Wire source card. 'wcustom' = Advanced
   // custom-library source (lives in wireAdvanced.customSources, never in
   // sources[]); regular Wire picks push an undo step like every other card edit.
+  if(kind==='wdev'){ if(typeof _wireAdvDevicePortConn==='function') _wireAdvDevicePortConn(id, opt.value||''); return; }   // 16jd: a converter / switch port's cable type
   if(kind==='wcustom'){
     if(typeof _wireAdvSetCustomField==='function') _wireAdvSetCustomField('src', id, field==='connector'?'connectorType':'resolution', opt.value);
     // 16ej: tile + swatch follow the cable colour on pick (the user may recolour the panel afterwards).
@@ -15389,6 +15422,7 @@ function _wireAdvHelpers(){
   if(!Array.isArray(wireAdvanced.customSources)) wireAdvanced.customSources = [];
   if(!Array.isArray(wireAdvanced.customDests))   wireAdvanced.customDests   = [];
   if(!Array.isArray(wireAdvanced.customDsms))    wireAdvanced.customDsms    = [];
+  if(!Array.isArray(wireAdvanced.devices))       wireAdvanced.devices       = [];   // 16jd: converters / network switches
   // 16en: older shows may hold several custom sources with the same name —
   // number the duplicates so each card resolves to itself from now on.
   { const _seen = new Set();
@@ -15421,7 +15455,7 @@ function _wireAdvHelpers(){
 // 16iu: the last page is always a spare — once it holds anything, the next one appears (up to 25), the I/O Patch rule.
 const _WIRE_ADV_MAX_PAGES = 25;
 function _wireAdvPageData(pid){ _wireAdvHelpers(); return (pid === wireAdvanced._activePageId) ? wireAdvanced : (wireAdvanced._pageData[pid] || null); }
-function _wireAdvPageUsed(pid){ const d = _wireAdvPageData(pid); if(!d) return false; return ((d.sources||[]).length + (d.dests||[]).length + (d.dsms||[]).length + (d.routers||[]).length + (d.wires||[]).length) > 0; }
+function _wireAdvPageUsed(pid){ const d = _wireAdvPageData(pid); if(!d) return false; return ((d.sources||[]).length + (d.dests||[]).length + (d.dsms||[]).length + (d.routers||[]).length + (d.devices||[]).length + (d.wires||[]).length) > 0; }
 function _wireAdvNextPageId(){ const ps = wireAdvanced._pages; let n = ps.length, id = 'p' + n; while(ps.some(p => p.id === id) || (wireAdvanced._pageData && wireAdvanced._pageData[id])) id = 'p' + (++n); return id; }
 function _wireAdvEnsurePages(){
   _wireAdvHelpers();
@@ -15468,7 +15502,7 @@ function _wireAdvOfferResync(){
     onConfirm: function(){
       if(typeof pushUndo === 'function') pushUndo();
       if(wireAdvanced._activePageId !== p0.id) _wireSwitchPage(p0.id);
-      wireAdvanced.sources = []; wireAdvanced.dests = []; wireAdvanced.dsms = []; wireAdvanced.routers = []; wireAdvanced.wires = [];
+      wireAdvanced.sources = []; wireAdvanced.dests = []; wireAdvanced.dsms = []; wireAdvanced.routers = []; wireAdvanced.devices = []; wireAdvanced.wires = [];
       _wireAdvSeedFromSimple(true);
       _wireRender();
       requestAnimationFrame(function(){ if(typeof _wireZoomFit === 'function') _wireZoomFit(); });
@@ -15524,7 +15558,8 @@ function _wireSwitchPage(pid){
     routers: wireAdvanced.routers,
     customSources: wireAdvanced.customSources,
     customDests: wireAdvanced.customDests,
-    customDsms: wireAdvanced.customDsms
+    customDsms: wireAdvanced.customDsms,
+    devices: wireAdvanced.devices   // 16jd
   };
   const nxt = wireAdvanced._pageData[pid] || {
     sources: [], dests: [], dsms: [], wires: [], routers: [],
@@ -15538,6 +15573,7 @@ function _wireSwitchPage(pid){
   wireAdvanced.customSources = Array.isArray(nxt.customSources) ? nxt.customSources : [];
   wireAdvanced.customDests   = Array.isArray(nxt.customDests)   ? nxt.customDests   : [];
   wireAdvanced.customDsms    = Array.isArray(nxt.customDsms)    ? nxt.customDsms    : [];
+  wireAdvanced.devices       = Array.isArray(nxt.devices)       ? nxt.devices       : [];   // 16jd
   wireAdvanced._activePageId = pid;
   if(_wireState){
     _wireState.selectedNodes = new Set();
@@ -16025,6 +16061,138 @@ function _wireAdvSwitcherSlot(routerId, side, idx, value){
   if(typeof scheduleAutoSave === 'function') scheduleAutoSave();
 }
 
+// ── Devices (16jd, Omar / Sibos drawing) ─────────────────────────────────
+// Converter = two independent port lists (In | Out), each port with its own
+// cable type + name, "+" per side, "×" per port, dead cells where a side is
+// shorter. Switch = one list of ports (a network switch: every port is in AND
+// out, so dvi:/dvo: share the row). Tile geometry is analytic (the drag code
+// and the drop-row inference read it too) — keep _wireAdvDevGeom the one truth.
+function _wireAdvDevRows(d){ return (d && d.kind === 'switch') ? (d.ins || []).length : Math.max(((d && d.ins) || []).length, ((d && d.outs) || []).length); }
+function _wireAdvDevGeom(d){
+  const rows = _wireAdvDevRows(d);
+  const w = (d.kind === 'switch') ? 300 : 440;
+  const h = 44 + 36 + rows * 36 + 36 + 4;   // title + header + rows + the "+" row + border
+  return { w: w, h: h, rows: rows, portY: function(i){ return d.y + 44 + 36 + i * 36 + 18; } };
+}
+function _wireAdvDevPort(d, side, i){ if(!d) return null; const arr = (side === 'out' && d.kind !== 'switch') ? d.outs : d.ins; return (arr && arr[i]) || null; }
+function _wireAdvDeviceById(id){ _wireAdvHelpers(); return (wireAdvanced.devices || []).find(x => x.id === id) || null; }
+function _wireAdvDevLabel(d){ return d ? (d.name || (d.kind === 'switch' ? 'Switch' : 'Converter')) : ''; }
+function _wireDevConnBtnHTML(devId, side, i, conn){
+  const spec = _wireCableSpec(conn);
+  const fam = spec ? spec.fam : '';
+  return '<button type="button" class="wire-cable-btn dv-conn' + (spec ? ' set ' + fam : '') + '" data-sys-kind="wdev" data-sys-id="' + _esc(devId + ':' + side + ':' + i) + '" data-sys-field="connector" data-sys-value="' + _esc(conn || '') + '" data-wire-origin="1" onclick="event.stopPropagation();_sysOpenDropdown(this)" onmousedown="event.stopPropagation()" title="' + (spec ? 'Cable type: ' + _esc(spec.type) + ', click to change' : 'Pick the cable type for this port') + '">'
+    + '<span class="dot"></span><span class="wire-cable-btn-label">' + _esc(spec ? spec.type : 'Type') + '</span>'
+    + '<span class="wire-cable-btn-chev"><svg aria-hidden="true" viewBox="0 0 10 10" fill="currentColor" width="8" height="8"><path d="M2 4l3 3 3-3z"/></svg></span></button>';
+}
+function _wireAdvDeviceTileHTML(d, isSelected){
+  const isSw = d.kind === 'switch';
+  const rows = _wireAdvDevRows(d);
+  let h = '<div xmlns="http://www.w3.org/1999/xhtml" class="wire-router-tile wire-device-tile' + (isSelected ? ' selected' : '') + '">';
+  h += '<div class="wire-router-title wire-device-title"><input type="text" value="' + _esc(d.name || '') + '" onchange="_wireAdvDeviceField(\'' + d.id + '\', \'name\', this.value)" onmousedown="event.stopPropagation()" placeholder="' + (isSw ? 'SWITCH' : 'CONVERTER') + '" maxlength="40" /></div>';
+  h += '<div class="wire-router-grid wire-device-grid' + (isSw ? ' one' : '') + '">';
+  h += isSw ? '<div class="r-hdr">Ports</div>' : '<div class="r-hdr">In</div><div class="r-hdr">Out</div>';
+  const cell = function(side, i){
+    const p = _wireAdvDevPort(d, side, i);
+    if(!p) return '<div class="rc rc-dead"></div>';
+    const ph = (isSw ? 'Port ' : (side === 'in' ? 'In ' : 'Out ')) + (i + 1);
+    return '<div class="rc dv-cell">' + _wireDevConnBtnHTML(d.id, side, i, p.conn)
+      + '<input type="text" class="dv-name" value="' + _esc(p.name || '') + '" placeholder="' + ph + '" onchange="_wireAdvDevicePortName(\'' + d.id + '\', \'' + side + '\', ' + i + ', this.value)" onmousedown="event.stopPropagation()" maxlength="40" />'
+      + '<button type="button" class="dv-x" title="Remove this port" onmousedown="event.stopPropagation()" onclick="event.stopPropagation();_wireAdvDeviceRemovePort(\'' + d.id + '\', \'' + side + '\', ' + i + ')">×</button></div>';
+  };
+  for(let i = 0; i < rows; i++){ h += cell('in', i); if(!isSw) h += cell('out', i); }
+  const add = function(side){ return '<div class="dv-foot"><button type="button" class="dv-add" onmousedown="event.stopPropagation()" onclick="event.stopPropagation();_wireAdvDeviceAddPort(\'' + d.id + '\', \'' + side + '\')">+ ' + (isSw ? 'Port' : (side === 'in' ? 'In' : 'Out')) + '</button></div>'; };
+  h += add('in'); if(!isSw) h += add('out');
+  h += '</div></div>';
+  return h;
+}
+function _wireAdvDeviceField(id, field, value){
+  const d = _wireAdvDeviceById(id); if(!d) return;
+  if(typeof pushUndo === 'function') pushUndo();
+  d[field] = String(value || '').trim();
+  if(typeof scheduleAutoSave === 'function') scheduleAutoSave();
+  _wireRender();   // onchange fires on blur / Enter, so nothing loses focus; router cells fed by this device pick up the name
+}
+function _wireAdvDevicePortName(id, side, i, value){
+  const d = _wireAdvDeviceById(id); const p = _wireAdvDevPort(d, side, i); if(!p) return;
+  if(typeof pushUndo === 'function') pushUndo();
+  p.name = String(value || '').trim();
+  if(typeof scheduleAutoSave === 'function') scheduleAutoSave();
+  _wireRender();
+}
+// key = '<devId>:<side>:<i>' — what the shared connector dropdown carries in data-sys-id.
+function _wireAdvDevicePortConn(key, value){
+  const parts = String(key || '').split(':'); if(parts.length < 3) return;
+  const i = parseInt(parts[parts.length - 1], 10); const side = parts[parts.length - 2]; const id = parts.slice(0, parts.length - 2).join(':');
+  const d = _wireAdvDeviceById(id); const p = _wireAdvDevPort(d, side, i); if(!p) return;
+  if(typeof pushUndo === 'function') pushUndo();
+  p.conn = value || '';
+  if(typeof scheduleAutoSave === 'function') scheduleAutoSave();
+  _wireRender();
+}
+function _wireAdvDeviceAddPort(id, side){
+  const d = _wireAdvDeviceById(id); if(!d) return;
+  const arr = (side === 'out' && d.kind !== 'switch') ? d.outs : d.ins;
+  if(arr.length >= 64) return;
+  if(typeof pushUndo === 'function') pushUndo();
+  const last = arr[arr.length - 1];
+  arr.push({ conn: last ? (last.conn || '') : (d.kind === 'switch' ? 'Ethernet' : ''), name: '' });   // a new port copies the cable type above it
+  if(typeof scheduleAutoSave === 'function') scheduleAutoSave();
+  _wireRender();
+}
+function _wireAdvDeviceRemovePort(id, side, i){
+  const d = _wireAdvDeviceById(id); if(!d) return;
+  const isSw = d.kind === 'switch';
+  const arr = (side === 'out' && !isSw) ? d.outs : d.ins;
+  if(!arr[i]) return;
+  // A port with a cable on it stays — delete the cable first, never orphan a wire.
+  const pin = 'dvi:' + id + ':' + i, pout = 'dvo:' + id + ':' + i;
+  const used = (wireAdvanced.wires || []).some(w => {
+    if(isSw) return w.fromId === pout || w.toId === pin || w.fromId === pin || w.toId === pout;
+    return side === 'in' ? (w.toId === pin || w.fromId === pin) : (w.fromId === pout || w.toId === pout);
+  });
+  if(used){ if(typeof showAlert === 'function') showAlert({ title: 'Port in use', message: 'That port still has a cable on it. Delete the cable first, then remove the port.' }); return; }
+  if(typeof pushUndo === 'function') pushUndo();
+  arr.splice(i, 1);
+  // The ports below move up one row — their wires follow.
+  const remap = function(pid){
+    const m = pid && pid.match(/^(dvi|dvo):([^:]+):(\d+)$/); if(!m || m[2] !== id) return pid;
+    const k = parseInt(m[3], 10);
+    const sameSide = isSw ? true : ((m[1] === 'dvi') === (side === 'in'));
+    return (sameSide && k > i) ? (m[1] + ':' + id + ':' + (k - 1)) : pid;
+  };
+  (wireAdvanced.wires || []).forEach(w => { w.fromId = remap(w.fromId); w.toId = remap(w.toId); });
+  if(typeof scheduleAutoSave === 'function') scheduleAutoSave();
+  _wireRender();
+}
+function _wireAdvAddDevice(kind, nIn, nOut){
+  _wireAdvHelpers();
+  const isSw = kind === 'switch';
+  const inC = Math.max(1, Math.min(64, parseInt(nIn, 10) || (isSw ? 8 : 2)));
+  const outC = isSw ? 0 : Math.max(0, Math.min(64, parseInt(nOut, 10) || 2));
+  const mk = function(n, conn){ return Array.from({ length: n }, () => ({ conn: conn, name: '' })); };
+  // Land below everything already on the page (routers stack at the top-left, sources fan down the left).
+  let bottom = 20;
+  const all = [].concat(
+    wireAdvanced.sources.map(s => 'asrc:' + s.id), wireAdvanced.dests.map(d => 'adst:' + d.id),
+    wireAdvanced.dsms.map(d => 'adsm:' + d.id), wireAdvanced.routers.map(r => 'router:' + r.id),
+    (wireAdvanced.devices || []).map(d => 'device:' + d.id));
+  all.forEach(nid => { const r = _wireAdvNodeRect(nid); if(r && r.y + r.h > bottom) bottom = r.y + r.h; });
+  if(typeof pushUndo === 'function') pushUndo();
+  const id = 'd' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+  wireAdvanced.devices.push({ id: id, kind: isSw ? 'switch' : 'converter', name: '', x: 80, y: (all.length ? bottom + 60 : 80), ins: mk(inC, isSw ? 'Ethernet' : ''), outs: mk(outC, '') });
+  if(typeof scheduleAutoSave === 'function') scheduleAutoSave();
+  _wireRender();
+  requestAnimationFrame(function(){ if(typeof _wireZoomFit === 'function') _wireZoomFit(); });
+}
+function _wireAdvAddDeviceCustom(kind){
+  const isSw = kind === 'switch';
+  _wireOpenIOCountModal({
+    title: isSw ? 'Switch' : 'Converter', leftLabel: isSw ? 'Ports' : 'Inputs', rightLabel: 'Outputs',
+    leftDefault: isSw ? 8 : 2, rightDefault: 2, single: isSw, confirmLabel: isSw ? 'Add switch' : 'Add converter',
+    onConfirm: function(nIn, nOut){ _wireAdvAddDevice(kind, nIn, nOut); }
+  });
+}
+
 // ── Router I/O drop-up menu (2026-07-01) ────────────────────────────────
 // The bottom-bar trigger opens this. ADD OPTIONS HERE: each {n:N} entry
 // drops an N×N router; {custom:true} opens the size prompt. Future
@@ -16041,6 +16209,11 @@ const _WIRE_ROUTER_MENU = [
   // spliced in after the default by _wireToggleRouterMenu.
   { swCustom: true, label: 'Custom switcher\u2026', sub: 'Pick inputs & outputs (1\u201364), saved for reuse' },
   { sw: '8\u00d72 Switcher', nIn: 8, nOut: 2, sub: '8 in \u00b7 2 out \u00b7 default', defaultSw: true },
+  // 16jd (Omar, Sibos drawing): gear that is not a matrix — converters (Decimator, DA, scaler) with a cable
+  // type on every port, and network switches that are one list of ports. Both live in wireAdvanced.devices.
+  { section: 'Devices' },
+  { dev: 'converter', label: 'Converter\u2026', sub: 'In / out ports, a cable type on each' },
+  { dev: 'switch', label: 'Switch\u2026', sub: 'One list of ports, Ethernet by default' },
 ];
 // Saved custom switchers — persisted per MACHINE (localStorage), not per
 // show, so a config built once ("16\u00d78") is reusable on every future show.
@@ -16080,9 +16253,9 @@ function _wireOpenIOCountModal(o){
     +'<div class="sys-modal-body"><div style="display:flex;gap:14px">'
     +'<label style="flex:1;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text3)">'+_esc(o.leftLabel||'Inputs')
     +'<input id="wire-ioc-left" type="number" min="1" max="64" value="'+(o.leftDefault||16)+'" style="width:100%;margin-top:6px;font-size:14px;padding:8px 12px;border:1px solid var(--ss-border-soft);border-radius:4px;background:var(--n-track);color:var(--n-cyan);outline:none;box-sizing:border-box;text-align:center;font-family:var(--font-mono);box-shadow:inset 2px 2px 4px rgba(0,0,0,.5)"></label>'
-    +'<label style="flex:1;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text3)">'+_esc(o.rightLabel||'Outputs')
+    +'<label style="flex:1;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text3)'+(o.single?';display:none':'')+'">'+_esc(o.rightLabel||'Outputs')
     +'<input id="wire-ioc-right" type="number" min="1" max="64" value="'+(o.rightDefault||8)+'" style="width:100%;margin-top:6px;font-size:14px;padding:8px 12px;border:1px solid var(--ss-border-soft);border-radius:4px;background:var(--n-track);color:var(--n-cyan);outline:none;box-sizing:border-box;text-align:center;font-family:var(--font-mono);box-shadow:inset 2px 2px 4px rgba(0,0,0,.5)"></label>'
-    +'</div><div style="font-size:10px;color:var(--text3);margin-top:10px">1\u201364 each. Rows past the smaller side stay blank on that side.</div></div>'
+    +'</div><div style="font-size:10px;color:var(--text3);margin-top:10px">'+(o.single?'1\u201364 ports. Add or remove more on the tile.':'1\u201364 each. Rows past the smaller side stay blank on that side.')+'</div></div>'
     +'<div class="sys-modal-footer"><button class="sys-modal-btn" id="wire-ioc-cancel">Cancel</button>'
     +'<button class="sys-modal-btn primary" id="wire-ioc-go">'+_esc(o.confirmLabel||'Add')+'</button></div></div>';
   document.body.appendChild(wrap);
@@ -16091,7 +16264,7 @@ function _wireOpenIOCountModal(o){
   function go(){
     var l=parseInt(document.getElementById('wire-ioc-left').value,10);
     var r2=parseInt(document.getElementById('wire-ioc-right').value,10);
-    if(!(l>=1&&l<=64)||!(r2>=1&&r2<=64)){
+    if(!(l>=1&&l<=64)||(!o.single&&!(r2>=1&&r2<=64))){
       if(typeof showAlert==='function') showAlert({variant:'warning',title:'Invalid size',message:'Enter whole numbers between 1 and 64 for both fields.'});
       return;
     }
@@ -16165,7 +16338,7 @@ function _wireToggleRouterMenu(ev){
     b.type = 'button';
     b.className = 'wire-router-menu-item';
     b.style.cssText = 'display:flex;align-items:center;gap:10px;width:100%;text-align:left;padding:8px 10px;border:none;background:transparent;border-radius:7px;cursor:pointer;color:var(--text);font-family:inherit';
-    var label = opt.sw ? opt.sw : ((opt.rt || opt.patch !== undefined) ? opt.label : ((opt.custom || opt.swCustom) ? (opt.label || 'Custom\u2026') : (opt.n + '\u00d7' + opt.n + ' Router')));
+    var label = opt.sw ? opt.sw : ((opt.rt || opt.dev || opt.patch !== undefined) ? opt.label : ((opt.custom || opt.swCustom) ? (opt.label || 'Custom\u2026') : (opt.n + '\u00d7' + opt.n + ' Router')));
     b.innerHTML = '<span style="flex:1;min-width:0"><span style="display:block;font-size:13px;font-weight:600">' + label + '</span>'
       + '<span style="display:block;font-size:10px;color:var(--text3)">' + (opt.sub || '') + '</span></span>';
     if(opt.saved){
@@ -16180,6 +16353,7 @@ function _wireToggleRouterMenu(ev){
       _wireCloseRouterMenu();
       if(opt.swCustom) _wireAdvAddSwitcherCustom();
       else if(opt.patch !== undefined) _wireAdvAddPatchTile(opt.patch);
+      else if(opt.dev) _wireAdvAddDeviceCustom(opt.dev);   // 16jd
       else if(opt.rt) _wireAdvAddRouterAsym(opt.nIn, opt.nOut);
       else if(opt.sw) _wireAdvAddSwitcher(opt.sw, opt.nIn, opt.nOut);
       else if(opt.custom) _wireAdvAddRouterCustom();
@@ -16412,6 +16586,19 @@ function _wireRenderAdvancedDiagram(container){
     }
   });
 
+  // 16jd: converter / switch devices — a port on every row, its own cable type each.
+  (wireAdvanced.devices || []).forEach(d => {
+    if(!d) return;
+    const g = _wireAdvDevGeom(d);
+    positions['device:' + d.id] = { x: d.x, y: d.y, w: g.w, h: g.h, type: 'device', name: _wireAdvDevLabel(d), color: '#5aa9ff', device: d };
+    const nIn = (d.ins || []).length, nOut = (d.kind === 'switch') ? nIn : (d.outs || []).length;
+    for(let i = 0; i < g.rows; i++){
+      const py = g.portY(i);
+      if(i < nIn)  positions['dvi:' + d.id + ':' + i] = { x: d.x,       y: py, w: 0, h: 0, type: 'dport-in',  color: '#5aa9ff', deviceId: d.id, portIdx: i };
+      if(i < nOut) positions['dvo:' + d.id + ':' + i] = { x: d.x + g.w, y: py, w: 0, h: 0, type: 'dport-out', color: '#5aa9ff', deviceId: d.id, portIdx: i };
+    }
+  });
+
   // Dynamic bbox — start with a minimum visible canvas, then expand to
   // include every instance (and any nodes dragged to negative coords).
   // INFINITE_PAD on every side gives a near-endless workspace that
@@ -16538,6 +16725,12 @@ function _wireRenderAdvancedDiagram(container){
     } else if(w.fromId.indexOf('asp:') === 0){
       const inst = wireAdvanced.sources.find(s => s.id === w.fromId.split(':')[1]);
       if(inst){ _es = _wireEdgeStyle(inst.name); wireColor = _es.color; }
+    } else if(w.fromId.indexOf('dvo:') === 0){   // 16jd: a wire leaving a device port takes THAT port's cable type
+      const _dp = w.fromId.split(':'); const _dd = (wireAdvanced.devices || []).find(x => x.id === _dp[1]);
+      const _pt = _wireAdvDevPort(_dd, 'out', parseInt(_dp[2], 10) || 0);
+      const _sp = _pt ? _wireCableSpec(_pt.conn) : null;
+      if(_sp){ _es = { color: _sp.color, dash: _sp.dash, sw: _sp.sw, markerEnd: _sp.markerEnd, markerStart: _sp.markerStart, typed: true, spec: _sp }; wireColor = _sp.color; }
+      else wireColor = '#5aa9ff';
     }
     const _isRet = (w.kind === 'return');
     if(_isRet) _es = null;
@@ -16656,6 +16849,29 @@ function _wireRenderAdvancedDiagram(container){
         svgNodes += '<circle class="wire-adv-connector" data-source-id="' + ropId + '" cx="' + (p.x + p.w) + '" cy="' + portY + '" r="16" fill="transparent" pointer-events="all" style="cursor:crosshair"/>';
         }
       }
+    } else if(p.type === 'device'){
+      // 16jd: converter / switch tile — router chrome, a port dot per row on both edges, coloured by the port's cable.
+      svgNodes += '<rect x="' + p.x + '" y="' + p.y + '" width="' + p.w + '" height="' + p.h + '" rx="8" ry="8" fill="transparent" stroke="none" pointer-events="none"/>';
+      svgNodes += '<foreignObject x="' + p.x + '" y="' + p.y + '" width="' + p.w + '" height="' + p.h + '">';
+      svgNodes += _wireAdvDeviceTileHTML(p.device, isSelected);
+      svgNodes += '</foreignObject>';
+      const _dg = _wireAdvDevGeom(p.device);
+      const _dIn = (p.device.ins || []).length, _dOut = (p.device.kind === 'switch') ? _dIn : (p.device.outs || []).length;
+      for(let i = 0; i < _dg.rows; i++){
+        const py = _dg.portY(i);
+        if(i < _dIn){
+          const _pc = _wireCableSpec(_wireAdvDevPort(p.device, 'in', i).conn);
+          const _c = _pc ? _pc.color : '#ff8a3d';
+          svgNodes += '<circle cx="' + p.x + '" cy="' + py + '" r="5" style="fill:' + _c + '" stroke="#0a0e16" stroke-width="1.5" pointer-events="none"/>';
+          svgNodes += '<circle class="wire-adv-rport-in" data-rport-id="dvi:' + p.device.id + ':' + i + '" cx="' + p.x + '" cy="' + py + '" r="14" fill="transparent" pointer-events="all" style="cursor:crosshair"/>';
+        }
+        if(i < _dOut){
+          const _pc2 = _wireCableSpec(_wireAdvDevPort(p.device, 'out', i).conn);
+          const _c2 = _pc2 ? _pc2.color : 'rgba(var(--n-cyan-rgb),0.95)';
+          svgNodes += '<circle cx="' + (p.x + p.w) + '" cy="' + py + '" r="5" style="fill:' + _c2 + '" stroke="#0a0e16" stroke-width="1.5" pointer-events="none"/>';
+          svgNodes += '<circle class="wire-adv-connector" data-source-id="dvo:' + p.device.id + ':' + i + '" cx="' + (p.x + p.w) + '" cy="' + py + '" r="14" fill="transparent" pointer-events="all" style="cursor:crosshair"/>';
+        }
+      }
     } else if(p.type === 'destination' || p.type === 'dsm'){
       // Rich tile (mirrors the source tile) so all three Advanced-canvas
       // instance types look visually consistent.
@@ -16710,7 +16926,7 @@ function _wireRenderAdvancedDiagram(container){
   // centered in the VISIBLE canvas gap (toggled in _wireRender) — the old SVG
   // text rode the huge padded viewBox and landed up-and-left. Keep svgHint=''.
   let svgHint = '';
-  const totalAdvNodes = wireAdvanced.sources.length + wireAdvanced.dests.length + wireAdvanced.dsms.length + wireAdvanced.routers.length;
+  const totalAdvNodes = wireAdvanced.sources.length + wireAdvanced.dests.length + wireAdvanced.dsms.length + wireAdvanced.routers.length + (wireAdvanced.devices || []).length;
 
   const zoomA = _wireGetZoom();
   // Real-content extent (cards + wires) for Fit zoom calculation; the
@@ -16895,6 +17111,15 @@ function _wireAdvDrop(ev){
 // on the Source side, and you can't drop onto a source node, so they need no
 // change.) Returns the normalized {fromId,toId,type}.
 function _wireAdvNormalizeRouterEndpoints(fromId, toId, type){
+  // 16jd: a destination / AUX pulled onto a converter or switch hangs off that row's OUT port.
+  if(type === 'rport-in' && toId.indexOf('dvi:') === 0 && (fromId.indexOf('adst:') === 0 || fromId.indexOf('adsm:') === 0)){
+    const dp = toId.split(':'); const dev = _wireAdvDeviceById(dp[1]);
+    const nOut = dev ? ((dev.kind === 'switch') ? (dev.ins || []).length : (dev.outs || []).length) : 0;
+    if(nOut > 0){
+      const k = Math.min(parseInt(dp[2], 10) || 0, nOut - 1);
+      return { fromId: 'dvo:' + dp[1] + ':' + k, toId: fromId, type: (fromId.indexOf('adsm:') === 0) ? 'dsm' : 'destination' };
+    }
+  }
   if(type === 'rport-in' && toId.indexOf('rip:') === 0 && (fromId.indexOf('adst:') === 0 || fromId.indexOf('adsm:') === 0)){
     const rp = toId.split(':');   // ['rip', routerId, idx]
     return { fromId: 'rop:' + rp[1] + ':' + rp[2], toId: fromId, type: (fromId.indexOf('adsm:') === 0) ? 'dsm' : 'destination' };
@@ -16957,7 +17182,7 @@ function _wireAdvStartWireDraw(ev, sourceNodeId){
       if(!g) return;
       tid  = g.getAttribute('data-node-id');
       type = g.getAttribute('data-node-type');
-      if(type !== 'destination' && type !== 'dsm' && type !== 'router') return;
+      if(type !== 'destination' && type !== 'dsm' && type !== 'router' && type !== 'device') return;   // 16jd: devices too
       // 16ez (Omar): the primary input is already fed by ANOTHER source, so this
       // run is the BACKUP — the second point pops up and takes the new line.
       if((type === 'destination' || type === 'dsm') && (wireAdvanced.wires || []).some(w => w.toId === tid && w.fromId !== sourceNodeId)){
@@ -16989,6 +17214,17 @@ function _wireAdvStartWireDraw(ev, sourceNodeId){
             type = 'rport-in';
           }
         }
+      }
+      // 16jd: a drop on a converter / switch body lands on the port row under the cursor.
+      if(type === 'device' && tid.indexOf('device:') === 0){
+        const dev = _wireAdvDeviceById(tid.slice(7));
+        const svgEl3 = document.querySelector('#wire-diagram svg');
+        if(!dev || !svgEl3 || !(dev.ins || []).length) return;
+        const sr3 = svgEl3.getBoundingClientRect(); const vb3 = svgEl3.viewBox.baseVal;
+        const localY3 = vb3.y + (ev2.clientY - sr3.top) * (vb3.height / sr3.height);
+        const rowIdx3 = Math.floor((localY3 - (dev.y + 44 + 36)) / 36);   // _wireAdvDevGeom: title 44 + header 36, rows 36
+        if(rowIdx3 < 0 || rowIdx3 >= _wireAdvDevRows(dev)) return;
+        tid = 'dvi:' + dev.id + ':' + Math.min(rowIdx3, dev.ins.length - 1); type = 'rport-in';
       }
     }
     // Type-aware: a destination/AUX dropped on a router INPUT goes to the
@@ -17043,6 +17279,7 @@ function _wireAdvAutoCellName(fromId){
   if(fromId.indexOf('rop:') === 0){ const p = fromId.split(':'); const r = wireAdvanced.routers.find(x => x.id === p[1]); const o = r && r.outputs[parseInt(p[2], 10)]; return o ? (o.name || (r.label || 'Router')) : ''; }
   if(fromId.indexOf('adst:') === 0){ const inst = wireAdvanced.dests.find(d => d.id === fromId.slice(5)); const s = inst ? (typeof screens !== 'undefined' ? screens : []).find(x => x.id === inst.refId) : null; return s ? (s.name || s.id) : ''; }
   if(fromId.indexOf('adsm:') === 0){ const inst = wireAdvanced.dsms.find(d => d.id === fromId.slice(5)); const d = inst ? (typeof dsms !== 'undefined' ? dsms : []).find(x => x.id === inst.refId) : null; return d ? (d.name || d.id) : ''; }
+  if(fromId.indexOf('dvo:') === 0){ const p = fromId.split(':'); const d = _wireAdvDeviceById(p[1]); if(!d) return ''; const k = parseInt(p[2], 10) || 0; const pt = _wireAdvDevPort(d, 'out', k); return _wireAdvDevLabel(d) + ' \u00b7 ' + ((pt && pt.name) ? pt.name : ((d.kind === 'switch' ? 'Port ' : 'Out ') + (k + 1))); }   // 16jd
   return '';
 }
 function _wireAdvAutoTargetName(toId){
@@ -17052,6 +17289,7 @@ function _wireAdvAutoTargetName(toId){
   if(toId.indexOf('dst:') === 0){ const s = (typeof screens !== 'undefined' ? screens : []).find(x => x.id === toId.slice(4)); return s ? (s.name || s.id) : ''; }
   if(toId.indexOf('dsm:') === 0){ const d = (typeof dsms !== 'undefined' ? dsms : []).find(x => x.id === toId.slice(4)); return d ? (d.name || d.id) : ''; }
   if(toId.indexOf('rip:') === 0){ const p = toId.split(':'); const r = wireAdvanced.routers.find(x => x.id === p[1]); return r ? ((r.label || 'Router') + ' IN ' + ((parseInt(p[2], 10) || 0) + 1)) : ''; }
+  if(toId.indexOf('dvi:') === 0){ const p = toId.split(':'); const d = _wireAdvDeviceById(p[1]); if(!d) return ''; const k = parseInt(p[2], 10) || 0; const pt = _wireAdvDevPort(d, 'in', k); return _wireAdvDevLabel(d) + ' \u00b7 ' + ((pt && pt.name) ? pt.name : ((d.kind === 'switch' ? 'Port ' : 'In ') + (k + 1))); }   // 16jd
   return '';
 }
 function _wireAdvSyncRouterCells(){
@@ -17186,6 +17424,7 @@ function _wireAdvOwnerId(id){
   if(id.indexOf('adp:') === 0){ const o = _wireAdvInstOf(id); return o ? o.ownerId : id; }
   if(id.indexOf('asp:') === 0) return 'asrc:' + id.split(':')[1];
   if(id.indexOf('rip:') === 0 || id.indexOf('rop:') === 0) return 'router:' + id.split(':')[1];
+  if(id.indexOf('dvi:') === 0 || id.indexOf('dvo:') === 0) return 'device:' + id.split(':')[1];   // 16jd
   return id;
 }
 // + / − backup input on a destination / AUX tile (max 2 inputs: primary + backup).
@@ -17267,7 +17506,7 @@ function _wireAdvDeleteSelected(){
   // Undo snapshot BEFORE the mutation (pushUndo captures current state;
   // pushing after deletion made node deletes un-undoable). A stale-id
   // no-op push is harmless — undo just becomes a blank step.
-  if(Array.from(sel).some(id => /^(asrc:|adst:|adsm:|router:)/.test(id)) && typeof pushUndo === 'function') pushUndo();
+  if(Array.from(sel).some(id => /^(asrc:|adst:|adsm:|router:|device:)/.test(id)) && typeof pushUndo === 'function') pushUndo();
   let changed = false;
   sel.forEach(id => {
     if(id.startsWith('asrc:')){
@@ -17289,6 +17528,13 @@ function _wireAdvDeleteSelected(){
       wireAdvanced.dsms = wireAdvanced.dsms.filter(d => d.id !== instId);
       wireAdvanced.wires = wireAdvanced.wires.filter(w => w.fromId !== id && w.toId !== id);
       if(wireAdvanced.dsms.length !== before) changed = true;
+    } else if(id.startsWith('device:')){   // 16jd
+      const before = wireAdvanced.devices.length;
+      const did = id.slice(7);
+      wireAdvanced.devices = wireAdvanced.devices.filter(d => d.id !== did);
+      const pi = 'dvi:' + did + ':', po = 'dvo:' + did + ':';
+      wireAdvanced.wires = wireAdvanced.wires.filter(w => w.fromId !== id && w.toId !== id && w.fromId.indexOf(pi) !== 0 && w.toId.indexOf(pi) !== 0 && w.fromId.indexOf(po) !== 0 && w.toId.indexOf(po) !== 0);
+      if(wireAdvanced.devices.length !== before) changed = true;
     } else if(id.startsWith('router:')){
       const before = wireAdvanced.routers.length;
       const rid = id.slice(7);
@@ -17345,7 +17591,7 @@ function _wireBuildAdvancedExportSvg(theme, opts){
   if(!clone.getAttribute('xmlns:xlink')) clone.setAttribute('xmlns:xlink', 'http://www.w3.org/1999/xlink');
   // Strip interactive-only elements that shouldn't be in the export
   // (mid-handle drag dots, drop hints, marquee selection rect).
-  clone.querySelectorAll('.wire-mid-handle, .wire-drop-hint, .wire-marquee, .wire-end-dot, .wire-src-outbtn, .wire-src-outbtn-glyph, .wire-dst-inbtn, .wire-dst-inbtn-glyph, .wire-edge-hit').forEach(el => el.remove());
+  clone.querySelectorAll('.wire-mid-handle, .wire-drop-hint, .wire-marquee, .wire-end-dot, .wire-src-outbtn, .wire-src-outbtn-glyph, .wire-dst-inbtn, .wire-dst-inbtn-glyph, .wire-edge-hit, .dv-add, .dv-x').forEach(el => el.remove());
   // Drop any cursor/transition styles that came from CSS — exports
   // should look static, not interactive.
   clone.removeAttribute('style');
@@ -17482,7 +17728,8 @@ function _wireBuildAdvancedExportSvg(theme, opts){
       + '#wire-overlay .wire-router-tile th,'
       + '#wire-overlay .wire-router-tile td{background:#ffffff !important;color:#1f2937 !important;border-color:#94a3b8 !important}\n'
       + '#wire-overlay .wire-router-tile th{background:#f1f5f9 !important;color:#0e7490 !important;font-weight:800}\n'
-      + '#wire-overlay .wire-router-tile .r-title{color:#0e7490 !important}\n';
+      + '#wire-overlay .wire-router-tile .r-title{color:#0e7490 !important}\n'
+      + '#wire-overlay .wire-device-grid .dv-conn{background:#f1f5f9 !important;border-color:#94a3b8 !important}\n';   // 16jd
   }
   // Strip the #wire-overlay scope AFTER the theme append — appended earlier
   // the overrides kept their prefix and never matched inside the SVG.
@@ -18408,7 +18655,7 @@ function _wireSwitchToAdvanced(){
     showConfirm({
       variant: 'info',
       title: 'Advanced Wire Builder',
-      message: 'Page 1 opens as this show: the Simple wiring under the show name, ready to customise. Advanced is a free-form wire builder. Drag sources, destinations, and AUX/DSM from the left panel onto the canvas, and add routers or switchers from I/O Tools, then draw wires by dragging from the connector dots on a tile\'s edge.\n\nAdvanced mode is fully standalone, it does NOT connect to anything outside of Advanced mode (no auto-sync with layers, presets, or DSM content). Use it when you want a hand-drawn, comprehensive wiring diagram independent of the show data.\n\nSwitch to Advanced now?',
+      message: 'Page 1 opens as this show: the Simple wiring under the show name, ready to customise. Advanced is a free-form wire builder. Drag sources, destinations, and AUX/DSM from the left panel onto the canvas, and add routers, switchers, converters or network switches from I/O Tools, then draw wires by dragging from the connector dots on a tile\'s edge.\n\nAdvanced mode is fully standalone, it does NOT connect to anything outside of Advanced mode (no auto-sync with layers, presets, or DSM content). Use it when you want a hand-drawn, comprehensive wiring diagram independent of the show data.\n\nSwitch to Advanced now?',
       confirmLabel: 'Switch to Advanced',
       cancelLabel: 'Stay in Simple',
       onConfirm: doSwitch
@@ -18507,7 +18754,10 @@ const _WIRE_CABLE_FAMILIES = {
   st2110: { label: 'ST-2110 · IP',      color: '#22e4ff', cssVar: '--n-cyan',   dash: '7 5',      sw: 2.6, roundStart: true  },
   fiber:  { label: 'Fiber',             color: '#22e4ff', cssVar: '--n-cyan',   dash: '10 4 2 4', sw: 2.6, roundStart: false },
   dante:  { label: 'Dante · audio IP',  color: '#ff8a3d', cssVar: '--n-orange', dash: '7 5',      sw: 2.6, roundStart: true  },
-  mv:     { label: 'Multiviewer',       color: '#ffe04a', cssVar: '--n-yellow', dash: '',         sw: 1.8, roundStart: false }
+  mv:     { label: 'Multiviewer',       color: '#ffe04a', cssVar: '--n-yellow', dash: '',         sw: 1.8, roundStart: false },
+  ethernet: { label: 'Ethernet · network',  color: '#5aa9ff',                      dash: '4 3',      sw: 2.4, roundStart: true  },   // 16jd
+  genlock:  { label: 'Genlock · reference', color: '#c3ccd8',                      dash: '2 5',      sw: 2.0, roundStart: false },
+  ltc:      { label: 'LTC · timecode',      color: '#ff4e8b',                      dash: '12 4',     sw: 2.0, roundStart: false }
 };
 function _wireCableSpec(connectorType){
   const fam = (connectorType && typeof _sysClassifyConnector === 'function') ? _sysClassifyConnector(connectorType) : 'empty';
@@ -18557,6 +18807,10 @@ function _wireCableTypesInUse(){
   if(wireSettings && wireSettings.wireView === 'advanced'){
     ((wireAdvanced && wireAdvanced.sources) || []).forEach(s => add(s && s.name));
     ((wireAdvanced && wireAdvanced.customSources) || []).forEach(s => add(s && s.name));
+    ((wireAdvanced && wireAdvanced.devices) || []).forEach(d => {   // 16jd: device ports carry their own cable types — one key row per device per type
+      if(!d) return; const dn = _wireAdvDevLabel(d); const seenT = new Set();
+      [].concat(d.ins || [], (d.kind === 'switch') ? [] : (d.outs || [])).forEach(p => { if(p && p.conn && !seenT.has(p.conn)){ seenT.add(p.conn); extra.push({ name: dn, type: p.conn }); } });
+    });
   } else {
     _wireBuildAllSourceNames().forEach(add);
     // 16ez: Simple draws destination / AUX connectors on the hub's output side.
@@ -19772,6 +20026,8 @@ function _wireStartNodeDrag(ev, nodeId){
   // drag delta (the port dots move with the tile, the wires must follow).
   const draggedRouterIds = new Set();
   dragIds.forEach(id => { if(id.indexOf('router:') === 0) draggedRouterIds.add(id.slice(7)); });
+  const draggedDevIds = new Set();   // 16jd
+  dragIds.forEach(id => { if(id.indexOf('device:') === 0) draggedDevIds.add(id.slice(7)); });
   const draggedSrcIds = new Set();
   dragIds.forEach(id => { if(id.indexOf('asrc:') === 0) draggedSrcIds.add(id.slice(5)); });
   const draggedDstIds = new Set();   // 16ez
@@ -19780,6 +20036,7 @@ function _wireStartNodeDrag(ev, nodeId){
   function _isPortOfDragged(id){
     if(!id) return false;
     if((id.indexOf('rip:') === 0 || id.indexOf('rop:') === 0) && draggedRouterIds.has(id.split(':')[1])) return true;
+    if((id.indexOf('dvi:') === 0 || id.indexOf('dvo:') === 0) && draggedDevIds.has(id.split(':')[1])) return true;   // 16jd
     if(id.indexOf('adp:') === 0 && draggedDstIds.has(id.split(':')[1])) return true;
     if((id.indexOf('hin:') === 0 || id.indexOf('hout:') === 0) && draggedHub) return true;
     return id.indexOf('asp:') === 0 && draggedSrcIds.has(id.split(':')[1]);
@@ -19795,6 +20052,12 @@ function _wireStartNodeDrag(ev, nodeId){
       origPortXY['rip:' + rid + ':' + i] = { x: rt.x,       y: py };
       origPortXY['rop:' + rid + ':' + i] = { x: rt.x + 820, y: py };   // 16el
     }
+  });
+  // 16jd: device ports — analytic, from _wireAdvDevGeom.
+  draggedDevIds.forEach(did => {
+    const dv = (wireAdvanced.devices || []).find(d => d.id === did); if(!dv) return;
+    const g = _wireAdvDevGeom(dv);
+    for(let i = 0; i < g.rows; i++){ const py = g.portY(i); origPortXY['dvi:' + did + ':' + i] = { x: dv.x, y: py }; origPortXY['dvo:' + did + ':' + i] = { x: dv.x + g.w, y: py }; }
   });
   // Same for dragged source tiles' extra OUT points (asp: ids) — analytic,
   // matching the render (tile 260 wide, height from _wireAdvSrcTileH,
@@ -20011,6 +20274,10 @@ function _wireStartNodeDrag(ev, nodeId){
             const inst = wireAdvanced.dsms.find(d => d.id === n.id.slice(5));
             if(inst){ inst.x = n.lastX; inst.y = n.lastY; return; }
           }
+          if(n.id.indexOf('device:') === 0 && Array.isArray(wireAdvanced.devices)){   // 16jd
+            const inst = wireAdvanced.devices.find(d => d.id === n.id.slice(7));
+            if(inst){ inst.x = n.lastX; inst.y = n.lastY; return; }
+          }
           if(n.id.indexOf('router:') === 0 && Array.isArray(wireAdvanced.routers)){
             const inst = wireAdvanced.routers.find(r => r.id === n.id.slice(7));
             if(inst){ inst.x = n.lastX; inst.y = n.lastY; return; }
@@ -20048,6 +20315,7 @@ function _wireAdvNodeRect(id){
   if(id.indexOf('adst:') === 0){ const d = wireAdvanced.dests.find(x => x.id === id.slice(5)); return d ? { obj: d, x: d.x, y: d.y, w: TILE_W, h: TILE_H } : null; }
   if(id.indexOf('adsm:') === 0){ const d = wireAdvanced.dsms.find(x => x.id === id.slice(5)); return d ? { obj: d, x: d.x, y: d.y, w: TILE_W, h: TILE_H } : null; }
   if(id.indexOf('router:') === 0){ const r = wireAdvanced.routers.find(x => x.id === id.slice(7)); return r ? { obj: r, x: r.x, y: r.y, w: 820, h: (56 + 44 + 44) + (parseInt(r.size, 10) || 10) * 44 + 4 } : null; }
+  if(id.indexOf('device:') === 0){ const d = (wireAdvanced.devices || []).find(x => x.id === id.slice(7)); if(!d) return null; const g = _wireAdvDevGeom(d); return { obj: d, x: d.x, y: d.y, w: g.w, h: g.h }; }   // 16jd
   return null;
 }
 function _wireAlignSelectedRects(){
@@ -20292,6 +20560,21 @@ function _wireRenderDetailsMain(container){
     return;
   }
 
+  if(type === 'device'){   // 16jd
+    const dv = _wireAdvDeviceById(key);
+    const isSw = !!(dv && dv.kind === 'switch');
+    const nI = dv ? (dv.ins || []).length : 0, nO = dv ? (dv.outs || []).length : 0;
+    const pi = 'dvi:' + key + ':', po = 'dvo:' + key + ':';
+    const wIn  = (wireAdvanced.wires || []).filter(w => w.toId.indexOf(pi) === 0).length;
+    const wOut = (wireAdvanced.wires || []).filter(w => w.fromId.indexOf(po) === 0).length;
+    container.innerHTML = '<div style="padding:14px;color:var(--text2);font-size:11px;line-height:1.6">'
+      + '<div style="font-weight:700;color:#5aa9ff;letter-spacing:.1em;text-transform:uppercase;font-size:10px;margin-bottom:4px">' + (isSw ? 'Switch' : 'Converter') + '</div>'
+      + '<div style="font-size:13px;font-weight:600;color:#5aa9ff;margin-bottom:8px">' + _esc(_wireAdvDevLabel(dv) || key) + '</div>'
+      + '<div style="color:var(--text3);font-size:10px;margin-bottom:10px">' + (isSw ? (nI + ' port' + (nI === 1 ? '' : 's')) : (nI + ' in \u00b7 ' + nO + ' out')) + ' \u00b7 ' + wIn + ' wire' + (wIn === 1 ? '' : 's') + ' in \u00b7 ' + wOut + ' wire' + (wOut === 1 ? '' : 's') + ' out</div>'
+      + '<div style="font-size:10px;color:var(--text3);font-style:italic">Every port has its own cable type, and a wire leaving a port takes that colour. + adds a port, \u00d7 removes an unwired one. Press Delete to remove the tile.</div>'
+      + '</div>';
+    return;
+  }
   if(type === 'src'){
     accent = '#5aa9ff';   // 16gg lane rule: sources blue
     header = 'Source';
@@ -22241,6 +22524,7 @@ function _applyProjectText(text){
       customSources: Array.isArray(s.wireAdvanced.customSources) ? s.wireAdvanced.customSources : [],
       customDests:   Array.isArray(s.wireAdvanced.customDests)   ? s.wireAdvanced.customDests   : [],
       customDsms:    Array.isArray(s.wireAdvanced.customDsms)    ? s.wireAdvanced.customDsms    : [],
+      devices:       Array.isArray(s.wireAdvanced.devices)       ? s.wireAdvanced.devices       : [],   // 16jd
       // Phase: multi-page Advanced — three independent canvas slots.
       _pages: Array.isArray(s.wireAdvanced._pages) ? s.wireAdvanced._pages : null,
       _activePageId: typeof s.wireAdvanced._activePageId === 'string' ? s.wireAdvanced._activePageId : 'p0',
@@ -22571,6 +22855,7 @@ function restoreAutoSave(){
           customSources: Array.isArray(s.wireAdvanced.customSources) ? s.wireAdvanced.customSources : [],
           customDests:   Array.isArray(s.wireAdvanced.customDests)   ? s.wireAdvanced.customDests   : [],
           customDsms:    Array.isArray(s.wireAdvanced.customDsms)    ? s.wireAdvanced.customDsms    : [],
+          devices:       Array.isArray(s.wireAdvanced.devices)       ? s.wireAdvanced.devices       : [],   // 16jd
           _pages: Array.isArray(s.wireAdvanced._pages) ? s.wireAdvanced._pages : null,
           _activePageId: typeof s.wireAdvanced._activePageId === 'string' ? s.wireAdvanced._activePageId : 'p0',
           _pageData: (s.wireAdvanced._pageData && typeof s.wireAdvanced._pageData === 'object') ? s.wireAdvanced._pageData : {}
