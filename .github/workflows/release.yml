@@ -48,7 +48,10 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
-          files: deploy/lookbook_builder.html
+          files: |
+            deploy/lookbook_builder.html
+            deploy/quick_guide.html
+            deploy/quick_guide.pdf
 
   win:
     needs: mac            # the release exists by now — no create-release race
