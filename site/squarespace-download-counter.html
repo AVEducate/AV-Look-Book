@@ -5,7 +5,7 @@
 <div id="avlb-downloads" style="font:600 15px/1.4 -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#9aa0aa;letter-spacing:.02em;min-height:1.4em;text-align:center;margin-top:10px"></div>
 <script>
 (function(){
-  var MODE='estimate';      // 'estimate' ignores the one automatic fetch every installer gets when a release is published; 'raw' shows GitHub's plain total
+  var MODE='raw';           // 'raw' shows GitHub's plain total (Omar, 2026-09-17); 'estimate' subtracted one fetch per installer file and threw real downloads away
   var SINCE='2026-09-14';   // only releases published on or after this date (the day the site went public); '' = all time
   var TEXT=function(n){ return n.toLocaleString()+(n===1?' download':' downloads')+' and counting'; };
   var el=document.getElementById('avlb-downloads'); if(!el) return;
