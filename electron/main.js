@@ -445,7 +445,7 @@ app.on('open-file', (e, p) => { e.preventDefault(); if (app.isReady()) openProje
 const _primaryReady = new Promise((resolve) => {
   if (app.requestSingleInstanceLock()) return resolve();
   const t0 = Date.now();
-  const retry = () => { if (app.requestSingleInstanceLock()) return resolve(); if (Date.now() - t0 < 6000) setTimeout(retry, 250); else app.exit(0); };
+  const retry = () => { if (app.requestSingleInstanceLock()) return resolve(); if (Date.now() - t0 < 20000) setTimeout(retry, 250); else process.exit(0); };   // 0.2.130: a graceful quit can take a few seconds (file flush + thumbnail)
   setTimeout(retry, 250);
 });
 app.on('second-instance', (e, argv) => {
@@ -672,7 +672,12 @@ ipcMain.handle('lb:welcome:action', async (_e, name, a, b) => {
 });
 
 // ── Bridge: misc (preload → window.lookbookNative) ───────────────────────
-ipcMain.handle('lb:relaunch', async () => { app.relaunch(); app.exit(0); });
+// Restart after a content update (shell 0.2.130). app.exit() used to tear the windows down without setting
+// `quitting`, so the last project window's 'closed' handler popped the Welcome window inside the dying copy and
+// it never exited — every Restart added another running AV Look Book (Omar's "multiple versions"). Quit
+// gracefully instead: before-quit sets `quitting`, the close flow flushes the file, and the new copy waits
+// for the single-instance lock (up to 20 s) while this one goes away.
+ipcMain.handle('lb:relaunch', async () => { quitting = true; app.relaunch(); app.quit(); });
 ipcMain.handle('lb:checkForUpdates', async () => checkForContentUpdate());
 ipcMain.handle('lb:info', async () => ({ shell: app.getVersion(), build: stampOfFile(currentHtmlPath()), online: net.isOnline() }));
 
