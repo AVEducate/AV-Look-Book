@@ -750,6 +750,16 @@ body.is-mobile #vp-tabs{display:none}
 .fs-panel-hdr.fs-cyan{background:linear-gradient(90deg,rgba(var(--n-cyan-rgb),.06) 0%,transparent 60%)}
 .fs-panel-hdr.fs-cyan .fs-strip{background:var(--n-cyan);box-shadow:0 0 8px var(--n-cyan)}
 .fs-panel-hdr.fs-cyan h4{color:var(--n-cyan)}
+/* 16jt (Omar): Wire's side-panel collapse, on the Advanced page. A collapsed panel is a 38 px strip that shows only the
+   toggle, centred in its header; everything else hides and the tile re-fits the wider viewport. */
+#fs-overlay .fs-panel-hdr .fs-panel-tog{margin-left:6px}
+#fs-overlay #fs-right-panel .fs-panel-hdr .fs-panel-tog{margin-left:0;margin-right:2px}
+#fs-overlay #fs-left-panel.fs-collapsed,#fs-overlay #fs-right-panel.fs-collapsed{width:38px !important;min-width:38px !important;max-width:38px !important;overflow:hidden}
+#fs-overlay .fs-collapsed > :not(.fs-panel-hdr){display:none !important}
+#fs-overlay .fs-collapsed .fs-panel-hdr{justify-content:center;padding:8px 4px;gap:0}
+#fs-overlay .fs-collapsed .fs-panel-hdr > :not(.fs-panel-tog){display:none}
+#fs-overlay .fs-collapsed .fs-panel-hdr .fs-panel-tog{margin:0}
+#fs-overlay .fs-collapsed .fs-panel-tog svg{transform:rotate(180deg)}
 #fs-left-panel:focus-within{border-right-color:rgba(90,169,255,.35) !important;box-shadow:inset 4px 0 16px -8px rgba(90,169,255,.25)}
 #fs-right-panel:focus-within{border-left-color:rgba(var(--n-cyan-rgb),.35) !important;box-shadow:inset -4px 0 16px -8px rgba(var(--n-cyan-rgb),.25)}
 .fs-count{font-family:var(--font-mono);font-size:10px;font-weight:600;color:var(--text2);padding:2px 7px;border:1px solid var(--n-line);border-radius:3px;background:#0a0d12;letter-spacing:0;text-transform:none}
@@ -1015,10 +1025,10 @@ input[type=range].fs-range::-moz-range-thumb,input[type=range].lfx-range::-moz-r
 /* Inline collapse toggle — lives inside the section header bar (not
    floating). Sized to match the "+" button (22x22) so they read as
    sibling controls. Cyan border + filled-rect icon. */
-#wire-overlay .wire-panel-inline-toggle{position:relative;isolation:isolate;display:inline-flex;align-items:center;justify-content:center;width:26px;height:24px;background:#0a0d12;border:1px solid var(--ss-border-soft);border-radius:999px;box-shadow:var(--n-shadow-inset);color:var(--n-cyan);cursor:pointer;padding:0;flex-shrink:0}
-#wire-overlay .wire-panel-inline-toggle::before{content:"";position:absolute;inset:2px;border-radius:999px;z-index:-1;pointer-events:none;background:linear-gradient(180deg,var(--sk-pill1),var(--sk-pill2));box-shadow:0 1px 3px rgba(0,0,0,.45), inset 0 1px 0 rgba(var(--n-cyan-rgb),.12)}
-#wire-overlay .wire-panel-inline-toggle:hover::before{filter:brightness(1.16)}
-#wire-overlay .wire-panel-inline-toggle svg{transition:transform .15s}
+#wire-overlay .wire-panel-inline-toggle,#fs-overlay .fs-panel-tog{position:relative;isolation:isolate;display:inline-flex;align-items:center;justify-content:center;width:26px;height:24px;background:#0a0d12;border:1px solid var(--ss-border-soft);border-radius:999px;box-shadow:var(--n-shadow-inset);color:var(--n-cyan);cursor:pointer;padding:0;flex-shrink:0}
+#wire-overlay .wire-panel-inline-toggle::before,#fs-overlay .fs-panel-tog::before{content:"";position:absolute;inset:2px;border-radius:999px;z-index:-1;pointer-events:none;background:linear-gradient(180deg,var(--sk-pill1),var(--sk-pill2));box-shadow:0 1px 3px rgba(0,0,0,.45), inset 0 1px 0 rgba(var(--n-cyan-rgb),.12)}
+#wire-overlay .wire-panel-inline-toggle:hover::before,#fs-overlay .fs-panel-tog:hover::before{filter:brightness(1.16)}
+#wire-overlay .wire-panel-inline-toggle svg,#fs-overlay .fs-panel-tog svg{transition:transform .15s}
 
 /* Top-bar active-view info — sits to the right of the 3-way nav pill
    and shows which page the user is currently on (icon + name + short
@@ -3680,7 +3690,7 @@ body #toolbar .tb-btn.save-dirty:not(.sec):not(.pri):hover{color:#f0c060 !import
    round stay round: status/LED dots, toggle-switch sliders + knobs, count badges, PDF cover brand.
    Kept as ONE block at the end of the cascade (the recess pass ~L798 uses !important, so this
    must too) instead of editing ~160 older rules — revert = delete this block + the inline edits. */
-.tbi,.tb-btn,.p-code,.p-name,.del-btn,.dsm-toggle,#collapse-btn,#custom-input,.fs-nav-btn,.fs-panel-hdr .fs-add-btn,.fs-num-inp,.fs-edid-inp,.pm-btn-primary,.pm-btn-cancel,.pm-btn-danger,.dlg-btn-primary,.dlg-btn-cancel,.cpr-btn,#wire-overlay .wire-panel-inline-toggle,.topbar-exit-btn,.sys-name-cell .sys-name-input,#wire-overlay .wire-custom-name,.sys-btn,.sys-add-btn,.pill-btn,button[onclick="_wireDownloadAllThumbnails()"],#wire-zoom-widget,#wire-zoom-widget button,#fs-zoom-widget,#fs-zoom-widget button,#wire-router-menu-btn,.ob-cta,.bb-pod-action,.sys-scope-pill,.sys-type-input,.skip-link,.mb-empty-cta,.mb-le-nameinput,.tbc,#sp-bg-btn,button[onclick^="setCrop("],.lb-seg,.lp-mode-toggle,.wire-nav-pillgroup,.pm-hdr .pm-close,#wire-overlay .wire-pane-add,button[onclick="closeColorPop()"],button[onclick="closeResWarn()"],#wire-overlay .wire-card-delete,#wire-overlay .wire-thumb-clear,.blend-popup-close,.fs-zoom-btn,.lc-reset,button[onclick="event.stopPropagation();actions.addDSM()"],button[onclick="event.stopPropagation();actions.removeDSM()"],.eng-toggle:focus-visible,button[class*="btn"]:focus-visible,button[class*="pill"]:focus-visible{border-radius:4px !important}
+.tbi,.tb-btn,.p-code,.p-name,.del-btn,.dsm-toggle,#collapse-btn,#custom-input,.fs-nav-btn,.fs-panel-hdr .fs-add-btn,.fs-num-inp,.fs-edid-inp,.pm-btn-primary,.pm-btn-cancel,.pm-btn-danger,.dlg-btn-primary,.dlg-btn-cancel,.cpr-btn,#wire-overlay .wire-panel-inline-toggle,#fs-overlay .fs-panel-tog,.topbar-exit-btn,.sys-name-cell .sys-name-input,#wire-overlay .wire-custom-name,.sys-btn,.sys-add-btn,.pill-btn,button[onclick="_wireDownloadAllThumbnails()"],#wire-zoom-widget,#wire-zoom-widget button,#fs-zoom-widget,#fs-zoom-widget button,#wire-router-menu-btn,.ob-cta,.bb-pod-action,.sys-scope-pill,.sys-type-input,.skip-link,.mb-empty-cta,.mb-le-nameinput,.tbc,#sp-bg-btn,button[onclick^="setCrop("],.lb-seg,.lp-mode-toggle,.wire-nav-pillgroup,.pm-hdr .pm-close,#wire-overlay .wire-pane-add,button[onclick="closeColorPop()"],button[onclick="closeResWarn()"],#wire-overlay .wire-card-delete,#wire-overlay .wire-thumb-clear,.blend-popup-close,.fs-zoom-btn,.lc-reset,button[onclick="event.stopPropagation();actions.addDSM()"],button[onclick="event.stopPropagation();actions.removeDSM()"],.eng-toggle:focus-visible,button[class*="btn"]:focus-visible,button[class*="pill"]:focus-visible{border-radius:4px !important}
 .lb-seg .lb-seg-btn,.lb-seg .seg-thumb,.lp-mode-toggle .seg-thumb,.lp-mode-toggle .lp-mode-btn,.wire-nav-pillgroup .wire-nav-btn,.wire-nav-pillgroup .wire-nav-thumb,.sys-modal .beta-pill,.mb-le-reschip,.mb-le-chip,.chip-x,.aoi-btn,.layer-dot,.dsm-dot{border-radius:3px !important}
 #toolbar .tb-btn::before,#table-toolbar .tb-btn::before,#custom-modal .tb-btn::before,.dlg-btn-primary::before,.dlg-btn-cancel::before,.pm-btn-primary::before,.pm-btn-cancel::before,.pm-btn-danger::before,.sys-btn::before,.del-btn::before,.cpr-btn::before,.fs-nav-btn::before,.pill-btn::before,#wire-overlay .wire-pane-add::before,.pm-hdr .pm-close::before,.sys-add-btn::before,.topbar-exit-btn::before,button[onclick="_wireResetLayout()"]::before,button[onclick="openWireExportModal()"]::before,#wire-router-menu-btn::before,button[onclick="closeFullscreen()"]::before,button[onclick="resetA11y()"]::before,button[onclick^="triggerScreenImageUpload"]::before,button[onclick="_wireDownloadAllThumbnails()"]::before,.tbc::before,#wire-overlay .wire-panel-inline-toggle::before,button[onclick="closeColorPop()"]::before,button[onclick="closeResWarn()"]::before,.fs-zoom-btn::before{border-radius:2px !important}
 /* DSM/AUX strip − + : boxes on the AUX chip's height (21px) with a glyph that fills the box. */
@@ -4098,7 +4108,7 @@ Also called DSM (Downstage Monitor) in broadcast and theater workflows, same thi
   <div class="bb-cell bb-pill bb-cyan" title="The largest number of layers used in any single preset, this is the figure to compare against your switcher's per-scene layer budget. (The most complex single moment in the show.)"><span class="bb-label">Layers</span><strong id="bb-layers">0</strong></div>
   <div id="bb-spacer"></div>
   <div class="bb-cell" id="bb-sel" style="font-size:10px;opacity:.5">—</div>
-  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy, hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16js</div>
+  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy, hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16jt</div>
   <button class="bb-util" id="tb-adv" onclick="actions.advancedMenu(event)" title="Advanced features (AOI, Free Mode, Blend Zones, Dead Space)" aria-label="Advanced features (AOI, Free Mode, Blend Zones, Dead Space)" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Advanced<span class="adv-count" aria-hidden="true"></span><svg aria-hidden="true" id="tb-adv-chev" viewBox="0 0 10 10" fill="currentColor" width="8" height="8" style="opacity:.7"><path d="M2 4l3 3 3-3z"/></svg></button>
   <button class="bb-util" onclick="actions.help()" title="Help, quick reference, keyboard shortcuts, glossary, accessibility" aria-label="Help, quick reference, keyboard shortcuts, glossary, accessibility" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="4.93" y1="4.93" x2="9.17" y2="9.17"/><line x1="14.83" y1="14.83" x2="19.07" y2="19.07"/><line x1="14.83" y1="9.17" x2="19.07" y2="4.93"/><line x1="4.93" y1="19.07" x2="9.17" y2="14.83"/></svg>Help</button>
   <button class="bb-util" id="tb-bug" onclick="reportBug()" title="Report a bug, opens an email to AV Educate with the show file attached so we can see it on our side" aria-label="Report a bug" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="7.2"/><path d="M15.4 15.4L21 21" stroke-width="2.6"/><ellipse cx="10" cy="11" rx="2.5" ry="3.3" fill="currentColor" stroke="none"/><circle cx="10" cy="7" r="1.5" fill="currentColor" stroke="none"/><path d="M7.5 9.2l-1.7-.8M7.4 11.2H5.6M7.7 13.1l-1.5 1.1M12.5 9.2l1.7-.8M12.6 11.2h1.8M12.3 13.1l1.5 1.1M9.2 5.9l-.8-1.1M10.8 5.9l.8-1.1" stroke-width="1.3"/></svg>Bug</button>   <!-- 16jk (Omar): Report a bug, after Help -->
@@ -4457,6 +4467,7 @@ Also called DSM (Downstage Monitor) in broadcast and theater workflows, same thi
         <span id="fs-src-count" class="fs-count">0</span>
         <div class="fs-dot" style="margin-left:auto"></div>
         <button onclick="_fsAddSource()" class="fs-add-btn" title="Add a source: an image / file name on Images, a video or image file on Video" aria-label="Add a source">+</button>
+        <button type="button" class="fs-panel-tog" id="fs-panel-tog-left" onclick="_fsTogglePanel('left')" title="Collapse / expand panel" aria-label="Toggle sources panel" aria-expanded="true"><svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="7" height="16" rx="1.5"/><rect x="13" y="4" width="8" height="16" rx="1.5" fill="currentColor" opacity=".22"/></svg></button>
       </div>
       <div id="fs-src-tabs" class="fs-tabs"><span class="lb-seg lb-seg-sm" data-seg="fs-src"><button type="button" class="lb-seg-btn on" data-tab="images" onclick="_fsSetSrcTab('images')" title="Images and files the show creates and uses">Images</button><button type="button" class="lb-seg-btn" data-tab="video" onclick="_fsSetSrcTab('video')" title="Video files added to the show">Video</button></span></div>
       <div id="fs-source-list" style="flex:1;overflow-y:auto;padding:10px" ondragover="_fsSrcListDragOver(event)" ondragleave="_fsSrcListDragLeave(event)" ondrop="_fsSrcListDrop(event)"></div>
@@ -4611,6 +4622,7 @@ Also called DSM (Downstage Monitor) in broadcast and theater workflows, same thi
     <!-- Right panel, Properties -->
     <div id="fs-right-panel" data-tab="preset" style="width:312px;flex-shrink:0;display:flex;flex-direction:column;background:#0d0e0f;border-left:1px solid #1e1e1e;min-width:240px;max-width:520px">
       <div class="fs-panel-hdr fs-cyan">
+        <button type="button" class="fs-panel-tog" id="fs-panel-tog-right" onclick="_fsTogglePanel('right')" title="Collapse / expand panel" aria-label="Toggle properties panel" aria-expanded="true"><svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="8" height="16" rx="1.5" fill="currentColor" opacity=".22"/><rect x="14" y="4" width="7" height="16" rx="1.5"/></svg></button>
         <div class="fs-strip"></div>
         <h4>Properties</h4>
         <div class="fs-dot" style="margin-left:auto"></div>
@@ -21468,6 +21480,7 @@ function openFullscreen(pid){
   fsCanvasLocked=true;
   _fsTakeSnap(pid);
   document.getElementById('fs-overlay').style.display='flex';
+  _fsApplyPanelCollapse();   // 16jt: this machine's collapsed sides, before the first fit
   fsApplyTransform();
   fsBindEvents();
   _fsSyncLockUI();
@@ -27775,6 +27788,26 @@ function _fsEnrichMedia(it,blob){
 
 // Panel resize drag — handles both left (presets) and right (properties)
 let _fsPanelDragging=false;
+// 16jt (Omar): collapse either side panel to a 38 px strip, the way Wire does, so a laptop gets a bigger working area.
+// Per machine (localStorage), not in the show file: the same show opens wide on a desktop and tight on a laptop.
+var _fsPanelCollapse=(function(){ const d={left:false,right:false}; try{ const s=JSON.parse(localStorage.getItem('lb_fs_panels')||'null'); if(s&&typeof s==='object'){ d.left=!!s.left; d.right=!!s.right; } }catch(e){} return d; })();
+function _fsTogglePanel(side){
+  if(side!=='left'&&side!=='right') return;
+  _fsPanelCollapse[side]=!_fsPanelCollapse[side];
+  try{ localStorage.setItem('lb_fs_panels',JSON.stringify(_fsPanelCollapse)); }catch(e){}
+  _fsApplyPanelCollapse();
+  if(document.activeElement&&document.activeElement.blur) document.activeElement.blur();
+  if(fsPresetId){ renderFullscreen(); requestAnimationFrame(fsFitScreen); }   // same as a window resize: the tile refills the width
+}
+function _fsApplyPanelCollapse(){
+  const st=_fsPanelCollapse||{left:false,right:false};
+  const L=document.getElementById('fs-left-panel'), R=document.getElementById('fs-right-panel');
+  if(L) L.classList.toggle('fs-collapsed',!!st.left); if(R) R.classList.toggle('fs-collapsed',!!st.right);
+  const dl=document.getElementById('fs-left-drag'), dr=document.getElementById('fs-panel-drag');
+  if(dl) dl.style.display=st.left?'none':''; if(dr) dr.style.display=st.right?'none':'';
+  const bl=document.getElementById('fs-panel-tog-left'), br=document.getElementById('fs-panel-tog-right');
+  if(bl) bl.setAttribute('aria-expanded',st.left?'false':'true'); if(br) br.setAttribute('aria-expanded',st.right?'false':'true');
+}
 function fsPanelResizeStart(e, side){
   e.preventDefault();
   _fsPanelDragging=true;
