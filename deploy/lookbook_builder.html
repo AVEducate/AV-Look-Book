@@ -857,6 +857,11 @@ video.fs-prev{position:absolute;inset:0;width:100%;height:100%;object-fit:contai
 .fs-band{position:absolute;z-index:3;pointer-events:none;background:repeating-linear-gradient(135deg,rgba(255,77,90,.75) 0 4px,rgba(255,77,90,.25) 4px 8px);display:flex;align-items:center;justify-content:center;overflow:hidden}
 .fs-band span{font-family:var(--font-mono);font-size:8px;font-weight:700;color:#fff;background:rgba(255,77,90,.9);padding:1px 5px;border-radius:2px;white-space:nowrap}
 .fs-band.l span,.fs-band.r span{writing-mode:vertical-rl}
+/* 16jq: scaler geometry — overflow outline (Advanced canvas), crop window on the Source thumb, compact 4-field rows */
+.fs-ovl-outline{position:absolute;border:1px dashed rgba(var(--n-cyan-rgb),.9);pointer-events:none;z-index:4;box-sizing:border-box}
+.fs-ovl-outline::after{content:'full picture, clipped by the box';position:absolute;left:0;top:-14px;font:700 8px var(--font-mono);letter-spacing:.04em;color:var(--n-cyan);background:rgba(0,0,0,.65);padding:1px 5px;border-radius:2px;white-space:nowrap}
+.fs-crop-rect{position:absolute;border:1.5px dashed var(--n-amber);box-shadow:0 0 0 9999px rgba(0,0,0,.45);pointer-events:none;z-index:2}
+.fs-geom4{display:flex;align-items:center;gap:4px;flex:1;min-width:0} .fs-geom4 .fs-num{width:58px;flex:0 0 auto} .fs-geom4 .lfx-tog{margin-left:auto;height:22px;padding:0 8px;font-size:9px}
 .fs-tl-tb{height:28px;min-width:28px;box-sizing:border-box;padding:0 5px;display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--n-line);border-radius:4px;background:linear-gradient(180deg,#1b1b22,#13131a);color:var(--text2);font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;font-family:inherit;flex-shrink:0}
 .fs-tl-tb.num{font-family:var(--font-mono);font-size:12px;letter-spacing:0}
 .fs-tl-tb.play{border-color:rgba(77,220,138,.5);color:var(--n-green)}
@@ -4082,7 +4087,7 @@ Also called DSM (Downstage Monitor) in broadcast and theater workflows, same thi
   <div class="bb-cell bb-pill bb-cyan" title="The largest number of layers used in any single preset, this is the figure to compare against your switcher's per-scene layer budget. (The most complex single moment in the show.)"><span class="bb-label">Layers</span><strong id="bb-layers">0</strong></div>
   <div id="bb-spacer"></div>
   <div class="bb-cell" id="bb-sel" style="font-size:10px;opacity:.5">—</div>
-  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy, hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16jp</div>
+  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy, hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16jq</div>
   <button class="bb-util" id="tb-adv" onclick="actions.advancedMenu(event)" title="Advanced features (AOI, Free Mode, Blend Zones, Dead Space)" aria-label="Advanced features (AOI, Free Mode, Blend Zones, Dead Space)" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Advanced<span class="adv-count" aria-hidden="true"></span><svg aria-hidden="true" id="tb-adv-chev" viewBox="0 0 10 10" fill="currentColor" width="8" height="8" style="opacity:.7"><path d="M2 4l3 3 3-3z"/></svg></button>
   <button class="bb-util" onclick="actions.help()" title="Help, quick reference, keyboard shortcuts, glossary, accessibility" aria-label="Help, quick reference, keyboard shortcuts, glossary, accessibility" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="4.93" y1="4.93" x2="9.17" y2="9.17"/><line x1="14.83" y1="14.83" x2="19.07" y2="19.07"/><line x1="14.83" y1="9.17" x2="19.07" y2="4.93"/><line x1="4.93" y1="19.07" x2="9.17" y2="14.83"/></svg>Help</button>
   <button class="bb-util" id="tb-bug" onclick="reportBug()" title="Report a bug, opens an email to AV Educate with the show file attached so we can see it on our side" aria-label="Report a bug" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="7.2"/><path d="M15.4 15.4L21 21" stroke-width="2.6"/><ellipse cx="10" cy="11" rx="2.5" ry="3.3" fill="currentColor" stroke="none"/><circle cx="10" cy="7" r="1.5" fill="currentColor" stroke="none"/><path d="M7.5 9.2l-1.7-.8M7.4 11.2H5.6M7.7 13.1l-1.5 1.1M12.5 9.2l1.7-.8M12.6 11.2h1.8M12.3 13.1l1.5 1.1M9.2 5.9l-.8-1.1M10.8 5.9l.8-1.1" stroke-width="1.3"/></svg>Bug</button>   <!-- 16jk (Omar): Report a bug, after Help -->
@@ -6737,7 +6742,7 @@ function _rcChip(p,s,n,vw,vh,aoiVX,aoiVY,aoiVW,aoiVH,sc){
   const showMode=getShowMode(p.id,s.id);
   const szL=Math.max(6,Math.round(vh*0.09));
   const szS=Math.max(5,Math.round(vh*0.06));
-  const _chipBg=ct.img?('#000 url('+ct.img+') center/cover no-repeat'):ct.c;
+  const _chipBg=ct.img?_fsCoverBg(ct.img,v,p.id,s.id,n,s,cw):ct.c;   // 16jq: crop / zoom / pan set in Advanced show here too
   // 16fo: crop insets are needed up here now (the FX overlay is sized to the
   // visible area); the clip-path string itself is still built further down.
   const cr2 = getCrop(p.id, s.id, n) || {t:0,b:0,l:0,r:0};
@@ -6862,7 +6867,7 @@ function _rcScreenBox(p,s,pos,sc,bgF){
   const showMode=getShowMode(p.id,s.id);
   const mainRot=getRotation(p.id,s.id);
   const overrideBg=getPBg(p.id,s.id), overrideColor=getPColor(p.id,s.id);
-  const bgStyle=overrideBg?'background:url('+overrideBg+') center/cover no-repeat;'
+  const bgStyle=overrideBg?'background:'+_fsCoverBg(overrideBg,(typeof getBgName==='function')?getBgName(p.id,s.id):'',p.id,s.id,0,s,iw)+';'   /* 16jq: the BG slice shows in Simple too */
     :overrideColor?'background:'+overrideColor+';'
     :s.bg?'background:url('+s.bg+') center/cover no-repeat;'
     :'background:'+(s.color||'#1a1a1a')+';';
@@ -26877,7 +26882,7 @@ if(typeof _lfxOpen==='object'&&_lfxOpen){ if(_lfxOpen.geometry===undefined) _lfx
 // loop, audio level, cover frame. Per-layer playback settings: p.layerMedia[sid][n] (n=0 = BG).
 // ══════════════════════════════════════════════════════════════════════
 var _fsMediaURL={}, _fsMediaBlob={}, _fsVideoEls={}, _fsWantPlay={}, _fsTlKey='', _fsTlRaf=0, _fsPlayScope='layer';
-var _FS_LM_DEF=Object.freeze({fit:'fit',in:0,out:null,speed:100,loop:true,level:100,hue:0,sat:0,bri:0,con:0,bw:false,neg:false,sepia:false,fadeIn:0,fadeOut:0});
+var _FS_LM_DEF=Object.freeze({fit:'fit',in:0,out:null,speed:100,loop:true,level:100,hue:0,sat:0,bri:0,con:0,bw:false,neg:false,sepia:false,fadeIn:0,fadeOut:0,crop:null,zoom:100,panX:0,panY:0});   // 16jq: crop = {x,y,w,h} source px; zoom %; pan px
 function _mdbOpen(){ return new Promise(function(res,rej){ try{ const r=indexedDB.open('lb-media',1); r.onupgradeneeded=function(){ r.result.createObjectStore('files'); }; r.onsuccess=function(){ res(r.result); }; r.onerror=function(){ rej(r.error); }; }catch(e){ rej(e); } }); }
 function _mdbPut(name,blob){ return _mdbOpen().then(function(db){ return new Promise(function(res,rej){ const tx=db.transaction('files','readwrite'); tx.objectStore('files').put(blob,name); tx.oncomplete=function(){ res(true); }; tx.onerror=function(){ rej(tx.error); }; }); }).catch(function(){ return false; }); }
 function _mdbGet(name){ return _mdbOpen().then(function(db){ return new Promise(function(res,rej){ const q=db.transaction('files','readonly').objectStore('files').get(name); q.onsuccess=function(){ res(q.result||null); }; q.onerror=function(){ rej(q.error); }; }); }).catch(function(){ return null; }); }
@@ -27006,64 +27011,109 @@ function _fsMountVideos(){
     const box=canvas.querySelector('.screen-box[data-pid="'+p.id+'"][data-sid="'+s.id+'"]'); if(!box) return;
     const key='BG:'+p.id+':'+s.id; const lm=getLayerMedia(p.id,s.id,0); const isVid=it.kind==='video';
     const vid=isVid?_fsMakeVideo(key,url,prev[key],lm):_fsMakeImg(url);
-    vid.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:'+(lm.fit==='fill'?'cover':lm.fit==='stretch'?'fill':lm.fit==='native'?'none':'contain')+';z-index:-1;pointer-events:none;background:#000';
-    vid.style.filter=_fsLookFilter(lm); vid.dataset.baseOp='1';
     const host=box.querySelector('.screen-inner')||box;   // 16jp: the cover paints on .screen-inner; a clip mounted above it in the box played unseen underneath
     if(!host.style.zIndex) host.style.zIndex='0'; if(getComputedStyle(host).position==='static') host.style.position='relative';
+    const gB=_fsMediaGeom(it,lm,parseInt(s.w),parseInt(s.h),true); const kB=(parseFloat(box.style.width)||box.offsetWidth||1)/Math.max(1,parseInt(s.w));   // 16jq: BG = 1:1 + crop
+    if(gB){ _fsPlaceMedia(vid,gB,kB,'position:absolute;pointer-events:none;background:#000;z-index:-1;'); host.style.overflow='hidden'; }
+    else vid.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:none;z-index:-1;pointer-events:none;background:#000';
+    vid.style.filter=_fsLookFilter(lm); vid.dataset.baseOp='1';
     host.insertBefore(vid,host.firstChild);
+    if(gB) _fsOutline(host,gB,kB);
     if(isVid){ _fsVideoEls[key]=vid; if(_fsWantPlay[key]&&vid.paused){ vid.play().catch(function(){}); } }
   });
   Object.keys(prev).forEach(function(k){ if(!_fsVideoEls[k]){ try{ prev[k].pause(); }catch(e){} delete _fsWantPlay[k]; } });
   _fsRenderTimeline();
 }
 // fit: contain / cover / stretch / 1:1 in destination pixels; bands mark what falls outside the box
+// ── 16jq: the scaler, the way an E2 / Aquilon layer does it ─────────────
+// Source crop (a window on the input, in source pixels) → scale per fit mode → zoom → pan. Everything in destination
+// pixels of the layer box (lw×lh); the caller multiplies by its own px-per-destination-px. The BG is pinned to 1:1 with
+// no zoom / pan, so its crop is the slice that lands in the destination.
+function _fsCropRect(lm,mw,mh){
+  const c=lm&&lm.crop; if(!c||!(c.w>0)||!(c.h>0)) return {x:0,y:0,w:mw,h:mh,full:true};
+  const x=Math.max(0,Math.min(mw-1,Math.round(c.x||0))), y=Math.max(0,Math.min(mh-1,Math.round(c.y||0)));
+  const w=Math.max(1,Math.min(mw-x,Math.round(c.w))), h=Math.max(1,Math.min(mh-y,Math.round(c.h)));
+  return {x:x,y:y,w:w,h:h,full:(x===0&&y===0&&w===mw&&h===mh)};
+}
+function _fsLayerBoxPx(pid,sid,n,s){ const lsz=n?(getLayerSize(pid,sid,n)||{wf:.5,hf:.5}):{wf:1,hf:1}; return {lw:Math.max(1,Math.round(lsz.wf*parseInt(s.w))), lh:Math.max(1,Math.round(lsz.hf*parseInt(s.h)))}; }
+function _fsMediaGeom(it,lm,lw,lh,isBg){
+  const mw=(it&&it.media&&it.media.w)||0, mh=(it&&it.media&&it.media.h)||0;
+  if(!mw||!mh||!lw||!lh) return null;
+  const c=_fsCropRect(lm,mw,mh);
+  const fit=isBg?'native':(lm.fit||'fit');
+  let sx,sy;
+  if(fit==='native'){ sx=sy=1; }
+  else if(fit==='stretch'){ sx=lw/c.w; sy=lh/c.h; }
+  else { const k=(fit==='fill')?Math.max(lw/c.w,lh/c.h):Math.min(lw/c.w,lh/c.h); sx=sy=k; }
+  const z=isBg?1:Math.max(.1,(lm.zoom||100)/100); sx*=z; sy*=z;
+  const dw=c.w*sx, dh=c.h*sy;
+  const dx=(lw-dw)/2+(isBg?0:(lm.panX||0)), dy=(lh-dh)/2+(isBg?0:(lm.panY||0));
+  return {mw:mw,mh:mh,crop:c,fit:fit,zoom:isBg?100:(lm.zoom||100),sx:sx,sy:sy,dw:dw,dh:dh,dx:dx,dy:dy,ex:dx-c.x*sx,ey:dy-c.y*sy,ew:mw*sx,eh:mh*sy,lw:lw,lh:lh,
+          offL:Math.max(0,-dx),offT:Math.max(0,-dy),offR:Math.max(0,dx+dw-lw),offB:Math.max(0,dy+dh-lh),
+          barL:Math.max(0,dx),barT:Math.max(0,dy),barR:Math.max(0,lw-dx-dw),barB:Math.max(0,lh-dy-dh)};
+}
+function _fsGeomIsDefault(lm){ return !(lm&&lm.crop&&lm.crop.w>0)&&((!lm||(lm.zoom||100)===100))&&!(lm&&(lm.panX||lm.panY)); }
+// place the media element (full scaled source) so the crop window lands where the geometry says; clip away the rest
+function _fsPlaceMedia(el,g,k,base){
+  el.style.cssText=base+'left:'+(g.ex*k)+'px;top:'+(g.ey*k)+'px;width:'+(g.ew*k)+'px;height:'+(g.eh*k)+'px;object-fit:fill';
+  if(!g.crop.full) el.style.clipPath='inset('+(g.crop.y*g.sy*k)+'px '+((g.mw-g.crop.x-g.crop.w)*g.sx*k)+'px '+((g.mh-g.crop.y-g.crop.h)*g.sy*k)+'px '+(g.crop.x*g.sx*k)+'px)';
+}
 function _fsApplyFit(vid,chip,it,lm,s,pid,sid,n){
   chip.querySelectorAll('.fs-band').forEach(function(b){ b.remove(); });
-  const cw=parseFloat(chip.style.width)||chip.offsetWidth||1, ch=parseFloat(chip.style.height)||chip.offsetHeight||1;
-  const mw=(it&&it.media&&it.media.w)||0, mh=(it&&it.media&&it.media.h)||0;
+  const cw=parseFloat(chip.style.width)||chip.offsetWidth||1;
   const base='position:absolute;pointer-events:none;background:#000;z-index:-1;';
-  if(lm.fit==='native'&&mw&&mh&&s){
-    const lsz=getLayerSize(pid,sid,n)||{wf:.5,hf:.5}; const lw=Math.max(1,Math.round(lsz.wf*parseInt(s.w))), lh=Math.max(1,Math.round(lsz.hf*parseInt(s.h)));
-    const k=cw/lw; const dw=mw*k, dh=mh*k;
-    vid.style.cssText=base+'left:'+((cw-dw)/2)+'px;top:'+((ch-dh)/2)+'px;width:'+dw+'px;height:'+dh+'px;object-fit:fill';
-    _fsBands(chip,cw,ch,dw,dh,lw,lh,mw,mh);
-  } else if(lm.fit==='fill'&&mw&&mh){
-    vid.style.cssText=base+'inset:0;width:100%;height:100%;object-fit:cover';
-    const k=Math.max(cw/mw,ch/mh); const lsz=getLayerSize(pid,sid,n)||{wf:.5,hf:.5}; const lw=Math.max(1,Math.round(lsz.wf*parseInt(s.w))), lh=Math.max(1,Math.round(lsz.hf*parseInt(s.h)));
-    _fsBands(chip,cw,ch,mw*k,mh*k,lw,lh,Math.round(mw*Math.max(lw/mw,lh/mh)),Math.round(mh*Math.max(lw/mw,lh/mh)));
-  } else {
-    vid.style.cssText=base+'inset:0;width:100%;height:100%;object-fit:'+(lm.fit==='stretch'?'fill':'contain');
-  }
+  const box=s?_fsLayerBoxPx(pid,sid,n,s):null; const g=(box&&it)?_fsMediaGeom(it,lm,box.lw,box.lh,!n):null;
+  if(!g){ vid.style.cssText=base+'inset:0;width:100%;height:100%;object-fit:'+(lm.fit==='stretch'?'fill':lm.fit==='fill'?'cover':lm.fit==='native'?'none':'contain'); _fsOutline(chip,null,1); return; }
+  const k=cw/g.lw;   // chip px per destination px
+  _fsPlaceMedia(vid,g,k,base);
+  _fsBands(chip,g,k);
+  _fsOutline(chip,g,k);
 }
-function _fsBands(chip,cw,ch,dw,dh,lw,lh,mw,mh){
-  const ox=Math.max(0,(dw-cw)/2), oy=Math.max(0,(dh-ch)/2);
-  const px=Math.max(0,Math.round((mw-lw)/2)), py=Math.max(0,Math.round((mh-lh)/2));
+// red hatching where the picture runs past the box, labelled in destination pixels
+function _fsBands(chip,g,k){
+  const cw=g.lw*k, ch=g.lh*k;
   const mk=function(cls,style,label){ const d=document.createElement('div'); d.className='fs-band '+cls; d.style.cssText=style; if(label){ const l=document.createElement('span'); l.textContent=label; d.appendChild(l); } chip.appendChild(d); };
-  if(oy>1){ mk('top','left:0;right:0;top:0;height:'+Math.min(ch/2,oy)+'px','▲ '+py+'px off top'); mk('bot','left:0;right:0;bottom:0;height:'+Math.min(ch/2,oy)+'px','▼ '+py+'px off bottom'); }
-  if(ox>1){ mk('l','top:0;bottom:0;left:0;width:'+Math.min(cw/2,ox)+'px','◀ '+px+'px'); mk('r','top:0;bottom:0;right:0;width:'+Math.min(cw/2,ox)+'px',px+'px ▶'); }
+  if(g.offT>0.5) mk('top','left:0;right:0;top:0;height:'+Math.min(ch/2,g.offT*k)+'px','▲ '+Math.round(g.offT)+'px off top');
+  if(g.offB>0.5) mk('bot','left:0;right:0;bottom:0;height:'+Math.min(ch/2,g.offB*k)+'px','▼ '+Math.round(g.offB)+'px off bottom');
+  if(g.offL>0.5) mk('l','top:0;bottom:0;left:0;width:'+Math.min(cw/2,g.offL*k)+'px','◀ '+Math.round(g.offL)+'px');
+  if(g.offR>0.5) mk('r','top:0;bottom:0;right:0;width:'+Math.min(cw/2,g.offR*k)+'px',Math.round(g.offR)+'px ▶');
+}
+// Advanced only: a dashed wire outline of the whole picture when it is bigger than the box (push-ins, 1:1 oversize)
+function _fsOutline(chip,g,k){
+  const box=chip.closest('.screen-box'); if(!box) return;
+  const id=(chip.dataset.lid||'bg')+':'+(chip.dataset.sid||box.dataset.sid||'');   // the BG host is .screen-inner; the id lives on the box
+  box.querySelectorAll('.fs-ovl-outline[data-for="'+id+'"]').forEach(function(e){ e.remove(); });
+  if(!g||!(g.offL>0.5||g.offT>0.5||g.offR>0.5||g.offB>0.5)) return;
+  const cl=parseFloat(chip.style.left)||0, ct=parseFloat(chip.style.top)||0;
+  const d=document.createElement('div'); d.className='fs-ovl-outline'; d.dataset.for=id;
+  d.style.cssText='left:'+(cl+g.dx*k)+'px;top:'+(ct+g.dy*k)+'px;width:'+(g.dw*k)+'px;height:'+(g.dh*k)+'px';
+  box.appendChild(d);
+}
+// Simple + the cover in Advanced: the same geometry as a CSS background (read-only there; the picture, not the clip)
+function _fsCoverBg(img,name,pid,sid,n,s,chipW){
+  const plain='#000 url('+img+') center/cover no-repeat';
+  const it=name?_fsMediaItem(name):null; const lm=getLayerMedia(pid,sid,n);
+  if(!it||_fsGeomIsDefault(lm)||!s) return plain;
+  const box=_fsLayerBoxPx(pid,sid,n,s); const g=_fsMediaGeom(it,lm,box.lw,box.lh,!n); if(!g) return plain;
+  const k=chipW/g.lw;
+  return '#000 url('+img+') '+(g.ex*k).toFixed(2)+'px '+(g.ey*k).toFixed(2)+'px / '+(g.ew*k).toFixed(2)+'px '+(g.eh*k).toFixed(2)+'px no-repeat';
 }
 function _fsSizeCheckText(it,pid,sid,n){
   if(!it||!it.media||!it.media.w) return '';
   const s=screens.find(function(x){ return x.id===sid; }); if(!s) return '';
-  const lsz=n?(getLayerSize(pid,sid,n)||{wf:.5,hf:.5}):{wf:1,hf:1};
-  const lw=Math.max(1,Math.round(lsz.wf*parseInt(s.w))), lh=Math.max(1,Math.round(lsz.hf*parseInt(s.h)));
-  const mw=it.media.w, mh=it.media.h; const lm=getLayerMedia(pid,sid,n);
-  let out=mw+'×'+mh+' into '+lw+'×'+lh;
-  if(mw===lw&&mh===lh) return out+' · <b class="ok">exact match</b>';
-  if(lm.fit==='native'){
-    const dx=mw-lw, dy=mh-lh;
-    if(dy>0) out+=' · <b>'+dy+'px taller</b> · '+Math.round(dy/2)+'px cut top &amp; bottom'; else if(dy<0) out+=' · '+(-dy)+'px shorter, '+Math.round(-dy/2)+'px bars top &amp; bottom';
-    if(dx>0) out+=' · <b>'+dx+'px wider</b> · '+Math.round(dx/2)+'px cut each side'; else if(dx<0) out+=' · '+(-dx)+'px narrower, '+Math.round(-dx/2)+'px bars each side';
-    if(dx===0) out+=' · width matches'; if(dy===0) out+=' · height matches';
-  } else if(lm.fit==='fill'){
-    const k=Math.max(lw/mw,lh/mh); const sw=Math.round(mw*k), sh=Math.round(mh*k);
-    out+=' · fills as '+sw+'×'+sh+(sh>lh?' · <b>'+Math.round((sh-lh)/2)+'px cut top &amp; bottom</b>':'')+(sw>lw?' · <b>'+Math.round((sw-lw)/2)+'px cut each side</b>':'');
-  } else if(lm.fit==='stretch'){
-    const ar=(mw/mh)/(lw/lh); out+=' · stretched'+(Math.abs(ar-1)>0.01?' · <b>'+(ar>1?'squeezed':'pulled')+' '+Math.round(Math.abs(ar-1)*100)+'%</b>':'');
-  } else {
-    const k=Math.min(lw/mw,lh/mh); const sw=Math.round(mw*k), sh=Math.round(mh*k);
-    out+=' · fits as '+sw+'×'+sh+(sh<lh?' · '+Math.round((lh-sh)/2)+'px bars top &amp; bottom':'')+(sw<lw?' · '+Math.round((lw-sw)/2)+'px bars each side':'');
-  }
+  const box=_fsLayerBoxPx(pid,sid,n,s); const lm=getLayerMedia(pid,sid,n); const g=_fsMediaGeom(it,lm,box.lw,box.lh,!n); if(!g) return '';
+  const mw=g.mw, mh=g.mh, c=g.crop, lw=g.lw, lh=g.lh;
+  let out=(c.full?mw+'×'+mh:'<b>crop '+c.w+'×'+c.h+'</b> of '+mw+'×'+mh)+' into '+lw+'×'+lh;
+  const dw=Math.round(g.dw), dh=Math.round(g.dh);
+  if(dw===lw&&dh===lh&&!g.offL&&!g.offT&&!g.offR&&!g.offB) return out+' · <b class="ok">exact match</b>';
+  if(g.fit==='native') out+=' · 1:1'; else if(g.fit==='stretch') out+=' · stretched to '+dw+'×'+dh; else out+=' · '+(g.fit==='fill'?'fills':'fits')+' as '+dw+'×'+dh;
+  if(g.zoom!==100) out+=' · zoom '+g.zoom+'%';
+  if(lm.panX||lm.panY) out+=' · pan '+(lm.panX||0)+', '+(lm.panY||0);
+  const cut=[]; if(g.offT>0.5) cut.push(Math.round(g.offT)+'px off top'); if(g.offB>0.5) cut.push(Math.round(g.offB)+'px off bottom'); if(g.offL>0.5) cut.push(Math.round(g.offL)+'px off left'); if(g.offR>0.5) cut.push(Math.round(g.offR)+'px off right');
+  const bar=[]; if(g.barT>0.5) bar.push(Math.round(g.barT)+'px top'); if(g.barB>0.5) bar.push(Math.round(g.barB)+'px bottom'); if(g.barL>0.5) bar.push(Math.round(g.barL)+'px left'); if(g.barR>0.5) bar.push(Math.round(g.barR)+'px right');
+  if(cut.length) out+=' · <b>cut: '+cut.join(', ')+'</b>';
+  if(bar.length) out+=' · bars: '+bar.join(', ');
+  if(g.fit==='stretch'){ const ar=(c.w/c.h)/(lw/lh); if(Math.abs(ar-1)>0.01) out+=' · <b>'+(ar>1?'squeezed':'pulled')+' '+Math.round(Math.abs(ar-1)*100)+'%</b>'; }
   return out;
 }
 // ── transport ───────────────────────────────────────────────────────────
@@ -27099,6 +27149,16 @@ function _fsToggleLoop(){ const t=_fsTargetKey(); if(!t) return; const q=_fsKeyP
 function _fsSetLevel(v){ const t=_fsTargetKey(); if(!t) return; const q=_fsKeyParts(t); setLayerMedia(q.pid,q.sid,q.n,{level:Math.max(0,Math.min(200,parseInt(v)||0))}); const vid=_fsVideoEls[t]; const lm=getLayerMedia(q.pid,q.sid,q.n); if(vid){ vid.volume=Math.min(1,lm.level/100); vid.muted=(lm.level===0); _fsApplyGain(vid,lm.level); } _fsVolSync(lm.level); const l2=document.getElementById('fs-props-lvl'); if(l2) l2.textContent=lm.level+'%'; }
 function _fsSetSpeed(v){ _fsSetLM({speed:Math.max(10,Math.min(400,parseInt(v)||100))}); renderFsPanel(true); }
 function _fsSetFit(mode){ const t=_fsTargetKey(); if(!t) return; _fsSetLM({fit:mode}); renderFullscreen(); }
+// 16jq: crop / zoom / pan fields → layer media, then a full re-render so the canvas, bands, outline and Simple follow
+function _fsGeomField(inp){ const pm=_fsPickedMedia(); if(!pm) return; const k=inp.dataset.k; const v=parseFloat(inp.value); if(!isFinite(v)) { renderFsPanel(true); return; }
+  const lm=getLayerMedia(pm.pid,pm.sid,pm.n); const mw=(pm.it.media&&pm.it.media.w)||0, mh=(pm.it.media&&pm.it.media.h)||0;
+  if(k==='zoom'){ _fsSetLM({zoom:Math.max(10,Math.min(800,Math.round(v)))}); }
+  else if(k==='panX'||k==='panY'){ const o={}; o[k]=Math.round(v); _fsSetLM(o); }
+  else { const c=_fsCropRect(lm,mw,mh); const nc={x:c.x,y:c.y,w:c.w,h:c.h}; if(k==='cx') nc.x=v; else if(k==='cy') nc.y=v; else if(k==='cw') nc.w=v; else if(k==='ch') nc.h=v; const cc=_fsCropRect({crop:nc},mw,mh); _fsSetLM({crop:cc.full?null:{x:cc.x,y:cc.y,w:cc.w,h:cc.h}}); }
+  renderFullscreen(); if(typeof scheduleRender==='function') scheduleRender(); }
+function _fsGeomReset(what){ if(what==='crop') _fsSetLM({crop:null}); else _fsSetLM({zoom:100,panX:0,panY:0}); renderFullscreen(); if(typeof scheduleRender==='function') scheduleRender(); }
+// the crop window drawn over the Source thumbnail
+function _fsCropRectHTML(p,s,n,it){ if(!it||!it.media||!it.media.w) return ''; const lm=getLayerMedia(p.id,s.id,n); const c=_fsCropRect(lm,it.media.w,it.media.h); if(c.full) return ''; const W=it.media.w,H=it.media.h; return '<div class="fs-crop-rect" style="left:'+(c.x/W*100).toFixed(2)+'%;top:'+(c.y/H*100).toFixed(2)+'%;width:'+(c.w/W*100).toFixed(2)+'%;height:'+(c.h/H*100).toFixed(2)+'%" title="Source crop '+c.w+'\u00d7'+c.h+' at '+c.x+','+c.y+'"></div>'; }
 function _fsSetScope(s){ _fsPlayScope=(s==='preset')?'preset':'layer'; renderFsPanel(true); }
 function _fsSetIn(){ const t=_fsTargetKey(); const vid=_fsVideoEls[t]; if(!vid) return; const q=_fsKeyParts(t); const lm=getLayerMedia(q.pid,q.sid,q.n); const tIn=Math.max(0,vid.currentTime); _fsSetLM({in:tIn, out:(lm.out!=null&&lm.out<=tIn+0.1)?null:lm.out}); _fsRenderTimeline(true); renderFsPanel(true); }
 function _fsSetOut(){ const t=_fsTargetKey(); const vid=_fsVideoEls[t]; if(!vid) return; const q=_fsKeyParts(t); const lm=getLayerMedia(q.pid,q.sid,q.n); const tOut=Math.max((lm.in||0)+0.1,vid.currentTime); _fsSetLM({out:tOut}); _fsRenderTimeline(true); renderFsPanel(true); }
@@ -27353,9 +27413,17 @@ function _fsMediaSectionHTML(p,s,n,v){
   const lm=getLayerMedia(p.id,s.id,n); const isVid=it.kind==='video';
   const fitLabel={fit:'Scale to fit',fill:'Scale to fill',stretch:'Stretch',native:'1:1 native'}[lm.fit]||'Scale to fit';
   const chev='<span class="pill-chev"><svg aria-hidden="true" viewBox="0 0 10 10" fill="currentColor"><path d="M2 4l3 3 3-3z"/></svg></span>';
-  const body='<div class="lfx-row"><span class="lfx-lbl">Resize</span><div class="sys-pill clickable fs-fitpill" data-sys-field="fs-fit" data-sys-value="'+_esc(lm.fit||'fit')+'" onclick="_sysOpenDropdown(this)" title="How the picture sits in the layer box"><span class="pill-label">'+fitLabel+'</span>'+chev+'</div></div>'
+  const isBg=(n===0); const mw=(it.media&&it.media.w)||0, mh=(it.media&&it.media.h)||0; const cr=_fsCropRect(lm,mw,mh);
+  const num=function(k,val,min,max,title){ return '<input class="lfx-inp fs-num" type="number" value="'+val+'"'+(min!=null?' min="'+min+'"':'')+(max!=null?' max="'+max+'"':'')+' step="1" data-k="'+k+'" title="'+title+'" onchange="_fsGeomField(this)" onkeydown="if(event.key===\'Enter\'){event.preventDefault();this.blur()}">'; };
+  const body=(isBg
+      ?'<div class="lfx-row"><span class="lfx-lbl">Resize</span><span class="fs-info">1:1 native · the BG stays at source size, crop it to slice what lands in the destination</span></div>'
+      :'<div class="lfx-row"><span class="lfx-lbl">Resize</span><div class="sys-pill clickable fs-fitpill" data-sys-field="fs-fit" data-sys-value="'+_esc(lm.fit||'fit')+'" onclick="_sysOpenDropdown(this)" title="How the picture sits in the layer box"><span class="pill-label">'+fitLabel+'</span>'+chev+'</div></div>')
+    +'<div class="lfx-row"><span class="lfx-lbl">Source crop</span><span class="fs-sl fs-geom4"><span class="fs-num-lbl">X</span>'+num('cx',cr.x,0,mw-1,'Crop window left edge, source pixels')+'<span class="fs-num-lbl">Y</span>'+num('cy',cr.y,0,mh-1,'Crop window top edge, source pixels')+'</span></div>'
+    +'<div class="lfx-row"><span class="lfx-lbl"></span><span class="fs-sl fs-geom4"><span class="fs-num-lbl">W</span>'+num('cw',cr.w,1,mw,'Crop window width, source pixels')+'<span class="fs-num-lbl">H</span>'+num('ch',cr.h,1,mh,'Crop window height, source pixels')+'<button type="button" class="lfx-tog" onclick="_fsGeomReset(\'crop\')" title="Back to the full picture"'+(cr.full?' disabled':'')+'>Full</button></span></div>'
+    +(isBg?'':'<div class="lfx-row"><span class="lfx-lbl">Zoom</span><span class="fs-sl fs-geom4">'+num('zoom',lm.zoom||100,10,800,'Zoom inside the box, percent. Above 100 pushes in; the box clips the rest')+'<span class="lfx-lbl">%</span></span></div>'
+      +'<div class="lfx-row"><span class="lfx-lbl">Pan</span><span class="fs-sl fs-geom4"><span class="fs-num-lbl">X</span>'+num('panX',lm.panX||0,null,null,'Shift the picture inside the box, destination pixels')+'<span class="fs-num-lbl">Y</span>'+num('panY',lm.panY||0,null,null,'Shift the picture inside the box, destination pixels')+'<button type="button" class="lfx-tog" onclick="_fsGeomReset(\'pan\')" title="Centre at 100%"'+(((lm.zoom||100)===100&&!lm.panX&&!lm.panY)?' disabled':'')+'>Reset</button></span></div>')
     +'<div class="fs-check"><div class="t">Size check</div><div class="m">'+_fsSizeCheckText(it,p.id,s.id,n)+'</div></div>'
-    +'<div class="lfx-hint">'+(isVid?'Position, size and crop live in their own sections; playback in the timeline under the canvas.':'Position, size and crop live in their own sections. Simple shows the same picture.')+'</div>';
+    +'<div class="lfx-hint">'+(isBg?'Crop first, then it lands 1:1. Simple shows the same slice.':'Crop, then scale, then zoom and pan, the way a scaler layer does it. The box clips; the dashed outline on the canvas is the part that is cut. Simple shows the result, edit it here.')+'</div>';
   return _fsAccHTML('geometry','Geometry',body,true);
 }
 function _fsTransitionSectionHTML(it,lm){
@@ -27416,7 +27484,7 @@ function _fsSourceBlockHTML(p,s,n,v){
   const names=_fsSourceNames(); const media=(Array.isArray(customLibrary)?customLibrary:[]).filter(function(c){ return c&&c.kind; }).map(function(c){ return c.l; });
   const common=CONTENT.map(function(c){ return c.l; }); const images=names.filter(function(x){ return media.indexOf(x)<0&&common.indexOf(x)<0; });
   const chev='<span class="pill-chev"><svg aria-hidden="true" viewBox="0 0 10 10" fill="currentColor"><path d="M2 4l3 3 3-3z"/></svg></span>';
-  const body='<div class="fs-srcblk"><div class="fs-srcblk-thumb" data-src="'+_esc(v||'')+'" style="'+thumb+'">'+(v?'':'<span class="fs-srcblk-empty">'+(n?'Empty layer':'No background')+'</span>')+(isVid?_fsPreviewBtnHTML():'')+(v&&!pic?'<span class="fs-srcblk-name">'+_esc(v)+'</span>':'')+'</div>'
+  const body='<div class="fs-srcblk"><div class="fs-srcblk-thumb" data-src="'+_esc(v||'')+'" style="'+thumb+'">'+(v?'':'<span class="fs-srcblk-empty">'+(n?'Empty layer':'No background')+'</span>')+(isVid?_fsPreviewBtnHTML():'')+(v&&!pic?'<span class="fs-srcblk-name">'+_esc(v)+'</span>':'')+_fsCropRectHTML(p,s,n,it)+'</div>'
     +'<div class="fs-srcblk-row"><span class="lfx-lbl">Source</span><div class="sys-pill clickable fs-srcpill'+(v?'':' empty')+'" data-sys-field="fs-source" data-sys-value="'+_esc(v||'')+'" onclick="_sysOpenDropdown(this)" title="Pick the source for this layer, click again to close"><span class="pill-label">'+(v?_esc(v):'— none —')+'</span>'+chev+'</div></div></div>';
   return _fsAccHTML('source','Source',body,false);   // 16id (Omar): a section like the rest, expand to use, collapse to get it out of the way
 }
