@@ -756,6 +756,13 @@ body.is-mobile #vp-tabs{display:none}
 /* sources */
 .fs-src{display:grid;grid-template-columns:88px 1fr;gap:10px;padding:8px;border:1px solid var(--n-line);border-radius:8px;background:#10131a;margin-bottom:8px;cursor:grab;transition:border-color .12s,box-shadow .12s}
 .fs-src:hover{border-color:#3a4150}
+/* 16jo: the blank add card at the end of each palette list */
+.fs-src.fs-src-add{cursor:pointer;border-style:dashed;background:transparent;opacity:.8}
+.fs-src.fs-src-add:hover,.fs-src.fs-src-add:focus-visible{opacity:1;border-color:var(--n-cyan);outline:none}
+.fs-src.fs-src-add .fs-src-thumb{border:1px dashed var(--n-line);background:rgba(255,255,255,.03)}
+.fs-src.fs-src-add .fs-src-add-plus{font-size:28px;font-weight:300;color:var(--text2);line-height:1}
+.fs-src.fs-src-add:hover .fs-src-add-plus{color:var(--n-cyan)}
+.fs-src.fs-src-add .fs-src-name{color:var(--text2)}
 .fs-src.dragging{border-color:var(--n-cyan);box-shadow:0 0 0 1px rgba(var(--n-cyan-rgb),.5)}
 .fs-src-thumb{height:56px;border-radius:6px;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}
 .fs-src-thumb-name{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.7);padding:0 6px;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
@@ -4069,7 +4076,7 @@ Also called DSM (Downstage Monitor) in broadcast and theater workflows, same thi
   <div class="bb-cell bb-pill bb-cyan" title="The largest number of layers used in any single preset, this is the figure to compare against your switcher's per-scene layer budget. (The most complex single moment in the show.)"><span class="bb-label">Layers</span><strong id="bb-layers">0</strong></div>
   <div id="bb-spacer"></div>
   <div class="bb-cell" id="bb-sel" style="font-size:10px;opacity:.5">—</div>
-  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy, hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16jn</div>
+  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy, hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16jo</div>
   <button class="bb-util" id="tb-adv" onclick="actions.advancedMenu(event)" title="Advanced features (AOI, Free Mode, Blend Zones, Dead Space)" aria-label="Advanced features (AOI, Free Mode, Blend Zones, Dead Space)" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Advanced<span class="adv-count" aria-hidden="true"></span><svg aria-hidden="true" id="tb-adv-chev" viewBox="0 0 10 10" fill="currentColor" width="8" height="8" style="opacity:.7"><path d="M2 4l3 3 3-3z"/></svg></button>
   <button class="bb-util" onclick="actions.help()" title="Help, quick reference, keyboard shortcuts, glossary, accessibility" aria-label="Help, quick reference, keyboard shortcuts, glossary, accessibility" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="4.93" y1="4.93" x2="9.17" y2="9.17"/><line x1="14.83" y1="14.83" x2="19.07" y2="19.07"/><line x1="14.83" y1="9.17" x2="19.07" y2="4.93"/><line x1="4.93" y1="19.07" x2="9.17" y2="14.83"/></svg>Help</button>
   <button class="bb-util" id="tb-bug" onclick="reportBug()" title="Report a bug, opens an email to AV Educate with the show file attached so we can see it on our side" aria-label="Report a bug" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="7.2"/><path d="M15.4 15.4L21 21" stroke-width="2.6"/><ellipse cx="10" cy="11" rx="2.5" ry="3.3" fill="currentColor" stroke="none"/><circle cx="10" cy="7" r="1.5" fill="currentColor" stroke="none"/><path d="M7.5 9.2l-1.7-.8M7.4 11.2H5.6M7.7 13.1l-1.5 1.1M12.5 9.2l1.7-.8M12.6 11.2h1.8M12.3 13.1l1.5 1.1M9.2 5.9l-.8-1.1M10.8 5.9l.8-1.1" stroke-width="1.3"/></svg>Bug</button>   <!-- 16jk (Omar): Report a bug, after Help -->
@@ -26721,19 +26728,28 @@ function _fsSourceNames(){
   const names=(typeof _srcNameOrder==='function')?_srcNameOrder():[];
   return names.filter(n=>n&&String(n).trim());
 }
+// 16jo (Omar): the list always ends with a blank card, a visual "click here to add the next one". Same shape as a real
+// card, dashed, and it does what the + button does for the tab. Once something is added it sits below the new item.
+function _fsAddCardHTML(tab){
+  const vid=(tab==='video');
+  return '<div class="fs-src fs-src-add" role="button" tabindex="0" onclick="_fsAddSource()" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();_fsAddSource();}" title="'+(vid?'Add a video or image file':'Add a source to the show library')+'">'
+    +'<div class="fs-src-thumb"><span class="fs-src-add-plus">+</span></div>'
+    +'<div class="fs-src-info"><div class="fs-src-name">'+(vid?'Add a video…':'Add a source…')+'</div><div class="fs-src-meta">'+(vid?'MP4 · MOV · WebM · image<br>or drop files here':'name it, pick a colour<br>or fill a layer on Simple')+'</div></div>'
+    +'</div>';
+}
 function _fsRenderSources(force){
   const el=document.getElementById('fs-source-list'); if(!el) return;
   if(_fsSrcTab==='video'){   // 16hy: video / image files (customLibrary items with a kind)
     const items=(Array.isArray(customLibrary)?customLibrary:[]).filter(function(c){ return c&&c.kind; });
     const c0=document.getElementById('fs-src-count'); if(c0) c0.textContent=items.length; _fsSrcSig='';
-    if(!items.length){ el.innerHTML='<div class="fs-src-empty">No videos yet. Press + or drop MP4 / MOV / WebM / image files here. The files stay in this app\'s storage, the project keeps their names and covers.</div>'; return; }
+    if(!items.length){ el.innerHTML=_fsAddCardHTML('video')+'<div class="fs-src-empty">No videos yet. Click the card, press + or drop MP4 / MOV / WebM / image files here. The files stay in this app\'s storage, the project keeps their names and covers.</div>'; return; }
     el.innerHTML=items.map(function(it){
       const m=it.media||{}; const has=!!_fsMediaUrl(it.l); const isVid=it.kind==='video';
       return '<div class="fs-src fs-src-media'+(has?'':' fs-src-missing')+'" draggable="'+(has?'true':'false')+'" data-src="'+_esc(it.l)+'" ondragstart="_fsSrcDragStart(event)" ondragend="_fsClearDropHot()" '+(has?'title="Drag onto a layer or a BG in the canvas"':'onclick="_fsPickMedia(this.dataset.src)" title="The file is not in this app\'s storage, click to relink it"')+'>'
         +'<div class="fs-src-thumb" style="'+(it.img?'background:#000 url('+it.img+') center/cover':'background:'+it.c)+'"><span class="fs-src-kind">'+(isVid?'Video':'Image')+'</span>'+(isVid?'<span class="fs-src-play">▶</span>':'')+'</div>'
         +'<div class="fs-src-info"><div class="fs-src-name">'+_esc(it.l)+'</div><div class="fs-src-meta"><b>'+(m.w||'?')+'×'+(m.h||'?')+'</b>'+(isVid&&m.fps?' · '+m.fps:'')+(isVid?' · '+_fsFmtTime(m.dur):'')+'<br>'+_fsFmtType(m.type)+(isVid?' · '+(m.hasAudio?'audio':'no audio'):'')+(has?'':' · <b class="warn">relink</b>')+'</div></div>'
         +'</div>';
-    }).join('')+'<div class="fs-src-hint">Drag a video onto a layer or a BG. It plays here, Simple shows its cover.</div>';
+    }).join('')+_fsAddCardHTML('video')+'<div class="fs-src-hint">Drag a video onto a layer or a BG. It plays here, Simple shows its cover.</div>';
     return;
   }
   const names=_fsSourceNames().filter(function(n){ return !_fsMediaItem(n); });   // media lives on the Video tab
@@ -26741,7 +26757,7 @@ function _fsRenderSources(force){
   if(!force&&sig===_fsSrcSig&&el.children.length) return;   // same list → keep the DOM (a drag may be in flight)
   _fsSrcSig=sig;
   const cnt=document.getElementById('fs-src-count'); if(cnt) cnt.textContent=names.length;
-  if(!names.length){ el.innerHTML='<div class="fs-src-empty">No sources yet. Fill a layer or a BG on Simple, or press + to add one to the show library.</div>'; return; }
+  if(!names.length){ el.innerHTML=_fsAddCardHTML('images')+'<div class="fs-src-empty">No sources yet. Click the card, fill a layer or a BG on Simple, or press + to add one to the show library.</div>'; return; }
   el.innerHTML=names.map(n=>{
     const ct=(typeof findContent==='function')?findContent(n):{c:'#636870'};
     const meta=(typeof _wireGetSourceMeta==='function')?_wireGetSourceMeta(n):{};
@@ -26751,7 +26767,7 @@ function _fsRenderSources(force){
       +'<div class="fs-src-thumb" style="'+_fsSwatchStyle(ct,'#636870')+'"><span class="fs-src-thumb-name">'+_esc(n)+'</span><span class="fs-src-kind">Image</span></div>'
       +'<div class="fs-src-info"><div class="fs-src-name">'+_esc(n)+'</div><div class="fs-src-meta"><b>'+res+'</b><br>library'+(conn?' · '+conn:'')+'</div></div>'
       +'</div>';
-  }).join('')+'<div class="fs-src-hint">Drag a source onto a layer or a BG in the canvas, like taking an input on a switcher.</div>';
+  }).join('')+_fsAddCardHTML('images')+'<div class="fs-src-hint">Drag a source onto a layer or a BG in the canvas, like taking an input on a switcher.</div>';
 }
 function _fsSrcDragStart(ev){
   const card=ev.currentTarget; const name=(card&&card.dataset)?card.dataset.src:'';
