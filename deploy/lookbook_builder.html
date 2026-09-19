@@ -1456,7 +1456,7 @@ body.is-mobile #wire-overlay #wire-align-panel{display:none !important}
 #wire-overlay .wire-router-subtitle input{background:transparent;border:none;color:inherit;font-weight:inherit;letter-spacing:inherit;font-size:inherit;text-align:center;outline:none;width:90%;text-transform:uppercase;height:32px;line-height:1}
 #wire-overlay .wire-router-subtitle input:focus{outline:1px solid var(--n-cyan);outline-offset:1px;background:#0a0e16}
 #wire-overlay .wire-router-grid{display:grid;grid-template-columns:72px 1fr 72px 1fr;grid-auto-rows:44px;flex:1;font-size:15px;min-height:0}
-#wire-overlay .wire-switcher-grid{grid-template-columns:56px 1fr 108px 56px 1fr 108px !important}
+#wire-overlay .wire-switcher-grid{grid-template-columns:48px minmax(0,1.25fr) minmax(0,1fr) 48px minmax(0,1.25fr) minmax(0,1fr) !important}   /* 16jv: # · Source · ID, both halves even */
 #wire-overlay .wire-return-edge{stroke:#ff8a3d !important;stroke-dasharray:7 5}
 #wire-overlay circle.wire-adv-rport-in:hover{fill:rgba(255,138,61,.3)}
 #wire-overlay circle.wire-adv-connector:hover{filter:drop-shadow(0 0 7px currentColor)}
@@ -1479,7 +1479,7 @@ body.is-mobile #wire-overlay #wire-align-panel{display:none !important}
 #wire-overlay .wire-srcport-row .wire-cable-btn{width:104px;flex-shrink:0}
 #wire-overlay circle.wire-adv-connector[data-source-id^="rop:"]:hover{fill:rgba(78,195,224,.3)}
 #wire-overlay .wire-router-grid .rc-dead{background:rgba(0,0,0,.28)}
-#wire-overlay .wire-router-grid input.r-slot{font-family:var(--font-mono);font-size:12px;color:var(--text2)}
+#wire-overlay .wire-router-grid input.r-slot{font-family:var(--font-mono);font-size:12px;color:var(--text)}   /* 16jv: the ID cell */
 #wire-overlay .wire-router-grid .r-hdr{background:#cfe9d8;color:#1f2937;font-weight:800;letter-spacing:.04em;text-transform:uppercase;text-align:center;height:44px;padding:0 8px;border-right:1px solid #1e1e1e;border-bottom:1px solid #1e1e1e;font-size:14px;display:flex;align-items:center;justify-content:center;box-sizing:border-box;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;position:static;width:auto}
 #wire-overlay .wire-router-grid .rc{background:rgba(255,255,255,0.02);color:var(--text);height:44px;padding:0 10px;border-right:1px solid rgba(255,255,255,0.06);border-bottom:1px solid rgba(255,255,255,0.06);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1;display:flex;align-items:center;box-sizing:border-box;font-size:15px}
 #wire-overlay .wire-router-grid .rc-num{justify-content:center;font-family:var(--font-mono);color:var(--text2);background:rgba(0,0,0,0.25)}
@@ -4115,7 +4115,7 @@ Also called DSM (Downstage Monitor) in broadcast and theater workflows, same thi
   <div class="bb-cell bb-pill bb-cyan" title="The largest number of layers used in any single preset, this is the figure to compare against your switcher's per-scene layer budget. (The most complex single moment in the show.)"><span class="bb-label">Layers</span><strong id="bb-layers">0</strong></div>
   <div id="bb-spacer"></div>
   <div class="bb-cell" id="bb-sel" style="font-size:10px;opacity:.5">—</div>
-  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy, hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16ju</div>
+  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy, hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16jv</div>
   <button class="bb-util" id="tb-adv" onclick="actions.advancedMenu(event)" title="Advanced features (AOI, Free Mode, Blend Zones, Dead Space)" aria-label="Advanced features (AOI, Free Mode, Blend Zones, Dead Space)" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Advanced<span class="adv-count" aria-hidden="true"></span><svg aria-hidden="true" id="tb-adv-chev" viewBox="0 0 10 10" fill="currentColor" width="8" height="8" style="opacity:.7"><path d="M2 4l3 3 3-3z"/></svg></button>
   <button class="bb-util" onclick="actions.help()" title="Help, quick reference, keyboard shortcuts, glossary, accessibility" aria-label="Help, quick reference, keyboard shortcuts, glossary, accessibility" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="4.93" y1="4.93" x2="9.17" y2="9.17"/><line x1="14.83" y1="14.83" x2="19.07" y2="19.07"/><line x1="14.83" y1="9.17" x2="19.07" y2="4.93"/><line x1="4.93" y1="19.07" x2="9.17" y2="14.83"/></svg>Help</button>
   <button class="bb-util" id="tb-bug" onclick="reportBug()" title="Report a bug, opens an email to AV Educate with the show file attached so we can see it on our side" aria-label="Report a bug" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="7.2"/><path d="M15.4 15.4L21 21" stroke-width="2.6"/><ellipse cx="10" cy="11" rx="2.5" ry="3.3" fill="currentColor" stroke="none"/><circle cx="10" cy="7" r="1.5" fill="currentColor" stroke="none"/><path d="M7.5 9.2l-1.7-.8M7.4 11.2H5.6M7.7 13.1l-1.5 1.1M12.5 9.2l1.7-.8M12.6 11.2h1.8M12.3 13.1l1.5 1.1M9.2 5.9l-.8-1.1M10.8 5.9l.8-1.1" stroke-width="1.3"/></svg>Bug</button>   <!-- 16jk (Omar): Report a bug, after Help -->
@@ -17008,18 +17008,18 @@ function _wireAdvRouterTileHTML(router, isSelected, o){
     // Switcher variant: 6-column grid with per-row SLOT fields and
     // asymmetric input/output counts (rows past a side's count go dead).
     h += '<div class="wire-router-grid wire-switcher-grid">';
-    h += '<div class="r-hdr">#</div><div class="r-hdr">Source</div><div class="r-hdr">Slot</div><div class="r-hdr">#</div><div class="r-hdr">Destination</div><div class="r-hdr">Slot</div>';
+    h += '<div class="r-hdr">#</div><div class="r-hdr">Source</div><div class="r-hdr">ID</div><div class="r-hdr">#</div><div class="r-hdr">Destination</div><div class="r-hdr">ID</div>';   // 16jv (Omar): Slot → ID
     for(let i = 0; i < router.size; i++){
       const inName  = router.inputs[i]  ? _esc(router.inputs[i].name  || '') : '';
       const outName = router.outputs[i] ? _esc(router.outputs[i].name || '') : '';
-      const inSlot  = router.inputs[i]  ? _esc(router.inputs[i].slot  || '') : '';
-      const outSlot = router.outputs[i] ? _esc(router.outputs[i].slot || '') : '';
+      const inSlot  = router.inputs[i]  ? _esc(router.inputs[i].pt  || '') : '';   // 16jv: the ID cell
+      const outSlot = router.outputs[i] ? _esc(router.outputs[i].pt || '') : '';
       if(i < swInC){
         h += '<div class="rc rc-num">' + (i + 1) + '</div>';
         h += o.static ? ('<div class="rc"><span class="r-static">' + (inName || '\u2014') + '</span></div>')
                       : ('<div class="rc"><input type="text" value="' + inName + '" placeholder="\u2014" onchange="_wireAdvRouterInputName(\'' + router.id + '\', ' + i + ', this.value)" onmousedown="event.stopPropagation()" /></div>');
         h += o.static ? ('<div class="rc"><span class="r-static r-slot">' + (inSlot || '\u2014') + '</span></div>')
-                      : ('<div class="rc"><input type="text" class="r-slot" value="' + inSlot + '" placeholder="\u2014" onchange="_wireAdvSwitcherSlot(\'' + router.id + '\', \'in\', ' + i + ', this.value)" onmousedown="event.stopPropagation()" /></div>');
+                      : ('<div class="rc"><input type="text" class="r-slot" value="' + inSlot + '" placeholder="\u2014" onchange="_wireAdvSwitcherPt(\'' + router.id + '\', \'in\', ' + i + ', this.value)" onmousedown="event.stopPropagation()" /></div>');
       } else {
         h += '<div class="rc rc-num rc-dead"></div><div class="rc rc-dead"></div><div class="rc rc-dead"></div>';
       }
@@ -17028,7 +17028,7 @@ function _wireAdvRouterTileHTML(router, isSelected, o){
         h += o.static ? ('<div class="rc"><span class="r-static">' + (outName || '\u2014') + '</span></div>')
                       : ('<div class="rc"><input type="text" value="' + outName + '" placeholder="\u2014" onchange="_wireAdvRouterOutputName(\'' + router.id + '\', ' + i + ', this.value)" onmousedown="event.stopPropagation()" /></div>');
         h += o.static ? ('<div class="rc"><span class="r-static r-slot">' + (outSlot || '\u2014') + '</span></div>')
-                      : ('<div class="rc"><input type="text" class="r-slot" value="' + outSlot + '" placeholder="\u2014" onchange="_wireAdvSwitcherSlot(\'' + router.id + '\', \'out\', ' + i + ', this.value)" onmousedown="event.stopPropagation()" /></div>');
+                      : ('<div class="rc"><input type="text" class="r-slot" value="' + outSlot + '" placeholder="\u2014" onchange="_wireAdvSwitcherPt(\'' + router.id + '\', \'out\', ' + i + ', this.value)" onmousedown="event.stopPropagation()" /></div>');
       } else {
         h += '<div class="rc rc-num rc-dead"></div><div class="rc rc-dead"></div><div class="rc rc-dead"></div>';
       }
@@ -18011,28 +18011,56 @@ function _wireAdvStartWireDraw(ev, sourceNodeId){
 // they are named. Output-side cells read the destination they feed.
 function _wireAdvAutoCellName(fromId){
   _wireAdvHelpers();
-  if(fromId.indexOf('asrc:') === 0){ const s = wireAdvanced.sources.find(x => x.id === fromId.slice(5)); if(!s) return ''; const l0 = (s.portLabels && s.portNames && s.portNames[0]) ? String(s.portNames[0]).trim() : ''; return l0 || (s.name || ''); }   // 16ju (Omar): a named point reads its own name, the first one too
-  if(fromId.indexOf('asp:') === 0){
-    const p = fromId.split(':'); const s = wireAdvanced.sources.find(x => x.id === p[1]); if(!s) return '';
-    const k = parseInt(p[2], 10) || 0;
-    const lbl = (s.portNames && s.portNames[k]) ? String(s.portNames[k]).trim() : '';
-    return lbl || ((s.name || 'Source') + ' ' + (k + 1));
-  }
+  if(fromId.indexOf('asrc:') === 0){ const s = wireAdvanced.sources.find(x => x.id === fromId.slice(5)); return s ? (s.name || '') : ''; }   // 16jv: the Source cell is the machine; its point lives in the ID cell
+  if(fromId.indexOf('asp:') === 0){ const p = fromId.split(':'); const s = wireAdvanced.sources.find(x => x.id === p[1]); return s ? (s.name || '') : ''; }   // 16jv
   if(fromId.indexOf('rop:') === 0){ const p = fromId.split(':'); const r = wireAdvanced.routers.find(x => x.id === p[1]); const o = r && r.outputs[parseInt(p[2], 10)]; return o ? (o.name || (r.label || 'Router')) : ''; }
   if(fromId.indexOf('adst:') === 0){ const inst = wireAdvanced.dests.find(d => d.id === fromId.slice(5)); const s = inst ? (typeof screens !== 'undefined' ? screens : []).find(x => x.id === inst.refId) : null; return s ? (s.name || s.id) : ''; }
   if(fromId.indexOf('adsm:') === 0){ const inst = wireAdvanced.dsms.find(d => d.id === fromId.slice(5)); const d = inst ? (typeof dsms !== 'undefined' ? dsms : []).find(x => x.id === inst.refId) : null; return d ? (d.name || d.id) : ''; }
-  if(fromId.indexOf('dvo:') === 0){ const p = fromId.split(':'); const d = _wireAdvDeviceById(p[1]); if(!d) return ''; const k = parseInt(p[2], 10) || 0; const pt = _wireAdvDevPort(d, 'out', k); return _wireAdvDevLabel(d) + ' \u00b7 ' + ((pt && pt.name) ? pt.name : ((d.kind === 'switch' ? 'Port ' : 'Out ') + (k + 1))); }   // 16jd
+  if(fromId.indexOf('dvo:') === 0){ const p = fromId.split(':'); const d = _wireAdvDeviceById(p[1]); return d ? _wireAdvDevLabel(d) : ''; }   // 16jd · 16jv: the port moves to the ID cell
   return '';
 }
 function _wireAdvAutoTargetName(toId){
   _wireAdvHelpers();
   if(toId.indexOf('adst:') === 0 || toId.indexOf('adsm:') === 0) return _wireAdvAutoCellName(toId);
-  if(toId.indexOf('adp:') === 0){ const o = _wireAdvInstOf(toId); const base = o ? _wireAdvAutoCellName(o.ownerId) : ''; return base ? base + ' \u00b7 BKP' : ''; }   // 16ez
+  if(toId.indexOf('adp:') === 0){ const o = _wireAdvInstOf(toId); return o ? _wireAdvAutoCellName(o.ownerId) : ''; }   // 16ez · 16jv: BKP moves to the ID cell
   if(toId.indexOf('dst:') === 0){ const s = (typeof screens !== 'undefined' ? screens : []).find(x => x.id === toId.slice(4)); return s ? (s.name || s.id) : ''; }
   if(toId.indexOf('dsm:') === 0){ const d = (typeof dsms !== 'undefined' ? dsms : []).find(x => x.id === toId.slice(4)); return d ? (d.name || d.id) : ''; }
-  if(toId.indexOf('rip:') === 0){ const p = toId.split(':'); const r = wireAdvanced.routers.find(x => x.id === p[1]); return r ? ((r.label || 'Router') + ' IN ' + ((parseInt(p[2], 10) || 0) + 1)) : ''; }
-  if(toId.indexOf('dvi:') === 0){ const p = toId.split(':'); const d = _wireAdvDeviceById(p[1]); if(!d) return ''; const k = parseInt(p[2], 10) || 0; const pt = _wireAdvDevPort(d, 'in', k); return _wireAdvDevLabel(d) + ' \u00b7 ' + ((pt && pt.name) ? pt.name : ((d.kind === 'switch' ? 'Port ' : 'In ') + (k + 1))); }   // 16jd
+  if(toId.indexOf('rip:') === 0){ const p = toId.split(':'); const r = wireAdvanced.routers.find(x => x.id === p[1]); return r ? (r.title || r.label || 'Router') : ''; }   // 16jv: IN n moves to the ID cell
+  if(toId.indexOf('dvi:') === 0){ const p = toId.split(':'); const d = _wireAdvDeviceById(p[1]); return d ? _wireAdvDevLabel(d) : ''; }   // 16jd · 16jv
   return '';
+}
+// 16jv (Omar): the ID cell. Input side = the source's output point (its name, OUT n on a multi-point machine, blank on a
+// plain single-output one), a converter / switch output port, or OUT n of an upstream router. Output side = BKP on a
+// destination's backup input, a device input port, IN n of a downstream router; blank otherwise.
+function _wireAdvAutoCellPt(fromId){
+  _wireAdvHelpers();
+  if(fromId.indexOf('asrc:') === 0 || fromId.indexOf('asp:') === 0){
+    const p = fromId.split(':'); const s = wireAdvanced.sources.find(x => x.id === p[1]); if(!s) return '';
+    const k = (fromId.indexOf('asp:') === 0) ? (parseInt(p[2], 10) || 0) : 0;
+    const lbl = (s.portLabels && s.portNames && s.portNames[k]) ? String(s.portNames[k]).trim() : '';
+    if(lbl) return lbl;
+    return ((parseInt(s.outC, 10) || 1) > 1) ? ('OUT ' + (k + 1)) : '';
+  }
+  if(fromId.indexOf('dvo:') === 0){ const p = fromId.split(':'); const d = _wireAdvDeviceById(p[1]); if(!d) return ''; const k = parseInt(p[2], 10) || 0; const pt = _wireAdvDevPort(d, 'out', k); return (pt && pt.name) ? pt.name : ((d.kind === 'switch' ? 'Port ' : 'Out ') + (k + 1)); }
+  if(fromId.indexOf('rop:') === 0){ const p = fromId.split(':'); return 'OUT ' + ((parseInt(p[2], 10) || 0) + 1); }
+  return '';
+}
+function _wireAdvAutoTargetPt(toId){
+  _wireAdvHelpers();
+  if(toId.indexOf('adp:') === 0) return 'BKP';
+  if(toId.indexOf('dvi:') === 0){ const p = toId.split(':'); const d = _wireAdvDeviceById(p[1]); if(!d) return ''; const k = parseInt(p[2], 10) || 0; const pt = _wireAdvDevPort(d, 'in', k); return (pt && pt.name) ? pt.name : ((d.kind === 'switch' ? 'Port ' : 'In ') + (k + 1)); }
+  if(toId.indexOf('rip:') === 0){ const p = toId.split(':'); return 'IN ' + ((parseInt(p[2], 10) || 0) + 1); }
+  return '';
+}
+function _wireAdvSwitcherPt(routerId, side, idx, value){
+  _wireAdvHelpers();
+  const r = wireAdvanced.routers.find(x => x.id === routerId); if(!r) return;
+  const arr = (side === 'in') ? r.inputs : r.outputs; if(!arr || !arr[idx]) return;
+  if(typeof pushUndo === 'function') pushUndo();
+  arr[idx].pt = String(value || '').trim();
+  arr[idx].ptAuto = !arr[idx].pt;   // typed = yours; cleared = back to auto
+  if(typeof scheduleAutoSave === 'function') scheduleAutoSave();
+  _wireRender();
 }
 function _wireAdvSyncRouterCells(){
   _wireAdvHelpers();
@@ -18045,26 +18073,32 @@ function _wireAdvSyncRouterCells(){
     // source's name (or clears) — even if the user had typed something for the
     // old cable. Only while the SAME cable stays connected is typed text kept.
     const _isDefaultName = n => /^New (Source|Destination)( \d+)?$/i.test(n || '');
-    function settle(cell, w, want){
+    function settle(cell, w, want, wantPt){
       const wid = w ? w.id : null;
       if(cell.wireId === undefined){
         cell.wireId = wid;   // older shows: untouched, matching or default-named = auto
         if(cell.auto === undefined) cell.auto = (!cell.name) || (!!w && cell.name === want) || _isDefaultName(cell.name);
       } else if(cell.wireId !== wid){
-        cell.wireId = wid; cell.auto = true;
+        cell.wireId = wid; cell.auto = true; cell.ptAuto = true;
       }
+      // 16jv: the ID cell follows the same rule. A Slot typed before 16jv becomes a typed ID, once.
+      if(cell.ptAuto === undefined){
+        if(!cell.pt && cell.slot && String(cell.slot).trim()){ cell.pt = String(cell.slot).trim(); delete cell.slot; }
+        cell.ptAuto = !(cell.pt && String(cell.pt).trim()) || (!!w && cell.pt === wantPt);
+      }
+      if(cell.ptAuto && (cell.pt || '') !== (wantPt || '')){ cell.pt = wantPt || ''; changed = true; }
       if(!cell.auto) return;
       if((cell.name || '') !== want){ cell.name = want; changed = true; }
     }
     (r.inputs || []).forEach((cell, i) => {
       if(!cell) return;
       const w = wires.find(x => x.toId === 'rip:' + r.id + ':' + i);
-      settle(cell, w, w ? _wireAdvAutoCellName(w.fromId) : '');
+      settle(cell, w, w ? _wireAdvAutoCellName(w.fromId) : '', w ? _wireAdvAutoCellPt(w.fromId) : '');
     });
     (r.outputs || []).forEach((cell, i) => {
       if(!cell) return;
       const w = wires.find(x => x.fromId === 'rop:' + r.id + ':' + i);
-      settle(cell, w, w ? _wireAdvAutoTargetName(w.toId) : '');
+      settle(cell, w, w ? _wireAdvAutoTargetName(w.toId) : '', w ? _wireAdvAutoTargetPt(w.toId) : '');
     });
   });
   return changed;
