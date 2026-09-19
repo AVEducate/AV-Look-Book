@@ -928,7 +928,7 @@ input[type=range].fs-range::-moz-range-thumb,input[type=range].lfx-range::-moz-r
 .fs-drow-res{font-family:var(--font-mono);font-size:10px;font-weight:600;color:var(--text3)}
 .fs-lrow{display:flex;align-items:center;gap:8px;padding:6px 10px;border-top:1px solid rgba(255,255,255,.04);cursor:pointer;font-size:12px}
 .fs-lrow:hover{background:rgba(255,255,255,.03)}
-.fs-lrow.bgrow{cursor:default}
+.fs-lrow.bgrow{cursor:pointer}
 .fs-lrow-l{font-family:var(--font-mono);font-size:10px;font-weight:700;color:var(--n-cyan);width:26px;flex-shrink:0}
 .fs-lrow.bgrow .fs-lrow-l{color:#a78bfa}
 .fs-lrow-sw{width:22px;height:14px;border-radius:2px;border:1px solid rgba(255,255,255,.12);flex-shrink:0}
@@ -4069,7 +4069,7 @@ Also called DSM (Downstage Monitor) in broadcast and theater workflows, same thi
   <div class="bb-cell bb-pill bb-cyan" title="The largest number of layers used in any single preset, this is the figure to compare against your switcher's per-scene layer budget. (The most complex single moment in the show.)"><span class="bb-label">Layers</span><strong id="bb-layers">0</strong></div>
   <div id="bb-spacer"></div>
   <div class="bb-cell" id="bb-sel" style="font-size:10px;opacity:.5">—</div>
-  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy, hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16jm</div>
+  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy, hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16jn</div>
   <button class="bb-util" id="tb-adv" onclick="actions.advancedMenu(event)" title="Advanced features (AOI, Free Mode, Blend Zones, Dead Space)" aria-label="Advanced features (AOI, Free Mode, Blend Zones, Dead Space)" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Advanced<span class="adv-count" aria-hidden="true"></span><svg aria-hidden="true" id="tb-adv-chev" viewBox="0 0 10 10" fill="currentColor" width="8" height="8" style="opacity:.7"><path d="M2 4l3 3 3-3z"/></svg></button>
   <button class="bb-util" onclick="actions.help()" title="Help, quick reference, keyboard shortcuts, glossary, accessibility" aria-label="Help, quick reference, keyboard shortcuts, glossary, accessibility" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="4.93" y1="4.93" x2="9.17" y2="9.17"/><line x1="14.83" y1="14.83" x2="19.07" y2="19.07"/><line x1="14.83" y1="9.17" x2="19.07" y2="4.93"/><line x1="4.93" y1="19.07" x2="9.17" y2="14.83"/></svg>Help</button>
   <button class="bb-util" id="tb-bug" onclick="reportBug()" title="Report a bug, opens an email to AV Educate with the show file attached so we can see it on our side" aria-label="Report a bug" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="7.2"/><path d="M15.4 15.4L21 21" stroke-width="2.6"/><ellipse cx="10" cy="11" rx="2.5" ry="3.3" fill="currentColor" stroke="none"/><circle cx="10" cy="7" r="1.5" fill="currentColor" stroke="none"/><path d="M7.5 9.2l-1.7-.8M7.4 11.2H5.6M7.7 13.1l-1.5 1.1M12.5 9.2l1.7-.8M12.6 11.2h1.8M12.3 13.1l1.5 1.1M9.2 5.9l-.8-1.1M10.8 5.9l.8-1.1" stroke-width="1.3"/></svg>Bug</button>   <!-- 16jk (Omar): Report a bug, after Help -->
@@ -21821,6 +21821,7 @@ function _fsCrumb(p,s,n){
     parts.push(_esc((typeof getScreenName==='function')?getScreenName(p.id,s.id):s.name));
   }
   if(n){ h+='<span class="fs-crumb-sep">·</span><span class="fs-crumb-c l" title="Layer">L'+n+'</span>'; parts.push('Layer '+n); }
+  else if(n===0){ h+='<span class="fs-crumb-sep">·</span><span class="fs-crumb-c l" title="Background">BG</span>'; parts.push('Background'); }   // 16jn
   return h+'<span class="fs-crumb-path" title="'+parts.join(' · ')+'">'+parts.join(' · ')+'</span></div>';
 }
 function _fsSwatchStyle(ct,fallback){
@@ -21843,8 +21844,9 @@ function renderFsPanel(force){
         _lfxRefreshGeo(existing,p.id,s.id,n);   // the user is typing in here — never rebuild under the cursor
         return;
       }
-      if(kind) kind.textContent='Layer';
-      const v=getL(p.id,s.id,n)||'', cr=getCrop(p.id,s.id,n);
+      const isBg=(n===0);   // 16jn: the BG is picked like a layer
+      if(kind) kind.textContent=isBg?'Background':'Layer';
+      const v=(isBg?getBgName(p.id,s.id):getL(p.id,s.id,n))||'', cr=getCrop(p.id,s.id,n);
       const ct=v?findContent(v):null;
       const it=v?_fsMediaItem(v):null; const lm=it?getLayerMedia(p.id,s.id,n):null;
       // 16ia (Omar's order): Source block, Media Info, General, Position & Size, Opacity, Crop, Border, Effects, Filters, Color, Video, Transition
@@ -21852,13 +21854,13 @@ function renderFsPanel(force){
         +'<div id="fs-props" data-pid="'+_esc(p.id)+'" data-sid="'+_esc(s.id)+'" data-n="'+n+'">'
         +_fsSourceBlockHTML(p,s,n,v)
         +_fsInfoSectionsHTML(p,s,n,v)
-        +_lpAdvancedSection(v,cr,p.id,s.id,n,true)
+        +(isBg?'':_lpAdvancedSection(v,cr,p.id,s.id,n,true))
         +(it?_fsLookSectionsHTML(p,s,n,it,lm):'')
         +_fsMediaSectionHTML(p,s,n,v)
         +(it&&it.kind==='video'?_fsTransitionSectionHTML(it,lm):'')   // 16ie: fades + In / Out
         +'</div>';
       const fp=document.getElementById('fs-props'); if(fp) fp._rebuild=function(){ renderFsPanel(true); };
-      _fsSizeCropPreview(p.id,s.id,n);   // 16ie
+      if(!isBg) _fsSizeCropPreview(p.id,s.id,n);   // 16ie
       panel.scrollTop=keepScroll;
       return;
     }
@@ -21875,7 +21877,7 @@ function renderFsPanel(force){
         +'<span class="fs-lrow-l">L'+n+'</span><span class="fs-lrow-sw" style="'+_fsSwatchStyle(ct,'transparent')+'"></span><span class="fs-lrow-n">'+(v?_esc(v):'— drop a source —')+'</span></div>';
     }).join('');
     return '<div class="fs-drow"><div class="fs-drow-h"><span class="fs-crumb-c d">D'+String(si+1).padStart(2,'0')+'</span><span class="fs-drow-name">'+_esc(dname)+'</span><span class="fs-drow-res">'+_esc(s.w+'×'+s.h)+'</span></div>'
-      +'<div class="fs-lrow bgrow'+(bg?'':' empty')+'" data-pid="'+pidA+'" data-sid="'+sidA+'" ondragover="_fsCanvasDragOver(event)" ondrop="_fsCanvasDrop(event)" title="Drop a source here to make it the BG"><span class="fs-lrow-l">BG</span><span class="fs-lrow-n">'+(bg?_esc(bg):'— drop a source —')+'</span></div>'
+      +'<div class="fs-lrow bgrow'+(bg?'':' empty')+'" data-pid="'+pidA+'" data-sid="'+sidA+'" data-n="0" onclick="_fsSelectLayer(\''+pidA+'\',\''+sidA+'\',0)" ondragover="_fsCanvasDragOver(event)" ondrop="_fsCanvasDrop(event)" title="'+(bg?'Pick the background, it has the same options as a layer':'Drop a source here to make it the BG')+'"><span class="fs-lrow-l">BG</span><span class="fs-lrow-sw" style="'+_fsSwatchStyle(bg?findContent(bg):null,'transparent')+'"></span><span class="fs-lrow-n">'+(bg?_esc(bg):'— drop a source —')+'</span></div>'   /* 16jn (Omar): the BG is a layer too */
       +lrows+'</div>';
   }).join('');
   panel.innerHTML=_fsCrumb(p,null,null)
@@ -26803,6 +26805,7 @@ function _fsAssignBg(pid,sid,name){
   const ct=(typeof findContent==='function')?findContent(name):null;
   setBgName(pid,sid,name);
   if(ct&&typeof setPColor==='function'){ if(ct.img) setPColor(pid,sid,null,ct.img); else if(ct.c) setPColor(pid,sid,ct.c,null); }
+  selLayer={pid:pid,sid:sid,n:0}; _fsSetPropTab('layers');   // 16jn: a dropped BG is picked like a layer, so the timeline takes it
   scheduleRender(); renderFullscreen();
 }
 function _fsSelectLayer(pid,sid,n){ selLayer={pid:pid,sid:sid,n:n}; _fsSetPropTab('layers'); renderFullscreen(); }
@@ -27023,7 +27026,7 @@ function _fsSizeCheckText(it,pid,sid,n){
   return out;
 }
 // ── transport ───────────────────────────────────────────────────────────
-function _fsTargetKey(){ if(!fsPresetId) return ''; if(selLayer&&selLayer.pid===fsPresetId){ const v=getL(selLayer.pid,selLayer.sid,selLayer.n); if(v&&_fsIsVideo(v)) return _fsLayerKey(selLayer.pid,selLayer.sid,selLayer.n); } if(sel&&sel.pid===fsPresetId){ const bg=getBgName(sel.pid,sel.sid); if(bg&&_fsIsVideo(bg)) return 'BG:'+sel.pid+':'+sel.sid; } return ''; }
+function _fsTargetKey(){ if(!fsPresetId) return ''; if(selLayer&&selLayer.pid===fsPresetId){ const v=selLayer.n?getL(selLayer.pid,selLayer.sid,selLayer.n):getBgName(selLayer.pid,selLayer.sid); if(v&&_fsIsVideo(v)) return selLayer.n?_fsLayerKey(selLayer.pid,selLayer.sid,selLayer.n):('BG:'+selLayer.pid+':'+selLayer.sid); } if(sel&&sel.pid===fsPresetId){ const bg=getBgName(sel.pid,sel.sid); if(bg&&_fsIsVideo(bg)) return 'BG:'+sel.pid+':'+sel.sid; } return ''; }
 // ── 16im: CLIP buttons act on the picked video, PRESET buttons on every video in the preset together; Space / the Play
 // button follow whichever mode is running. 30 / 20 / 10 jump to the last N seconds before Out (rehearsal cue calls).
 var _fsPresetPlaying=false;
@@ -27244,7 +27247,7 @@ function _fsTakeChipBg(inner,el){ const bg=inner.querySelector('.chip-bg'); el.d
 function _fsLookFilter(lm){ const f=[]; if(lm.hue) f.push('hue-rotate('+lm.hue+'deg)'); if(lm.sat) f.push('saturate('+(100+lm.sat)+'%)'); if(lm.bri) f.push('brightness('+(100+lm.bri)+'%)'); if(lm.con) f.push('contrast('+(100+lm.con)+'%)'); if(lm.bw) f.push('grayscale(1)'); if(lm.neg) f.push('invert(1)'); if(lm.sepia) f.push('sepia(1)'); return f.length?f.join(' '):'none'; }
 function _fsPickedMedia(){
   if(!fsPresetId) return null;
-  if(selLayer&&selLayer.pid===fsPresetId){ const v=getL(selLayer.pid,selLayer.sid,selLayer.n); const it=v?_fsMediaItem(v):null; if(it) return {pid:selLayer.pid,sid:selLayer.sid,n:selLayer.n,name:v,it:it}; }
+  if(selLayer&&selLayer.pid===fsPresetId){ const v=selLayer.n?getL(selLayer.pid,selLayer.sid,selLayer.n):getBgName(selLayer.pid,selLayer.sid); const it=v?_fsMediaItem(v):null; if(it) return {pid:selLayer.pid,sid:selLayer.sid,n:selLayer.n,name:v,it:it}; }
   if(sel&&sel.pid===fsPresetId){ const bg=getBgName(sel.pid,sel.sid); const it=bg?_fsMediaItem(bg):null; if(it) return {pid:sel.pid,sid:sel.sid,n:0,name:bg,it:it}; }
   return null;
 }
@@ -27372,13 +27375,13 @@ function _fsSourceBlockHTML(p,s,n,v){
   const names=_fsSourceNames(); const media=(Array.isArray(customLibrary)?customLibrary:[]).filter(function(c){ return c&&c.kind; }).map(function(c){ return c.l; });
   const common=CONTENT.map(function(c){ return c.l; }); const images=names.filter(function(x){ return media.indexOf(x)<0&&common.indexOf(x)<0; });
   const chev='<span class="pill-chev"><svg aria-hidden="true" viewBox="0 0 10 10" fill="currentColor"><path d="M2 4l3 3 3-3z"/></svg></span>';
-  const body='<div class="fs-srcblk"><div class="fs-srcblk-thumb" style="'+thumb+'">'+(v?'':'<span class="fs-srcblk-empty">Empty layer</span>')+(isVid?'<span class="fs-src-play">▶</span>':'')+(v&&!pic?'<span class="fs-srcblk-name">'+_esc(v)+'</span>':'')+'</div>'
+  const body='<div class="fs-srcblk"><div class="fs-srcblk-thumb" style="'+thumb+'">'+(v?'':'<span class="fs-srcblk-empty">'+(n?'Empty layer':'No background')+'</span>')+(isVid?'<span class="fs-src-play">▶</span>':'')+(v&&!pic?'<span class="fs-srcblk-name">'+_esc(v)+'</span>':'')+'</div>'
     +'<div class="fs-srcblk-row"><span class="lfx-lbl">Source</span><div class="sys-pill clickable fs-srcpill'+(v?'':' empty')+'" data-sys-field="fs-source" data-sys-value="'+_esc(v||'')+'" onclick="_sysOpenDropdown(this)" title="Pick the source for this layer, click again to close"><span class="pill-label">'+(v?_esc(v):'— none —')+'</span>'+chev+'</div></div></div>';
   return _fsAccHTML('source','Source',body,false);   // 16id (Omar): a section like the rest, expand to use, collapse to get it out of the way
 }
 // the picker's list: none, then Video / Images / Common groups (16ib)
 function _fsBuildSourceOptions(){
-  const v=(selLayer&&fsPresetId)?(getL(selLayer.pid,selLayer.sid,selLayer.n)||''):'';
+  const v=(selLayer&&fsPresetId)?((selLayer.n?getL(selLayer.pid,selLayer.sid,selLayer.n):getBgName(selLayer.pid,selLayer.sid))||''):'';   // 16jn
   const names=_fsSourceNames(); const lib=(Array.isArray(customLibrary)?customLibrary:[]);
   const media=lib.filter(function(c){ return c&&c.kind; });
   const common=CONTENT.map(function(c){ return c.l; });
@@ -27389,7 +27392,9 @@ function _fsBuildSourceOptions(){
   opts.push({group:'Common'}); common.forEach(function(nm){ opts.push({value:nm,label:nm}); });
   return opts;
 }
-function _fsSwapSource(val){ if(!selLayer||!fsPresetId) return; const nm=val||null; if((getL(selLayer.pid,selLayer.sid,selLayer.n)||null)===nm) return; homeSetL(selLayer.pid,selLayer.sid,selLayer.n,nm); scheduleRender(); renderFullscreen(); }
+function _fsSwapSource(val){ if(!selLayer||!fsPresetId) return; const nm=val||null;
+  if(selLayer.n===0){ if((getBgName(selLayer.pid,selLayer.sid)||null)===nm) return; if(nm) _fsAssignBg(selLayer.pid,selLayer.sid,nm); else { if(typeof pushUndo==='function') pushUndo(); setBgName(selLayer.pid,selLayer.sid,''); scheduleRender(); renderFullscreen(); } return; }   // 16jn: the BG row ('' clears it)
+  if((getL(selLayer.pid,selLayer.sid,selLayer.n)||null)===nm) return; homeSetL(selLayer.pid,selLayer.sid,selLayer.n,nm); scheduleRender(); renderFullscreen(); }
 // Media Info (read-only) and General (layer name, source name, colour tag, notes)
 function _fsInfoSectionsHTML(p,s,n,v){
   const it=v?_fsMediaItem(v):null; const ct=v?findContent(v):null; const m=(it&&it.media)||null;
@@ -27407,11 +27412,11 @@ function _fsInfoSectionsHTML(p,s,n,v){
     const meta=(typeof _wireGetSourceMeta==='function')?_wireGetSourceMeta(v):{}; const isCommon=CONTENT.some(function(c){ return c.l===v; });
     info=row('Kind',isCommon?'Common content':'Library item')+row('Resolution',_esc(meta.resolution||'—'))+row('Connector',_esc(meta.connectorType||'—'))
       +row('Colour','<span class="fs-info-sw" style="background:'+((ct&&ct.c)||'#636870')+'"></span>'+_esc((ct&&ct.c)||'—'));
-  } else info='<div class="lfx-hint">Empty layer. Pick a source above or drop one on it.</div>';
+  } else info='<div class="lfx-hint">'+(n?'Empty layer.':'No background yet.')+' Pick a source above or drop one on it.</div>';
   const cust=(Array.isArray(customLibrary)?customLibrary:[]).find(function(c){ return c&&c.l===v; });
   const lsz=getLayerSize(p.id,s.id,n)||{}; const lname=lsz.name||'';
   const inp=function(val,fn,ph){ return '<input class="lfx-inp fs-text" type="text" value="'+_esc(val)+'" placeholder="'+ph+'" onchange="'+fn+'" onkeydown="if(event.key===\'Enter\'){event.preventDefault();this.blur()}">'; };
-  let gen=row('Layer',inp(lname,'_fsSetLayerNameUI(this.value)','Custom layer name…'))
+  let gen=(n?row('Layer',inp(lname,'_fsSetLayerNameUI(this.value)','Custom layer name…')):'')   // 16jn: no layer name on the BG
     +row('Source',cust?inp(v,'_fsRenameContentUI(this.value)','Source name'):'<span class="fs-info">'+(v?_esc(v):'—')+'</span>');
   if(cust) gen+=row('Colour tag','<span class="fs-sl"><input type="color" class="fs-color" value="'+((cust.c&&/^#[0-9a-f]{6}$/i.test(cust.c))?cust.c:'#636870')+'" oninput="_fsSetContentColor(this.value)" onchange="_lfxCommit()" aria-label="Colour tag"><span class="fs-info">'+_esc(cust.c||'')+'</span></span>')
     +row('Notes',inp(cust.notes||'','_fsSetContentNotes(this.value)','Notes for this source…'));
@@ -27421,7 +27426,7 @@ function _fsInfoSectionsHTML(p,s,n,v){
 }
 function _fsSetLayerNameUI(val){ if(!selLayer) return; if(typeof pushUndo==='function') pushUndo(); setLayerName(selLayer.pid,selLayer.sid,selLayer.n,(val||'').trim().slice(0,40)); scheduleRender(); renderFullscreen(); }
 function _fsRenameContentUI(val){
-  if(!selLayer) return; const old=getL(selLayer.pid,selLayer.sid,selLayer.n); if(!old) return;
+  if(!selLayer) return; const old=selLayer.n?getL(selLayer.pid,selLayer.sid,selLayer.n):getBgName(selLayer.pid,selLayer.sid); if(!old) return;   // 16jn
   const nn=(val||'').trim().slice(0,40);
   if(!nn||nn===old){ renderFsPanel(true); return; }
   if(allContent().some(function(c){ return c.l===nn; })){ if(typeof showAlert==='function') showAlert({variant:'warning',title:'Name in use',message:'"'+nn+'" is already a source in this show. Pick another name.'}); renderFsPanel(true); return; }
