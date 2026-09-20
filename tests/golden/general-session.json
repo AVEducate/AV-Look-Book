@@ -1,0 +1,604 @@
+{
+ "show": "general-session",
+ "sections": {
+  "meta": {
+   "presets": [
+    {
+     "code": "P01",
+     "name": "WALK-IN",
+     "notes": "Doors open. Logo on all walls, house music."
+    },
+    {
+     "code": "P02",
+     "name": "WELCOME",
+     "notes": "Emcee at podium. IMAG on the sides, logo and name key on center."
+    },
+    {
+     "code": "P03",
+     "name": "KEYNOTE",
+     "notes": "Slides center, IMAG sides. PPT B is the hot backup for PPT A."
+    },
+    {
+     "code": "P04",
+     "name": "PANEL",
+     "notes": "Four chairs. Wide two-shot house left, tight house right."
+    },
+    {
+     "code": "P05",
+     "name": "VIDEO",
+     "notes": "Full-bleed playback on all three walls. Audio from playback."
+    }
+   ],
+   "screens": [
+    {
+     "name": "LEFT LED",
+     "w": 1920,
+     "h": 1080
+    },
+    {
+     "name": "CENTER LED",
+     "w": 1920,
+     "h": 1080
+    },
+    {
+     "name": "RIGHT LED",
+     "w": 1920,
+     "h": 1080
+    }
+   ],
+   "dsms": [
+    {
+     "name": "DSM 1",
+     "type": ""
+    },
+    {
+     "name": "AUX 1",
+     "type": ""
+    }
+   ]
+  },
+  "layout": [
+   {
+    "code": "P01",
+    "screens": [
+     {
+      "screen": "LEFT LED",
+      "bg": "LOGO",
+      "bgDetail": "",
+      "aoi": null,
+      "layers": []
+     },
+     {
+      "screen": "CENTER LED",
+      "bg": "LOGO",
+      "bgDetail": "",
+      "aoi": null,
+      "layers": []
+     },
+     {
+      "screen": "RIGHT LED",
+      "bg": "LOGO",
+      "bgDetail": "",
+      "aoi": null,
+      "layers": []
+     }
+    ],
+    "dsm": [
+     {
+      "name": "DSM 1",
+      "on": true,
+      "content": "CLOCK"
+     },
+     {
+      "name": "AUX 1",
+      "on": true,
+      "content": "PGM"
+     }
+    ]
+   },
+   {
+    "code": "P02",
+    "screens": [
+     {
+      "screen": "LEFT LED",
+      "bg": "LOGO",
+      "bgDetail": "",
+      "aoi": null,
+      "layers": [
+       {
+        "n": 1,
+        "name": "CAM 1",
+        "x": 0,
+        "y": 0,
+        "w": 1920,
+        "h": 1080,
+        "crop": {
+         "t": 0,
+         "b": 0,
+         "l": 0,
+         "r": 0
+        },
+        "fx": ""
+       }
+      ]
+     },
+     {
+      "screen": "CENTER LED",
+      "bg": "LOGO",
+      "bgDetail": "",
+      "aoi": null,
+      "layers": [
+       {
+        "n": 1,
+        "name": "LOWER 3RD",
+        "x": 0,
+        "y": 842,
+        "w": 1920,
+        "h": 238,
+        "crop": {
+         "t": 0,
+         "b": 0,
+         "l": 0,
+         "r": 0
+        },
+        "fx": ""
+       }
+      ]
+     },
+     {
+      "screen": "RIGHT LED",
+      "bg": "LOGO",
+      "bgDetail": "",
+      "aoi": null,
+      "layers": [
+       {
+        "n": 1,
+        "name": "CAM 1",
+        "x": 0,
+        "y": 0,
+        "w": 1920,
+        "h": 1080,
+        "crop": {
+         "t": 0,
+         "b": 0,
+         "l": 0,
+         "r": 0
+        },
+        "fx": ""
+       }
+      ]
+     }
+    ],
+    "dsm": [
+     {
+      "name": "DSM 1",
+      "on": true,
+      "content": "PROMPTER"
+     },
+     {
+      "name": "AUX 1",
+      "on": true,
+      "content": "PGM"
+     }
+    ]
+   },
+   {
+    "code": "P03",
+    "screens": [
+     {
+      "screen": "LEFT LED",
+      "bg": "LOGO",
+      "bgDetail": "",
+      "aoi": null,
+      "layers": [
+       {
+        "n": 1,
+        "name": "CAM 1",
+        "x": 0,
+        "y": 0,
+        "w": 1920,
+        "h": 1080,
+        "crop": {
+         "t": 0,
+         "b": 0,
+         "l": 0,
+         "r": 0
+        },
+        "fx": ""
+       }
+      ]
+     },
+     {
+      "screen": "CENTER LED",
+      "bg": "LOGO",
+      "bgDetail": "",
+      "aoi": null,
+      "layers": [
+       {
+        "n": 1,
+        "name": "PPT A",
+        "x": 0,
+        "y": 0,
+        "w": 1920,
+        "h": 1080,
+        "crop": {
+         "t": 0,
+         "b": 0,
+         "l": 0,
+         "r": 0
+        },
+        "fx": ""
+       }
+      ]
+     },
+     {
+      "screen": "RIGHT LED",
+      "bg": "LOGO",
+      "bgDetail": "",
+      "aoi": null,
+      "layers": [
+       {
+        "n": 1,
+        "name": "CAM 1",
+        "x": 0,
+        "y": 0,
+        "w": 1920,
+        "h": 1080,
+        "crop": {
+         "t": 0,
+         "b": 0,
+         "l": 0,
+         "r": 0
+        },
+        "fx": ""
+       }
+      ]
+     }
+    ],
+    "dsm": [
+     {
+      "name": "DSM 1",
+      "on": true,
+      "content": "NOTES"
+     },
+     {
+      "name": "AUX 1",
+      "on": true,
+      "content": "PGM"
+     }
+    ]
+   },
+   {
+    "code": "P04",
+    "screens": [
+     {
+      "screen": "LEFT LED",
+      "bg": "LOGO",
+      "bgDetail": "",
+      "aoi": null,
+      "layers": [
+       {
+        "n": 1,
+        "name": "CAM 2",
+        "x": 0,
+        "y": 0,
+        "w": 1920,
+        "h": 1080,
+        "crop": {
+         "t": 0,
+         "b": 0,
+         "l": 0,
+         "r": 0
+        },
+        "fx": ""
+       }
+      ]
+     },
+     {
+      "screen": "CENTER LED",
+      "bg": "LOGO",
+      "bgDetail": "",
+      "aoi": null,
+      "layers": [
+       {
+        "n": 1,
+        "name": "PPT A",
+        "x": 0,
+        "y": 0,
+        "w": 1920,
+        "h": 1080,
+        "crop": {
+         "t": 0,
+         "b": 0,
+         "l": 0,
+         "r": 0
+        },
+        "fx": ""
+       }
+      ]
+     },
+     {
+      "screen": "RIGHT LED",
+      "bg": "LOGO",
+      "bgDetail": "",
+      "aoi": null,
+      "layers": [
+       {
+        "n": 1,
+        "name": "CAM 1",
+        "x": 0,
+        "y": 0,
+        "w": 1920,
+        "h": 1080,
+        "crop": {
+         "t": 0,
+         "b": 0,
+         "l": 0,
+         "r": 0
+        },
+        "fx": ""
+       }
+      ]
+     }
+    ],
+    "dsm": [
+     {
+      "name": "DSM 1",
+      "on": true,
+      "content": "CLOCK"
+     },
+     {
+      "name": "AUX 1",
+      "on": true,
+      "content": "PGM"
+     }
+    ]
+   },
+   {
+    "code": "P05",
+    "screens": [
+     {
+      "screen": "LEFT LED",
+      "bg": "PLAYBACK",
+      "bgDetail": "",
+      "aoi": null,
+      "layers": []
+     },
+     {
+      "screen": "CENTER LED",
+      "bg": "PLAYBACK",
+      "bgDetail": "",
+      "aoi": null,
+      "layers": []
+     },
+     {
+      "screen": "RIGHT LED",
+      "bg": "PLAYBACK",
+      "bgDetail": "",
+      "aoi": null,
+      "layers": []
+     }
+    ],
+    "dsm": [
+     {
+      "name": "DSM 1",
+      "on": true,
+      "content": "CLOCK"
+     },
+     {
+      "name": "AUX 1",
+      "on": true,
+      "content": "PGM"
+     }
+    ]
+   }
+  ],
+  "sources": [
+   {
+    "name": "PPT A",
+    "connectorType": "HDMI 2.0",
+    "resolution": "1920x1080",
+    "type": "PC"
+   },
+   {
+    "name": "PPT B",
+    "connectorType": "HDMI 2.0",
+    "resolution": "1920x1080",
+    "type": "PC"
+   },
+   {
+    "name": "CAM 1",
+    "connectorType": "12G-SDI",
+    "resolution": "1920x1080",
+    "type": "Camera"
+   },
+   {
+    "name": "CAM 2",
+    "connectorType": "12G-SDI",
+    "resolution": "1920x1080",
+    "type": "Camera"
+   },
+   {
+    "name": "PLAYBACK",
+    "connectorType": "12G-SDI",
+    "resolution": "1920x1080",
+    "type": "Media Server"
+   },
+   {
+    "name": "LOGO",
+    "connectorType": "HDMI 2.0",
+    "resolution": "1920x1080",
+    "type": "Media Server"
+   },
+   {
+    "name": "PROMPTER",
+    "connectorType": "3G-SDI",
+    "resolution": "1920x1080",
+    "type": "Teleprompter"
+   },
+   {
+    "name": "LOWER 3RD",
+    "connectorType": "HDMI 2.0",
+    "resolution": "1920x1080",
+    "type": "Media Server"
+   }
+  ],
+  "excelRows": [
+   [
+    "General Session"
+   ],
+   [
+    "Exported September 19, 2026"
+   ],
+   [],
+   [
+    "P#",
+    "Preset Name",
+    "Notes",
+    "Resolution",
+    "LEFT LED",
+    "CENTER LED",
+    "RIGHT LED",
+    "DSM 1",
+    "AUX 1"
+   ],
+   [
+    "",
+    "",
+    "",
+    "Canvas: 5760x1080",
+    "1920x1080",
+    "1920x1080",
+    "1920x1080",
+    "1920x1080",
+    "1920x1080"
+   ],
+   [],
+   [
+    "P01",
+    "WALK-IN",
+    "Doors open. Logo on all walls, house music.",
+    "",
+    "BG: LOGO",
+    "BG: LOGO",
+    "BG: LOGO",
+    "CLOCK",
+    "PGM"
+   ],
+   [
+    "P02",
+    "WELCOME",
+    "Emcee at podium. IMAG on the sides, logo and name key on center.",
+    "",
+    "BG: LOGO\nL1: CAM 1 (1920×1080)",
+    "BG: LOGO\nL1: LOWER 3RD (1920×238)",
+    "BG: LOGO\nL1: CAM 1 (1920×1080)",
+    "PROMPTER",
+    "PGM"
+   ],
+   [
+    "P03",
+    "KEYNOTE",
+    "Slides center, IMAG sides. PPT B is the hot backup for PPT A.",
+    "",
+    "BG: LOGO\nL1: CAM 1 (1920×1080)",
+    "BG: LOGO\nL1: PPT A (1920×1080)",
+    "BG: LOGO\nL1: CAM 1 (1920×1080)",
+    "NOTES",
+    "PGM"
+   ],
+   [
+    "P04",
+    "PANEL",
+    "Four chairs. Wide two-shot house left, tight house right.",
+    "",
+    "BG: LOGO\nL1: CAM 2 (1920×1080)",
+    "BG: LOGO\nL1: PPT A (1920×1080)",
+    "BG: LOGO\nL1: CAM 1 (1920×1080)",
+    "CLOCK",
+    "PGM"
+   ],
+   [
+    "P05",
+    "VIDEO",
+    "Full-bleed playback on all three walls. Audio from playback.",
+    "",
+    "BG: PLAYBACK",
+    "BG: PLAYBACK",
+    "BG: PLAYBACK",
+    "CLOCK",
+    "PGM"
+   ]
+  ],
+  "wireSimple": {
+   "labels": [
+    "PPT A",
+    "PPT B",
+    "CAM 1",
+    "CAM 2",
+    "LOGO",
+    "CLOCK",
+    "PGM",
+    "LOWER 3RD",
+    "PROMPTER",
+    "NOTES",
+    "PLAYBACK",
+    "LEFT LED",
+    "CENTER LED",
+    "RIGHT LED",
+    "DSM 1",
+    "AUX 1",
+    "PPT A",
+    "—",
+    "LEFT LED",
+    "—",
+    "PPT B",
+    "—",
+    "CENTER LED",
+    "—",
+    "CAM 1",
+    "—",
+    "RIGHT LED",
+    "—",
+    "CAM 2",
+    "—",
+    "DSM 1",
+    "—",
+    "LOGO",
+    "—",
+    "AUX 1",
+    "—",
+    "CLOCK",
+    "—",
+    "PGM",
+    "—",
+    "LOWER 3RD",
+    "—",
+    "PROMPTER",
+    "—",
+    "NOTES",
+    "—",
+    "PLAYBACK",
+    "—"
+   ],
+   "cards": [
+    "PPT A",
+    "PPT B",
+    "CAM 1",
+    "CAM 2",
+    "LOGO",
+    "CLOCK",
+    "PGM",
+    "LOWER 3RD",
+    "PROMPTER",
+    "NOTES",
+    "PLAYBACK",
+    "LEFT LED",
+    "CENTER LED",
+    "RIGHT LED",
+    "DSM 1",
+    "AUX 1"
+   ]
+  }
+ }
+}

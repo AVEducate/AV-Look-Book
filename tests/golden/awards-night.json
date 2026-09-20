@@ -1,0 +1,630 @@
+{
+ "show": "awards-night",
+ "sections": {
+  "meta": {
+   "presets": [
+    {
+     "code": "P01",
+     "name": "WALK-IN",
+     "notes": "Sponsor loop everywhere while guests are seated."
+    },
+    {
+     "code": "P02",
+     "name": "HOST",
+     "notes": "Host at center. Logo on the wall with a name key, IMAG on the sides."
+    },
+    {
+     "code": "P03",
+     "name": "NOMINEES",
+     "notes": "Category reel on the wall. Reaction camera on the sides."
+    },
+    {
+     "code": "P04",
+     "name": "WINNER",
+     "notes": "Winner card full on the wall with a camera PIP top right. Sides on the walk-up camera."
+    },
+    {
+     "code": "P05",
+     "name": "SPEECH",
+     "notes": "Acceptance speech. Camera everywhere, name key on the wall."
+    }
+   ],
+   "screens": [
+    {
+     "name": "SIDE L PROJ",
+     "w": 1920,
+     "h": 1200
+    },
+    {
+     "name": "STAGE LED",
+     "w": 3840,
+     "h": 1080
+    },
+    {
+     "name": "SIDE R PROJ",
+     "w": 1920,
+     "h": 1200
+    }
+   ],
+   "dsms": [
+    {
+     "name": "DSM 1",
+     "type": ""
+    },
+    {
+     "name": "AUX 1",
+     "type": ""
+    }
+   ]
+  },
+  "layout": [
+   {
+    "code": "P01",
+    "screens": [
+     {
+      "screen": "SIDE L PROJ",
+      "bg": "SPONSOR LOOP",
+      "bgDetail": "",
+      "aoi": null,
+      "layers": []
+     },
+     {
+      "screen": "STAGE LED",
+      "bg": "SPONSOR LOOP",
+      "bgDetail": "",
+      "aoi": null,
+      "layers": []
+     },
+     {
+      "screen": "SIDE R PROJ",
+      "bg": "SPONSOR LOOP",
+      "bgDetail": "",
+      "aoi": null,
+      "layers": []
+     }
+    ],
+    "dsm": [
+     {
+      "name": "DSM 1",
+      "on": true,
+      "content": "CLOCK"
+     },
+     {
+      "name": "AUX 1",
+      "on": true,
+      "content": "PGM"
+     }
+    ]
+   },
+   {
+    "code": "P02",
+    "screens": [
+     {
+      "screen": "SIDE L PROJ",
+      "bg": "SPONSOR LOOP",
+      "bgDetail": "",
+      "aoi": null,
+      "layers": [
+       {
+        "n": 1,
+        "name": "CAM 1",
+        "x": 0,
+        "y": 0,
+        "w": 1920,
+        "h": 1200,
+        "crop": {
+         "t": 0,
+         "b": 0,
+         "l": 0,
+         "r": 0
+        },
+        "fx": ""
+       }
+      ]
+     },
+     {
+      "screen": "STAGE LED",
+      "bg": "LOGO",
+      "bgDetail": "",
+      "aoi": null,
+      "layers": [
+       {
+        "n": 1,
+        "name": "LOWER 3RD",
+        "x": 960,
+        "y": 842,
+        "w": 1920,
+        "h": 238,
+        "crop": {
+         "t": 0,
+         "b": 0,
+         "l": 0,
+         "r": 0
+        },
+        "fx": ""
+       }
+      ]
+     },
+     {
+      "screen": "SIDE R PROJ",
+      "bg": "SPONSOR LOOP",
+      "bgDetail": "",
+      "aoi": null,
+      "layers": [
+       {
+        "n": 1,
+        "name": "CAM 1",
+        "x": 0,
+        "y": 0,
+        "w": 1920,
+        "h": 1200,
+        "crop": {
+         "t": 0,
+         "b": 0,
+         "l": 0,
+         "r": 0
+        },
+        "fx": ""
+       }
+      ]
+     }
+    ],
+    "dsm": [
+     {
+      "name": "DSM 1",
+      "on": true,
+      "content": "PROMPTER"
+     },
+     {
+      "name": "AUX 1",
+      "on": true,
+      "content": "PGM"
+     }
+    ]
+   },
+   {
+    "code": "P03",
+    "screens": [
+     {
+      "screen": "SIDE L PROJ",
+      "bg": "SPONSOR LOOP",
+      "bgDetail": "",
+      "aoi": null,
+      "layers": [
+       {
+        "n": 1,
+        "name": "CAM 2",
+        "x": 0,
+        "y": 0,
+        "w": 1920,
+        "h": 1200,
+        "crop": {
+         "t": 0,
+         "b": 0,
+         "l": 0,
+         "r": 0
+        },
+        "fx": ""
+       }
+      ]
+     },
+     {
+      "screen": "STAGE LED",
+      "bg": "NOMINEE REEL",
+      "bgDetail": "",
+      "aoi": null,
+      "layers": []
+     },
+     {
+      "screen": "SIDE R PROJ",
+      "bg": "SPONSOR LOOP",
+      "bgDetail": "",
+      "aoi": null,
+      "layers": [
+       {
+        "n": 1,
+        "name": "CAM 2",
+        "x": 0,
+        "y": 0,
+        "w": 1920,
+        "h": 1200,
+        "crop": {
+         "t": 0,
+         "b": 0,
+         "l": 0,
+         "r": 0
+        },
+        "fx": ""
+       }
+      ]
+     }
+    ],
+    "dsm": [
+     {
+      "name": "DSM 1",
+      "on": true,
+      "content": "CLOCK"
+     },
+     {
+      "name": "AUX 1",
+      "on": true,
+      "content": "PGM"
+     }
+    ]
+   },
+   {
+    "code": "P04",
+    "screens": [
+     {
+      "screen": "SIDE L PROJ",
+      "bg": "SPONSOR LOOP",
+      "bgDetail": "",
+      "aoi": null,
+      "layers": [
+       {
+        "n": 1,
+        "name": "CAM 1",
+        "x": 0,
+        "y": 0,
+        "w": 1920,
+        "h": 1200,
+        "crop": {
+         "t": 0,
+         "b": 0,
+         "l": 0,
+         "r": 0
+        },
+        "fx": ""
+       }
+      ]
+     },
+     {
+      "screen": "STAGE LED",
+      "bg": "WINNER GFX",
+      "bgDetail": "",
+      "aoi": null,
+      "layers": [
+       {
+        "n": 1,
+        "name": "CAM 1",
+        "x": 2534,
+        "y": 86,
+        "w": 1152,
+        "h": 540,
+        "crop": {
+         "t": 0,
+         "b": 0,
+         "l": 0,
+         "r": 0
+        },
+        "fx": ""
+       }
+      ]
+     },
+     {
+      "screen": "SIDE R PROJ",
+      "bg": "SPONSOR LOOP",
+      "bgDetail": "",
+      "aoi": null,
+      "layers": [
+       {
+        "n": 1,
+        "name": "CAM 1",
+        "x": 0,
+        "y": 0,
+        "w": 1920,
+        "h": 1200,
+        "crop": {
+         "t": 0,
+         "b": 0,
+         "l": 0,
+         "r": 0
+        },
+        "fx": ""
+       }
+      ]
+     }
+    ],
+    "dsm": [
+     {
+      "name": "DSM 1",
+      "on": true,
+      "content": "CLOCK"
+     },
+     {
+      "name": "AUX 1",
+      "on": true,
+      "content": "PGM"
+     }
+    ]
+   },
+   {
+    "code": "P05",
+    "screens": [
+     {
+      "screen": "SIDE L PROJ",
+      "bg": "SPONSOR LOOP",
+      "bgDetail": "",
+      "aoi": null,
+      "layers": [
+       {
+        "n": 1,
+        "name": "CAM 1",
+        "x": 0,
+        "y": 0,
+        "w": 1920,
+        "h": 1200,
+        "crop": {
+         "t": 0,
+         "b": 0,
+         "l": 0,
+         "r": 0
+        },
+        "fx": ""
+       }
+      ]
+     },
+     {
+      "screen": "STAGE LED",
+      "bg": "SPONSOR LOOP",
+      "bgDetail": "",
+      "aoi": null,
+      "layers": [
+       {
+        "n": 1,
+        "name": "CAM 1",
+        "x": 0,
+        "y": 0,
+        "w": 3840,
+        "h": 1080,
+        "crop": {
+         "t": 0,
+         "b": 0,
+         "l": 0,
+         "r": 0
+        },
+        "fx": ""
+       }
+      ]
+     },
+     {
+      "screen": "SIDE R PROJ",
+      "bg": "SPONSOR LOOP",
+      "bgDetail": "",
+      "aoi": null,
+      "layers": [
+       {
+        "n": 1,
+        "name": "CAM 1",
+        "x": 0,
+        "y": 0,
+        "w": 1920,
+        "h": 1200,
+        "crop": {
+         "t": 0,
+         "b": 0,
+         "l": 0,
+         "r": 0
+        },
+        "fx": ""
+       }
+      ]
+     }
+    ],
+    "dsm": [
+     {
+      "name": "DSM 1",
+      "on": true,
+      "content": "TIMER"
+     },
+     {
+      "name": "AUX 1",
+      "on": true,
+      "content": "PGM"
+     }
+    ]
+   }
+  ],
+  "sources": [
+   {
+    "name": "NOMINEE REEL",
+    "connectorType": "12G-SDI",
+    "resolution": "3840x1080",
+    "type": "Media Server"
+   },
+   {
+    "name": "WINNER GFX",
+    "connectorType": "12G-SDI",
+    "resolution": "3840x1080",
+    "type": "Media Server"
+   },
+   {
+    "name": "SPONSOR LOOP",
+    "connectorType": "HDMI 2.0",
+    "resolution": "1920x1080",
+    "type": "Media Server"
+   },
+   {
+    "name": "CAM 1",
+    "connectorType": "12G-SDI",
+    "resolution": "1920x1080",
+    "type": "Camera"
+   },
+   {
+    "name": "CAM 2",
+    "connectorType": "12G-SDI",
+    "resolution": "1920x1080",
+    "type": "Camera"
+   },
+   {
+    "name": "LOGO",
+    "connectorType": "HDMI 2.0",
+    "resolution": "1920x1080",
+    "type": "Media Server"
+   },
+   {
+    "name": "LOWER 3RD",
+    "connectorType": "HDMI 2.0",
+    "resolution": "1920x1080",
+    "type": "Media Server"
+   }
+  ],
+  "excelRows": [
+   [
+    "Awards Night"
+   ],
+   [
+    "Exported September 19, 2026"
+   ],
+   [],
+   [
+    "P#",
+    "Preset Name",
+    "Notes",
+    "Resolution",
+    "SIDE L PROJ",
+    "STAGE LED",
+    "SIDE R PROJ",
+    "DSM 1",
+    "AUX 1"
+   ],
+   [
+    "",
+    "",
+    "",
+    "Canvas: 7680x1200",
+    "1920x1200",
+    "3840x1080",
+    "1920x1200",
+    "1920x1080",
+    "1920x1080"
+   ],
+   [],
+   [
+    "P01",
+    "WALK-IN",
+    "Sponsor loop everywhere while guests are seated.",
+    "",
+    "BG: SPONSOR LOOP",
+    "BG: SPONSOR LOOP",
+    "BG: SPONSOR LOOP",
+    "CLOCK",
+    "PGM"
+   ],
+   [
+    "P02",
+    "HOST",
+    "Host at center. Logo on the wall with a name key, IMAG on the sides.",
+    "",
+    "BG: SPONSOR LOOP\nL1: CAM 1 (1920×1200)",
+    "BG: LOGO\nL1: LOWER 3RD (1920×238)",
+    "BG: SPONSOR LOOP\nL1: CAM 1 (1920×1200)",
+    "PROMPTER",
+    "PGM"
+   ],
+   [
+    "P03",
+    "NOMINEES",
+    "Category reel on the wall. Reaction camera on the sides.",
+    "",
+    "BG: SPONSOR LOOP\nL1: CAM 2 (1920×1200)",
+    "BG: NOMINEE REEL",
+    "BG: SPONSOR LOOP\nL1: CAM 2 (1920×1200)",
+    "CLOCK",
+    "PGM"
+   ],
+   [
+    "P04",
+    "WINNER",
+    "Winner card full on the wall with a camera PIP top right. Sides on the walk-up camera.",
+    "",
+    "BG: SPONSOR LOOP\nL1: CAM 1 (1920×1200)",
+    "BG: WINNER GFX\nL1: CAM 1 (1152×540)",
+    "BG: SPONSOR LOOP\nL1: CAM 1 (1920×1200)",
+    "CLOCK",
+    "PGM"
+   ],
+   [
+    "P05",
+    "SPEECH",
+    "Acceptance speech. Camera everywhere, name key on the wall.",
+    "",
+    "BG: SPONSOR LOOP\nL1: CAM 1 (1920×1200)",
+    "BG: SPONSOR LOOP\nL1: CAM 1 (3840×1080)",
+    "BG: SPONSOR LOOP\nL1: CAM 1 (1920×1200)",
+    "TIMER",
+    "PGM"
+   ]
+  ],
+  "wireSimple": {
+   "labels": [
+    "NOMINEE REEL",
+    "WINNER GFX",
+    "SPONSOR LOOP",
+    "CAM 1",
+    "CAM 2",
+    "CLOCK",
+    "PGM",
+    "LOWER 3RD",
+    "LOGO",
+    "PROMPTER",
+    "TIMER",
+    "SIDE L PROJ",
+    "STAGE LED",
+    "SIDE R PROJ",
+    "DSM 1",
+    "AUX 1",
+    "NOMINEE REEL",
+    "—",
+    "SIDE L PROJ",
+    "—",
+    "WINNER GFX",
+    "—",
+    "STAGE LED",
+    "—",
+    "SPONSOR LOOP",
+    "—",
+    "SIDE R PROJ",
+    "—",
+    "CAM 1",
+    "—",
+    "DSM 1",
+    "—",
+    "CAM 2",
+    "—",
+    "AUX 1",
+    "—",
+    "CLOCK",
+    "—",
+    "PGM",
+    "—",
+    "LOWER 3RD",
+    "—",
+    "LOGO",
+    "—",
+    "PROMPTER",
+    "—",
+    "TIMER",
+    "—"
+   ],
+   "cards": [
+    "NOMINEE REEL",
+    "WINNER GFX",
+    "SPONSOR LOOP",
+    "CAM 1",
+    "CAM 2",
+    "CLOCK",
+    "PGM",
+    "LOWER 3RD",
+    "LOGO",
+    "PROMPTER",
+    "TIMER",
+    "SIDE L PROJ",
+    "STAGE LED",
+    "SIDE R PROJ",
+    "DSM 1",
+    "AUX 1"
+   ]
+  }
+ }
+}
