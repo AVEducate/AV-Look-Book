@@ -1,0 +1,520 @@
+{
+ "show": "town-hall",
+ "sections": {
+  "meta": {
+   "presets": [
+    {
+     "code": "P01",
+     "name": "WALK-IN",
+     "notes": "Logo on the wall and overflow."
+    },
+    {
+     "code": "P02",
+     "name": "CEO ADDRESS",
+     "notes": "Slides full with the CEO in a PIP bottom right. Overflow mirrors main."
+    },
+    {
+     "code": "P03",
+     "name": "REMOTE GUEST",
+     "notes": "Teams full with a name key."
+    },
+    {
+     "code": "P04",
+     "name": "Q&A",
+     "notes": "Audience camera full."
+    },
+    {
+     "code": "P05",
+     "name": "VIDEO",
+     "notes": "Recap video, full bleed."
+    }
+   ],
+   "screens": [
+    {
+     "name": "MAIN LED",
+     "w": 1920,
+     "h": 1080
+    },
+    {
+     "name": "OVERFLOW",
+     "w": 1920,
+     "h": 1080
+    }
+   ],
+   "dsms": [
+    {
+     "name": "DSM 1",
+     "type": ""
+    },
+    {
+     "name": "AUX 1",
+     "type": ""
+    }
+   ]
+  },
+  "layout": [
+   {
+    "code": "P01",
+    "screens": [
+     {
+      "screen": "MAIN LED",
+      "bg": "LOGO",
+      "bgDetail": "",
+      "aoi": null,
+      "layers": []
+     },
+     {
+      "screen": "OVERFLOW",
+      "bg": "LOGO",
+      "bgDetail": "",
+      "aoi": null,
+      "layers": []
+     }
+    ],
+    "dsm": [
+     {
+      "name": "DSM 1",
+      "on": true,
+      "content": "CLOCK"
+     },
+     {
+      "name": "AUX 1",
+      "on": true,
+      "content": "PGM"
+     }
+    ]
+   },
+   {
+    "code": "P02",
+    "screens": [
+     {
+      "screen": "MAIN LED",
+      "bg": "CEO PPT",
+      "bgDetail": "",
+      "aoi": null,
+      "layers": [
+       {
+        "n": 1,
+        "name": "CAM 1",
+        "x": 1306,
+        "y": 713,
+        "w": 576,
+        "h": 324,
+        "crop": {
+         "t": 0,
+         "b": 0,
+         "l": 0,
+         "r": 0
+        },
+        "fx": ""
+       }
+      ]
+     },
+     {
+      "screen": "OVERFLOW",
+      "bg": "CEO PPT",
+      "bgDetail": "",
+      "aoi": null,
+      "layers": [
+       {
+        "n": 1,
+        "name": "CAM 1",
+        "x": 1306,
+        "y": 713,
+        "w": 576,
+        "h": 324,
+        "crop": {
+         "t": 0,
+         "b": 0,
+         "l": 0,
+         "r": 0
+        },
+        "fx": ""
+       }
+      ]
+     }
+    ],
+    "dsm": [
+     {
+      "name": "DSM 1",
+      "on": true,
+      "content": "PROMPTER"
+     },
+     {
+      "name": "AUX 1",
+      "on": true,
+      "content": "PGM"
+     }
+    ]
+   },
+   {
+    "code": "P03",
+    "screens": [
+     {
+      "screen": "MAIN LED",
+      "bg": "LOGO",
+      "bgDetail": "",
+      "aoi": null,
+      "layers": [
+       {
+        "n": 1,
+        "name": "TEAMS",
+        "x": 0,
+        "y": 0,
+        "w": 1920,
+        "h": 1080,
+        "crop": {
+         "t": 0,
+         "b": 0,
+         "l": 0,
+         "r": 0
+        },
+        "fx": ""
+       },
+       {
+        "n": 2,
+        "name": "LOWER 3RD",
+        "x": 0,
+        "y": 842,
+        "w": 1920,
+        "h": 238,
+        "crop": {
+         "t": 0,
+         "b": 0,
+         "l": 0,
+         "r": 0
+        },
+        "fx": ""
+       }
+      ]
+     },
+     {
+      "screen": "OVERFLOW",
+      "bg": "LOGO",
+      "bgDetail": "",
+      "aoi": null,
+      "layers": [
+       {
+        "n": 1,
+        "name": "TEAMS",
+        "x": 0,
+        "y": 0,
+        "w": 1920,
+        "h": 1080,
+        "crop": {
+         "t": 0,
+         "b": 0,
+         "l": 0,
+         "r": 0
+        },
+        "fx": ""
+       }
+      ]
+     }
+    ],
+    "dsm": [
+     {
+      "name": "DSM 1",
+      "on": true,
+      "content": "NOTES"
+     },
+     {
+      "name": "AUX 1",
+      "on": true,
+      "content": "PGM"
+     }
+    ]
+   },
+   {
+    "code": "P04",
+    "screens": [
+     {
+      "screen": "MAIN LED",
+      "bg": "LOGO",
+      "bgDetail": "",
+      "aoi": null,
+      "layers": [
+       {
+        "n": 1,
+        "name": "HANDYCAM",
+        "x": 0,
+        "y": 0,
+        "w": 1920,
+        "h": 1080,
+        "crop": {
+         "t": 0,
+         "b": 0,
+         "l": 0,
+         "r": 0
+        },
+        "fx": ""
+       }
+      ]
+     },
+     {
+      "screen": "OVERFLOW",
+      "bg": "LOGO",
+      "bgDetail": "",
+      "aoi": null,
+      "layers": [
+       {
+        "n": 1,
+        "name": "HANDYCAM",
+        "x": 0,
+        "y": 0,
+        "w": 1920,
+        "h": 1080,
+        "crop": {
+         "t": 0,
+         "b": 0,
+         "l": 0,
+         "r": 0
+        },
+        "fx": ""
+       }
+      ]
+     }
+    ],
+    "dsm": [
+     {
+      "name": "DSM 1",
+      "on": true,
+      "content": "CLOCK"
+     },
+     {
+      "name": "AUX 1",
+      "on": true,
+      "content": "PGM"
+     }
+    ]
+   },
+   {
+    "code": "P05",
+    "screens": [
+     {
+      "screen": "MAIN LED",
+      "bg": "PLAYBACK",
+      "bgDetail": "",
+      "aoi": null,
+      "layers": []
+     },
+     {
+      "screen": "OVERFLOW",
+      "bg": "PLAYBACK",
+      "bgDetail": "",
+      "aoi": null,
+      "layers": []
+     }
+    ],
+    "dsm": [
+     {
+      "name": "DSM 1",
+      "on": true,
+      "content": "CLOCK"
+     },
+     {
+      "name": "AUX 1",
+      "on": true,
+      "content": "PGM"
+     }
+    ]
+   }
+  ],
+  "sources": [
+   {
+    "name": "CEO PPT",
+    "connectorType": "HDMI 2.0",
+    "resolution": "1920x1080",
+    "type": "PC"
+   },
+   {
+    "name": "CAM 1",
+    "connectorType": "12G-SDI",
+    "resolution": "1920x1080",
+    "type": "Camera"
+   },
+   {
+    "name": "HANDYCAM",
+    "connectorType": "3G-SDI",
+    "resolution": "1920x1080",
+    "type": "Camera"
+   },
+   {
+    "name": "TEAMS",
+    "connectorType": "HDMI 2.0",
+    "resolution": "1920x1080",
+    "type": "PC"
+   },
+   {
+    "name": "PROMPTER",
+    "connectorType": "3G-SDI",
+    "resolution": "1920x1080",
+    "type": "Teleprompter"
+   },
+   {
+    "name": "LOGO",
+    "connectorType": "HDMI 2.0",
+    "resolution": "1920x1080",
+    "type": "Media Server"
+   },
+   {
+    "name": "PLAYBACK",
+    "connectorType": "12G-SDI",
+    "resolution": "1920x1080",
+    "type": "Media Server"
+   },
+   {
+    "name": "LOWER 3RD",
+    "connectorType": "HDMI 2.0",
+    "resolution": "1920x1080",
+    "type": "Media Server"
+   }
+  ],
+  "excelRows": [
+   [
+    "Town Hall"
+   ],
+   [
+    "Exported September 19, 2026"
+   ],
+   [],
+   [
+    "P#",
+    "Preset Name",
+    "Notes",
+    "Resolution",
+    "MAIN LED",
+    "OVERFLOW",
+    "DSM 1",
+    "AUX 1"
+   ],
+   [
+    "",
+    "",
+    "",
+    "Canvas: 3840x1080",
+    "1920x1080",
+    "1920x1080",
+    "1920x1080",
+    "1920x1080"
+   ],
+   [],
+   [
+    "P01",
+    "WALK-IN",
+    "Logo on the wall and overflow.",
+    "",
+    "BG: LOGO",
+    "BG: LOGO",
+    "CLOCK",
+    "PGM"
+   ],
+   [
+    "P02",
+    "CEO ADDRESS",
+    "Slides full with the CEO in a PIP bottom right. Overflow mirrors main.",
+    "",
+    "BG: CEO PPT\nL1: CAM 1 (576×324)",
+    "BG: CEO PPT\nL1: CAM 1 (576×324)",
+    "PROMPTER",
+    "PGM"
+   ],
+   [
+    "P03",
+    "REMOTE GUEST",
+    "Teams full with a name key.",
+    "",
+    "BG: LOGO\nL1: TEAMS (1920×1080) / L2: LOWER 3RD (1920×238)",
+    "BG: LOGO\nL1: TEAMS (1920×1080)",
+    "NOTES",
+    "PGM"
+   ],
+   [
+    "P04",
+    "Q&A",
+    "Audience camera full.",
+    "",
+    "BG: LOGO\nL1: HANDYCAM (1920×1080)",
+    "BG: LOGO\nL1: HANDYCAM (1920×1080)",
+    "CLOCK",
+    "PGM"
+   ],
+   [
+    "P05",
+    "VIDEO",
+    "Recap video, full bleed.",
+    "",
+    "BG: PLAYBACK",
+    "BG: PLAYBACK",
+    "CLOCK",
+    "PGM"
+   ]
+  ],
+  "wireSimple": {
+   "labels": [
+    "CEO PPT",
+    "CAM 1",
+    "LOGO",
+    "CLOCK",
+    "PGM",
+    "PROMPTER",
+    "TEAMS",
+    "LOWER 3RD",
+    "NOTES",
+    "HANDYCAM",
+    "PLAYBACK",
+    "MAIN LED",
+    "OVERFLOW",
+    "DSM 1",
+    "AUX 1",
+    "CEO PPT",
+    "—",
+    "MAIN LED",
+    "—",
+    "CAM 1",
+    "—",
+    "OVERFLOW",
+    "—",
+    "LOGO",
+    "—",
+    "DSM 1",
+    "—",
+    "CLOCK",
+    "—",
+    "AUX 1",
+    "—",
+    "PGM",
+    "—",
+    "PROMPTER",
+    "—",
+    "TEAMS",
+    "—",
+    "LOWER 3RD",
+    "—",
+    "NOTES",
+    "—",
+    "HANDYCAM",
+    "—",
+    "PLAYBACK",
+    "—"
+   ],
+   "cards": [
+    "CEO PPT",
+    "CAM 1",
+    "LOGO",
+    "CLOCK",
+    "PGM",
+    "PROMPTER",
+    "TEAMS",
+    "LOWER 3RD",
+    "NOTES",
+    "HANDYCAM",
+    "PLAYBACK",
+    "MAIN LED",
+    "OVERFLOW",
+    "DSM 1",
+    "AUX 1"
+   ]
+  }
+ }
+}

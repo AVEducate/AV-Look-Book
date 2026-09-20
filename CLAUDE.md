@@ -170,3 +170,16 @@ grep -oE 'function [_a-zA-Z][_a-zA-Z0-9]*' deploy/lookbook_builder.html | sort |
 # Quick JS syntax check (extracts <script> block and runs node --check)
 python3 -c "import re; src=open('deploy/lookbook_builder.html').read(); m=re.search(r'<script>(.*?)</script>', src, re.DOTALL); open('/tmp/lb_script.js','w').write(m.group(1))" && node --check /tmp/lb_script.js
 ```
+
+## Release channels + regression gate (established 2026-09-19, v0.2.148)
+Users must never receive a build that has not passed the gate. Two lines:
+- **Stable = `release/0.2`**, tags without a suffix (`v0.2.149`). These reach every user (Windows self-update,
+  Mac content update). Only cherry-picked bug fixes land here.
+- **Development = `main`**, tags WITH a `-` (`v0.3.0-beta.1`). The workflow publishes those as pre-releases;
+  both updaters ignore pre-releases, so users stay on the last full release. Bump `electron/package.json` to
+  the matching `0.3.0-beta.N` before tagging.
+- **Before any full release** run `node tests/run_smoke.mjs` (must print `SMOKE: PASS`), the syntax checks, and
+  open the three example shows by hand. `tests/golden/` is the behaviour of v0.2.148: a difference is a
+  regression unless the change was intended, in which case regenerate with `--golden` in the same commit and say so.
+- Full checklist: `RELEASE.md`. The smoke probe (`tests/smoke_probe.js`) is where new core behaviour gets a check
+  added when it ships.

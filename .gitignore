@@ -6,7 +6,16 @@ exports/
 mockups/
 app/
 docs/
-tests/
+# tests/: the smoke probe, runner and goldens are tracked; Playwright leftovers and outputs are not
+tests/node_modules/
+tests/test-results/
+tests/playwright-report/
+tests/out/
+tests/package.json
+tests/package-lock.json
+tests/playwright.config.js
+tests/specs/
+tests/README.md
 prototype/
 INDEX PAGE/
 .claude/

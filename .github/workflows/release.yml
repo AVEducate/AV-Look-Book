@@ -7,6 +7,9 @@
 # the same release — the loser (Windows on v0.2.35 and v0.2.38) failed and the
 # release shipped without its .exe. Windows now waits for the macOS job (which
 # creates the release) and retries the publish a couple of times.
+# 2026-09-19: release channels. A tag with a '-' in it (v0.3.0-beta.1) is published as a PRE-RELEASE: the Windows
+# self-updater and the in-app content updater (releases/latest) both ignore pre-releases, so users stay on the last
+# full release. A plain tag (v0.2.149, v0.3.0) is a full release and reaches every user. See RELEASE.md.
 name: Build installers
 
 on:
@@ -42,12 +45,14 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CSC_IDENTITY_AUTO_DISCOVERY: "false"   # unsigned for now
+          EP_PRE_RELEASE: ${{ contains(github.ref_name, '-') }}   # beta tags are born as pre-releases
         run: npx electron-builder --mac --publish always
 
       - name: Attach the app HTML to the release (content updates)
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
+          prerelease: ${{ contains(github.ref_name, '-') }}
           files: |
             deploy/lookbook_builder.html
             deploy/quick_guide.html
@@ -78,6 +83,7 @@ jobs:
         shell: pwsh
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          EP_PRE_RELEASE: ${{ contains(github.ref_name, '-') }}
         run: |
           $ok = $false
           foreach ($i in 1..3) {
