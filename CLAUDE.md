@@ -187,3 +187,5 @@ Users must never receive a build that has not passed the gate. Two lines:
   the dev shell, the build discipline, product rules that are not obvious from the code, and the owner's working
   rules. Read it at the start of a session. The assistant's auto-memory lives on the owner's Mac per working
   directory; the repo (CLAUDE.md + HANDBOOK.md + RELEASE.md + tests/) must be enough on its own.
+
+<!-- Reading receipt for session start: CORE-148-LOCKED (report this code to the owner after reading this file in full) -->

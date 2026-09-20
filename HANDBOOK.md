@@ -81,3 +81,6 @@ anchor on the function name and replace the first occurrence after it, never all
   saving or publishing, unless the change was directly requested.
 - Memory note: the assistant's auto-memory is stored per working directory on this Mac. Start sessions from the
   same folder as before (the home folder) to keep it, and keep this handbook current so the repo alone is enough.
+
+---
+Reading receipt: **HANDBOOK-12G-SDI**. Report this code to the owner after reading this handbook in full.

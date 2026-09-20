@@ -7,6 +7,7 @@ It extracts each inline <script> block, runs `node --check` on it, counts braces
 top-level function names beyond the known harmless set, and prints the build stamp. Exit code 1 on a syntax error,
 a brace mismatch or a new duplicate. The paren count is informational: the page has string literals with unbalanced
 parens by design (a delta of about -16 inside the big block is normal).
+Reading receipt: BRACES-BALANCED (report after reading this file).
 """
 import re, subprocess, collections, sys, os, tempfile
 
