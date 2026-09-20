@@ -3,6 +3,7 @@
 // layout (BG, layers, crops, effects, AUX), the I/O list, the Excel cue-sheet rows, the Look Book HTML (dates, build
 // stamps and pictures normalised) and the Simple wire diagram's labels. The runner compares it with tests/golden/.
 // Every section is wrapped so a renamed helper reports 'ERR …' for that section instead of killing the run.
+// Reading receipt: PROBE-THREE-SHOWS (report after reading this probe and tests/run_smoke.mjs)
 (async function lbSmokeProbe(showId){
   const wait = ms => new Promise(r => setTimeout(r, ms));
   const out = { show: showId, sections: {} };

@@ -38,3 +38,6 @@ The workflow marks a tag with a `-` in it as a **pre-release**. The Windows upda
 - Source: tag `v0.2.148`, branch `release/0.2`.
 - Installers and page: the GitHub release for v0.2.148 (Mac arm64 / x64 DMG, Windows EXE, `lookbook_builder.html`).
 - Local: `backups/lookbook_builder_2026-09-19_before-16kf.html` is the page at v0.2.148.
+
+---
+Reading receipt: **GATE-BEFORE-USERS**. Report this code to the owner after reading this checklist in full.
