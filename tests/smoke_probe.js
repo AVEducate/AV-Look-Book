@@ -5,12 +5,15 @@
 // Every section is wrapped so a renamed helper reports 'ERR …' for that section instead of killing the run.
 // Reading receipt: PROBE-THREE-SHOWS (report after reading this probe and tests/run_smoke.mjs)
 (async function lbSmokeProbe(showId){
+  // deterministic run: the app gives an uncoloured source a RANDOM cable colour on first draw, and ids come from Math.random
+  (function () { let a = 0x9e3779b9; Math.random = function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; })();
   const wait = ms => new Promise(r => setTimeout(r, ms));
   const out = { show: showId, sections: {} };
   const S = (k, f) => { try { out.sections[k] = f(); } catch (e) { out.sections[k] = 'ERR ' + String(e); } };
   const norm = html => String(html || '')
     .replace(/\d{2}\/\d{2}\/\d{4}/g, 'DATE')
     .replace(/\d{4}-\d{2}-\d{2}/g, 'DATE')
+    .replace(/(January|February|March|April|May|June|July|August|September|October|November|December) \d{1,2}, \d{4}/g, 'DATE')
     .replace(/build 2026-06-16[a-z0-9]+/g, 'BUILD')
     .replace(/data:[a-z]+\/[a-z0-9.+-]+;base64,[A-Za-z0-9+/=]+/g, m => 'data:X(' + m.length + ')')
     .replace(/\s+/g, ' ');
@@ -57,7 +60,11 @@
     return rows;
   });
 
-  S('lookbook', () => norm(exportPDF(true)));
+  // the Look Book exactly as a user gets it: through the export window with its default ticks (that is what adds the wire sheet)
+  let userHtml = null;
+  try { openPdfExportModal(); await wait(350); const real = exportPDF; window.exportPDF = function () { userHtml = real(true); }; try { _pdfConfirmExport(); } finally { window.exportPDF = real; } await wait(150); } catch (e) { userHtml = null; }
+  S('lookbook', () => norm(userHtml || exportPDF(true)));
+  S('lookbookHasWireSheet', () => /id="pdf-wire"/.test(userHtml || ''));
 
   S('wireSimple', () => {
     openWireMode();
