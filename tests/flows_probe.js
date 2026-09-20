@@ -86,6 +86,11 @@
     const secs = $$('.lfx-acc', pop).map(a => a.querySelector('.lfx-ttl').textContent.trim()); closeLayerPanel();
     return is(secs, ['Position', 'Size', 'Opacity', 'Mask', 'Border', 'Shadow', 'Effects'], 'sections');
   });
+  await check('Simple: the layer panel title reads in full and no caption in the panel is cut off', async () => {
+    const f = firstLayer(); openLayerPanel(fakeEv, f.pid, f.sid, 1, true); await wait(450); const pop = $('#layer-panel'); if (!pop) return 'the layer panel did not open';
+    const h = $('.pm-hdr h3', pop); const cut = $$('*', pop).filter(el => el.children.length === 0 && el.clientWidth > 0 && el.scrollWidth > el.clientWidth + 1 && (el.textContent || '').trim()).map(el => el.textContent.trim().slice(0, 30));
+    const out = is([/^L1 · /.test(h.textContent), h.scrollWidth <= h.clientWidth + 1, cut], [true, true, []], 'title / fits / cut-off text'); closeLayerPanel(); return out;
+  });
   await check('Simple: typing a Width in the layer panel resizes the layer and the height follows the lock', async () => {
     const f = firstLayer(); const sw = parseInt(f.s.w), sh = parseInt(f.s.h); openLayerPanel(fakeEv, f.pid, f.sid, 1, true); await wait(400);
     const w = $$('#layer-panel .lfx-acc[data-sec="size"] input[type=number]').find(i => i.dataset.dim === 'w'); if (!w) return 'no Width field';
@@ -158,7 +163,16 @@
       _fsAssignBg(A.pid, A.sid, 'TEST CLIP'); await wait(600); mute();
       return is([selLayer && selLayer.n, getBgName(A.pid, A.sid), secTitles().includes('Transition'), secTitles().includes('Position')], [0, 'TEST CLIP', true, false], 'BG');
     });
-    await check('Advanced: a video General section shows a Speed box', () => { const a = $('.lfx-acc[data-sec="general"]', fp()); return /Speed/i.test(a ? a.textContent : '') ? true : 'no Speed row'; });
+    await check('Advanced: Speed is a menu of fixed steps (0, 1.0, 1.25, 1.5, 2.0, 3.0), a pick sets the clip rate, 0 holds a still frame', async () => {
+      const acc = $('.lfx-acc[data-sec="general"]', fp()); if (!$('.fs-speedpill', fp())) return 'no Speed menu in General';
+      if (!vis($('.fs-speedpill', fp()))) { acc.querySelector('.lfx-head, .lfx-ttl, button').click(); await wait(350); }
+      const open = async () => { $('.fs-speedpill', fp()).click(); await wait(250); return $$('.sys-dd .sys-dd-item'); };
+      const labels = (await open()).map(i => i.textContent.trim()); $('.fs-speedpill', fp()).click(); await wait(200);
+      const pick = async label => { const it = (await open()).find(i => i.textContent.trim().indexOf(label) === 0); if (!it) return 'no ' + label; it.click(); await wait(400); mute(); const lm = getLayerMedia(A.pid, A.sid, 0); return [lm.speed, $$('video').some(v => v.playbackRate === _fsRateOf(lm)), $('.fs-speedpill .pill-label', fp()).textContent]; };
+      const a = await pick('1.25'), b = await pick('0'); const v = $$('video').find(x => x.playbackRate === 0); const t0 = v ? v.currentTime : -1; _fsPlayToggle(); await wait(450); mute(); const t1 = v ? v.currentTime : -2; _fsPauseAll(); await wait(200);
+      const c = await pick('1.0');
+      return is([labels, a, b, t1 === t0, c], [['0still frame', '1.0normal', '1.25', '1.5', '2.0', '3.0'], [125, true, '1.25'], [0, true, '0'], true, [100, true, '1.0']], 'speed menu');
+    });
     await check('Advanced: the timeline shows transport for a picked clip and Play lights a transport key', async () => {
       const bar = $('.fs-tl-bar'); if (!bar) return 'no timeline bar'; mute(); _fsPlayToggle(); await wait(500); mute();
       const lit = $$('.fs-tl-bar button.on, .fs-tl-bar .on').length; const playing = $$('video').some(v => !v.paused); _fsPauseAll(); await wait(200);
@@ -252,6 +266,19 @@
     const n = (wireAdvanced.devices || []).length; _wireAdvAddDevice('converter', 2, 2); _wireAdvAddDevice('switch', 8, 0); await wait(400); const d = wireAdvanced.devices[wireAdvanced.devices.length - 2]; const ins = d.ins.length; _wireAdvDeviceAddPort(d.id, 'in'); await wait(250);
     return is([wireAdvanced.devices.length, d.ins.length, $$('#wire-diagram .wire-device-tile').length], [n + 2, ins + 1, n + 2], 'devices');
   });
+  await check('Wire Advanced: a tile that grows pushes the tile stacked under it down by the same amount', async () => {
+    const gap = () => rt.y - _wireAdvTileBottom('router:' + hub.id); const g0 = gap(), y0 = rt.y, n = hub.inC; _wireAdvRouterAddPort(hub.id, 'in'); await wait(300); const g1 = gap(), moved = rt.y - y0;
+    _wireAdvRouterRemovePort(hub.id, 'in', hub.inC - 1); await wait(300); return is([g0 >= 0, g1, moved, hub.inC], [true, g0, 44, n], 'gap kept / moved / rows');
+  });
+  await check('Wire Advanced: a new router or switcher never lands on another tile', async () => {
+    const hits = () => { const R = []; const add = (id, k, e) => { const r = _wireAdvNodeRect(id); if (r) R.push({ k, x: r.x, y: r.y, w: r.w, h: r.h + (e || 0) }); };
+      wireAdvanced.sources.forEach(o => add('asrc:' + o.id, 'source')); wireAdvanced.dests.forEach(o => add('adst:' + o.id, 'destination')); wireAdvanced.dsms.forEach(o => add('adsm:' + o.id, 'aux'));
+      wireAdvanced.routers.forEach(o => add('router:' + o.id, o.kind || 'router', 36)); (wireAdvanced.devices || []).forEach(o => add('device:' + o.id, 'device'));
+      const h = []; for (let i = 0; i < R.length; i++) for (let j = i + 1; j < R.length; j++) { const a = R[i], b = R[j]; if (a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y) h.push(a.k + ' on ' + b.k); } return h; };
+    const n = wireAdvanced.routers.length; _wireAdvAddSwitcher('PLACEMENT TEST', 4, 2); await wait(400); _wireAdvAddRouterAsym(6, 2); await wait(400); const h1 = hits(), added = wireAdvanced.routers.length - n;
+    wireAdvanced.routers.splice(n, added); _wireRender(); await wait(300);
+    return is([added, h1], [2, []], 'tiles added / overlaps');
+  });
   await check('Wire Advanced: a page can be copied and the copy closed', async () => {
     const n = wireAdvanced._pages.length, cur = wireAdvanced._activePageId; _wireCopyPage(cur); await wait(500); okDialogs(); const copied = wireAdvanced._pages.some(p => / copy$/i.test(p.name)); const cp = wireAdvanced._pages.find(p => / copy$/i.test(p.name));
     if (cp) { _wireClosePage(cp.id); await wait(400); okDialogs(); await wait(300); } if (wireAdvanced._activePageId !== cur) { _wireSwitchPage(cur); await wait(300); }
@@ -279,6 +306,10 @@
     const pairs = pg.sources.filter(r => r.backupOf).length; const wantPairs = named.filter(n => /^(PBP|GFX)\s+A$/i.test(n)).length;
     return is([named.length >= srcNames().length, pairs], [true, wantPairs], 'page 1');
   });
+  await check('I/O Patch Advanced: the banner says page 1 feeds Simple and Wire, other pages stand alone', async () => {
+    const hint = () => ($('#io-adv .io-adv-bar .hint') || {}).textContent || ''; const p1 = hint(); _ioSetPage(1); await wait(400); const p2 = hint(); _ioSetPage(0); await wait(400);
+    return is([/^Page 1 starts as a copy/.test(p1) && /also appears in Simple and in Wire/.test(p1), /^A standalone page/.test(p2), /standalone patch/i.test(p1 + p2)], [true, true, false], 'banner');
+  });
   await check('I/O Patch Advanced: the Backup window opens for a source and closes', async () => {
     const r = ioAdvanced.pages[0].sources.find(x => x.name); _ioBackupOpen(r.id); await wait(400); const o = $('#sys-bk-overlay'); const open = vis(o); if (o) { const x = o.querySelector('.sys-modal-close'); if (x) x.click(); else o.remove(); } await wait(200);
     return is([open, !!$('#sys-bk-overlay') && vis($('#sys-bk-overlay'))], [true, false], 'backup window');
@@ -296,6 +327,10 @@
     const d = new DOMParser().parseFromString(await userLookBook(), 'text/html'); const t = d.body.textContent;
     return is([d.querySelectorAll('.pp-breakdown').length, !!d.querySelector('.cover'), !!d.querySelector('.summary-table'), /I\/O/i.test(t), !!d.querySelector('.wire-page')], [presets.length, true, true, true, true], 'Look Book sections');
   });
+  await check('Look Book window: no Wire style choice, the Simple / Advanced view choice stays, the wire sheet is orthogonal', async () => {
+    openPdfExportModal(); await wait(300); const seen = [$$('input[name="pdf-opt-wire-style"]').length, $$('input[name="pdf-opt-wire-view"]').length, /wire style/i.test($('#pdf-export-modal').textContent)]; closePdfExportModal(); await wait(150);
+    await userLookBook(); return is([seen, window._pdfOpts.wireStyle], [[0, 2, false], 'orthogonal'], 'export window');
+  });
   await check('Look Book and Excel: every destination starts with a BG line', async () => {
     const html = await userLookBook(); const bgRows = (html.match(/<span class="bd-l">BG<\/span>/g) || []).length; const orig = _buildXlsx; let rows = null; window._buildXlsx = function (r) { rows = r; return orig.apply(this, arguments); }; try { _doExportExcel(true); } finally { window._buildXlsx = orig; }
     const cells = []; (rows || []).forEach(r => r.forEach(c => { if (typeof c === 'string' && /^BG: /.test(c)) cells.push(c); })); return is([bgRows, cells.length], [presets.length * screens.length, presets.length * screens.length], 'BG lines');
@@ -306,6 +341,11 @@
   await check('Help text names only sections that exist today', async () => {
     actions.help(); await wait(400); const box = $$('[id*="help"]').filter(vis).sort((a, b) => b.textContent.length - a.textContent.length)[0]; const t = box ? box.textContent : ''; closeHelp(); await wait(150);
     const retired = ['Position & Size', 'Geometry', 'Lock ratio', 'Zoom %', 'Pan X', 'Slot']; const hit = retired.filter(w => t.includes(w)); return hit.length ? 'Help still says: ' + hit.join(', ') : (t.length > 500 ? true : 'could not read the Help text');
+  });
+  await check('name: Help and the Look Book cover say AV Look Book, the window title keeps the ending the desktop app reads', async () => {
+    actions.help(); await wait(300); const h = $$('h3').find(x => /· Help$/.test(x.textContent.trim())); const ht = h ? h.textContent.trim() : ''; closeHelp(); await wait(150);
+    const d = new DOMParser().parseFromString(await userLookBook(), 'text/html'); const brand = ((d.querySelector('.brand') || {}).textContent || '').trim();
+    return is([ht, brand, / — Look Book Builder$/.test(document.title)], ['AV Look Book · Help', 'AV Look Book', true], 'name');
   });
   await check('Report a bug: builds an email to AV Educate with the template and the show attached', async () => {
     mailHref = null; downloads.length = 0; await reportBug(); await wait(500); const h = decodeURIComponent(mailHref || '');

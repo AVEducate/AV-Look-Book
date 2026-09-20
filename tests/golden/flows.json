@@ -41,6 +41,10 @@
    "ok": true
   },
   {
+   "name": "Simple: the layer panel title reads in full and no caption in the panel is cut off",
+   "ok": true
+  },
+  {
    "name": "Simple: typing a Width in the layer panel resizes the layer and the height follows the lock",
    "ok": true
   },
@@ -93,7 +97,7 @@
    "ok": true
   },
   {
-   "name": "Advanced: a video General section shows a Speed box",
+   "name": "Advanced: Speed is a menu of fixed steps (0, 1.0, 1.25, 1.5, 2.0, 3.0), a pick sets the clip rate, 0 holds a still frame",
    "ok": true
   },
   {
@@ -185,6 +189,14 @@
    "ok": true
   },
   {
+   "name": "Wire Advanced: a tile that grows pushes the tile stacked under it down by the same amount",
+   "ok": true
+  },
+  {
+   "name": "Wire Advanced: a new router or switcher never lands on another tile",
+   "ok": true
+  },
+  {
    "name": "Wire Advanced: a page can be copied and the copy closed",
    "ok": true
   },
@@ -209,6 +221,10 @@
    "ok": true
   },
   {
+   "name": "I/O Patch Advanced: the banner says page 1 feeds Simple and Wire, other pages stand alone",
+   "ok": true
+  },
+  {
    "name": "I/O Patch Advanced: the Backup window opens for a source and closes",
    "ok": true
   },
@@ -229,6 +245,10 @@
    "ok": true
   },
   {
+   "name": "Look Book window: no Wire style choice, the Simple / Advanced view choice stays, the wire sheet is orthogonal",
+   "ok": true
+  },
+  {
    "name": "Look Book and Excel: every destination starts with a BG line",
    "ok": true
   },
@@ -246,8 +266,11 @@
   },
   {
    "name": "Help text names only sections that exist today",
-   "ok": false,
-   "detail": "Help still says: Position & Size, Geometry"
+   "ok": true
+  },
+  {
+   "name": "name: Help and the Look Book cover say AV Look Book, the window title keeps the ending the desktop app reads",
+   "ok": true
   },
   {
    "name": "Report a bug: builds an email to AV Educate with the template and the show attached",

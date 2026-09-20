@@ -1,7 +1,7 @@
 # Look Book Builder — Project Context
 
 ## What this is
-AV Look Book (in-app name still "Look Book Builder"): a single-file HTML/CSS/JS application for AV / live-event
+AV Look Book (the window title still ends in "— Look Book Builder" on purpose, see HANDBOOK section 5): a single-file HTML/CSS/JS application for AV / live-event
 pre-production, wrapped in an Electron desktop shell for Mac and Windows. Target users: video engineers, show callers
 and producers. Three tools share one show file (`.avlb`, JSON): **Video Presets** (Simple + Advanced), **Wire**
 (Simple + Advanced signal flow) and **I/O Patch** (Simple + Advanced). Exports a user can reach: the Look Book PDF,
@@ -24,6 +24,8 @@ the Excel cue sheet, the I/O Excel, the Wire drawing, and Send. (A CSV exporter 
   `backups/lookbook_builder_<date>_before-<stamp>.html`. The page at v0.2.148 is
   `backups/lookbook_builder_2026-09-19_before-16kf.html`.
 - `private/` — git-ignored; a dated copy of the assistant's memory folder lives here. The repo is PUBLIC.
+- `Test AV Look Book.command` — the owner's double-click launcher for the TEST copy (dev shell from this folder, own
+  data folder). He tests every change there before anything is pushed or released (RELEASE.md).
 - `HANDBOOK.md` (how to work), `RELEASE.md` (the release gate). `app/` and the old Netlify site are retired.
 
 To test, serve `deploy/` (`python3 -m http.server 8090 --directory deploy`) and open the page in Chrome. No build step.

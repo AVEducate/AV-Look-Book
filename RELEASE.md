@@ -10,6 +10,16 @@ Two lines, two kinds of tag. Users only ever see full releases.
 The workflow marks a tag with a `-` in it as a **pre-release**. The Windows updater and the in-app content updater
 (`releases/latest`) both ignore pre-releases, so a beta never reaches a user.
 
+## The owner tests first (rule since 2026-09-20)
+Nothing is pushed, tagged or released until the owner has tried it on his own Mac and said so.
+1. The change is built on `main`, checked (`tools/check_js.py`) and driven in the browser, the gate is run, and the
+   work is committed LOCALLY. No `git push`, no tag.
+2. The owner double-clicks **`Test AV Look Book.command`** in the repo folder. It opens the desktop app straight from
+   this folder with the page in `deploy/`, using its own data folder (`av-look-book-dev`), so the installed app and
+   its shows are never touched. The build stamp at the bottom right of the window must match the build under test.
+3. When the owner says it works: push `main`. When he says "release it": run the gate below and tag a full release.
+   If he finds a problem: fix, re-run the gate, he tests again. Users have seen nothing in the meantime.
+
 ## Day to day
 - Build on `main`. Bump `electron/package.json` to the beta version (`0.3.0-beta.N`) and tag `v0.3.0-beta.N`.
 - A user-facing bug: fix it on `main`, then `git cherry-pick` that one commit onto `release/0.2`, bump the patch
@@ -40,7 +50,8 @@ The workflow marks a tag with a `-` in it as a **pre-release**. The Windows upda
   `--flows-only` skips the three snapshots while you work. Randomness is seeded inside the probes (the app gives an
   uncoloured source a random cable colour), and dates are normalised, so two runs of the same page always match.
   Needs Node 22 and Chrome (`LB_CHROME=/path/to/chrome` to override).
-- `tests/golden/` was generated from **v0.2.148**, the version users trust. Regenerate only on purpose.
+- On `release/0.2` `tests/golden/` is the behaviour of **v0.2.148**, the version users trust. On `main` it follows
+  each intended change (regenerated in the same commit, named in the message). Regenerate only on purpose.
 
 ## Backups of the trusted version
 - Source: tag `v0.2.148`, branch `release/0.2`.

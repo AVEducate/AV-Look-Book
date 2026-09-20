@@ -64,7 +64,10 @@ anchor on the function name and replace the first occurrence after it, never all
 1. Snapshot `backups/lookbook_builder_<date>_before-<stamp>.html`.
 2. Script the edit (section 2). Bump the stamp. Run `tools/check_js.py`.
 3. Drive the feature in the browser, then the neighbours it could affect. Screenshots are the proof.
-4. Bump `electron/package.json` (beta on `main`, patch on `release/0.2`), commit, push, tag, push the tag, watch CI.
+4. Run the gate (`node tests/run_smoke.mjs`), add a flows check for the change, regenerate goldens if the change was
+   intended. Commit LOCALLY and stop: the owner tests with `Test AV Look Book.command` before anything is pushed
+   (RELEASE.md, "The owner tests first"). Only after his OK: push; only on "release it": bump
+   `electron/package.json`, tag, push the tag, watch CI.
 5. Write the build's notes down (memory, or this file if the knowledge is durable).
 
 ## 5. Product rules that are not obvious from the code
@@ -74,6 +77,17 @@ anchor on the function name and replace the first occurrence after it, never all
 - Router tile = video hub: `outputs[o].assignedInput` is the matrix; the routed input's name and ID follow through
   the output to the next device. Switcher tiles have `#·Source·ID` per side; ID = the output point (PRIMARY, OUT 2, BKP).
 - A source rename runs through `_sysApplyGlobalRename` and reaches presets, library, Wire pages and thumbnails.
+- Clip speed is a menu of fixed steps (`_FS_SPEED_STEPS`: 0, 1.0, 1.25, 1.5, 2.0, 3.0), stored as a percentage in
+  `layerMedia.speed`; 0 is a real value (still frame), so never write `speed||100`. `_fsRateOf(lm)` is the one place a
+  stored speed becomes a playback rate. An older show's odd value stays listed until it is changed.
+- Wire cables are always orthogonal; there is no style choice anywhere, including the Look Book export window.
+- A new router / switcher is placed by `_wireAdvFreeSpot` (never on another tile); a tile that grows pushes the tiles
+  stacked under it down (`_wireAdvPushBelow`).
+- THE NAME: the product is "AV Look Book". The page's `<title>` and every `document.title` still end in
+  " — Look Book Builder" ON PURPOSE: installed desktop shells strip that exact ending to name a show in Recents
+  (`electron/main.js`, `page-title-updated`) and Mac shells cannot self-update. Do not change the ending until a shell
+  that accepts both has been out long enough. The file name `lookbook_builder.html` is load-bearing too (content
+  updater URL, release workflow, `copy-html`).
 - Exports list the BG like a layer (`BG: name (detail)`); a BG whose picture is a library clip resolves to that clip.
 - Declined by the owner, do not resurface: mask shapes, anchor points, hardware profiles, canvas/WebGL renderer,
   interpolation filter toggles, upscale-factor notes, per-layer "sharp pixels", any licence mention.
