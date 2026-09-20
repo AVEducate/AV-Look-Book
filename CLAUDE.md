@@ -100,8 +100,13 @@ or a mutation manually poking the DOM).
 
 **VIEW layer — `render*` assemblers + `_rc/_rf/_fs/_lp` helpers + HTML templates**
 - `renderCanvas()` → `_rcChip`/`_rcAoiOverlay`/`_rcScreenBox`/`_rcOverlapVis`/`_rcDeadVis`
-- `renderFullscreen()` → `_rfChip`/`_rfScreenBox`/`_rfOverlapHtml`/`_rfDeadHtml`
-- `renderFsPanel()` → `_fsCPR`/`_fsLayerCard`/`_fsScreenCard`/`_fsBlendRow`
+- `renderFullscreen()` (Advanced) → the SAME tile as Simple: `_rcPresetRow` (so `_rcScreenBox`/`_rcChip`/`_rcOverlapVis`/
+  `_rcDeadVis`), then `_fsMountVideos` + `renderFsPanel`. The old `_rf*` helpers are dead code since build 16hx.
+- `renderFsPanel()` → `_fsCrumb` + `_fsSourceBlockHTML` + `_fsInfoSectionsHTML` + `_lpAdvancedSection` (the same accordion
+  the Simple layer panel uses) + `_fsLookSectionsHTML` + `_fsMediaSectionHTML` + `_fsTransitionSectionHTML`. The old
+  `_fsCPR`/`_fsLayerCard`/`_fsScreenCard`/`_fsBlendRow` cards are dead code since build 16hu (verified 2026-09-20;
+  removal list and cascade in `private/study-2026-09-20/unused_full.json`). `initMobileShell` / `initMobileMainView`
+  are self-running blocks that LOOK unreferenced: deleting them deletes the phone build.
 - Each helper ≤8KB, single job. Edit a helper = safe; touching the slim assembler
   = high-risk. Markup carries classes + `data-*` and is wired by actions/
   delegation — never reaching into data/logic. Focus styling is CSS
