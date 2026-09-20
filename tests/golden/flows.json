@@ -225,6 +225,10 @@
    "ok": true
   },
   {
+   "name": "I/O Patch Advanced: a browser draft keeps the Advanced pages (rows on page 2 survive an autosave)",
+   "ok": true
+  },
+  {
    "name": "I/O Patch Advanced: the Backup window opens for a source and closes",
    "ok": true
   },

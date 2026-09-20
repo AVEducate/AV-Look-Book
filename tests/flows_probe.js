@@ -311,6 +311,12 @@
     const foot = $$('#io-adv .sys-section-footer .hint').map(e => e.textContent);
     return is([/^Page 1 starts as a copy/.test(p1) && /A source you name here also appears in Simple and in Wire/.test(p1) && /destination or multiviewer you name here appears in Simple\./.test(p1), /^A standalone page/.test(p2), /standalone patch/i.test(p1 + p2), foot.filter(t => /in Wire/.test(t)).length], [true, true, false, 1], 'banner');
   });
+  await check('I/O Patch Advanced: a browser draft keeps the Advanced pages (rows on page 2 survive an autosave)', async () => {
+    const pg = ioAdvanced.pages[1]; if (!pg) return 'no page 2'; const before = JSON.stringify(pg.sources); const r = _ioAdvBlank('src'); r.name = 'DRAFT TEST SOURCE'; pg.sources.push(r);
+    _writeAutoSaveNow(); let saved = null; try { saved = JSON.parse(localStorage.getItem('avlb_autosave') || 'null'); } catch (e) {}
+    const kept = !!(saved && saved.ioAdvanced && saved.ioAdvanced.pages && saved.ioAdvanced.pages[1] && saved.ioAdvanced.pages[1].sources.some(x => x.name === 'DRAFT TEST SOURCE'));
+    pg.sources = JSON.parse(before); _writeAutoSaveNow(); return kept ? true : 'the draft has no I/O Advanced pages in it';
+  });
   await check('I/O Patch Advanced: the Backup window opens for a source and closes', async () => {
     const r = ioAdvanced.pages[0].sources.find(x => x.name); _ioBackupOpen(r.id); await wait(400); const o = $('#sys-bk-overlay'); const open = vis(o); if (o) { const x = o.querySelector('.sys-modal-close'); if (x) x.click(); else o.remove(); } await wait(200);
     return is([open, !!$('#sys-bk-overlay') && vis($('#sys-bk-overlay'))], [true, false], 'backup window');
