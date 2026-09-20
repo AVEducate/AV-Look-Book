@@ -28,3 +28,4 @@ electron/app/
 *.log
 Thumbs.db
 electron/build/dmg/preview@2x.png
+private/
