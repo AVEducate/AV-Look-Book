@@ -448,7 +448,7 @@
     "General Session"
    ],
    [
-    "Exported September 19, 2026"
+    "Exported September 20, 2026"
    ],
    [],
    [
@@ -530,6 +530,7 @@
     "PGM"
    ]
   ],
+  "lookbookHasWireSheet": true,
   "wireSimple": {
    "labels": [
     "PPT A",

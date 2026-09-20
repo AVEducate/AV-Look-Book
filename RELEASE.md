@@ -20,7 +20,7 @@ The workflow marks a tag with a `-` in it as a **pre-release**. The Windows upda
 ## The release gate (before any tag without a suffix)
 1. `node tests/run_smoke.mjs` prints `SMOKE: PASS`. Every difference it reports must be one we meant; if a change
    was intended, regenerate the goldens from that build (`--golden`) in the same commit and say so in the message.
-2. Syntax / brace / duplicate check on the page (`scratchpad/check_js.py` or the equivalent).
+2. `python3 tools/check_js.py` exits 0 (syntax, brace balance, no new duplicate function names).
 3. Open the three example shows (General Session, Awards Night, Town Hall) in the app: Video Presets Simple and
    Advanced, Wire Simple and Advanced, I/O Patch, export the Look Book and the Excel, open both.
 4. `electron/package.json` version matches the tag. Commit, push, tag, push the tag, watch CI go green.
@@ -30,7 +30,15 @@ The workflow marks a tag with a `-` in it as a **pre-release**. The Windows upda
 - `tests/smoke_probe.js` runs inside the app and snapshots the show model, every preset's layout (BG, layers,
   crops, effects, AUX), the I/O list, the Excel rows, the Look Book HTML (dates, build stamps and pictures
   normalised) and the Simple wire labels, for each example show.
-- `tests/run_smoke.mjs` serves `deploy/`, drives headless Chrome, runs the probe and diffs against `tests/golden/`.
+- `tests/flows_probe.js` then DRIVES the app like a user on General Session, in Simple and Advanced, across Video
+  Presets, Wire and I/O Patch: add / remove presets, destinations and AUX, the layer panel, media layers (lock, scale,
+  source crop, corner drag), a clip BG and the timeline, source rename, pinch zoom, pinned headers, the switcher ID
+  cells, the router matrix and name follow-through, devices, page copy, I/O meta and backup window, the Look Book
+  through its real export window, the Excel rows, Quick Start, Help, Report a bug. Page errors are collected too.
+  A check that already fails at the trusted version is a KNOWN ISSUE in the golden and is printed every run.
+- `tests/run_smoke.mjs` serves `deploy/`, drives headless Chrome, runs both probes and diffs against `tests/golden/`.
+  `--flows-only` skips the three snapshots while you work. Randomness is seeded inside the probes (the app gives an
+  uncoloured source a random cable colour), and dates are normalised, so two runs of the same page always match.
   Needs Node 22 and Chrome (`LB_CHROME=/path/to/chrome` to override).
 - `tests/golden/` was generated from **v0.2.148**, the version users trust. Regenerate only on purpose.
 

@@ -1,39 +1,32 @@
 # Look Book Builder — Project Context
 
 ## What this is
-Single-file HTML/CSS/JS application for AV/live event production planning.
-Target users: show callers and project managers in live events.
-Plans screen configurations, layer assignments, DSM/AUX outputs, and preset
-combinations, then exports as TSV/CSV spreadsheets and a look book PDF.
+AV Look Book (in-app name still "Look Book Builder"): a single-file HTML/CSS/JS application for AV / live-event
+pre-production, wrapped in an Electron desktop shell for Mac and Windows. Target users: video engineers, show callers
+and producers. Three tools share one show file (`.avlb`, JSON): **Video Presets** (Simple + Advanced), **Wire**
+(Simple + Advanced signal flow) and **I/O Patch** (Simple + Advanced). Exports a user can reach: the Look Book PDF,
+the Excel cue sheet, the I/O Excel, the Wire drawing, and Send. (A CSV exporter exists in the code but has no button.)
 
 ## File layout
-- `deploy/lookbook_builder.html` — **THE single master file** (~1.29MB). All edits land here.
-  This is also the file Netlify deploys, so the same file you're editing is the
-  one users see — no separate "publish" step. **As of 2026-06-14 this file CONTAINS
-  the mobile build** (gated by `body.is-mobile`); the old `lookbook_builder_v2.html`
-  mobile sandbox was merged in and retired. There is now ONE working file — no more
-  V1/V2 dual-file porting.
-- `deploy/index.html` — separate "Guided Tour" landing page (Netlify serves it at
-  the root); its CTA links to `lookbook_builder.html`. Not a copy of the app.
-- `backups/` — known-good checkpoints. Snapshot here before every risky edit.
-  Restore points (newest first):
-  - `backups/lookbook_builder_v1-desktop-only_2026-06-14.html` — last desktop-only
-    production, captured just before the mobile cutover. Restore this if the mobile
-    merge ever regresses the desktop experience.
-  - `backups/lookbook_builder_good_model_2026-05-19.html` — older locked-in baseline.
-  ```bash
-  cp backups/lookbook_builder_v1-desktop-only_2026-06-14.html deploy/lookbook_builder.html
-  ```
-- `exports/` — test exports (.avlb, .tsv, .csv)
-- `electron/` — the AV Look Book desktop shell (Electron 33): `main.js` (Welcome window,
-  one window per project, recents + thumbnails, GitHub-Release content updates),
-  `preload.js` / `welcome-preload.js` bridges, `welcome.html`. Installers are built by
-  `.github/workflows/release.yml` on every `v*` tag → GitHub Releases (repo AVEducate/AV-Look-Book).
-- `app/` — **legacy folder, no longer in use.** The file used to live here;
-  it was renamed into `backups/` on 2026-05-19 as the good-model safety net.
-  Do not put new working copies here.
+- `deploy/lookbook_builder.html` — **THE single master file** (about 2 MB). Every page change lands here. Users do NOT
+  get this file when you save it: it reaches them only through a GitHub release (see "Release channels" below).
+  It contains the mobile build too (gated by `body.is-mobile`).
+- `electron/` — the desktop shell (Electron 33): `main.js` (Welcome window, one window per project, recents, content
+  updater that pulls the page from the latest FULL release, Send show, Report a bug), `preload.js`,
+  `welcome-preload.js`, `welcome.html`, `build/` icons. `package.json` version must equal the tag.
+- `.github/workflows/release.yml` — builds Mac + Windows installers on every `v*` tag; tags with a `-` are pre-releases.
+- `tests/` — the regression gate: `run_smoke.mjs`, `smoke_probe.js` (what each example show produces),
+  `flows_probe.js` (drives the app like a user, Simple + Advanced, all three tools), `golden/`.
+- `tools/` — `check_js.py` (run after every page edit), `cdp.mjs` (drive the dev shell).
+- `deploy/quick_guide.html` / `.pdf` — the Quick Guide. `deploy/landing-*.html`, `site/` — website blocks, the download
+  counter and the example packets (`site/packets/`).
+- `backups/` — local snapshots, not in git. Snapshot before every page edit:
+  `backups/lookbook_builder_<date>_before-<stamp>.html`. The page at v0.2.148 is
+  `backups/lookbook_builder_2026-09-19_before-16kf.html`.
+- `private/` — git-ignored; a dated copy of the assistant's memory folder lives here. The repo is PUBLIC.
+- `HANDBOOK.md` (how to work), `RELEASE.md` (the release gate). `app/` and the old Netlify site are retired.
 
-Open `deploy/lookbook_builder.html` directly in Chrome to test. No build step.
+To test, serve `deploy/` (`python3 -m http.server 8090 --directory deploy`) and open the page in Chrome. No build step.
 
 ## Top priority: avoid regressions
 The recurring pain point is "fix one thing, break another." Treat this as a
@@ -159,12 +152,12 @@ Quick sanity checks:
 grep -o '{' deploy/lookbook_builder.html | wc -l
 grep -o '}' deploy/lookbook_builder.html | wc -l
 
-# File size sanity (baseline as of build 16by: ~1.37MB / braces 6001 each; watch
+# File size sanity (baseline at v0.2.148: ~2.0 MB / braces 7310 each; watch
 # for sudden unjustified jumps — that's the template-literal corruption signature)
 ls -la deploy/lookbook_builder.html
 
-# Duplicate function definitions (should print only known nested locals:
-# esc, find, mv, newPage, nl, pillStyle, union, up)
+# Duplicate function definitions (known harmless nested locals: _c, close, esc, esc2, find, mv, newPage, nl,
+# pillStyle, place, union, up). `python3 tools/check_js.py` does this check and the syntax check for you.
 grep -oE 'function [_a-zA-Z][_a-zA-Z0-9]*' deploy/lookbook_builder.html | sort | uniq -d
 
 # Quick JS syntax check (extracts <script> block and runs node --check)

@@ -1,0 +1,258 @@
+{
+ "checks": [
+  {
+   "name": "example: General Session opens with 5 presets, 3 destinations, 2 AUX outputs",
+   "ok": true
+  },
+  {
+   "name": "save / load: the show is identical after a save and a reload",
+   "ok": true
+  },
+  {
+   "name": "undo / redo: a layer change undoes and redoes",
+   "ok": true
+  },
+  {
+   "name": "Simple: one preset tile per preset and layer chips on the canvas",
+   "ok": true
+  },
+  {
+   "name": "Simple: Add Preset adds one, Delete removes it",
+   "ok": true
+  },
+  {
+   "name": "Simple: copy a preset and paste it onto another",
+   "ok": true
+  },
+  {
+   "name": "Simple: Add Destination opens its window, adds the destination, and it can be removed",
+   "ok": true
+  },
+  {
+   "name": "Simple: Add AUX adds an output that is on in every preset, Remove takes it away",
+   "ok": true
+  },
+  {
+   "name": "Simple: an AUX can be switched off for one preset only",
+   "ok": true
+  },
+  {
+   "name": "Simple: the layer panel lists Position, Size, Opacity, Mask, Border, Shadow, Effects",
+   "ok": true
+  },
+  {
+   "name": "Simple: typing a Width in the layer panel resizes the layer and the height follows the lock",
+   "ok": true
+  },
+  {
+   "name": "Simple: an Area of Interest can be switched on and off for a destination",
+   "ok": true
+  },
+  {
+   "name": "Advanced: opens on a preset with the sources rail and the properties panel",
+   "ok": true
+  },
+  {
+   "name": "Advanced: both side panels collapse to a strip and come back",
+   "ok": true
+  },
+  {
+   "name": "Advanced: picking a plain layer shows Source, General, Position, Size, Opacity, Mask, Border, Shadow, Effects",
+   "ok": true
+  },
+  {
+   "name": "Advanced: a 4:3 picture dropped on a locked layer reshapes the window to 4:3",
+   "ok": true
+  },
+  {
+   "name": "Advanced: a media layer adds Filters, Color and Source crop sections",
+   "ok": true
+  },
+  {
+   "name": "Advanced: Filters offers B&W, Negative and Sepia",
+   "ok": true
+  },
+  {
+   "name": "Advanced: Width and Scale are one window (Width 960 gives Height 720 and Scale 120%)",
+   "ok": true
+  },
+  {
+   "name": "Advanced: unlocking the aspect switches the layer to Stretch, locking again snaps it back",
+   "ok": true
+  },
+  {
+   "name": "Advanced: a source crop reshapes a locked window, Full picture restores it",
+   "ok": true
+  },
+  {
+   "name": "Advanced: dragging a corner of a locked layer keeps its shape and the panel follows",
+   "ok": true
+  },
+  {
+   "name": "Advanced: a clip dropped on the BG selects the BG and lists it like a layer",
+   "ok": true
+  },
+  {
+   "name": "Advanced: a video General section shows a Speed box",
+   "ok": true
+  },
+  {
+   "name": "Advanced: the timeline shows transport for a picked clip and Play lights a transport key",
+   "ok": true
+  },
+  {
+   "name": "Advanced: nothing is left playing after Pause",
+   "ok": true
+  },
+  {
+   "name": "exports: a clip BG is written as a layer with its details",
+   "ok": true
+  },
+  {
+   "name": "Advanced: clearing the BG source removes its picture too",
+   "ok": true
+  },
+  {
+   "name": "Advanced: closes cleanly",
+   "ok": true
+  },
+  {
+   "name": "Wire Simple: the diagram draws one switcher row per source and one card per source",
+   "ok": true
+  },
+  {
+   "name": "Wire Simple: the switcher columns read # Source ID # Destination ID",
+   "ok": true
+  },
+  {
+   "name": "Wire: renaming a source from its card reaches every preset, the I/O list and the diagram",
+   "ok": true
+  },
+  {
+   "name": "Wire: a duplicate source name is refused",
+   "ok": true
+  },
+  {
+   "name": "Wire: pinch (ctrl + wheel) zooms about the cursor, a plain wheel does not zoom",
+   "ok": true
+  },
+  {
+   "name": "Wire: the All Sources header stays pinned while the cards scroll",
+   "ok": true
+  },
+  {
+   "name": "Wire: both side panels collapse to a strip and come back",
+   "ok": true
+  },
+  {
+   "name": "Wire: the Export window offers sheet sizes from Letter to ANSI E",
+   "ok": true
+  },
+  {
+   "name": "Wire Advanced: page 1 is built from the show, every source wired into the switcher",
+   "ok": true
+  },
+  {
+   "name": "Wire Advanced: switcher cells read the machine in Source and leave ID blank for a single output",
+   "ok": true
+  },
+  {
+   "name": "Wire Advanced: a named output point shows in the ID cell, an unnamed extra point reads OUT 2",
+   "ok": true
+  },
+  {
+   "name": "Wire Advanced: + In adds a row, × removes a free row, × on a wired row is refused",
+   "ok": true
+  },
+  {
+   "name": "Wire Advanced: the pencil reopens the size window with the current counts, shrinking below a cable is refused",
+   "ok": true
+  },
+  {
+   "name": "Wire Advanced: a router draws the matrix panel with numbered In and Out keys",
+   "ok": true
+  },
+  {
+   "name": "Wire Advanced: pressing an output arms it (it blinks), pressing an input routes it, and the name follows through to the switcher",
+   "ok": true
+  },
+  {
+   "name": "Wire Advanced: one input can feed two outputs, and an output only ever has one input",
+   "ok": true
+  },
+  {
+   "name": "Wire Advanced: a converter and a network switch can be added and grow a port",
+   "ok": true
+  },
+  {
+   "name": "Wire Advanced: a page can be copied and the copy closed",
+   "ok": true
+  },
+  {
+   "name": "Wire: closes cleanly",
+   "ok": true
+  },
+  {
+   "name": "I/O Patch Simple: lists every source, destination and AUX",
+   "ok": true
+  },
+  {
+   "name": "I/O Patch: setting a connector and resolution on a source is stored and shown",
+   "ok": true
+  },
+  {
+   "name": "I/O Patch: renaming a source here also renames it in every preset",
+   "ok": true
+  },
+  {
+   "name": "I/O Patch Advanced: page 1 is built from the show and PBP / GFX A sources get a B backup row",
+   "ok": true
+  },
+  {
+   "name": "I/O Patch Advanced: the Backup window opens for a source and closes",
+   "ok": true
+  },
+  {
+   "name": "I/O Patch Advanced: a page can be copied and the copy closed",
+   "ok": true
+  },
+  {
+   "name": "I/O Patch: the Excel export builds a sheet",
+   "ok": true
+  },
+  {
+   "name": "I/O Patch: closes cleanly",
+   "ok": true
+  },
+  {
+   "name": "Look Book: a cover, one page per preset, the I/O reference, the wire sheet and the summary",
+   "ok": true
+  },
+  {
+   "name": "Look Book and Excel: every destination starts with a BG line",
+   "ok": true
+  },
+  {
+   "name": "Excel cue sheet: one row per preset under the headers",
+   "ok": true
+  },
+  {
+   "name": "Quick Start: opens with the three example shows and closes",
+   "ok": true
+  },
+  {
+   "name": "Help: opens and closes",
+   "ok": true
+  },
+  {
+   "name": "Help text names only sections that exist today",
+   "ok": false,
+   "detail": "Help still says: Position & Size, Geometry"
+  },
+  {
+   "name": "Report a bug: builds an email to AV Educate with the template and the show attached",
+   "ok": true
+  }
+ ],
+ "pageErrors": []
+}
