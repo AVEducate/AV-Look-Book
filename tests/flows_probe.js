@@ -308,7 +308,8 @@
   });
   await check('I/O Patch Advanced: the banner says page 1 feeds Simple and Wire, other pages stand alone', async () => {
     const hint = () => ($('#io-adv .io-adv-bar .hint') || {}).textContent || ''; const p1 = hint(); _ioSetPage(1); await wait(400); const p2 = hint(); _ioSetPage(0); await wait(400);
-    return is([/^Page 1 starts as a copy/.test(p1) && /also appears in Simple and in Wire/.test(p1), /^A standalone page/.test(p2), /standalone patch/i.test(p1 + p2)], [true, true, false], 'banner');
+    const foot = $$('#io-adv .sys-section-footer .hint').map(e => e.textContent);
+    return is([/^Page 1 starts as a copy/.test(p1) && /A source you name here also appears in Simple and in Wire/.test(p1) && /destination or multiviewer you name here appears in Simple\./.test(p1), /^A standalone page/.test(p2), /standalone patch/i.test(p1 + p2), foot.filter(t => /in Wire/.test(t)).length], [true, true, false, 1], 'banner');
   });
   await check('I/O Patch Advanced: the Backup window opens for a source and closes', async () => {
     const r = ioAdvanced.pages[0].sources.find(x => x.name); _ioBackupOpen(r.id); await wait(400); const o = $('#sys-bk-overlay'); const open = vis(o); if (o) { const x = o.querySelector('.sys-modal-close'); if (x) x.click(); else o.remove(); } await wait(200);
