@@ -178,8 +178,12 @@ Users must never receive a build that has not passed the gate. Two lines:
 - **Development = `main`**, tags WITH a `-` (`v0.3.0-beta.1`). The workflow publishes those as pre-releases;
   both updaters ignore pre-releases, so users stay on the last full release. Bump `electron/package.json` to
   the matching `0.3.0-beta.N` before tagging.
-- **Before any full release** run `node tests/run_smoke.mjs` (must print `SMOKE: PASS`), the syntax checks, and
+- **Before any full release** run `node tests/run_smoke.mjs` (must print `SMOKE: PASS`), `python3 tools/check_js.py`, and
   open the three example shows by hand. `tests/golden/` is the behaviour of v0.2.148: a difference is a
   regression unless the change was intended, in which case regenerate with `--golden` in the same commit and say so.
 - Full checklist: `RELEASE.md`. The smoke probe (`tests/smoke_probe.js`) is where new core behaviour gets a check
   added when it ships.
+- **Operating manual: `HANDBOOK.md`** — where things live, the safe edit pattern, how to test in the browser and
+  the dev shell, the build discipline, product rules that are not obvious from the code, and the owner's working
+  rules. Read it at the start of a session. The assistant's auto-memory lives on the owner's Mac per working
+  directory; the repo (CLAUDE.md + HANDBOOK.md + RELEASE.md + tests/) must be enough on its own.
