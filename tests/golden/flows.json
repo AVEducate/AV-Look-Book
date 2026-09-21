@@ -49,6 +49,10 @@
    "ok": true
   },
   {
+   "name": "Simple: a masked layer can sit past the edge by the masked amount, and a Size edit leaves its position alone",
+   "ok": true
+  },
+  {
    "name": "Simple: an Area of Interest can be switched on and off for a destination",
    "ok": true
   },

@@ -97,6 +97,17 @@
     w.focus(); w.value = '960'; fire(w, 'input'); await wait(150); fire(w, 'change'); w.blur(); await wait(200);
     const g = _lfxGeo(f.pid, f.sid, 1, sw, sh); closeLayerPanel(); const out = is([g.w, g.h], [960, 540], 'window'); await restore(); return out;
   });
+  await check('Simple: a masked layer can sit past the edge by the masked amount, and a Size edit leaves its position alone', async () => {
+    const f = firstLayer(); const sw = parseInt(f.s.w), sh = parseInt(f.s.h); setCrop(f.pid, f.sid, 1, { t: 0, b: 0, l: 25, r: 0 }); setLayerSize(f.pid, f.sid, 1, 0.5, 0.5, 0, 0.1); scheduleRender(); await wait(200);
+    openLayerPanel(fakeEv, f.pid, f.sid, 1, true); await wait(450); const pop = $('#layer-panel'); if (!pop) return 'the layer panel did not open';
+    const inp = (sec, dim) => $$('.lfx-acc[data-sec="' + sec + '"] input[type=number]', pop).find(i => i.dataset.dim === dim); const x = inp('pos', 'x'); if (!x) return 'no X field';
+    x.focus(); x.value = '-120'; fire(x, 'input'); fire(x, 'change'); await wait(250); const x1 = Math.round((getLayerSize(f.pid, f.sid, 1).xf || 0) * sw);
+    const floor = parseInt(($$('.lfx-acc[data-sec="pos"] input[type=range]', pop).find(i => i.dataset.dim === 'x') || {}).min, 10);
+    const wasLocked = _lfxLock; if (_lfxLock) { const lk = $('.fs-lock', pop); if (lk) { lk.click(); await wait(250); } }
+    const hIn = inp('size', 'h'); hIn.focus(); hIn.value = '400'; fire(hIn, 'input'); fire(hIn, 'change'); await wait(250); const x2 = Math.round((getLayerSize(f.pid, f.sid, 1).xf || 0) * sw);
+    const out = is([x1, x2, floor <= -120], [-120, -120, true], 'typed X / X after a Height edit / fader floor'); closeLayerPanel(); _lfxLock = wasLocked;   // the padlock is session-wide: leave it as it was for the checks that follow
+    await restore(); return out;
+  });
   await check('Simple: an Area of Interest can be switched on and off for a destination', async () => {
     const p = presets[1].id, s = screens[0].id; const was = !!getAOI(p, s); toggleAOI(p, s); await wait(200); const on = !!getAOI(p, s); toggleAOI(p, s); await wait(200);
     const out = is([on, !!getAOI(p, s)], [!was, was], 'AOI'); await restore(); return out;
