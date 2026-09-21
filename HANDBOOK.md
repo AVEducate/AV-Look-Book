@@ -71,6 +71,17 @@ anchor on the function name and replace the first occurrence after it, never all
 5. Write the build's notes down (memory, or this file if the knowledge is durable).
 
 ## 5. Product rules that are not obvious from the code
+- **P01 is the MASTER preset** (owner's rule, an old workflow: do not break it). `addPreset` deep-copies every per-preset
+  field from `presets[0]` ("GLOBAL PRESET 00"): layers, colours, BGs, show mode, layer sizes, masks, AOI, POSITIONS (so
+  blends and free positions set on P01 are inherited), AUX on / content / colour, opacities. Later presets are then changed
+  on their own; editing P01 afterwards does not reach back. Destination name / colour edited on P01 = show-wide; on any
+  other preset = that preset's override. The four Modifier switches (AOI Overlays, Blend Zones, Dead Space, Free Position)
+  are NOT per preset and not in the show file: one view setting for the whole program on this computer
+  (`localStorage lookbook_adv_settings`, since 2026-06-02). The owner believes they follow P01 per preset: that would be a
+  NEW feature (decision pending), say so before building anything on that assumption.
+- **Before building anything the owner recommends, check it against the rules already in place** (this section, the
+  manual, the build log) and TELL HIM FIRST when it would break one or change something that was put in on purpose
+  (example: the arrow-key resize of a destination was an accessibility feature added 2026-06-01, not an accident).
 - The BG is a layer: `selLayer.n === 0` everywhere; its media, look and crop live in `layerMedia[sid][0]`.
 - A layer window is the picture: Size (px) and Scale (% of the cropped source) are one thing; the aspect lock
   (`_lfxLock`, default on) keeps the shape; unlocked = stretch. No push-in zoom; a push-in is a tighter source crop.

@@ -61,10 +61,10 @@ The top bar is the same on every page, so adding a destination, undoing, saving 
 |---|---|---|
 | Show | **Show name** | Names the window, the saved file and every export. Typing here is not an Undo step. |
 | Canvas | **W × H** | The total canvas in pixels, calculated from your destinations (side by side, plus any blend or free position). Change the destinations, not this number. See the CHECK below. |
-| Add | **+ Destination** | Opens Add Destination (3.2). From Wire and I/O Patch the window opens on top of the page ****. |
+| Add | **+ Destination** | Opens Add Destination (3.2). From Wire and I/O Patch the window opens on top of the page. |
 | Add | **+ Preset** | Adds a preset after the last one, copied from P01. Needs at least one destination. Pressed from Wire or I/O Patch it adds the preset with nothing on screen to tell you. |
 | History & Presets | **Undo / Redo** | Chapter 10. |
-| History & Presets | **Collapse all / Expand all** | Folds every preset tile down to its header, or opens them all. A view action; it does not mark the show unsaved ****. |
+| History & Presets | **Collapse all / Expand all** | Folds every preset tile down to its header, or opens them all. A view action; it does not mark the show unsaved. |
 | Project | **Save**, **New**, **Load** | Chapter 10. |
 | Export | **Excel**, **Look Book**, **Send** | Chapter 9. |
 | Bottom row | **Wire · Video Presets · I/O Patch** | The tool switch. One tool is open at a time. The label on the left tells you where you are. |
@@ -74,15 +74,15 @@ The top bar is the same on every page, so adding a destination, undoing, saving 
 ### 3.2 Add Destination
 
 1. Press **+ Destination**. The name is already selected: type over it.
-2. Set **Width** and **Height** in pixels. Limits are 67 to 7680 wide and 67 to 4320 high; a value outside is pulled back to the limit, and a blank, zero or minus keeps 1920 × 1080 ****.
+2. Set **Width** and **Height** in pixels. Limits are 67 to 7680 wide and 67 to 4320 high; a value outside is pulled back to the limit, and a blank, zero or minus keeps 1920 × 1080.
 3. Pick a colour: one of the eleven swatches, a hex value, **Pick…** for the full colour window (4.7), or the picture tile to upload an image as the destination's background.
-4. Press **Enter** or **＋ Add Destination**. The destination is added to the right of the last one in every preset. One Undo step ****.
+4. Press **Enter** or **＋ Add Destination**. The destination is added to the right of the last one in every preset. One Undo step.
 
 **Escape**, **Cancel** or the ✕ close the window without adding. A click outside does not close it, so a stray click cannot lose what you typed. On an empty show + Destination opens Quick Setup instead.
 
 ### 3.3 Quick Show Setup
 
-Opens by itself on a new show, from **New**, from Cmd / Ctrl + N, and from the "Click here to start" card on an empty canvas. The cursor starts in Show name and the window opens at the top ****.
+Opens by itself on a new show, from **New**, from Cmd / Ctrl + N, and from the "Click here to start" card on an empty canvas. The cursor starts in Show name and the window opens at the top.
 
 | Control | What it does |
 |---|---|
@@ -99,7 +99,7 @@ Opens by itself on a new show, from **New**, from Cmd / Ctrl + N, and from the "
 | **Build My Show** (or Enter) | Creates the destinations, presets, AUX outputs and canvas. |
 | **Start blank** (or Escape) | Closes the wizard and leaves an empty show. |
 
-With a resolution list open, Escape closes the list only; the next Escape closes the wizard ****.
+With a resolution list open, Escape closes the list only; the next Escape closes the wizard.
 
 Build My Show is one Undo step: the first Undo after it takes you back to an empty canvas (Redo brings the show back).
 
@@ -115,7 +115,7 @@ The desktop has no "Edit Show Info" window (the phone has one). Change date, ven
 | **Layers** | The most layers used in any single preset. Compare it with your switcher's layer budget. |
 | Selection read-out | The preset, destination and size you last picked. |
 | **build …** | The build stamp. Quote it in a bug report. |
-| **Advanced** | The overlays menu: **AOI Overlays**, **Blend Zones**, **Dead Space**, **Free Position** (each on / off, remembered on this computer, not in the show file) and **Fit Canvas**. Every preset tile has the same menu on its own ADVANCED ▾ button. It closes when you press anywhere else ****. |
+| **Advanced** | The overlays menu: **AOI Overlays**, **Blend Zones**, **Dead Space**, **Free Position** (each on / off, remembered on this computer, not in the show file) and **Fit Canvas**. Every preset tile has the same menu on its own ADVANCED ▾ button. It closes when you press anywhere else. |
 | **Help** | Quick Reference, Keyboard, Glossary, Vocabulary (how Look Book terms map to Aquilon, Spyder, Pixelhue, Barco) and Accessibility, plus links to Feedback and Support. On the Keyboard tab choose a Mac or PC keyboard; hover or click a shortcut to light its keys. |
 | **Bug** | Downloads the show file and opens an email to AV Educate with a short form and your build stamp. Remove the attachment if you would rather not share the show. |
 
@@ -127,13 +127,25 @@ The Advanced page, Wire and I/O Patch cover the status bar. Go back to Video Pre
 
 Simple is where you build looks. One **preset tile** per look, stacked down the page. Each tile draws your destinations to scale, the layers on them, and the DSM / AUX outputs underneath. The **Destination Combinations** table at the bottom is the same show as a spreadsheet: type in either place, the other follows.
 
+### 4.0 Preset 1 is the master preset
+
+**P01 ("Global Preset") is the master that every preset created after it follows.** When you press **+ Preset**, the new preset starts as a full copy of P01 as it is at that moment: the backgrounds, the layers with their sizes and masks, the AOIs, which AUX / DSM outputs are on and what they show, and the **positions of the destinations, including any blend (overlap) or free position you set up on P01**. So if P01 has LEFT and CENTER blended, every preset you add afterwards starts with that same blend.
+
+After that, each preset is its own: change a blend, a layer or an AUX on P03 and only P03 changes. Changing P01 later does NOT reach back into presets that already exist; it only affects presets you create from then on.
+
+Set up P01 first (destinations in the right order, blends, the background every look shares), then add the other presets.
+
+Two things follow the first preset in a different way:
+- A destination's **name** and **colour** changed on P01 are the show-wide name and colour; changed on any other preset they belong to that preset only (4.4).
+- The **Modifiers** switches (AOI Overlays, Blend Zones, Dead Space, Free Position; 4.2) are not part of any preset: they switch what you SEE and whether destinations can be dragged, for the whole program on this computer.
+
 ### 4.1 The preset tile header
 
 | Control | What it does |
 |---|---|
-| Drag handle (six dots) | Drag the tile up or down to re-order presets. A line shows where it will land; it lands on that line ****. |
+| Drag handle (six dots) | Drag the tile up or down to re-order presets. A line shows where it will land; it lands on that line. |
 | **Code** (P01) | Up to 4 characters. Used in the table, the exports and show calling. |
-| **Name**, **Notes** | Free text. Quotes and symbols are fine ****. |
+| **Name**, **Notes** | Free text. Quotes and symbols are fine. |
 | **ADVANCED ▾** | The tile's overlays menu (4.2). |
 | **Paste** | Greyed until you copy a preset. Overwrites this preset's content and keeps this preset's own code, name and notes. No question is asked; Undo brings the old content back. |
 | **Copy** | Copies this preset. The button flashes "COPIED". |
@@ -141,7 +153,7 @@ Simple is where you build looks. One **preset tile** per look, stacked down the 
 | Chevron | Minimise / expand the tile. Double-clicking the empty part of the header does the same. |
 | Bin | Removes the preset at once. Undo brings it back. |
 
-Code, Name and Notes: Enter or a click away confirms, Escape cancels, and each edit is one Undo step ****.
+Code, Name and Notes: Enter or a click away confirms, Escape cancels, and each edit is one Undo step.
 
 ### 4.2 The ADVANCED ▾ menu
 
@@ -179,7 +191,7 @@ Four switches for the whole page (a tick shows what is on) and one action for th
 
 **Area of Interest (AOI Overlays on)**
 1. Pick a destination and press **A** (bottom right of the box). The red box is the AOI.
-2. Drag it, drag its corners, or type X / Y / W / H under it. Each is one Undo step ****.
+2. Drag it, drag its corners, or type X / Y / W / H under it. Each is one Undo step.
 3. Hover the button group for **OFF**, **P** (paste), **C** (copy) and **↺** (back to the full destination).
 
 While an AOI is on, the destination's own corner handles are hidden.
@@ -209,7 +221,7 @@ A layer is a coloured chip inside the destination. A new layer starts as a centr
 - **Arrow keys** nudge 10 px, Shift 100 px. **Tab / Shift + Tab** steps through the layers of that destination. **Delete / Backspace** removes the layer from this preset.
 - **↺** on the chip (shows on hover) puts size and position back to the default.
 
-Drags, corner drags and nudges are each an Undo step that really goes back ****.
+Drags, corner drags and nudges are each an Undo step that really goes back.
 
 **The Layer panel.** The pill at the top switches **Simple / Advanced**. ✕, Escape or a click outside closes it; drag it by its title.
 
@@ -223,7 +235,7 @@ Drags, corner drags and nudges are each an Undo step that really goes back ****.
 *Advanced mode*
 - **Show Labels / Shape Only**.
 - Seven sections, each with copy / paste / reset tools (paste works between layers): **Position** (X, Y), **Size** (Width, Height, the padlock keeps the shape), **Opacity** (0 to 256, or percent), **Mask** (Top / Bottom / Left / Right in pixels, up to 99 % a side), **Border** (on / off, colour, opacity, horizontal and vertical thickness), **Shadow** (on / off, colour, opacity, X and Y offset), **Effects** (Flip H, Flip V).
-- With the padlock on, type a Width and the Height follows: 640 on a 16:9 layer gives 640 × 360 ****.
+- With the padlock on, type a Width and the Height follows: 640 on a 16:9 layer gives 640 × 360.
 - **Remove from ALL presets** (asks first).
 
 The smallest layer is 67 × 67 px. A layer can never be bigger than its destination.
@@ -242,9 +254,9 @@ Under every tile: the output boxes, and a toolbar.
 
 Opens from a BG/Color button, the table's BG swatch, a library ✎, a Border / Shadow swatch, or Add Destination › Pick….
 
-Label field (BG only), colour square, hue bar, alpha bar, Hex, R G B A, eleven quick colours, **Image** (pick a picture as the background), **Apply**. ✕ or Escape closes it without applying, and leaves the panel under it open ****.
+Label field (BG only), colour square, hue bar, alpha bar, Hex, R G B A, eleven quick colours, **Image** (pick a picture as the background), **Apply**. ✕ or Escape closes it without applying, and leaves the panel under it open.
 
-On the first preset the colour becomes the show-wide colour of that destination ****; on any other preset it is that preset's own.
+On the first preset the colour becomes the show-wide colour of that destination; on any other preset it is that preset's own.
 
 Colour changes to built-in content types (PGM, CAM …) last for the session only. Your own library items keep theirs in the show file.
 
@@ -254,17 +266,17 @@ One block per preset, one row per destination.
 
 | Column | What you can do |
 |---|---|
-| ⇅ | Drag to re-order destinations (every preset goes back to a clean strip). The row lands where the line shows ****. |
+| ⇅ | Drag to re-order destinations (every preset goes back to a clean strip). The row lands where the line shows. |
 | P# | Preset code (first row of the block). |
 | BG/Color | Swatch or chevron = colour window. A second click on the chevron closes it. |
-| Name | On the FIRST preset: renames the destination everywhere. On any other preset: a name for that preset only, shown on that preset's canvas **** and in the exports. Empty = back to the global name. Chevron = Destination Properties. |
+| Name | On the FIRST preset: renames the destination everywhere. On any other preset: a name for that preset only, shown on that preset's canvas and in the exports. Empty = back to the global name. Chevron = Destination Properties. |
 | Notes | One note per destination, shared by every preset. |
 | Red pill | Non-standard resolution. Click it: the window lists the closest standard sizes (to read, not to click) and has the "Engineer reviewed & approved" tick that clears the warning. |
 | L1 to L4 (more appear as you use them) | Type a content name and Enter; empty clears the layer. Chevron = Layer panel (Simple). Double-click = Layer panel (Advanced). |
 | DSM / AUX columns | Content per preset; chevron or double-click = AUX Properties. |
 | ✕ | Only on the first destination row of each block. Deletes that destination from the whole show at once, no question. Undo brings it back. |
 
-Toolbar above the table: **Add Destination**, **Add Preset**; the chevron collapses the table. Drag the grip above the title to resize the table; a single click on the grip steps through preset heights. Enter confirms a cell, Escape cancels it ****. A row click selects that destination and makes its preset the working one (amber bar).
+Toolbar above the table: **Add Destination**, **Add Preset**; the chevron collapses the table. Drag the grip above the title to resize the table; a single click on the grip steps through preset heights. Enter confirms a cell, Escape cancels it. A row click selects that destination and makes its preset the working one (amber bar).
 
 ### 4.9 Common jobs
 
@@ -325,7 +337,7 @@ Zoom: −, +, the percentage goes back to 100 %, Fit fills the space with the ti
 Each file card shows its cover, size, frame rate, length, type and whether it has audio.
 - The round **play** key on a video card previews it right there (with sound). One preview at a time.
 - A dimmed card that reads **relink** means the app no longer has the file (another computer, cleared storage). Click the card and pick the file again; every layer that used it comes back.
-- The **×** in the corner of a card removes the file from the show ****. The app first tells you where it is used ("P02 LEFT LED L1, P02 CENTER LED BG"). Remove empties those layers, backgrounds and AUX, forgets their clip settings and deletes the app's copy. The original on your drive is never touched. One Undo brings all of it back.
+- The **×** in the corner of a card removes the file from the show. The app first tells you where it is used ("P02 LEFT LED L1, P02 CENTER LED BG"). Remove empties those layers, backgrounds and AUX, forgets their clip settings and deletes the app's copy. The original on your drive is never touched. One Undo brings all of it back.
 
 **Using a source.** Drag a card:
 - onto a **layer** in the tile: that layer now shows this source;
@@ -336,7 +348,7 @@ Whatever you drop on is picked, so its properties and, for a clip, the timeline 
 
 ### 5.3 The centre tile
 
-It is the Simple tile, so chapter 4 applies: destinations (pick, ◀ ▶ re-order, double-click for properties), layers (drag, corner handles, ↺), the gear menu (AOI Overlays, Blend Zones, Dead Space, Free Position, Fit Canvas), Paste / Copy / Reset / Trash, the AUX band, and the preset number, name and notes typed straight into the header. The page title and the thumbnail follow the name ****.
+It is the Simple tile, so chapter 4 applies: destinations (pick, ◀ ▶ re-order, double-click for properties), layers (drag, corner handles, ↺), the gear menu (AOI Overlays, Blend Zones, Dead Space, Free Position, Fit Canvas), Paste / Copy / Reset / Trash, the AUX band, and the preset number, name and notes typed straight into the header. The page title and the thumbnail follow the name.
 
 Clicking a layer picks it and opens the Layers tab on the right.
 
@@ -358,7 +370,7 @@ With a layer or a BG picked, the line at the top reads where you are (P02 · D01
 |---|---|
 | Source | The picture, and a menu to change the source (Video, Images, Common) or set it to none |
 | Media Info | Read-only: kind, size, frame rate, length, codecs, audio, file name, where the file lives |
-| General | Your own layer name; for a source you created: rename it everywhere, colour tag, notes (on a BG too ****). For a clip: **Speed** (0 = hold a still, 1.0, 1.25, 1.5, 2.0, 3.0) and **Loop** |
+| General | Your own layer name; for a source you created: rename it everywhere, colour tag, notes (on a BG too). For a clip: **Speed** (0 = hold a still, 1.0, 1.25, 1.5, 2.0, 3.0) and **Loop** |
 | Position, Size, Opacity, Mask, Border, Shadow, Effects | As in the Layer panel (4.5). For media, Size also has Scale H / V in percent of the picture |
 | Filters (media) | B&W, Negative, Sepia |
 | Color (media) | Hue, Saturation, Brightness, Contrast |
@@ -367,7 +379,7 @@ With a layer or a BG picked, the line at the top reads where you are (P02 · D01
 
 A background has the same sections except Position, Size, Opacity, Mask, Border, Shadow and Effects: a BG always fills its destination.
 
-Numbers: type and press Enter, or drag the fader. Grab the knob, or press anywhere on its track ****.
+Numbers: type and press Enter, or drag the fader. Grab the knob, or press anywhere on its track.
 
 ### 5.6 The timeline
 
@@ -384,7 +396,7 @@ It follows the picked layer or BG when that holds a clip. Until then the keys ar
 | Cover | Use the frame under the playhead as the picture Simple, the thumbnails and the exports show for this clip |
 | Right clock | Time left to Out |
 
-On the lanes: click or drag anywhere to scrub. Drag the two handles on the ruler to trim In and Out. The white line across the waveform is the **level**: bottom 0 %, middle 100 %, top 200 %. Drag it (5 % steps, hold Shift for 1 %), use the arrow keys on it for 1 % steps, double-click for 100 %. A click, a drag or a double-click on it is one Undo step ****. The L / R meters read the picked clip while it plays.
+On the lanes: click or drag anywhere to scrub. Drag the two handles on the ruler to trim In and Out. The white line across the waveform is the **level**: bottom 0 %, middle 100 %, top 200 %. Drag it (5 % steps, hold Shift for 1 %), use the arrow keys on it for 1 % steps, double-click for 100 %. A click, a drag or a double-click on it is one Undo step. The L / R meters read the picked clip while it plays.
 
 Picking another layer stops what was playing, unless you started playback with PRESET Play.
 
@@ -456,8 +468,8 @@ It answers "what is plugged into the switcher and what comes out". It does not s
 | **Simple / Advanced** | Simple is this automatic drawing. Advanced is the free-form builder (chapter 7). |
 | **− / +** | Zoom out / in by 10 %, from 25 % to 300 %. The drawing stays centred. |
 | **The percentage** | Click it to go back to 100 %. |
-| **Fit** | Shows the whole drawing between the two side panels, including anything you dragged away ****. It never zooms past 100 %. |
-| **Reset Layout** | Puts every moved node, the switcher and every moved cable **** back to the automatic layout. One Undo brings your layout back. |
+| **Fit** | Shows the whole drawing between the two side panels, including anything you dragged away. It never zooms past 100 %. |
+| **Reset Layout** | Puts every moved node, the switcher and every moved cable back to the automatic layout. One Undo brings your layout back. |
 | **Export** | Opens the Export window (6.5). |
 
 Trackpad pinch, or Ctrl / Cmd + mouse wheel, zooms around the pointer. A plain two-finger scroll or wheel pans. The Space bar is not a temporary Hand tool here.
@@ -468,29 +480,29 @@ Three folding lists: **All Sources**, **All Destinations**, **AUX / DSM**. Click
 
 Every card has:
 
-- **Thumbnail tile.** Until you give it a picture it shows the name on the card's colour. Click the tile to upload a picture (it is shrunk to thumbnail size). On a source, the cable colour is then matched to the picture's main colour; picture and colour are one Undo step ****. Hover a picture and press the **×** to remove it.
+- **Thumbnail tile.** Until you give it a picture it shows the name on the card's colour. Click the tile to upload a picture (it is shrunk to thumbnail size). On a source, the cable colour is then matched to the picture's main colour; picture and colour are one Undo step. Hover a picture and press the **×** to remove it.
 - **Colour bar** under the tile. Click it to pick any colour. On a source this is the cable colour (tile, node and cable follow). On a destination or AUX it is the colour of its node and tile.
 - **Shuffle** (crossed arrows). Picks another colour from the palette.
-- **Resolution.** Type it, or press the small ▼ for the list: Custom (opens the bandwidth calculator, 8.4), the resolutions already used in this show, then the standards. A source accepts any text; a destination or AUX only accepts a real size such as 1920x1080, because it resizes the screen in Video Presets too. Esc while typing puts the old value back ****.
+- **Resolution.** Type it, or press the small ▼ for the list: Custom (opens the bandwidth calculator, 8.4), the resolutions already used in this show, then the standards. A source accepts any text; a destination or AUX only accepts a real size such as 1920x1080, because it resizes the screen in Video Presets too. Esc while typing puts the old value back.
 - **Cable Type.** The same list as I/O Patch (HDMI, SDI, NDI, fibre …). It sets the cable's colour and line pattern on the drawing and adds the type to the Cable Colour Code on the right. "Clear" removes the type.
 
-Source cards also have a **pencil** next to the name. It renames the source everywhere at once: every preset, I/O Patch, Video Presets, both Wire views, its thumbnail, and the place you dragged it to on this drawing ****. A name already in use is refused; Esc cancels. Destinations and AUX outputs have no pencil; rename them in Video Presets or I/O Patch.
+Source cards also have a **pencil** next to the name. It renames the source everywhere at once: every preset, I/O Patch, Video Presets, both Wire views, its thumbnail, and the place you dragged it to on this drawing. A name already in use is refused; Esc cancels. Destinations and AUX outputs have no pencil; rename them in Video Presets or I/O Patch.
 
-Everything you change on a card is one Undo step and lights the unsaved mark ****.
+Everything you change on a card is one Undo step and lights the unsaved mark.
 
 ### 6.3 The drawing
 
 - **Click a node** to select it: its cable thickens and Details shows where it is used. **Shift-click** adds to the selection. **Drag on empty grid** to box-select. Click empty grid to clear.
 - **Drag a node**, or a selected group, anywhere. Cables follow and route around other nodes.
-- **The switcher**: type its real name in the box at the top (E2, Spyder, ATEM …); it prints on the sheet and is one Undo step ****. Drag it by its "11 IN · 5 OUT" bar. Parked over other nodes it turns see-through. Its # / Source / ID and # / Destination / ID columns fill themselves from the show; the ID cells read "—" here and cannot be typed (real port IDs are typed in Advanced).
-- **Click a cable** to select it. A white handle appears at its middle: drag the handle to move that cable out of a crowded run. One Undo step ****.
+- **The switcher**: type its real name in the box at the top (E2, Spyder, ATEM …); it prints on the sheet and is one Undo step. Drag it by its "11 IN · 5 OUT" bar. Parked over other nodes it turns see-through. Its # / Source / ID and # / Destination / ID columns fill themselves from the show; the ID cells read "—" here and cannot be typed (real port IDs are typed in Advanced).
+- **Click a cable** to select it. A white handle appears at its middle: drag the handle to move that cable out of a crowded run. One Undo step.
 - **Delete / Backspace do nothing here.** Simple always shows the whole show; remove a source or a screen in Video Presets or I/O Patch.
 - **Tools** (left edge of the drawing): **Select** (default), **Hand** (drag anywhere to pan, even over a node), **Align** (in Simple the panel offers "Clean up", which is the same as Reset Layout, and an Undo arrow).
 
 ### 6.4 Right panel
 
 - **Presets.** Click a preset to filter the drawing to that look: sources it does not use fade and their cables dim. Click it again, or press Esc, to show everything.
-- **Details.** With nothing selected: the lane counts and the **Cable Colour Code**, one row per cable type in use; hover a row to see who uses it. With a node selected: every preset that uses it and where. A background counts ****. With a source on an IP cable (NDI, ST-2110, Dante) selected, an **IP Address** field appears; the next one you fill starts from the same range.
+- **Details.** With nothing selected: the lane counts and the **Cable Colour Code**, one row per cable type in use; hover a row to see who uses it. With a node selected: every preset that uses it and where. A background counts. With a source on an IP cable (NDI, ST-2110, Dante) selected, an **IP Address** field appears; the next one you fill starts from the same range.
 - **Project Info** is the title block of the printed sheet: Project, Date, Venue, Client, Job No, Designer, Drawn By, Project Ver, the automatic Drawn date, and your **Logo** (click the tile to upload, × to remove; the × removes it at once and Undo does not bring it back). These are the same fields as Quick Setup, so fill them in either place. **Dates, Address and Format** are for the cover tab of the Excel exports only and do not print on the drawing. Press Enter or click away to commit a field. A blank Venue reads N/A.
 - Each header folds its section. On a short window Presets and Details scroll inside themselves so Project Info is never cut off.
 
@@ -504,7 +516,7 @@ Everything you change on a card is one Undo step and lights the unsaved mark ***
 
 The sheet carries the drawing, the Cable Colour Code, the title block from Project Info with your logo, and "Page 1 · Full System". The switcher prints with the same # / Source / ID columns you see on screen **(after the fix; today the print still says SLOT)**.
 
-**Asset Pack: Download All Thumbnails (ZIP).** One ZIP with a 1920 × 1080 PNG per source, destination and AUX in three folders. Uploaded pictures are used as they are; every other tile is the name in white on the colour of its card ****. Hand it to the graphics and playback operators as test slates.
+**Asset Pack: Download All Thumbnails (ZIP).** One ZIP with a 1920 × 1080 PNG per source, destination and AUX in three folders. Uploaded pictures are used as they are; every other tile is the name in white on the colour of its card. Hand it to the graphics and playback operators as test slates.
 
 ×, Cancel, a click outside the window, or Esc closes it without exporting. There is no Excel export from Wire.
 
@@ -552,23 +564,23 @@ The panels, zoom, tools, Presets, Details, Project Info and Export are as in cha
 
 - **Page 1 is your show.** It opens already built: every source cabled into a switcher tile, every destination and AUX cabled out of it. It takes the show name.
 - The last page is always an empty spare. Use it and a new spare appears, up to 25 pages.
-- **Click** a tab to open the page. **Double-click** the tab to rename it: Enter keeps the name, Escape puts the old one back and stays in Wire; a rename is one Undo step ****.
-- On the open tab: the **copy icon** makes "<name> copy" on the spare page. The **×** closes the page; a page with anything on it asks first, and Undo brings it back. Long names are shortened on the tab so the two icons are always reachable ****.
+- **Click** a tab to open the page. **Double-click** the tab to rename it: Enter keeps the name, Escape puts the old one back and stays in Wire; a rename is one Undo step.
+- On the open tab: the **copy icon** makes "<name> copy" on the spare page. The **×** closes the page; a page with anything on it asks first, and Undo brings it back. Long names are shortened on the tab so the two icons are always reachable.
 - If sources, destinations or AUX change in the show after page 1 was built, opening Advanced offers **Rebuild from Simple** once. "Keep my page" leaves your drawing alone. A rebuild replaces page 1 only and can be undone.
 
 ### 7.2 Tiles
 
 **Source tile.** Coloured in the source's cable colour. The dot on the right edge is its output.
 - **+** on the top right corner adds an output point (up to six). **−** removes the last one (refused while it holds a cable).
-- **Aa** shows a name box beside each point (MAIN, BACKUP, TX-2). Typing a name is one Undo step ****. At the third point the app asks once whether you want the name boxes.
+- **Aa** shows a name box beside each point (MAIN, BACKUP, TX-2). Typing a name is one Undo step. At the third point the app asks once whether you want the name boxes.
 - Select the tile and Details lists every output with its own **cable type** button. A point with no type of its own uses the source's cable type.
 - The **pencil** beside the name renames the source everywhere in the show.
 
 **Destination and AUX / DSM tiles.** The dot on the left edge is the input.
 - **+** on the top left corner adds a **backup input**; the two points are then tagged PRI and BKP. Drop a second source on a tile that is already fed and the backup point appears by itself and takes the cable. A third source is refused.
-- You can also pull a cable the other way: drag from the input dot back onto a source tile ****, a router row or a converter port.
+- You can also pull a cable the other way: drag from the input dot back onto a source tile, a router row or a converter port.
 
-**Custom tiles.** The **+** on each left panel heading adds a custom source, destination or AUX that exists only in Wire (a record deck, an encoder). Type its name and resolution on the card, then drag it onto the canvas. A custom source also has a cable colour and cable type; a custom destination or AUX has neither. The **×** on the card removes it together with its tiles and cables on that page ****; Undo brings everything back. Names are kept unique: a second "New Source" becomes "New Source 2". Custom cards belong to the page they were made on.
+**Custom tiles.** The **+** on each left panel heading adds a custom source, destination or AUX that exists only in Wire (a record deck, an encoder). Type its name and resolution on the card, then drag it onto the canvas. A custom source also has a cable colour and cable type; a custom destination or AUX has neither. The **×** on the card removes it together with its tiles and cables on that page; Undo brings everything back. Names are kept unique: a second "New Source" becomes "New Source 2". Custom cards belong to the page they were made on.
 
 **Router (video hub).** Left half: inputs (# · Source · ID). Right half: outputs (Destination · ID · #). The numbered keys in the middle are the matrix panel:
 1. Press an **Out** key (it blinks).
@@ -580,15 +592,15 @@ One input can feed many outputs; an output has one input. The routed source's na
 **Switcher.** The same tile without the matrix keys.
 
 **On both:**
-- **Name cell** follows what is plugged into the row. **ID cell** follows the point it is plugged to (PRIMARY, OUT 2, BKP, In 3) until you type your own; typed ID text stays through re-plugs, and clearing the box hands it back to automatic. **Tab** in an ID cell goes down the column, Shift + Tab goes up. Tab after typing in any other box moves to the next box ****.
+- **Name cell** follows what is plugged into the row. **ID cell** follows the point it is plugged to (PRIMARY, OUT 2, BKP, In 3) until you type your own; typed ID text stays through re-plugs, and clearing the box hands it back to automatic. **Tab** in an ID cell goes down the column, Shift + Tab goes up. Tab after typing in any other box moves to the next box.
 - **+ In / + Out** at the bottom add a row. **×** at the end of a row removes it (refused while a cable is on it). The **pencil** in the title bar reopens the size window for a bulk resize. A tile that grows pushes the tile stacked under it down.
-- Title and subtitle are yours to type. The default router subtitle keeps up with the real size until you replace it ****.
+- Title and subtitle are yours to type. The default router subtitle keeps up with the real size until you replace it.
 
-**Converter.** In and Out port lists, a **cable type** and a name on every port, **+ In / + Out** at the bottom, **×** on a free port. A cable leaving a port takes that port's colour and pattern. Growing it pushes the tile below it down ****.
+**Converter.** In and Out port lists, a **cable type** and a name on every port, **+ In / + Out** at the bottom, **×** on a free port. A cable leaving a port takes that port's colour and pattern. Growing it pushes the tile below it down.
 
 **Switch (network).** One list of ports, Ethernet by default; every port is in and out. **+ Port** adds one.
 
-**I/O Patch page tile.** Any I/O Patch Advanced page that has rows appears at the bottom of I/O Tools. The tile arrives with every input and output already named, is named after the patch page (locked, rename it in I/O Patch) and keeps the page's rows. It never lands on top of another tile ****.
+**I/O Patch page tile.** Any I/O Patch Advanced page that has rows appears at the bottom of I/O Tools. The tile arrives with every input and output already named, is named after the patch page (locked, rename it in I/O Patch) and keeps the page's rows. It never lands on top of another tile.
 
 ### 7.3 Cables
 
@@ -602,7 +614,7 @@ One input can feed many outputs; an output has one input. The routed source's na
 ### 7.4 Select, move, align
 
 - Click a tile to select it. **Shift-click** adds or removes tiles. **Drag on empty canvas** draws a selection box. Drag any selected tile and they all move.
-- **Delete / Backspace** removes the selected tiles with their cables, including a backup cable ****. While Wire is open these keys never reach Video Presets behind it ****.
+- **Delete / Backspace** removes the selected tiles with their cables, including a backup cable. While Wire is open these keys never reach Video Presets behind it.
 - **Align tool**: with a selection, a palette offers Left / Center / Right, Top / Middle / Bottom (two or more tiles), Distribute Horizontally / Vertically / Evenly (three or more), **Clean up columns** and an Undo button. Drag the palette by its header; double-click the header to dock it. Clean up columns does not move converters or network switches.
 - **Reset Layout** (page bar) tidies the Advanced page into three columns, sources · routers and switchers · destinations and AUX. One Undo step; it does not touch the Simple layout **(after the fix; today it moves nothing here and silently resets the Simple drawing)**.
 
@@ -666,16 +678,16 @@ Two views, chosen at the left of the page bar:
 | Column | How to use it |
 |---|---|
 | Badge | S1, S2 … sources. D1 … destinations. A1 … AUX / DSM. IO = an I/O-only destination. MV = multiviewer. |
-| Name | Type a new name and press Enter, or click the chevron for the list: "Type your own name", the names already in the show, then common names. On an output the list offers destination names only ****. |
+| Name | Type a new name and press Enter, or click the chevron for the list: "Type your own name", the names already in the show, then common names. On an output the list offers destination names only. |
 | Connector | Click for the cable menu: HDMI family, DisplayPort / DVI / USB-C, 3G / 6G / 12G-SDI, NDI, ST-2110, SRT / RTMP / RTSP, Fiber, SFP, Dante, MV, Ethernet, Genlock, LTC. "Clear" empties it. A source's tile colour in Wire follows the cable you pick. |
 | Type | Sources: PC, Workstation, Mac, Camera, PTZ, Media Server, Switcher, Teleprompter. Outputs: LED, Projection, Monitor, Stream. "Custom…" turns the cell into a text box; the name you type is remembered and offered in the menu from then on. |
 | Resolution | Click for the list: sizes already used in the show first, then Standard HD, UHD / 4K, DCI, ultra-wide, 5K and up, LED wall sizes, SD. "Custom resolution…" opens the calculator (8.4). "Clear" empties a source's resolution. |
 | Red pill | Lights up between Resolution and Notes when the connector cannot carry that resolution (3840×2160 on 3G-SDI, for example). Hover it for the reason. It compares pixel count with the connector only; frame rate and bit depth are not stored per row. |
-| Notes | Free text. Enter or clicking away keeps it, Escape throws the edit away ****. |
+| Notes | Free text. Enter or clicking away keeps it, Escape throws the edit away. |
 | Reset (round arrow) | Asks, then clears connector and notes (and the resolution on a source). Name and type stay. |
 | Trash | On a source that lives in the presets: asks, then removes it from every preset, background and AUX, and from the library. On an I/O-only row: removes it straight away. On a destination or AUX: asks, then removes it from the canvas and every preset. Undo brings any of them back **(after the fix; today these deletes are permanent)**. |
 
-**Set for all.** The first row of each table (S0 / D0) sets the connector, type or resolution of every row under it in one go. One Undo step takes the whole change back ****. On the output side it sets destinations, AUX / DSM and I/O-only destinations ****; the multiviewer is left alone.
+**Set for all.** The first row of each table (S0 / D0) sets the connector, type or resolution of every row under it in one go. One Undo step takes the whole change back. On the output side it sets destinations, AUX / DSM and I/O-only destinations; the multiviewer is left alone.
 
 ### 8.3 Sources, destinations, multiviewers
 
@@ -768,7 +780,7 @@ Everything that leaves the building sits in the top bar and stays there whicheve
 | Pages to include | What you get |
 |---|---|
 | Cover page | Show name, canvas size, number of presets / destinations / AUX, version, a notes box you can type in before printing, date. |
-| Table of Contents | Every section with its real page number; each row is a link that jumps to the section ****. Long preset names are shortened here only. |
+| Table of Contents | Every section with its real page number; each row is a link that jumps to the section. Long preset names are shortened here only. |
 | Sources I/O reference | Every source with connector, name, type (a backup reads "Backup of PPT A"), resolution, notes. |
 | Destinations I/O reference | Destinations, AUX / DSM and multiviewers, same columns. |
 | Per-preset pages | One block per preset: the notes, the canvas exactly as the program canvas shows it, the layer resolutions, AUX / DSM content and the destination breakdown: one column per destination with the BG line first, then L1, L2 … A preset that does not fit on one page continues on the next with its header repeated. |
@@ -778,11 +790,11 @@ Everything that leaves the building sits in the top bar and stays there whicheve
 | Details | Adds |
 |---|---|
 | Show AOI markers + dimensions | The AOI box on the canvas and an "AOI 1280x720" line in the breakdown. |
-| Show Crop and layer FX | Under each layer: the mask per side in pixels with the visible size it leaves, then opacity, flip, border, shadow. Long lines wrap, nothing is cut ****. |
+| Show Crop and layer FX | Under each layer: the mask per side in pixels with the visible size it leaves, then opacity, flip, border, shadow. Long lines wrap, nothing is cut. |
 | Show Blend Zones | The overlaps on the canvas, a line per pair (192x1080 px, ~10 %) and the ultra-wide total of each blend group. |
 | Show Dead Space | The gaps on the canvas and a line per gap in pixels and feet. |
 
-The four Details start the way your overlays menu is set. **Version** is stamped on the cover and on the strip at the top of every page so an old printout is obvious. **Cancel**, the ✕, a click outside the window, or Esc **** close the window without exporting.
+The four Details start the way your overlays menu is set. **Version** is stamped on the cover and on the strip at the top of every page so an old printout is obvious. **Cancel**, the ✕, a click outside the window, or Esc close the window without exporting.
 
 > **CHECK (are the Look Book window choices remembered?).** The toolbar chapter says "your choices are remembered until you close the app". The exports chapter says "choices are remembered only when you export" and that they go back to the defaults after a reload. Both agree they are not stored in the show file.
 
@@ -809,7 +821,7 @@ The **Export** button on the I/O Patch page writes `<show>_video-io.xlsx`:
 Both Excel exports look the show over first. If everything is in order the file is written at once.
 - **Errors stop the export:** blank show name, no destinations, no presets.
 - **Warnings let you go on:** a destination with a non-standard size that the engineer has not approved, or one above DCI 4K; a preset with no name; a preset with nothing on it (a BG-only look such as a walk-in logo is fine **(after the fix; today it is flagged)**); a Canvas size that does not match the layout. On the I/O Patch: sources or destinations with no connector or no resolution, and a cable that cannot carry the resolution.
-- **Export Anyway** writes the file. **Close**, the ✕, a click outside, or Esc **** go back to the show. The check never changes the show itself, and it has no "fix it" button.
+- **Export Anyway** writes the file. **Close**, the ✕, a click outside, or Esc go back to the show. The check never changes the show itself, and it has no "fix it" button.
 
 ### 9.4 Send
 
@@ -817,7 +829,7 @@ Both Excel exports look the show over first. If everything is in order the file 
 - **Desktop app:** a confirmation, then the Look Book as a real PDF, the Excel cue sheet and the show file are written to *Documents › AV Look Book › Outbox › your show*, and a new email opens with all three attached (Apple Mail on the Mac; elsewhere the mail text is on the clipboard and the folder opens so you can drag the files in).
 - **Browser / phone:** the share sheet opens with the Excel cue sheet and the Look Book (an .html file that opens in any browser and prints to PDF). Where there is no share sheet the two files download and a draft email opens with a note to attach them. The show file is not included; attach the .avlb yourself if the crew needs it.
 
-The Look Book that Send attaches is the one the Look Book window would give you, wire sheet included ****.
+The Look Book that Send attaches is the one the Look Book window would give you, wire sheet included.
 
 In a browser, Send and Bug open your mail program by leaving the page for a moment; with unsaved changes the browser asks "Leave site?". Save first, or answer Leave: the show stays open.
 
@@ -857,11 +869,11 @@ One file (.avlb) is the whole show: destinations, presets, every layer with its 
 |---|---|
 | **Save** | Writes the show file. The first time it asks where; after that it overwrites the same file quietly (Chrome and Edge; Safari and Firefox download a new copy each time). |
 | **Shift + click Save** | Save As. Save now writes to the new file. |
-| **Cmd / Ctrl + S** | Save from anywhere, including while you are typing in a box (the box is committed first) ****. Add Shift for Save As. |
+| **Cmd / Ctrl + S** | Save from anywhere, including while you are typing in a box (the box is committed first). Add Shift for Save As. |
 | **Load** | Opens a show file. If the open show has unsaved changes you are asked first. A damaged file, or one that is not a show, is refused with a message and your show stays as it was. |
 | **New** | Asks first, clears the show, then opens Quick Setup. Cmd / Ctrl + N does the same **(after the fix; today the key opens Quick Setup over the open show and Build My Show adds to it)**. In the desktop app New opens a new window instead; every show has its own window. |
 
-**The unsaved mark.** Save turns gold while there are changes that are not in the file. It compares the show with what was last saved, so Undo back to the saved state turns it off. It comes on within half a second of any change, including typing the show name and any edit in Wire ****. New, Load, an example show or closing the window ask first when it is on.
+**The unsaved mark.** Save turns gold while there are changes that are not in the file. It compares the show with what was last saved, so Undo back to the saved state turns it off. It comes on within half a second of any change, including typing the show name and any edit in Wire. New, Load, an example show or closing the window ask first when it is on.
 
 > **CHECK (what lights up).** The exports engineer found that the Save button's text turns gold and the separate "dot" element is always hidden (the Help line about a gold dot was wrong). The undo chapter still calls it "the gold dot on Save", the toolbar chapter "the Save icon lights". This manual says "Save turns gold".
 
@@ -870,7 +882,7 @@ Today, just looking can light it: the first time Wire (or Advanced, or a Look Bo
 ### 10.2 Autosave and drafts
 
 - **Desktop app:** the show file itself is written about every 30 seconds once the show has a file and an unsaved change, and again when the window closes. It lives in Documents › AV Look Book. If an autosave ever fails, a red note appears bottom right: save by hand.
-- **Browser:** the app keeps a draft inside the browser 30 seconds after a change and again when the tab closes. Next time you open the page it asks **Restore draft** or **Start fresh**. An empty show is never offered ****, and the draft is safe while that question is on screen, even if you reload again before answering ****. A draft is a safety net, not a save: it lives in that browser on that computer only.
+- **Browser:** the app keeps a draft inside the browser 30 seconds after a change and again when the tab closes. Next time you open the page it asks **Restore draft** or **Start fresh**. An empty show is never offered, and the draft is safe while that question is on screen, even if you reload again before answering. A draft is a safety net, not a save: it lives in that browser on that computer only.
 - A restored browser draft puts the destinations back on the plain left-to-right strip. If you built blend zones or dead space with Free Position, open the saved file instead of the draft to get them back.
 
 ### 10.3 Undo and Redo
@@ -937,10 +949,10 @@ All single-key shortcuts are switched off while a text box, a number box or a dr
 
 | Keys | Where | What it does |
 |---|---|---|
-| Cmd / Ctrl + S | everywhere | Save. Shift = Save As. Works while typing in a field **** |
+| Cmd / Ctrl + S | everywhere | Save. Shift = Save As. Works while typing in a field |
 | Cmd / Ctrl + Z | everywhere | Undo (inside a text field: undoes your typing) |
 | Cmd / Ctrl + Shift + Z, Cmd / Ctrl + Y | everywhere | Redo |
-| Cmd / Ctrl + N | everywhere | New show: asks first, then Quick Setup **** |
+| Cmd / Ctrl + N | everywhere | New show: asks first, then Quick Setup |
 | Cmd / Ctrl + Shift + N | everywhere | Add a preset |
 | Cmd / Ctrl + C | Video Presets, a destination picked | Copy the preset of the picked destination |
 | Cmd / Ctrl + V | Video Presets, a destination picked | Paste onto the preset of the picked destination (the target keeps its number and name) |
