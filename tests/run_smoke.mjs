@@ -18,11 +18,11 @@ import { fileURLToPath } from 'node:url';
 import { tmpdir } from 'node:os';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
-const DEPLOY = join(ROOT, 'deploy');
+const DEPLOY = process.env.LB_DEPLOY || join(ROOT, 'deploy');   // LB_DEPLOY / LB_HTTP / LB_CDP / LB_OUT let a second copy of the gate test another page folder (bisecting a merge) without touching the goldens
 const GOLDEN = join(ROOT, 'tests', 'golden');
-const OUT = join(ROOT, 'tests', 'out');
+const OUT = process.env.LB_OUT || join(ROOT, 'tests', 'out');
 const SHOWS = ['general-session', 'awards-night', 'town-hall'];
-const PORT = 8097, CDP = 9343;
+const PORT = parseInt(process.env.LB_HTTP, 10) || 8097, CDP = parseInt(process.env.LB_CDP, 10) || 9343;
 const golden = process.argv.includes('--golden');
 const flowsOnly = process.argv.includes('--flows-only');
 const noMobile = process.argv.includes('--no-mobile');
@@ -110,6 +110,9 @@ try {
   const t = await target();
   const { ws, send } = await connect(t.webSocketDebuggerUrl);
   await send('Runtime.enable'); await send('Log.enable');
+  // A headless page has no window focus, so el.focus() / el.blur() fire no events and every check that types in a field and leaves it
+  // (a rename, a note, a preset name) silently did nothing. Focus emulation makes the page behave like the window the user is in.
+  try { await send('Emulation.setFocusEmulationEnabled', { enabled: true }); } catch (e) {}
   mkdirSync(OUT, { recursive: true }); if (golden) mkdirSync(GOLDEN, { recursive: true });
 
   if (!flowsOnly) for (const show of SHOWS) {
@@ -143,6 +146,8 @@ try {
   // user flows, Simple and Advanced, on the General Session example
   where = 'flows';
   await loadApp(send);
+  // the snapshot stage opens export windows; make sure THIS page is the focused one again before the flows type into fields
+  try { await send('Page.bringToFront'); await send('Emulation.setFocusEmulationEnabled', { enabled: true }); } catch (e) {}
   const flows = await evalJs(send, '(' + flowsSrc + ')()');
   const result = { checks: flows.checks, pageErrors };
   writeFileSync(join(OUT, 'flows.json'), JSON.stringify(result, null, 1));

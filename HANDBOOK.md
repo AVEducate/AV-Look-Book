@@ -102,6 +102,16 @@ anchor on the function name and replace the first occurrence after it, never all
   same folder as before (the home folder) to keep it, and keep this handbook current so the repo alone is enough.
 
 ---
+Merging several patches (lesson of build 16kp, nine click-through patches): every patch passed on its author's copy, and
+11 of 93 new checks still failed on the merged page (two patches adding the same undo step, two Escape handlers closing
+two things on one press, two Cmd+S handlers saving twice). Never trust "applies cleanly". Build the intermediate pages
+(after patch 1, after patch 2, ...) and run the gate against each with `LB_DEPLOY=<folder> LB_HTTP=<port> LB_CDP=<port>
+LB_OUT=<folder> node tests/run_smoke.mjs --flows-only --no-mobile`; the pass / fail history per check names the patch that
+breaks it. A check that NEVER passes, even right after its own patch, points at the harness, not the page: the gate's
+browser page must have window focus (`Emulation.setFocusEmulationEnabled`, re-applied before the flows stage) or
+`el.focus()` / `el.blur()` fire no events and every "type in a field, then leave it" check silently does nothing.
+`USER_MANUAL.md` is the user-facing manual (13 chapters + keyboard table); keep it in step with behaviour changes.
+
 Phone / tablet build: read `PHONE.md` before touching anything under `initMobileShell` or the `body.is-mobile` CSS.
 
 Reading receipt: **HANDBOOK-12G-SDI**. Report this code to the owner after reading this handbook in full.

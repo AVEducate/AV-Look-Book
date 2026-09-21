@@ -263,6 +263,106 @@
   });
 
 
+  // ── vp-simple click-through (2026-09-21): INSERT in the Simple section of tests/flows_probe.js, straight AFTER the check
+  //    'Simple: the EDID note is kept per destination per preset, survives save and load, follows a destination copy and goes with a deleted destination'.
+  //    Every check here FAILS on build 16ko without patch.py and PASSES with it. No media needed.
+  const vpMouse = (el, type, x, y) => el.dispatchEvent(new MouseEvent(type, { bubbles: true, cancelable: true, clientX: x, clientY: y, button: 0, buttons: type === 'mouseup' ? 0 : 1 }));
+  const vpDrag = async (el, dx, dy) => { const r = el.getBoundingClientRect(); const x = r.left + r.width / 2, y = r.top + r.height / 2; vpMouse(el, 'mousedown', x, y); for (let i = 1; i <= 4; i++) { vpMouse(window, 'mousemove', x + dx * i / 4, y + dy * i / 4); await wait(20); } vpMouse(window, 'mouseup', x + dx, y + dy); return el; };
+  const vpUndoLen = () => _undoStack.length;
+  await check('Simple: a preset name with a quote is kept whole after a redraw, a preset field edit is one undo step, and a code edit leaves the name field alone', async () => {
+    const p = presets[0], old = p.name, n0 = vpUndoLen(); const nm = $('#pn-' + p.id); nm.focus(); nm.value = '6" RISER'; nm.blur(); await wait(150);
+    render(); await wait(200); const shown = $('#pn-' + p.id).value, steps = vpUndoLen() - n0;
+    const before = $('#pn-' + p.id); const cd = $('#pc-' + p.id); cd.focus(); cd.value = 'Z1'; cd.blur(); await wait(250); const sameField = $('#pn-' + p.id) === before;   // a rebuilt tile dropped the text typed next
+    doUndo(); await wait(250); doUndo(); await wait(250); const back = presets[0].name; await restore();
+    return is([shown, steps, sameField, back], ['6" RISER', 1, true, old], 'field after redraw / undo steps for the rename / name field survives a code edit / name after undo');
+  });
+  await check('Simple: a destination corner drag, an AOI drag, an AOI corner drag, a typed AOI field and a layer corner drag are each one undo step', async () => {
+    const f = firstLayer(); const p = presets[0], s = screens[1]; const out = [];
+    doSelect(p.id, s.id); await wait(250); let n = vpUndoLen(); const w0 = parseInt(s.w);
+    await vpDrag($('.preset-row[data-pid="' + p.id + '"] .screen-box[data-sid="' + s.id + '"] > .rh-br'), -24, 0); await wait(300); out.push(vpUndoLen() - n, parseInt(screens[1].w) !== w0);
+    doUndo(); await wait(300); out.push(parseInt(screens[1].w) === w0);
+    const wasAoi = document.body.classList.contains('adv-hide-aoi'); document.body.classList.remove('adv-hide-aoi'); toggleAOI(p.id, s.id); setAOI(p.id, s.id, { x: 100, y: 100, w: 800, h: 600 }); render(); await wait(250);
+    const bx = () => $('.preset-row[data-pid="' + p.id + '"] .screen-box[data-sid="' + s.id + '"]');
+    n = vpUndoLen(); await vpDrag($('.aoi-drag', bx()), 20, 0); await wait(250); out.push(vpUndoLen() - n);
+    n = vpUndoLen(); await vpDrag($('.aoi-box .rh-br', bx()), -12, -8); await wait(250); out.push(vpUndoLen() - n);
+    n = vpUndoLen(); const fld = $('.aoi-dim-row input[data-dim="w"]', bx()); fld.value = '640'; fire(fld, 'change'); await wait(250); out.push(vpUndoLen() - n, getAOI(p.id, s.id).w);
+    document.body.classList.toggle('adv-hide-aoi', wasAoi);
+    selLayer = { pid: f.pid, sid: f.sid, n: 1 }; setLayerSize(f.pid, f.sid, 1, 0.5, 0.5, 0.25, 0.25); render(); await wait(300);
+    n = vpUndoLen(); await vpDrag($('.preset-row[data-pid="' + f.pid + '"] .layer-chip[data-sid="' + f.sid + '"][data-lid="1"] .lrh-br'), -20, -10); await wait(300); out.push(vpUndoLen() - n);
+    selLayer = null; await restore();
+    return is(out, [1, true, true, 1, 1, 1, 640, 1], 'dest corner steps / resized / undo restores / AOI drag / AOI corner / AOI field steps, value / layer corner');
+  });
+  await check('Simple: a layer drag undoes to where the layer was, dragging a selected chip does not open the Layer panel, and arrow nudges are one undo step', async () => {
+    const f = firstLayer(); setLayerSize(f.pid, f.sid, 1, 0.5, 0.5, 0.25, 0.25); selLayer = { pid: f.pid, sid: f.sid, n: 1 }; render(); await wait(300);
+    const chip = () => $('.preset-row[data-pid="' + f.pid + '"] .layer-chip[data-sid="' + f.sid + '"][data-lid="1"]');
+    const c = chip(); await vpDrag(c, 30, 10); c.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true })); await wait(350);   // the browser fires this click after every drag
+    const panel = !!$('#layer-panel'); closeLayerPanel(); const moved = getLayerSize(f.pid, f.sid, 1).xf;
+    doUndo(); await wait(300); const back = getLayerSize(f.pid, f.sid, 1).xf;
+    selLayer = { pid: f.pid, sid: f.sid, n: 1 }; const n = vpUndoLen(); const key = k => document.body.dispatchEvent(new KeyboardEvent('keydown', { key: k, bubbles: true, cancelable: true }));
+    key('ArrowRight'); key('ArrowRight'); key('ArrowDown'); await wait(250); const steps = vpUndoLen() - n; doUndo(); await wait(250); const back2 = getLayerSize(f.pid, f.sid, 1).xf;
+    selLayer = null; await restore();
+    return is([panel, moved !== 0.25, back, steps, back2], [false, true, 0.25, 1, 0.25], 'panel opened by the drag / layer moved / X after undo / undo steps for three nudges / X after undoing the nudges');
+  });
+  await check('Simple: in the Simple layer panel a Width + Enter, Fill, a library pick, Remove from this preset and the library × are each one undo step', async () => {
+    const f = firstLayer(); const out = []; const open = async () => { closeLayerPanel(); openLayerPanelSimple(fakeEv, f.pid, f.sid, 1); await wait(400); return $('#layer-panel'); };
+    let pop = await open(); let n = vpUndoLen(); const w = $('.lp-w', pop); w.value = '800'; w.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true })); await wait(250); out.push(vpUndoLen() - n);
+    n = vpUndoLen(); $('.lp-fs-btn', pop).click(); await wait(250); out.push(vpUndoLen() - n);
+    pop = await open(); n = vpUndoLen(); const cur = getL(f.pid, f.sid, 1); const rowEl = $$('.lp-content-list > div', pop).find(r => r.dataset.label && r.dataset.label !== cur); rowEl.click(); await wait(300); out.push(vpUndoLen() - n);
+    pop = await open(); n = vpUndoLen(); $('.lp-remove', pop).click(); await wait(300); out.push(vpUndoLen() - n, getL(f.pid, f.sid, 1)); doUndo(); await wait(300); out.push(!!getL(f.pid, f.sid, 1));
+    customLibrary.push({ l: 'VP TEST ITEM', c: '#6b7280' }); n = vpUndoLen(); deleteCustomLabel('VP TEST ITEM'); await wait(200); out.push(vpUndoLen() - n);
+    closeLayerPanel(); await restore();
+    return is(out, [1, 1, 1, 1, null, true, 1], 'Width / Fill / library pick / Remove steps, layer gone, undo brings it back / library × steps');
+  });
+  await check('Simple: Show Labels / Remove Labels is one undo step, and a click on the mode already lit changes nothing', async () => {
+    const p = presets[0], s = screens[0]; openScreenPanel(fakeEv, p.id, s.id); await wait(350); const n = vpUndoLen();
+    $('#sp-show-show').click(); await wait(150); const idle = vpUndoLen() - n, untouched = !(p.showMode && p.showMode[s.id]);
+    $('#sp-show-shape').click(); await wait(200); const steps = vpUndoLen() - n; doUndo(); await wait(250); const back = getShowMode(p.id, s.id); closeScreenPanel(); await restore();
+    return is([idle, untouched, steps, back], [0, true, 1, 'show'], 'steps for the lit mode / nothing written / steps for Remove Labels / mode after undo');
+  });
+  await check('Simple: Add AUX (+), the AUX panel Apply and Remove AUX Globally are each one undo step', async () => {
+    const out = []; let n = vpUndoLen(); const c0 = dsms.length; actions.addDSM(); await wait(250); out.push(vpUndoLen() - n, dsms.length - c0); doUndo(); await wait(250); out.push(dsms.length - c0);
+    const p = presets[0], dm = dsms[0]; selDSM = { pid: p.id, dsmId: dm.id }; openDSMPanel(fakeEv, p.id, dm.id); await wait(350); n = vpUndoLen();
+    $('#dsmp-name').value = 'RECORD 1'; $('#dsmp-apply').click(); await wait(250); out.push(vpUndoLen() - n, getDSMName(p.id, dm.id)); doUndo(); await wait(250); out.push(getDSMName(p.id, dm.id) !== 'RECORD 1');
+    const dm2 = dsms[0]; openDSMPanel(fakeEv, p.id, dm2.id); await wait(350); n = vpUndoLen(); const c1 = dsms.length; $('#dsmp-remove').click(); await wait(250); okDialogs(); await wait(200); out.push(vpUndoLen() - n, c1 - dsms.length); doUndo(); await wait(250); out.push(dsms.length === c1);
+    selDSM = null; await restore();
+    return is(out, [1, 1, 0, 1, 'RECORD 1', true, 1, 1, true], '+ steps, added, undone / Apply steps, name, undone / Remove steps, removed, undone');
+  });
+  await check('Simple: a dragged table row or preset tile lands where the drop line shows, a drop on the near half changes nothing, and Undo puts the order back', async () => {
+    const names = () => screens.map(s => s.name).join('|'), pn = () => presets.map(p => p.code).join('|'); const o = names(), po = pn(); const out = [];
+    const tr = i => $$('#tbody tr[data-pid="' + presets[0].id + '"]')[i]; const cell = i => tr(i).children[0];
+    const drop = async (from, to, bottom) => { screenDragStart({ dataTransfer: {} }, screens[from].id); const r = tr(to).getBoundingClientRect(); const ev = new MouseEvent('drop', { bubbles: true, cancelable: true, clientX: r.left + 8, clientY: bottom ? r.bottom - 3 : r.top + 3 }); cell(to).dispatchEvent(ev); await wait(350); };
+    let n = vpUndoLen(); await drop(0, 1, false); out.push(names() === o, vpUndoLen() - n);           // top half of the next row = stay
+    await drop(0, 1, true); const s1 = screens.map(s => s.name); out.push(s1[0] === o.split('|')[1] && s1[1] === o.split('|')[0]); doUndo(); await wait(350); out.push(names() === o);
+    const rowEl = i => $$('.preset-row')[i]; const pdrop = async (from, to, bottom) => { presetDragStart({ dataTransfer: {}, stopPropagation() {} }, presets[from].id); await wait(30); const r = rowEl(to).getBoundingClientRect(); presetDrop({ preventDefault() {}, stopPropagation() {}, target: rowEl(to), clientY: bottom ? r.bottom - 4 : r.top + 4 }, presets[to].id); presetDragEnd(); await wait(350); };
+    n = vpUndoLen(); await pdrop(0, 1, false); out.push(pn() === po, vpUndoLen() - n);
+    await pdrop(0, 1, true); const c = po.split('|'); out.push(pn() === [c[1], c[0]].concat(c.slice(2)).join('|')); doUndo(); await wait(350); out.push(pn() === po);
+    await restore();
+    return is(out, [true, 0, true, true, true, 0, true, true], 'row: near half stays, no undo step / far half swaps / undo / tile: near half stays, no step / far half swaps / undo');
+  });
+  await check('Simple: a BG colour picked on the first preset shows on the canvas even when the destination carries a BG content colour', async () => {
+    const p = presets[0], s = screens[1]; const had = !!getPColor(p.id, s.id); openColorPop(fakeEv, s.id, p.id); await wait(300); cpSetFromHex('#2980b9'); cpApply(); await wait(400);
+    const bg = (getComputedStyle($('.preset-row[data-pid="' + p.id + '"] .screen-box[data-sid="' + s.id + '"] .screen-inner')).backgroundColor.match(/\d+/g) || []).map(Number); closeColorPop(); await restore();
+    return is([had, bg[0] < 80 && bg[2] > 150], [true, true], 'the example carries a BG colour on P01 / the canvas turned blue (got rgb ' + bg.join(',') + ')');
+  });
+  await check('Simple: Escape closes the colour picker and leaves the Layer panel under it open; Escape in a table cell cancels the edit', async () => {
+    const f = firstLayer(); openLayerPanel(fakeEv, f.pid, f.sid, 1, true); await wait(400); const sw = $('#layer-panel .lfx-swatch'); if (!sw) return 'no colour swatch in the layer panel'; _lfxOpenColor(sw); await wait(300);
+    const wasOpen = $('#color-pop').style.display === 'block'; document.activeElement.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true })); await wait(250);
+    const pickerOpen = $('#color-pop').style.display === 'block', panelOpen = !!$('#layer-panel'); closeColorPop(); closeLayerPanel();
+    const cellIn = $('#tbody input[name="t-d-notes"]'); const old = screens[0].notes || ''; cellIn.focus(); cellIn.value = 'SHOULD NOT STICK'; cellIn.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true })); cellIn.dispatchEvent(new Event('blur')); await wait(250);
+    const kept = (screens[0].notes || '') === old; await restore();
+    return is([wasOpen, pickerOpen, panelOpen, kept], [true, false, true, true], 'picker was open / picker after Escape / panel after Escape / note untouched after Escape');
+  });
+  await check('Simple: a table note or P# edit is one undo step, a per-preset destination name shows on that preset\'s canvas, and the blend window shows all four digits of a resolution', async () => {
+    const out = []; let n = vpUndoLen(); const note = $('#tbody input[name="t-d-notes"]'); note.focus(); note.value = 'NEW NOTE'; note.blur(); await wait(250); out.push(vpUndoLen() - n, screens[0].notes);
+    const others = $$('#tbody input[name="t-d-notes"]').filter(i => i.id.endsWith('-' + screens[0].id)).map(i => i.value); out.push(others.every(v => v === 'NEW NOTE'));
+    const q = presets[2], s = screens[1]; homeSetScreenName(q.id, s.id, 'PANEL WALL'); render(); await wait(300);
+    out.push(($('.preset-row[data-pid="' + q.id + '"] .screen-box[data-sid="' + s.id + '"] .screen-inner > .screen-lbl') || {}).textContent, ($('.preset-row[data-pid="' + presets[0].id + '"] .screen-box[data-sid="' + s.id + '"] .screen-inner > .screen-lbl') || {}).textContent === s.name);
+    const p = presets[0]; initStripPositions(p.id); setPosition(p, screens[1].id, 1720, 0); const wasB = document.body.classList.contains('adv-hide-blend'); document.body.classList.remove('adv-hide-blend'); render(); await wait(250);
+    openBlendPopup(p.id, screens[0].id, screens[1].id); await wait(250); const cut = $$('.blend-popup input[onchange*="setDestResFromPopup"]').filter(i => i.scrollWidth > i.clientWidth + 1).length; closeBlendPopup(); document.body.classList.toggle('adv-hide-blend', wasB);
+    out.push(cut); await restore();
+    return is(out, [1, 'NEW NOTE', true, 'PANEL WALL', true, 0], 'note undo steps, note / every row of that destination follows / per-preset name on its canvas, first preset keeps the global name / resolution fields cut off');
+  });
+
   // ── Video Presets, Advanced ─────────────────────────────────────────────────────────────────────────────────────
   // test media: a 4:3 picture with alpha and a short silent clip, both built in the page
   const cv = document.createElement('canvas'); cv.width = 800; cv.height = 600; const g2 = cv.getContext('2d'); g2.fillStyle = '#ff4e8b'; g2.beginPath(); g2.arc(400, 300, 260, 0, 6.3); g2.fill();
@@ -313,6 +413,71 @@
     $('#ms-n').value = 'ADV TEST DEST'; confirmScreen(); await wait(600); okDialogs(); const added = screens.length, drawn = $$('#fs-canvas .screen-box').length;
     const out = is([shown, above, reachable, added, drawn], [true, true, true, n0 + 1, n0 + 1], 'window shown / above Advanced / clickable / destinations / drawn in Advanced'); doUndo(); await wait(500); return out;
   });
+// vp-advanced click-through (2026-09-21): new checks for tests/flows_probe.js. Each one FAILS on build 16ko as shipped and
+// PASSES with patch.py (A*) / patch_shared.py (S*). Synthetic events on purpose (the probe runs inside the page).
+// Helpers used: $, $$, wait, is, fire, okDialogs, dialogText, and the section's own A / mute / clipOk. No restore() in here: the
+// Advanced section's test media lives in customLibrary AFTER BASE was taken, so restore() would delete it. Each check sets an undo
+// bookmark (pushUndo) and walks back to it instead.
+
+// ═══ BLOCK 1 ═══ INSERT straight AFTER the check
+//   'Advanced: + Destination opens its window ABOVE the Advanced page and adds the destination'
+// (Advanced is open on A.pid, nothing picked yet; every check here leaves the show as it found it.)
+  await check('Advanced: Esc closes the window, menu or field on top and never the Advanced page under it; with nothing open it still goes back to Simple', async () => {
+    const esc = t => (t || document.body).dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }));
+    const open = () => getComputedStyle($('#fs-overlay')).display !== 'none';
+    actions.addDestination(); await wait(400); esc($('#ms-n')); await wait(400); const afterWindow = [getComputedStyle($('#modal')).display === 'none' || !$('#modal').classList.contains('show'), open()];
+    if (!open()) { openFullscreen(A.pid); await wait(600); }
+    const btn = $('#fs-canvas .pr-actions button.v-cyan'); toggleAdvancedMenu({ stopPropagation() {}, currentTarget: btn, target: btn }); await wait(300); esc(); await wait(300); const afterMenu = [$('#adv-menu').classList.contains('open'), open()];
+    if (!open()) { openFullscreen(A.pid); await wait(600); }
+    const nm = $('#fs-canvas input.p-name'); nm.focus(); esc(nm); await wait(300); const afterField = open();
+    if (!open()) { openFullscreen(A.pid); await wait(600); }
+    if (document.activeElement && document.activeElement.blur) document.activeElement.blur(); esc(); await wait(400); const bare = open();
+    if (!open()) { openFullscreen(A.pid); await wait(700); mute(); }
+    return is([afterWindow, afterMenu, afterField, bare], [[true, true], [false, true], true, false], 'window closed + page stays / menu closed + page stays / page stays after Esc in a field / bare Esc leaves Advanced');
+  });
+  await check('Advanced: an arrow key with a destination selected resizes it like Simple and never slides it onto its neighbour', async () => {
+    const s = screens[1], p = presets.find(x => x.id === A.pid); const x0 = ((p.positions || {})[s.id] || {}).x, w0 = parseInt(s.w); const u0 = _undoStack.length;
+    doSelect(A.pid, s.id); selLayer = null; document.body.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true, cancelable: true })); await wait(350);
+    const q = presets.find(x => x.id === A.pid); const x1 = ((q.positions || {})[s.id] || {}).x, w1 = parseInt(screens[1].w), steps = _undoStack.length - u0;
+    while (_undoStack.length > u0) { doUndo(); await wait(250); } doSelect(null, null);
+    return is([w1 - w0, x1 === x0, steps], [1, true, 1], 'width grew by / position untouched / undo steps');
+  });
+  await check('Advanced: a preset renamed in the tile shows in the page title and on its preset card at once', async () => {
+    const p = presets.find(x => x.id === A.pid), old = p.name; const inp = $('#fs-canvas input.p-name'); if (!inp) return 'no Name field in the Advanced tile';
+    inp.value = 'RENAME CHECK'; inp.dispatchEvent(new FocusEvent('blur')); inp.dispatchEvent(new FocusEvent('focusout', { bubbles: true })); await wait(300);
+    const got = [$('#fs-title').textContent.includes('RENAME CHECK'), ($('#fs-preset-list .fs-pcard.on .fs-pcard-name') || {}).textContent];
+    presets.find(x => x.id === A.pid).name = old; renderFullscreen(); renderTable(); await wait(200);
+    return is(got, [true, 'RENAME CHECK'], 'page title / preset card');
+  });
+  await check('Advanced: pressing a fader track in Properties keeps the panel under the pointer, the drag follows and lands as one undo step', async () => {
+    const b0 = _undoStack.length; pushUndo(); setLayerSize(A.pid, A.sid, 1, 0.5, 0.5, 0, 0); _fsSelectLayer(A.pid, A.sid, 1); await wait(400);
+    if (!$('#fs-props .lfx-acc[data-sec="pos"]').classList.contains('open')) _lfxToggleSec('pos'); await wait(150);
+    if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+    const f = $('#fs-props .lfx-acc[data-sec="pos"] input[type=range]'); if (!f) return 'no X fader'; const u0 = _undoStack.length;
+    f.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, cancelable: true, button: 0 })); f.value = '300'; fire(f, 'input'); await wait(150); const kept = f.isConnected;
+    if (kept) { f.value = '420'; fire(f, 'input'); fire(f, 'change'); } window.dispatchEvent(new PointerEvent('pointerup', { bubbles: true })); await wait(250);
+    const x = _lfxGeo(A.pid, A.sid, 1, parseInt(A.s.w), parseInt(A.s.h)).x, steps = _undoStack.length - u0;
+    _lfxSnap = null; while (_undoStack.length > b0) { doUndo(); await wait(250); } _fsClearLayer(); await wait(200); mute();
+    return is([kept, x, steps], [true, 420, 1], 'fader survives the first step / X after the drag / undo steps');
+  });
+  await check('Advanced: Colour tag and Notes work when the BG is picked', async () => {
+    const b0 = _undoStack.length; pushUndo(); _fsAssignBg(A.pid, A.sid, 'TEST 4x3'); await wait(400);
+    _fsSetContentNotes('bg note'); _fsSetContentColor('#123abc'); _lfxCommit(); await wait(150); const me = customLibrary.find(c => c.l === 'TEST 4x3'); const got = [me.notes || '', me.c];
+    _lfxSnap = null; while (_undoStack.length > b0) { doUndo(); await wait(250); } _fsClearLayer(); await wait(200); mute();
+    return is(got, ['bg note', '#123abc'], 'notes / colour tag');
+  });
+  await check('Advanced: a Video card has a remove button; Remove asks first, empties every layer and BG that used the file with their clip settings, and one Undo brings it all back', async () => {
+    const name = clipOk ? 'TEST CLIP' : 'TEST 4x3'; const b0 = _undoStack.length; pushUndo();
+    homeSetL(A.pid, A.sid, 2, name); _fsAssignBg(A.pid, screens[1].id, name); setLayerMedia(A.pid, A.sid, 2, { hue: 20 }); _fsClearLayer(); _fsSetSrcTab('video'); await wait(400); mute();
+    const back0 = async () => { while (_undoStack.length > b0) { doUndo(); await wait(250); } _fsSetSrcTab('images'); _fsClearLayer(); await wait(300); mute(); };
+    const card = $$('#fs-source-list .fs-src-media').find(c => c.dataset.src === name); const x = card && card.querySelector('.fs-src-x'); if (!x) { await back0(); return 'no remove button on the Video card'; }
+    const u0 = _undoStack.length; x.click(); await wait(350); const asked = /Remove/.test(dialogText()) && /2 places/.test(dialogText()); okDialogs(); await wait(600);
+    const p = () => presets.find(q => q.id === A.pid); const gone = [customLibrary.some(c => c.l === name), getL(A.pid, A.sid, 2), (p().bgNames || {})[screens[1].id] || null, !!((p().layerMedia || {})[A.sid] || {})[2], _undoStack.length - u0];
+    doUndo(); await wait(700); mute(); const back = [customLibrary.some(c => c.l === name), getL(A.pid, A.sid, 2), (p().bgNames || {})[screens[1].id], !clipOk || !!_fsMediaUrl(name)];
+    await back0();
+    return is([asked, gone, back], [true, [false, null, null, false, 1], [true, name, name, true]], 'asked with the use count / after Remove (in library, L2, BG, clip settings, undo steps) / after one Undo (in library, L2, BG, file attached)');
+  });
+
   await check('Advanced: picking a plain layer shows Source, General, Position, Size, Opacity, Mask, Border, Shadow, Effects', async () => {
     _fsSelectLayer(A.pid, A.sid, 1); await wait(450);
     return is(secTitles().filter(t => t !== 'Media Info'), ['Source', 'General', 'Position', 'Size', 'Opacity', 'Mask', 'Border', 'Shadow', 'Effects'], 'sections');
@@ -343,6 +508,21 @@
     return is([Math.abs(g.h / g.w - 0.75) < 0.01, String(g.w) === shown], [true, true], 'corner drag');
   });
   if (clipOk) {
+// ═══ BLOCK 3 (goes with patch_shared.py, the tile code Simple and Advanced share) ═══ INSERT straight AFTER the check
+//   'Advanced: dragging a corner of a locked layer keeps its shape and the panel follows'
+  await check('Advanced: dragging a layer, dragging its corner and nudging it with the arrow keys are each one undo step that really goes back', async () => {
+    const b0 = _undoStack.length; pushUndo(); _fsClearLayer(); setLayerSize(A.pid, A.sid, 1, 0.4, 0.4, 0.1, 0.1); renderFullscreen(); await wait(300); mute();
+    const geo = () => { const g = _lfxGeo(A.pid, A.sid, 1, parseInt(A.s.w), parseInt(A.s.h)); return g.x + ',' + g.y + ',' + g.w + ',' + g.h; };
+    const drag = async (el, dx, dy) => { const r = el.getBoundingClientRect(), x = r.left + r.width / 2, y = r.top + r.height / 2; el.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true, clientX: x, clientY: y, button: 0 })); for (let i = 1; i <= 5; i++) { window.dispatchEvent(new MouseEvent('mousemove', { bubbles: true, clientX: x + dx * i / 5, clientY: y + dy * i / 5 })); await wait(15); } window.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, clientX: x + dx, clientY: y + dy })); await wait(300); };
+    const chip = () => $('#fs-canvas .layer-chip[data-pid="' + A.pid + '"][data-sid="' + A.sid + '"][data-lid="1"]'); const res = [];
+    let g0 = geo(), u0 = _undoStack.length; await drag(chip(), 30, 10); let moved = geo() !== g0; let st = _undoStack.length - u0; if (st) { doUndo(); await wait(350); } res.push([moved, st, geo() === g0]);
+    setLayerSize(A.pid, A.sid, 1, 0.4, 0.4, 0.1, 0.1); selLayer = { pid: A.pid, sid: A.sid, n: 1 }; renderFullscreen(); await wait(250); updateLayerSelDOM(A.pid, A.sid, 1, true); const h = $('#fs-canvas .layer-chip.lsel .lrh-br'); if (!h) { while (_undoStack.length > b0) { doUndo(); await wait(200); } return 'no corner handle on the picked layer'; }
+    g0 = geo(); u0 = _undoStack.length; await drag(h, -20, -12); moved = geo() !== g0; st = _undoStack.length - u0; if (st) { doUndo(); await wait(350); } res.push([moved, st, geo() === g0]);
+    setLayerSize(A.pid, A.sid, 1, 0.4, 0.4, 0.1, 0.1); selLayer = { pid: A.pid, sid: A.sid, n: 1 }; g0 = geo(); u0 = _undoStack.length; window._lbNudgeAt = 0; const k = key => document.body.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true })); k('ArrowRight'); k('ArrowRight'); k('ArrowDown'); await wait(300);
+    moved = geo() !== g0; st = _undoStack.length - u0; if (st) { doUndo(); await wait(350); } res.push([moved, st, geo() === g0]);
+    while (_undoStack.length > b0) { doUndo(); await wait(250); } _fsClearLayer(); await wait(200); mute();
+    return is(res, [[true, 1, true], [true, 1, true], [true, 1, true]], 'for a move, a corner drag and three arrow presses: [it moved, undo steps, one Undo restores it]');
+  });
     await check('Advanced: a clip dropped on the BG selects the BG and lists it like a layer', async () => {
       _fsAssignBg(A.pid, A.sid, 'TEST CLIP'); await wait(600); mute();
       return is([selLayer && selLayer.n, getBgName(A.pid, A.sid), secTitles().includes('Transition'), secTitles().includes('Position')], [0, 'TEST CLIP', true, false], 'BG');
@@ -429,6 +609,19 @@
       setLayerMedia(A.pid, A.sid, 0, { level: 100 }); _fsTlSync();
       return is([fine, undone, coarse % 5 === 0 && coarse > 100, keyed - coarse, p0 === p1], [103, 100, true, 1, true], 'Shift-drag 3 px up / undo / plain drag / Up Up Down / destination position unchanged');
     });
+// ═══ BLOCK 2 ═══ INSERT inside the `if (clipOk) { … }` group, straight AFTER the check
+//   'Advanced: Level moves in 1% steps with Shift-drag and with the arrow keys on the level line, a plain drag keeps the 5% detents, arrows do not nudge the destination'
+// (the BG of A holds TEST CLIP and is picked, the level line is on screen).
+    await check('Advanced: a click, a drag and a double-click on the Level line are each at most one undo step, and one Undo goes back', async () => {
+      selLayer = { pid: A.pid, sid: A.sid, n: 0 }; setLayerMedia(A.pid, A.sid, 0, { level: 60 }); renderFullscreen(); await wait(400); mute(); _fsTlSync();
+      const el = $('#fs-timeline .fs-tl-vol'); if (!el) return 'no level line'; const r = el.getBoundingClientRect(), x = r.left + r.width / 2, y = r.top + r.height / 2; const u0 = _undoStack.length;
+      const press = () => { el.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true, clientX: x, clientY: y, button: 0 })); window.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, clientX: x, clientY: y })); };
+      press(); press(); el.dispatchEvent(new MouseEvent('dblclick', { bubbles: true, cancelable: true, clientX: x, clientY: y })); await wait(250);
+      const lvl = getLayerMedia(A.pid, A.sid, 0).level, steps = _undoStack.length - u0; doUndo(); await wait(300); const undone = getLayerMedia(A.pid, A.sid, 0).level; mute();
+      while (_undoStack.length > u0) { doUndo(); await wait(200); } setLayerMedia(A.pid, A.sid, 0, { level: 100 }); _fsTlSync();
+      return is([lvl, steps <= 2, undone !== 100], [100, true, true], 'level after the double-click / no more than two undo steps for the whole gesture (it was three) / one Undo leaves 100');
+    });
+
     await check('Advanced: stepping to a preset that holds video with nothing picked wakes the Preset transport', async () => {
       const i = presets.findIndex(p => p.id === A.pid); const d = presets[i + 1] ? 1 : -1; if (!presets[i + d]) return 'no neighbour preset';
       _fsPauseAll(); fsNavPreset(d); await wait(600); const away = [Object.keys(_fsVideoEls).length, $('#fs-tl-pplay').disabled];
@@ -599,6 +792,103 @@
 
   // ── Wire, Advanced ──────────────────────────────────────────────────────────────────────────────────────────────
   let hub = null, rt = null;
+  // ── Wire SIMPLE click-through (wire-simple): INSERT in tests/flows_probe.js straight AFTER the check
+  //    'Wire: the Export window offers sheet sizes from Letter to ANSI E' (Wire is open in Simple at that point; every
+  //    check below re-opens it anyway). Helpers used: $, $$, wait, is, vis, restore, okDialogs, dlgOpen, srcNames.
+  //    Every one FAILS on build 16ko and PASSES with clickthrough/wire-simple/patch.py applied.
+  const wsOpen = async () => { if (getComputedStyle($('#wire-overlay')).display !== 'flex') { openWireMode(); await wait(450); } if (wireSettings.wireView !== 'simple') { wireSettings.wireView = 'simple'; _wireRender(); await wait(300); } };
+  const wsWireUp = () => getComputedStyle($('#wire-overlay')).display === 'flex';
+  const wsEsc = el => (el || document.body).dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', code: 'Escape', keyCode: 27, bubbles: true, cancelable: true }));
+  await check('Wire: Esc closes the Export window, a cable-type menu, the resolution menu, Help or a dialog first, never the Wire page under it', async () => {
+    const bad = [];
+    await wsOpen(); openWireExportModal(); await wait(250); wsEsc(); await wait(250); if (!wsWireUp()) bad.push('Export window: Wire closed'); if (vis($('#wire-export-modal'))) bad.push('Export window stayed open'); closeWireExportModal();
+    await wsOpen(); $('#wire-sources-panel .wire-cable-btn').click(); await wait(250); wsEsc(); await wait(250); if (!wsWireUp()) bad.push('cable-type menu: Wire closed'); if ($$('.sys-dd').some(vis)) bad.push('cable-type menu stayed open'); if (typeof _sysCloseMenu === 'function') _sysCloseMenu();
+    await wsOpen(); $('#wire-sources-panel .wire-res-dropdown-btn').click(); await wait(250); wsEsc(); await wait(250); if (!wsWireUp()) bad.push('resolution menu: Wire closed'); if ($('.shared-res-dd')) bad.push('resolution menu stayed open'); closeSharedResPicker();
+    await wsOpen(); actions.help(); await wait(300); wsEsc(); await wait(300); if (!wsWireUp()) bad.push('Help: Wire closed'); try { closeHelp(); } catch (e) {}
+    await wsOpen(); showAlert({ variant: 'info', title: 'Esc test', message: 'x' }); await wait(250); wsEsc(); await wait(300); if (!wsWireUp()) bad.push('dialog: Wire closed'); okDialogs();
+    /* and with nothing open the documented cascade still runs: preset filter first, then leave Wire */
+    await wsOpen(); _wireSelectPreset(presets[0].id); await wait(200); wsEsc(); await wait(200); if (_wireState.activePreset !== null || !wsWireUp()) bad.push('cascade: the first Esc did not just clear the preset filter'); wsEsc(); await wait(250); if (wsWireUp()) bad.push('cascade: the second Esc did not leave Wire');
+    await wsOpen(); return bad.length ? bad.join(' | ') : true;
+  });
+  await check('Wire: Esc in the rename field or a resolution field cancels the typing and leaves the Wire page open', async () => {
+    await wsOpen(); const n = srcNames(); const pen = $$('#wire-sources-panel .wire-src-pen')[0]; pen.click(); await wait(200);
+    const inp = $('#wire-sources-panel .wire-src-rename'); inp.value = 'ESC TEST NAME'; wsEsc(inp); await wait(350); const a = [wsWireUp(), srcNames()[0] === n[0]];
+    await wsOpen(); const res = $('#wire-sources-panel .wire-source-res'); const was = res.value; res.focus(); res.value = '999x999'; wsEsc(res); await wait(350);
+    const meta = _wireGetSourceMeta(srcNames()[0]); const out = is([a, wsWireUp(), meta.resolution === was], [[true, true], true, true], 'rename [Wire open, name kept] / Wire open after Esc in resolution / old resolution kept');
+    await restore(); await wsOpen(); return out;
+  });
+  await check('Wire: + Destination opens ABOVE the Wire page and the new destination lands in the Wire panel', async () => {
+    await wsOpen(); const n = screens.length; actions.addDestination(); await wait(350); const m = $('#modal'); const f = $('#ms-n'); const r = f.getBoundingClientRect(); const top = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+    const reach = !!top && m.contains(top); f.value = 'WIRE STACK DEST'; $('#ms-w').value = '1920'; $('#ms-h').value = '1080'; confirmScreen(); await wait(500); okDialogs(); await wait(300);
+    const listed = $$('#wire-sources-panel .wire-source-name').some(e => /WIRE STACK DEST/.test(e.textContent));
+    const out = is([reach, screens.length, listed], [true, n + 1, true], 'window reachable over Wire / destination count / listed in Wire'); await restore(); await wsOpen(); return out;
+  });
+  await check('Wire: an edit made on a card (cable colour) lights the unsaved mark without leaving Wire', async () => {
+    await restore(); await wsOpen(); await wait(500); _captureCleanBaseline(); _recomputeDirty(); const before = _isDirty;   /* opening Wire gives uncoloured sources a cable colour: start from a clean mark */
+    _wireRandomizeSourceColor(srcNames()[0]); await wait(700); const after = _isDirty;
+    await restore(); await wsOpen(); return is([before, after], [false, true], 'unsaved mark before / after');
+  });
+  await check('Wire: one source thumbnail upload is ONE undo step (picture and sampled colour together)', async () => {
+    await wsOpen(); const name = srcNames()[0]; const cv = document.createElement('canvas'); cv.width = 64; cv.height = 36; const x = cv.getContext('2d'); x.fillStyle = '#d81e28'; x.fillRect(0, 0, 64, 36);
+    const blob = await new Promise(r => cv.toBlob(r, 'image/png')); const realClick = HTMLInputElement.prototype.click;
+    HTMLInputElement.prototype.click = function () { if (this.type !== 'file') return realClick.call(this); const dt = new DataTransfer(); dt.items.add(new File([blob], 't.png', { type: 'image/png' })); this.files = dt.files; this.dispatchEvent(new Event('change')); };
+    const u0 = _undoStack.length; try { _wireUploadThumbnail('src:' + name); await wait(900); } finally { HTMLInputElement.prototype.click = realClick; }
+    const steps = _undoStack.length - u0; const has = !!wireThumbnails['src:' + name]; doUndo(); await wait(400); const left = !!wireThumbnails['src:' + name];
+    await restore(); await wsOpen(); return is([has, steps, left], [true, 1, false], 'uploaded / undo steps / picture left after one undo');
+  });
+  await check('Wire Simple: moving a cable by its handle is one undo step, and Reset Layout puts the cable back', async () => {
+    await wsOpen(); _wireSetZoom(1); await wait(200); const p = $('#wire-diagram .wire-edge[data-edge-key^="simple:hout:0"]'); const key = p.getAttribute('data-edge-key');
+    _wireState.selectedNodes.clear(); _wireState.selectedEdgeKey = key; _wireRender(); await wait(250); const h = $('#wire-diagram .wire-mid-handle'); if (!h) return 'no handle on the selected cable';
+    const r = h.getBoundingClientRect(), x = r.left + r.width / 2, y = r.top + r.height / 2; const u0 = _undoStack.length;
+    h.dispatchEvent(new MouseEvent('mousedown', { clientX: x, clientY: y, button: 0, bubbles: true, cancelable: true }));
+    window.dispatchEvent(new MouseEvent('mousemove', { clientX: x + 20, clientY: y + 24, bubbles: true })); window.dispatchEvent(new MouseEvent('mousemove', { clientX: x + 30, clientY: y + 36, bubbles: true }));
+    window.dispatchEvent(new MouseEvent('mouseup', { clientX: x + 30, clientY: y + 36, bubbles: true })); await wait(300);
+    const moved = Math.round(_wireGetEdgeOffset(key)), steps = _undoStack.length - u0; _wireResetLayout(); await wait(300); const afterReset = Math.round(_wireGetEdgeOffset(key));
+    doUndo(); await wait(300); const undone = Math.round(_wireGetEdgeOffset(key)); await restore(); await wsOpen();
+    return is([moved !== 0, steps, afterReset, undone === moved], [true, 1, 0, true], 'moved / undo steps / offset after Reset Layout / undo of the reset brings it back');
+  });
+  await check('Wire Simple: typing the switcher name is one undo step', async () => {
+    await wsOpen(); const inp = $('#wire-diagram .wire-hub-name'); const u0 = _undoStack.length; inp.value = 'E2 MAIN'; inp.dispatchEvent(new Event('change', { bubbles: true })); await wait(300);
+    const steps = _undoStack.length - u0, named = _wireHubName(); doUndo(); await wait(350); const back = _wireHubName(); await restore(); await wsOpen();
+    return is([named, steps, back], ['E2 MAIN', 1, ''], 'name / undo steps / name after undo');
+  });
+  await check('Wire Simple: a source that was dragged keeps its place (and its cable route) when it is renamed', async () => {
+    await wsOpen(); const old = srcNames()[0]; pushUndo(); wireLayout['src:' + old] = { x: -120, y: -60 }; _wireSetEdgeOffset('simple:src:' + old + '→hin:0', 22); _wireRender(); await wait(250);
+    const pen = $$('#wire-sources-panel .wire-src-pen').find(b => b.closest('.wire-source-name').textContent.trim() === old); pen.click(); await wait(200);
+    const inp = $('#wire-sources-panel .wire-src-rename'); inp.value = 'MOVED AND RENAMED'; inp.dispatchEvent(new Event('blur')); await wait(600);
+    const g = $$('#wire-diagram .wire-node').find(n => n.getAttribute('data-node-id') === 'src:MOVED AND RENAMED'); const rc = g ? g.querySelector('rect') : null;
+    const out = is([rc ? [+rc.getAttribute('x'), +rc.getAttribute('y')] : null, _wireGetEdgeOffset('simple:src:MOVED AND RENAMED→hin:0'), Object.keys(wireLayout).includes('src:' + old)], [[-120, -60], 22, false], 'node place / cable offset / old key left behind');
+    await restore(); await wsOpen(); return out;
+  });
+  await check('Wire Details: a BG counts as use, for the source and for the destination', async () => {
+    await wsOpen(); const sid = screens[0].id; const p = presets[presets.length - 1]; pushUndo(); const nm = 'BG ONLY SRC'; p.bgNames = p.bgNames || {}; p.bgNames[sid] = nm; _wireRender(); await wait(200);
+    _wireState.selectedNodes.clear(); _wireSelectNode('src:' + nm, false); await wait(250); const srcTxt = $('#wire-details').textContent.replace(/\s+/g, ' ');
+    _wireSelectNode('dst:' + sid, false); await wait(250); const dstTxt = $('#wire-details').textContent.replace(/\s+/g, ' ');
+    await restore(); await wsOpen(); return is([/Active in 1 preset/.test(srcTxt), dstTxt.includes(nm)], [true, true], 'source Details counts the BG / destination Details lists the BG');
+  });
+  await check('Wire Simple: Fit brings a node that was dragged far away back on screen', async () => {
+    await wsOpen(); const nm = srcNames()[0]; pushUndo(); wireLayout['src:' + nm] = { x: -900, y: -1100 }; _wireRender(); await wait(200); _wireZoomFit(); await wait(450);
+    const g = $$('#wire-diagram .wire-node').find(n => n.getAttribute('data-node-id') === 'src:' + nm); const r = g.getBoundingClientRect(); const sc = $('#wire-diagram-scroll').getBoundingClientRect();
+    const L = $('#wire-panel-left').getBoundingClientRect().right, R = $('#wire-panel-right').getBoundingClientRect().left;
+    const ok = r.left >= L - 1 && r.right <= R + 1 && r.top >= sc.top - 1 && r.bottom <= sc.bottom + 1; await restore(); await wsOpen(); _wireZoomFit(); await wait(200); _wireSetZoom(1);
+    return ok ? true : 'the moved node sits at ' + Math.round(r.left) + ',' + Math.round(r.top) + ' outside the drawing area after Fit';
+  });
+  await check('Wire export: the printed Simple switcher reads ID over its columns, like the screen (no SLOT)', async () => {
+    await wsOpen(); const svg = _wireExportSheetsSvg('light'); return is([(svg.match(/>SLOT</g) || []).length, (svg.match(/>ID</g) || []).length], [0, 2], 'SLOT cells / ID cells on the sheet');
+  });
+  await check('Wire Asset Pack: a destination tile and an AUX tile use the colour of their card', async () => {
+    await wsOpen(); const realClick = HTMLAnchorElement.prototype.click; let zip = null; HTMLAnchorElement.prototype.click = function () { if (this.download && /thumbnails\.zip$/.test(this.download)) { zip = fetch(this.href).then(r => r.blob()); return; } return realClick.call(this); };
+    try { await _wireDownloadAllThumbnails(); } finally { HTMLAnchorElement.prototype.click = realClick; } if (!zip) return 'no ZIP was produced';
+    const buf = new Uint8Array(await (await zip).arrayBuffer()), dv = new DataView(buf.buffer); let o = 0; const px = {};
+    while (o + 30 < buf.length && dv.getUint32(o, true) === 0x04034b50) { const sz = dv.getUint32(o + 18, true), nl = dv.getUint16(o + 26, true), el = dv.getUint16(o + 28, true); const name = new TextDecoder().decode(buf.slice(o + 30, o + 30 + nl)); const kind = /^destinations\//.test(name) ? 'dest' : (/^aux-dsm\//.test(name) ? 'aux' : '');
+      if (kind && !px[kind]) { const bm = await createImageBitmap(new Blob([buf.slice(o + 30 + nl + el, o + 30 + nl + el + sz)], { type: 'image/png' })); const cv = document.createElement('canvas'); cv.width = bm.width; cv.height = bm.height; const x = cv.getContext('2d'); x.drawImage(bm, 0, 0); const d = x.getImageData(5, 5, 1, 1).data; px[kind] = '#' + [d[0], d[1], d[2]].map(v => v.toString(16).padStart(2, '0')).join(''); }
+      o += 30 + nl + el + sz; }
+    return is([px.dest, px.aux], [_wireNodeColor('dest', screens[0].id).toLowerCase(), _wireNodeColor('dsm', dsms[0].id).toLowerCase()], 'first destination tile / first AUX tile');
+  });
+  await check('Help: the Wire section describes the switcher in the middle, not "lines showing what feeds what"', async () => {
+    actions.help(); await wait(300); if (typeof helpTab === 'function') helpTab('ref'); await wait(200); const t = ($('#help-overlay') || document.body).textContent; closeHelp(); await wait(150);
+    return is([/lines showing what feeds what/.test(t), /the switcher in the middle/.test(t)], [false, true], 'old sentence / new sentence');
+  });
   await check('Wire Advanced: page 1 is built from the show, every source wired into the switcher', async () => {
     wireSettings.wireView = 'advanced'; _wireRender(); await wait(400); _wireAdvSeedFromSimple(true); _wireRender(); await wait(600); hub = wireAdvanced.routers[0];
     const n = srcNames().length; return is([wireAdvanced.sources.length, !!hub, hub && hub.inC, wireAdvanced.wires.length >= n], [n, true, n, true], 'seed');
@@ -717,6 +1007,102 @@
     return is([at1, pt0, at2, pt1, steps], ['in1', 'A1', 'in0', 'A2', 2], 'Tab down the ID column');
   });
 
+// wire-advanced click-through (2026-09-21) — regression checks for tests/flows_probe.js.
+// Every block FAILS on build 16ko unpatched and PASSES with patch.py applied (proved with runflows.mjs, see the report).
+//
+// INSERT all blocks, in this order, right AFTER the check
+//     'Wire Advanced: Tab in an ID cell commits it and lands in the next ID cell of the same column, Shift+Tab goes back up'
+// and BEFORE 'Wire: closes cleanly'. Wire is open in Advanced on page 1 at that point, `hub` is the seeded switcher and the
+// section's own restore() follows 'Wire: closes cleanly'. Each block works on a spare page and leaves page 1 active.
+// Synthetic events on purpose (the probe runs inside the page); keys go to <body> the way an unfocused page receives them.
+
+  const _waKey = (k, target) => (target || document.body).dispatchEvent(new KeyboardEvent('keydown', { key: k, bubbles: true, cancelable: true }));
+  const _waWireUp = () => getComputedStyle($('#wire-overlay')).display === 'flex';
+  const _waSpare = async () => { const p = wireAdvanced._pages[wireAdvanced._pages.length - 1]; _wireSwitchPage(p.id); await wait(250); return p; };
+  const _waHome = async () => { if (!_waWireUp()) { openWireMode(); await wait(300); } _wireState.selectedNodes = new Set(); _wireState.selectedEdgeKey = null; const cur = wireAdvanced._activePageId; if (cur !== wireAdvanced._pages[0].id) { ['sources', 'dests', 'dsms', 'routers', 'devices', 'wires', 'customSources', 'customDests', 'customDsms'].forEach(k => { wireAdvanced[k] = []; }); _wireSwitchPage(wireAdvanced._pages[0].id); await wait(250); } while (wireAdvanced._pages.length > 3 && !_wireAdvPageUsed(wireAdvanced._pages[wireAdvanced._pages.length - 1].id) && !_wireAdvPageUsed(wireAdvanced._pages[wireAdvanced._pages.length - 2].id)) { const gone = wireAdvanced._pages.pop(); delete wireAdvanced._pageData[gone.id]; } _wireRender(); hub = wireAdvanced.routers.find(r => r.id === hub.id) || hub; };
+
+  await check('Wire Advanced: an edit lights the Save indicator (the show knows it is dirty without a trip through Video Presets)', async () => {
+    await _waSpare(); _captureCleanBaseline(); _recomputeDirty(); const before = _isDirty;
+    _wireAdvAddCustomDest(); await wait(700); const lit = _isDirty;
+    await _waHome(); return is([before, lit], [false, true], 'dirty before / after adding a custom destination');
+  });
+  await check('Wire Advanced: renaming a page is one undo step, Escape in the name box cancels and leaves Wire open, no page error', async () => {
+    const p = await _waSpare(); const old = p.name, u0 = _undoStack.length; let errs = 0; const onErr = () => { errs++; }; window.addEventListener('error', onErr);
+    _wireBeginRenamePage(p.id); await wait(80); let box = $('#wire-page-rename-input'); if (!box) { window.removeEventListener('error', onErr); return 'no rename box'; }
+    box.value = 'TRUCK'; box.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true })); await wait(250); const named = p.name, steps = _undoStack.length - u0;
+    _wireBeginRenamePage(p.id); await wait(80); box = $('#wire-page-rename-input'); box.value = 'XXXX'; box.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true })); await wait(250);
+    const afterEsc = p.name, up = _waWireUp(); window.removeEventListener('error', onErr);
+    const pg = wireAdvanced._pages.find(x => x.id === p.id); if (pg) pg.name = old; await _waHome();
+    return is([named, steps, afterEsc, up, errs], ['TRUCK', 1, 'TRUCK', true, 0], 'name after Enter / undo steps / name after Escape / Wire still open / page errors');
+  });
+  await check('Wire Advanced: the copy and close icons stay inside the tab when the page name is long', async () => {
+    const p0 = wireAdvanced._pages[0], keep = p0.name; p0.name = 'GENERAL SESSION MAIN ROOM COPY'; _wireRender(); await wait(200);
+    const tab = $$('#wire-page-tabs button').find(b => b.querySelector('span[title="Close this page"]')); if (!tab) { p0.name = keep; _wireRender(); return 'no active tab'; }
+    const tr = tab.getBoundingClientRect(); const out = $$('span[onclick]', tab).map(s => s.getBoundingClientRect()).filter(r => r.right > tr.right + 0.5 || r.width === 0).length;
+    const x = tab.querySelector('span[title="Close this page"]').getBoundingClientRect(); const top = document.elementFromPoint(x.left + x.width / 2, x.top + x.height / 2); const hit = !!top && !!top.closest('span[title="Close this page"]');
+    p0.name = keep; _wireRender(); await wait(150); return is([out, hit], [0, true], 'icons outside the tab / the close icon is the top element at its own centre');
+  });
+  await check('Wire Advanced: Escape closes what is on top first (cable menu, export window, an armed matrix key); only a bare Escape closes Wire', async () => {
+    await _waSpare(); _wireAdvAddDevice('converter', 1, 1); await wait(300); const btn = $('#wire-diagram .wire-device-tile .dv-conn'); if (!btn) { await _waHome(); return 'no cable type button'; }
+    btn.click(); await wait(200); const menuOpen = !!$('.sys-dd'); _waKey('Escape'); await wait(200); const a = [!$('.sys-dd'), _waWireUp()]; if (!_waWireUp()) { _sysCloseMenu(); openWireMode(); await wait(300); }
+    openWireExportModal(); await wait(250); _waKey('Escape'); await wait(200); const b = [getComputedStyle($('#wire-export-modal')).display === 'none', _waWireUp()]; if (!_waWireUp()) { closeWireExportModal(); openWireMode(); await wait(300); }
+    _wireAdvAddRouterAsym(2, 2); await wait(400); const k = $('#wire-diagram .rt-out'); if (k) k.click(); await wait(150); _waKey('Escape'); await wait(200); const c2 = [!_wireRtArmed, _waWireUp()]; _wireRtArmed = null; if (!_waWireUp()) { openWireMode(); await wait(300); }
+    await _waHome(); return is([menuOpen, a, b, c2], [true, [true, true], [true, true], [true, true]], 'menu opened / [menu closed, Wire open] / [export closed, Wire open] / [key disarmed, Wire open]');
+  });
+  await check('Wire Advanced: with Wire open, Delete removes the selected tile and never the layer selected in Video Presets behind it', async () => {
+    const f = firstLayer(); const was = getL(f.pid, f.sid, 1); await _waSpare();
+    wireAdvanced.dests.push({ id: 'waKeyD', refId: screens[0].id, x: 600, y: 100 }); _wireState.selectedNodes = new Set(['adst:waKeyD']); _wireRender(); await wait(200);
+    selLayer = { pid: f.pid, sid: f.sid, n: 1 }; const u0 = _undoStack.length; _waKey('Delete'); await wait(300);
+    const out = [wireAdvanced.dests.length, getL(f.pid, f.sid, 1), _undoStack.length - u0]; selLayer = null; if (getL(f.pid, f.sid, 1) !== was) { setL(f.pid, f.sid, 1, was); scheduleRender(); }
+    await _waHome(); return is(out, [0, was, 1], 'tiles left / the layer behind / undo steps');
+  });
+  await check('Wire Advanced: the size window sits under the app dialog, so "Invalid size" can be answered', async () => {
+    _wireAdvAddRouterCustom(); await wait(200); const l = $('#wire-ioc-left'); if (!l) return 'no size window'; l.value = '99'; $('#wire-ioc-go').click(); await wait(250);
+    const ok = $('#dlg-confirm'), r = ok.getBoundingClientRect(), top = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2); const onTop = dlgOpen() && !!top && (top === ok || ok.contains(top));
+    okDialogs(); await wait(150); const o = $('#wire-iocount-overlay'); if (o) $('#wire-ioc-cancel').click(); await wait(150);
+    return is(onTop, true, 'the OK button of the alert is the top element');
+  });
+  await check('Wire Advanced: deleting a destination tile takes its BACKUP cable too, the switcher row is free again', async () => {
+    await _waSpare(); _wireAdvAddSwitcher('WA TEST', 2, 2); await wait(400); const r = wireAdvanced.routers[wireAdvanced.routers.length - 1];
+    wireAdvanced.dests.push({ id: 'waBk', refId: screens[0].id, x: 1500, y: 0, inC: 2 }); wireAdvanced.wires.push({ id: 'waW1', fromId: 'rop:' + r.id + ':0', toId: 'adst:waBk' }, { id: 'waW2', fromId: 'rop:' + r.id + ':1', toId: 'adp:waBk:1' });
+    _wireState.selectedNodes = new Set(['adst:waBk']); _wireRender(); await wait(200); _wireAdvDeleteSelected(); await wait(250); const left = wireAdvanced.wires.length;
+    _wireAdvRouterRemovePort(r.id, 'out', 1); await wait(250); const refused = /Port in use/i.test(dialogText()); okDialogs(); await wait(100);
+    await _waHome(); return is([left, refused], [0, false], 'cables left in the data / "Port in use" on the freed row');
+  });
+  await check('Wire Advanced: typing an output point name is one undo step', async () => {
+    await _waSpare(); wireAdvanced.sources.push({ id: 'waPn', name: srcNames()[0], x: 100, y: 100, outC: 2, portLabels: true, portNames: ['', ''] }); _wireRender(); await wait(250);
+    const box = $('.wire-srcport-name[data-src-id="waPn"][data-port="1"]'); if (!box) { await _waHome(); return 'no name box'; } const u0 = _undoStack.length;
+    box.value = 'BACKUP'; fire(box, 'change'); await wait(250); const steps = _undoStack.length - u0; await _waHome(); return is(steps, 1, 'undo steps');
+  });
+  await check('Wire Advanced: a converter that grows pushes the tile under it down, an I/O Patch page tile never lands on another tile', async () => {
+    await _waSpare(); wireAdvanced.devices.push({ id: 'waV1', kind: 'converter', name: '', x: 420, y: 260, ins: [{ conn: '', name: '' }, { conn: '', name: '' }], outs: [{ conn: '', name: '' }] }, { id: 'waV2', kind: 'switch', name: '', x: 420, y: 460, ins: [{ conn: 'Ethernet', name: '' }], outs: [] }); _wireRender(); await wait(200);
+    for (let i = 0; i < 4; i++) _wireAdvDeviceAddPort('waV1', 'in'); await wait(250); const a = _wireAdvNodeRect('device:waV1'), b = _wireAdvNodeRect('device:waV2'); const overlap = a.y + a.h > b.y;
+    await _waHome(); const keep = JSON.stringify(ioAdvanced.pages[1]); const pg = ioAdvanced.pages[1]; pg.sources = [{ name: 'WA SRV 1' }, { name: 'WA SRV 2' }]; pg.dests = [{ name: 'WA LED' }];
+    const n = wireAdvanced.routers.length; _wireAdvAddPatchTile(1); await wait(400); const L = _wireAdvTileList(), me = L.find(t => t.id === 'router:' + wireAdvanced.routers[wireAdvanced.routers.length - 1].id);
+    const hits = (wireAdvanced.routers.length === n + 1) ? L.filter(t => t !== me && me.x < t.x + t.w && me.x + me.w > t.x && me.y < t.y + t.h && me.y + me.h > t.y).length : -1;
+    wireAdvanced.routers.splice(n); ioAdvanced.pages[1] = JSON.parse(keep); _wireRender(); await wait(250); hub = wireAdvanced.routers.find(r => r.id === hub.id) || hub;
+    return is([overlap, hits], [false, 0], 'converter overlaps the switch below / tiles under the new patch tile');
+  });
+  await check('Wire Advanced: a custom destination reads by name in Details and in the switcher cell; removing a custom source card takes its tiles', async () => {
+    await _waSpare(); _wireAdvAddCustomDest(); const cd = wireAdvanced.customDests[wireAdvanced.customDests.length - 1]; cd.name = 'WA RECORD'; _wireAdvAddSwitcher('WA TEST', 2, 2); await wait(400); const r = wireAdvanced.routers[wireAdvanced.routers.length - 1];
+    wireAdvanced.dests.push({ id: 'waCd', refId: cd.id, x: 1500, y: 300 }); wireAdvanced.wires.push({ id: 'waW9', fromId: 'rop:' + r.id + ':0', toId: 'adst:waCd' }); _wireState.selectedNodes = new Set(['adst:waCd']); _wireRender(); await wait(250);
+    const det = /WA RECORD/.test($('#wire-details').textContent), cell = r.outputs[0].name;
+    _wireAdvAddCustomSource(); const cs = wireAdvanced.customSources[wireAdvanced.customSources.length - 1]; wireAdvanced.sources.push({ id: 'waCs', name: cs.name, x: 0, y: 900 }); wireAdvanced.wires.push({ id: 'waW8', fromId: 'asrc:waCs', toId: 'rip:' + r.id + ':1' }); _wireRender(); await wait(200);
+    _wireAdvDeleteCustom('src', cs.id); await wait(250); const tileLeft = wireAdvanced.sources.some(s => s.id === 'waCs'), cableLeft = wireAdvanced.wires.some(w => w.id === 'waW8');
+    await _waHome(); return is([det, cell, tileLeft, cableLeft], [true, 'WA RECORD', false, false], 'Details names it / switcher cell / tile left / cable left');
+  });
+  await check('Wire Advanced: Reset Layout tidies the Advanced page and leaves the Simple layout alone; the default router subtitle follows its size', async () => {
+    await _waSpare(); wireLayout['src:' + srcNames()[0]] = { x: 555, y: 444 }; wireAdvanced.sources.push({ id: 'waR1', name: srcNames()[0], x: 100, y: 100 }, { id: 'waR2', name: srcNames()[1], x: -400, y: 900 }); _wireRender(); await wait(200);
+    _wireResetLayout(); await wait(400); const kept = !!wireLayout['src:' + srcNames()[0]], lined = wireAdvanced.sources.length === 2 && wireAdvanced.sources[0].x === wireAdvanced.sources[1].x; delete wireLayout['src:' + srcNames()[0]];
+    _wireAdvAddRouterAsym(2, 2); await wait(400); const r = wireAdvanced.routers[wireAdvanced.routers.length - 1]; _wireAdvRouterAddPort(r.id, 'in'); await wait(250); const label = r.label;
+    await _waHome(); return is([kept, lined, label], [true, true, 'UNTITLED 3X2 ENGINEERING RACK'], 'Simple layout kept / stray tile back in its column / subtitle');
+  });
+  await check('Wire Advanced: Tab out of a typed name cell lands in the next text box instead of nowhere', async () => {
+    await _waSpare(); _wireAdvAddRouterAsym(2, 2); await wait(400); const cell = $('#wire-diagram .wire-matrix-grid .rc input:not(.r-slot)'); if (!cell) { await _waHome(); return 'no name cell'; }
+    cell.focus(); cell.select(); document.execCommand('insertText', false, 'CAM 7'); cell.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', code: 'Tab', bubbles: true, cancelable: true })); cell.blur(); await wait(300);
+    const ae = document.activeElement; const on = !!ae && ae.tagName === 'INPUT' && !!ae.closest('#wire-diagram'); if (ae && ae.blur) ae.blur();
+    const typed = wireAdvanced.routers[wireAdvanced.routers.length - 1].inputs[0].name; await _waHome(); return is([typed, on], ['CAM 7', true], 'name stored / focus is in a text box on the canvas');
+  });
   await check('Wire: closes cleanly', async () => { closeWireMode(); await wait(300); return is(getComputedStyle($('#wire-overlay')).display, 'none', 'overlay'); });
   await restore();
 
@@ -763,6 +1149,76 @@
   await restore();
 
   // ── exports, Quick Start, Help, bug report ──────────────────────────────────────────────────────────────────────
+  // ── I/O Patch click-through (2026-09-21): INSERT in tests/flows_probe.js straight AFTER the check
+  //    'I/O Patch: closes cleanly' (the `await restore();` that follows it can stay where it is). Every check below opens
+  //    the I/O Patch itself, restores the show and closes the page again. No media. Each one FAILS on build 16ko without
+  //    the io-patch patch and PASSES with it.
+  const ioEsc = el => (el || document.body).dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }));
+  const ioOpenSimple = async () => { openSystem(); await wait(500); if (ioAdvanced.view !== 'simple') { _ioSetView('simple'); await wait(400); } okDialogs(); };
+  const ioRow = name => $$('#sys-src-rows .sys-row').find(r => ($('.sys-name-input', r) || {}).value === name);
+  const ioPick = async (pill, re) => { _sysOpenDropdown(pill); await wait(150); const it = $$('.sys-dd .sys-dd-item').find(i => re.test(i.textContent.trim())); if (!it) { _sysCloseMenu(); return false; } it.click(); await wait(300); return true; };
+  await check('I/O Patch: a connector pick, a custom resolution, a note and a typed rename are each ONE undo step', async () => {
+    await restore(); await ioOpenSimple(); const n = srcNames()[0]; const before = JSON.stringify(_sysGetSourceMeta(n)); const out = [];
+    const u0 = _undoStack.length; if (!await ioPick($('[data-sys-field="connector"]', ioRow(n)), /^3G-SDI/)) return 'no 3G-SDI in the connector menu';
+    out.push(_undoStack.length - u0); doUndo(); await wait(300); out.push(JSON.stringify(_sysGetSourceMeta(n)) === before);
+    const u1 = _undoStack.length; await ioPick($('[data-sys-field="resolution"]', ioRow(n)), /^Custom resolution/); $('#sys-cf-w').value = '5000'; $('#sys-cf-h').value = '1200'; $('#sys-cf-save').click(); await wait(300);
+    out.push(_undoStack.length - u1); doUndo(); await wait(300); out.push(JSON.stringify(_sysGetSourceMeta(n)) === before);
+    const u2 = _undoStack.length; const nt = $('.sys-notes-input', ioRow(n)); nt.focus(); nt.value = 'UNDO NOTE'; fire(nt, 'change'); nt.blur(); await wait(200);
+    out.push(_undoStack.length - u2); doUndo(); await wait(300); out.push(JSON.stringify(_sysGetSourceMeta(n)) === before);
+    const u3 = _undoStack.length; const nm = $('.sys-name-input', ioRow(n)); nm.focus(); nm.value = 'UNDO RENAMED'; nm.blur(); await wait(400);
+    out.push(_undoStack.length - u3); doUndo(); await wait(400); out.push(srcNames()[0] === n && !srcNames().includes('UNDO RENAMED'));
+    closeSystem(); await restore(); return is(out, [1, true, 1, true, 1, true, 1, true], 'undo steps / state back, for connector, custom resolution, note, rename');
+  });
+  await check('I/O Patch: deleting a source from its row is one undo step and Undo puts it back in every preset', async () => {
+    await restore(); await ioOpenSimple(); const f = firstLayer(); const n = getL(f.pid, f.sid, 1); const refs = () => JSON.stringify(presets.map(p => p.layers)).split(JSON.stringify(n)).length - 1; const r0 = refs(), u0 = _undoStack.length;
+    $('[data-sys-action="delete"]', ioRow(n)).click(); await wait(250); const go = $('#sys-confirm-go'); if (!go) return 'no confirm window'; go.click(); await wait(400); const gone = refs();
+    const steps = _undoStack.length - u0; doUndo(); await wait(400); const back = refs(); closeSystem(); await restore();
+    return is([gone, steps, back], [0, 1, r0], 'layer references after delete / undo steps / after undo');
+  });
+  await check('I/O Patch: Add Source and Add MV are undo steps', async () => {
+    await restore(); await ioOpenSimple(); const s0 = sources.length, m0 = multiviewers.length, u0 = _undoStack.length;
+    _sysAddSource(); await wait(200); _sysAddMV(); await wait(200); const steps = _undoStack.length - u0; doUndo(); await wait(300); doUndo(); await wait(300);
+    const out = is([steps, sources.length, multiviewers.length], [2, s0, m0], 'undo steps / sources / multiviewers after two undos'); closeSystem(); await restore(); return out;
+  });
+  await check('I/O Patch: Escape closes the menu, the window or the field on top, never the page underneath', async () => {
+    await restore(); await ioOpenSimple(); const open = () => $('#sys-overlay').classList.contains('open'); const n = srcNames()[0]; const out = [];
+    _sysOpenDropdown($('[data-sys-field="connector"]', ioRow(n))); await wait(150); ioEsc(); await wait(200); out.push(!$('.sys-dd'), open()); if (!open()) { _sysCloseMenu(); openSystem(); await wait(400); }
+    await ioPick($('[data-sys-field="resolution"]', ioRow(n)), /^Custom resolution/); ioEsc($('#sys-cf-w')); await wait(200); out.push(!$('#sys-cf-overlay'), open()); if (!open()) { openSystem(); await wait(400); }
+    const nt = $('.sys-notes-input', ioRow(n)); const was = nt.value; nt.focus(); nt.value = was + ' typed then Escape'; ioEsc(nt); await wait(200); out.push(open(), (_sysGetSourceMeta(n).notes || '') !== was + ' typed then Escape'); if (!open()) { openSystem(); await wait(400); }
+    _ioSetView('advanced'); await wait(700); okDialogs(); _ioRenamePage(1); await wait(200); const inp = $('#io-page-rename'); if (!inp) return 'the page name box did not open'; ioEsc(inp); await wait(250); out.push(open());
+    ioEsc(); await wait(250); out.push(open());   // nothing on top: Escape closes the I/O Patch, as the Help says
+    closeSystem(); await restore(); return is(out, [true, true, true, true, true, true, true, false], 'menu closed / page open, window closed / page open, page open / note not kept, page open after a page-rename Escape, page closed by a bare Escape');
+  });
+  await check('I/O Patch: a source cannot take a name that is already in the show', async () => {
+    await restore(); await ioOpenSimple(); const a = srcNames()[0], b = srcNames()[2], n0 = srcNames().length; const nm = $('.sys-name-input', ioRow(a)); nm.focus(); nm.value = b; nm.blur(); await wait(400);
+    const said = /already a source/i.test(dialogText()); okDialogs(); await wait(200); const dup = sources.filter(s => s && s.name === b).length;
+    const out = is([said, srcNames().length, srcNames()[0], dup], [true, n0, a, 1], 'refused with a message / source count / first source / entries named ' + b); closeSystem(); await restore(); return out;
+  });
+  await check('I/O Patch: a source renamed or deleted in Simple does not come back as a ghost row after Advanced is opened', async () => {
+    await restore(); await ioOpenSimple(); _ioSetView('advanced'); await wait(700); okDialogs(); _ioSetView('simple'); await wait(400); const a = srcNames()[0], b = srcNames()[3];
+    const nm = $('.sys-name-input', ioRow(a)); nm.focus(); nm.value = 'GHOST TEST'; nm.blur(); await wait(400);
+    $('[data-sys-action="delete"]', ioRow(b)).click(); await wait(250); $('#sys-confirm-go').click(); await wait(400);
+    _ioSetView('advanced'); await wait(800); const cancel = $('#dlg-cancel'); if (dlgOpen() && cancel) cancel.click(); await wait(300); const names = srcNames(); const p1 = ioAdvanced.pages[0].sources.map(r => r.name);
+    closeSystem(); await restore(); return is([names.includes(a), names.includes(b), p1.includes('GHOST TEST'), p1.includes(a), p1.includes(b)], [false, false, true, false, false], 'old name back in Simple / deleted source back in Simple / page 1 has the new name / page 1 still has the old name / page 1 still has the deleted source');
+  });
+  await check('I/O Patch: + Destination from the top bar opens ABOVE the I/O Patch page and adds the destination', async () => {
+    await restore(); await ioOpenSimple(); const n0 = screens.length; actions.addDestination(); await wait(400); const m = $('#modal'); if (!vis(m)) { closeSystem(); return 'the Add Destination window did not open'; }
+    const r = $('#ms-n').getBoundingClientRect(); const top = document.elementFromPoint(Math.round(r.left + r.width / 2), Math.round(r.top + r.height / 2)); const above = !!top && m.contains(top);   // the name box of the window must be the top element, not the I/O Patch page
+    $('#ms-n').value = 'IO STACK TEST'; $('#ms-w').value = '1920'; $('#ms-h').value = '1080'; confirmScreen(); await wait(450); okDialogs(); const listed = $$('#sys-dst-rows .sys-name-input').some(i => i.value === 'IO STACK TEST');
+    closeSystem(); const out = is([above, screens.length, listed], [true, n0 + 1, true], 'window on top / destinations / listed in the patch'); await restore(); return out;
+  });
+  await check('I/O Patch: the destination name menu offers destination names only', async () => {
+    await restore(); await ioOpenSimple(); const chev = $('#sys-dst-rows .sys-name-chev'); _sysOpenDropdown(chev); await wait(150); const items = $$('.sys-dd .sys-dd-item').map(i => ($('.item-text', i) || i).textContent.trim()); _sysCloseMenu();
+    const wrong = srcNames().filter(n => items.includes(n) && !screens.concat(dsms).some(d => d.name === n)); closeSystem(); return wrong.length ? 'source names offered as destination names: ' + wrong.join(', ') : true;
+  });
+  await check('I/O Patch: clicking in and out of a Notes box writes nothing (a BG source keeps its own note)', async () => {
+    await restore(); await ioOpenSimple(); const n = srcNames().find(x => _sysFindBGAssignments(x).length && (_sysGetSourceMeta(x).notes || '')); if (!n) { closeSystem(); return 'the example has no BG source with a note'; }
+    const own = _sysGetSourceMeta(n).notes; const d0 = _isDirty; _isDirty = false; const nt = $('.sys-notes-input', ioRow(n)); nt.focus(); nt.blur(); await wait(200); const out = is([_sysGetSourceMeta(n).notes, _isDirty], [own, false], 'source note / show marked changed'); _isDirty = d0; closeSystem(); await restore(); return out;
+  });
+  await check('I/O Patch: Set for all destinations also sets the I/O-only destination rows under it', async () => {
+    await restore(); ioDests.push({ id: uid(), name: 'IO ONLY TEST', connectorType: '', deviceType: '', customType: '', w: 1920, h: 1080, notes: '' }); await ioOpenSimple();
+    await ioPick($('#sys-dst-rows .sys-row-global [data-sys-field="connector"]'), /^HDMI 2\.1/); const got = [screens[0].connectorType, (ioDests[0] || {}).connectorType]; closeSystem(); await restore(); return is(got, ['HDMI 2.1', 'HDMI 2.1'], 'first destination / I/O-only destination');
+  });
   await check('Look Book: a cover, one page per preset, the I/O reference, the wire sheet and the summary', async () => {
     const d = new DOMParser().parseFromString(await userLookBook(), 'text/html'); const t = d.body.textContent;
     return is([d.querySelectorAll('.pp-breakdown').length, !!d.querySelector('.cover'), !!d.querySelector('.summary-table'), /I\/O/i.test(t), !!d.querySelector('.wire-page')], [presets.length, true, true, true, true], 'Look Book sections');
@@ -853,6 +1309,84 @@
     actions.help(); await wait(400); const box = $$('[id*="help"]').filter(vis).sort((a, b) => b.textContent.length - a.textContent.length)[0]; const t = box ? box.textContent : ''; closeHelp(); await wait(150);
     const retired = ['Position & Size', 'Geometry', 'Lock ratio', 'Zoom %', 'Pan X', 'Slot']; const hit = retired.filter(w => t.includes(w)); return hit.length ? 'Help still says: ' + hit.join(', ') : (t.length > 500 ? true : 'could not read the Help text');
   });
+  // ── stacking / focus / keys audit (patch 16kp-sfk) ─────────────────────────────────────────────────────────────
+  // INSERT these blocks in tests/flows_probe.js straight AFTER the check 'Help text names only sections that exist today'
+  // (the last section, where Help is tested) and before 'name: Help and the Look Book cover say AV Look Book, ...'.
+  // Synthetic events on purpose (the probe runs inside the page). Escape is sent to the focused element, or to <body>
+  // when nothing has the focus, the way the browser routes a real key. Every block closes what it opened and leaves the
+  // app on Video Presets Simple.
+  await check('Stacking: + Destination opens ABOVE the Wire page and above the I/O Patch page, and its colour window above it', async () => {
+    const onTop = el => { const r = el.getBoundingClientRect(); const t = document.elementFromPoint(r.left + r.width / 2, r.top + Math.min(r.height / 2, 30)); return !!t && el.contains(t); };
+    const out = [];
+    for (const open of [() => openWireMode(), () => openSystem()]) {
+      open(); await wait(500); actions.addDestination(); await wait(350); const m = $('#mbox');
+      const modalTop = vis(m) && onTop(m); openModalColorPicker(); await wait(300); const cp = $('#color-pop'); const cpTop = vis(cp) && onTop(cp);
+      closeColorPop(); closeModal(); await wait(150); out.push(modalTop, cpTop);
+    }
+    closeSystem(); closeWireMode(); await wait(300);
+    return is(out, [true, true, true, true], 'Wire: window on top / colour window on top / I/O Patch: window on top / colour window on top');
+  });
+  await check('Escape: a window open over Advanced, Wire or I/O Patch closes alone and the page stays open', async () => {
+    const esc = () => (document.activeElement && document.activeElement !== document.body ? document.activeElement : document.body).dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }));
+    // Advanced: the Add Destination window (focus sits in its Name field)
+    openFullscreen(presets[1].id); await wait(600); actions.addDestination(); await wait(300); esc(); await wait(300);
+    const a = [!$('#modal').classList.contains('show'), !!fsPresetId];
+    // Advanced: the preset's Advanced menu (focus nowhere)
+    if (document.activeElement && document.activeElement.blur) document.activeElement.blur(); const ab = $('#fs-overlay button[onclick="toggleAdvancedMenu(event)"]'); if (ab) ab.click(); await wait(250); esc(); await wait(300);
+    const b = [!$('#adv-menu').classList.contains('open'), !!fsPresetId]; closeAdvancedMenu(); if (fsPresetId) closeFullscreen(); await wait(300);
+    // Wire: a cable type list
+    openWireMode(); await wait(600); const cb = $('#wire-overlay .wire-cable-btn'); if (!cb) { closeWireMode(); return 'no cable type button in Wire'; }
+    _sysOpenDropdown(cb); await wait(250); const listOpen = !!$('.sys-dd'); esc(); await wait(300);
+    const c = [listOpen, !$('.sys-dd'), getComputedStyle($('#wire-overlay')).display !== 'none']; _sysCloseMenu(); closeWireMode(); await wait(300);
+    // I/O Patch: the Look Book export window
+    openSystem(); await wait(500); openPdfExportModal(); await wait(300); esc(); await wait(300);
+    const e = [getComputedStyle($('#pdf-export-modal')).display === 'none', $('#sys-overlay').classList.contains('open')]; closePdfExportModal(); closeSystem(); await wait(300);
+    return is([a, b, c, e], [[true, true], [true, true], [true, true, true], [true, true]], 'Advanced + Add Destination [closed, page open] / Advanced + menu / Wire + list [opened, closed, page open] / I/O + Look Book window');
+  });
+  await check('Escape: closes the Look Book export window, the Wire export window, the Pre-Export Check and the colour window', async () => {
+    const esc = () => document.body.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }));
+    const hidden = el => !el || getComputedStyle(el).display === 'none';
+    if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+    openPdfExportModal(); await wait(300); esc(); await wait(250); const pdf = hidden($('#pdf-export-modal')); closePdfExportModal();
+    openWireMode(); await wait(500); openWireExportModal(); await wait(300); esc(); await wait(250); const wx = [hidden($('#wire-export-modal')), getComputedStyle($('#wire-overlay')).display !== 'none']; closeWireExportModal(); closeWireMode(); await wait(300);
+    const vp = $('#validation-panel'), vb = $('#validation-backdrop'); vp.innerHTML = '<div style="padding:20px">probe</div>'; vp.style.display = 'block'; vb.style.display = 'block'; await wait(100); esc(); await wait(250);
+    const val = [hidden(vp), hidden(vb)]; vp.style.display = 'none'; vb.style.display = 'none';
+    const f = firstLayer(); openColorPop(Object.assign({}, fakeEv), f.sid, f.pid); await wait(300); const cpOpen = !hidden($('#color-pop')); esc(); await wait(250); const cp = hidden($('#color-pop')); closeColorPop();
+    return is([pdf, wx, val, cpOpen, cp], [true, [true, true], [true, true], true, true], 'Look Book window closed / Wire export [closed, Wire still open] / Pre-Export Check [panel, backdrop] / colour window opened / closed');
+  });
+  await check('Escape typed in a text field never closes Advanced, Wire or I/O Patch', async () => {
+    const escIn = el => { el.focus(); el.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true })); };
+    openFullscreen(presets[1].id); await wait(600); const n = $('#fs-viewport input.p-name') || $('#show-name'); escIn(n); await wait(300); const a = !!fsPresetId; n.blur(); if (fsPresetId) closeFullscreen(); await wait(300);
+    openWireMode(); await wait(600); const w = $('#wtb-project'); escIn(w); await wait(300); const b = getComputedStyle($('#wire-overlay')).display !== 'none'; w.blur(); closeWireMode(); await wait(300);
+    openSystem(); await wait(500); const s = $('#sys-overlay input.sys-notes-input') || $('#sys-overlay input'); escIn(s); await wait(300); const c = $('#sys-overlay').classList.contains('open'); s.blur(); closeSystem(); await wait(300);
+    return is([a, b, c], [true, true, true], 'Advanced still open / Wire still open / I/O Patch still open');
+  });
+  await check('Advanced: [ ] and the arrow keys typed in a dropdown or a text area do not change the preset or nudge the layer', async () => {
+    const pid = presets[1].id; openFullscreen(pid); await wait(600); const f = firstLayer();
+    const host = $('#fs-right-panel') || $('#fs-overlay'); const sel = document.createElement('select'); sel.innerHTML = '<option>a</option><option>b</option>'; const ta = document.createElement('textarea'); host.appendChild(sel); host.appendChild(ta);
+    const key = (el, k) => { el.focus(); el.dispatchEvent(new KeyboardEvent('keydown', { key: k, bubbles: true, cancelable: true })); };
+    const geo = () => JSON.stringify(getLayerSize(f.pid, f.sid, 1) || {}); selLayer = { pid: f.pid, sid: f.sid, n: 1 }; const g0 = geo();
+    key(sel, ']'); await wait(200); const p1 = fsPresetId; key(ta, '['); await wait(200); const p2 = fsPresetId;
+    const ev = new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true, cancelable: true }); ta.focus(); ta.dispatchEvent(ev); await wait(200); const blocked = ev.defaultPrevented; const g1 = geo();
+    sel.remove(); ta.remove(); selLayer = null; if (fsPresetId) closeFullscreen(); await wait(300); const out = is([p1, p2, blocked, g1 === g0], [pid, pid, false, true], 'preset after ] in a dropdown / after [ in a text area / arrow key taken away from the text area / layer untouched'); await restore(); return out;
+  });
+  await check('Layer Properties: a Width TYPED digit by digit (6, 64, 640) keeps the shape with the lock on (640 x 360, not 640 x 640)', async () => {
+    const f = firstLayer(); const sw = parseInt(f.s.w), sh = parseInt(f.s.h); const wasLocked = _lfxLock; _lfxLock = true;
+    openLayerPanel(fakeEv, f.pid, f.sid, 1, true); await wait(450);
+    const w = $$('#layer-panel .lfx-acc[data-sec="size"] input[type=number]').find(i => i.dataset.dim === 'w'); if (!w) { closeLayerPanel(); _lfxLock = wasLocked; return 'no Width field'; }
+    w.focus(); for (const v of ['6', '64', '640']) { w.value = v; fire(w, 'input'); await wait(80); } fire(w, 'change'); w.blur(); await wait(200);
+    const g = _lfxGeo(f.pid, f.sid, 1, sw, sh); closeLayerPanel(); _lfxLock = wasLocked; const out = is([g.w, g.h], [640, 360], 'window after typing 640'); await restore(); return out;
+  });
+  await check('Keys: an arrow nudge of a picked layer is one undo step; Advanced on Lock resizes a picked destination and never moves it', async () => {
+    const key = (k, shift) => document.body.dispatchEvent(new KeyboardEvent('keydown', { key: k, shiftKey: !!shift, bubbles: true, cancelable: true }));
+    const f = firstLayer(); setLayerSize(f.pid, f.sid, 1, 0.5, 0.5, 0.1, 0.1); scheduleRender(); await wait(200);
+    doSelect(null, null); selLayer = { pid: f.pid, sid: f.sid, n: 1 }; const u0 = _undoStack.length; const x0 = getLayerSize(f.pid, f.sid, 1).xf;
+    key('ArrowRight'); await wait(200); const moved = Math.round((getLayerSize(f.pid, f.sid, 1).xf - x0) * parseInt(f.s.w)); const steps = _undoStack.length - u0;
+    doUndo(); await wait(250); const back = Math.round((getLayerSize(f.pid, f.sid, 1).xf - x0) * parseInt(f.s.w)); selLayer = null;
+    openFullscreen(f.pid); await wait(600); fsCanvasLocked = true; sel = { pid: f.pid, sid: f.sid }; const p = presets.find(x => x.id === f.pid); const pos0 = JSON.stringify(p.positions[f.sid]); const w0 = parseInt(f.s.w); const u1 = _undoStack.length;
+    key('ArrowRight'); await wait(250); const s2 = screens.find(x => x.id === f.sid); const res = [JSON.stringify(p.positions[f.sid]) === pos0, parseInt(s2.w) - w0, _undoStack.length - u1];
+    sel = null; if (fsPresetId) closeFullscreen(); await wait(300); const out = is([moved, steps, back, res], [10, 1, 0, [true, 1, 1]], 'layer moved px / undo steps / px after one undo / Advanced on Lock [position untouched, width +px, undo steps]'); await restore(); return out;
+  });
   await check('name: Help and the Look Book cover say AV Look Book, the window title keeps the ending the desktop app reads', async () => {
     actions.help(); await wait(300); const h = $$('h3').find(x => /· Help$/.test(x.textContent.trim())); const ht = h ? h.textContent.trim() : ''; closeHelp(); await wait(150);
     const d = new DOMParser().parseFromString(await userLookBook(), 'text/html'); const brand = ((d.querySelector('.brand') || {}).textContent || '').trim();
@@ -863,6 +1397,250 @@
     return is([/^mailto:info@aveducate\.com/i.test(mailHref || ''), /Name:/.test(h), /Bug located:/.test(h), downloads.some(d => /\.avlb$/.test(d.name))], [true, true, true, true], 'bug mail');
   });
 
+  // ── shell-toolbar click-through (2026-09-21): INSERT in tests/flows_probe.js straight AFTER the check
+  //    'Report a bug: builds an email to AV Educate with the template and the show attached' (the last check of the file,
+  //    before the "_fsPauseAll" clean-up line). Every block fails on build 16ko without patch.py and passes with it.
+  //    Helpers used: $, $$, wait, is, vis, restore, okDialogs, dlgOpen, dialogText (all defined at the top of the probe).
+  const _stKey = (key, o, target) => (target || document.body).dispatchEvent(new KeyboardEvent('keydown', Object.assign({ key, bubbles: true, cancelable: true }, o || {})));
+  const _stTop = el => { if (!el) return false; const r = el.getBoundingClientRect(); const t = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2); return !!t && (t === el || el.contains(t)); };
+
+  await check('toolbar: + Destination opens ABOVE Wire and above I/O Patch, and its colour picker above that', async () => {
+    const seen = [];
+    for (const [open, close] of [[openWireMode, closeWireMode], [openSystem, closeSystem]]) {
+      open(); await wait(700); actions.addDestination(); await wait(350); const win = _stTop($('#ms-n'));
+      openModalColorPicker(); await wait(250); const pick = _stTop($('#color-pop')); if (typeof closeColorPop === 'function') closeColorPop(); closeModal(); close(); await wait(350); seen.push(win, pick);
+    }
+    actions.addDestination(); await wait(300); const home = _stTop($('#ms-n')); closeModal();
+    return is(seen.concat(home), [true, true, true, true, true], 'Wire window / Wire picker / I/O window / I/O picker / Video Presets window on top');
+  });
+  await check('toolbar: Add Destination is one undo step and is held to the size limits (67 to 7680 wide, 67 to 4320 high)', async () => {
+    const n = screens.length, u = _undoStack.length; actions.addDestination(); await wait(300); $('#ms-n').value = 'LIMIT TEST'; $('#ms-w').value = '99999'; $('#ms-h').value = '-5'; confirmScreen(); await wait(450); okDialogs();
+    const s = screens[screens.length - 1]; const got = [screens.length, s.w, s.h, _undoStack.length - u]; doUndo(); await wait(400); const back = screens.length; await restore();
+    return is(got.concat(back), [n + 1, 7680, 1080, 1, n], 'count / width / height / undo steps / count after Undo');
+  });
+  await check('keys: Cmd+N on an open show goes through New (asks first), and Build My Show then makes a NEW show instead of adding to the open one', async () => {
+    _stKey('n', { metaKey: true }); await wait(350); const asked = dlgOpen() && /new show|unsaved/i.test(dialogText()); const qsEarly = vis($('#qs-modal'));
+    if (!asked) { closeQS(); await restore(); return 'Cmd+N opened Quick Setup over the open show without asking (Build My Show would add 4 destinations and a second P01 to it)'; }
+    okDialogs(); await wait(900); const cleared = screens.length === 0 && presets.length === 0 && vis($('#qs-modal'));
+    $('#qs-show').value = 'KEY NEW SHOW'; confirmQS(); await wait(600); okDialogs(); const out = is([qsEarly, cleared, screens.length, presets.length, presets.filter(p => p.code === 'P01').length], [false, true, 4, 1, 1], 'Quick Setup before the answer / cleared first / destinations / presets / P01 count');
+    await restore(); return out;
+  });
+  await check('Quick Setup: opens at the top with the cursor in Show name; Escape with a resolution list open closes the list only, the next Escape closes the wizard', async () => {
+    openQS(); await wait(300); $('#qs-modal').scrollTop = 9999; closeQS(); openQS(); await wait(350); const top = $('#qs-modal').scrollTop, focus = (document.activeElement || {}).id;
+    qsOpenResPicker({ stopPropagation() {} }, 0); await wait(300); const listOpen = $$('.shared-res-dd').length; _stKey('Escape', {}, $('#qs-res-0')); await wait(250);
+    const listAfter = $$('.shared-res-dd').length, qsAfter = vis($('#qs-modal')); if (typeof closeSharedResPicker === 'function') closeSharedResPicker();
+    _stKey('Escape'); await wait(250); const qsEnd = vis($('#qs-modal')); closeQS();
+    return is([top, focus, listOpen, listAfter, qsAfter, qsEnd], [0, 'qs-show', 1, 0, true, false], 'scroll / cursor / list open / list after Escape / wizard after 1st Escape / wizard after 2nd');
+  });
+  await check('Escape closes the Look Book window, the Pre-Export Check and Add Destination (cursor outside the fields), and lets go of a picked layer', async () => {
+    openPdfExportModal(); await wait(300); _stKey('Escape'); await wait(200); const lb = vis($('#pdf-export-modal')); closePdfExportModal();
+    runExportWithValidation(function () {}, '_doExportExcel', function () { return { errors: [], warnings: ['test warning'] }; }); await wait(250); const was = vis($('#validation-panel')); _stKey('Escape'); await wait(200); const pre = vis($('#validation-panel')) || vis($('#validation-backdrop'));
+    $('#validation-panel').style.display = 'none'; $('#validation-backdrop').style.display = 'none';
+    actions.addDestination(); await wait(300); if (document.activeElement) document.activeElement.blur(); _stKey('Escape'); await wait(200); const add = $('#modal').classList.contains('show'); closeModal();
+    const f = firstLayer(); selLayer = { pid: f.pid, sid: f.sid, n: 1 }; updateLayerSelDOM(f.pid, f.sid, 1, true); _stKey('Escape'); await wait(200); const held = !!selLayer, lit = $$('.layer-chip.lsel').length; selLayer = null; await restore();
+    return is([lb, was, pre, add, held, lit], [false, true, false, false, false, 0], 'Look Book open / check opened / check open after Escape / Add Destination open / layer still picked / chips lit');
+  });
+  await check('keys: Cmd+S saves while the cursor is in the Show name field, and saves once (not twice) outside a field', async () => {
+    const real = window.saveProject; let calls = 0; window.saveProject = function () { calls++; };
+    try { const f = $('#show-name'); f.focus(); _stKey('s', { metaKey: true }, f); await wait(150); const inField = calls; f.blur(); _stKey('s', { metaKey: true }); await wait(150); return is([inField, calls], [1, 2], 'saves from the field / total after one more outside'); }
+    finally { window.saveProject = real; }
+  });
+  await check('draft: a show with nothing in it is never offered as a draft, a real show still is', async () => {
+    const KEY = 'avlb_autosave'; let old = null; try { old = localStorage.getItem(KEY); } catch (e) { return 'no localStorage in this run'; }
+    const empty = { screens: [], presets: [], dsms: [], sources: [], ioDests: [], customLibrary: [], showName: '', _savedAt: Date.now() };
+    localStorage.setItem(KEY, JSON.stringify(empty)); restoreAutoSave(); await wait(300); const offeredEmpty = dlgOpen(); if (offeredEmpty) { $('#dlg-cancel').click(); await wait(900); }
+    const st = JSON.parse(BASE); localStorage.setItem(KEY, JSON.stringify(Object.assign({}, st, { _savedAt: Date.now() }))); restoreAutoSave(); await wait(300); const offeredReal = dlgOpen() && /Restore Draft/i.test(dialogText());
+    if (dlgOpen()) { $('#dlg-cancel').click(); await wait(900); } if (old === null) localStorage.removeItem(KEY); else localStorage.setItem(KEY, old);
+    return is([offeredEmpty, offeredReal], [false, true], 'empty show offered / real show offered');
+  });
+  await check('Help keyboard map: the 1 – 9 row lights nine keys, Scroll wheel reads as a mouse action, and the Cmd+N line says what the key does', async () => {
+    actions.help(); helpTab('kbd'); await wait(350); const rows = $$('#hpanel-kbd .kbv-sc'); const nine = rows.find(r => /^1\s/.test(r.children[0].textContent.trim())), wheel = rows.find(r => /Scroll wheel/.test(r.children[0].textContent));
+    const newRow = rows.find(r => /\+ N$/.test(r.children[0].textContent.trim()) && !/Shift/.test(r.children[0].textContent)); if (!nine || !wheel || !newRow) { closeHelp(); return 'a keyboard row is missing'; }
+    nine.click(); await wait(100); const lit = $$('#kbv-board .kbv-key.on').length; nine.click(); wheel.click(); await wait(100); const hint = $('#kbv-hint').textContent; wheel.click(); const txt = newRow.children[1].textContent; closeHelp(); await wait(150);
+    return is([lit, /mouse action/.test(hint), /Quick Show Setup/.test(txt) && !/new project wizard/.test(txt)], [9, true, true], 'keys lit / wheel is a mouse row / Cmd+N text');
+  });
+  await check('unsaved marker: Collapse all and Expand all leave a saved show clean', async () => {
+    await restore(); _captureCleanBaseline(); _recomputeDirty(); const before = _isDirty; actions.collapseAll(); await wait(250); _recomputeDirty(); const a = _isDirty; actions.expandAll(); await wait(250); _recomputeDirty(); const b = _isDirty; await restore();
+    return is([before, a, b], [false, false, false], 'unsaved before / after Collapse all / after Expand all');
+  });
+  await check('keys: in the Advanced page an arrow does to a picked destination exactly what it does in Simple (resizes it 1 px, never moves it as well, one undo step); in Simple an arrow nudge of a layer is one undo step', async () => {
+    const p = presets[0], s = screens[0]; openFullscreen(p.id); await wait(700); doSelect(p.id, s.id); selLayer = null; const w0 = parseInt(s.w), x0 = ((p.positions || {})[s.id] || { x: 0 }).x, u0 = _undoStack.length;
+    _stKey('ArrowRight'); await wait(300); const s1 = screens.find(x => x.id === s.id), p1 = presets.find(x => x.id === p.id); const adv = [parseInt(s1.w) - w0, ((p1.positions || {})[s.id] || { x: 0 }).x - x0, _undoStack.length - u0];
+    closeFullscreen(); await wait(400); await restore();
+    const f = firstLayer(); setLayerSize(f.pid, f.sid, 1, 0.5, 0.5, 0.25, 0.25); doSelect(null, null); selLayer = { pid: f.pid, sid: f.sid, n: 1 }; const sw = parseInt(f.s.w); const lx = () => Math.round((getLayerSize(f.pid, f.sid, 1).xf || 0) * sw);
+    const a = lx(), u1 = _undoStack.length; _stKey('ArrowRight'); await wait(250); const b = lx(), steps = _undoStack.length - u1; doUndo(); await wait(350); const c = lx(); selLayer = null; await restore();
+    return is([adv, b - a, steps, c - a], [[1, 0, 1], 10, 1, 0], 'Advanced [resize, move, undo steps] / Simple nudge px / undo steps / px after Undo');   /* merge decision 16kp: Advanced follows Simple (owner: "everything Simple can do, Advanced should do"); three patches had proposed three different rules */
+  });
+  await check('Advanced overlays menu (status bar) closes on a click on a layer chip, and its button still toggles it', async () => {
+    const btn = $('#tb-adv'), menu = $('#adv-menu'); btn.click(); await wait(250); const opened = menu.classList.contains('open'); const chip = $('.preset-row .layer-chip'); if (!chip) { closeAdvancedMenu(); return 'no layer chip on the canvas'; }
+    chip.click(); await wait(250); const after = menu.classList.contains('open'); closeAdvancedMenu(); btn.click(); await wait(200); const t1 = menu.classList.contains('open'); btn.click(); await wait(200); const t2 = menu.classList.contains('open');
+    closeAdvancedMenu(); try { closeLayerPanel(); } catch (e) {} selLayer = null; await restore();
+    return is([opened, after, t1, t2], [true, false, true, false], 'opened / open after the chip click / button opens / button closes');
+  });
+  // ── exports-send (click-through 2026-09-21). INSERT in tests/flows_probe.js straight AFTER the check
+  //    'Report a bug: builds an email to AV Educate with the template and the show attached' (the last check, before the
+  //    closing "try { _fsPauseAll(); }" line). Uses the probe's own helpers: $, $$, wait, is, fire, vis, firstLayer, restore,
+  //    okDialogs, dialogText, dlgOpen, userLookBook, downloads, mailHref. Needs no media. Each check FAILS on build 16ko
+  //    and PASSES with exports-send/patch.py applied.
+  // the printed Look Book, laid out the way the print window lays it out (its own script runs, the print call is taken out)
+  const lbRender = async (html) => {
+    const f = document.createElement('iframe'); f.style.cssText = 'position:fixed;left:-4000px;top:0;width:1300px;height:900px;border:0;visibility:hidden';
+    f.srcdoc = String(html).replace('setTimeout(()=>window.print(), 800);', ''); document.body.appendChild(f);
+    await new Promise(r => { f.onload = r; setTimeout(r, 4000); }); await wait(500); return f;
+  };
+  await check('Look Book: every contents row jumps to its section and prints the real page number, rows are one line high', async () => {
+    window._pdfOpts = null; const f = await lbRender(await userLookBook()); const d = f.contentDocument; const pages = [...d.querySelectorAll('.page')];
+    const rows = [...d.querySelectorAll('.toc-row')].map(a => { const t = d.getElementById((a.getAttribute('href') || '').slice(1)); const pg = t ? (t.classList.contains('page') ? t : t.closest('.page')) : null; return { label: a.querySelector('.toc-name').textContent, printed: a.querySelector('.toc-row .toc-page').textContent.trim(), real: pg ? String(pages.indexOf(pg) + 1) : 'no target', h: Math.round(a.getBoundingClientRect().height) }; });
+    const bad = rows.filter(r => r.printed !== r.real).map(r => r.label + ' prints ' + r.printed + ', is on ' + r.real); const tall = rows.filter(r => r.h > 40).length; f.remove();
+    return is([rows.length > 5, bad, tall], [true, [], 0], 'rows found / wrong or dead rows / rows taller than one line');
+  });
+  await check('Look Book: the Canvas Visual stays inside the page margins on every preset page', async () => {
+    window._pdfOpts = null; const f = await lbRender(await userLookBook()); const d = f.contentDocument;
+    const out = [...d.querySelectorAll('.page .canvas-vis')].map(c => Math.round(c.getBoundingClientRect().right - c.closest('.page').getBoundingClientRect().right + 30)).filter(px => px > 1); const n = d.querySelectorAll('.page .canvas-vis').length; f.remove();
+    return is([n >= presets.length, out], [true, []], 'canvas frames found / px past the right margin');
+  });
+  await check('Look Book: a preset name with < > & prints in full in the page header, and crop / FX lines are not cut', async () => {
+    const f0 = firstLayer(); const p = presets.find(x => x.id === f0.pid); p.name = 'Q&A <Panel> wide'; setCrop(f0.pid, f0.sid, 1, { t: 10, b: 5, l: 25, r: 3 }); setLayerFx(f0.pid, f0.sid, 1, { op: 128, flipH: true, edge: { on: true, w: 6, color: '#ff4e8b' }, shadow: { on: true, x: 8, y: 8, blur: 12 } });
+    window._pdfOpts = null; openPdfExportModal(); await wait(300); $('#pdf-opt-crop').checked = true; const real = exportPDF; let html = ''; window.exportPDF = function () { html = real(true); }; try { _pdfConfirmExport(); } finally { window.exportPDF = real; } await wait(150);
+    const f = await lbRender(html); const d = f.contentDocument; const hdr = [...d.querySelectorAll('.preset-page .ph-name')].map(e => e.textContent).filter(t => /Q&A/.test(t));
+    const cut = [...d.querySelectorAll('.bd-crop,.bd-row,.bd-dest')].filter(e => e.scrollWidth > e.clientWidth + 1).map(e => e.textContent.trim().slice(0, 24)); f.remove(); window._pdfOpts = null; await restore();
+    return is([hdr.length > 0 && hdr.every(t => t === 'Q&A <Panel> wide'), cut], [true, []], 'header text / cut lines');
+  });
+  await check('Exports: Esc closes the Look Book window, and closes the Pre-Export Check without closing the I/O Patch page under it', async () => {
+    const esc = () => document.body.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }));
+    openPdfExportModal(); await wait(250); esc(); await wait(200); const lbOpen = getComputedStyle($('#pdf-export-modal')).display !== 'none'; closePdfExportModal();
+    openSystem(); await wait(600); const nm = presets[1].name; presets[1].name = ''; runExportWithValidation(function () {}, '_doExportExcel'); await wait(250); const shown = getComputedStyle($('#validation-panel')).display !== 'none';
+    esc(); await wait(250); const panelOpen = getComputedStyle($('#validation-panel')).display !== 'none', dim = getComputedStyle($('#validation-backdrop')).display !== 'none', ioOpen = $('#sys-overlay').classList.contains('open');
+    $('#validation-panel').style.display = 'none'; $('#validation-backdrop').style.display = 'none'; presets[1].name = nm; if (ioOpen) closeSystem(); await wait(250);
+    return is([lbOpen, shown, panelOpen, dim, ioOpen], [false, true, false, false, true], 'Look Book window open after Esc / check shown / check open after Esc / dim layer left / I/O Patch still open');
+  });
+  await check('Pre-Export Check: a BG-only preset (walk-in logo, full-bleed playback) is not called empty, a preset with nothing on it is', async () => {
+    const before = validateProject().warnings.filter(w => /P01|P05/.test(w) && /no layers|no BG/.test(w));
+    actions.addPreset(); await wait(350); okDialogs(); const np = presets[presets.length - 1]; screens.forEach(s => { setBgName(np.id, s.id, ''); if (np.bgs) delete np.bgs[s.id]; getLayerNums(np.id).forEach(n => setL(np.id, s.id, n, null)); });
+    const bare = screens.every(s => !getBgName(np.id, s.id)); const flagged = validateProject().warnings.some(w => w.indexOf('Preset ' + np.code + ' ') === 0 && /no BG and no layers|no layers/.test(w)); await restore();
+    return is([before, bare ? flagged : true], [[], true], 'BG-only presets flagged / an empty preset flagged');
+  });
+  await check('Browser draft: while the Restore Draft question is unanswered the autosave leaves the stored draft alone, then writes again once it is answered', async () => {
+    const KEY = 'avlb_autosave'; const keep = localStorage.getItem(KEY); const mark = JSON.stringify({ screens: [{ id: 'keepme', name: 'DRAFT', w: 1920, h: 1080 }], presets: [], _savedAt: Date.now() }); localStorage.setItem(KEY, mark);
+    restoreAutoSave(); await wait(300); const asked = /Restore Draft/i.test(dialogText()); _writeAutoSaveNow(); const untouched = localStorage.getItem(KEY) === mark;
+    const c = $('#dlg-cancel'); if (c) c.click(); await wait(1600); if (dlgOpen()) { const c2 = $('#dlg-cancel'); if (c2) c2.click(); await wait(900); } _writeAutoSaveNow(); const writesAgain = localStorage.getItem(KEY) !== mark;
+    if (keep === null) localStorage.removeItem(KEY); else localStorage.setItem(KEY, keep);
+    return is([asked, untouched, dlgOpen(), writesAgain], [true, true, false, true], 'prompt shown / draft untouched while it is up / prompt closed / autosave writes afterwards');
+  });
+  await check('Save: Cmd / Ctrl + S saves while the cursor is in a text field (once, and the field is committed first)', async () => {
+    const real = window.saveProject; let calls = 0, hadFocus = null; window.saveProject = function () { calls++; hadFocus = document.activeElement && document.activeElement.id; };
+    const inp = $('#show-name'); inp.focus(); const ev = new KeyboardEvent('keydown', { key: 's', metaKey: true, bubbles: true, cancelable: true }); inp.dispatchEvent(ev); await wait(150);
+    window.saveProject = real; inp.blur(); return is([calls, ev.defaultPrevented, hadFocus === 'show-name'], [1, true, false], 'save calls / browser Save Page blocked / field still focused at save time');
+  });
+  await check('Open: a show file with a blank name clears the name field instead of keeping the previous show\'s name', async () => {
+    const st = JSON.parse(BASE); st.showName = ''; _applyProjectText(JSON.stringify(st)); await wait(700); okDialogs(); const got = $('#show-name').value; await restore();
+    return is([got, $('#show-name').value], ['', JSON.parse(BASE).showName], 'name after opening the blank-name file / after restoring');
+  });
+  await check('Send: attaches the Look Book the window builds (wire sheet included) plus the cue sheet, and the mail draft goes through the mail seam', async () => {
+    const hadShare = navigator.share, hadCan = navigator.canShare; let shared = null; const had = window._pdfOpts; window._pdfOpts = null;
+    navigator.canShare = function () { return true; }; navigator.share = async function (d) { shared = d; };
+    await sendShow(); await wait(400); const lb = shared && (shared.files || []).find(f => /\.html$/.test(f.name)); const xl = shared && (shared.files || []).find(f => /\.xlsx$/.test(f.name)); const html = lb ? await lb.text() : '';
+    let mailed = 'Send still opens the mail draft with window.location, not through _lbOpenMail';
+    if (/_lbOpenMail\(/.test(String(sendShow))) { navigator.canShare = function () { return false; }; mailHref = null; downloads.length = 0; await sendShow(); await wait(400); mailed = (/^mailto:\?subject=Look%20Book/.test(mailHref || '') && downloads.length === 2) ? true : ('mail href ' + mailHref + ', downloads ' + downloads.length); }
+    delete navigator.share; delete navigator.canShare; if (hadShare && !navigator.share) navigator.share = hadShare; if (hadCan && !navigator.canShare) navigator.canShare = hadCan; window._pdfOpts = had;
+    return is([!!xl, /id="pdf-wire"/.test(html), /id="pdf-cover"/.test(html), window._pdfOpts === had, mailed], [true, true, true, true, true], 'cue sheet attached / wire sheet in the sent Look Book / cover / window options left alone / mail fallback');
+  });
+  // ── UNDO / UNSAVED-CHANGES AUDIT (2026-09-21). INSERT the whole block in tests/flows_probe.js straight AFTER the LAST
+  //    check, 'Report a bug: builds an email to AV Educate with the template and the show attached', and BEFORE the
+  //    closing "try { _fsPauseAll(); } ..." line. (Not earlier: one check opens Advanced, and the Simple tile count check
+  //    near the top counts the tiles Advanced leaves in the page.) Every check closes what it opened and ends on
+  //    restore(). They drive the page with the events a user produces (pointerdown / mouse / click / input / change /
+  //    keydown), because the undo safety net listens to those. The 'view-only clicks' check passes on the old page too:
+  //    it is the guard that keeps the net from ever recording a step for a view change.
+  try { closeFullscreen(); } catch (e) {} try { closeWireMode(); } catch (e) {} try { closeSystem(); } catch (e) {} await restore();
+  const _uaLen = () => eval('_undoStack').length;
+  const _uaSnap = () => _snapshot();
+  const _uaPtr = (el, type, x, y) => el.dispatchEvent(new PointerEvent(type, { bubbles: true, cancelable: true, clientX: x, clientY: y, pointerId: 1, isPrimary: true, button: 0, buttons: type === 'pointerup' ? 0 : 1 }));
+  const _uaMouse = (el, type, x, y) => el.dispatchEvent(new MouseEvent(type, { bubbles: true, cancelable: true, clientX: x, clientY: y, button: 0, buttons: type === 'mouseup' ? 0 : 1, view: window }));
+  // one step recorded, Undo gives back exactly the state from before, Redo the state from after
+  const _uaOneStep = async (before, n0, label) => {
+    const after = _uaSnap(), steps = _uaLen() - n0; if (after === before) return label + ': the action changed nothing';
+    doUndo(); await wait(300); const undone = _uaSnap() === before; doRedo(); await wait(300); const redone = _uaSnap() === after;
+    return is([steps, undone, redone], [1, true, true], label + ' (undo steps / undo restores / redo re-applies)');
+  };
+
+  await check('undo: Add Destination (its window, the Add button) is one undo step', async () => {
+    await restore(); const before = _uaSnap(), n0 = _uaLen(); actions.addDestination(); await wait(350); if (!vis($('#modal'))) return 'the Add Destination window did not open';
+    $('#ms-n').value = 'UNDO DEST'; $('#ms-w').value = '1920'; $('#ms-h').value = '1080'; $('#modal button[onclick="confirmScreen()"]').click(); await wait(500); okDialogs(); await wait(200);
+    const out = await _uaOneStep(before, n0, 'Add Destination'); await restore(); return out;
+  });
+  await check('undo: Add AUX (+) is one undo step', async () => {
+    await restore(); const before = _uaSnap(), n0 = _uaLen(); const b = $('.preset-row [onclick*="actions.addDSM()"]'); if (!b) return 'no + AUX button'; b.click(); await wait(450);
+    const out = await _uaOneStep(before, n0, 'Add AUX'); await restore(); return out;
+  });
+  await check('undo: layer panel "Remove from this preset" is one undo step', async () => {
+    await restore(); const f = firstLayer(); const before = _uaSnap(), n0 = _uaLen(); openLayerPanel(fakeEv, f.pid, f.sid, 1, false); await wait(450); const b = $('#layer-panel .lp-remove'); if (!b) return 'no Remove button in the Simple layer panel';
+    b.click(); await wait(450); if (getL(f.pid, f.sid, 1)) return 'the layer is still there';
+    const out = await _uaOneStep(before, n0, 'Remove from this preset'); await restore(); return out;
+  });
+  await check('undo: picking content from the layer panel list is one undo step', async () => {
+    await restore(); const f = firstLayer(); const before = _uaSnap(), n0 = _uaLen(); openLayerPanel(fakeEv, f.pid, f.sid, 1, false); await wait(450);
+    const row = $$('#layer-panel [data-label]').find(r => r.dataset.label === 'TIMER' && !r.classList.contains('lp-color-swatch') && !r.classList.contains('lp-del')); if (!row) return 'no TIMER row in the list';
+    row.click(); await wait(450); if (getL(f.pid, f.sid, 1) !== 'TIMER') return 'the pick did not land';
+    const out = await _uaOneStep(before, n0, 'list pick'); await restore(); return out;
+  });
+  await check('undo: a layer dragged on the canvas goes back to where it started', async () => {
+    await restore(); const f = firstLayer(); setLayerSize(f.pid, f.sid, 1, 0.3, 0.3, 0.1, 0.1); scheduleRender(); await wait(350);
+    const chip = $('.preset-row[data-pid="' + f.pid + '"] .layer-chip[data-sid="' + f.sid + '"][data-lid="1"]'); if (!chip) return 'no chip'; chip.scrollIntoView({ block: 'center' }); await wait(200);
+    const r = chip.getBoundingClientRect(), x = r.left + r.width / 2, y = r.top + r.height / 2; const before = _uaSnap(), n0 = _uaLen(), x0 = getLayerSize(f.pid, f.sid, 1).xf;
+    _uaPtr(chip, 'pointerdown', x, y); _uaMouse(chip, 'mousedown', x, y);
+    for (let i = 1; i <= 6; i++) { _uaMouse(window, 'mousemove', x + i * 8, y + i * 4); await wait(20); }
+    _uaMouse(window, 'mouseup', x + 48, y + 24); _uaPtr(window, 'pointerup', x + 48, y + 24); await wait(450);
+    if (getLayerSize(f.pid, f.sid, 1).xf === x0) return 'the drag did not move the layer';
+    const out = await _uaOneStep(before, n0, 'layer drag'); await restore(); return out;
+  });
+  await check('undo: an arrow-key nudge burst is one undo step and Undo puts the layer back', async () => {
+    await restore(); const f = firstLayer(); setLayerSize(f.pid, f.sid, 1, 0.3, 0.3, 0.1, 0.1); scheduleRender(); await wait(300); selLayer = { pid: f.pid, sid: f.sid, n: 1 };
+    const before = _uaSnap(), n0 = _uaLen();
+    for (let i = 0; i < 3; i++) { document.body.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true, cancelable: true })); await wait(40); }
+    await wait(800); const out = await _uaOneStep(before, n0, 'nudge'); selLayer = null; await restore(); return out;
+  });
+  await check('undo: a preset name typed in the preset header is one undo step', async () => {
+    await restore(); const p = presets[0]; const inp = $('#pn-' + p.id); if (!inp) return 'no preset name field'; const before = _uaSnap(), n0 = _uaLen();
+    fire(inp, 'input'); inp.value = 'UNDO NAME'; inp.dispatchEvent(new Event('blur')); fire(inp, 'change'); await wait(450);
+    if (presets[0].name !== 'UNDO NAME') return 'the name did not commit';
+    const out = await _uaOneStep(before, n0, 'preset name'); await restore(); return out;
+  });
+  await check('undo: AUX panel Apply (name and size) is one undo step', async () => {
+    await restore(); const p = presets[0], d = dsms[0]; const before = _uaSnap(), n0 = _uaLen(); openDSMPanel(fakeEv, p.id, d.id); await wait(450); if (!$('#dsm-panel')) return 'the AUX panel did not open';
+    $('#dsmp-name').value = 'UNDO AUX'; $('#dsmp-w').value = '1280'; $('#dsmp-apply').click(); await wait(450); const pn = $('#dsm-panel'); if (pn) pn.remove();
+    const out = await _uaOneStep(before, n0, 'AUX Apply'); await restore(); return out;
+  });
+  await check('undo: I/O Patch Simple "+ Source" is one undo step and arms the autosave', async () => {
+    await restore(); openSystem(); await wait(700); if (ioAdvanced.view !== 'simple') { _ioSetView('simple'); await wait(500); } okDialogs();
+    clearTimeout(eval('_autoSaveTimer')); eval('_autoSaveTimer=null'); const before = _uaSnap(), n0 = _uaLen(); const b = $('#sys-overlay [onclick*="_sysAddSource()"]'); if (!b) { closeSystem(); return 'no + Source button'; }
+    b.click(); await wait(450); const armed = !!eval('_autoSaveTimer'); const out = await _uaOneStep(before, n0, '+ Source'); closeSystem(); await restore(); return out === true ? is(armed, true, 'autosave armed') : out;
+  });
+  await check('undo: view-only clicks (Collapse all, Expand all, Wire zoom) record no undo step and keep Redo', async () => {
+    await restore(); pushUndo(); setL(presets[0].id, screens[0].id, 4, 'TIMER'); scheduleRender(); await wait(200); doUndo(); await wait(300); const n0 = _uaLen(), r0 = eval('_redoStack').length;
+    $('[onclick*="actions.collapseAll"]').click(); await wait(250); $('[onclick*="actions.expandAll"]').click(); await wait(250);
+    openWireMode(); await wait(700); const z = $('#wire-overlay [onclick*="_wireZoomBy(0.1)"]'); if (z) z.click(); await wait(300); closeWireMode(); await wait(300);
+    const out = is([_uaLen() - n0, eval('_redoStack').length], [0, r0], 'undo steps added / redo steps kept'); await restore(); return out;
+  });
+  await check('unsaved dot: typing the show name lights it without any other action', async () => {
+    await restore(); await wait(500); if (eval('_isDirty')) return 'the show is already marked unsaved after a reload'; const sn = $('#show-name'), was = sn.value;
+    sn.value = was + ' X'; fire(sn, 'input'); fire(sn, 'change'); await wait(900); const lit = eval('_isDirty') && !!$('#tb-dirty').closest('button').classList.contains('save-dirty');
+    sn.value = was; fire(sn, 'input'); fire(sn, 'change'); await wait(200); await restore(); return is(lit, true, 'unsaved dot');
+  });
+  await check('Advanced: the Opacity fader is not rebuilt under the pointer on its first move and records one undo step', async () => {
+    await restore(); const f = firstLayer(); openFullscreen(f.pid); await wait(700); _fsSelectLayer(f.pid, f.sid, 1); await wait(450);
+    const acc = $('#fs-props .lfx-acc[data-sec="op"]'); if (acc && !acc.classList.contains('open')) { _lfxToggleSec('op'); await wait(300); } if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+    const fad = $('#fs-props input[type=range].lfx-op256'); if (!fad) { closeFullscreen(); return 'no Opacity fader'; } const before = _uaSnap(), n0 = _uaLen(); const r = fad.getBoundingClientRect();
+    _uaPtr(fad, 'pointerdown', r.left + 100, r.top + 5); if (fad.getAttribute('onpointerdown')) { /* inline handler ran with the event above */ }
+    fad.value = '128'; fire(fad, 'input'); await wait(60); const alive = fad.isConnected; fad.value = '96'; fire(fad, 'input'); fire(fad, 'change'); _uaPtr(window, 'pointerup', r.left + 60, r.top + 5); await wait(450);
+    const op = getLayerFx(f.pid, f.sid, 1).op; const step = alive ? await _uaOneStep(before, n0, 'fader') : 'skipped'; closeFullscreen(); await wait(300); await restore();
+    return alive ? (step === true ? is(op, 96, 'opacity after the second move') : step) : 'the panel was rebuilt under the fader on its first move (the fader element was replaced)';
+  });
+  await check('Show card edit (phone Quick Setup edit): confirming with nothing changed keeps a free layout', async () => {
+    await restore(); const p = presets[0], s = screens[1]; setPosition(p, s.id, 2500, 300); const want = JSON.stringify(p.positions);
+    openQSEdit(); await wait(450); confirmQSEdit(); await wait(450); okDialogs(); try { closeQS(); } catch (e) {} await wait(250);
+    const out = is(JSON.stringify(presets[0].positions), want, 'positions after an unchanged Show card edit'); await restore(); return out;
+  });
   try { _fsPauseAll(); } catch (e) {} $$('video').forEach(v => { try { v.muted = true; v.pause(); } catch (e) {} });
   return { checks };
 })

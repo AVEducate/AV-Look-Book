@@ -97,6 +97,46 @@
    "ok": true
   },
   {
+   "name": "Simple: a preset name with a quote is kept whole after a redraw, a preset field edit is one undo step, and a code edit leaves the name field alone",
+   "ok": true
+  },
+  {
+   "name": "Simple: a destination corner drag, an AOI drag, an AOI corner drag, a typed AOI field and a layer corner drag are each one undo step",
+   "ok": true
+  },
+  {
+   "name": "Simple: a layer drag undoes to where the layer was, dragging a selected chip does not open the Layer panel, and arrow nudges are one undo step",
+   "ok": true
+  },
+  {
+   "name": "Simple: in the Simple layer panel a Width + Enter, Fill, a library pick, Remove from this preset and the library × are each one undo step",
+   "ok": true
+  },
+  {
+   "name": "Simple: Show Labels / Remove Labels is one undo step, and a click on the mode already lit changes nothing",
+   "ok": true
+  },
+  {
+   "name": "Simple: Add AUX (+), the AUX panel Apply and Remove AUX Globally are each one undo step",
+   "ok": true
+  },
+  {
+   "name": "Simple: a dragged table row or preset tile lands where the drop line shows, a drop on the near half changes nothing, and Undo puts the order back",
+   "ok": true
+  },
+  {
+   "name": "Simple: a BG colour picked on the first preset shows on the canvas even when the destination carries a BG content colour",
+   "ok": true
+  },
+  {
+   "name": "Simple: Escape closes the colour picker and leaves the Layer panel under it open; Escape in a table cell cancels the edit",
+   "ok": true
+  },
+  {
+   "name": "Simple: a table note or P# edit is one undo step, a per-preset destination name shows on that preset's canvas, and the blend window shows all four digits of a resolution",
+   "ok": true
+  },
+  {
    "name": "Advanced: opens on a preset with the sources rail and the properties panel",
    "ok": true
   },
@@ -114,6 +154,30 @@
   },
   {
    "name": "Advanced: + Destination opens its window ABOVE the Advanced page and adds the destination",
+   "ok": true
+  },
+  {
+   "name": "Advanced: Esc closes the window, menu or field on top and never the Advanced page under it; with nothing open it still goes back to Simple",
+   "ok": true
+  },
+  {
+   "name": "Advanced: an arrow key with a destination selected resizes it like Simple and never slides it onto its neighbour",
+   "ok": true
+  },
+  {
+   "name": "Advanced: a preset renamed in the tile shows in the page title and on its preset card at once",
+   "ok": true
+  },
+  {
+   "name": "Advanced: pressing a fader track in Properties keeps the panel under the pointer, the drag follows and lands as one undo step",
+   "ok": true
+  },
+  {
+   "name": "Advanced: Colour tag and Notes work when the BG is picked",
+   "ok": true
+  },
+  {
+   "name": "Advanced: a Video card has a remove button; Remove asks first, empties every layer and BG that used the file with their clip settings, and one Undo brings it all back",
    "ok": true
   },
   {
@@ -146,6 +210,10 @@
   },
   {
    "name": "Advanced: dragging a corner of a locked layer keeps its shape and the panel follows",
+   "ok": true
+  },
+  {
+   "name": "Advanced: dragging a layer, dragging its corner and nudging it with the arrow keys are each one undo step that really goes back",
    "ok": true
   },
   {
@@ -182,6 +250,10 @@
   },
   {
    "name": "Advanced: Level moves in 1% steps with Shift-drag and with the arrow keys on the level line, a plain drag keeps the 5% detents, arrows do not nudge the destination",
+   "ok": true
+  },
+  {
+   "name": "Advanced: a click, a drag and a double-click on the Level line are each at most one undo step, and one Undo goes back",
    "ok": true
   },
   {
@@ -277,6 +349,58 @@
    "ok": true
   },
   {
+   "name": "Wire: Esc closes the Export window, a cable-type menu, the resolution menu, Help or a dialog first, never the Wire page under it",
+   "ok": true
+  },
+  {
+   "name": "Wire: Esc in the rename field or a resolution field cancels the typing and leaves the Wire page open",
+   "ok": true
+  },
+  {
+   "name": "Wire: + Destination opens ABOVE the Wire page and the new destination lands in the Wire panel",
+   "ok": true
+  },
+  {
+   "name": "Wire: an edit made on a card (cable colour) lights the unsaved mark without leaving Wire",
+   "ok": true
+  },
+  {
+   "name": "Wire: one source thumbnail upload is ONE undo step (picture and sampled colour together)",
+   "ok": true
+  },
+  {
+   "name": "Wire Simple: moving a cable by its handle is one undo step, and Reset Layout puts the cable back",
+   "ok": true
+  },
+  {
+   "name": "Wire Simple: typing the switcher name is one undo step",
+   "ok": true
+  },
+  {
+   "name": "Wire Simple: a source that was dragged keeps its place (and its cable route) when it is renamed",
+   "ok": true
+  },
+  {
+   "name": "Wire Details: a BG counts as use, for the source and for the destination",
+   "ok": true
+  },
+  {
+   "name": "Wire Simple: Fit brings a node that was dragged far away back on screen",
+   "ok": true
+  },
+  {
+   "name": "Wire export: the printed Simple switcher reads ID over its columns, like the screen (no SLOT)",
+   "ok": true
+  },
+  {
+   "name": "Wire Asset Pack: a destination tile and an AUX tile use the colour of their card",
+   "ok": true
+  },
+  {
+   "name": "Help: the Wire section describes the switcher in the middle, not \"lines showing what feeds what\"",
+   "ok": true
+  },
+  {
    "name": "Wire Advanced: page 1 is built from the show, every source wired into the switcher",
    "ok": true
   },
@@ -341,6 +465,54 @@
    "ok": true
   },
   {
+   "name": "Wire Advanced: an edit lights the Save indicator (the show knows it is dirty without a trip through Video Presets)",
+   "ok": true
+  },
+  {
+   "name": "Wire Advanced: renaming a page is one undo step, Escape in the name box cancels and leaves Wire open, no page error",
+   "ok": true
+  },
+  {
+   "name": "Wire Advanced: the copy and close icons stay inside the tab when the page name is long",
+   "ok": true
+  },
+  {
+   "name": "Wire Advanced: Escape closes what is on top first (cable menu, export window, an armed matrix key); only a bare Escape closes Wire",
+   "ok": true
+  },
+  {
+   "name": "Wire Advanced: with Wire open, Delete removes the selected tile and never the layer selected in Video Presets behind it",
+   "ok": true
+  },
+  {
+   "name": "Wire Advanced: the size window sits under the app dialog, so \"Invalid size\" can be answered",
+   "ok": true
+  },
+  {
+   "name": "Wire Advanced: deleting a destination tile takes its BACKUP cable too, the switcher row is free again",
+   "ok": true
+  },
+  {
+   "name": "Wire Advanced: typing an output point name is one undo step",
+   "ok": true
+  },
+  {
+   "name": "Wire Advanced: a converter that grows pushes the tile under it down, an I/O Patch page tile never lands on another tile",
+   "ok": true
+  },
+  {
+   "name": "Wire Advanced: a custom destination reads by name in Details and in the switcher cell; removing a custom source card takes its tiles",
+   "ok": true
+  },
+  {
+   "name": "Wire Advanced: Reset Layout tidies the Advanced page and leaves the Simple layout alone; the default router subtitle follows its size",
+   "ok": true
+  },
+  {
+   "name": "Wire Advanced: Tab out of a typed name cell lands in the next text box instead of nowhere",
+   "ok": true
+  },
+  {
    "name": "Wire: closes cleanly",
    "ok": true
   },
@@ -382,6 +554,46 @@
   },
   {
    "name": "I/O Patch: closes cleanly",
+   "ok": true
+  },
+  {
+   "name": "I/O Patch: a connector pick, a custom resolution, a note and a typed rename are each ONE undo step",
+   "ok": true
+  },
+  {
+   "name": "I/O Patch: deleting a source from its row is one undo step and Undo puts it back in every preset",
+   "ok": true
+  },
+  {
+   "name": "I/O Patch: Add Source and Add MV are undo steps",
+   "ok": true
+  },
+  {
+   "name": "I/O Patch: Escape closes the menu, the window or the field on top, never the page underneath",
+   "ok": true
+  },
+  {
+   "name": "I/O Patch: a source cannot take a name that is already in the show",
+   "ok": true
+  },
+  {
+   "name": "I/O Patch: a source renamed or deleted in Simple does not come back as a ghost row after Advanced is opened",
+   "ok": true
+  },
+  {
+   "name": "I/O Patch: + Destination from the top bar opens ABOVE the I/O Patch page and adds the destination",
+   "ok": true
+  },
+  {
+   "name": "I/O Patch: the destination name menu offers destination names only",
+   "ok": true
+  },
+  {
+   "name": "I/O Patch: clicking in and out of a Notes box writes nothing (a BG source keeps its own note)",
+   "ok": true
+  },
+  {
+   "name": "I/O Patch: Set for all destinations also sets the I/O-only destination rows under it",
    "ok": true
   },
   {
@@ -433,11 +645,171 @@
    "ok": true
   },
   {
+   "name": "Stacking: + Destination opens ABOVE the Wire page and above the I/O Patch page, and its colour window above it",
+   "ok": true
+  },
+  {
+   "name": "Escape: a window open over Advanced, Wire or I/O Patch closes alone and the page stays open",
+   "ok": true
+  },
+  {
+   "name": "Escape: closes the Look Book export window, the Wire export window, the Pre-Export Check and the colour window",
+   "ok": true
+  },
+  {
+   "name": "Escape typed in a text field never closes Advanced, Wire or I/O Patch",
+   "ok": true
+  },
+  {
+   "name": "Advanced: [ ] and the arrow keys typed in a dropdown or a text area do not change the preset or nudge the layer",
+   "ok": true
+  },
+  {
+   "name": "Layer Properties: a Width TYPED digit by digit (6, 64, 640) keeps the shape with the lock on (640 x 360, not 640 x 640)",
+   "ok": true
+  },
+  {
+   "name": "Keys: an arrow nudge of a picked layer is one undo step; Advanced on Lock resizes a picked destination and never moves it",
+   "ok": true
+  },
+  {
    "name": "name: Help and the Look Book cover say AV Look Book, the window title keeps the ending the desktop app reads",
    "ok": true
   },
   {
    "name": "Report a bug: builds an email to AV Educate with the template and the show attached",
+   "ok": true
+  },
+  {
+   "name": "toolbar: + Destination opens ABOVE Wire and above I/O Patch, and its colour picker above that",
+   "ok": true
+  },
+  {
+   "name": "toolbar: Add Destination is one undo step and is held to the size limits (67 to 7680 wide, 67 to 4320 high)",
+   "ok": true
+  },
+  {
+   "name": "keys: Cmd+N on an open show goes through New (asks first), and Build My Show then makes a NEW show instead of adding to the open one",
+   "ok": true
+  },
+  {
+   "name": "Quick Setup: opens at the top with the cursor in Show name; Escape with a resolution list open closes the list only, the next Escape closes the wizard",
+   "ok": true
+  },
+  {
+   "name": "Escape closes the Look Book window, the Pre-Export Check and Add Destination (cursor outside the fields), and lets go of a picked layer",
+   "ok": true
+  },
+  {
+   "name": "keys: Cmd+S saves while the cursor is in the Show name field, and saves once (not twice) outside a field",
+   "ok": true
+  },
+  {
+   "name": "draft: a show with nothing in it is never offered as a draft, a real show still is",
+   "ok": true
+  },
+  {
+   "name": "Help keyboard map: the 1 – 9 row lights nine keys, Scroll wheel reads as a mouse action, and the Cmd+N line says what the key does",
+   "ok": true
+  },
+  {
+   "name": "unsaved marker: Collapse all and Expand all leave a saved show clean",
+   "ok": true
+  },
+  {
+   "name": "keys: in the Advanced page an arrow does to a picked destination exactly what it does in Simple (resizes it 1 px, never moves it as well, one undo step); in Simple an arrow nudge of a layer is one undo step",
+   "ok": true
+  },
+  {
+   "name": "Advanced overlays menu (status bar) closes on a click on a layer chip, and its button still toggles it",
+   "ok": true
+  },
+  {
+   "name": "Look Book: every contents row jumps to its section and prints the real page number, rows are one line high",
+   "ok": true
+  },
+  {
+   "name": "Look Book: the Canvas Visual stays inside the page margins on every preset page",
+   "ok": true
+  },
+  {
+   "name": "Look Book: a preset name with < > & prints in full in the page header, and crop / FX lines are not cut",
+   "ok": true
+  },
+  {
+   "name": "Exports: Esc closes the Look Book window, and closes the Pre-Export Check without closing the I/O Patch page under it",
+   "ok": true
+  },
+  {
+   "name": "Pre-Export Check: a BG-only preset (walk-in logo, full-bleed playback) is not called empty, a preset with nothing on it is",
+   "ok": true
+  },
+  {
+   "name": "Browser draft: while the Restore Draft question is unanswered the autosave leaves the stored draft alone, then writes again once it is answered",
+   "ok": true
+  },
+  {
+   "name": "Save: Cmd / Ctrl + S saves while the cursor is in a text field (once, and the field is committed first)",
+   "ok": true
+  },
+  {
+   "name": "Open: a show file with a blank name clears the name field instead of keeping the previous show's name",
+   "ok": true
+  },
+  {
+   "name": "Send: attaches the Look Book the window builds (wire sheet included) plus the cue sheet, and the mail draft goes through the mail seam",
+   "ok": true
+  },
+  {
+   "name": "undo: Add Destination (its window, the Add button) is one undo step",
+   "ok": true
+  },
+  {
+   "name": "undo: Add AUX (+) is one undo step",
+   "ok": true
+  },
+  {
+   "name": "undo: layer panel \"Remove from this preset\" is one undo step",
+   "ok": true
+  },
+  {
+   "name": "undo: picking content from the layer panel list is one undo step",
+   "ok": true
+  },
+  {
+   "name": "undo: a layer dragged on the canvas goes back to where it started",
+   "ok": true
+  },
+  {
+   "name": "undo: an arrow-key nudge burst is one undo step and Undo puts the layer back",
+   "ok": true
+  },
+  {
+   "name": "undo: a preset name typed in the preset header is one undo step",
+   "ok": true
+  },
+  {
+   "name": "undo: AUX panel Apply (name and size) is one undo step",
+   "ok": true
+  },
+  {
+   "name": "undo: I/O Patch Simple \"+ Source\" is one undo step and arms the autosave",
+   "ok": true
+  },
+  {
+   "name": "undo: view-only clicks (Collapse all, Expand all, Wire zoom) record no undo step and keep Redo",
+   "ok": true
+  },
+  {
+   "name": "unsaved dot: typing the show name lights it without any other action",
+   "ok": true
+  },
+  {
+   "name": "Advanced: the Opacity fader is not rebuilt under the pointer on its first move and records one undo step",
+   "ok": true
+  },
+  {
+   "name": "Show card edit (phone Quick Setup edit): confirming with nothing changed keeps a free layout",
    "ok": true
   }
  ],

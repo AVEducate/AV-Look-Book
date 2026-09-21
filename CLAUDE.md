@@ -27,6 +27,7 @@ the Excel cue sheet, the I/O Excel, the Wire drawing, and Send. (A CSV exporter 
 - `private/` — git-ignored; a dated copy of the assistant's memory folder lives here. The repo is PUBLIC.
 - `Test AV Look Book.command` — the owner's double-click launcher for the TEST copy (dev shell from this folder, own
   data folder). He tests every change there before anything is pushed or released (RELEASE.md).
+- `USER_MANUAL.md` — the user manual (what every control does, step by step), written from the 2026-09-21 click-through.
 - `HANDBOOK.md` (how to work), `RELEASE.md` (the release gate), `PHONE.md` (the phone / tablet build: purpose, rules,
   traps, how it is tested). `app/` and the old Netlify site are retired.
 
