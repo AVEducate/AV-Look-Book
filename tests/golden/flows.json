@@ -109,6 +109,10 @@
    "ok": true
   },
   {
+   "name": "Advanced: the Preset group has its own 30 / 20 / 10 and they move every clip to its last seconds",
+   "ok": true
+  },
+  {
    "name": "Advanced: nothing is left playing after Pause",
    "ok": true
   },
@@ -125,7 +129,7 @@
    "ok": true
   },
   {
-   "name": "Advanced: a blocked Display window says so and leaves the button unlit; an open one mirrors the preset clean and closes with the button",
+   "name": "Advanced: a blocked Display window says so and leaves the button unlit; an open one mirrors the preset with its information and without controls, and closes with the button",
    "ok": true
   },
   {
