@@ -143,6 +143,8 @@ It pairs with hardware switchers; it does not replace them.
 - On pressing Display, a note explains clip formats: for reference playback only; H.264 and HEVC play, ProRes and HAP do
   not (Chromium has no decoder for them).
 - Idea for later: the phone / tablet version outputs the Advanced preset to an external monitor for a client preview.
+- DECIDED 2026-09-20 (later): build Stage 1 now (the pop-out the user drags to the other screen; the owner has a
+  monitor to demo it with). Stage 2 (the app places itself on the second display) waits for V3. No Stage 3.
 - Build notes: Stage 1 = a same-origin pop-out window with muted-or-audio twin players following the editor's players
   (no installer needed, the user drags it to the other screen). "Takes over the second display by itself" needs the
   desktop shell (Electron `screen`, a frameless window on the chosen display) = a new installer. Stage 3 (cut / mix)
@@ -155,7 +157,8 @@ Goal (owner): the EIC patch book is hand-typed for every show today; make it fas
 - In Wire, a page is a tab; a router and a switcher that sit on the same page stay combined on that tab. Other pages
   can hold only part of the system.
 - Unused ports print as rows up to the device size; the user fills or deletes them in Excel.
-- COVER tab: first tab of the Excel from I/O Patch and from Wire only (not the Look Book PDF). Same look as the owner's
+- COVER tab: first tab of every Excel the app writes (I/O Patch, Wire, and the Video Presets cue sheet), not the Look
+  Book PDF. Same look as the owner's
   model cover, filled from the show info. The big top line is the SHOW NAME (not the client). No logo. Adds two fields
   used only by the Excel cover: venue address and a date range. Cells do not have to be merged as long as the result
   matches. Only the cover takes the model's look; the other tabs keep today's look.
