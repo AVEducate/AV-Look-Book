@@ -92,14 +92,20 @@ or a mutation manually poking the DOM).
 **CONTROLLER layer — `actions.*` (one named fn per user operation)**
 - The view calls `actions.X(...)`; each action does `[pushUndo if needed] →
   data setter/mutator → scheduleRender()`. One place to find/change an operation.
-  Covers toolbar, preset-row, DSM toolbar, screen-panel show-mode, advanced
-  toggles, DSM-panel content. (Layer-properties panel buttons are wired via
+  Covers toolbar, preset-row, DSM toolbar, screen-panel show-mode, Modifiers-menu
+  toggles (`toggleAdvFeature`; the menu read "Advanced" on screen until 2026-09-21, code names keep `adv`), DSM-panel content. (Layer-properties panel buttons are wired via
   `addEventListener` in `wireEvents` — already decoupled; a valid alternative.)
 - Redraw is ONE batched path: **`scheduleRender()`** (rAF-coalesced) calls
   `render()` and resyncs whichever overlay is open (`_sysRefreshIfOpen` +
   `_wireRefreshIfOpen`). Use it after a mutation instead of bare `render()` /
   `renderFullscreen()`. EXCEPTION: per-frame drag move-loops (`function mv`) and
   mobile `_mb*` stay synchronous `render()` for same-frame paint — don't convert.
+
+**No-overlap guard (2026-09-21)** — `_ovlBegin()` / `_ovlEnd(tok)` (+ `_ovlPairs`, `_ovlNew`, `_ovlRevert`), in front of `_bgGroups`.
+Bracket every writer of a destination position / size / rotation that is NOT a blend control (today: Destination Properties Apply,
+`_spTool` paste / reset, `startResize`, `setDeadPx`, `_sysSetMeta` dest resolution, `_unhideScreen`). New overlap = the drag's
+"Create Blend Zone?"; Cancel = pre-action snapshot back, no undo step. Not bracketed on purpose: blend controls, load, undo / redo,
+the move arrows and the arrow keys.
 
 **VIEW layer — `render*` assemblers + `_rc/_rf/_fs/_lp` helpers + HTML templates**
 - `renderCanvas()` → `_rcChip`/`_rcAoiOverlay`/`_rcScreenBox`/`_rcOverlapVis`/`_rcDeadVis`

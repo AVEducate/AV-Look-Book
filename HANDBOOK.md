@@ -79,6 +79,21 @@ anchor on the function name and replace the first occurrence after it, never all
   are NOT per preset and not in the show file: one view setting for the whole program on this computer
   (`localStorage lookbook_adv_settings`, since 2026-06-02). The owner believes they follow P01 per preset: that would be a
   NEW feature (decision pending), say so before building anything on that assumption.
+- **Why Simple and Advanced exist** (owner, 2026-09-21; keep every change inside this idea). Simple is PRE-BUILT from the
+  Video Presets page, for smaller shows and for a show caller or producer who does not know the hardware. Advanced is for
+  the engineer: the hardware the presets page cannot know (routers, switchers, DAs, converters) is added there. Advanced
+  PAGE 1 is the Simple build carried over, and it is two-way: a change on page 1 updates Simple, I/O Patch and Video
+  Presets, because a source is ONE thing (name, cover, cable type, resolution) shown in several places, which is why it is
+  drag-and-drop. Every page after page 1 is a CUSTOM build that feeds nothing back. Random cable colours on the first look
+  at Wire are intended; a colour the user picked must never change again.
+- **The arrow KEYS on a picked destination RESIZE it 1 px (Shift 10)**, in Simple and in Advanced: an accessibility feature
+  from 2026-06-01, kept on purpose (owner 2026-09-21: "keep this the way it is"). The on-canvas ◀ ▶ are what SWAP a
+  destination with its neighbour. The key resize goes through `updateScreenSize` (neighbours are pushed along) so it can
+  never park a destination on another one; a burst of presses is one undo step.
+- **The Modifiers menu** (AOI Overlays, Blend Zones, Dead Space, Free Position, Fit Canvas) opens from the MODIFIERS button
+  on each preset tile only. The status-bar button that also opened it is now a greyed-out **Educator** placeholder
+  (`#tb-educator`, disabled) for a future build. The switches are one session-wide view state: not per preset, not in the
+  show file, all OFF at every launch (`loadAdvSettings`, a deliberate 2026-06-02 decision).
 - **Before building anything the owner recommends, check it against the rules already in place** (this section, the
   manual, the build log) and TELL HIM FIRST when it would break one or change something that was put in on purpose
   (example: the arrow-key resize of a destination was an accessibility feature added 2026-06-01, not an accident).
@@ -92,6 +107,10 @@ anchor on the function name and replace the first occurrence after it, never all
   `layerMedia.speed`; 0 is a real value (still frame), so never write `speed||100`. `_fsRateOf(lm)` is the one place a
   stored speed becomes a playback rate. An older show's odd value stays listed until it is changed.
 - Wire cables are always orthogonal; there is no style choice anywhere, including the Look Book export window.
+- No accidental overlaps (owner rule, 2026-09-21): a destination never lands on another one, Simple or Advanced, unless the user came
+  through a blend control. Any code that writes a destination position, size or rotation outside a blend control brackets itself with
+  `const t=_ovlBegin();` ... `_ovlEnd(t);`. A NEW overlapping pair in any preset raises "Create Blend Zone?"; Cancel restores the
+  pre-action snapshot and drops the undo step. The one geometric test is `_overlapPairsForPreset(p)`. Never call the guard on load.
 - A new router / switcher is placed by `_wireAdvFreeSpot` (never on another tile); a tile that grows pushes the tiles
   stacked under it down (`_wireAdvPushBelow`).
 - THE NAME: the product is "AV Look Book". The page's `<title>` and every `document.title` still end in
@@ -99,6 +118,13 @@ anchor on the function name and replace the first occurrence after it, never all
   (`electron/main.js`, `page-title-updated`) and Mac shells cannot self-update. Do not change the ending until a shell
   that accepts both has been out long enough. The file name `lookbook_builder.html` is load-bearing too (content
   updater URL, release workflow, `copy-html`).
+- THE WORD "ADVANCED": on screen it means ONLY the Simple / Advanced switch (Video Presets, Wire, I/O Patch, Layer panel).
+  The gear menu on a preset tile is **Modifiers** (renamed 2026-09-21; the status-bar copy of it became the greyed-out Educator placeholder the same day). Code names keep `adv` on
+  purpose: `toggleAdvancedMenu`, `closeAdvancedMenu`, `actions.advancedMenu`, `toggleAdvFeature`, `#adv-menu`, `#tb-adv`,
+  `.adv-item`, `data-adv`, `adv-hide-*`, `adv-free-position`, `lookbook_adv_settings`. The four switches are body classes:
+  one state for every preset, per computer session (cleared on every page load and on New Show), never in the show file,
+  no undo step. Fit Canvas is the only item that edits the show (one undo step; tile = that preset, Advanced page = the
+  open preset, status bar = every preset).
 - Exports list the BG like a layer (`BG: name (detail)`); a BG whose picture is a library clip resolves to that clip.
 - Declined by the owner, do not resurface: mask shapes, anchor points, hardware profiles, canvas/WebGL renderer,
   interpolation filter toggles, upscale-factor notes, per-layer "sharp pixels", any licence mention.

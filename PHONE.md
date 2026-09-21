@@ -127,13 +127,13 @@ decision on record; nobody wrote down whether it was left out on purpose.
 | Video Presets in landscape | Retired 2026-06-15. The edit view still draws in landscape but leaves almost no room on a phone. | BY DESIGN |
 | Video Presets Advanced (engineer view: clips, timeline, speed, source crop, BG as layer 0) | Hidden and blocked (`#vp-tabs`, `_vpSetView`). Cover stills still show on the chips. | TO DECIDE (the 16ht commit says "engineer mode stays desktop-only"; no owner decision on record) |
 | Layer panel, Simple and Advanced sections | The same desktop panel, docked. It always opens on Simple (`_mbLayerAdv` is never set true). | BY DESIGN (2026-06-16) |
-| Destination panel (W/H, X/Y, rotation, BG, show mode) | The same desktop panel, docked. | BY DESIGN |
+| Destination panel (W/H, X/Y, rotation, BG, show mode) | The same desktop panel, docked. **(no-overlap guard, 2026-09-21)** Apply, paste and reset ask "Create Blend Zone?" when the result would cover another destination; Cancel puts it back. NOT covered on the phone: the resolution picker (`mbOpenResPicker`) and Move Left / Right (`mbMoveDest` swaps top-left corners, so two destinations of different width end up overlapping). | BY DESIGN |
 | AUX / DSM panel | The same desktop panel, docked. | BY DESIGN |
 | Picture follows an edit live | **(build 16ki)** the visualiser redraws after a size APPLY, a fader move or a content pick while a panel is docked. Through 16kh it stayed frozen until the panel closed. | BY DESIGN |
 | Move a destination | ◀ ▶ on the selected wall in the visualiser AND Left / Right in the row. Swaps positions in every preset. | BY DESIGN (2026-06-15) |
 | Add / remove destination, layer, AUX | ± pairs at the bottom of their own section. − DEST and − AUX remove the LAST one and ask first; − LAYER removes the open layer without asking; + LAYER lands on D1 unless a layer is open. | Placement BY DESIGN; which item "−" removes TO DECIDE |
 | Presets: delete, duplicate, reorder | Add only ("+ New Preset" copies P01). | TO DECIDE |
-| AOI, Blend, Dead space, Free position | Hidden; the menu lives on the desktop bottom bar. | TO DECIDE |
+| AOI, Blend, Dead space, Free position | Hidden; the Modifiers menu (the old "Advanced" gear menu) lives on the desktop preset tiles (the bottom-bar button became the greyed-out Educator placeholder in build 16kq). | TO DECIDE |
 | Combinations table and stats bar | Hidden. The four count chips on each preset card stand in. | TO DECIDE |
 | I/O Patch Simple | Cards using the desktop connector, type and resolution pickers. | BY DESIGN (2026-06-12) |
 | I/O "Set for all", + Source / + Destination / + AUX / + MV, per-row reset and delete, name library, "Only here" rename | Absent. A rename on the phone is always global. | TO DECIDE |

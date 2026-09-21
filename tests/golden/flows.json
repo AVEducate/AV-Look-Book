@@ -313,7 +313,43 @@
    "ok": true
   },
   {
+   "name": "Modifiers: the preset tile button reads MODIFIERS and hangs the menu; the status bar holds a greyed-out Educator that does nothing; the page switch still reads Advanced",
+   "ok": true
+  },
+  {
+   "name": "Modifiers: Help and the Look Book window point at \"Modifiers ▾\", nothing on screen still says \"Advanced ▾\" or \"Advanced menu\"",
+   "ok": true
+  },
+  {
+   "name": "Modifiers: a switch is ONE state for every preset on this computer, not a preset setting: no undo step, show stays clean, nothing in the show file",
+   "ok": true
+  },
+  {
    "name": "Destination drag ends when the mouse-up is lost (the button was released outside the window)",
+   "ok": true
+  },
+  {
+   "name": "no overlap: a typed X in Destination Properties that lands on the neighbour asks \"Create Blend Zone?\"; Cancel puts it back with no undo step; Add to blend is ONE undo step, marks the show unsaved and survives save + reload without a question",
+   "ok": true
+  },
+  {
+   "name": "no overlap: a typed Rotation whose tilted footprint reaches the neighbour asks; Cancel takes the rotation back with no undo step; a 90 degree turn on a clean strip still re-packs without a question",
+   "ok": true
+  },
+  {
+   "name": "no overlap: a pasted position that sits on another destination asks; Cancel puts it back with no undo step and the panel closes",
+   "ok": true
+  },
+  {
+   "name": "no overlap: with a second row under destination 1, a height change (corner handle, typed H, I/O Patch resolution) that would drop the row onto the strip asks each time, and Cancel puts every destination back",
+   "ok": true
+  },
+  {
+   "name": "no overlap: a wider Dead Space value that pushes a destination onto the next one asks, and so does putting a removed destination back into a slot that was taken; Cancel undoes both",
+   "ok": true
+  },
+  {
+   "name": "no overlap (existing behaviour, pinned): a Free Position drop on a neighbour asks and Cancel puts it back; the Blend Zones sideways drag and the blend PX box blend without a question; a typed Width on a strip, Add Destination, Duplicate and Fit Canvas make no overlap and ask nothing",
    "ok": true
   },
   {
@@ -721,7 +757,31 @@
    "ok": true
   },
   {
-   "name": "Advanced overlays menu (status bar) closes on a click on a layer chip, and its button still toggles it",
+   "name": "move arrows: a swap never parks a destination on top of another, with unequal widths, a dead space and a preset that has its own order; the dead space keeps its slot",
+   "ok": true
+  },
+  {
+   "name": "move arrows: a blended pair moves as one block from either member and never swaps with its partner; a destination alone on a second row is greyed both ways and a press on it adds no undo step",
+   "ok": true
+  },
+  {
+   "name": "move arrows: a pick from the Simple table row or the Advanced destination row shows the arrows, picking elsewhere moves them, un-picking removes them",
+   "ok": true
+  },
+  {
+   "name": "move arrows: a swap carries everything stored per destination in every preset, the table order follows, Undo and Redo are exact and a save + reload keeps it (pins existing behaviour)",
+   "ok": true
+  },
+  {
+   "name": "move arrows: the phone arrows use the same swap (unequal widths never overlap, one undo step)",
+   "ok": true
+  },
+  {
+   "name": "Modifiers menu (preset tile) closes on a click on a layer chip, and its button still toggles it",
+   "ok": true
+  },
+  {
+   "name": "Keys: an arrow key on a picked destination resizes it 1 px and pushes the destinations to its right along, so nothing ever overlaps; a burst is one undo step; Advanced does the same",
    "ok": true
   },
   {

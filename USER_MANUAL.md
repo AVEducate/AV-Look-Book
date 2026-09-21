@@ -115,7 +115,7 @@ The desktop has no "Edit Show Info" window (the phone has one). Change date, ven
 | **Layers** | The most layers used in any single preset. Compare it with your switcher's layer budget. |
 | Selection read-out | The preset, destination and size you last picked. |
 | **build …** | The build stamp. Quote it in a bug report. |
-| **Advanced** | The overlays menu: **AOI Overlays**, **Blend Zones**, **Dead Space**, **Free Position** (each on / off, remembered on this computer, not in the show file) and **Fit Canvas**. Every preset tile has the same menu on its own ADVANCED ▾ button. It closes when you press anywhere else. |
+| **Educator** | Greyed out. A place kept for a teaching tool in a future build; it does nothing today. (The Modifiers menu used to open from here as well; it now opens from the **MODIFIERS ▾** button on each preset tile only, 4.2.) |
 | **Help** | Quick Reference, Keyboard, Glossary, Vocabulary (how Look Book terms map to Aquilon, Spyder, Pixelhue, Barco) and Accessibility, plus links to Feedback and Support. On the Keyboard tab choose a Mac or PC keyboard; hover or click a shortcut to light its keys. |
 | **Bug** | Downloads the show file and opens an email to AV Educate with a short form and your build stamp. Remove the attachment if you would rather not share the show. |
 
@@ -137,7 +137,7 @@ Set up P01 first (destinations in the right order, blends, the background every 
 
 Two things follow the first preset in a different way:
 - A destination's **name** and **colour** changed on P01 are the show-wide name and colour; changed on any other preset they belong to that preset only (4.4).
-- The **Modifiers** switches (AOI Overlays, Blend Zones, Dead Space, Free Position; 4.2) are not part of any preset: they switch what you SEE and whether destinations can be dragged, for the whole program on this computer.
+- The **Modifiers** switches (AOI Overlays, Blend Zones, Dead Space, Free Position; 4.2) are not part of any preset and are not saved in the show: they switch what you SEE and whether destinations can be dragged, on every preset at once, and they all start OFF each time the app opens.
 
 ### 4.1 The preset tile header
 
@@ -146,7 +146,7 @@ Two things follow the first preset in a different way:
 | Drag handle (six dots) | Drag the tile up or down to re-order presets. A line shows where it will land; it lands on that line. |
 | **Code** (P01) | Up to 4 characters. Used in the table, the exports and show calling. |
 | **Name**, **Notes** | Free text. Quotes and symbols are fine. |
-| **ADVANCED ▾** | The tile's overlays menu (4.2). |
+| **MODIFIERS ▾** | The tile's modifiers menu (4.2). |
 | **Paste** | Greyed until you copy a preset. Overwrites this preset's content and keeps this preset's own code, name and notes. No question is asked; Undo brings the old content back. |
 | **Copy** | Copies this preset. The button flashes "COPIED". |
 | **Reset** | Puts this preset's destinations back in a clean left-to-right strip (removes hand placement and blends in this preset only). |
@@ -155,9 +155,9 @@ Two things follow the first preset in a different way:
 
 Code, Name and Notes: Enter or a click away confirms, Escape cancels, and each edit is one Undo step.
 
-### 4.2 The ADVANCED ▾ menu
+### 4.2 The MODIFIERS ▾ menu
 
-Four switches for the whole page (a tick shows what is on) and one action for this tile.
+Four switches for the whole page (a tick shows what is on) and one action for this tile. A switch is not a setting of one preset: it shows on every preset, it is not saved in the show, and every switch starts off when the app opens. Modifiers has nothing to do with the Simple / Advanced switch of the page.
 
 - **AOI Overlays**: shows the Area of Interest tools on a selected destination.
 - **Blend Zones**: lets you drag a destination sideways over its neighbour and shows the orange hatch with the overlap in pixels and percent.
@@ -187,6 +187,8 @@ Four switches for the whole page (a tick shows what is on) and one action for th
 
 **Free Position.** Drag anywhere. If the drop makes a new overlap the app asks "Create Blend Zone?": *Add to blend* keeps it, *Cancel* puts the destination back. After a drop the layout slides back to 0,0 by itself.
 
+**No accidental overlaps.** A destination never lands on top of another one without asking, in Simple or in Advanced. A typed X / Y, Width / Height or Rotation in Destination Properties, a pasted or reset size / position / rotation, a corner-handle resize, a Dead Space value, a resolution picked in I/O Patch, or the eye button that brings a hidden destination back: when the result would cover a neighbour (fully or partly, in ANY preset, the message names the presets) the app asks the same "Create Blend Zone?". *Add to blend* keeps the change as its one Undo step. *Cancel* puts everything back the way it was before the action and leaves no Undo step. The blend controls themselves (the Blend Zones sideways drag, the PX and % boxes, the blend window) never ask: there the overlap is what you asked for. Opening a show never moves anything, so old shows keep their blends.
+
 **Dead Space.** Type the gap in PX or in FT on the blue arrow; the right-hand destination moves. A ⚠ marks a gap over 500 px. Feet follow the Pixel-Feet setting in Help › Accessibility, not the LED pitch.
 
 **Area of Interest (AOI Overlays on)**
@@ -204,6 +206,7 @@ Double-click a destination, or press the chevron in the table's Name cell.
 - **Layers · this preset**: L1 to L4 buttons open that layer's panel. **↺ Reset** puts every layer on this destination back to its default place.
 - **Preset override · this preset**: **BG/Color**, **X / Y Position**, **Rotation** (any angle; a 90° turn asks whether to keep your layout or re-arrange), **EDID Note**. Each row has copy / paste / reset tools; paste acts at once.
 - **Apply** (or Enter) writes the fields as one Undo step and closes the window. **Copy** duplicates the destination. **Cancel**, ✕, Escape or a click outside close without applying typed numbers.
+- **Never on top of a neighbour without asking**: Apply, paste and reset check the result. If it would overlap another destination you get "Create Blend Zone?" (4.3); Cancel takes the whole Apply back.
 - **Reset Preset Layout**: clean strip for this preset.
 - **Show Labels / Remove Labels**: name and resolution on or off for this destination in this preset.
 - **Remove from Preset**: hides the destination in this preset only (the ghost brings it back).
@@ -289,7 +292,7 @@ Toolbar above the table: **Add Destination**, **Add Preset**; the chevron collap
 2. Drag the chip where you want it, or double-click it and type Position and Size.
 
 **Build a projector blend**
-1. ADVANCED ▾ › Blend Zones.
+1. MODIFIERS ▾ › Blend Zones.
 2. Drag the right-hand destination over the left one.
 3. Click the PX number and type the overlap. Aim for the green tick.
 
@@ -454,6 +457,18 @@ It is a reference picture next to your switcher, not a playback machine: H.264 a
 - The 1 to 9 keys do nothing you can see in Advanced.
 
 ---
+
+## Why there is a Simple and an Advanced (read this once)
+
+**Simple is built for you from the Video Presets page.** Every source you used in a preset, every destination and every AUX / DSM is already there, cabled through one switcher. It is meant for smaller shows, and for a show caller or a producer who does not need to know the hardware: nothing has to be drawn.
+
+**Advanced is for the engineer.** It is where you add the hardware the Video Presets page cannot know about: routers, switchers, DAs, converters, network switches, and how they are really cabled.
+
+**Page 1 of Advanced IS the Simple drawing, carried over.** It starts as the pre-built Simple diagram so you can modify it and add to it. What you change there about a source or a destination (its name, its cover picture, its cable type, its resolution) is the same fact in Simple, in I/O Patch and in Video Presets: there is one source, shown in several places, which is why you can drag and drop it anywhere. **Every page after page 1 is a custom build**: start from nothing and draw any combination you need; those pages do not feed back into Simple.
+
+**Cable colours.** The first time you look at Wire, every source and destination that has no colour yet is given a random one. That is intended. **Once you have picked a colour yourself it never changes again.**
+
+The same split runs through I/O Patch: Simple lists what the show already has; Advanced page 1 starts as a copy of it and feeds back; the pages after it are your own.
 
 ## 6. Wire, Simple
 
@@ -794,13 +809,13 @@ Everything that leaves the building sits in the top bar and stays there whicheve
 | Show Blend Zones | The overlaps on the canvas, a line per pair (192x1080 px, ~10 %) and the ultra-wide total of each blend group. |
 | Show Dead Space | The gaps on the canvas and a line per gap in pixels and feet. |
 
-The four Details start the way your overlays menu is set. **Version** is stamped on the cover and on the strip at the top of every page so an old printout is obvious. **Cancel**, the ✕, a click outside the window, or Esc close the window without exporting.
+The four Details start the way your Modifiers menu is set. **Version** is stamped on the cover and on the strip at the top of every page so an old printout is obvious. **Cancel**, the ✕, a click outside the window, or Esc close the window without exporting.
 
 > **CHECK (are the Look Book window choices remembered?).** The toolbar chapter says "your choices are remembered until you close the app". The exports chapter says "choices are remembered only when you export" and that they go back to the defaults after a reload. Both agree they are not stored in the show file.
 
 Good to know
 - The Look Book does not run the Pre-Export Check (the two Excel exports do).
-- The canvas on the preset pages follows the **Canvas** size in the top bar. If you added destinations and the canvas was not refitted, use ADVANCED ▾ › Fit Canvas first, or the destinations past the canvas edge are cut, on paper as on screen.
+- The canvas on the preset pages follows the **Canvas** size in the top bar. If you added destinations and the canvas was not refitted, use MODIFIERS ▾ › Fit Canvas first, or the destinations past the canvas edge are cut, on paper as on screen.
 - Clip settings (In / Out, loop, speed, level, fades, look) print on the BG line. A clip on a layer prints only its name and size. EDID notes are not printed anywhere.
 - The Version box belongs to the Look Book window and is not stored in the show. The Excel cover and the Wire title block use **Project Ver** from the show info instead.
 - The first Look Book with a wire sheet gives each source its cable colour, the same as opening Wire does, so the show then counts as changed. Save afterwards.
@@ -894,6 +909,7 @@ The same history covers all three tools. Undo / Redo are in the top bar (dim whe
 - A drag, from press to release: moving or resizing a layer, a destination, an AOI box, a Wire tile, a cable handle, a fader.
 - A field, from the moment you click into it until you leave it or press Enter. Typing ten letters is one step, not ten.
 - Apply in Destination Properties is one step even when it changes size, position and rotation together, and the "Keep your layout?" question that may follow belongs to the same step.
+- "Create Blend Zone?" belongs to the action that raised it: *Add to blend* keeps that one step, *Cancel* leaves none (only after a Free Position DRAG does Cancel still leave one empty step).
 - A rename that runs through the whole show is one step and Undo puts the old name back everywhere.
 - In the layer panel, a custom name, a size and Apply together are one step.
 
@@ -920,7 +936,7 @@ Undo restores the show, not the view: it does not scroll for you and it clears t
 
 Everything that opens over a page (messages, Add Destination, the colour window, the properties panels, dropdown lists, the export windows, Help) opens ABOVE the page you are on, including Wire and I/O Patch **(after the fix; today + Destination opens behind Wire and I/O Patch, and a warning raised from a Wire window can open behind that window)**.
 
-**Closing.** A window with a dark area around it closes with a click on that dark area. Panels and lists close with a press anywhere outside **(after the fix for the overlays menu, the colour window and the Wire I/O Tools menu, which stayed open when the press landed on a destination, a layer or the drawing)**. Add Destination is the exception on purpose. Two lists are never open together; the three properties panels (Layer, Destination, AUX) are one at a time.
+**Closing.** A window with a dark area around it closes with a click on that dark area. Panels and lists close with a press anywhere outside **(after the fix for the Modifiers menu, the colour window and the Wire I/O Tools menu, which stayed open when the press landed on a destination, a layer or the drawing)**. Add Destination is the exception on purpose. Two lists are never open together; the three properties panels (Layer, Destination, AUX) are one at a time.
 
 **Escape: one press closes one thing.**
 1. If a list, a menu, a message or a window is open, Escape closes the top-most one and nothing else. A list open inside a window closes first; the next press closes the window.
@@ -1005,7 +1021,7 @@ Each item says what you see on build 2026-06-16ko and what to do. "Fixed by" nam
 | **Restored a draft and my blends are gone** | A restored draft is put back on the plain strip on purpose | Load the saved .avlb instead. |
 | **The browser asks "Leave site?" on Send or Bug** | Mail is opened by leaving the page | Save first, or answer Leave; the show stays open. |
 | **Look Book: the canvas picture is cut at the right edge, contents links are dead, contents page numbers are wrong, table lines end in "…"** | Faults in the Look Book layout | Fixed by the pending patches. Until then check page numbers by hand. |
-| **Look Book: destinations at the right of the canvas are missing** | The Canvas size was not refitted after adding destinations | ADVANCED ▾ › Fit Canvas, then export again. |
+| **Look Book: destinations at the right of the canvas are missing** | The Canvas size was not refitted after adding destinations | MODIFIERS ▾ › Fit Canvas, then export again. |
 | **Excel check warns "P01 WALK-IN has no layers"** | The check ignores the BG | Press Export Anyway. Fixed by the pending patches. |
 | **The Look Book from Send has no wire sheet** | Send builds the book without the window's options | Export the Look Book from its window and attach it yourself. Fixed by the pending patches. |
 | **A video card is dim and reads "relink"** | The app's stored copy is not on this computer | Click the card and pick the file again. |

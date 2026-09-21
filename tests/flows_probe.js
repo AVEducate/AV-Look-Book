@@ -239,7 +239,7 @@
     openScreenPanel(fakeEv, a.p, a.s); await wait(400); let pop = $('#screen-panel'); if (!pop) return 'Destination Properties did not open';
     const tool = (key, act) => $('[data-sp-key="' + key + '"][data-sp-tool="' + act + '"]', pop); if (!tool('size', 'copy') || !tool('pos', 'paste') || !tool('rot', 'reset')) { closeScreenPanel(); return 'no copy / paste / reset tools in Destination Properties'; }
     const asp = [($('#sp-aspect', pop) || {}).textContent]; $('#sp-w', pop).value = '3840'; fire($('#sp-w', pop), 'input'); asp.push($('#sp-aspect', pop).textContent);
-    $('#sp-w', pop).value = '1280'; $('#sp-h', pop).value = '720'; $('#sp-x', pop).value = '300'; $('#sp-y', pop).value = '20'; $('#sp-rot', pop).value = '180';   // copy takes what the window shows
+    $('#sp-w', pop).value = '1280'; $('#sp-h', pop).value = '720'; $('#sp-x', pop).value = '0'; $('#sp-y', pop).value = '20'; $('#sp-rot', pop).value = '180';   // copy takes what the window shows
     tool('size', 'copy').click(); tool('pos', 'copy').click(); tool('rot', 'copy').click(); closeScreenPanel(); await wait(150);
     const before = JSON.stringify([S().w, S().h, P().positions[b.s], getRotation(b.p, b.s)]);
     openScreenPanel(fakeEv, b.p, b.s); await wait(400); pop = $('#screen-panel'); const n = _undoStack.length;
@@ -247,7 +247,7 @@
     const pasted = [parseInt(S().w), parseInt(S().h), P().positions[b.s].x, P().positions[b.s].y, getRotation(b.p, b.s)], fields = [$('#sp-w', pop).value, $('#sp-x', pop).value, $('#sp-rot', pop).value];
     tool('size', 'reset').click(); await wait(150); tool('pos', 'reset').click(); await wait(150); tool('rot', 'reset').click(); await wait(250);
     const after = JSON.stringify([S().w, S().h, P().positions[b.s], getRotation(b.p, b.s)]); closeScreenPanel();
-    const out = is([asp, pasted, fields, [s1, s2, s3], after === before, _undoStack.length - n], [['Aspect 16:9', 'Aspect 32:9'], [1280, 720, 300, 20, 180], ['1280', '300', '180'], [1, 2, 3], true, 6], 'aspect / pasted / fields follow / one undo step per paste / reset returns to as-opened / six steps in all');
+    const out = is([asp, pasted, fields, [s1, s2, s3], after === before, _undoStack.length - n], [['Aspect 16:9', 'Aspect 32:9'], [1280, 720, 0, 20, 180], ['1280', '0', '180'], [1, 2, 3], true, 5], 'aspect / pasted / fields follow / one undo step per paste / reset returns to as-opened / five steps in all (the size reset re-centres the destination, so the position reset has nothing left to change and leaves no empty step)');
     await restore(); return out;
   });
   await check('Simple: the EDID note is kept per destination per preset, survives save and load, follows a destination copy and goes with a deleted destination', async () => {
@@ -739,6 +739,31 @@
     try { _fsPauseAll(); } catch (e) {} closeFullscreen(); await wait(400); await restore();
     return out;
   });
+  await check('Modifiers: the preset tile button reads MODIFIERS and hangs the menu; the status bar holds a greyed-out Educator that does nothing; the page switch still reads Advanced', async () => {
+    closeAdvancedMenu(); const tile = $('.preset-row .pr-actions button[onclick*="toggleAdvancedMenu"]'), menu = $('#adv-menu'), edu = $('#tb-educator'); if (!tile || !menu) return 'no Modifiers button on the preset tile'; if (!edu) return 'no Educator placeholder in the status bar';
+    const word = b => [...b.childNodes].filter(n => n.nodeType === 3).map(n => n.textContent.trim()).join('');
+    const tileOk = [word(tile), /^Modifiers/.test(tile.getAttribute('aria-label') || ''), /^Modifiers: options you switch on or off/.test(tile.title), tile.scrollWidth <= tile.clientWidth + 1];
+    edu.click(); await wait(200); const eduOk = [edu.textContent.trim(), edu.disabled, menu.classList.contains('open'), !!$('#tb-adv'), edu.getBoundingClientRect().right <= innerWidth];
+    tile.click(); await wait(250); const hung = menu.classList.contains('open'); const items = $$('#adv-menu .adv-item .lbl').map(x => x.textContent.trim()); closeAdvancedMenu(); await wait(150);
+    const pageSwitch = $$('[data-vp-view="advanced"]').map(b => b.textContent.trim()).filter((t, i, a) => a.indexOf(t) === i);
+    return is({ tileOk, eduOk, hung, items, pageSwitch }, { tileOk: ['Modifiers', true, true, true], eduOk: ['Educator', true, false, false, true], hung: true, items: ['AOI Overlays', 'Blend Zones', 'Dead Space', 'Free Position', 'Fit Canvas'], pageSwitch: ['Advanced'] }, 'tile / Educator [label, disabled, menu opened by it, old button still there, inside the window] / menu / items / page switch');
+  });
+  await check('Modifiers: Help and the Look Book window point at "Modifiers ▾", nothing on screen still says "Advanced ▾" or "Advanced menu"', async () => {
+    openHelp(); await wait(350); const h = $('#help-overlay'); const ht = h ? h.textContent : ''; const helpOpen = vis(h); closeHelp(); await wait(200);
+    openPdfExportModal(); await wait(350); const m = $('#pdf-export-modal'); const hint = ((m ? m.textContent : '').match(/Defaults follow[^.]*\./) || [''])[0]; closePdfExportModal(); await wait(200);
+    const old = $$('button, [title], [aria-label]').filter(el => /Advanced (features|view options|menu)|Advanced\s*▾/.test((el.title || '') + ' ' + (el.getAttribute('aria-label') || ''))).length;
+    return is([helpOpen, /Preset tile . Modifiers . menu/.test(ht), /Open the Modifiers ▾ menu/.test(ht), /Modifiers ▾ Dead Space/.test(ht), /Advanced\s*▾/.test(ht), /Simple vs Advanced/.test(ht), /Modifiers ▾/.test(hint), /Advanced/.test(hint), old],
+      [true, true, true, true, false, true, true, false, 0], 'Help open / section title / turn-it-on row / dead-space pointer / old word in Help / Wire "Simple vs Advanced" kept / Look Book hint new / hint old / old tooltips left');
+  });
+  await check('Modifiers: a switch is ONE state for every preset on this computer, not a preset setting: no undo step, show stays clean, nothing in the show file', async () => {
+    closeAdvancedMenu(); const was = !document.body.classList.contains('adv-hide-blend'); if (was) toggleAdvFeature('blend');
+    const before = JSON.stringify(getProjectState()), u0 = _undoStack.length, dirty0 = _isDirty; const tiles = $$('.preset-row .pr-actions button[onclick*="toggleAdvancedMenu"]'); if (tiles.length < 2) return 'needs two preset tiles';
+    tiles[0].click(); await wait(200); $('#adv-menu [data-adv="blend"]').click(); await wait(250); const closed = !$('#adv-menu').classList.contains('open');
+    tiles[1].click(); await wait(200); const tickOnOtherTile = $('#adv-menu [data-adv="blend"]').classList.contains('on'); closeAdvancedMenu();
+    const out = [closed, tickOnOtherTile, !document.body.classList.contains('adv-hide-blend'), !$('#tb-adv'), _undoStack.length - u0, _isDirty === dirty0, JSON.stringify(getProjectState()) === before, /blend/.test(localStorage.getItem('lookbook_adv_settings') || '')];
+    toggleAdvFeature('blend'); if (was) toggleAdvFeature('blend'); closeAdvancedMenu(); await wait(150);
+    return is(out, [true, true, true, true, 0, true, true, true], 'menu closes on a pick / tick shows from another tile / blend view on / no status-bar Modifiers button / undo steps / dirty unchanged / show unchanged / kept in this browser only');
+  });
   await check('Destination drag ends when the mouse-up is lost (the button was released outside the window)', async () => {
     const was = cvAdv('freePos', true);
     await cvLay([0, 0], [1920, 0], [3840, 0]);
@@ -755,6 +780,85 @@
 
   // ── Wire, Simple ────────────────────────────────────────────────────────────────────────────────────────────────
   const srcNames = () => (typeof _wireBuildAllSourceNames === 'function' ? _wireBuildAllSourceNames() : []);
+  // ── no-overlap guard (2026-09-21): INSERT in tests/flows_probe.js straight AFTER the check
+  //    'Destination drag ends when the mouse-up is lost (the button was released outside the window)' (it uses cvAdv / cvMouse from that section).
+  //    Checks 1 to 5 FAIL on build 16kp without patch.py and PASS with it. Check 6 only PINS behaviour that already exists.
+  const ovlPairs = () => [..._overlapPairsForPreset(presets[0])].map(k => k.split('|').map(id => screens.findIndex(s => s.id === id) + 1).sort().join('+')).sort().join(',');
+  const ovlAsked = () => dlgOpen() && /Create Blend Zone/.test(dialogText());
+  const ovlStrip = async () => { presets.forEach(p => repackPositions(p.id)); render(); await wait(200); };
+  const ovlTwoRows = async () => { await ovlStrip(); const last = screens[screens.length - 1]; setPosition(presets[0], last.id, 0, parseInt(screens[0].h) + 40); render(); await wait(200); };
+  const ovlGeo = () => JSON.stringify(screens.map(s => [parseInt(s.w), parseInt(s.h), presets[0].positions[s.id], getRotation(presets[0].id, s.id), _screenHidden(presets[0], s.id)]));
+
+  await check('no overlap: a typed X in Destination Properties that lands on the neighbour asks "Create Blend Zone?"; Cancel puts it back with no undo step; Add to blend is ONE undo step, marks the show unsaved and survives save + reload without a question', async () => {
+    await ovlStrip(); const b = screens[1].id; const X = () => presets[0].positions[b].x; const x0 = X(), n = _undoStack.length;
+    const apply = async () => { openScreenPanel(fakeEv, presets[0].id, b); await wait(400); const pop = $('#screen-panel'); if (!pop) return false; $('#sp-x', pop).value = String(x0 - 300); $('#sp-apply', pop).click(); await wait(400); return true; };
+    if (!(await apply())) return 'Destination Properties did not open';
+    if (!ovlAsked()) { const got = ovlPairs(); await restore(); return 'no question: destination 2 went 300 px over destination 1 silently (overlaps now: ' + got + ')'; }
+    $('#dlg-cancel').click(); await wait(400); const cancel = [X(), ovlPairs(), _undoStack.length - n];
+    await apply(); const asked2 = ovlAsked(); $('#dlg-confirm').click(); await wait(700); const add = [X(), ovlPairs(), _undoStack.length - n, _isDirty];
+    doUndo(); await wait(300); const undone = [X(), ovlPairs()]; doRedo(); await wait(300);
+    _applyProjectText(JSON.stringify(getProjectState())); await wait(800); const onLoad = [ovlAsked(), ovlPairs()]; okDialogs();
+    await restore(); return is([asked2, cancel, add, undone, onLoad], [true, [x0, '', 0], [x0 - 300, '1+2', 1, true], [x0, ''], [false, '1+2']], 'asked again / after Cancel (X, overlaps, undo steps) / after Add to blend (X, overlaps, undo steps, unsaved) / after Undo / after save + reload (question, overlaps)');
+  });
+  await check('no overlap: a typed Rotation whose tilted footprint reaches the neighbour asks; Cancel takes the rotation back with no undo step; a 90 degree turn on a clean strip still re-packs without a question', async () => {
+    await ovlStrip(); const a = screens[0].id, n = _undoStack.length;
+    const rot = async v => { openScreenPanel(fakeEv, presets[0].id, a); await wait(400); const pop = $('#screen-panel'); if (!pop) return false; $('#sp-rot', pop).value = String(v); $('#sp-apply', pop).click(); await wait(400); return true; };
+    if (!(await rot(30))) return 'Destination Properties did not open';
+    if (!ovlAsked()) { const got = ovlPairs(); await restore(); return 'no question: the 30 degree footprint went over the neighbour silently (overlaps now: ' + got + ')'; }
+    $('#dlg-cancel').click(); await wait(400); const cancel = [getRotation(presets[0].id, a), ovlPairs(), _undoStack.length - n];
+    await rot(90); const quiet = [dlgOpen(), getRotation(presets[0].id, a), ovlPairs()]; okDialogs();
+    await restore(); return is([cancel, quiet], [[0, '', 0], [false, 90, '']], 'after Cancel (rotation, overlaps, undo steps) / 90 on a clean strip (question, rotation, overlaps)');
+  });
+  await check('no overlap: a pasted position that sits on another destination asks; Cancel puts it back with no undo step and the panel closes', async () => {
+    await ovlStrip(); const a = screens[0].id, c = screens[2].id, n0 = () => _undoStack.length; const x0 = presets[0].positions[c].x;
+    openScreenPanel(fakeEv, presets[0].id, a); await wait(400); let pop = $('#screen-panel'); if (!pop) return 'Destination Properties did not open';
+    $('[data-sp-key="pos"][data-sp-tool="copy"]', pop).click(); closeScreenPanel(); await wait(150);
+    openScreenPanel(fakeEv, presets[0].id, c); await wait(400); pop = $('#screen-panel'); const n = n0();
+    $('[data-sp-key="pos"][data-sp-tool="paste"]', pop).click(); await wait(400);
+    if (!ovlAsked()) { const got = ovlPairs(); closeScreenPanel(); await restore(); return 'no question: destination 3 was pasted on top of destination 1 silently (overlaps now: ' + got + ')'; }
+    $('#dlg-cancel').click(); await wait(400); const out = is([presets[0].positions[c].x, ovlPairs(), n0() - n, !!$('#screen-panel')], [x0, '', 0, false], 'after Cancel: X / overlaps / undo steps / panel still open');
+    await restore(); return out;
+  });
+  await check('no overlap: with a second row under destination 1, a height change (corner handle, typed H, I/O Patch resolution) that would drop the row onto the strip asks each time, and Cancel puts every destination back', async () => {
+    const out = []; let miss = '';
+    const run = async (label, act) => {
+      await ovlTwoRows(); const g0 = ovlGeo(), n = _undoStack.length; await act(); await wait(450);
+      if (!ovlAsked()) { miss += label + ' made ' + (ovlPairs() || 'no overlap') + ' with no question; '; okDialogs(); return; }
+      $('#dlg-cancel').click(); await wait(400); out.push([label, ovlGeo() === g0, _undoStack.length - n]);
+    };
+    await run('corner handle', async () => { doSelect(presets[0].id, screens[0].id); await wait(250); await vpDrag($('.preset-row[data-pid="' + presets[0].id + '"] .screen-box[data-sid="' + screens[0].id + '"] > .rh-tr'), 0, 14); });
+    await run('typed H', async () => { openScreenPanel(fakeEv, presets[0].id, screens[0].id); await wait(400); const pop = $('#screen-panel'); $('#sp-h', pop).value = String(parseInt(screens[0].h) - 80); $('#sp-apply', pop).click(); });
+    await run('I/O Patch resolution', async () => { _sysSetMeta('dest', screens[0].id, 'resolution', parseInt(screens[0].w) + 'x' + (parseInt(screens[0].h) - 80)); });
+    doSelect(null, null); await restore();
+    return miss ? miss : is(out, [['corner handle', true, 0], ['typed H', true, 0], ['I/O Patch resolution', true, 0]], 'per path: everything back after Cancel / undo steps left');
+  });
+  await check('no overlap: a wider Dead Space value that pushes a destination onto the next one asks, and so does putting a removed destination back into a slot that was taken; Cancel undoes both', async () => {
+    await ovlStrip(); const was = cvAdv('dead', true); const P = () => presets[0], w = i => parseInt(screens[i].w);
+    setPosition(P(), screens[1].id, w(0) + 100, P().positions[screens[1].id].y); setPosition(P(), screens[2].id, w(0) + 100 + w(1), P().positions[screens[2].id].y); render(); await wait(300);
+    const inp = $$('.preset-row[data-pid="' + P().id + '"] input').find(i => /setDeadPx/.test(i.getAttribute('onchange') || '')); if (!inp) { cvAdv('dead', was); await restore(); return 'no dead-space box on the tile'; }
+    const g0 = ovlGeo(), n = _undoStack.length; inp.value = '600'; fire(inp, 'change'); await wait(400);
+    const dead = ovlAsked() ? 'asked' : 'silent ' + ovlPairs(); if (ovlAsked()) { $('#dlg-cancel').click(); await wait(400); } else okDialogs();
+    const deadBack = [ovlGeo() === g0, _undoStack.length - n]; cvAdv('dead', was);
+    await ovlStrip(); const hid = screens[1].id; P().hiddenScreens = {}; P().hiddenScreens[hid] = true; setPosition(P(), screens[2].id, P().positions[hid].x, P().positions[hid].y); render(); await wait(250);
+    const g1 = ovlGeo(), n1 = _undoStack.length; _unhideScreen(P().id, hid); await wait(400);
+    const unhide = ovlAsked() ? 'asked' : 'silent ' + ovlPairs(); if (ovlAsked()) { $('#dlg-cancel').click(); await wait(400); } else okDialogs();
+    const out = is([dead, deadBack, unhide, ovlGeo() === g1, _undoStack.length - n1], ['asked', [true, 0], 'asked', true, 0], 'dead-space box / back after Cancel, undo steps / put back into preset / back after Cancel / undo steps');
+    await restore(); return out;
+  });
+  await check('no overlap (existing behaviour, pinned): a Free Position drop on a neighbour asks and Cancel puts it back; the Blend Zones sideways drag and the blend PX box blend without a question; a typed Width on a strip, Add Destination, Duplicate and Fit Canvas make no overlap and ask nothing', async () => {
+    await ovlStrip(); const wasF = cvAdv('freePos', true); const pid = presets[0].id; const boxOf = i => $('.preset-row[data-pid="' + pid + '"] .screen-box[data-sid="' + screens[i].id + '"]');
+    const dragLeft = async (i, frac) => { const el = boxOf(i), r = el.getBoundingClientRect(), x = r.left + r.width / 2, y = r.top + r.height * 0.8; cvMouse(el, 'mousedown', x, y); for (let k = 1; k <= 5; k++) { cvMouse(window, 'mousemove', x - r.width * frac * k / 5, y, { shiftKey: true }); await wait(25); } cvMouse(window, 'mouseup', x - r.width * frac, y); await wait(350); };
+    const x0 = presets[0].positions[screens[1].id].x; await dragLeft(1, 0.4); const free = [ovlAsked()]; if (dlgOpen()) { $('#dlg-cancel').click(); await wait(350); } free.push(presets[0].positions[screens[1].id].x === x0, ovlPairs());
+    cvAdv('freePos', false); const wasB = cvAdv('blend', true); await wait(250); await dragLeft(1, 0.25); const side = [dlgOpen(), ovlPairs()]; okDialogs();
+    const px = $$('.preset-row[data-pid="' + pid + '"] input').find(i => /setBlendPx/.test(i.getAttribute('onchange') || '')); let box = 'no PX box';
+    if (px) { px.value = '200'; fire(px, 'change'); await wait(350); box = [dlgOpen(), ovlPairs()]; okDialogs(); }
+    cvAdv('blend', wasB); cvAdv('freePos', wasF); await ovlStrip();
+    openScreenPanel(fakeEv, presets[0].id, screens[0].id); await wait(400); $('#sp-w', $('#screen-panel')).value = String(parseInt(screens[0].w) + 500); $('#sp-apply', $('#screen-panel')).click(); await wait(400); const wide = [dlgOpen(), ovlPairs()]; okDialogs();
+    actions.addDestination(); await wait(300); $('#ms-n').value = 'OVL ADD'; confirmScreen(); await wait(400); const added = [dlgOpen(), ovlPairs()]; okDialogs();
+    duplicateScreen(screens[0].id); await wait(400); const dup = [dlgOpen(), ovlPairs()]; okDialogs();
+    presets.forEach(p => screens.forEach(s => { const q = p.positions[s.id]; if (q) setPosition(p, s.id, q.x + 300, q.y + 120); })); fitCanvasTrim(presets[0].id); await wait(300); const fit = [dlgOpen(), ovlPairs()]; okDialogs();
+    await restore(); return is([free, side, box, wide, added, dup, fit], [[true, true, ''], [false, '1+2'], [false, '1+2'], [false, ''], [false, ''], [false, ''], [false, '']], 'Free Position drop (asked, back after Cancel, overlaps) / Blend Zones drag / PX box / typed Width / Add Destination / Duplicate / Fit Canvas, each (question, overlaps)');
+  });
   await check('Wire Simple: the diagram draws one switcher row per source and one card per source', async () => {
     openWireMode(); await wait(500); wireSettings.wireView = 'simple'; _wireRender(); await wait(500);
     const n = srcNames().length; const cards = $$('#wire-sources-panel .wire-pane:first-child .wire-source-card').length; const rows = $$('#wire-diagram .wire-router-tile .rc-num:not(.rc-dead)').length;
@@ -1471,8 +1575,54 @@
     const a = lx(), u1 = _undoStack.length; _stKey('ArrowRight'); await wait(250); const b = lx(), steps = _undoStack.length - u1; doUndo(); await wait(350); const c = lx(); selLayer = null; await restore();
     return is([adv, b - a, steps, c - a], [[1, 0, 1], 10, 1, 0], 'Advanced [resize, move, undo steps] / Simple nudge px / undo steps / px after Undo');   /* merge decision 16kp: Advanced follows Simple (owner: "everything Simple can do, Advanced should do"); three patches had proposed three different rules */
   });
-  await check('Advanced overlays menu (status bar) closes on a click on a layer chip, and its button still toggles it', async () => {
-    const btn = $('#tb-adv'), menu = $('#adv-menu'); btn.click(); await wait(250); const opened = menu.classList.contains('open'); const chip = $('.preset-row .layer-chip'); if (!chip) { closeAdvancedMenu(); return 'no layer chip on the canvas'; }
+  // ── move arrows on a selected destination (round 4, on-canvas ◀ ▶ only: the arrow KEYS stay the 1 px resize, owner 2026-09-21) ──
+  const _mvFmt = () => $$('.move-symbol button').map(b => b.textContent + (b.style.pointerEvents === 'none' ? 'grey' : 'on')).join(' ');
+  const _mvBox = (pid, sid) => $((fsPresetId ? '#fs-canvas' : '#canvas-area') + ' .screen-box[data-pid="' + pid + '"][data-sid="' + sid + '"]');
+  const _mvPick = async (pid, sid) => { hideMoveSymbol(); doSelect(null, null); selLayer = null; await wait(120); _mvBox(pid, sid).click(); await wait(250); };
+  const _mvPress = async glyph => { const b = $$('.move-symbol button').find(x => x.textContent === glyph); if (!b || b.style.pointerEvents === 'none') return false; b.click(); await wait(450); return true; };
+  const _mvShow = () => JSON.stringify({ screens, presets });
+  const _mvOverlaps = () => presets.map(p => _overlapPairsForPreset(p).size).join(',');
+  await check('move arrows: a swap never parks a destination on top of another, with unequal widths, a dead space and a preset that has its own order; the dead space keeps its slot', async () => {
+    await restore(); screens[1].w = 3840; presets.forEach(p => { delete p.positions; initStripPositions(p.id); }); const [a, b, c] = screens.map(s => s.id);
+    presets.forEach((p, i) => { if (i === 1) { setPosition(p, a, 0, 0); setPosition(p, c, 1920, 0); setPosition(p, b, 3840, 0); } else setPosition(p, c, 6260, 0); }); render(); await wait(350);
+    await _mvPick(presets[0].id, a); const pressed = await _mvPress('▶'); const q = presets[0].positions, q2 = presets[1].positions;
+    const out = is([pressed, _mvOverlaps(), [q[b].x, q[a].x, q[c].x], [q2[b].x, q2[c].x, q2[a].x], screens.map(s => s.id).join()], [true, '0,0,0,0,0', [0, 3840, 6260], [0, 3840, 5760], [b, a, c].join()], 'pressed / overlaps per preset / P01 x / P02 x / list order');
+    hideMoveSymbol(); doSelect(null, null); await restore(); return out;
+  });
+  await check('move arrows: a blended pair moves as one block from either member and never swaps with its partner; a destination alone on a second row is greyed both ways and a press on it adds no undo step', async () => {
+    await restore(); const [a, b, c] = screens.map(s => s.id); const pid = presets[0].id; presets.forEach(p => { initStripPositions(p.id); setPosition(p, b, 1720, 0); }); render(); await wait(300);
+    await _mvPick(pid, a); const left = _mvFmt(); const ov0 = _mvOverlaps(); await _mvPress('▶'); const q = presets[0].positions; const blend = [left, [q[c].x, q[a].x, q[b].x], _mvOverlaps() === ov0, screens.map(s => s.id).join() === [c, a, b].join()];
+    await _mvPick(pid, b); const right = _mvFmt();
+    await restore(); presets.forEach(p => { initStripPositions(p.id); setPosition(p, c, 0, 1080); }); render(); await wait(300);
+    await _mvPick(pid, c); const lone = _mvFmt(); const u0 = _undoStack.length, s0 = _mvShow(); _execMove(pid, c, 'right'); await wait(400); const idle = _undoStack.length === u0 && _mvShow() === s0;
+    hideMoveSymbol(); doSelect(null, null); await restore();
+    return is([blend, right, lone, idle], [['◀grey ▶on', [0, 2120, 3840], true, true], '◀on ▶grey', '◀grey ▶grey', true], 'blend [arrows on the LEFT member, x after ▶, blends kept, list order] / arrows on the right member / alone on row 2 / no phantom undo step');
+  });
+  await check('move arrows: a pick from the Simple table row or the Advanced destination row shows the arrows, picking elsewhere moves them, un-picking removes them', async () => {
+    await restore(); const pid = presets[0].id; hideMoveSymbol(); doSelect(null, null); const out = [];
+    const cell = $('#tbody tr[data-pid="' + pid + '"][data-sid="' + screens[1].id + '"]').children[5]; _mvBox(pid, screens[0].id).click(); await wait(200); cell.click(); await wait(250);
+    out.push(_mvFmt(), $$('.move-symbol').length, ($('.move-symbol') && $('.move-symbol').closest('.screen-box').dataset.sid) === screens[1].id); cell.click(); await wait(200); out.push(_mvFmt());
+    openFullscreen(pid); await wait(700); const tab = _fsPropTab; _fsSetPropTab('layers'); if (selLayer) _fsClearLayer(); doSelect(null, null); await wait(300);
+    const row = $$('#fs-toolbar .fs-drow-h[data-sid]').find(r => r.dataset.sid === screens[2].id); if (row) row.click(); await wait(300); out.push(_mvFmt());
+    hideMoveSymbol(); doSelect(null, null); _fsSetPropTab(tab); closeFullscreen(); await wait(400); await restore();
+    return is(out, ['◀on ▶on', 1, true, '', '◀on ▶grey'], 'Simple row pick / one arrow pair / on the row\'s destination / after un-pick / Advanced row pick (last destination)');
+  });
+  await check('move arrows: a swap carries everything stored per destination in every preset, the table order follows, Undo and Redo are exact and a save + reload keeps it (pins existing behaviour)', async () => {
+    await restore(); const p1 = presets[1], sid = screens[1].id; toggleAOI(p1.id, sid); setAOI(p1.id, sid, { x: 100, y: 100, w: 800, h: 600 }); setScreenName(presets[2].id, sid, 'ZZ OVERRIDE'); presets[3].hiddenScreens = presets[3].hiddenScreens || {}; presets[3].hiddenScreens[screens[0].id] = true; render(); await wait(300);
+    const sig = () => { const o = {}; presets.forEach(p => screens.forEach(s => { const r = {}; Object.keys(p).forEach(k => { const v = p[k]; if (k !== 'positions' && v && typeof v === 'object' && !Array.isArray(v) && Object.prototype.hasOwnProperty.call(v, s.id)) r[k] = v[s.id]; }); o[p.id + s.id] = r; })); return JSON.stringify(Object.keys(o).sort().map(k => [k, o[k]])); };
+    const g0 = sig(), s0 = _mvShow(), names = screens.map(s => s.name); await _mvPick(presets[0].id, sid); await _mvPress('◀'); const s1 = _mvShow();
+    const rows = $$('#tbody tr[data-pid="' + presets[0].id + '"]').map(r => screens.find(s => s.id === r.dataset.sid).name);
+    const kept = sig() === g0; doUndo(); await wait(400); const undone = _mvShow() === s0; doRedo(); await wait(400); const redone = _mvShow() === s1;
+    const saved = JSON.stringify(getProjectState()); _applyProjectText(saved); await wait(700); okDialogs(); const reloaded = JSON.stringify(getProjectState().screens) + JSON.stringify(getProjectState().presets) === JSON.stringify(JSON.parse(saved).screens) + JSON.stringify(JSON.parse(saved).presets);
+    hideMoveSymbol(); doSelect(null, null); await restore();
+    return is([kept, rows, undone, redone, reloaded], [true, [names[1], names[0], names[2]], true, true, true], 'per-destination data untouched / table rows / undo / redo / save + reload');
+  });
+  await check('move arrows: the phone arrows use the same swap (unequal widths never overlap, one undo step)', async () => {
+    await restore(); screens[1].w = 3840; presets.forEach(p => { delete p.positions; initStripPositions(p.id); }); render(); await wait(300); const u0 = _undoStack.length;
+    mbMoveDest(screens[0].id, 1); await wait(400); const out = is([_mvOverlaps(), _undoStack.length - u0, presets[0].positions[screens[0].id].x], ['0,0,0,0,0', 1, 0], 'overlaps per preset / undo steps / the wide destination now starts at'); await restore(); return out;
+  });
+  await check('Modifiers menu (preset tile) closes on a click on a layer chip, and its button still toggles it', async () => {
+    const btn = $('.preset-row .pr-actions button[onclick*="toggleAdvancedMenu"]'), menu = $('#adv-menu'); if (!btn) return 'no Modifiers button on the preset tile'; btn.click(); await wait(250); const opened = menu.classList.contains('open'); const chip = $('.preset-row .layer-chip'); if (!chip) { closeAdvancedMenu(); return 'no layer chip on the canvas'; }
     chip.click(); await wait(250); const after = menu.classList.contains('open'); closeAdvancedMenu(); btn.click(); await wait(200); const t1 = menu.classList.contains('open'); btn.click(); await wait(200); const t2 = menu.classList.contains('open');
     closeAdvancedMenu(); try { closeLayerPanel(); } catch (e) {} selLayer = null; await restore();
     return is([opened, after, t1, t2], [true, false, true, false], 'opened / open after the chip click / button opens / button closes');
@@ -1488,6 +1638,13 @@
     f.srcdoc = String(html).replace('setTimeout(()=>window.print(), 800);', ''); document.body.appendChild(f);
     await new Promise(r => { f.onload = r; setTimeout(r, 4000); }); await wait(500); return f;
   };
+  await check('Keys: an arrow key on a picked destination resizes it 1 px and pushes the destinations to its right along, so nothing ever overlaps; a burst is one undo step; Advanced does the same', async () => {
+    await restore(); const A = () => screens[0], B = () => screens[1], P0 = () => presets[0]; const x = id => (P0().positions[id] || {}).x, ov = () => presets.map(q => _overlapPairsForPreset(q).size).join(',');
+    const run = async () => { doSelect(P0().id, A().id); selLayer = null; await wait(150); const w0 = parseInt(A().w), bx0 = x(B().id), u0 = _undoStack.length; for (let i = 0; i < 3; i++) { _stKey('ArrowRight'); await wait(60); } await wait(250);
+      const got = [parseInt(A().w) - w0, x(B().id) - bx0, ov(), _undoStack.length - u0]; doUndo(); await wait(350); got.push(parseInt(A().w) - w0, x(B().id) - bx0); doSelect(null, null); return got; };
+    const simple = await run(); await wait(800); openFullscreen(P0().id); await wait(700); const adv = await run(); closeFullscreen(); await wait(400); await restore();
+    const want = [3, 3, presets.map(() => 0).join(','), 1, 0, 0]; return is([simple, adv], [want, want], '[width +px, neighbour moved px, overlaps per preset, undo steps, width after Undo, neighbour after Undo] in Simple / in Advanced');
+  });
   await check('Look Book: every contents row jumps to its section and prints the real page number, rows are one line high', async () => {
     window._pdfOpts = null; const f = await lbRender(await userLookBook()); const d = f.contentDocument; const pages = [...d.querySelectorAll('.page')];
     const rows = [...d.querySelectorAll('.toc-row')].map(a => { const t = d.getElementById((a.getAttribute('href') || '').slice(1)); const pg = t ? (t.classList.contains('page') ? t : t.closest('.page')) : null; return { label: a.querySelector('.toc-name').textContent, printed: a.querySelector('.toc-row .toc-page').textContent.trim(), real: pg ? String(pages.indexOf(pg) + 1) : 'no target', h: Math.round(a.getBoundingClientRect().height) }; });
