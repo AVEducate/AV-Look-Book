@@ -19,7 +19,7 @@ import { join, dirname, normalize, resolve, extname, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
-const REPO = existsSync(join(HERE, '..', 'deploy', 'lookbook_builder.html')) ? join(HERE, '..') : '/Users/aveducate/LookBook';
+const REPO = join(HERE, '..');   // this file lives in <repo>/tests
 const DEPLOY = resolve(process.env.LB_DEPLOY || join(REPO, 'deploy'));
 const PACKET = resolve(process.env.LB_PACKET || join(REPO, 'site', 'packets', 'Town Hall.avlb'));
 const GOLDEN = join(HERE, 'golden');
