@@ -124,3 +124,47 @@ shifts — note the move in a commit message.
 When an item gets built, **delete it from this file** (don't strike-
 through). Keep this list living and current; don't let it become a
 graveyard of "we'll never do this."
+
+---
+
+## 3. Owner decisions, 2026-09-20 (specs on record, NOT built yet)
+
+### 3a. "Display": send the selected Advanced preset to a second screen
+Purpose (owner): a REFERENCE visualiser so content can be judged on a bigger screen, for the user or to show a client.
+It pairs with hardware switchers; it does not replace them.
+- Where: Video Presets > Advanced, a new tab called **Display** with a monitor icon, placed LEFT of Zoom.
+- Pressing Display with a second monitor connected takes over that display and shows ONLY the selected preset, clean.
+- All control stays in the program window. The output window has no controls. The preset shown changes only through
+  the Advanced page's own preset picker (right side).
+- No CUT / MIX between presets ("that process power should stay on screen switchers and video switchers").
+- Audio is allowed to follow the output.
+- Shape: fill WIDE rather than tall (presets are wide); never distort the picture. The owner pictures about 1920x720;
+  the honest rule is "fit the canvas shape to the screen width" (a 3-wide 5760x1080 canvas is 1920x360 on a 1080p screen).
+- On pressing Display, a note explains clip formats: for reference playback only; H.264 and HEVC play, ProRes and HAP do
+  not (Chromium has no decoder for them).
+- Idea for later: the phone / tablet version outputs the Advanced preset to an external monitor for a client preview.
+- Build notes: Stage 1 = a same-origin pop-out window with muted-or-audio twin players following the editor's players
+  (no installer needed, the user drags it to the other screen). "Takes over the second display by itself" needs the
+  desktop shell (Electron `screen`, a frameless window on the chosen display) = a new installer. Stage 3 (cut / mix)
+  is dropped. Brief: `private/study-2026-09-20/monitor_output_feasibility.md`.
+
+### 3b. Excel exports (I/O Patch and Wire)
+Goal (owner): the EIC patch book is hand-typed for every show today; make it fast. Big or small show.
+- Each tool gets its OWN Excel export. The Excel button in I/O Patch and in Wire opens an export window listing every
+  available option, so the user picks the level of detail. (Wire has no Excel export today: PDF / SVG / PNG only.)
+- In Wire, a page is a tab; a router and a switcher that sit on the same page stay combined on that tab. Other pages
+  can hold only part of the system.
+- Unused ports print as rows up to the device size; the user fills or deletes them in Excel.
+- COVER tab: first tab of the Excel from I/O Patch and from Wire only (not the Look Book PDF). Same look as the owner's
+  model cover, filled from the show info. The big top line is the SHOW NAME (not the client). No logo. Adds two fields
+  used only by the Excel cover: venue address and a date range. Cells do not have to be merged as long as the result
+  matches. Only the cover takes the model's look; the other tabs keep today's look.
+- FRAME RATE: a new column in I/O Patch between Resolution and Notes, default 59.94, with a "Set for all" control in
+  the top row like the other columns. The bandwidth warning pill sits between Type and Resolution. Quick Setup gets
+  the same field where destinations are chosen; a destination shows it after its resolution.
+- Parked: Comms, NDI addressing, Records. To discuss later: rack / location per tile, cable identity (mult or TAC id,
+  strand, jacket colour), a cable that leaves a Wire page, the switcher port's own jack next to its far end, spare
+  rows, multiview window maps.
+- Longer term: the Look Book export offers everything in one place, plus a master folder with copies of every video
+  file and every PNG for the video team (Wire's Asset Pack is the starting point).
+
