@@ -828,6 +828,15 @@ body.is-mobile #vp-tabs{display:none}
 .fs-tl-cover .fs-tl-cap{color:inherit;padding:0}
 .fs-tl-vol{position:absolute;left:0;right:0;height:0;border-top:2px solid #fff;z-index:4;cursor:ns-resize;box-shadow:0 0 4px rgba(0,0,0,.9)}
 .fs-tl-vol::before{content:'';position:absolute;left:0;right:0;top:-7px;height:14px}
+.fs-tl-vol:focus{outline:none}
+.fs-tl-vol:focus b{color:var(--n-cyan);box-shadow:0 0 0 1px rgba(var(--n-cyan-rgb),.6)}
+@media (max-width:1425px){   /* In / Out / Clear need about 108 px: below a 1425 window the strip tightens (Cover keeps its thumbnail and tooltip, loses its word) so the count-down LCD stays inside */
+  .fs-tl-bar{gap:3px}
+  .fs-tl-grp{gap:2px}
+  .fs-tl-cover .fs-tl-cap{display:none}
+  #fs-tl-in,#fs-tl-out,#fs-tl-clr{padding:0 2px;letter-spacing:0}
+  #fs-tl-clr{min-width:22px}
+}
 .fs-tl-vol b{position:absolute;right:4px;top:-13px;font-family:var(--font-mono);font-size:9px;font-weight:600;color:#fff;background:rgba(0,0,0,.75);padding:1px 4px;border-radius:2px;pointer-events:none;line-height:10px}
 .fs-tl-body{display:flex;align-items:stretch;gap:6px}
 .fs-tl-meter{width:20px;flex-shrink:0;padding-top:31px;display:flex;align-items:flex-start}
@@ -974,6 +983,16 @@ input[type=range].fs-range::-moz-range-thumb,input[type=range].lfx-range::-moz-r
 .fs-drow-h{display:flex;align-items:center;gap:8px;padding:7px 10px;border-bottom:1px solid var(--n-line)}
 .fs-drow-name{font-size:12px;font-weight:700;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
 .fs-drow-res{font-family:var(--font-mono);font-size:10px;font-weight:600;color:var(--text3)}
+.fs-drow-h[data-sid]{cursor:pointer}   /* R3-DEST-FEATURES: the destination header row selects / opens Destination Properties */
+.fs-drow-h[data-sid]:hover{background:rgba(255,255,255,.03)}
+.fs-drow-h.sel{background:rgba(255,138,61,.10);box-shadow:inset 2px 0 0 var(--n-orange)}
+.fs-drow-asp{font-family:var(--font-mono);font-size:10px;font-weight:600;color:var(--text3);opacity:.85}
+.fs-drow-prop{width:20px;height:20px;padding:0;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;border:1px solid var(--n-line);border-radius:3px;background:#0a0d12;color:var(--text3);cursor:pointer;font-family:inherit}
+.fs-drow-prop svg{width:12px;height:12px;display:block}
+.fs-drow-prop:hover{color:var(--n-orange);border-color:rgba(255,138,61,.45)}
+body.is-mobile #screen-panel .lfx-tools{gap:6px}   /* phone: the Destination Properties tools are real 44 px targets (tap budget) */
+body.is-mobile #screen-panel .lfx-tools button{width:44px;height:44px}
+body.is-mobile #screen-panel .lfx-tools button svg{width:16px;height:16px}
 .fs-lrow{display:flex;align-items:center;gap:8px;padding:6px 10px;border-top:1px solid rgba(255,255,255,.04);cursor:pointer;font-size:12px}
 .fs-lrow:hover{background:rgba(255,255,255,.03)}
 .fs-lrow.bgrow{cursor:pointer}
@@ -4285,7 +4304,7 @@ Also called DSM (Downstage Monitor) in broadcast and theater workflows, same thi
   <div class="bb-cell bb-pill bb-cyan" title="The largest number of layers used in any single preset, this is the figure to compare against your switcher's per-scene layer budget. (The most complex single moment in the show.)"><span class="bb-label">Layers</span><strong id="bb-layers">0</strong></div>
   <div id="bb-spacer"></div>
   <div class="bb-cell" id="bb-sel" style="font-size:10px;opacity:.5">—</div>
-  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy, hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16kl</div>
+  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy, hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16km</div>
   <button class="bb-util" id="tb-adv" onclick="actions.advancedMenu(event)" title="Advanced features (AOI, Free Mode, Blend Zones, Dead Space)" aria-label="Advanced features (AOI, Free Mode, Blend Zones, Dead Space)" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Advanced<span class="adv-count" aria-hidden="true"></span><svg aria-hidden="true" id="tb-adv-chev" viewBox="0 0 10 10" fill="currentColor" width="8" height="8" style="opacity:.7"><path d="M2 4l3 3 3-3z"/></svg></button>
   <button class="bb-util" onclick="actions.help()" title="Help, quick reference, keyboard shortcuts, glossary, accessibility" aria-label="Help, quick reference, keyboard shortcuts, glossary, accessibility" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="4.93" y1="4.93" x2="9.17" y2="9.17"/><line x1="14.83" y1="14.83" x2="19.07" y2="19.07"/><line x1="14.83" y1="9.17" x2="19.07" y2="4.93"/><line x1="4.93" y1="19.07" x2="9.17" y2="14.83"/></svg>Help</button>
   <button class="bb-util" id="tb-bug" onclick="reportBug()" title="Report a bug, opens an email to AV Educate with the show file attached so we can see it on our side" aria-label="Report a bug" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="7.2"/><path d="M15.4 15.4L21 21" stroke-width="2.6"/><ellipse cx="10" cy="11" rx="2.5" ry="3.3" fill="currentColor" stroke="none"/><circle cx="10" cy="7" r="1.5" fill="currentColor" stroke="none"/><path d="M7.5 9.2l-1.7-.8M7.4 11.2H5.6M7.7 13.1l-1.5 1.1M12.5 9.2l1.7-.8M12.6 11.2h1.8M12.3 13.1l1.5 1.1M9.2 5.9l-.8-1.1M10.8 5.9l.8-1.1" stroke-width="1.3"/></svg>Bug</button>   <!-- 16jk (Omar): Report a bug, after Help -->
@@ -4542,6 +4561,9 @@ Also called DSM (Downstage Monitor) in broadcast and theater workflows, same thi
           <div class="wire-tb-row"><label class="wire-tb-lbl" for="wtb-designer">Designer</label><input id="wtb-designer" class="wire-tb-inp" type="text" data-tb="designer" placeholder="—" maxlength="60" aria-label="Designer"></div>
           <div class="wire-tb-row"><label class="wire-tb-lbl" for="wtb-drawnby">Drawn By</label><input id="wtb-drawnby" class="wire-tb-inp" type="text" data-tb="drawnBy" placeholder="Initials" maxlength="30" aria-label="Drawn by"></div>
           <div class="wire-tb-row"><label class="wire-tb-lbl" for="wtb-ver">Project Ver</label><input id="wtb-ver" class="wire-tb-inp" type="text" data-tb="projectVer" placeholder="V1" maxlength="20" aria-label="Project version"></div>
+          <div class="wire-tb-row"><label class="wire-tb-lbl" for="wtb-dates" title="Show dates, Excel cover only">Dates</label><input id="wtb-dates" class="wire-tb-inp" type="text" data-tb="dates" placeholder="APRIL 8-10, 2026" maxlength="60" aria-label="Show dates (Excel cover)" title="Excel cover only. Blank = the Date above"></div>
+          <div class="wire-tb-row"><label class="wire-tb-lbl" for="wtb-address" title="Venue address, Excel cover only">Address</label><input id="wtb-address" class="wire-tb-inp" type="text" data-tb="address" placeholder="Venue address" maxlength="120" aria-label="Venue address (Excel cover)" title="Excel cover only"></div>
+          <div class="wire-tb-row"><label class="wire-tb-lbl" for="wtb-format" title="Show format, Excel cover only">Format</label><input id="wtb-format" class="wire-tb-inp" type="text" data-tb="format" placeholder="3840x2160 - 59.94p" maxlength="60" aria-label="Show format (Excel cover)" title="Excel cover only"></div>
           <div class="wire-tb-row"><span class="wire-tb-lbl">Drawn</span><span id="wtb-drawn" class="wire-tb-auto" title="Auto, today's date from this computer">—</span></div>
           <!-- 16el: company logo, works like a source thumbnail (LOGO tile + upload icon);
                prints in the drawing sheet's logo cell. -->
@@ -4922,7 +4944,7 @@ Also called DSM (Downstage Monitor) in broadcast and theater workflows, same thi
         </div>
       </div>
         <div style="display:flex;flex-direction:column;gap:0">
-<div style="font-size:10px;font-weight:700;color:#8a93a8;letter-spacing:.08em;text-transform:uppercase;padding:10px 0 4px;border-bottom:1px solid #252830;margin-bottom:8px;margin-top:6px">Global, Works Everywhere</div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Ctrl / Cmd + S</div><div style="font-size:10px;color:#e2e4e8;flex:1">Save project to file</div></div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Ctrl / Cmd + Z</div><div style="font-size:10px;color:#e2e4e8;flex:1">Undo last action</div></div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Ctrl / Cmd + Shift + Z</div><div style="font-size:10px;color:#e2e4e8;flex:1">Redo (same as Ctrl / Cmd + Y)</div></div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Ctrl / Cmd + Y</div><div style="font-size:10px;color:#e2e4e8;flex:1">Redo</div></div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Ctrl / Cmd + C</div><div style="font-size:10px;color:#e2e4e8;flex:1">Copy selected preset</div></div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Ctrl / Cmd + V</div><div style="font-size:10px;color:#e2e4e8;flex:1">Paste copied preset</div></div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Ctrl / Cmd + N</div><div style="font-size:10px;color:#e2e4e8;flex:1">Open Quick Show Setup (new project wizard)</div></div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Ctrl / Cmd + Shift + N</div><div style="font-size:10px;color:#e2e4e8;flex:1">Add a new preset</div></div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Escape</div><div style="font-size:10px;color:#e2e4e8;flex:1">Deselect / close panel / close modal</div></div><div style="font-size:10px;font-weight:700;color:#8a93a8;letter-spacing:.08em;text-transform:uppercase;padding:10px 0 4px;border-bottom:1px solid #252830;margin-bottom:8px;margin-top:6px">Video Presets</div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Delete / Backspace</div><div style="font-size:10px;color:#e2e4e8;flex:1">Remove the selected layer from this preset; with no layer picked, remove the selected destination</div></div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Arrow keys</div><div style="font-size:10px;color:#e2e4e8;flex:1">Move the selected layer 10px; with no layer picked, resize the selected destination 1px</div></div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Shift + Arrow keys</div><div style="font-size:10px;color:#e2e4e8;flex:1">Move the selected layer 100px; resize the selected destination 10px</div></div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Tab / Shift + Tab</div><div style="font-size:10px;color:#e2e4e8;flex:1">Cycle to the next / previous layer (with a layer selected)</div></div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Ctrl / Cmd + D</div><div style="font-size:10px;color:#e2e4e8;flex:1">Duplicate the selected destination</div></div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">1 &ndash; 9</div><div style="font-size:10px;color:#e2e4e8;flex:1">Scroll to preset 1&ndash;9</div></div><div style="font-size:10px;font-weight:700;color:#8a93a8;letter-spacing:.08em;text-transform:uppercase;padding:10px 0 4px;border-bottom:1px solid #252830;margin-bottom:8px;margin-top:6px">Video Presets &mdash; Advanced page</div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Space</div><div style="font-size:10px;color:#e2e4e8;flex:1">Play / pause the picked layer&rsquo;s clip (in PRESET mode, every video). With no video picked, hold Space and drag to pan</div></div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">, / .</div><div style="font-size:10px;color:#e2e4e8;flex:1">Step one frame back / forward</div></div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">[ / ]</div><div style="font-size:10px;color:#e2e4e8;flex:1">Previous / next preset</div></div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Arrow keys</div><div style="font-size:10px;color:#e2e4e8;flex:1">Nudge the selected layer 1px</div></div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Shift + Arrow keys</div><div style="font-size:10px;color:#e2e4e8;flex:1">Nudge the selected layer 10px</div></div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Escape</div><div style="font-size:10px;color:#e2e4e8;flex:1">Back to Simple</div></div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Scroll wheel</div><div style="font-size:10px;color:#e2e4e8;flex:1">Zoom the canvas. Drag the background or middle-click to pan</div></div><div style="font-size:10px;font-weight:700;color:#8a93a8;letter-spacing:.08em;text-transform:uppercase;padding:10px 0 4px;border-bottom:1px solid #252830;margin-bottom:8px;margin-top:6px">Wire Mode</div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Escape</div><div style="font-size:10px;color:#e2e4e8;flex:1">Cascading close: clear edge selection → clear node selection → clear preset filter → exit Wire Mode</div></div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Delete / Backspace</div><div style="font-size:10px;color:#e2e4e8;flex:1">Advanced view: remove the selected source instance(s) or the selected wire</div></div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Click / drag</div><div style="font-size:10px;color:#e2e4e8;flex:1">Default Select tool. Switch to Hand tool from the left palette to pan with click-drag.</div></div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Double-click page tab</div><div style="font-size:10px;color:#e2e4e8;flex:1">Rename the Advanced page (Page 1 / Page 2 / Page 3) inline</div></div><div style="font-size:10px;font-weight:700;color:#8a93a8;letter-spacing:.08em;text-transform:uppercase;padding:10px 0 4px;border-bottom:1px solid #252830;margin-bottom:8px;margin-top:6px">I/O Patch</div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Escape</div><div style="font-size:10px;color:#e2e4e8;flex:1">Close I/O Patch</div></div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Enter (in cell)</div><div style="font-size:10px;color:#e2e4e8;flex:1">Confirm name / connector / resolution edit</div></div><div style="font-size:10px;font-weight:700;color:#8a93a8;letter-spacing:.08em;text-transform:uppercase;padding:10px 0 4px;border-bottom:1px solid #252830;margin-bottom:8px;margin-top:6px">Modals & Panels</div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Enter</div><div style="font-size:10px;color:#e2e4e8;flex:1">Confirm Quick Setup wizard</div></div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Enter</div><div style="font-size:10px;color:#e2e4e8;flex:1">Confirm Add Destination modal</div></div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Escape</div><div style="font-size:10px;color:#e2e4e8;flex:1">Close Add Destination modal</div></div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Escape</div><div style="font-size:10px;color:#e2e4e8;flex:1">Close Destination Properties panel</div></div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Escape</div><div style="font-size:10px;color:#e2e4e8;flex:1">Close Layer Properties panel</div></div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Click Simple / Advanced pill</div><div style="font-size:10px;color:#e2e4e8;flex:1">Toggle Layer Properties between Simple (name + content + size) and Advanced (display mode + crop)</div></div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Enter (in input)</div><div style="font-size:10px;color:#e2e4e8;flex:1">Confirm and move to next field</div></div><div style="font-size:10px;font-weight:700;color:#8a93a8;letter-spacing:.08em;text-transform:uppercase;padding:10px 0 4px;border-bottom:1px solid #252830;margin-bottom:8px;margin-top:6px">Quick Setup Wizard</div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Tab</div><div style="font-size:10px;color:#e2e4e8;flex:1">Move between fields</div></div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Enter</div><div style="font-size:10px;color:#e2e4e8;flex:1">Confirm and build show</div></div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Escape</div><div style="font-size:10px;color:#e2e4e8;flex:1">Cancel and close</div></div><div style="font-size:10px;font-weight:700;color:#8a93a8;letter-spacing:.08em;text-transform:uppercase;padding:10px 0 4px;border-bottom:1px solid #252830;margin-bottom:8px;margin-top:6px">Table / Destination Combinations</div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Tab</div><div style="font-size:10px;color:#e2e4e8;flex:1">Move between cells</div></div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Enter (in cell)</div><div style="font-size:10px;color:#e2e4e8;flex:1">Confirm edit</div></div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Escape (in cell)</div><div style="font-size:10px;color:#e2e4e8;flex:1">Cancel edit</div></div>
+<div style="font-size:10px;font-weight:700;color:#8a93a8;letter-spacing:.08em;text-transform:uppercase;padding:10px 0 4px;border-bottom:1px solid #252830;margin-bottom:8px;margin-top:6px">Global, Works Everywhere</div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Ctrl / Cmd + S</div><div style="font-size:10px;color:#e2e4e8;flex:1">Save project to file</div></div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Ctrl / Cmd + Z</div><div style="font-size:10px;color:#e2e4e8;flex:1">Undo last action</div></div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Ctrl / Cmd + Shift + Z</div><div style="font-size:10px;color:#e2e4e8;flex:1">Redo (same as Ctrl / Cmd + Y)</div></div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Ctrl / Cmd + Y</div><div style="font-size:10px;color:#e2e4e8;flex:1">Redo</div></div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Ctrl / Cmd + C</div><div style="font-size:10px;color:#e2e4e8;flex:1">Copy selected preset</div></div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Ctrl / Cmd + V</div><div style="font-size:10px;color:#e2e4e8;flex:1">Paste copied preset</div></div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Ctrl / Cmd + N</div><div style="font-size:10px;color:#e2e4e8;flex:1">Open Quick Show Setup (new project wizard)</div></div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Ctrl / Cmd + Shift + N</div><div style="font-size:10px;color:#e2e4e8;flex:1">Add a new preset</div></div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Escape</div><div style="font-size:10px;color:#e2e4e8;flex:1">Deselect / close panel / close modal</div></div><div style="font-size:10px;font-weight:700;color:#8a93a8;letter-spacing:.08em;text-transform:uppercase;padding:10px 0 4px;border-bottom:1px solid #252830;margin-bottom:8px;margin-top:6px">Video Presets</div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Delete / Backspace</div><div style="font-size:10px;color:#e2e4e8;flex:1">Remove the selected layer from this preset. A destination is never removed by a key: use Destination Properties or the ✕ in the table</div></div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Arrow keys</div><div style="font-size:10px;color:#e2e4e8;flex:1">Move the selected layer 10px; with no layer picked, resize the selected destination 1px</div></div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Shift + Arrow keys</div><div style="font-size:10px;color:#e2e4e8;flex:1">Move the selected layer 100px; resize the selected destination 10px</div></div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Tab / Shift + Tab</div><div style="font-size:10px;color:#e2e4e8;flex:1">Cycle to the next / previous layer (with a layer selected)</div></div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Ctrl / Cmd + D</div><div style="font-size:10px;color:#e2e4e8;flex:1">Duplicate the selected destination</div></div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">1 &ndash; 9</div><div style="font-size:10px;color:#e2e4e8;flex:1">Scroll to preset 1&ndash;9</div></div><div style="font-size:10px;font-weight:700;color:#8a93a8;letter-spacing:.08em;text-transform:uppercase;padding:10px 0 4px;border-bottom:1px solid #252830;margin-bottom:8px;margin-top:6px">Video Presets &mdash; Advanced page</div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Space</div><div style="font-size:10px;color:#e2e4e8;flex:1">Play / pause the picked layer&rsquo;s clip (in PRESET mode, every video). With no video picked, hold Space and drag to pan</div></div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">, / .</div><div style="font-size:10px;color:#e2e4e8;flex:1">Step one frame back / forward</div></div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">[ / ]</div><div style="font-size:10px;color:#e2e4e8;flex:1">Previous / next preset</div></div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Arrow keys</div><div style="font-size:10px;color:#e2e4e8;flex:1">Nudge the selected layer 1px</div></div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Shift + Arrow keys</div><div style="font-size:10px;color:#e2e4e8;flex:1">Nudge the selected layer 10px</div></div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Escape</div><div style="font-size:10px;color:#e2e4e8;flex:1">Back to Simple</div></div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Scroll wheel</div><div style="font-size:10px;color:#e2e4e8;flex:1">Zoom the canvas. Drag the background or middle-click to pan</div></div><div style="font-size:10px;font-weight:700;color:#8a93a8;letter-spacing:.08em;text-transform:uppercase;padding:10px 0 4px;border-bottom:1px solid #252830;margin-bottom:8px;margin-top:6px">Wire Mode</div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Escape</div><div style="font-size:10px;color:#e2e4e8;flex:1">Cascading close: clear edge selection → clear node selection → clear preset filter → exit Wire Mode</div></div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Delete / Backspace</div><div style="font-size:10px;color:#e2e4e8;flex:1">Advanced view: remove the selected source instance(s) or the selected wire</div></div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Click / drag</div><div style="font-size:10px;color:#e2e4e8;flex:1">Default Select tool. Switch to Hand tool from the left palette to pan with click-drag.</div></div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Double-click page tab</div><div style="font-size:10px;color:#e2e4e8;flex:1">Rename the Advanced page (Page 1 / Page 2 / Page 3) inline</div></div><div style="font-size:10px;font-weight:700;color:#8a93a8;letter-spacing:.08em;text-transform:uppercase;padding:10px 0 4px;border-bottom:1px solid #252830;margin-bottom:8px;margin-top:6px">I/O Patch</div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Escape</div><div style="font-size:10px;color:#e2e4e8;flex:1">Close I/O Patch</div></div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Enter (in cell)</div><div style="font-size:10px;color:#e2e4e8;flex:1">Confirm name / connector / resolution edit</div></div><div style="font-size:10px;font-weight:700;color:#8a93a8;letter-spacing:.08em;text-transform:uppercase;padding:10px 0 4px;border-bottom:1px solid #252830;margin-bottom:8px;margin-top:6px">Modals & Panels</div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Enter</div><div style="font-size:10px;color:#e2e4e8;flex:1">Confirm Quick Setup wizard</div></div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Enter</div><div style="font-size:10px;color:#e2e4e8;flex:1">Confirm Add Destination modal</div></div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Escape</div><div style="font-size:10px;color:#e2e4e8;flex:1">Close Add Destination modal</div></div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Escape</div><div style="font-size:10px;color:#e2e4e8;flex:1">Close Destination Properties panel</div></div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Escape</div><div style="font-size:10px;color:#e2e4e8;flex:1">Close Layer Properties panel</div></div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Click Simple / Advanced pill</div><div style="font-size:10px;color:#e2e4e8;flex:1">Toggle Layer Properties between Simple (name + content + size) and Advanced (display mode + crop)</div></div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Enter (in input)</div><div style="font-size:10px;color:#e2e4e8;flex:1">Confirm and move to next field</div></div><div style="font-size:10px;font-weight:700;color:#8a93a8;letter-spacing:.08em;text-transform:uppercase;padding:10px 0 4px;border-bottom:1px solid #252830;margin-bottom:8px;margin-top:6px">Quick Setup Wizard</div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Tab</div><div style="font-size:10px;color:#e2e4e8;flex:1">Move between fields</div></div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Enter</div><div style="font-size:10px;color:#e2e4e8;flex:1">Confirm and build show</div></div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Escape</div><div style="font-size:10px;color:#e2e4e8;flex:1">Cancel and close</div></div><div style="font-size:10px;font-weight:700;color:#8a93a8;letter-spacing:.08em;text-transform:uppercase;padding:10px 0 4px;border-bottom:1px solid #252830;margin-bottom:8px;margin-top:6px">Table / Destination Combinations</div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Tab</div><div style="font-size:10px;color:#e2e4e8;flex:1">Move between cells</div></div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Enter (in cell)</div><div style="font-size:10px;color:#e2e4e8;flex:1">Confirm edit</div></div><div style="display:flex;gap:12px;padding:4px 0;border-bottom:1px solid #1e2024"><div style="font-size:10px;color:#9aa0aa;width:220px;flex-shrink:0">Escape (in cell)</div><div style="font-size:10px;color:#e2e4e8;flex:1">Cancel edit</div></div>
         </div>
       </div>
       <div id="hpanel-gloss" style="display:none;overflow-y:auto;padding:20px 24px 24px;max-height:calc(90vh - 150px);min-height:calc(90vh - 150px)">
@@ -5223,6 +5245,22 @@ Also called DSM (Downstage Monitor) in broadcast and theater workflows, same thi
             <div class="qs-meta-col qs-meta-col-sm">
               <label class="qs-lbl" for="qs-ver" style="min-width:0">Project Ver</label>
               <input id="qs-ver" class="qs-inp" type="text" placeholder="V1" maxlength="20">
+            </div>
+          </div>
+          <!-- Excel cover fields (mirrored in Wire, Project Info). Used ONLY by the Cover tab of the Excel exports. -->
+          <div style="font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.45);margin:16px 0 6px">Excel cover, optional, also editable in Wire</div>
+          <div class="qs-meta-grid">
+            <div class="qs-meta-col">
+              <label class="qs-lbl" for="qs-dates" style="min-width:0">Show dates</label>
+              <input id="qs-dates" class="qs-inp" type="text" placeholder="APRIL 8-10, 2026" maxlength="60">
+            </div>
+            <div class="qs-meta-col">
+              <label class="qs-lbl" for="qs-format" style="min-width:0">Show format</label>
+              <input id="qs-format" class="qs-inp" type="text" placeholder="3840x2160 - 59.94p" maxlength="60">
+            </div>
+            <div class="qs-meta-col" style="flex:1 1 100%">
+              <label class="qs-lbl" for="qs-address" style="min-width:0">Venue address</label>
+              <input id="qs-address" class="qs-inp" type="text" placeholder="Street, city, state" maxlength="120">
             </div>
           </div>
         </div>
@@ -5838,8 +5876,32 @@ function setL(pid,sid,n,v){
   const p=presets.find(p=>p.id===pid);if(!p)return;
   if(!p.layers[sid])p.layers[sid]={};
   if(v===null)delete p.layers[sid][n];
-  else p.layers[sid][n]=v;
+  else { const _wasEmpty=!p.layers[sid][n]; p.layers[sid][n]=v; if(_wasEmpty&&typeof _lbPlaceNewLayer==='function') _lbPlaceNewLayer(pid,sid,n); }   /* round 3: new layer = centred PIP */
 }
+// round 3 (Omar, 2026-09-21): the default for a NEW layer. An empty slot that gets content starts as a CENTRED PIP sized from half
+// the destination: half the width and half the height for plain content; for a picture or a clip with the aspect
+// lock on, half the width with the height following the picture's shape, never larger than the destination
+// (_lfxFitLocked). Whatever a removed layer left behind in the slot (its old size, position and mask) no longer
+// comes back with the next layer; the slot's custom name stays. Runs inside setL, so every way of giving a layer
+// its first content gets the same rule (table, layer panel, Advanced drop / pick, phone) and it rides the caller's
+// undo step. Replacing the content of a layer that already has some does not come through here.
+function _lbPlaceNewLayer(pid,sid,n){
+  const p=presets.find(x=>x.id===pid); const s=(typeof screens!=='undefined'&&Array.isArray(screens))?screens.find(x=>x.id===sid):null;
+  if(!p||!s||!(n>0)) return;
+  const sw=parseInt(s.w)||1920, sh=parseInt(s.h)||1080;
+  if(p.crops&&p.crops[sid]&&p.crops[sid][n]) delete p.crops[sid][n];
+  let w=Math.round(sw/2), h=Math.round(sh/2);
+  if(typeof _lfxLock!=='undefined'&&_lfxLock&&typeof _lfxCropDims==='function'&&typeof _lfxFitLocked==='function'){
+    let cd=null; try{ cd=_lfxCropDims(pid,sid,n); }catch(e){ cd=null; }
+    if(cd&&cd.cw>0&&cd.ch>0){ const f=_lfxFitLocked(w,Math.round(w*cd.ch/cd.cw),cd.ch/cd.cw,sw,sh); w=Math.min(sw,f.w); h=Math.min(sh,f.h); }
+  }
+  if(!p.layerSizes) p.layerSizes={};
+  if(!p.layerSizes[sid]) p.layerSizes[sid]={};
+  const nm=p.layerSizes[sid][n]&&p.layerSizes[sid][n].name;
+  p.layerSizes[sid][n]={wf:w/sw,hf:h/sh,xf:(sw-w)/2/sw,yf:(sh-h)/2/sh};
+  if(nm) p.layerSizes[sid][n].name=nm;
+}
+
 
 
 // Per-preset color override helpers
@@ -5948,6 +6010,7 @@ function pasteAOI(pid,sid){
   const h=Math.min(_copiedAOI.h,sh);
   const x=Math.min(_copiedAOI.x,sw-w);
   const y=Math.min(_copiedAOI.y,sh-h);
+  pushUndo();
   p.aoi[sid]={enabled:true,x,y,w,h};
   scheduleRender();
 }
@@ -5957,6 +6020,7 @@ function toggleAOI(pid,sid){
   const s=screens.find(x=>x.id===sid);if(!s)return;
   if(!p.aoi)p.aoi={};
   if(!p.aoi[sid]) p.aoi[sid]={enabled:false,x:0,y:0,w:parseInt(s.w),h:parseInt(s.h)};
+  pushUndo();   /* R3-DEST-FEATURES: AOI on / off is one undo step */
   p.aoi[sid].enabled=!p.aoi[sid].enabled;
   // When enabling, reset to full screen
   if(p.aoi[sid].enabled){
@@ -6032,12 +6096,26 @@ function _layerVisibleSize(pid,sid,n,sw,sh,wf,hf){
   return {w:Math.max(0,w), h:Math.max(0,h)};
 }
 
+// round 3 (Omar, 2026-09-21): mask limit. Each side 0..99 % and opposite sides together never more than 99 %, so a layer can be
+// masked down to a sliver but can never disappear. The side being edited gives way; when both sides of a pair
+// arrive together (paste) the bottom / right one does. Every mask writer goes through setCrop, so this is the one rule.
+function _lbCropLimit(prev,fields){
+  const out=Object.assign({t:0,b:0,l:0,r:0},prev||{},fields||{});
+  ['t','b','l','r'].forEach(function(k){ let v=parseFloat(out[k]); if(!isFinite(v)||v<0) v=0; out[k]=Math.min(99,v); });
+  [['t','b'],['l','r']].forEach(function(pr){
+    const a=pr[0], b=pr[1]; if(out[a]+out[b]<=99) return;
+    const give=(fields&&(a in fields)&&!(b in fields))?a:b;
+    const keep=(give===a)?b:a;
+    out[give]=Math.max(0,99-out[keep]);
+  });
+  return out;
+}
 function setCrop(pid,sid,n,fields){
   const p=presets.find(x=>x.id===pid);if(!p)return;
   if(!p.crops)p.crops={};
   if(!p.crops[sid])p.crops[sid]={};
   const prev=p.crops[sid][n]||{t:0,b:0,l:0,r:0};
-  p.crops[sid][n]=Object.assign({},prev,fields);
+  p.crops[sid][n]=_lbCropLimit(prev,fields);   /* round 3: 99 % rule */
   // A crop change moves the bounds — keep any stored position inside them.
   const ls=p.layerSizes&&p.layerSizes[sid]&&p.layerSizes[sid][n];
   if(ls&&ls.xf!==undefined&&ls.wf!==undefined){
@@ -6506,7 +6584,7 @@ function doSelect(pid,sid){
       if(ca){
         const caRect=ca.getBoundingClientRect();
         const elRect=el.getBoundingClientRect();
-        if(elRect.top<caRect.top||elRect.bottom>caRect.bottom){
+        if(!window._lbSelFromCanvas&&(elRect.top<caRect.top||elRect.bottom>caRect.bottom)){   /* round 3: only a pick made elsewhere (table row) brings the box into view */
           ca.scrollTop+=elRect.top-caRect.top-40;
         }
       }
@@ -6857,7 +6935,8 @@ function screenClick(e,pid,sid){
     }
   } else {
     hideMoveSymbol();
-    doSelect(pid,sid);
+    window._lbSelFromCanvas=true;   /* round 3: the box was clicked, so it is on screen: scrolling it moved the preset under the pointer and the second click of a double-click missed */
+    try{ doSelect(pid,sid); } finally { window._lbSelFromCanvas=false; }
     showMoveSymbol(pid,sid);
   }
 }
@@ -7025,6 +7104,7 @@ function _rcAoiOverlay(p,s,vw,vh,aoiData,aoiVX,aoiVY,aoiVW,aoiVH,sc){
       +'<div class="rh rh-tl" onmousedown="startAOIResize(event,\''+pid+'\',\''+sid+'\',\'tl\','+sc+')"></div>'
       +'<div class="rh rh-tr" onmousedown="startAOIResize(event,\''+pid+'\',\''+sid+'\',\'tr\','+sc+')"></div>'
       +'<div class="aoi-actions active" onmousedown="event.stopPropagation()" onclick="event.stopPropagation()">'
+        +'<button class="aoi-btn off" style="font-size:8px;letter-spacing:0" onclick="event.stopPropagation();aoiTurnOff(\''+pid+'\',\''+sid+'\')" title="Turn this AOI off" aria-label="Turn AOI off">OFF</button>'
         +'<button class="aoi-btn paste" onclick="event.stopPropagation();pasteAOI(\''+pid+'\',\''+sid+'\')" title="Paste copied AOI here" aria-label="Paste AOI">P</button>'
         +'<button class="aoi-btn copy"  onclick="event.stopPropagation();copyAOI(\''+pid+'\',\''+sid+'\')" title="Copy this AOI" aria-label="Copy AOI">C</button>'
         +'<button class="aoi-btn main reset" onclick="event.stopPropagation();resetAOIFull(\''+pid+'\',\''+sid+'\')" title="Reset AOI to full destination" aria-label="Reset AOI to full destination">↺</button>'
@@ -7315,8 +7395,9 @@ function openBlendPopup(pid, aSid, bSid, ev){
   const pb = p.positions[bSid] || {x:0,y:0};
   const ea = (typeof getEffectiveDims === 'function') ? getEffectiveDims(a, pid) : {w:parseInt(a.w), h:parseInt(a.h)};
   const eb = (typeof getEffectiveDims === 'function') ? getEffectiveDims(b, pid) : {w:parseInt(b.w), h:parseInt(b.h)};
-  // Identify left vs right by current x
-  const aIsLeft = pa.x <= pb.x;
+  // Identify left vs right by current x (top vs bottom for a top / bottom blend)
+  const _bzV = _blendAxisOf(pa,pb,ea,eb)==='y';
+  const aIsLeft = _bzV ? (pa.y <= pb.y) : (pa.x <= pb.x);
   const leftSid = aIsLeft ? aSid : bSid;
   const rightSid = aIsLeft ? bSid : aSid;
   const leftName = (aIsLeft ? a : b).name || leftSid;
@@ -7325,14 +7406,14 @@ function openBlendPopup(pid, aSid, bSid, ev){
   const rightPos = aIsLeft ? pb : pa;
   const leftDims = aIsLeft ? ea : eb;
   const rightDims = aIsLeft ? eb : ea;
-  const blendPx = (leftPos.x + leftDims.w) - rightPos.x;
+  const blendPx = _bzV ? ((leftPos.y + leftDims.h) - rightPos.y) : ((leftPos.x + leftDims.w) - rightPos.x);
   if(blendPx <= 0) return;
 
   // Mini preview: scale total span into ~PREVIEW_W px wide
   const PREVIEW_W = 190;
   const PREVIEW_H_MAX = 70;
   const totalW = (rightPos.x + rightDims.w) - leftPos.x;
-  const totalH = Math.max(leftDims.h, rightDims.h);
+  const totalH = _bzV ? Math.max(leftDims.h, (rightPos.y + rightDims.h) - leftPos.y) : Math.max(leftDims.h, rightDims.h);
   const scale = Math.min(PREVIEW_W / totalW, PREVIEW_H_MAX / totalH);
   const wL = Math.max(1, Math.round(leftDims.w * scale));
   const hL = Math.max(1, Math.round(leftDims.h * scale));
@@ -7340,15 +7421,15 @@ function openBlendPopup(pid, aSid, bSid, ev){
   const hR = Math.max(1, Math.round(rightDims.h * scale));
   const rxOff = Math.round((rightPos.x - leftPos.x) * scale);
   const ryOff = Math.round((rightPos.y - leftPos.y) * scale);
-  const ovW = Math.max(1, Math.round(blendPx * scale));
-  const ovH = Math.max(1, Math.round(Math.min(leftDims.h, rightDims.h) * scale));
+  const ovW = Math.max(1, Math.round((_bzV ? (Math.min(pa.x+ea.w,pb.x+eb.w)-Math.max(pa.x,pb.x)) : blendPx) * scale));
+  const ovH = Math.max(1, Math.round((_bzV ? blendPx : Math.min(leftDims.h, rightDims.h)) * scale));
   const previewW = Math.max(wL, rxOff + wR);
   const previewH = Math.max(hL, ryOff + hR);
   const previewHtml = ''
     + '<div style="position:relative;width:'+previewW+'px;height:'+previewH+'px">'
       + '<div style="position:absolute;left:0;top:0;width:'+wL+'px;height:'+hL+'px;background:rgba(var(--n-cyan-rgb),.18);border:1px solid rgba(var(--n-cyan-rgb),.7);border-radius:2px;display:flex;align-items:center;justify-content:center;color:var(--n-cyan);font-size:8px;font-weight:800;letter-spacing:.04em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+_esc(leftName)+'</div>'
       + '<div style="position:absolute;left:'+rxOff+'px;top:'+ryOff+'px;width:'+wR+'px;height:'+hR+'px;background:rgba(var(--n-cyan-rgb),.18);border:1px solid rgba(var(--n-cyan-rgb),.7);border-radius:2px;display:flex;align-items:center;justify-content:center;color:var(--n-cyan);font-size:8px;font-weight:800;letter-spacing:.04em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+_esc(rightName)+'</div>'
-      + '<div style="position:absolute;left:'+rxOff+'px;top:'+Math.max(0, ryOff)+'px;width:'+ovW+'px;height:'+ovH+'px;background:repeating-linear-gradient(45deg,rgba(255,120,0,.55) 0px,rgba(255,120,0,.55) 2px,transparent 2px,transparent 5px);border:1px solid rgba(255,138,61,.7);pointer-events:none;border-radius:1px"></div>'
+      + '<div style="position:absolute;left:'+(_bzV?Math.max(0,rxOff):rxOff)+'px;top:'+Math.max(0, ryOff)+'px;width:'+ovW+'px;height:'+ovH+'px;background:repeating-linear-gradient(45deg,rgba(255,120,0,.55) 0px,rgba(255,120,0,.55) 2px,transparent 2px,transparent 5px);border:1px solid rgba(255,138,61,.7);pointer-events:none;border-radius:1px"></div>'
     + '</div>';
 
   const popup = document.createElement('div');
@@ -7375,8 +7456,9 @@ function openBlendPopup(pid, aSid, bSid, ev){
 
   // Compute blend percent (matches the _blendPercent helper's math:
   // pct of overlap relative to the smaller of the two destinations' widths).
-  const minW = Math.min(parseInt(a.w), parseInt(b.w));
+  const minW = _bzV ? Math.min(ea.h, eb.h) : Math.min(ea.w, eb.w);
   const blendPct = minW > 0 ? Math.round(blendPx / minW * 100) : 0;
+  const _bzGd = _blendGuide(blendPct);
 
   // Build per-member resolution rows
   let resRowsHtml = '';
@@ -7407,9 +7489,11 @@ function openBlendPopup(pid, aSid, bSid, ev){
     + '</div>'
     + '<div class="blend-popup-row">'
       + '<label for="blend-popup-pct">Blend Percent</label>'
-      + '<input type="number" min="0" max="100" step="0.1" value="' + blendPct + '" id="blend-popup-pct" data-pid="' + pid + '" data-asid="' + aSid + '" data-bsid="' + bSid + '" onchange="setBlendPctFromPopup(this)">'
+      + '<input type="number" min="0" max="100" step="0.1" value="' + blendPct + '" id="blend-popup-pct" style="color:' + _bzGd.color + ';border-color:' + _bzGd.color + '" data-pid="' + pid + '" data-asid="' + aSid + '" data-bsid="' + bSid + '" onchange="setBlendPctFromPopup(this)">'
       + '<span class="suffix">%</span>'
+      + '<span id="blend-popup-guide" title="' + _bzGd.tip + '" style="color:' + _bzGd.color + ';font-weight:800;font-size:12px;min-width:10px;text-align:center">' + _bzGd.mark + '</span>'
     + '</div>'
+    + '<div id="blend-popup-tip" style="font-size:10px;line-height:1.35;color:var(--text3);margin:2px 0 0;max-width:230px">Recommended: 15-25% of output ' + (_bzV ? 'height' : 'width') + '. Hold Shift to disable snap</div>'
     + '<div class="blend-popup-divider"></div>'
     + resRowsHtml
     + '<button class="blend-popup-break" onclick="breakBlend(\''+pid+'\',\''+aSid+'\',\''+bSid+'\')">Break Blend</button>';
@@ -7493,7 +7577,8 @@ function setBlendPctFromPopup(input){
   const sa = screens.find(x => x.id === aSid);
   const sb = screens.find(x => x.id === bSid);
   if(!sa || !sb) return;
-  const minW = Math.min(parseInt(sa.w), parseInt(sb.w));
+  const _bi = _blendPairInfo(pid, aSid, bSid);
+  const minW = _bi ? _bi.smaller : Math.min(parseInt(sa.w), parseInt(sb.w));
   const newPx = Math.max(0, Math.round(newPct / 100 * minW));
   const proxy = { dataset: { pid: pid, asid: aSid, bsid: bSid }, value: String(newPx) };
   setBlendPx(proxy);
@@ -7584,6 +7669,7 @@ function breakBlend(pid, aSid, bSid){
   if(!pa || !pb){ closeBlendPopup(); return; }
   const ea = (typeof getEffectiveDims === 'function') ? getEffectiveDims(a, pid) : {w:parseInt(a.w), h:parseInt(a.h)};
   const eb = (typeof getEffectiveDims === 'function') ? getEffectiveDims(b, pid) : {w:parseInt(b.w), h:parseInt(b.h)};
+  if(_blendAxisOf(pa,pb,ea,eb)==='y'){ _breakBlendY(p,pid,a,b,pa,pb); return; }
   const aIsLeft = pa.x <= pb.x;
   const leftSid = aIsLeft ? aSid : bSid;
   const leftPos = aIsLeft ? pa : pb;
@@ -7605,6 +7691,156 @@ function breakBlend(pid, aSid, bSid){
   closeBlendPopup();
 }
 
+/* ── adv-canvas merge (round 3): blend axis + 15-25% guidance, large-gap warning, snap-guide geometry, destination-drag
+   safety, Fit Canvas. Self-contained helpers; the live functions below call into them. ── */
+/* Which way two overlapping destinations blend. 'y' (top / bottom) only when the overlap is wider than it is tall AND the
+   two centres sit more above / below each other than side by side. Everything else stays 'x', exactly as before. */
+function _blendAxisOf(pa,pb,ea,eb){
+  const ow=Math.min(pa.x+ea.w,pb.x+eb.w)-Math.max(pa.x,pb.x), oh=Math.min(pa.y+ea.h,pb.y+eb.h)-Math.max(pa.y,pb.y);
+  const dcx=Math.abs((pa.x+ea.w/2)-(pb.x+eb.w/2)), dcy=Math.abs((pa.y+ea.h/2)-(pb.y+eb.h/2));
+  return (ow>=oh&&dcy>dcx)?'y':'x';
+}
+/* One pair's blend numbers on the right axis, from EFFECTIVE (rotation-aware) sizes: {axis, px, smaller, pct}. */
+function _blendPairInfo(pid,aSid,bSid){
+  const p=presets.find(x=>x.id===pid), sa=screens.find(x=>x.id===aSid), sb=screens.find(x=>x.id===bSid);
+  if(!p||!sa||!sb) return null;
+  const pos=p.positions||{}, pa=pos[aSid]||{x:0,y:0}, pb=pos[bSid]||{x:0,y:0};
+  const ea=getEffectiveDims(sa,pid), eb=getEffectiveDims(sb,pid);
+  const axis=_blendAxisOf(pa,pb,ea,eb);
+  const px=axis==='y'?(Math.min(pa.y+ea.h,pb.y+eb.h)-Math.max(pa.y,pb.y)):(Math.min(pa.x+ea.w,pb.x+eb.w)-Math.max(pa.x,pb.x));
+  const smaller=axis==='y'?Math.min(ea.h,eb.h):Math.min(ea.w,eb.w);
+  return {axis:axis,px:px,smaller:smaller,pct:smaller>0?Math.round(px/smaller*100):0};
+}
+/* 15-25% guidance (from the old _rfOverlapHtml): green tick inside, amber up-arrow under, red down-arrow over. */
+function _blendGuide(pct){
+  const ok=pct>=15&&pct<=25, low=pct<15;
+  return {key:ok?'ok':low?'low':'high', color:ok?'#4ddc8a':low?'#f0c060':'#ff4d5a', mark:ok?'\u2713':low?'\u2191':'\u2193',
+    tip:ok?'Inside the recommended 15-25%':low?'Under 15%: widen the blend':'Over 25%: narrow the blend'};
+}
+/* Top / bottom blend typed in pixels (from the axis y branch of the old fsSetBlendOverlap): the LOWER destination moves,
+   everything at or below the upper one's bottom edge rides along. One undo step, only on a real change. */
+function _setBlendPxY(p,pid,sa,sb,pa,pb,newPx){
+  const aTop=pa.y<=pb.y, top=aTop?sa:sb, bot=aTop?sb:sa, topPos=aTop?pa:pb, botPos=aTop?pb:pa;
+  const tD=getEffectiveDims(top,pid), bD=getEffectiveDims(bot,pid);
+  const px=Math.max(0,Math.min(Math.min(tD.h,bD.h)-1,newPx));
+  const anchorBottom=topPos.y+tD.h, newY=anchorBottom-px, dY=newY-botPos.y;
+  if(dY===0){ scheduleRender(); return; }
+  pushUndo();
+  setPosition(p,bot.id,botPos.x,newY);
+  screens.forEach(o=>{
+    if(o.id===sa.id||o.id===sb.id) return;
+    const op=p.positions[o.id];
+    if(op&&op.y>=anchorBottom) setPosition(p,o.id,op.x,op.y+dY);
+  });
+  scheduleRender();
+}
+/* Break Blend on a top / bottom pair: push the lower destination (and everything at or below it) down by the overlap.
+   breakBlend has already pushed the undo step. */
+function _breakBlendY(p,pid,a,b,pa,pb){
+  const aTop=pa.y<=pb.y, top=aTop?a:b, bot=aTop?b:a, topPos=aTop?pa:pb, botPos=aTop?pb:pa;
+  const px=(topPos.y+getEffectiveDims(top,pid).h)-botPos.y;
+  if(px>0){
+    const oldY=botPos.y;
+    screens.forEach(o=>{
+      if(o.id===top.id) return;
+      const op=p.positions[o.id];
+      if(op&&op.y>=oldY) setPosition(p,o.id,op.x,op.y+px);
+    });
+  }
+  if(typeof scheduleAutoSave==='function') scheduleAutoSave();
+  scheduleRender();
+  closeBlendPopup();
+}
+/* Warning mark for a dead-space gap over 500 px (from the old renderFsDeadBar). Screen only: _pdfStaticizeAdv drops it. */
+function _gapWarnHtml(gap){
+  return gap>500?'<span class="gap-warn" title="Large gap, check alignment" style="color:#f0c060;font-weight:800;font-size:11px;margin-left:2px;cursor:help">\u26A0</span>':'';
+}
+/* Where a snap guide belongs on screen, measured from the tile that is actually showing (the Advanced tile while the
+   Advanced page is open, else the Simple tile): origin = the tile's canvas, k = screen px per real px INCLUDING the
+   Advanced zoom and any rescale the drag itself caused. */
+function _snapGuideGeom(pid){
+  const adv=(typeof fsPresetId!=='undefined'&&fsPresetId)?document.getElementById('fs-canvas'):null;
+  const root=adv||document.getElementById('canvas-area')||document;
+  const row=root.querySelector('.preset-row[data-pid="'+pid+'"]');
+  const inner=row&&row.querySelector('.screens-visual > div');
+  const p=presets.find(x=>x.id===pid);
+  if(!inner||!p) return null;
+  const ir=inner.getBoundingClientRect();
+  let k=0, far=0;
+  row.querySelectorAll('.screen-box[data-sid]').forEach(bx=>{
+    const s=screens.find(x=>x.id===bx.dataset.sid); if(!s) return;
+    const pos=(p.positions&&p.positions[s.id])||{x:0,y:0};
+    const ext=pos.x+getEffectiveDims(s,pid).w;
+    if(ext>far){ far=ext; k=(bx.getBoundingClientRect().right-ir.left)/ext; }
+  });
+  if(!(k>0)) return null;
+  return {row:row.getBoundingClientRect(), ox:ir.left, oy:ir.top, k:k};
+}
+/* Destination drag: the mousedown event that armed a drag inside the Advanced tile (the viewport's own mousedown skips
+   its pan for that one event), and the lost-mouse-up safety from the old fsStartScreenDrag (blur, right-click, button
+   released outside the window). */
+let _fsDestDragEvt=null;
+let _homeDragSafety=null;
+function _homeDragSafetyOn(up){
+  _homeDragSafetyOff();
+  const s={ end:function(){ try{ up(); }catch(_){} }, guard:function(ev){ if(ev.buttons===0){ try{ up(); }catch(_){} } } };
+  window.addEventListener('blur',s.end);
+  window.addEventListener('contextmenu',s.end);
+  window.addEventListener('mousemove',s.guard);
+  _homeDragSafety=s;
+}
+function _homeDragSafetyOff(){
+  const s=_homeDragSafety; _fsDestDragEvt=null;
+  if(!s) return;
+  _homeDragSafety=null;
+  window.removeEventListener('blur',s.end);
+  window.removeEventListener('contextmenu',s.end);
+  window.removeEventListener('mousemove',s.guard);
+}
+/* Fit Canvas (from the old _fsFitNow, now per preset and rotation-proof because only positions move; canvas W x H follows
+   through syncCanvasSize). Visible destinations decide the trim, hidden ones ride along. */
+function _fitCanvasPlan(p){
+  if(!p||!p.positions) return null;
+  let minX=Infinity, minY=Infinity;
+  screens.forEach(s=>{
+    if(_screenHidden(p,s.id)) return;
+    const pos=p.positions[s.id]||{x:0,y:0};
+    if(pos.x<minX) minX=pos.x;
+    if(pos.y<minY) minY=pos.y;
+  });
+  if(!isFinite(minX)||!isFinite(minY)) return null;
+  minX=Math.max(0,Math.round(minX)); minY=Math.max(0,Math.round(minY));
+  return (minX>0||minY>0)?{dx:minX,dy:minY}:null;
+}
+function _fitCanvasApply(p,plan){
+  screens.forEach(s=>{
+    const pos=p.positions[s.id]; if(!pos) return;
+    setPosition(p,s.id,Math.round(pos.x-plan.dx),Math.round(pos.y-plan.dy));
+  });
+}
+/* User action: ONE undo step, then the batched redraw. pid empty = every preset. Returns false when nothing needed trimming. */
+function fitCanvasTrim(pid){
+  const list=(pid?presets.filter(x=>x.id===pid):presets).map(p=>({p:p,plan:_fitCanvasPlan(p)})).filter(x=>x.plan);
+  if(!list.length) return false;
+  pushUndo();
+  list.forEach(x=>_fitCanvasApply(x.p,x.plan));
+  scheduleRender();
+  return true;
+}
+/* End of a Free Position drag: the drag already pushed its undo step, so the trim rides in the same step. */
+function _fitCanvasAfterDrop(p){
+  const plan=_fitCanvasPlan(p); if(!plan) return false;
+  _fitCanvasApply(p,plan); scheduleRender(); return true;
+}
+/* Advanced menu -> Fit Canvas. On the Advanced page it fits the open preset; from a Simple tile's Advanced button that
+   tile's preset; from the status-bar Advanced button every preset. */
+function fitCanvasFromMenu(){
+  let pid=(typeof fsPresetId!=='undefined'&&fsPresetId)?fsPresetId:null;
+  if(!pid){ const b=document.querySelector('.preset-row .menu-open'); const row=b&&b.closest('.preset-row[data-pid]'); if(row) pid=row.dataset.pid; }
+  closeAdvancedMenu();
+  if(!fitCanvasTrim(pid)) showAlert({variant:'info',title:'Canvas already fits',message:'The top-left destination already sits at 0,0, so there is nothing to trim.'});
+}
+
 function _rcOverlapVis(pos,sc,pid){
   let html='';
   const _hp=presets.find(x=>x.id===pid);
@@ -7620,10 +7856,11 @@ function _rcOverlapVis(pos,sc,pid){
       if(ix2<=ix1||iy2<=iy1)continue;
       const vox=Math.round(ix1*sc),voy=Math.round(iy1*sc);
       const vow=Math.round((ix2-ix1)*sc),voh=Math.round((iy2-iy1)*sc);
-      const isH=(ix2-ix1)<(iy2-iy1);
+      const isH=_blendAxisOf(pa,pb,ea,eb)==='x';
       const dir1=isH?'to right':'to bottom', dir2=isH?'to left':'to top';
-      const ovPx = ix2 - ix1;
-      const blendPct = _blendPercent(ovPx, ea.w, eb.w);
+      const ovPx = isH ? (ix2 - ix1) : (iy2 - iy1);
+      const blendPct = isH ? _blendPercent(ovPx, ea.w, eb.w) : _blendPercent(ovPx, ea.h, eb.h);
+      const _bzG = _blendGuide(blendPct);
       html+='<div class="overlap-vis" data-pid="'+pid+'" data-asid="'+sa.id+'" data-bsid="'+sb.id+'" style="position:absolute;left:'+vox+'px;top:'+voy+'px;width:'+vow+'px;height:'+voh+'px;pointer-events:none;z-index:6;overflow:visible">'
         +'<div class="overlap-hatch" style="pointer-events:auto;cursor:pointer" title="Double-click for blend options" onclick="event.stopPropagation()" ondblclick="openBlendPopup(\''+pid+'\',\''+sa.id+'\',\''+sb.id+'\',event)"></div>'
         +'<div style="position:absolute;inset:0;background:linear-gradient('+dir1+',rgba(0,0,0,.2),transparent)"></div>'
@@ -7632,8 +7869,8 @@ function _rcOverlapVis(pos,sc,pid){
           +'<input type="number" min="1" value="'+ovPx+'" data-pid="'+pid+'" data-asid="'+sa.id+'" data-bsid="'+sb.id+'" onfocus="this.select()" onchange="setBlendPx(this)">'
           +'<span class="suffix">PX</span>'
         +'</div>'
-        +'<div class="blend-label" style="bottom:2px;left:50%;transform:translateX(-50%)" onmousedown="event.stopPropagation()">'
-          +'<span>'+blendPct+'</span><span class="suffix">%</span>'
+        +'<div class="blend-label" style="bottom:2px;left:50%;transform:translateX('+(isH?'-50%':'52px')+');color:'+_bzG.color+';border:1px solid '+_bzG.color+'" title="'+_bzG.tip+'" data-guide="'+_bzG.key+'" onmousedown="event.stopPropagation()">'
+          +'<span>'+blendPct+'</span><span class="suffix" style="color:'+_bzG.color+'">%</span><span>'+_bzG.mark+'</span>'
         +'</div>'
       +'</div>';
     }
@@ -7666,7 +7903,7 @@ function _rcDeadVis(pos,sc,pid){
               +'<input type="number" min="0" value="'+gap+'" data-pid="'+pid+'" data-asid="'+sa.id+'" data-bsid="'+sb.id+'" data-dir="h" onfocus="this.select()" onchange="setDeadPx(this)">'
               +'<span class="suffix">PX</span>'
               +'<input type="number" min="0" step="0.1" value="'+_pxToFt(gap)+'" data-pid="'+pid+'" data-asid="'+sa.id+'" data-bsid="'+sb.id+'" data-dir="h" onfocus="this.select()" onchange="setDeadFt(this)">'
-              +'<span class="suffix">FT</span>'
+              +'<span class="suffix">FT</span>'+_gapWarnHtml(gap)
             +'</div>'
           +'</div>';
         }
@@ -7685,7 +7922,7 @@ function _rcDeadVis(pos,sc,pid){
               +'<input type="number" min="0" value="'+gap+'" data-pid="'+pid+'" data-asid="'+sa.id+'" data-bsid="'+sb.id+'" data-dir="v" onfocus="this.select()" onchange="setDeadPx(this)">'
               +'<span class="suffix">PX</span>'
               +'<input type="number" min="0" step="0.1" value="'+_pxToFt(gap)+'" data-pid="'+pid+'" data-asid="'+sa.id+'" data-bsid="'+sb.id+'" data-dir="v" onfocus="this.select()" onchange="setDeadFt(this)">'
-              +'<span class="suffix">FT</span>'
+              +'<span class="suffix">FT</span>'+_gapWarnHtml(gap)
             +'</div>'
           +'</div>';
         }
@@ -8378,7 +8615,7 @@ function _qsApplyModeLabels(){
 }
 let _qsSetDefaultForAll=true; // when ON: screen 1 res sets default for all
 // 16ee: Quick Setup ↔ showMeta (Client / Job No / Designer / Drawn By / Project Ver).
-const _QS_META_IDS={client:'qs-client',jobNo:'qs-jobno',designer:'qs-designer',drawnBy:'qs-drawnby',projectVer:'qs-ver'};
+const _QS_META_IDS={client:'qs-client',jobNo:'qs-jobno',designer:'qs-designer',drawnBy:'qs-drawnby',projectVer:'qs-ver',dates:'qs-dates',address:'qs-address',format:'qs-format'};
 function _qsFillMeta(src){ Object.keys(_QS_META_IDS).forEach(k=>{ const el=document.getElementById(_QS_META_IDS[k]); if(el) el.value=(src&&typeof src[k]==='string')?src[k]:''; }); }
 function _qsApplyMeta(){ Object.keys(_QS_META_IDS).forEach(k=>{ const el=document.getElementById(_QS_META_IDS[k]); if(el) showMeta[k]=(el.value||'').trim(); }); }
 
@@ -8812,7 +9049,7 @@ function confirmQSEdit(){
         if(p.layerSizes) delete p.layerSizes[sid];
         if(p.crops) delete p.crops[sid];
         if(p.layerFx) delete p.layerFx[sid];
-        if(p.aoi) delete p.aoi[sid];
+        if(p.aoi) delete p.aoi[sid]; if(p.edidNotes) delete p.edidNotes[sid];
         if(p.screenName) delete p.screenName[sid];
         if(p.bgNames) delete p.bgNames[sid];
         if(p.showMode) delete p.showMode[sid];
@@ -8883,6 +9120,29 @@ function confirmScreen(){
   document.getElementById('cv-h').value=totalStripH;
   closeModal();scheduleRender();
 }
+
+// round 3 (Omar, 2026-09-21): a click ANYWHERE outside a floating panel closes it. The closer below never hears a click on a
+// destination, a layer chip, an AUX box or a table row (their handlers stop the event) and it had no rule at all
+// for the AUX panel. This one listens in the capture phase, so it runs first and nothing can swallow the click.
+// Left alone: a press that began inside a popup (slider / header drag), anything that belongs to a panel (.pm
+// popups, the colour picker, dropdown lists, the dialog, the content picker), the table openers (the chevron is a
+// toggle and closes its own panel) and the phone's inline panels.
+function _lbClickIsInsidePopup(t){
+  return !!(t&&t.closest&&t.closest('.pm,#layer-panel,#screen-panel,#dsm-panel,#color-pop,.sys-dd,#dlg-overlay,#picker,#ov,#custom-modal,.home-field-chev,.layer-dot'));
+}
+function _lbCloseFloatingPanels(){
+  if(document.getElementById('screen-panel')&&typeof closeScreenPanel==='function') closeScreenPanel();
+  if(document.getElementById('layer-panel')&&typeof closeLayerPanel==='function') closeLayerPanel();
+  const dp=document.getElementById('dsm-panel');
+  if(dp){ dp.remove(); if(typeof _homeClearOpen==='function') _homeClearOpen(); }
+}
+document.addEventListener('click',function(e){
+  if(window._lbPressInPopup||window._mbInlinePanelOpen) return;
+  if(document.body.classList.contains('is-mobile')) return;
+  if(!document.getElementById('screen-panel')&&!document.getElementById('layer-panel')&&!document.getElementById('dsm-panel')) return;
+  if(_lbClickIsInsidePopup(e.target)) return;
+  _lbCloseFloatingPanels();
+},true);
 
 // ---- Keyboard ----
 document.addEventListener('click',e=>{
@@ -8983,6 +9243,7 @@ document.addEventListener('keydown',e=>{
   // specifically-pointed-at than a whole destination.
   if((e.key==='Delete'||e.key==='Backspace')&&typeof selLayer!=='undefined'&&selLayer){
     e.preventDefault();
+    if(typeof pushUndo==='function'&&typeof getL==='function'&&getL(selLayer.pid,selLayer.sid,selLayer.n)) pushUndo();   /* round 3: the key delete had no undo step */
     if(typeof setL==='function') setL(selLayer.pid,selLayer.sid,selLayer.n,null);
     selLayer=null;
     scheduleRender();
@@ -8990,8 +9251,7 @@ document.addEventListener('keydown',e=>{
     return;
   }
   if((e.key==='Delete'||e.key==='Backspace')&&sel){
-    e.preventDefault();
-    deleteSelectedScreen();
+    e.preventDefault();   /* round 3 (Omar, 2026-09-21): a key never removes a destination. Destinations go from Destination Properties or the table ✕. preventDefault stays so Backspace cannot leave the page */
   }
 
   // ── Layer chip nudge (arrow keys) — only when a layer is selected ──
@@ -9093,7 +9353,7 @@ function deleteScreen(sid){
     if(p.layerSizes) delete p.layerSizes[sid];
     if(p.crops) delete p.crops[sid];
     if(p.layerFx) delete p.layerFx[sid];
-    if(p.aoi) delete p.aoi[sid];
+    if(p.aoi) delete p.aoi[sid]; if(p.edidNotes) delete p.edidNotes[sid];
     if(p.showMode) delete p.showMode[sid];
     if(p.rotations) delete p.rotations[sid];
     // Wipe all positions and rebuild so remaining screens repack left-to-right
@@ -9558,6 +9818,7 @@ function openScreenPanel(e,pid,sid){
       </div>
     </div>`;
 
+  _spInstallExtras(pop,pid,sid);   /* copy / paste / reset tools, aspect read-out, EDID note */
   // Duplicate screen button
   pop.querySelector('#sp-duplicate').addEventListener('click',(ev)=>{
     ev.stopPropagation();
@@ -9592,6 +9853,7 @@ function openScreenPanel(e,pid,sid){
 
   // Apply handler
   pop.querySelector('#sp-apply').addEventListener('click',()=>{
+    const _spU=_spUndoBegin();   /* one Apply = one undo step */
     // Global: name + size
     const newW=parseInt(pop.querySelector('#sp-w').value)||s.w;
     const newH=parseInt(pop.querySelector('#sp-h').value)||s.h;
@@ -9615,6 +9877,7 @@ function openScreenPanel(e,pid,sid){
     // choice (P01 edits still propagate to inheriting presets). No manual
     // repackPositions call is needed here.
     setRotationSmart(pid,sid,newRot);
+    _spApplyEnd(_spU,pop,pid,sid);
     closeScreenPanel();
     scheduleRender();
     scheduleRender();
@@ -9623,6 +9886,7 @@ function openScreenPanel(e,pid,sid){
   // Reset Layout — wipe this preset's positions and rebuild clean
   pop.querySelector('#sp-reset-layout').addEventListener('click',(ev)=>{
     ev.stopPropagation();
+    pushUndo();
     repackPositions(pid);
     closeScreenPanel();
     scheduleRender();
@@ -9681,6 +9945,168 @@ function openScreenPanel(e,pid,sid){
   // without this, Escape is dead until the user clicks a field inside.
   pop.tabIndex=-1; pop.style.outline='none'; pop.focus();
 }
+
+/* ── R3-DEST-FEATURES (destination-level merge-back). Reference implementation: the old _fsScreenCard / _fsCPR /
+   fsCopyProp / fsPasteProp / fsResetProp cards (unreachable since 16hu), adapted to the Destination Properties popup. ── */
+/* A. AOI off: the only live OFF path. One undo step. */
+function aoiTurnOff(pid,sid){
+  if(!getAOI(pid,sid)) return;
+  pushUndo();
+  setAOI(pid,sid,{enabled:false});
+  scheduleRender();
+}
+/* B. One user action = ONE undo step even when an inner helper (setRotationSmart on a landscape / portrait flip) pushes
+   its own: the step always restores the state from BEFORE the action, and nothing is recorded when nothing changed. */
+function _spUndoBegin(){ const n=_undoStack.length; return {snap:_snapshot(), n:n, top:n?_undoStack[n-1]:null}; }
+function _spUndoEnd(t){
+  if(!t) return;
+  const n=_undoStack.length, top=n?_undoStack[n-1]:null;
+  if(n>t.n){ _undoStack.length=t.n; _undoStack.push(t.snap); _redoStack=[]; _syncUndoButtons(); }
+  else if(top!==t.top){ _undoStack[n-1]=t.snap; }   /* the stack was full, the inner push shifted it */
+  else pushUndoFrom(t.snap);
+}
+/* F. EDID note: free text per destination per preset. Field name kept (preset.edidNotes[sid]) so old shows read back. */
+function getEdidNote(pid,sid){ const p=presets.find(x=>x.id===pid); return (p&&p.edidNotes&&p.edidNotes[sid])||''; }
+function setEdidNote(pid,sid,text){
+  const p=presets.find(x=>x.id===pid); if(!p) return;
+  const v=String(text==null?'':text).trim();
+  if(v){ if(!p.edidNotes) p.edidNotes={}; p.edidNotes[sid]=v; }
+  else if(p.edidNotes){ delete p.edidNotes[sid]; if(!Object.keys(p.edidNotes).length) delete p.edidNotes; }
+}
+function _spApplyEnd(u,pop,pid,sid){
+  const el=pop&&pop.querySelector('#sp-edid');
+  if(el && String(el.value||'').trim()!==getEdidNote(pid,sid)) setEdidNote(pid,sid,el.value);
+  _spUndoEnd(u);
+}
+/* E. Reduced aspect ratio (16:9, 32:9 ...). 8:5 also reads 16:10; an unfamiliar ratio also reads as n.nn:1. */
+function _destAspect(w,h){
+  w=parseInt(w)||0; h=parseInt(h)||0; if(w<=0||h<=0) return '';
+  let a=w,b=h; while(b){ const t=b; b=a%b; a=t; }
+  const rw=w/a, rh=h/a;
+  if(rw===8&&rh===5) return '8:5 (16:10)';
+  if(rw>64||rh>64) return (w/h).toFixed(2)+':1 ('+rw+':'+rh+')';
+  return rw+':'+rh;
+}
+/* D. Copy / paste / reset of a destination's Size, Position and Rotation, between destinations and presets. */
+var _spClip={size:null,pos:null,rot:null};
+function _spToolsHTML(key,what){
+  const b=function(a,t){ return '<button type="button" data-sp-tool="'+a+'" data-sp-key="'+key+'" title="'+t+'" aria-label="'+t+'" onclick="event.stopPropagation();_spTool(\''+a+'\',\''+key+'\')">'+_FS_TOOLS_SVG[a]+'</button>'; };
+  return '<span class="lfx-tools" style="display:inline-flex;flex-shrink:0;margin-left:auto" onclick="event.stopPropagation()">'+b('copy','Copy '+what)+b('paste','Paste '+what)+b('reset','Reset '+what+' to what it was when this window opened')+'</span>';
+}
+function _spFlash(pop,key,msg){
+  const t=pop&&pop.querySelector('[data-sp-flash="'+key+'"]'); if(!t) return;
+  const orig=t.dataset.orig||t.textContent; t.dataset.orig=orig; t.textContent=msg; t.style.color='var(--n-cyan)';   /* same idiom as _lfxFlash: the row label answers */
+  clearTimeout(t._fl); t._fl=setTimeout(function(){ t.textContent=orig; t.style.color=''; },1000);
+}
+function _spAspectSync(pop){
+  const el=pop&&pop.querySelector('#sp-aspect'); if(!el) return;
+  const a=_destAspect(pop.querySelector('#sp-w').value, pop.querySelector('#sp-h').value);
+  el.textContent=a?('Aspect '+a):'';
+}
+function _spRefresh(pop){
+  if(!pop||!pop.isConnected) return;
+  const pid=pop.dataset.pid, sid=pop.dataset.sid;
+  const s=screens.find(x=>x.id===sid), p=presets.find(x=>x.id===pid); if(!s||!p) return;
+  const pos=(p.positions&&p.positions[sid])||{x:0,y:0};
+  const set=function(id,v){ const el=pop.querySelector(id); if(el) el.value=v; };
+  set('#sp-w',s.w); set('#sp-h',s.h); set('#sp-x',pos.x); set('#sp-y',pos.y); set('#sp-rot',getRotation(pid,sid));
+  _spAspectSync(pop);
+}
+function _spWrite(pid,sid,key,v){
+  const s=screens.find(x=>x.id===sid), p=presets.find(x=>x.id===pid); if(!s||!p||v===null||v===undefined) return;
+  if(key==='size'){   /* through updateScreenSize so neighbours reflow and layers re-clamp (the old paste wrote W / H raw) */
+    if(parseInt(v.w)!==parseInt(s.w)) updateScreenSize(sid,'w',v.w);
+    if(parseInt(v.h)!==parseInt(s.h)) updateScreenSize(sid,'h',v.h);
+  } else if(key==='pos'){
+    initStripPositions(pid);
+    setPosition(p,sid,Math.max(0,parseInt(v.x)||0),Math.max(0,parseInt(v.y)||0));
+  } else if(key==='rot'){
+    setRotationSmart(pid,sid,v);
+  }
+}
+function _spTool(action,key){
+  const pop=document.getElementById('screen-panel'); if(!pop) return;
+  const pid=pop.dataset.pid, sid=pop.dataset.sid;
+  const s=screens.find(x=>x.id===sid), p=presets.find(x=>x.id===pid); if(!s||!p) return;
+  const fld=function(id){ const el=pop.querySelector(id); return el?parseFloat(el.value):NaN; };
+  if(action==='copy'){   /* copies what the window shows */
+    if(key==='size'){ const w=parseInt(fld('#sp-w')), h=parseInt(fld('#sp-h')); _spClip.size={w:(w>=67&&w<=7680)?w:parseInt(s.w), h:(h>=67&&h<=4320)?h:parseInt(s.h)}; }
+    else if(key==='pos'){ const cur=(p.positions&&p.positions[sid])||{x:0,y:0}; const x=parseInt(fld('#sp-x')), y=parseInt(fld('#sp-y')); _spClip.pos={x:isNaN(x)?cur.x:Math.max(0,x), y:isNaN(y)?cur.y:Math.max(0,y)}; }
+    else if(key==='rot'){ const r=fld('#sp-rot'); _spClip.rot=isNaN(r)?getRotation(pid,sid):Math.max(-360,Math.min(360,r)); }
+    _spFlash(pop,key,'Copied'); return;
+  }
+  let v=null;
+  if(action==='paste'){ v=_spClip[key]; if(v===null||v===undefined){ _spFlash(pop,key,'Nothing copied'); return; } }
+  else if(action==='reset'){ const o=pop._spOrig; if(!o) return; v= key==='size'?{w:o.w,h:o.h} : key==='pos'?{x:o.x,y:o.y} : o.rot; }
+  else return;
+  const u=_spUndoBegin();
+  _spWrite(pid,sid,key,v);
+  _spUndoEnd(u);
+  _spRefresh(pop);
+  _spFlash(pop,key,action==='paste'?'Pasted':'Reset');
+  const dlg=document.getElementById('dlg-overlay');
+  if(dlg&&dlg.classList.contains('show')) closeScreenPanel();   /* the Keep / Re-arrange question is up: its answer moves destinations, do not keep stale X / Y on screen */
+  scheduleRender();
+}
+/* Called once by openScreenPanel after the form is built: adds the tools, the aspect read-out and the EDID note. */
+function _spInstallExtras(pop,pid,sid){
+  const s=screens.find(x=>x.id===sid), p=presets.find(x=>x.id===pid); if(!pop||!s||!p) return;
+  const pos=(p.positions&&p.positions[sid])||{x:0,y:0};
+  pop._spOrig={w:parseInt(s.w),h:parseInt(s.h),x:pos.x,y:pos.y,rot:getRotation(pid,sid)};
+  const wIn=pop.querySelector('#sp-w'), hIn=pop.querySelector('#sp-h'), xIn=pop.querySelector('#sp-x'), rIn=pop.querySelector('#sp-rot');
+  const lbl='font-size:11px;color:var(--text3);letter-spacing:.04em';
+  const sizeGrid=wIn&&wIn.parentElement&&wIn.parentElement.parentElement;
+  const row='display:flex;align-items:center;gap:8px;margin-bottom:6px';
+  if(sizeGrid){
+    sizeGrid.insertAdjacentHTML('beforebegin','<div style="'+row+'"><span data-sp-flash="size" style="'+lbl+'">Size</span>'
+      +'<span id="sp-aspect" title="Aspect ratio of this destination" style="font-size:11px;font-weight:600;color:var(--text2);font-family:var(--font-mono);letter-spacing:.04em;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></span>'+_spToolsHTML('size','size')+'</div>');
+    [wIn,hIn].forEach(function(el){ if(el) el.addEventListener('input',function(){ _spAspectSync(pop); }); });
+  }
+  const posGrid=xIn&&xIn.parentElement&&xIn.parentElement.parentElement;
+  if(posGrid) posGrid.insertAdjacentHTML('beforebegin','<div style="'+row+'"><span data-sp-flash="pos" style="'+lbl+'">Position</span>'+_spToolsHTML('pos','position')+'</div>');
+  if(rIn){
+    const rl=rIn.previousElementSibling;
+    if(rl){ rl.style.display='flex'; rl.style.alignItems='center'; rl.style.gap='8px'; rl.innerHTML='<span data-sp-flash="rot">'+_esc(rl.textContent.trim())+'</span>'+_spToolsHTML('rot','rotation'); }
+    rIn.parentElement.insertAdjacentHTML('afterend','<div style="margin-top:8px"><div style="'+lbl+';margin-bottom:4px">EDID Note</div>'
+      +'<input id="sp-edid" type="text" maxlength="160" placeholder="EDID note for this destination in this preset\u2026" value="'+_esc(getEdidNote(pid,sid))+'"'
+      +' style="width:100%;font-size:12px;padding:7px 10px;border:1px solid rgba(255,255,255,.06);border-radius:4px;background:var(--n-track);color:var(--text);outline:none;box-sizing:border-box;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5);transition:all .15s;font-family:inherit"'
+      +' data-fx="orange-c" aria-label="EDID note for this destination in this preset"></div>');
+  }
+  _spAspectSync(pop);
+}
+/* C. Advanced > Layers overview: the destination header row is a real control. A destination covered by a full-size
+   layer cannot be reached on the canvas; this row always can. */
+function _fsDrowAttrs(p,s){
+  const pidA=_esc(p.id), sidA=_esc(s.id), on=!!(sel&&sel.pid===p.id&&sel.sid===s.id), note=getEdidNote(p.id,s.id);
+  return (on?' sel':'')+'" data-pid="'+pidA+'" data-sid="'+sidA+'" onclick="_fsDrowClick(event,\''+pidA+'\',\''+sidA+'\')" ondblclick="_fsDrowProps(event,\''+pidA+'\',\''+sidA+'\')"'
+    +' title="'+_esc('Click to select this destination, double-click for Destination Properties'+(note?' \u00b7 EDID: '+note:''))+'"';
+}
+function _fsDrowExtras(p,s){
+  const pidA=_esc(p.id), sidA=_esc(s.id), a=_destAspect(s.w,s.h);
+  return (a?'<span class="fs-drow-asp" title="Aspect ratio">'+_esc(a)+'</span>':'')
+    +'<button type="button" class="fs-drow-prop" title="Destination Properties" aria-label="Destination Properties" onclick="_fsDrowProps(event,\''+pidA+'\',\''+sidA+'\')" ondblclick="event.stopPropagation()">'
+    +'<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="17" x2="20" y2="17"/><circle cx="9" cy="7" r="2.5" fill="currentColor"/><circle cx="15" cy="17" r="2.5" fill="currentColor"/></svg></button>';
+}
+function _fsDrowSync(){
+  document.querySelectorAll('#fs-toolbar .fs-drow-h[data-sid]').forEach(function(el){ el.classList.toggle('sel',!!sel&&sel.pid===el.dataset.pid&&sel.sid===el.dataset.sid); });
+}
+function _fsDrowClick(e,pid,sid){
+  if(e&&e.target&&e.target.closest&&e.target.closest('.fs-drow-prop')) return;
+  if(typeof hideMoveSymbol==='function') hideMoveSymbol();
+  /* same toggle as the Simple table row; the second click of a double-click keeps it selected */
+  if(sel&&sel.pid===pid&&sel.sid===sid&&!(e&&e.detail>1)) doSelect(null,null); else doSelect(pid,sid);
+  _fsDrowSync();
+}
+function _fsDrowProps(e,pid,sid){
+  if(e&&e.stopPropagation) e.stopPropagation();
+  if(!(sel&&sel.pid===pid&&sel.sid===sid)){ if(typeof hideMoveSymbol==='function') hideMoveSymbol(); doSelect(pid,sid); }
+  _fsDrowSync();
+  const box=document.querySelector('#fs-canvas .screen-box[data-pid="'+pid+'"][data-sid="'+sid+'"]')||(e&&e.currentTarget)||document.body;
+  openScreenPanel({target:box,currentTarget:box,stopPropagation:function(){},preventDefault:function(){}},pid,sid);
+}
+/* keep the row highlight in step with a selection made on the canvas (doSelect paints live DOM, it does not re-render) */
+document.addEventListener('click',function(){ if(fsPresetId) requestAnimationFrame(_fsDrowSync); },true);
+document.addEventListener('keyup',function(ev){ if(ev.key==='Escape'&&fsPresetId) requestAnimationFrame(_fsDrowSync); },true);
 
 function spSetShowMode(mode){
   const pop=document.getElementById('screen-panel');
@@ -9956,12 +10382,12 @@ function _lpAdvancedSection(v, cr, pid, sid, n, isAdv){
   const _botPx = Math.round((cr.b||0) * _layerH / 100);
   const _lftPx = Math.round((cr.l||0) * _layerW / 100);
   const _rgtPx = Math.round((cr.r||0) * _layerW / 100);
-  // Max pixel per side = 49% of the layer dim (keeps 2% visible)
-  const _maxTB = Math.floor(_layerH * 0.49);
-  const _maxLR = Math.floor(_layerW * 0.49);
+  // Max pixel per side = 99% of the layer dim; lpCropChange / setCrop keep opposite sides within 99% together (round 3)
+  const _maxTB = Math.floor(_layerH * 0.99);
+  const _maxLR = Math.floor(_layerW * 0.99);
   const cropInp = (dim, label, val, maxPx) => `<div>
                 <div class="lfx-lbl" style="margin-bottom:4px">${label} <span style="opacity:.55;font-weight:400">(px)</span></div>
-                <input class="lp-cr-inp lfx-inp" type="number" value="${val}" min="0" max="${maxPx}" data-dim="${dim}" data-layer-w="${_layerW}" data-layer-h="${_layerH}" style="color:#ff9aa8" data-fx="pink-c" oninput="lpCropChange(this,'${pid}','${sid}',${n})">
+                <input class="lp-cr-inp lfx-inp" type="number" value="${val}" min="0" max="${maxPx}" data-dim="${dim}" data-layer-w="${_layerW}" data-layer-h="${_layerH}" style="color:#ff9aa8" data-fx="pink-c" onfocus="_lfxFocus()" onchange="_lfxCommit()" oninput="lpCropChange(this,'${pid}','${sid}',${n})">
               </div>`;
   const ct = findContent(v);
   const innerBg = ct ? (ct.img ? 'url('+ct.img+') center/cover no-repeat' : ct.c) : 'var(--n-cyan)';   // 16ie: the cover / picture, not just the colour
@@ -10291,6 +10717,7 @@ function openLayerPanelWithMode(e,pid,sid,n,_adv){
 
 // Live crop update from panel inputs
 function lpCropChange(inp,pid,sid,n){
+  if(typeof _lfxSnap!=='undefined'&&!_lfxSnap&&typeof _snapshot==='function') _lfxSnap=_snapshot();   /* round 3: one undo step per Mask edit, committed on change (_lfxCommit) */
   // 2026-05-22: input is now in pixels of the layer's source dimensions.
   // Convert to percentage before storing (the rest of the app still
   // works in % — clip-path render, etc.).
@@ -10299,7 +10726,8 @@ function lpCropChange(inp,pid,sid,n){
   const dimSize = isVertical
     ? (parseInt(inp.dataset.layerH) || 1080)
     : (parseInt(inp.dataset.layerW) || 1920);
-  const maxPx = Math.floor(dimSize * 0.49);
+  const _oppPct = ((typeof getCrop==='function'?getCrop(pid,sid,n):null)||{})[({t:'b',b:'t',l:'r',r:'l'})[dim]]||0;
+  const maxPx = Math.max(0, Math.floor(dimSize * Math.min(99, 99 - _oppPct) / 100));   /* round 3: was 49 % per side */
   const px = Math.max(0, Math.min(maxPx, parseInt(inp.value) || 0));
   inp.value = px;
   const pct = dimSize > 0 ? (px * 100 / dimSize) : 0;
@@ -10957,6 +11385,7 @@ function setBlendPx(input){
   if(!sa || !sb) return;
   const pa = {...(p.positions[aSid]||{x:0,y:0})};
   const pb = {...(p.positions[bSid]||{x:0,y:0})};
+  if(_blendAxisOf(pa,pb,getEffectiveDims(sa,pid),getEffectiveDims(sb,pid))==='y'){ _setBlendPxY(p,pid,sa,sb,pa,pb,newPx); return; }
   let leftSid, rightSid, leftPos, rightPos, leftDims;
   if(pa.x <= pb.x){ leftSid = aSid; rightSid = bSid; leftPos = pa; rightPos = pb; leftDims = getEffectiveDims(sa, pid); }
   else            { leftSid = bSid; rightSid = aSid; leftPos = pb; rightPos = pa; leftDims = getEffectiveDims(sb, pid); }
@@ -11084,17 +11513,18 @@ function _showHomeSnapGuides(guideX, guideY, sc, pid){
   const canvasArea = document.getElementById('canvas-area');
   const ref = canvasArea ? canvasArea : presetRow;
   const refRect = ref.getBoundingClientRect();
-  const prRect = presetRow.getBoundingClientRect();
+  const _gg = _snapGuideGeom(pid); if(!_gg) return;
+  const prRect = _gg.row;
 
   if(guideX !== null && guideX !== undefined){
-    const screenX = prRect.left + guideX * sc;
+    const screenX = _gg.ox + guideX * _gg.k;
     const g = document.createElement('div');
     g.className = 'home-snap-guide';
     g.style.cssText = 'position:fixed;left:'+screenX+'px;top:'+prRect.top+'px;width:1px;height:'+prRect.height+'px;pointer-events:none;z-index:9999;border-left:1px dashed rgba(255,100,100,1);box-shadow:0 0 6px rgba(220,60,60,.45)';
     document.body.appendChild(g);
   }
   if(guideY !== null && guideY !== undefined){
-    const screenY = prRect.top + guideY * sc;
+    const screenY = _gg.oy + guideY * _gg.k;
     const g = document.createElement('div');
     g.className = 'home-snap-guide';
     g.style.cssText = 'position:fixed;top:'+screenY+'px;left:'+prRect.left+'px;height:1px;width:'+prRect.width+'px;pointer-events:none;z-index:9999;border-top:1px dashed rgba(255,100,100,1);box-shadow:0 0 6px rgba(220,60,60,.45)';
@@ -11123,6 +11553,10 @@ function startHomeScreenDrag(e,pid,sid,sc){
   const sx=e.clientX,sy=e.clientY;
   let didDrag=false;
 
+  /* Advanced page: Space + drag stays the pan; otherwise this press is a destination drag, not a pan. Then the lost-mouse-up safety. */
+  if(_fsInTile(e)&&_fsSpaceDown) return;
+  _homeDragSafetyOn(up);
+  if(_fsInTile(e)) _fsDestDragEvt=e;
   // Snap config — drag-relative threshold in real pixels
   const _SNAP_PX = 8;
   // Dragged destination's dims (for edge calculations)
@@ -11204,6 +11638,7 @@ function startHomeScreenDrag(e,pid,sid,sc){
   }
   function up(){
     _clearHomeSnapGuides();
+    _homeDragSafetyOff();
     window.removeEventListener('mousemove', mv);
     window.removeEventListener('mouseup', up);
 
@@ -11221,6 +11656,7 @@ function startHomeScreenDrag(e,pid,sid,sc){
           _newPairs.push({ a: parts[0], b: parts[1] });
         }
       });
+      if(_newPairs.length === 0) _fitCanvasAfterDrop(p);
       if(_newPairs.length > 0){
         const _nameOf = id => {
           const s = screens.find(x => x.id === id);
@@ -11234,7 +11670,7 @@ function startHomeScreenDrag(e,pid,sid,sc){
           message: msg,
           confirmLabel: 'Add to blend',
           cancelLabel: 'Cancel',
-          onConfirm: function(){ scheduleRender(); },
+          onConfirm: function(){ _fitCanvasAfterDrop(p); scheduleRender(); },
           onCancel: function(){
             if(_dragGroup){
               _dragGroup.forEach(id => {
@@ -12702,6 +13138,7 @@ var actions={
   // panel + advanced-canvas operations (Phase 6)
   setShowMode:function(m){ spSetShowMode(m); },
   toggleAdvFeature:function(f){ toggleAdvFeature(f); },
+  fitCanvas:function(){ fitCanvasFromMenu(); },
   dsmPanelContent:function(pid,dsmId,label,color){ dsmPanelSelContent(pid,dsmId,label,color); }
 };
 // ── Universal sliding thumb for segmented controls (2026-06-23) ──
@@ -12893,6 +13330,22 @@ function _ioBkPrimaryOf(rows,r){ return (r&&r.backupOf)?(rows.find(function(x){ 
 function _ioBkBackupOf(rows,r){ return r?(rows.find(function(x){ return x&&x.backupOf===r.id; })||null):null; }
 function _ioBkState(rows,r){ if(!r) return ''; if(_ioBkPrimaryOf(rows,r)) return 'backup'; if(_ioBkBackupOf(rows,r)) return 'primary'; return ''; }
 function _ioBkPB(rows,r){ const st=_ioBkState(rows,r); return st==='primary'?'P':(st==='backup'?'B':''); }
+/* 16kk: the primary a source backs up, by NAME, from today's pairs: Advanced I/O page 1 (the show's page: the backup
+   row's backupOf points at its primary row), else the Simple twin's pairOf / autoB. '' when the source is not a backup. */
+function _ioBkPrimaryNameFor(name){
+  const nm=String(name||'').trim().toLowerCase(); if(!nm) return '';
+  try{
+    const pg=(typeof ioAdvanced==='object'&&ioAdvanced&&Array.isArray(ioAdvanced.pages))?ioAdvanced.pages[0]:null;
+    const rows=(pg&&Array.isArray(pg.sources))?pg.sources:[];
+    const r=rows.find(function(x){ return x&&String(x.name||'').trim().toLowerCase()===nm; });
+    const p=r?_ioBkPrimaryOf(rows,r):null;
+    if(p&&String(p.name||'').trim()) return String(p.name).trim();
+    const m=(typeof _sysGetSourceMeta==='function')?(_sysGetSourceMeta(name)||{}):{};
+    return String(m.pairOf||m.autoB||'').trim();
+  }catch(e){ return ''; }
+}
+/* Type column text for print: the machine type, then the backup link when there is one. */
+function _ioBkTypeText(name,typeText){ const p=_ioBkPrimaryNameFor(name); return p?((typeText?typeText+' \u00b7 ':'')+'Backup of '+p):(typeText||''); }
 function _ioBkPlaceUnder(rows,primaryId,backupId){ const bi=rows.findIndex(function(x){ return x&&x.id===backupId; }); if(bi<0) return; const b=rows.splice(bi,1)[0]; const pi=rows.findIndex(function(x){ return x&&x.id===primaryId; }); rows.splice(pi+1,0,b); }
 function _ioBkPair(pg,primaryId,backupId){
   const rows=pg.sources; const p=rows.find(function(x){ return x&&x.id===primaryId; }); const b=rows.find(function(x){ return x&&x.id===backupId; });
@@ -14350,6 +14803,7 @@ function _sysRowDelete(kind,id){
             if(p.bgNames&&p.bgNames[id]) delete p.bgNames[id];
             if(p.bgColors&&p.bgColors[id]) delete p.bgColors[id];
             if(p.aoi&&p.aoi[id]) delete p.aoi[id];
+            if(p.edidNotes&&p.edidNotes[id]) delete p.edidNotes[id];
             if(p.screenName&&p.screenName[id]) delete p.screenName[id];
           });
         }
@@ -14553,7 +15007,7 @@ function _sysExportIOExcel(){
 
     // 16hm: every Advanced page with rows becomes its own sheet, named after the page
     const advSheets=(ioAdvanced&&Array.isArray(ioAdvanced.pages))?ioAdvanced.pages.filter(_ioAdvPageUsed).map(function(p){ const sh=_ioAdvSheet(p, showRaw); return {name:p.name, rows:sh.rows, styles:sh.styles, colWidths:colWidths, rowHeights:rowHeights}; }):[];
-    const blob=advSheets.length ? _buildXlsxMulti([{name:'Video I-O', rows:rows, styles:styles, colWidths:colWidths, rowHeights:rowHeights}].concat(advSheets)) : _buildXlsx(rows,styles,colWidths,rowHeights,'Video I-O');
+    const blob=advSheets.length ? _buildXlsxMulti([_xlsxCoverSheet('I/O PATCH'),{name:'Video I-O', rows:rows, styles:styles, colWidths:colWidths, rowHeights:rowHeights}].concat(advSheets)) : _buildXlsx(rows,styles,colWidths,rowHeights,'Video I-O','I/O PATCH');
     dl(blob,showFileName('video-io')+'.xlsx');
   } catch(err){
     if(typeof showAlert==='function'){
@@ -18350,6 +18804,30 @@ function _wireAdvSwitcherPt(routerId, side, idx, value){
   if(typeof scheduleAutoSave === 'function') scheduleAutoSave();
   _wireRender();
 }
+/* 16kk: Tab / Shift+Tab in an ID cell goes to the next / previous ID cell of the SAME column. Committing an ID
+   re-renders every tile (the box that had focus is rebuilt), so the move is done by hand: commit, then focus the
+   rebuilt neighbour. Off either end of the column Tab behaves as the browser does. */
+function _wireAdvPtCellKey(el){
+  const m = /_wireAdvSwitcherPt\('([^']+)',\s*'(in|out)',\s*(\d+)/.exec((el && el.getAttribute && el.getAttribute('onchange')) || '');
+  return m ? { rid: m[1], side: m[2], idx: parseInt(m[3], 10) } : null;
+}
+function _wireAdvPtCellEl(rid, side, idx){
+  const all = document.querySelectorAll('#wire-diagram input.r-slot');
+  for(let i = 0; i < all.length; i++){ const k = _wireAdvPtCellKey(all[i]); if(k && k.rid === rid && k.side === side && k.idx === idx) return all[i]; }
+  return null;
+}
+function _wireAdvPtTabKey(e){
+  if(!e || e.key !== 'Tab' || e.altKey || e.ctrlKey || e.metaKey) return;
+  const el = e.target; if(!el || el.tagName !== 'INPUT' || !el.classList || !el.classList.contains('r-slot')) return;
+  const k = _wireAdvPtCellKey(el); if(!k) return;
+  const next = k.idx + (e.shiftKey ? -1 : 1);
+  if(next < 0 || !_wireAdvPtCellEl(k.rid, k.side, next)) return;
+  e.preventDefault();
+  el.blur();   /* a changed value commits here (onchange -> _wireAdvSwitcherPt -> one undo step -> re-render) */
+  const t = _wireAdvPtCellEl(k.rid, k.side, next);
+  if(t){ try{ t.focus({ preventScroll: true }); }catch(_e){ t.focus(); } try{ t.select(); }catch(_e){} }
+}
+document.addEventListener('keydown', _wireAdvPtTabKey, true);
 function _wireAdvSyncRouterCells(){
   _wireAdvHelpers();
   const wires = wireAdvanced.wires || [];
@@ -18367,7 +18845,7 @@ function _wireAdvSyncRouterCells(){
         cell.wireId = wid;   // older shows: untouched, matching or default-named = auto
         if(cell.auto === undefined) cell.auto = (!cell.name) || (!!w && cell.name === want) || _isDefaultName(cell.name);
       } else if(cell.wireId !== wid){
-        cell.wireId = wid; cell.auto = true; cell.ptAuto = true;
+        cell.wireId = wid; cell.auto = true;   /* 16kk: the ID cell is NOT reset here. A typed ID stays through a plug, pull or swap; a cell still on auto (ptAuto) follows the new cable below */
       }
       // 16jv: the ID cell follows the same rule. A Slot typed before 16jv becomes a typed ID, once.
       if(cell.ptAuto === undefined){
@@ -19571,17 +20049,37 @@ function _wireExportSheetList(theme){
   }
   return [_wireSheetSvg(_wireBuildExportSvg(theme, { transparent: true, noLegend: true }), { theme: theme, pageLabel: 'Page 1', title: 'Full System', version: ver, legendRows: _wireCableTypesInUse() })];
 }
+/* 16kk: a sheet's own size, read from the root tag _wireSheetSvg wrote (Letter 1600 x 1131 up to A0 6809 x 4406) */
+function _wireSheetDims(sh){
+  const tag = String(sh || '').slice(0, 600); const end = tag.indexOf('>'); const head = end > 0 ? tag.slice(0, end) : tag;
+  const num = function(attr){ const m = new RegExp('\\s' + attr + '="([0-9.]+)"').exec(head); return m ? parseFloat(m[1]) : 0; };
+  let w = num('width'), h = num('height');
+  if(!(w > 0 && h > 0)){ const vb = /\sviewBox="0 0 ([0-9.]+) ([0-9.]+)"/.exec(head); if(vb){ w = parseFloat(vb[1]); h = parseFloat(vb[2]); } }
+  if(!(w > 0 && h > 0)){ const sp = _wireSheetSpec(); w = Math.round(1600 * sp.w / 11); h = Math.round(1131 * sp.h / 8.5); }
+  return { w: w, h: h };
+}
+/* 16kk: PNG raster scale. 2x like before while it fits; a big sheet or a tall stack backs off so the canvas stays
+   inside what Chrome / Electron can encode (longest side 16384 px, 100 megapixels). */
+function _wirePngScale(w, h){
+  w = Math.max(1, w || 0); h = Math.max(1, h || 0);
+  const s = Math.min(2, 16384 / Math.max(w, h), Math.sqrt(100e6 / (w * h)));
+  return Math.max(0.25, s);
+}
 // Stack N sheets vertically into one SVG (SVG / PNG downloads).
 function _wireStackSheets(sheets, theme){
-  const W = 1600, H = 1131, GAP = 28;
+  const GAP = 28;
   const n = Math.max(1, sheets.length);
-  const totalH = n * H + (n - 1) * GAP;
+  const dims = sheets.map(_wireSheetDims);   /* 16kk: each sheet's real size, not a fixed Letter */
+  const W = dims.reduce(function(m, d){ return Math.max(m, d.w); }, 0) || 1600;
+  const totalH = (dims.reduce(function(t, d){ return t + d.h; }, 0) || 1131) + (n - 1) * GAP;
+  let yOff = 0;
   const bg = (theme === 'light') ? '#e5e7eb' : '#050608';
   let xml = '<?xml version="1.0" encoding="UTF-8"?>'
           + '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="' + W + '" height="' + totalH + '" viewBox="0 0 ' + W + ' ' + totalH + '">'
           + '<rect x="0" y="0" width="' + W + '" height="' + totalH + '" fill="' + bg + '"/>';
   sheets.forEach((sh, i) => {
-    xml += sh.replace(/^<svg /, '<svg x="0" y="' + (i * (H + GAP)) + '" ');
+    xml += sh.replace(/^<svg /, '<svg x="' + Math.round((W - dims[i].w) / 2) + '" y="' + yOff + '" ');
+    yOff += dims[i].h + GAP;
   });
   return xml + '</svg>';
 }
@@ -19606,10 +20104,10 @@ function _wireResolveCyanRgb(){ try{ const v=getComputedStyle(document.body).get
 function _wireExportPng(theme){
   const svg = _wireExportSheetsSvg(theme);   // 16ek: RCM-style drawing sheet(s)
   const blob = new Blob([svg], { type: 'image/svg+xml;charset=utf-8' });
-  const url = URL.createObjectURL(blob);
+  const url = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);   /* 16kk: a data: URL, not a blob: URL. Chrome taints the canvas for a blob: SVG that holds HTML tiles and the PNG never came out */
   const img = new Image();
   img.onload = function(){
-    const SCALE = 2;
+    const SCALE = _wirePngScale(img.width, img.height);   /* 16kk: follows the sheet size, capped */
     const canvas = document.createElement('canvas');
     canvas.width = img.width * SCALE;
     canvas.height = img.height * SCALE;
@@ -22265,7 +22763,7 @@ function fsBindEvents(){
   _fsBoundMouseDown=e=>{
     // Pan on: middle-click anywhere, space+left-click anywhere, or left-click on background
     const onBackground=e.target===vp||e.target.id==='fs-world'||e.target.id==='fs-canvas'||e.target.closest('.screens-visual')||e.target.tagName==='DIV'&&!e.target.closest('.screen-box')&&!e.target.closest('.layer-chip')&&!e.target.closest('[id^="layer"]')&&!e.target.closest('button')&&!e.target.closest('input');
-    if(e.button===1||_fsSpaceDown||(e.button===0&&onBackground)){
+    if(e.button===1||_fsSpaceDown||(e.button===0&&onBackground&&_fsDestDragEvt!==e)){
       e.preventDefault();_fsPanning=true;
       _fsPanStart={x:e.clientX,y:e.clientY};
       _fsPanOrigin={x:fsPanX,y:fsPanY};
@@ -22639,7 +23137,7 @@ function renderFsPanel(force){
       return '<div class="fs-lrow'+(v?'':' empty')+'" data-pid="'+pidA+'" data-sid="'+sidA+'" data-n="'+n+'" onclick="_fsSelectLayer(\''+pidA+'\',\''+sidA+'\','+n+')" ondragover="_fsCanvasDragOver(event)" ondrop="_fsCanvasDrop(event)" title="'+(v?'Pick this layer':'Drop a source here to fill this layer')+'">'
         +'<span class="fs-lrow-l">L'+n+'</span><span class="fs-lrow-sw" style="'+_fsSwatchStyle(ct,'transparent')+'"></span><span class="fs-lrow-n">'+(v?_esc(v):'— drop a source —')+'</span></div>';
     }).join('');
-    return '<div class="fs-drow"><div class="fs-drow-h"><span class="fs-crumb-c d">D'+String(si+1).padStart(2,'0')+'</span><span class="fs-drow-name">'+_esc(dname)+'</span><span class="fs-drow-res">'+_esc(s.w+'×'+s.h)+'</span></div>'
+    return '<div class="fs-drow"><div class="fs-drow-h'+_fsDrowAttrs(p,s)+'><span class="fs-crumb-c d">D'+String(si+1).padStart(2,'0')+'</span><span class="fs-drow-name">'+_esc(dname)+'</span><span class="fs-drow-res">'+_esc(s.w+'×'+s.h)+'</span>'+_fsDrowExtras(p,s)+'</div>'
       +'<div class="fs-lrow bgrow'+(bg?'':' empty')+'" data-pid="'+pidA+'" data-sid="'+sidA+'" data-n="0" onclick="_fsSelectLayer(\''+pidA+'\',\''+sidA+'\',0)" ondragover="_fsCanvasDragOver(event)" ondrop="_fsCanvasDrop(event)" title="'+(bg?'Pick the background, it has the same options as a layer':'Drop a source here to make it the BG')+'"><span class="fs-lrow-l">BG</span><span class="fs-lrow-sw" style="'+_fsSwatchStyle(bg?findContent(bg):null,'transparent')+'"></span><span class="fs-lrow-n">'+(bg?_esc(bg):'— drop a source —')+'</span></div>'   /* 16jn (Omar): the BG is a layer too */
       +lrows+'</div>';
   }).join('');
@@ -24110,7 +24608,8 @@ function duplicateScreen(sid){
   // Copy all per-preset data for this screen to the new one
   presets.forEach(p=>{
     const copy=k=>{if(p[k]&&p[k][sid]!==undefined){if(!p[k])p[k]={};p[k][newId]=JSON.parse(JSON.stringify(p[k][sid]));}}
-    ;['layers','colors','bgs','bgNames','showMode','layerSizes','crops','aoi','opacities','layerFx'].forEach(copy);
+    ;['layers','colors','bgs','bgNames','showMode','layerSizes','crops','aoi','opacities','layerFx'].forEach(copy); copy('layerMedia');   /* clip settings: fit, In / Out, speed, loop, level, look, fades */
+    copy('edidNotes');
     // Repack all positions from scratch so every screen gets a clean left-to-right strip slot
     p.positions={};
     repackPositions(p.id);
@@ -24384,10 +24883,10 @@ let ioAdvanced = _ioAdvDefault();   // 16hm: standalone I/O Patch pages (see _io
 // are the EXTRA fields. Persisted via getProjectState() as `showMeta`; like
 // the show name they are NOT undo-tracked (typing in a text field isn't an
 // undo step anywhere else in the app either).
-const _SHOW_META_KEYS=['client','jobNo','designer','drawnBy','projectVer','logo'];   // 16el: logo = data URL (set directly, not via setShowMeta's 60-char cap)
-let showMeta={client:'',jobNo:'',designer:'',drawnBy:'',projectVer:'',logo:''};
-function _showMetaFrom(o){ const m={client:'',jobNo:'',designer:'',drawnBy:'',projectVer:'',logo:''}; if(o&&typeof o==='object') _SHOW_META_KEYS.forEach(k=>{ if(typeof o[k]==='string') m[k]=o[k]; }); return m; }
-function setShowMeta(field,value){ if(_SHOW_META_KEYS.indexOf(field)<0) return; showMeta[field]=(value==null?'':String(value)).slice(0,60); if(typeof scheduleAutoSave==='function') scheduleAutoSave(); if(typeof _scheduleDirtyCheck==='function') _scheduleDirtyCheck(); }
+const _SHOW_META_KEYS=['client','jobNo','designer','drawnBy','projectVer','logo','dates','address','format'];   // 16el: logo = data URL (set directly, not via setShowMeta's 60-char cap)
+let showMeta={client:'',jobNo:'',designer:'',drawnBy:'',projectVer:'',logo:'',dates:'',address:'',format:''};
+function _showMetaFrom(o){ const m={client:'',jobNo:'',designer:'',drawnBy:'',projectVer:'',logo:'',dates:'',address:'',format:''}; if(o&&typeof o==='object') _SHOW_META_KEYS.forEach(k=>{ if(typeof o[k]==='string') m[k]=o[k]; }); return m; }
+function setShowMeta(field,value){ if(_SHOW_META_KEYS.indexOf(field)<0) return; showMeta[field]=(value==null?'':String(value)).slice(0,field==='address'?120:60); if(typeof scheduleAutoSave==='function') scheduleAutoSave(); if(typeof _scheduleDirtyCheck==='function') _scheduleDirtyCheck(); }
 // MM/DD/YYYY for a Date (used by the auto "Drawn" stamp).
 function _fmtMDY(d){ return String(d.getMonth()+1).padStart(2,'0')+'/'+String(d.getDate()).padStart(2,'0')+'/'+d.getFullYear(); }
 
@@ -24973,7 +25472,9 @@ function _xlsxStylesXml(){
     '<font><b/><sz val="11"/><name val="Calibri"/></font>',
     '<font><i/><sz val="10"/><color rgb="FF666666"/><name val="Calibri"/></font>',
     '<font><b/><sz val="11"/><color rgb="FFFF8A3D"/><name val="Calibri"/></font>',
-    '<font><b/><sz val="16"/><name val="Calibri"/></font>'
+    '<font><b/><sz val="16"/><name val="Calibri"/></font>',
+    /* Excel cover: fonts 6..12 (Arial) */
+    '<font><b/><sz val="30"/><name val="Arial"/></font>', '<font><b/><sz val="12"/><name val="Arial"/></font>', '<font><b/><sz val="18"/><name val="Arial"/></font>', '<font><sz val="10"/><name val="Arial"/></font>', '<font><sz val="9"/><name val="Arial"/></font>', '<font><b/><sz val="11"/><name val="Arial"/></font>', '<font><b/><sz val="10"/><name val="Arial"/></font>'
   ];
   const fills = [
     '<fill><patternFill patternType="none"/></fill>',
@@ -24981,7 +25482,9 @@ function _xlsxStylesXml(){
     '<fill><patternFill patternType="solid"><fgColor rgb="FF0A1322"/></patternFill></fill>',
     '<fill><patternFill patternType="solid"><fgColor rgb="FFFF8A3D"/></patternFill></fill>',
     '<fill><patternFill patternType="solid"><fgColor rgb="FFD4A644"/></patternFill></fill>',
-    '<fill><patternFill patternType="solid"><fgColor rgb="FFFFF8F0"/></patternFill></fill>'
+    '<fill><patternFill patternType="solid"><fgColor rgb="FFFFF8F0"/></patternFill></fill>',
+    /* Excel cover: fills 6 black, 7 white */
+    '<fill><patternFill patternType="solid"><fgColor rgb="FF000000"/></patternFill></fill>', '<fill><patternFill patternType="solid"><fgColor rgb="FFFFFFFF"/></patternFill></fill>'
   ];
   const borders = [
     '<border/>',
@@ -24997,7 +25500,17 @@ function _xlsxStylesXml(){
     '<xf fontId="3" fillId="0" borderId="1" xfId="0" applyFont="1" applyBorder="1" applyAlignment="1"><alignment horizontal="left" vertical="center" wrapText="1"/></xf>',
     '<xf fontId="0" fillId="0" borderId="1" xfId="0" applyBorder="1" applyAlignment="1"><alignment horizontal="left" vertical="top" wrapText="1"/></xf>',
     '<xf fontId="5" fillId="0" borderId="0" xfId="0" applyFont="1"/>',
-    '<xf fontId="3" fillId="0" borderId="0" xfId="0" applyFont="1"/>'
+    '<xf fontId="3" fillId="0" borderId="0" xfId="0" applyFont="1"/>',
+    /* Excel cover: styles 10..18, see _xlsxCoverSheet */
+    '<xf fontId="9" fillId="6" borderId="0" xfId="0" applyFont="1" applyFill="1" applyAlignment="1"><alignment horizontal="center" vertical="center" shrinkToFit="1"/></xf>',
+    '<xf fontId="9" fillId="7" borderId="0" xfId="0" applyFont="1" applyFill="1" applyAlignment="1"><alignment horizontal="center" vertical="center" shrinkToFit="1"/></xf>',
+    '<xf fontId="6" fillId="0" borderId="0" xfId="0" applyFont="1" applyAlignment="1"><alignment horizontal="center" vertical="center" shrinkToFit="1"/></xf>',
+    '<xf fontId="7" fillId="0" borderId="0" xfId="0" applyFont="1" applyAlignment="1"><alignment horizontal="center" vertical="center" shrinkToFit="1"/></xf>',
+    '<xf fontId="8" fillId="0" borderId="0" xfId="0" applyFont="1" applyAlignment="1"><alignment horizontal="center" vertical="center" shrinkToFit="1"/></xf>',
+    '<xf fontId="9" fillId="0" borderId="0" xfId="0" applyFont="1" applyAlignment="1"><alignment horizontal="center" vertical="center" shrinkToFit="1"/></xf>',
+    '<xf fontId="10" fillId="0" borderId="0" xfId="0" applyFont="1" applyAlignment="1"><alignment horizontal="center" vertical="center" shrinkToFit="1"/></xf>',
+    '<xf fontId="11" fillId="0" borderId="0" xfId="0" applyFont="1" applyAlignment="1"><alignment horizontal="center" vertical="center" shrinkToFit="1"/></xf>',
+    '<xf fontId="12" fillId="0" borderId="0" xfId="0" applyFont="1" applyAlignment="1"><alignment horizontal="center" vertical="center" shrinkToFit="1"/></xf>'
   ];
   return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
     + '<styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">'
@@ -25014,7 +25527,8 @@ function _xlsxStylesXml(){
 // cellStyles: same shape; entry = style index (number)
 // cols: array of column widths in character units
 // rowHeights: optional map {rowIndex0: heightInPoints}
-function _xlsxSheetXml(rows, cellStyles, cols, rowHeights){
+function _xlsxSheetXml(rows, cellStyles, cols, rowHeights, x){
+  const _xt=_xlsxSheetExtras(x);   /* Excel cover: merges + page setup, in schema order */
   const colsXml = (cols && cols.length)
     ? '<cols>' + cols.map((w,i) => '<col min="'+(i+1)+'" max="'+(i+1)+'" width="'+w+'" customWidth="1"/>').join('') + '</cols>'
     : '';
@@ -25036,12 +25550,13 @@ function _xlsxSheetXml(rows, cellStyles, cols, rowHeights){
   }).join('');
   return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
     + '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">'
-    + colsXml
+    + _xt.pre + colsXml
     + '<sheetData>'+rowsXml+'</sheetData>'
-    + '</worksheet>';
+    + _xt.post + '</worksheet>';
 }
 
-function _buildXlsx(rows, cellStyles, colWidths, rowHeights, sheetName){
+function _buildXlsx(rows, cellStyles, colWidths, rowHeights, sheetName, coverTitle){
+  if(coverTitle) return _buildXlsxMulti([_xlsxCoverSheet(coverTitle), {name:(sheetName||'Look Book'), rows:rows, styles:cellStyles, colWidths:colWidths, rowHeights:rowHeights}]);   /* Excel cover: Cover first, the data sheet second */
   const files = [
     {name:'[Content_Types].xml', content:_xlsxContentTypes()},
     {name:'_rels/.rels', content:_xlsxRels()},
@@ -25051,6 +25566,57 @@ function _buildXlsx(rows, cellStyles, colWidths, rowHeights, sheetName){
     {name:'xl/worksheets/sheet1.xml', content:_xlsxSheetXml(rows, cellStyles, colWidths, rowHeights)}
   ];
   return _zipBuild(files);
+}
+
+/* Excel cover (Omar): every Excel the app writes opens on a COVER tab. _xlsxCoverSheet(docTitle) returns a sheet for
+   _buildXlsxMulti ('CUE SHEET', 'I/O PATCH', and whatever a future Wire export passes). Cover styles are 10..18 in _xlsxStylesXml:
+   10 black fill, 11 white fill, 12 show name (30 bold), 13 document title (12 bold), 14 venue (18 bold), 15 dates / version (10),
+   16 address (9), 17 format (11 bold), 18 designer (10 bold). All Arial, centred both ways, no wrap, no borders; shrink-to-fit so a long name is never cut off. */
+function _xlsxCoverInfo(){
+  const gv=function(id){ const el=document.getElementById(id); return el?String(el.value||'').trim():''; };
+  const m=(typeof showMeta==='object'&&showMeta)?showMeta:{};
+  const tx=function(k){ return (typeof m[k]==='string')?m[k].trim():''; };
+  const venue=gv('show-venue');
+  let dates=tx('dates');
+  if(!dates){ const d=gv('show-date').match(/^(\d{4})-(\d{2})-(\d{2})$/); if(d) dates=new Date(+d[1],+d[2]-1,+d[3]).toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}); }
+  const vn=tx('projectVer').replace(/^v(?:er(?:sion)?)?\.?\s*(?=\d)/i,'');
+  return {show:gv('show-name')||'Untitled Show', venue:(/^n\s*\/?\s*a$/i.test(venue)?'':venue), dates:dates, address:tx('address'), format:tx('format'), designer:tx('designer'), version:'VERSION '+(vn||'1')};
+}
+function _xlsxCoverSheet(docTitle){
+  const i=_xlsxCoverInfo();
+  const rows=[], styles=[], rowHeights={}, merges=[];
+  for(let r=0;r<22;r++){ rows.push([null,null,null,null,null,null,null,null]); styles.push([0,0,0,0,0,0,0,0]); rowHeights[r]=15.75; }
+  const fill=function(r1,r2,c1,c2,s){ for(let r=r1;r<=r2;r++) for(let c=c1;c<=c2;c++) styles[r-1][c]=s; };
+  fill(2,3,0,7,10); fill(4,16,0,0,10); fill(4,16,7,7,10); fill(17,18,0,7,10);   /* black frame: A2:H3, A4:A16, H4:H16, A17:H18 */
+  fill(4,16,1,1,11); fill(4,16,6,6,11);                                         /* white strips: B4:B16, G4:G16 */
+  const put=function(r1,r2,c1,c2,text,s){ fill(r1,r2,c1,c2,s); merges.push(_colLetter(c1)+r1+':'+_colLetter(c2)+r2); if(text) rows[r1-1][c1]=String(text).toUpperCase(); };
+  put(5,7,2,5,i.show,12);                                   /* C5:F7   show name */
+  put(8,8,3,4,docTitle||'',13);                             /* D8:E8   document title */
+  put(9,10,2,5,i.venue,14);                                 /* C9:F10  venue (blank when N/A) */
+  put(11,11,3,4,i.dates,15);                                /* D11:E11 show dates */
+  put(12,13,2,5,i.address,16);                              /* C12:F13 venue address */
+  put(15,15,3,4,i.format?('FORMAT: '+i.format):'',17);      /* D15:E15 show format (line left empty when blank) */
+  put(21,21,3,4,i.designer,18);                             /* D21:E21 designer */
+  put(22,22,3,4,i.version,15);                              /* D22:E22 version */
+  return {name:'Cover', rows:rows, styles:styles, colWidths:[12.66,6.66,12.66,12.66,12.66,12.66,6.66,12.66], rowHeights:rowHeights,
+    merges:merges, defaultRowHeight:15.75, print:{orientation:'portrait', fitToWidth:true, hCentered:true, margins:{left:0.7,right:0.7,top:0.75,bottom:0.75,header:0.3,footer:0.3}}};
+}
+/* Sheet-level XML a sheet may ask for, split by where the schema wants it (Excel offers to "repair" a file with these out of order):
+   pre  = sheetPr, sheetFormatPr   (before <cols>)      post = mergeCells, printOptions, pageMargins, pageSetup   (after </sheetData>)
+   A sheet with none of merges / defaultRowHeight / print gets two empty strings, so the data tabs come out byte-identical. */
+function _xlsxSheetExtras(x){
+  const out={pre:'',post:''}; if(!x||typeof x!=='object') return out;
+  const p=x.print||null;
+  if(p&&p.fitToWidth) out.pre+='<sheetPr><pageSetUpPr fitToPage="1"/></sheetPr>';
+  if(x.defaultRowHeight) out.pre+='<sheetFormatPr defaultRowHeight="'+x.defaultRowHeight+'" customHeight="1"/>';
+  if(Array.isArray(x.merges)&&x.merges.length) out.post+='<mergeCells count="'+x.merges.length+'">'+x.merges.map(function(m){ return '<mergeCell ref="'+_xmlEsc(m)+'"/>'; }).join('')+'</mergeCells>';
+  if(p){
+    if(p.hCentered) out.post+='<printOptions horizontalCentered="1"/>';
+    const g=p.margins||{}; const n=function(v,d){ return (typeof v==='number'&&isFinite(v))?v:d; };
+    out.post+='<pageMargins left="'+n(g.left,0.7)+'" right="'+n(g.right,0.7)+'" top="'+n(g.top,0.75)+'" bottom="'+n(g.bottom,0.75)+'" header="'+n(g.header,0.3)+'" footer="'+n(g.footer,0.3)+'"/>';
+    out.post+='<pageSetup orientation="'+(p.orientation==='landscape'?'landscape':'portrait')+'"'+(p.fitToWidth?' fitToWidth="1" fitToHeight="0"':'')+'/>';
+  }
+  return out;
 }
 
 // 16hm: multi-sheet workbook — same parts as _buildXlsx, one worksheet per entry in sheets[{name,rows,styles,colWidths,rowHeights}]
@@ -25071,7 +25637,7 @@ function _buildXlsxMulti(sheets){
   sheets.forEach(function(_,i){ rels+='<Relationship Id="rId'+(i+1)+'" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet'+(i+1)+'.xml"/>'; });
   rels+='<Relationship Id="rId'+(sheets.length+1)+'" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>';
   const files=[{name:'[Content_Types].xml', content:ct},{name:'_rels/.rels', content:_xlsxRels()},{name:'xl/workbook.xml', content:wb},{name:'xl/_rels/workbook.xml.rels', content:rels},{name:'xl/styles.xml', content:_xlsxStylesXml()}];
-  sheets.forEach(function(sh,i){ files.push({name:'xl/worksheets/sheet'+(i+1)+'.xml', content:_xlsxSheetXml(sh.rows, sh.styles, sh.colWidths, sh.rowHeights)}); });
+  sheets.forEach(function(sh,i){ files.push({name:'xl/worksheets/sheet'+(i+1)+'.xml', content:_xlsxSheetXml(sh.rows, sh.styles, sh.colWidths, sh.rowHeights, sh)}); });
   return _zipBuild(files);
 }
 
@@ -25192,7 +25758,7 @@ function _doExportExcel(_returnBlob){
     const rowHeights={0:24,1:16,3:32,4:20};
     for(let i=6;i<rows.length;i++) rowHeights[i]=30; // body rows tall enough for multiline
 
-    const blob=_buildXlsx(rows, styles, colWidths, rowHeights, show);
+    const blob=_buildXlsx(rows, styles, colWidths, rowHeights, show, 'CUE SHEET');
     if(_returnBlob) return blob;
     dl(blob, showFileName('look_book')+'.xlsx');
   }catch(err){showAlert({variant:'error',title:'Couldn’t finish the export',message:'Something went wrong while building the file. Try again, the console has the details if it keeps happening.\n\n'+err.message});}
@@ -25339,6 +25905,8 @@ function _pdfStaticizeAdv(html){
   html = html.replace(/<input[^>]*?value="([^"]*)"[^>]*>/g, '<span class="pp-val">$1</span>');
   // the bottom % chip lands on the res label at print scale — drop it
   html = html.replace(/<div class="blend-label" style="bottom:2px[^"]*"[^>]*>[\s\S]*?<\/div>/g, '');
+  /* the large-gap warning mark is editor chrome too */
+  html = html.replace(/<span class="gap-warn"[^>]*>[^<]*<\/span>/g, '');
   // dead interaction handlers (their functions don't exist in the print doc)
   html = html.replace(/ on(?:click|dblclick|mousedown|focus|change)="[^"]*"/g, '');
   return html;
@@ -25422,7 +25990,7 @@ function exportPDF(_returnHtml){
     : sourceNames.map((nm, i) => {
         const meta = (typeof _sysGetSourceMeta === 'function') ? _sysGetSourceMeta(nm) : {};
         const _mr = (typeof _sysMachineRaw==='function') ? _sysMachineRaw(meta) : '';
-        const displayType = (_mr==='Custom') ? (meta.customType||'') : _mr;
+        const displayType = _ioBkTypeText(nm, (_mr==='Custom') ? (meta.customType||'') : _mr);   /* 16kk: Backup of <primary> */
         let notes = meta.notes || '';
         // Yellow rule: when source is a BG on a destination, the synced
         // notes live on that destination's s.notes — pull from there.
@@ -27658,7 +28226,7 @@ if(typeof _lfxOpen==='object'&&_lfxOpen){ if(_lfxOpen.geometry===undefined) _lfx
 // box. The timeline under the canvas follows the picked layer: transport, scrub, In / Out,
 // loop, audio level, cover frame. Per-layer playback settings: p.layerMedia[sid][n] (n=0 = BG).
 // ══════════════════════════════════════════════════════════════════════
-var _fsMediaURL={}, _fsMediaBlob={}, _fsVideoEls={}, _fsWantPlay={}, _fsTlKey='', _fsTlRaf=0, _fsPlayScope='layer';
+var _fsMediaURL={}, _fsMediaBlob={}, _fsVideoEls={}, _fsWantPlay={}, _fsTlKey='', _fsTlRaf=0;
 var _FS_LM_DEF=Object.freeze({fit:'fit',in:0,out:null,speed:100,loop:true,level:100,hue:0,sat:0,bri:0,con:0,bw:false,neg:false,sepia:false,fadeIn:0,fadeOut:0,crop:null,zoom:100,zoomV:null,panX:0,panY:0});   // 16jq: crop = {x,y,w,h} source px; zoom %; pan px
 function _mdbOpen(){ return new Promise(function(res,rej){ try{ const r=indexedDB.open('lb-media',1); r.onupgradeneeded=function(){ r.result.createObjectStore('files'); }; r.onsuccess=function(){ res(r.result); }; r.onerror=function(){ rej(r.error); }; }catch(e){ rej(e); } }); }
 function _mdbPut(name,blob){ return _mdbOpen().then(function(db){ return new Promise(function(res,rej){ const tx=db.transaction('files','readwrite'); tx.objectStore('files').put(blob,name); tx.oncomplete=function(){ res(true); }; tx.onerror=function(){ rej(tx.error); }; }); }).catch(function(){ return false; }); }
@@ -27918,8 +28486,11 @@ function _fsGoToLast(n){ const t=_fsTargetKey(); const vid=_fsVideoEls[t]; if(!v
 function _fsPresetGoToLast(n){ Object.keys(_fsVideoEls).forEach(function(t){ const vid=_fsVideoEls[t]; if(!vid||!isFinite(vid.duration)||!vid.duration) return; const q=_fsKeyParts(t); const lm=getLayerMedia(q.pid,q.sid,q.n); const fps=_fsClipFps(_fsMediaItem(q.n?getL(q.pid,q.sid,q.n):getBgName(q.pid,q.sid))); const end=lm.out!=null?lm.out:vid.duration; const tt=_fsSnapFrame(Math.max(lm.in||0,end-n),fps); try{ vid.currentTime=Math.max(0,Math.min(vid.duration-0.001,tt)); }catch(e){} }); _fsTlSync(); }
 // the audio level line across the waveform: bottom = 0 %, middle = 100 %, top = 200 % (boost through the audio graph)
 function _fsApplyGain(vid,level){ const rec=vid?_fsMeterNodes.get(vid):null; if(rec&&rec.gain) rec.gain.gain.value=Math.max(1,(level==null?100:level)/100); }
-function _fsVolSync(level){ const el=document.querySelector('#fs-timeline .fs-tl-vol'); if(!el) return; level=Math.max(0,Math.min(200,level==null?100:level)); el.style.top=((1-level/200)*100)+'%'; const b=el.querySelector('b'); if(b){ b.textContent=Math.round(level)+'%'; b.style.top=level>150?'4px':''; } }
-function _fsVolStart(ev){ if(ev.button!==0) return; ev.stopPropagation(); ev.preventDefault(); if(!_fsVideoEls[_fsTargetKey()]) return; const track=ev.currentTarget.parentNode; if(typeof pushUndo==='function') pushUndo(); const move=function(e){ const r=track.getBoundingClientRect(); const f=1-Math.max(0,Math.min(1,(e.clientY-r.top)/Math.max(1,r.height))); _fsSetLevel(Math.round(f*200/5)*5); }; move(ev); const up=function(){ window.removeEventListener('mousemove',move); window.removeEventListener('mouseup',up); }; window.addEventListener('mousemove',move); window.addEventListener('mouseup',up); }
+function _fsVolSync(level){ const el=document.querySelector('#fs-timeline .fs-tl-vol'); if(!el) return; level=Math.max(0,Math.min(200,level==null?100:level)); el.style.top=((1-level/200)*100)+'%'; const b=el.querySelector('b'); el.setAttribute('aria-valuenow',String(Math.round(level))); if(b){ b.textContent=Math.round(level)+'%'; b.style.top=level>150?'4px':''; } }
+function _fsVolStart(ev){ if(ev.button!==0) return; ev.stopPropagation(); ev.preventDefault(); if(!_fsVideoEls[_fsTargetKey()]) return; const track=ev.currentTarget.parentNode; _fsVolFineRef=null; try{ ev.currentTarget.focus({preventScroll:true}); }catch(e2){} if(typeof pushUndo==='function') pushUndo(); const move=function(e){ const r=track.getBoundingClientRect(); const f=1-Math.max(0,Math.min(1,(e.clientY-r.top)/Math.max(1,r.height))); _fsSetLevel(_fsVolFine(e,Math.round(f*200/5)*5)); }; move(ev); const up=function(){ window.removeEventListener('mousemove',move); window.removeEventListener('mouseup',up); }; window.addEventListener('mousemove',move); window.addEventListener('mouseup',up); }
+var _fsVolFineRef=null;
+function _fsVolFine(e,coarse){ if(!e.shiftKey){ _fsVolFineRef=null; return coarse; } if(!_fsVolFineRef){ const t=_fsTargetKey(); const q=t?_fsKeyParts(t):null; _fsVolFineRef={y:e.clientY,lvl:q?getLayerMedia(q.pid,q.sid,q.n).level:coarse}; } return Math.max(0,Math.min(200,Math.round(_fsVolFineRef.lvl+(_fsVolFineRef.y-e.clientY)))); }
+function _fsVolKey(e){ const up=(e.key==='ArrowUp'||e.key==='ArrowRight'), dn=(e.key==='ArrowDown'||e.key==='ArrowLeft'); if(!up&&!dn) return; e.preventDefault(); e.stopPropagation();   /* the arrows must not nudge the picked layer */ const t=_fsTargetKey(); if(!_fsVideoEls[t]) return; const q=_fsKeyParts(t); const cur=Math.round(getLayerMedia(q.pid,q.sid,q.n).level); const nx=Math.max(0,Math.min(200,cur+(up?1:-1)*(e.shiftKey?10:1))); if(nx===cur) return; if(!e.repeat&&typeof pushUndo==='function') pushUndo();   /* a held key is one undo step */ _fsSetLevel(nx); }
 function _fsVolReset(ev){ ev.stopPropagation(); ev.preventDefault(); if(!_fsVideoEls[_fsTargetKey()]) return; if(typeof pushUndo==='function') pushUndo(); _fsSetLevel(100); }
 function _fsOnTime(key,vid){ const q=_fsKeyParts(key); const lm=getLayerMedia(q.pid,q.sid,q.n); if(lm.out!=null&&vid.currentTime>=lm.out&&!vid.paused){   /* 16il: only while playing, so a paused scrub can sit past Out */ if(lm.loop){ vid.currentTime=lm.in||0; } else { vid.pause(); delete _fsWantPlay[key]; vid.currentTime=lm.out; } } if(_fsTlKey===key) _fsTlSync(); }
 function _fsOnEnded(key,vid){ const q=_fsKeyParts(key); const lm=getLayerMedia(q.pid,q.sid,q.n); if(lm.loop){ vid.currentTime=lm.in||0; vid.play().catch(function(){}); } else { delete _fsWantPlay[key]; } if(_fsTlKey===key) _fsTlSync(); }
@@ -27964,11 +28535,15 @@ function _fsGeomReset(what){ const pm=_fsPickedMedia(); if(!pm) return; if(typeo
   if(document.activeElement&&document.activeElement.blur) document.activeElement.blur(); renderFullscreen(); if(typeof scheduleRender==='function') scheduleRender(); }
 // the crop window drawn over the Source thumbnail
 function _fsCropRectHTML(p,s,n,it){ if(!it||!it.media||!it.media.w) return ''; const lm=getLayerMedia(p.id,s.id,n); const c=_fsCropRect(lm,it.media.w,it.media.h); if(c.full) return ''; const W=it.media.w,H=it.media.h; return '<div class="fs-crop-rect" style="left:'+(c.x/W*100).toFixed(2)+'%;top:'+(c.y/H*100).toFixed(2)+'%;width:'+(c.w/W*100).toFixed(2)+'%;height:'+(c.h/H*100).toFixed(2)+'%" title="Source crop '+c.w+'\u00d7'+c.h+' at '+c.x+','+c.y+'"></div>'; }
-function _fsSetScope(s){ _fsPlayScope=(s==='preset')?'preset':'layer'; renderFsPanel(true); }
-function _fsSetIn(){ const t=_fsTargetKey(); const vid=_fsVideoEls[t]; if(!vid) return; const q=_fsKeyParts(t); const lm=getLayerMedia(q.pid,q.sid,q.n); const tIn=Math.max(0,vid.currentTime); _fsSetLM({in:tIn, out:(lm.out!=null&&lm.out<=tIn+0.1)?null:lm.out}); _fsRenderTimeline(true); renderFsPanel(true); }
-function _fsSetOut(){ const t=_fsTargetKey(); const vid=_fsVideoEls[t]; if(!vid) return; const q=_fsKeyParts(t); const lm=getLayerMedia(q.pid,q.sid,q.n); const tOut=Math.max((lm.in||0)+0.1,vid.currentTime); _fsSetLM({out:tOut}); _fsRenderTimeline(true); renderFsPanel(true); }
-function _fsClearInOut(){ _fsSetLM({in:0,out:null}); _fsRenderTimeline(true); renderFsPanel(true); }
-function _fsSeekFrac(f){ const t=_fsTargetKey(); const vid=_fsVideoEls[t]; if(!vid||!isFinite(vid.duration)) return; f=Math.max(0,Math.min(1,f)); const q=_fsKeyParts(t); const fps=_fsClipFps(_fsMediaItem(q.n?getL(q.pid,q.sid,q.n):getBgName(q.pid,q.sid))); const tt=_fsSnapFrame(f*(vid.duration||0),fps); const keys=_fsPlayScope==='preset'?Object.keys(_fsVideoEls):[t]; keys.forEach(function(k){ const v2=_fsVideoEls[k]; try{ v2.currentTime=tt; }catch(e){} }); _fsTlSync(); }
+/* 16kj+ clip-transport: Mark In / Mark Out / Clear act at the playhead, snapped to a whole frame, one undo step each, and never pause the clip (usable while it plays). Keys I and O. */
+function _fsMarkCtx(){ const t=_fsTargetKey(); const vid=_fsVideoEls[t]; if(!vid||!isFinite(vid.duration)||!vid.duration) return null; const q=_fsKeyParts(t); const fps=_fsClipFps(_fsMediaItem(q.n?getL(q.pid,q.sid,q.n):getBgName(q.pid,q.sid))); return {t:t,vid:vid,q:q,fps:fps,dur:vid.duration,lm:getLayerMedia(q.pid,q.sid,q.n)}; }
+function _fsMarkApply(c,patch){ if(typeof pushUndo==='function') pushUndo(); setLayerMedia(c.q.pid,c.q.sid,c.q.n,patch); const lm=getLayerMedia(c.q.pid,c.q.sid,c.q.n); c.vid.loop=!!(lm.loop&&lm.out==null); _fsTlSync(); renderFsPanel(true); }
+function _fsMarkSync(lm){ const hasIn=!!(lm&&lm.in>0), hasOut=!!(lm&&lm.out!=null); const i=document.getElementById('fs-tl-in'), o=document.getElementById('fs-tl-out'), x=document.getElementById('fs-tl-clr'); if(i) i.classList.toggle('on',hasIn); if(o) o.classList.toggle('on',hasOut); if(x) x.disabled=!(hasIn||hasOut); }
+function _fsTlMarkHTML(d){ const b=function(id,fn,title,txt){ return '<button type="button" class="fs-tl-tb" id="'+id+'" onclick="'+fn+'" title="'+title+'"'+d+'>'+txt+'</button>'; }; return '<span class="fs-tl-grp">'+b('fs-tl-in','_fsSetIn()','Mark In at the playhead, frame-exact (I). Works while the clip plays','In')+b('fs-tl-out','_fsSetOut()','Mark Out at the playhead, frame-exact (O). Works while the clip plays','Out')+b('fs-tl-clr','_fsClearInOut()','Clear In and Out (the fades stay)','&#10005;')+'</span>'; }
+function _fsSetIn(){ const c=_fsMarkCtx(); if(!c) return; let tIn=Math.max(0,Math.min(c.dur-1/c.fps,_fsSnapFrame(c.vid.currentTime,c.fps))); if(tIn<0.5/c.fps) tIn=0; const out=(c.lm.out!=null&&(c.lm.out-tIn)<(1/c.fps-1e-4))?null:c.lm.out;   /* an In at or past Out sends Out back to the clip end (the old rule), otherwise one frame minimum like the handles */ if(Math.abs(tIn-(c.lm.in||0))<1e-6&&out===c.lm.out) return; _fsMarkApply(c,{in:tIn,out:out}); }
+function _fsSetOut(){ const c=_fsMarkCtx(); if(!c) return; const tOut=Math.max((c.lm.in||0)+1/c.fps,_fsSnapFrame(c.vid.currentTime,c.fps)); const out=(tOut>=c.dur-0.5/c.fps)?null:tOut;   /* within half a frame of the end = clip end, like the handles */ if(out===c.lm.out||(out!=null&&c.lm.out!=null&&Math.abs(out-c.lm.out)<1e-6)) return; _fsMarkApply(c,{out:out}); }
+function _fsClearInOut(){ const c=_fsMarkCtx(); if(!c) return; if(!(c.lm.in>0)&&c.lm.out==null) return; _fsMarkApply(c,{in:0,out:null}); }
+function _fsSeekFrac(f){ const t=_fsTargetKey(); const vid=_fsVideoEls[t]; if(!vid||!isFinite(vid.duration)) return; f=Math.max(0,Math.min(1,f)); const q=_fsKeyParts(t); const fps=_fsClipFps(_fsMediaItem(q.n?getL(q.pid,q.sid,q.n):getBgName(q.pid,q.sid))); const tt=_fsSnapFrame(f*(vid.duration||0),fps); const keys=_fsPresetPlaying?Object.keys(_fsVideoEls):[t]; keys.forEach(function(k){ const v2=_fsVideoEls[k]; try{ v2.currentTime=tt; }catch(e){} }); _fsTlSync(); }
 function _fsSetCover(){ const t=_fsTargetKey(); const vid=_fsVideoEls[t]; if(!vid||!vid.videoWidth) return; const q=_fsKeyParts(t); const name=q.n?getL(q.pid,q.sid,q.n):getBgName(q.pid,q.sid); const it=_fsMediaItem(name); if(!it) return; if(typeof pushUndo==='function') pushUndo(); it.img=_fsShrink(vid,vid.videoWidth,vid.videoHeight); it.media.coverTime=vid.currentTime; presets.forEach(function(p){ screens.forEach(function(s){ if(getBgName(p.id,s.id)===name&&typeof setPColor==='function') setPColor(p.id,s.id,null,it.img); }); }); _isDirty=true; if(typeof _updateDirtyIndicator==='function') _updateDirtyIndicator(); scheduleRender(); renderFullscreen(); _fsRenderTimeline(true); }   // 16ij: the Cover thumb in the transport strip
 // ── the timeline under the canvas (16ij: Mitti-style) ───────────────────
 // A transport strip on top (Stop / Play / Pause, frame steps, loop, In / Out, the two LCD timecodes, the level fader and
@@ -28002,6 +28577,7 @@ function _fsTlBarHTML(on,lm,lvl,it){
     +'<b class="fs-tl-lcd" id="fs-tl-cur" title="Count up from In">00:00:00:00</b>'
     +'<span class="fs-tl-grp"><span class="fs-tl-cap">Clip</span>'+b('','fs-tl-stop','_fsStop()','Stop the clip, back to In',_lbIcoHTML('stop'),d)+b('play','fs-tl-play','_fsClipPlayToggle()','Play / pause this layer\'s clip (Space)',_lbIcoHTML('play'),d)+b('','fs-tl-pause','_fsPause()','Pause the clip',_lbIcoHTML('pause'),d)+'</span>'
     +'<span class="fs-tl-grp">'+b('num','','_fsGoToLast(30)','Go to the last 30 seconds','30',d)+b('num','','_fsGoToLast(20)','Go to the last 20 seconds','20',d)+b('num','','_fsGoToLast(10)','Go to the last 10 seconds','10',d)+'</span>'
+    +_fsTlMarkHTML(d)
     +'<span class="fs-tl-grp"><span class="fs-tl-cap">Preset</span>'+b('','fs-tl-pstop','_fsPresetStop()','Stop every video in the preset',_lbIcoHTML('stop'),dp)+b('play','fs-tl-pplay','_fsPresetPlayToggle()','Play / pause every video in the preset together',_lbIcoHTML('play'),dp)+b('','fs-tl-ppause','_fsPresetPause()','Pause every video in the preset',_lbIcoHTML('pause'),dp)+'</span>'
     +'<span class="fs-tl-grp">'+b('num','fs-tl-p30','_fsPresetGoToLast(30)','Every video in the preset: go to its last 30 seconds','30',dp)+b('num','fs-tl-p20','_fsPresetGoToLast(20)','Every video in the preset: go to its last 20 seconds','20',dp)+b('num','fs-tl-p10','_fsPresetGoToLast(10)','Every video in the preset: go to its last 10 seconds','10',dp)+'</span>'   /* 16kl (Omar): the same jump for the whole preset, for long clips in rehearsal */
     +'<span class="fs-tl-spacer"></span>'
@@ -28015,7 +28591,7 @@ function _fsTlBodyHTML(it,hint){
     +'<div class="fs-tl-lanes"'+(it?' onmousedown="_fsTlScrubStart(event)" title="Click or drag to scrub"':'')+'>'
     +'<div class="fs-tl-ruler"><canvas class="fs-tl-rulerc"></canvas><div class="fs-tl-range"><div class="fs-tl-range-in"></div>'+(it?'<div class="fs-tl-hdl in" onmousedown="_fsTlTrimStart(event,\'in\')" title="Drag to set In"></div><div class="fs-tl-hdl out" onmousedown="_fsTlTrimStart(event,\'out\')" title="Drag to set Out"></div>':'')+'</div></div>'
     +'<div class="fs-tl-tracks"><div class="fs-tl-track video">'+(it?'<canvas class="fs-tl-stripc"></canvas>':'<span class="fs-tl-hint">'+hint+'</span>')+'</div>'
-    +'<div class="fs-tl-track audio"><canvas class="fs-tl-wavec"></canvas>'+((it&&it.media&&it.media.hasAudio)?'':'<span class="fs-tl-noaudio">'+(it?'no audio':'')+'</span>')+(it?'<div class="fs-tl-vol" onmousedown="_fsVolStart(event)" ondblclick="_fsVolReset(event)" title="Audio level — drag up or down, double-click for 100%"><b id="fs-tl-lvl">100%</b></div>':'')+'</div>'
+    +'<div class="fs-tl-track audio"><canvas class="fs-tl-wavec"></canvas>'+((it&&it.media&&it.media.hasAudio)?'':'<span class="fs-tl-noaudio">'+(it?'no audio':'')+'</span>')+(it?'<div class="fs-tl-vol" tabindex="0" role="slider" aria-label="Audio level" aria-orientation="vertical" aria-valuemin="0" aria-valuemax="200" onmousedown="_fsVolStart(event)" onkeydown="_fsVolKey(event)" ondblclick="_fsVolReset(event)" title="Audio level — drag up or down (5% steps, hold Shift for 1%), arrow keys step 1%, double-click for 100%"><b id="fs-tl-lvl">100%</b></div>':'')+'</div>'
     +'<div class="fs-tl-dim l"></div><div class="fs-tl-dim r"></div></div>'
     +(it?'<div class="fs-tl-head"></div>':'')+'</div>'+meter+'</div>';
 }
@@ -28025,7 +28601,7 @@ function _fsRenderTimeline(force){
   const key=_fsTargetKey();
   if(key!==_fsTlKey) _fsStopOthers(key);   // 16il: picking another layer or video stops the last one
   if(!key||!_fsVideoEls[key]){
-    if(_fsTlKey!==''||force||!tl.classList.contains('empty')||!tl.firstElementChild){ _fsTlKey=''; _fsStripGen++; tl.classList.add('empty'); delete tl.dataset.dur;
+    if(_fsTlKey!==''||force||!tl.classList.contains('empty')||!tl.firstElementChild||tl.dataset.nvid!==String(Object.keys(_fsVideoEls).length)){ tl.dataset.nvid=String(Object.keys(_fsVideoEls).length); _fsTlKey=''; _fsStripGen++; tl.classList.add('empty'); delete tl.dataset.dur;
       tl.innerHTML=_fsTlBarHTML(false,null,100,null)+_fsTlBodyHTML(null,Object.keys(_fsVideoEls).length?'Pick a layer that holds a video to trim it and set its cover':'Drop a video from the Video tab onto a layer or a BG, then pick it');
       _fsDrawWave(tl.querySelector('.fs-tl-wavec'),null); _fsMeterDraw(); }
     return;
@@ -28139,7 +28715,7 @@ function _fsTlSync(){
   if(dur&&tl.dataset.dur!==String(dur)){ tl.dataset.dur=String(dur); const itR=_fsMediaItem(q.n?getL(q.pid,q.sid,q.n):getBgName(q.pid,q.sid)); const fpsR=itR&&itR.media&&itR.media.fps; _fsDrawRuler(tl.querySelector('.fs-tl-rulerc'),dur,fpsR?(Math.round(fpsR*100)/100)+' fps':''); }
   const fpsTC=_fsClipFps(_fsMediaItem(q.n?getL(q.pid,q.sid,q.n):getBgName(q.pid,q.sid)));   // 16ii: frames in the readout
   const cur=document.getElementById('fs-tl-cur'); if(cur) cur.textContent=_fsFmtTC(Math.max(0,vid.currentTime-(lm.in||0)),fpsTC);   // 16im: count up from In
-  _fsVolSync(lm.level);
+  _fsVolSync(lm.level); _fsMarkSync(lm);
   const rem=document.getElementById('fs-tl-rem'); if(rem) rem.textContent='-'+_fsFmtTC(Math.max(0,(lm.out!=null?lm.out:dur)-vid.currentTime),fpsTC);
   const playing=!vid.paused; const pb=document.getElementById('fs-tl-play'); if(pb) pb.classList.toggle('on',playing); const pz=document.getElementById('fs-tl-pause'); if(pz) pz.classList.toggle('on',!playing&&vid.currentTime>(lm.in||0)+0.01);
 }
@@ -28188,7 +28764,7 @@ function _fsFadeTick(){
 function _fsResetFades(){ Object.keys(_fsVideoEls).forEach(function(key){ const vid=_fsVideoEls[key]; vid.style.opacity=vid.dataset.baseOp||'1'; }); }
 // ── 16ia: Source block, Media Info, General, per-section tools; Filters / Color / Video / Transition in Omar's order ──
 var _fsLookClip={};
-var _FS_SEC_FIELDS={geometry:['fit','crop'],color:['hue','sat','bri','con'],filters:['bw','neg','sepia'],transition:['fadeIn','fadeOut','in','out']};
+var _FS_SEC_FIELDS={geometry:['fit','crop'],color:['hue','sat','bri','con'],filters:['bw','neg','sepia'],transition:['fadeIn','fadeOut']};
 var _FS_TOOLS_SVG={
   copy:'<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>',
   paste:'<svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><polyline points="9 14 11 16 15 12"/></svg>',
@@ -28461,7 +29037,7 @@ function _fsClipFps(it){ const f=it&&it.media&&it.media.fps; return (f&&f>=10&&f
 function _fsFmtTC(t,fps){ t=Math.max(0,t||0); fps=fps||30; const s=Math.floor(t+1e-6); const ff=Math.min(Math.round(fps)-1,Math.floor((t-s)*fps+1e-6)); const h=Math.floor(s/3600), m=Math.floor((s%3600)/60), sec=s%60; const p=function(x,n){ return String(x).padStart(n||2,'0'); }; return p(h)+':'+p(m)+':'+p(sec)+':'+p(ff,fps>=100?3:2); }
 function _fsSnapFrame(t,fps){ fps=fps||30; return Math.round(t*fps)/fps+0.0005; }
 function _fsStepFrame(dir){ const key=_fsTargetKey(); const vid=_fsVideoEls[key]; if(!vid) return; const q=_fsKeyParts(key); const fps=_fsClipFps(_fsMediaItem(q.n?getL(q.pid,q.sid,q.n):getBgName(q.pid,q.sid))); delete _fsWantPlay[key]; try{ vid.pause(); }catch(e){} const dur=isFinite(vid.duration)?vid.duration:1e9; const f=Math.round(vid.currentTime*fps)+dir; try{ vid.currentTime=Math.max(0,Math.min(dur-1/fps,f/fps+0.0005)); }catch(e){} _fsResetFades(); _fsTlSync(); }
-document.addEventListener('keydown',function(e){ if(typeof fsPresetId==='undefined'||!fsPresetId) return; const t=e.target; if(t&&(t.tagName==='INPUT'||t.tagName==='TEXTAREA'||t.tagName==='SELECT'||t.isContentEditable)) return; if(e.key===','){ _fsStepFrame(-1); e.preventDefault(); } else if(e.key==='.'){ _fsStepFrame(1); e.preventDefault(); } });
+document.addEventListener('keydown',function(e){ if(typeof fsPresetId==='undefined'||!fsPresetId) return; const t=e.target; if(t&&(t.tagName==='INPUT'||t.tagName==='TEXTAREA'||t.tagName==='SELECT'||t.isContentEditable)) return; if(e.key===','){ _fsStepFrame(-1); e.preventDefault(); } else if(e.key==='.'){ _fsStepFrame(1); e.preventDefault(); } else if((e.key==='i'||e.key==='I'||e.key==='o'||e.key==='O')&&!e.metaKey&&!e.ctrlKey&&!e.altKey&&!e.repeat&&!document.querySelector('#dlg-overlay.show')&&_fsVideoEls[_fsTargetKey()]){ if(e.key==='i'||e.key==='I') _fsSetIn(); else _fsSetOut(); e.preventDefault(); } });
 function _fsPathFor(f){ try{ const nat=window.lookbookNative; if(nat&&typeof nat.pathForFile==='function') return nat.pathForFile(f)||''; }catch(e){} return ''; }
 function _fsMediaLacksInfo(it){ const m=it.media||{}; if(!m.fileName) return true; if(it.kind==='video'&&(m.vcodec===undefined||m.bitDepth===undefined||!m.fps)) return true; return false; }
 // older items: the file name comes back with the stored File, codecs / fps / channels from the file itself
@@ -30769,6 +31345,11 @@ document.addEventListener('keydown', e => {
   <div class="adv-item" role="menuitemcheckbox" data-adv="freePos" title="Drag destinations anywhere" onclick="actions.toggleAdvFeature('freePos')">
     <span class="chk">✓</span>
     <span class="lbl">Free Position</span>
+  </div>
+  <div class="menu-section-label">Layout</div>
+  <div class="adv-item" role="menuitem" data-adv-act="fit" title="Slide the layout so the top-left destination sits at 0,0 and trim the canvas to the destinations" onclick="actions.fitCanvas()">
+    <span class="chk" style="visibility:hidden"></span>
+    <span class="lbl">Fit Canvas</span>
   </div>
 </div>
 </body>

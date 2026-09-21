@@ -252,7 +252,7 @@
   },
   "quick-setup": {
    "smallTaps": 7,
-   "smallText": 18
+   "smallText": 19
   },
   "preset-list": {
    "smallTaps": 10,
@@ -308,7 +308,7 @@
   },
   "quick-setup-edit": {
    "smallTaps": 7,
-   "smallText": 12
+   "smallText": 13
   },
   "landscape-preset-list": {
    "smallTaps": 10,

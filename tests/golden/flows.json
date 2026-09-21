@@ -29,6 +29,10 @@
    "ok": true
   },
   {
+   "name": "Simple: Duplicate destination carries the clip settings (fit, In / Out, speed, level, look) and is one undo step",
+   "ok": true
+  },
+  {
    "name": "Simple: Add AUX adds an output that is on in every preset, Remove takes it away",
    "ok": true
   },
@@ -53,7 +57,43 @@
    "ok": true
   },
   {
+   "name": "Simple: Delete and Backspace never remove a selected destination, a selected layer still goes and comes back with one undo",
+   "ok": true
+  },
+  {
+   "name": "Simple: a click on a destination that is half out of view does not move the canvas, and click then double-click opens Destination Properties",
+   "ok": true
+  },
+  {
+   "name": "Simple: a click outside closes the Destination, Layer and AUX panels (another destination, the same destination, the toolbar), a click inside keeps them open",
+   "ok": true
+  },
+  {
+   "name": "new layer: starts as a centred PIP at half the destination (plain = half by half, a locked picture keeps its shape), also in a slot a removed layer left behind",
+   "ok": true
+  },
+  {
+   "name": "mask: each side goes to 99 %, opposite sides never pass 99 % together (typed and pasted), one undo per edit, and the Look Book prints it",
+   "ok": true
+  },
+  {
    "name": "Simple: an Area of Interest can be switched on and off for a destination",
+   "ok": true
+  },
+  {
+   "name": "Simple: an active Area of Interest has an Off button on the destination, and Off is one undo step",
+   "ok": true
+  },
+  {
+   "name": "Simple: Destination Properties Apply is one undo step, Undo brings back size, position and rotation together and nothing older",
+   "ok": true
+  },
+  {
+   "name": "Simple: Destination Properties copies and pastes Size, Position and Rotation between destinations and presets, resets them, shows the aspect ratio",
+   "ok": true
+  },
+  {
+   "name": "Simple: the EDID note is kept per destination per preset, survives save and load, follows a destination copy and goes with a deleted destination",
    "ok": true
   },
   {
@@ -62,6 +102,10 @@
   },
   {
    "name": "Advanced: both side panels collapse to a strip and come back",
+   "ok": true
+  },
+  {
+   "name": "Advanced: a destination row in the Layers overview selects the destination, a double-click or its button opens Destination Properties",
    "ok": true
   },
   {
@@ -113,6 +157,26 @@
    "ok": true
   },
   {
+   "name": "Advanced: Mark In / Mark Out (strip buttons and the I / O keys) land on the playhead frame, work while the clip plays, Clear removes both and keeps the fades, each is one undo step",
+   "ok": true
+  },
+  {
+   "name": "Advanced: the Transition copy / paste / reset act on the fades only, In / Out stay with the timeline",
+   "ok": true
+  },
+  {
+   "name": "Advanced: with the Preset transport active a scrub moves every clip in the preset, with the Clip transport only the picked clip",
+   "ok": true
+  },
+  {
+   "name": "Advanced: Level moves in 1% steps with Shift-drag and with the arrow keys on the level line, a plain drag keeps the 5% detents, arrows do not nudge the destination",
+   "ok": true
+  },
+  {
+   "name": "Advanced: stepping to a preset that holds video with nothing picked wakes the Preset transport",
+   "ok": true
+  },
+  {
    "name": "Advanced: nothing is left playing after Pause",
    "ok": true
   },
@@ -134,6 +198,38 @@
   },
   {
    "name": "Advanced: closes cleanly",
+   "ok": true
+  },
+  {
+   "name": "Blend Zones: a top / bottom overlap reads on height (100 px of 1080 = 9%), and a typed PX moves the lower destination in one undo step",
+   "ok": true
+  },
+  {
+   "name": "Blend popup: a rotated pair reads % on the effective width (216 px of 1080 = 20%), typing 25% gives 270 px, and the 15-25% guidance and caption show",
+   "ok": true
+  },
+  {
+   "name": "Blend Zones: the % chip reads green tick at 15-25%, amber up-arrow under 15%, red down-arrow over 25%",
+   "ok": true
+  },
+  {
+   "name": "Dead Space: a gap over 500 px carries the \"Large gap, check alignment\" mark, a 300 px gap does not, and the mark stays out of the printed Look Book",
+   "ok": true
+  },
+  {
+   "name": "Advanced: dragging a destination in Free Position does not pan the view, and the red snap guide sits on the snapped edge",
+   "ok": true
+  },
+  {
+   "name": "Free Position: a drop slides the layout back to 0,0 in the same undo step as the drag (Fit Canvas after a drop)",
+   "ok": true
+  },
+  {
+   "name": "Advanced: the Advanced menu has Fit Canvas, it slides the open preset to 0,0 and trims the canvas in one undo step",
+   "ok": true
+  },
+  {
+   "name": "Destination drag ends when the mouse-up is lost (the button was released outside the window)",
    "ok": true
   },
   {
@@ -217,6 +313,22 @@
    "ok": true
   },
   {
+   "name": "Wire export: the stacked SVG follows the chosen sheet size, no overlap (Letter, Tabloid, ANSI E; one and three pages)",
+   "ok": true
+  },
+  {
+   "name": "Wire export: the PNG is rendered at the chosen sheet size (Tabloid one page = 4946 x 2928) and a huge stack stays under the pixel cap",
+   "ok": true
+  },
+  {
+   "name": "Wire Advanced: an ID typed on an empty row stays when a cable is plugged, swapped and pulled; an untouched ID still follows the cable; clearing it goes back to auto",
+   "ok": true
+  },
+  {
+   "name": "Wire Advanced: Tab in an ID cell commits it and lands in the next ID cell of the same column, Shift+Tab goes back up",
+   "ok": true
+  },
+  {
    "name": "Wire: closes cleanly",
    "ok": true
   },
@@ -265,6 +377,10 @@
    "ok": true
   },
   {
+   "name": "Look Book: a backup source prints Backup of <primary> in the I/O reference Type column, its primary and the others keep their plain type",
+   "ok": true
+  },
+  {
    "name": "Look Book window: no Wire style choice, the Simple / Advanced view choice stays, the wire sheet is orthogonal",
    "ok": true
   },
@@ -274,6 +390,22 @@
   },
   {
    "name": "Excel cue sheet: one row per preset under the headers",
+   "ok": true
+  },
+  {
+   "name": "Excel cue sheet: the first tab is the Cover (show info in the owner's cells, merged, black and white frame), the cue sheet is the second tab",
+   "ok": true
+  },
+  {
+   "name": "Excel cover: blank show info falls back (the single show date written out, N/A venue / address / format / designer lines empty, VERSION 1) and the merges stay",
+   "ok": true
+  },
+  {
+   "name": "I/O Patch Excel: opens on the Cover titled I/O PATCH, Video I-O is the second tab",
+   "ok": true
+  },
+  {
+   "name": "show info: Show dates / Venue address / Show format edit in Wire Project Info and Quick Setup in step, save with the show, load blank from an old show, and stay off the Wire sheet and the Look Book",
    "ok": true
   },
   {
