@@ -46,7 +46,12 @@ Nothing is pushed, tagged or released until the owner has tried it on his own Ma
   cells, the router matrix and name follow-through, devices, page copy, I/O meta and backup window, the Look Book
   through its real export window, the Excel rows, Quick Start, Help, Report a bug. Page errors are collected too.
   A check that already fails at the trusted version is a KNOWN ISSUE in the golden and is printed every run.
-- `tests/run_smoke.mjs` serves `deploy/`, drives headless Chrome, runs both probes and diffs against `tests/golden/`.
+- `tests/mobile_probe.js` (run by `tests/run_mobile_stage.mjs`) walks the PHONE build with phone emulation and real
+  touch taps, portrait and landscape: launch, Open a show file, the three examples, the preset editor (visualiser fit,
+  live picture, docked panels), Wire, I/O cards, exports and windows, plus per-screen budgets for tap targets under
+  44 px and text under 11 px that may never rise. See `PHONE.md`.
+- `tests/run_smoke.mjs` serves `deploy/`, drives headless Chrome, runs both probes, then the phone stage
+  (`--no-mobile` skips it), and diffs against `tests/golden/`.
   `--flows-only` skips the three snapshots while you work. Randomness is seeded inside the probes (the app gives an
   uncoloured source a random cable colour), and dates are normalised, so two runs of the same page always match.
   Needs Node 22 and Chrome (`LB_CHROME=/path/to/chrome` to override).

@@ -1,0 +1,327 @@
+{
+ "checks": [
+  {
+   "name": "runner: real touch taps are available (the probe is driven by tests/run_mobile_stage.mjs)",
+   "ok": true
+  },
+  {
+   "name": "launch: phone mode is on (body.is-mobile, LB_isMobile(), a 390x844 touch screen)",
+   "ok": true
+  },
+  {
+   "name": "launch: the empty state shows with its start button and no show is loaded",
+   "ok": true
+  },
+  {
+   "name": "launch: a tap on the start button opens Quick Setup with the three example shows",
+   "ok": true
+  },
+  {
+   "name": "modal: Quick Setup fits the phone and no control is cut off",
+   "ok": true
+  },
+  {
+   "name": "open: the empty state has an Open-a-show-file control",
+   "ok": true
+  },
+  {
+   "name": "open: a tap on the empty-state Open control raises the file picker and the chosen show loads (Town Hall: 2 destinations, 5 presets, 2 AUX)",
+   "ok": true
+  },
+  {
+   "name": "open: a show file put into the app's own file input loads at phone size (Town Hall: 2 destinations, 5 presets, 2 AUX)",
+   "ok": true
+  },
+  {
+   "name": "open: the Show card has an Open-a-show-file control",
+   "ok": true
+  },
+  {
+   "name": "open: a tap on the Show-card Open control raises the file picker and the file replaces the open show",
+   "ok": true
+  },
+  {
+   "name": "example Town Hall: opens from its dialog, the dialog fits the phone, and the preset list equals the model (codes, names, Dest / AUX / Outs / Layers)",
+   "ok": true
+  },
+  {
+   "name": "example Town Hall: the visualiser fits its box on every preset (last destination inside .mb-vis, no sideways scrollbar)",
+   "ok": true
+  },
+  {
+   "name": "example Town Hall: the accordion rows equal the model on every preset (destinations, D·L layers, AUX / DSM content)",
+   "ok": true
+  },
+  {
+   "name": "example Town Hall: every chip size in the visualiser equals getLayerSize x destination size",
+   "ok": true
+  },
+  {
+   "name": "example Awards Night: opens from its dialog, the dialog fits the phone, and the preset list equals the model (codes, names, Dest / AUX / Outs / Layers)",
+   "ok": true
+  },
+  {
+   "name": "example Awards Night: the visualiser fits its box on every preset (last destination inside .mb-vis, no sideways scrollbar)",
+   "ok": true
+  },
+  {
+   "name": "example Awards Night: the accordion rows equal the model on every preset (destinations, D·L layers, AUX / DSM content)",
+   "ok": true
+  },
+  {
+   "name": "example Awards Night: every chip size in the visualiser equals getLayerSize x destination size",
+   "ok": true
+  },
+  {
+   "name": "example General Session: opens from its dialog, the dialog fits the phone, and the preset list equals the model (codes, names, Dest / AUX / Outs / Layers)",
+   "ok": true
+  },
+  {
+   "name": "example General Session: the visualiser fits its box on every preset (last destination inside .mb-vis, no sideways scrollbar)",
+   "ok": true
+  },
+  {
+   "name": "example General Session: the accordion rows equal the model on every preset (destinations, D·L layers, AUX / DSM content)",
+   "ok": true
+  },
+  {
+   "name": "example General Session: every chip size in the visualiser equals getLayerSize x destination size",
+   "ok": true
+  },
+  {
+   "name": "edit: a tap on a preset's pencil opens it with Back, the visualiser and the Destinations / Layers / AUX rows",
+   "ok": true
+  },
+  {
+   "name": "edit: a tap on a wall in the visualiser opens its destination row with the docked Destination panel",
+   "ok": true
+  },
+  {
+   "name": "edit: a double tap on a wall never pops a floating desktop panel",
+   "ok": true
+  },
+  {
+   "name": "edit: a tap on a layer chip in the visualiser opens its layer row with the docked Layer panel (Simple)",
+   "ok": true
+  },
+  {
+   "name": "layer: Size 960 x 540 + APPLY updates the model and the docked panel stays open",
+   "ok": true
+  },
+  {
+   "name": "layer: after APPLY the visualiser shows the new size while the panel is still open (chip reads 960x540)",
+   "ok": true
+  },
+  {
+   "name": "layer: the docked panel header never covers the visualiser while the page scrolls",
+   "ok": true
+  },
+  {
+   "name": "layer: a content pick in the docked panel writes through to the model, the layer row and the visualiser",
+   "ok": true
+  },
+  {
+   "name": "add: + DEST adds a destination to the model, the accordion and the visualiser",
+   "ok": true
+  },
+  {
+   "name": "visualiser: still fits its box after + DEST (four walls)",
+   "ok": true
+  },
+  {
+   "name": "remove: − DEST asks to confirm, Cancel keeps the destination, Remove deletes it from every preset",
+   "ok": true
+  },
+  {
+   "name": "add: + AUX adds an output that is on in every preset and drawn in the visualiser",
+   "ok": true
+  },
+  {
+   "name": "aux: a tap on an AUX row docks the AUX panel in the row",
+   "ok": true
+  },
+  {
+   "name": "remove: − AUX asks to confirm, Cancel keeps the AUX, Remove deletes it",
+   "ok": true
+  },
+  {
+   "name": "back: Back returns to the list from a docked Destination, Layer and AUX panel, no panel flag is stranded and the next preset opens",
+   "ok": true
+  },
+  {
+   "name": "add: + New Preset adds one preset and its card",
+   "ok": true
+  },
+  {
+   "name": "Wire portrait: a tap on Wire shows the rotate card over the tool, and the tool pill still works",
+   "ok": true
+  },
+  {
+   "name": "Wire landscape: the rotate card is gone and the diagram draws in Simple, fitted, with no Advanced tabs",
+   "ok": true
+  },
+  {
+   "name": "Wire: a show saved in Advanced is shown in Simple on the phone (no Advanced tiles or tabs on screen)",
+   "ok": true
+  },
+  {
+   "name": "Wire: opening Wire on the phone does NOT change the saved view of a show saved in Advanced (wireSettings.wireView stays \"advanced\" for Save, Send and the autosave)",
+   "ok": true
+  },
+  {
+   "name": "I/O: a tap on I/O Patch shows one card per source, destination, AUX and multiviewer, equal to the model",
+   "ok": true
+  },
+  {
+   "name": "I/O: a connector picked on a source card is stored and shown, and the menu fits the phone",
+   "ok": true
+  },
+  {
+   "name": "I/O: a resolution picked from the side sheet is stored and shown, and the sheet fits the phone",
+   "ok": true
+  },
+  {
+   "name": "I/O: a source renamed on its card (typed, then a tap away) is renamed in every preset",
+   "ok": true
+  },
+  {
+   "name": "exports: the Excel cue sheet runs at phone size (the Pre-Export Check fits and Export Anyway delivers the .xlsx)",
+   "ok": true
+  },
+  {
+   "name": "exports: the I/O Excel runs at phone size",
+   "ok": true
+  },
+  {
+   "name": "exports: the Look Book builds a cover and one page per preset at phone size, from a window that fits the phone",
+   "ok": true
+  },
+  {
+   "name": "exports: the Wire drawing builds at phone size, and the Wire export window fits the phone",
+   "ok": true
+  },
+  {
+   "name": "modal: Help fits the phone",
+   "ok": true
+  },
+  {
+   "name": "modal: every Help tab can be reached on the phone, and a tap on the last one opens it",
+   "ok": true
+  },
+  {
+   "name": "modal: Quick Setup opened from the Show card fits the phone",
+   "ok": true
+  },
+  {
+   "name": "landscape: phone mode stays on after the phone is rotated and the preset list still equals the model",
+   "ok": true
+  },
+  {
+   "name": "landscape: the visualiser fits its box on every preset of General Session",
+   "ok": true
+  },
+  {
+   "name": "landscape: a layer row docks its panel and Back still works",
+   "ok": true
+  },
+  {
+   "name": "landscape: I/O Patch cards equal the model count",
+   "ok": true
+  },
+  {
+   "name": "panels: no floating desktop panel appeared on the phone at any point (every Destination / Layer / AUX panel carried .mb-inline-panel)",
+   "ok": true
+  },
+  {
+   "name": "portrait: the page never scrolls sideways on any screen",
+   "ok": true
+  },
+  {
+   "name": "landscape: the page never scrolls sideways on any screen",
+   "ok": true
+  },
+  {
+   "name": "no page errors during the phone run (exceptions, console.error, native dialogs)",
+   "ok": true
+  }
+ ],
+ "budgets": {
+  "launch": {
+   "smallTaps": 4,
+   "smallText": 1
+  },
+  "quick-setup": {
+   "smallTaps": 7,
+   "smallText": 18
+  },
+  "preset-list": {
+   "smallTaps": 10,
+   "smallText": 30
+  },
+  "preset-edit": {
+   "smallTaps": 4,
+   "smallText": 43
+  },
+  "destination-panel": {
+   "smallTaps": 9,
+   "smallText": 50
+  },
+  "layer-panel": {
+   "smallTaps": 6,
+   "smallText": 56
+  },
+  "aux-panel": {
+   "smallTaps": 6,
+   "smallText": 48
+  },
+  "wire-portrait": {
+   "smallTaps": 3,
+   "smallText": 0
+  },
+  "wire-landscape": {
+   "smallTaps": 5,
+   "smallText": 5
+  },
+  "io-patch": {
+   "smallTaps": 3,
+   "smallText": 85
+  },
+  "io-connector-menu": {
+   "smallTaps": 0,
+   "smallText": 0
+  },
+  "io-resolution-sheet": {
+   "smallTaps": 0,
+   "smallText": 0
+  },
+  "lookbook-window": {
+   "smallTaps": 14,
+   "smallText": 0
+  },
+  "wire-export-window": {
+   "smallTaps": 1,
+   "smallText": 3
+  },
+  "help": {
+   "smallTaps": 1,
+   "smallText": 6
+  },
+  "quick-setup-edit": {
+   "smallTaps": 7,
+   "smallText": 12
+  },
+  "landscape-preset-list": {
+   "smallTaps": 10,
+   "smallText": 30
+  },
+  "landscape-preset-edit": {
+   "smallTaps": 2,
+   "smallText": 30
+  },
+  "landscape-io-patch": {
+   "smallTaps": 3,
+   "smallText": 85
+  }
+ },
+ "pageErrors": []
+}

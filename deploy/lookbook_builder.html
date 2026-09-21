@@ -2887,6 +2887,7 @@ body.adv-hide-aoi .aoi-actions {
 .mb-bb-amber  { color: var(--n-amber); }
 .mb-bb-cyan   { color: var(--n-cyan); }
 .mb-bb-yellow { color: var(--n-yellow, var(--n-amber)); }
+.mb-bb-pink   { color: var(--n-pink); }
 
 /* Quick Guide tile (top of the mobile preset list) — mirrors the Quick Setup
    "SHOW" panel: it IS a .qs-panel.qs-cyan, with read-only value boxes that
@@ -2902,6 +2903,18 @@ body.adv-hide-aoi .aoi-actions {
 .mb-guide-dv { display: flex; gap: 14px; margin-top: 10px; }
 .mb-guide-dvcol { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 6px; }
 .mb-guide-dvcol .qs-lbl { min-width: 0; }
+/* Open a show file (phone). Secondary button under the empty-state start button, and an Open button that
+   sits to the LEFT of Send on the Show tile header (same box as Send: it reuses .mb-guide-send). */
+.mb-empty-open {
+  margin-top: 2px; min-height: var(--ss-touch);
+  background: transparent; border: 1px solid rgba(255,255,255,.14); color: var(--text2);
+  border-radius: 999px; padding: 10px 22px; font-size: 13px; font-weight: 700; letter-spacing: 0.02em;
+  cursor: pointer; font-family: inherit; display: inline-flex; align-items: center;
+  transition: border-color .15s, color .15s;
+}
+.mb-empty-open svg { width: 14px; height: 14px; margin-right: 7px; flex-shrink: 0; }
+.mb-empty-open:hover, .mb-empty-open:active { border-color: rgba(var(--n-cyan-rgb),.55); color: var(--n-cyan); }
+.mb-guide-open + .mb-guide-send { margin-left: 0; }
 /* Send / share button on the Show tile header (top-right). */
 .mb-guide-send {
   margin-left: auto; flex-shrink: 0; width: 32px; height: 28px;
@@ -3656,6 +3669,20 @@ body.is-mobile #wire-overlay #wire-style-bar { display: none !important; }
 .mb-vis .screens-visual{margin:0 auto}
 .mb-vis .rh,.mb-vis .aoi-actions,.mb-vis .aoi-drag,.mb-vis .lc-reset,.mb-vis .aoi-dim-row{display:none!important}
 .mb-vis .screen-box,.mb-vis .layer-chip,.mb-vis .dsm-box{cursor:pointer}
+/* Phone, docked Layer / Destination / AUX panel: the visualiser is never covered. The docked panel is its own paint layer
+   (isolation), so its header (z-index 5, same as .mb-vis, later in the page) and anything else inside it stay UNDER the sticky
+   visualiser. Default: the header is not sticky (landscape, and browsers without overflow:clip). Portrait: the header sticks
+   directly under the visualiser; --mb-vis-stick is kept up to date by mbVisSync() in initMobileShell. overflow:clip (not
+   hidden / auto) on the open row and on the panel, so the sticky header answers to #mobile-main, the real scroller. */
+body.is-mobile #mobile-main .mb-inline-panel{isolation:isolate}
+body.is-mobile #mobile-main .mb-inline-panel .pm-hdr{position:relative;top:0}
+@supports (overflow:clip){
+@media (orientation: portrait){
+  body.is-mobile #mobile-main .mb-le-row.open{overflow:clip}
+  body.is-mobile #mobile-main .mb-inline-panel{overflow:clip !important}
+  body.is-mobile #mobile-main .mb-inline-panel .pm-hdr{position:sticky;top:var(--mb-vis-stick,195px)}
+}
+}
 /* ── Unified button typography (2026-06-23): one font system across every action
    button. Root fix: .tb-btn/.del-btn/.pm-btn never set font-family, so they fell back
    to the browser's default control font (Arial/Helvetica) instead of the app font.
@@ -4002,6 +4029,109 @@ button[onclick="_wireResetLayout()"],button[onclick="_wireZoomFit()"],#fs-topbar
 #wire-overlay .wire-tb-inp{background:#0a0d12;border:1px solid rgba(255,255,255,.06);border-radius:4px}
 /* 16fp: sticky popup header stays opaque over scrolled content (variant rules above set a transparent gradient via the shorthand) */
 .pm .pm-hdr,.pm.p-amber .pm-hdr,.pm.p-cyan .pm-hdr,.pm.p-green .pm-hdr,.pm.p-orange .pm-hdr{background-color:#10131a}
+/* ══ PHONE TOUCH PASS (fix-touch) ════════════════════════════════════════════════════════════════
+   Phone only: EVERY rule below starts with body.is-mobile, so the desktop layout cannot move.
+   1. Touch targets reach var(--ss-touch) (44px). Where a control must stay visually small it keeps
+      its look and gets a transparent ::after hit area; where a scrolling list has room it really grows.
+   2. Every text field is 16px so iPhone Safari does not zoom the page on focus.
+   3. The Help tab bar scrolls sideways by touch.
+   4. Text that was hard-cut now ends in an ellipsis or wraps.
+   ═════════════════════════════════════════════════════════════════════════════════════════════ */
+
+/* ── 2. fields: 16px + 44px tall (the Wire DIAGRAM is left alone on purpose: it is a scaled drawing) ── */
+body.is-mobile :is(#mobile-main,#qs-modal,.pm,#dlg-overlay,#validation-panel,#wire-panel-left,.shared-res-dd,#color-pop) :is(input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]):not([type=button]):not([type=submit]):not([type=file]),select,textarea){font-size:16px !important;min-height:var(--ss-touch) !important;box-sizing:border-box !important;text-overflow:ellipsis}
+body.is-mobile #color-pop input[type=number],body.is-mobile #color-pop #cp-hex{font-size:16px !important;letter-spacing:0 !important}
+/* colour editor, portrait (240px wide): at 16px "#RRGGBB" and "100" no longer fit five-across, so HEX takes its own row */
+@media (orientation: portrait){
+  body.is-mobile #color-pop .cp-controls-col>div:has(>div>#cp-hex){flex-wrap:wrap}
+  body.is-mobile #color-pop .cp-controls-col>div>div:has(>#cp-hex){flex:1 0 100% !important}
+}
+
+/* ── 1a. invisible hit areas: the control keeps its size, the tap area grows to 44x44 around its centre ── */
+body.is-mobile :is(.mb-guide-send,.mb-preset-action,.mb-back-btn,.qs-step,.fs-lock,.lfx-tools button,.lp-color-swatch,#sp-reset-layer-pos,#sp-bg-btn,.lp-reset-pos,#qs-sd-toggle),
+body.is-mobile #wire-overlay :is(.wire-src-pen,.wire-res-dropdown-btn,.wire-color-shuffle){position:relative}
+body.is-mobile :is(.wire-nav-pillgroup .wire-nav-btn,.pm-close,.mb-guide-send,.mb-preset-action,.mb-back-btn,.qs-step,.fs-lock,.lfx-tools button,.lp-color-swatch,#sp-reset-layer-pos,#sp-bg-btn,.lp-reset-pos,#qs-sd-toggle,.mb-vis-arrow)::after,
+body.is-mobile #wire-overlay :is(.wire-src-pen,.wire-res-dropdown-btn,.wire-color-shuffle,.wire-panel-inline-toggle)::after{content:"";position:absolute;left:50%;top:50%;width:100%;height:100%;min-width:var(--ss-touch);min-height:var(--ss-touch);transform:translate(-50%,-50%);background:transparent}
+/* wall move arrows: the hit area grows INTO the selected wall, not over its neighbour */
+body.is-mobile .mb-vis-arrow[title="Move left"]::after{left:-2px;transform:translateY(-50%)}
+body.is-mobile .mb-vis-arrow[title="Move right"]::after{left:auto;right:-2px;transform:translateY(-50%)}
+/* the Layer panel's SIZE Reset sits right under the library list: its hit area grows DOWN over the Width / Height captions, not up over the list */
+body.is-mobile .lp-reset-pos::after{top:-4px;transform:translateX(-50%)}
+/* the Destination panel's LAYERS Reset sits 8px above the L1-L4 pills: its hit area grows UP into the empty divider space */
+body.is-mobile #sp-reset-layer-pos::after{top:-21px;transform:translateX(-50%)}
+/* edge controls: anchor the hit area to the inside so the panel edge does not cut it */
+body.is-mobile #wire-overlay .wire-res-dropdown-btn::after{left:auto;right:-7px;transform:translateY(-50%)}
+body.is-mobile #wire-overlay .wire-panel-inline-toggle::after{left:auto;right:0;transform:translateY(-50%)}
+body.is-mobile #wire-overlay .wire-color-shuffle::after{left:auto;right:-15px;transform:translateY(-50%)}
+body.is-mobile .skip-link{min-height:var(--ss-touch);display:inline-flex;align-items:center;box-sizing:border-box}
+
+/* ── 1b. launch + preset list ── */
+body.is-mobile .mb-empty-cta{min-height:var(--ss-touch)}
+
+/* ── 1c. Quick Setup ── */
+body.is-mobile #qs-modal :is(.qs-screen-hdr,.qs-res-btn){min-height:var(--ss-touch);box-sizing:border-box}
+
+/* ── 1d. preset edit: docked Destination / Layer / AUX panels ── */
+body.is-mobile .mb-le-movebtn{min-height:var(--ss-touch)}
+body.is-mobile .mb-inline-panel button:where(:not(.pm-close,.fs-lock,#sp-reset-layer-pos,#sp-bg-btn,.lp-reset-pos,.lfx-tools button)),
+body.is-mobile .mb-inline-panel .lfx-tog,body.is-mobile .mb-inline-panel .lfx-swatch{min-height:var(--ss-touch) !important;box-sizing:border-box}
+body.is-mobile .mb-inline-panel .sp-layer-btn{position:relative}
+body.is-mobile .mb-inline-panel .lfx-swatch{min-width:var(--ss-touch)}
+/* content library rows (Layer "Other library items" + AUX "Content Library"): 44px rows in a taller scroll box */
+body.is-mobile .mb-inline-panel .lp-others-list>div,
+body.is-mobile #dsm-panel.mb-inline-panel div[onclick*="dsmPanelContent"]{min-height:var(--ss-touch);box-sizing:border-box}
+body.is-mobile #dsm-panel.mb-inline-panel span[onclick*="dsmPanelContent"]{display:inline-flex;align-items:center;min-height:var(--ss-touch);box-sizing:border-box;padding:0 12px !important}
+body.is-mobile .mb-inline-panel .lp-others-list,
+body.is-mobile #dsm-panel.mb-inline-panel div[style*="max-height:140px"]{max-height:min(272px,52vh) !important}
+body.is-mobile .mb-inline-panel .lp-others-list .lp-del{align-self:stretch;display:flex;align-items:center;justify-content:center;min-width:var(--ss-touch);padding:0 !important}
+body.is-mobile .mb-inline-panel .lp-others-list .lp-color-swatch{margin:0 9px 0 13px}
+/* Advanced layer cards */
+body.is-mobile .mb-inline-panel .lfx-hd{height:auto;min-height:var(--ss-touch)}
+body.is-mobile .mb-inline-panel .lfx-tools{gap:24px;margin:0 12px;min-height:var(--ss-touch);align-items:center}
+body.is-mobile .mb-inline-panel input[type=range]{height:var(--ss-touch) !important}
+body.is-mobile .mb-inline-panel .fs-geom-row{grid-template-columns:78px 1fr 64px 20px}
+body.is-mobile .mb-inline-panel .fs-geom-row .fs-geom-span{min-height:var(--ss-touch)}
+body.is-mobile .mb-inline-panel div[style*="grid-template-columns:1fr 16px 1fr"]>div:nth-child(2){padding-bottom:14px !important}
+
+/* ── 1e. I/O Patch cards + every dropdown menu row ── */
+body.is-mobile .mb-io-card .sys-pill.clickable,body.is-mobile .mb-io-card .sys-chip.clickable{min-height:var(--ss-touch)}
+body.is-mobile .sys-dd .sys-dd-item{min-height:var(--ss-touch);box-sizing:border-box}
+body.is-mobile .mb-io-card .mb-io-field:has(>.mb-io-input){flex-wrap:wrap;row-gap:5px}
+body.is-mobile .mb-io-card .mb-io-field>.mb-io-input{flex:1 1 100%}
+
+/* ── 1f. modals (Export PDF / Export Wire / pre-check): check rows and segment buttons ── */
+body.is-mobile .pm label:has(>input[type=checkbox]),body.is-mobile .pm label:has(>input[type=radio]){min-height:var(--ss-touch);box-sizing:border-box}
+body.is-mobile .pm .lb-seg-btn{min-height:var(--ss-touch);min-width:var(--ss-touch)}
+body.is-mobile .pm:not(.mb-inline-panel) button:not(.pm-close):not(.lb-seg-btn):not(.help-tab){min-height:var(--ss-touch)}
+
+/* ── 1g. Wire (landscape): top bar zoom widget + source cards ── */
+body.is-mobile #wire-overlay > div:first-child{height:46px !important}
+body.is-mobile #wire-topbar #wire-zoom-widget{height:46px !important;padding:0 3px !important}
+body.is-mobile #wire-topbar #wire-zoom-widget>button{min-width:var(--ss-touch) !important;height:var(--ss-touch) !important}
+/* colour bar: same thin bar, 44px tall tap area (the colour is clipped to the content box) */
+body.is-mobile #wire-overlay #wire-panel-left .wire-color-swatch{height:var(--ss-touch) !important;padding:12px 0 !important;background-clip:content-box !important;border-color:transparent !important;box-sizing:border-box;margin-right:4px}
+body.is-mobile #wire-overlay #wire-panel-left .wire-cable-btn{height:var(--ss-touch) !important}
+body.is-mobile #wire-overlay #wire-panel-left .wire-res-row{min-height:var(--ss-touch)}
+body.is-mobile #wire-overlay #wire-panel-left .wire-source-name{min-height:var(--ss-touch);display:flex;align-items:center}
+body.is-mobile #wire-overlay #wire-sources-panel .wire-pane-hdr{height:var(--ss-touch)}
+body.is-mobile #wire-overlay #wire-sources-panel > .wire-pane:nth-child(2) > .wire-pane-hdr{top:44px}
+body.is-mobile #wire-overlay #wire-sources-panel > .wire-pane:nth-child(3) > .wire-pane-hdr{top:88px}
+
+/* ── 3. Help: the tab bar scrolls sideways by touch; tabs and links are 44px tall ── */
+body.is-mobile #help-overlay .pm-hdr + div{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;touch-action:pan-x;overscroll-behavior-x:contain;scrollbar-width:none;padding-left:12px !important;padding-right:12px !important}
+body.is-mobile #help-overlay .pm-hdr + div::-webkit-scrollbar{display:none}
+body.is-mobile #help-overlay .help-tab{flex:0 0 auto;white-space:nowrap;min-height:var(--ss-touch);padding-left:12px;padding-right:12px}
+body.is-mobile #help-overlay #help-online{row-gap:0 !important}
+/* the taller tab bar + links must not push the window off a short screen: the window is a column, the open tab takes what is left */
+body.is-mobile #help-overlay>.pm{display:flex;flex-direction:column;height:94vh;height:calc(100dvh - 24px)}
+body.is-mobile #help-overlay>.pm>[id^="hpanel-"]{flex:1 1 auto;min-height:0 !important;max-height:none !important}
+body.is-mobile #help-overlay #help-online a{display:inline-flex;align-items:center;min-height:var(--ss-touch)}
+
+/* ── 4. hard-cut text ── */
+/* docked panel title ("DESTINATION PROPERTIES") wraps instead of clipping */
+body.is-mobile .mb-inline-panel .pm-hdr h3{white-space:normal;overflow:visible;text-overflow:clip;line-height:1.25}
+/* menu rows as wide as their header ("USB-C / Thunderbolt") wrap onto a second line */
+body.is-mobile .sys-dd[data-fit="header"] .sys-dd-item .item-text,body.is-mobile .sys-dd.wire-fit .sys-dd-item .item-text{white-space:normal;overflow:visible;text-overflow:clip;line-height:1.25}
 </style>
 </head>
 <body data-skin="black">
@@ -4152,7 +4282,7 @@ Also called DSM (Downstage Monitor) in broadcast and theater workflows, same thi
   <div class="bb-cell bb-pill bb-cyan" title="The largest number of layers used in any single preset, this is the figure to compare against your switcher's per-scene layer budget. (The most complex single moment in the show.)"><span class="bb-label">Layers</span><strong id="bb-layers">0</strong></div>
   <div id="bb-spacer"></div>
   <div class="bb-cell" id="bb-sel" style="font-size:10px;opacity:.5">—</div>
-  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy, hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16kh</div>
+  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy, hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16ki</div>
   <button class="bb-util" id="tb-adv" onclick="actions.advancedMenu(event)" title="Advanced features (AOI, Free Mode, Blend Zones, Dead Space)" aria-label="Advanced features (AOI, Free Mode, Blend Zones, Dead Space)" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Advanced<span class="adv-count" aria-hidden="true"></span><svg aria-hidden="true" id="tb-adv-chev" viewBox="0 0 10 10" fill="currentColor" width="8" height="8" style="opacity:.7"><path d="M2 4l3 3 3-3z"/></svg></button>
   <button class="bb-util" onclick="actions.help()" title="Help, quick reference, keyboard shortcuts, glossary, accessibility" aria-label="Help, quick reference, keyboard shortcuts, glossary, accessibility" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="4.93" y1="4.93" x2="9.17" y2="9.17"/><line x1="14.83" y1="14.83" x2="19.07" y2="19.07"/><line x1="14.83" y1="9.17" x2="19.07" y2="4.93"/><line x1="4.93" y1="19.07" x2="9.17" y2="14.83"/></svg>Help</button>
   <button class="bb-util" id="tb-bug" onclick="reportBug()" title="Report a bug, opens an email to AV Educate with the show file attached so we can see it on our side" aria-label="Report a bug" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="7.2"/><path d="M15.4 15.4L21 21" stroke-width="2.6"/><ellipse cx="10" cy="11" rx="2.5" ry="3.3" fill="currentColor" stroke="none"/><circle cx="10" cy="7" r="1.5" fill="currentColor" stroke="none"/><path d="M7.5 9.2l-1.7-.8M7.4 11.2H5.6M7.7 13.1l-1.5 1.1M12.5 9.2l1.7-.8M12.6 11.2h1.8M12.3 13.1l1.5 1.1M9.2 5.9l-.8-1.1M10.8 5.9l.8-1.1" stroke-width="1.3"/></svg>Bug</button>   <!-- 16jk (Omar): Report a bug, after Help -->
@@ -23409,9 +23539,21 @@ function fsApplySize(){}
 // ── 16jc (Omar): example shows. Bundled so they open offline from Quick Start; the same three files are the training
 // packets on the site (site/packets). Opening one is like loading a file with no path: explore it, then Save As to keep it.
 const _LB_EXAMPLES=[{"id":"general-session","name":"General Session","blurb":"Three LED walls. Walk-in, keynote with a hot-backup laptop, panel, playback. One DSM, one AUX.","state":{"version":3,"dsmLabel":"AUX","showName":"General Session","showDate":"2026-10-14","showVenue":"Grand Ballroom","showMeta":{"client":"Example Corp","jobNo":"EX-1001","designer":"AV Educate","drawnBy":"AVE","projectVer":"V1","logo":""},"canvasW":"5760","canvasH":"1080","screens":[{"id":"x9j0fy","name":"LEFT LED","w":1920,"h":1080,"color":"#1a1a1a","connectorType":"12G-SDI","deviceType":"LED","notes":"2.6 mm, stage left"},{"id":"x9s9nr","name":"CENTER LED","w":1920,"h":1080,"color":"#1a1a1a","connectorType":"12G-SDI","deviceType":"LED","notes":"2.6 mm, center"},{"id":"xpqn9w","name":"RIGHT LED","w":1920,"h":1080,"color":"#1a1a1a","connectorType":"12G-SDI","deviceType":"LED","notes":"2.6 mm, stage right"}],"presets":[{"id":"xtwm1j","code":"P01","name":"WALK-IN","layers":{"x9j0fy":{},"x9s9nr":{},"xpqn9w":{}},"active":{},"positions":{"x9j0fy":{"x":0,"y":0},"x9s9nr":{"x":1920,"y":0},"xpqn9w":{"x":3840,"y":0}},"dsmOn":{"xv5pno":true,"xyw476":true},"notes":"Doors open. Logo on all walls, house music.","bgNames":{"x9j0fy":"LOGO","x9s9nr":"LOGO","xpqn9w":"LOGO"},"colors":{"x9j0fy":"#ff4d5a","x9s9nr":"#ff4d5a","xpqn9w":"#ff4d5a"},"bgs":{},"dsmContent":{"xv5pno":"CLOCK","xyw476":"PGM"},"layerSizes":{}},{"id":"xe6scx","code":"P02","name":"WELCOME","layers":{"x9j0fy":{"1":"CAM 1"},"x9s9nr":{"1":"LOWER 3RD"},"xpqn9w":{"1":"CAM 1"}},"active":{},"positions":{"x9j0fy":{"x":0,"y":0},"x9s9nr":{"x":1920,"y":0},"xpqn9w":{"x":3840,"y":0}},"dsmOn":{"xv5pno":true,"xyw476":true},"notes":"Emcee at podium. IMAG on the sides, logo and name key on center.","bgNames":{"x9s9nr":"LOGO"},"colors":{"x9s9nr":"#ff4d5a"},"bgs":{},"layerSizes":{"x9s9nr":{"1":{"wf":1,"hf":0.22,"xf":0,"yf":0.78}},"x9j0fy":{"1":{"wf":1,"hf":1,"xf":0,"yf":0}},"xpqn9w":{"1":{"wf":1,"hf":1,"xf":0,"yf":0}}},"dsmContent":{"xv5pno":"PROMPTER","xyw476":"PGM"}},{"id":"x8vrsj","code":"P03","name":"KEYNOTE","layers":{"x9j0fy":{"1":"CAM 1"},"x9s9nr":{"1":"PPT A"},"xpqn9w":{"1":"CAM 1"}},"active":{},"positions":{"x9j0fy":{"x":0,"y":0},"x9s9nr":{"x":1920,"y":0},"xpqn9w":{"x":3840,"y":0}},"dsmOn":{"xv5pno":true,"xyw476":true},"notes":"Slides center, IMAG sides. PPT B is the hot backup for PPT A.","bgNames":{},"colors":{},"bgs":{},"dsmContent":{"xv5pno":"NOTES","xyw476":"PGM"},"layerSizes":{"x9j0fy":{"1":{"wf":1,"hf":1,"xf":0,"yf":0}},"x9s9nr":{"1":{"wf":1,"hf":1,"xf":0,"yf":0}},"xpqn9w":{"1":{"wf":1,"hf":1,"xf":0,"yf":0}}}},{"id":"xe39fd","code":"P04","name":"PANEL","layers":{"x9j0fy":{"1":"CAM 2"},"x9s9nr":{"1":"PPT A"},"xpqn9w":{"1":"CAM 1"}},"active":{},"positions":{"x9j0fy":{"x":0,"y":0},"x9s9nr":{"x":1920,"y":0},"xpqn9w":{"x":3840,"y":0}},"dsmOn":{"xv5pno":true,"xyw476":true},"notes":"Four chairs. Wide two-shot house left, tight house right.","bgNames":{},"colors":{},"bgs":{},"dsmContent":{"xv5pno":"CLOCK","xyw476":"PGM"},"layerSizes":{"x9j0fy":{"1":{"wf":1,"hf":1,"xf":0,"yf":0}},"x9s9nr":{"1":{"wf":1,"hf":1,"xf":0,"yf":0}},"xpqn9w":{"1":{"wf":1,"hf":1,"xf":0,"yf":0}}}},{"id":"xtf78t","code":"P05","name":"VIDEO","layers":{"x9j0fy":{},"x9s9nr":{},"xpqn9w":{}},"active":{},"positions":{"x9j0fy":{"x":0,"y":0},"x9s9nr":{"x":1920,"y":0},"xpqn9w":{"x":3840,"y":0}},"dsmOn":{"xv5pno":true,"xyw476":true},"notes":"Full-bleed playback on all three walls. Audio from playback.","bgNames":{"x9j0fy":"PLAYBACK","x9s9nr":"PLAYBACK","xpqn9w":"PLAYBACK"},"colors":{"x9j0fy":"#1d6244","x9s9nr":"#1d6244","xpqn9w":"#1d6244"},"bgs":{},"dsmContent":{"xv5pno":"CLOCK","xyw476":"PGM"},"layerSizes":{}}],"customLibrary":[{"l":"PPT A","c":"#3b82f6"},{"l":"PPT B","c":"#2563eb"},{"l":"CAM 1","c":"#e05a4f"},{"l":"CAM 2","c":"#b03a30"}],"customTypes":{"machines":[],"devices":[]},"dsms":[{"id":"xv5pno","name":"DSM 1","w":1920,"h":1080,"connectorType":"HDMI 2.0","deviceType":"Monitor","notes":"Downstage confidence monitor"},{"id":"xyw476","name":"AUX 1","w":1920,"h":1080,"connectorType":"12G-SDI","deviceType":"Stream","notes":"Program feed to record / stream"}],"multiviewers":[{"id":"xt28yx","name":"MV 1","connectorType":"MV","resolution":"1920x1080","deviceType":"Monitor","notes":"Operator monitor"}],"sources":[{"name":"PPT A","type":"PC","connectorType":"HDMI 2.0","resolution":"1920x1080","notes":"Presenter laptop A"},{"name":"PPT B","type":"PC","connectorType":"HDMI 2.0","resolution":"1920x1080","notes":"Presenter laptop B, backup of PPT A"},{"name":"CAM 1","type":"Camera","connectorType":"12G-SDI","resolution":"1920x1080","notes":"Center camera, IMAG"},{"name":"CAM 2","type":"Camera","connectorType":"12G-SDI","resolution":"1920x1080","notes":"House left camera"},{"name":"PLAYBACK","type":"Media Server","connectorType":"12G-SDI","resolution":"1920x1080","notes":"Walk-in loop and videos"},{"name":"LOGO","type":"Media Server","connectorType":"HDMI 2.0","resolution":"1920x1080","notes":"Event logo, still"},{"name":"PROMPTER","type":"Teleprompter","connectorType":"3G-SDI","resolution":"1920x1080","notes":"Prompter feed for DSM"},{"name":"LOWER 3RD","type":"Media Server","connectorType":"HDMI 2.0","resolution":"1920x1080","notes":"Name keys"}],"ioDests":[],"wireLayout":{},"wireThumbnails":{},"wireSettings":{"wireView":"simple","wireStyle":"curved","panes":{"src":true,"dst":true,"aux":true}},"wireAdvanced":{"sources":[],"dests":[],"dsms":[],"wires":[],"routers":[],"customSources":[],"customDests":[],"customDsms":[]},"ioAdvanced":{"view":"simple","page":0,"pages":[{"id":"p1","uid":"xe4ugo","name":"Page 1","sources":[{"id":"iamu4kif6d7vdm","name":"","connectorType":"","customType":"","resolution":"","notes":"","type":""}],"dests":[{"id":"iamu4kif6dxyex","name":"","connectorType":"","customType":"","resolution":"","notes":"","deviceType":""}],"mvs":[]},{"id":"p2","uid":"xidrca","name":"Page 2","sources":[{"id":"iamu4kif6dgywh","name":"","connectorType":"","customType":"","resolution":"","notes":"","type":""}],"dests":[{"id":"iamu4kif6d3urm","name":"","connectorType":"","customType":"","resolution":"","notes":"","deviceType":""}],"mvs":[]},{"id":"p3","uid":"x7rm37","name":"Page 3","sources":[{"id":"iamu4kif6d2jab","name":"","connectorType":"","customType":"","resolution":"","notes":"","type":""}],"dests":[{"id":"iamu4kif6dfqdz","name":"","connectorType":"","customType":"","resolution":"","notes":"","deviceType":""}],"mvs":[]}]}}},{"id":"awards-night","name":"Awards Night","blurb":"A 32:9 wall between two projection screens. Nominee reels, winner cards with a camera PIP, speeches.","state":{"version":3,"dsmLabel":"AUX","showName":"Awards Night","showDate":"2026-11-06","showVenue":"Main Hall","showMeta":{"client":"Example Corp","jobNo":"EX-1002","designer":"AV Educate","drawnBy":"AVE","projectVer":"V1","logo":""},"canvasW":"7680","canvasH":"1200","screens":[{"id":"xt1n40","name":"SIDE L PROJ","w":1920,"h":1200,"color":"#1a1a1a","connectorType":"HDMI 2.0","deviceType":"Projection","notes":"20K laser, 16:10"},{"id":"xp292f","name":"STAGE LED","w":3840,"h":1080,"color":"#1a1a1a","connectorType":"12G-SDI","deviceType":"LED","notes":"Two 12G feeds, 32:9 wall"},{"id":"x9fkjf","name":"SIDE R PROJ","w":1920,"h":1200,"color":"#1a1a1a","connectorType":"HDMI 2.0","deviceType":"Projection","notes":"20K laser, 16:10"}],"presets":[{"id":"xkxyl8","code":"P01","name":"WALK-IN","layers":{"xt1n40":{},"xp292f":{},"x9fkjf":{}},"active":{},"positions":{"xt1n40":{"x":0,"y":0},"xp292f":{"x":1920,"y":60},"x9fkjf":{"x":5760,"y":0}},"dsmOn":{"xoc8mj":true,"xrviwz":true},"notes":"Sponsor loop everywhere while guests are seated.","bgNames":{"xt1n40":"SPONSOR LOOP","xp292f":"SPONSOR LOOP","x9fkjf":"SPONSOR LOOP"},"colors":{"xt1n40":"#22c55e","xp292f":"#22c55e","x9fkjf":"#22c55e"},"bgs":{},"dsmContent":{"xoc8mj":"CLOCK","xrviwz":"PGM"},"layerSizes":{}},{"id":"xdsjoo","code":"P02","name":"HOST","layers":{"xt1n40":{"1":"CAM 1"},"xp292f":{"1":"LOWER 3RD"},"x9fkjf":{"1":"CAM 1"}},"active":{},"positions":{"xt1n40":{"x":0,"y":0},"xp292f":{"x":1920,"y":60},"x9fkjf":{"x":5760,"y":0}},"dsmOn":{"xoc8mj":true,"xrviwz":true},"notes":"Host at center. Logo on the wall with a name key, IMAG on the sides.","bgNames":{"xp292f":"LOGO"},"colors":{"xp292f":"#ff4d5a"},"bgs":{},"layerSizes":{"xp292f":{"1":{"wf":0.5,"hf":0.22,"xf":0.25,"yf":0.78}},"xt1n40":{"1":{"wf":1,"hf":1,"xf":0,"yf":0}},"x9fkjf":{"1":{"wf":1,"hf":1,"xf":0,"yf":0}}},"dsmContent":{"xoc8mj":"PROMPTER","xrviwz":"PGM"}},{"id":"x0tzzi","code":"P03","name":"NOMINEES","layers":{"xt1n40":{"1":"CAM 2"},"xp292f":{},"x9fkjf":{"1":"CAM 2"}},"active":{},"positions":{"xt1n40":{"x":0,"y":0},"xp292f":{"x":1920,"y":60},"x9fkjf":{"x":5760,"y":0}},"dsmOn":{"xoc8mj":true,"xrviwz":true},"notes":"Category reel on the wall. Reaction camera on the sides.","bgNames":{"xp292f":"NOMINEE REEL"},"colors":{"xp292f":"#8b5cf6"},"bgs":{},"dsmContent":{"xoc8mj":"CLOCK","xrviwz":"PGM"},"layerSizes":{"xt1n40":{"1":{"wf":1,"hf":1,"xf":0,"yf":0}},"x9fkjf":{"1":{"wf":1,"hf":1,"xf":0,"yf":0}}}},{"id":"xc6x3z","code":"P04","name":"WINNER","layers":{"xt1n40":{"1":"CAM 1"},"xp292f":{"1":"CAM 1"},"x9fkjf":{"1":"CAM 1"}},"active":{},"positions":{"xt1n40":{"x":0,"y":0},"xp292f":{"x":1920,"y":60},"x9fkjf":{"x":5760,"y":0}},"dsmOn":{"xoc8mj":true,"xrviwz":true},"notes":"Winner card full on the wall with a camera PIP top right. Sides on the walk-up camera.","bgNames":{"xp292f":"WINNER GFX"},"colors":{"xp292f":"#f0c060"},"bgs":{},"layerSizes":{"xp292f":{"1":{"wf":0.3,"hf":0.5,"xf":0.66,"yf":0.08}},"xt1n40":{"1":{"wf":1,"hf":1,"xf":0,"yf":0}},"x9fkjf":{"1":{"wf":1,"hf":1,"xf":0,"yf":0}}},"dsmContent":{"xoc8mj":"CLOCK","xrviwz":"PGM"}},{"id":"xlthf3","code":"P05","name":"SPEECH","layers":{"xt1n40":{"1":"CAM 1"},"xp292f":{"1":"CAM 1"},"x9fkjf":{"1":"CAM 1"}},"active":{},"positions":{"xt1n40":{"x":0,"y":0},"xp292f":{"x":1920,"y":60},"x9fkjf":{"x":5760,"y":0}},"dsmOn":{"xoc8mj":true,"xrviwz":true},"notes":"Acceptance speech. Camera everywhere, name key on the wall.","bgNames":{},"colors":{},"bgs":{},"dsmContent":{"xoc8mj":"TIMER","xrviwz":"PGM"},"layerSizes":{"xt1n40":{"1":{"wf":1,"hf":1,"xf":0,"yf":0}},"xp292f":{"1":{"wf":1,"hf":1,"xf":0,"yf":0}},"x9fkjf":{"1":{"wf":1,"hf":1,"xf":0,"yf":0}}}}],"customLibrary":[{"l":"NOMINEE REEL","c":"#8b5cf6"},{"l":"WINNER GFX","c":"#f0c060"},{"l":"SPONSOR LOOP","c":"#22c55e"},{"l":"CAM 1","c":"#e05a4f"},{"l":"CAM 2","c":"#b03a30"}],"customTypes":{"machines":[],"devices":[]},"dsms":[{"id":"xoc8mj","name":"DSM 1","w":1920,"h":1080,"connectorType":"HDMI 2.0","deviceType":"Monitor","notes":"Presenter confidence"},{"id":"xrviwz","name":"AUX 1","w":1920,"h":1080,"connectorType":"12G-SDI","deviceType":"Stream","notes":"Clean feed to stream encoder"}],"multiviewers":[{"id":"xaaq2i","name":"MV 1","connectorType":"MV","resolution":"1920x1080","deviceType":"Monitor","notes":"Operator monitor"}],"sources":[{"name":"NOMINEE REEL","type":"Media Server","connectorType":"12G-SDI","resolution":"3840x1080","notes":"Category reels, wall aspect"},{"name":"WINNER GFX","type":"Media Server","connectorType":"12G-SDI","resolution":"3840x1080","notes":"Winner card per category"},{"name":"SPONSOR LOOP","type":"Media Server","connectorType":"HDMI 2.0","resolution":"1920x1080","notes":"Sponsor loop, silent"},{"name":"CAM 1","type":"Camera","connectorType":"12G-SDI","resolution":"1920x1080","notes":"Center camera"},{"name":"CAM 2","type":"Camera","connectorType":"12G-SDI","resolution":"1920x1080","notes":"Audience reaction"},{"name":"LOGO","type":"Media Server","connectorType":"HDMI 2.0","resolution":"1920x1080","notes":"Show logo"},{"name":"LOWER 3RD","type":"Media Server","connectorType":"HDMI 2.0","resolution":"1920x1080","notes":"Name keys"}],"ioDests":[],"wireLayout":{},"wireThumbnails":{},"wireSettings":{"wireView":"simple","wireStyle":"curved","panes":{"src":true,"dst":true,"aux":true}},"wireAdvanced":{"sources":[],"dests":[],"dsms":[],"wires":[],"routers":[],"customSources":[],"customDests":[],"customDsms":[]},"ioAdvanced":{"view":"simple","page":0,"pages":[{"id":"p1","uid":"xx4geh","name":"Page 1","sources":[{"id":"iamu4kifj9c02x","name":"","connectorType":"","customType":"","resolution":"","notes":"","type":""}],"dests":[{"id":"iamu4kifj9527j","name":"","connectorType":"","customType":"","resolution":"","notes":"","deviceType":""}],"mvs":[]},{"id":"p2","uid":"xpktkw","name":"Page 2","sources":[{"id":"iamu4kifj9s574","name":"","connectorType":"","customType":"","resolution":"","notes":"","type":""}],"dests":[{"id":"iamu4kifj9y43j","name":"","connectorType":"","customType":"","resolution":"","notes":"","deviceType":""}],"mvs":[]},{"id":"p3","uid":"x2kz2q","name":"Page 3","sources":[{"id":"iamu4kifj9fp0s","name":"","connectorType":"","customType":"","resolution":"","notes":"","type":""}],"dests":[{"id":"iamu4kifj9lgh2","name":"","connectorType":"","customType":"","resolution":"","notes":"","deviceType":""}],"mvs":[]}]}}},{"id":"town-hall","name":"Town Hall","blurb":"Hybrid all-hands. Slides with a CEO PIP, a Teams guest, audience Q&A, a recap video, stream out.","state":{"version":3,"dsmLabel":"AUX","showName":"Town Hall","showDate":"2026-10-02","showVenue":"HQ Auditorium","showMeta":{"client":"Example Corp","jobNo":"EX-1003","designer":"AV Educate","drawnBy":"AVE","projectVer":"V1","logo":""},"canvasW":"3840","canvasH":"1080","screens":[{"id":"x2jidq","name":"MAIN LED","w":1920,"h":1080,"color":"#1a1a1a","connectorType":"12G-SDI","deviceType":"LED","notes":"Auditorium wall"},{"id":"xl3rba","name":"OVERFLOW","w":1920,"h":1080,"color":"#1a1a1a","connectorType":"HDMI 2.0","deviceType":"Monitor","notes":"Lobby overflow displays, mirrors main"}],"presets":[{"id":"xdruuy","code":"P01","name":"WALK-IN","layers":{"x2jidq":{},"xl3rba":{}},"active":{},"positions":{"x2jidq":{"x":0,"y":0},"xl3rba":{"x":1920,"y":0}},"dsmOn":{"xi6ipp":true,"x9tvlp":true},"notes":"Logo on the wall and overflow.","bgNames":{"x2jidq":"LOGO","xl3rba":"LOGO"},"colors":{"x2jidq":"#ff4d5a","xl3rba":"#ff4d5a"},"bgs":{},"dsmContent":{"xi6ipp":"CLOCK","x9tvlp":"PGM"},"layerSizes":{}},{"id":"xx80ap","code":"P02","name":"CEO ADDRESS","layers":{"x2jidq":{"1":"CAM 1"},"xl3rba":{"1":"CAM 1"}},"active":{},"positions":{"x2jidq":{"x":0,"y":0},"xl3rba":{"x":1920,"y":0}},"dsmOn":{"xi6ipp":true,"x9tvlp":true},"notes":"Slides full with the CEO in a PIP bottom right. Overflow mirrors main.","bgNames":{"x2jidq":"CEO PPT","xl3rba":"CEO PPT"},"colors":{"x2jidq":"#3b82f6","xl3rba":"#3b82f6"},"bgs":{},"layerSizes":{"x2jidq":{"1":{"wf":0.3,"hf":0.3,"xf":0.68,"yf":0.66}},"xl3rba":{"1":{"wf":0.3,"hf":0.3,"xf":0.68,"yf":0.66}}},"dsmContent":{"xi6ipp":"PROMPTER","x9tvlp":"PGM"}},{"id":"xt8jqa","code":"P03","name":"REMOTE GUEST","layers":{"x2jidq":{"1":"TEAMS","2":"LOWER 3RD"},"xl3rba":{"1":"TEAMS"}},"active":{},"positions":{"x2jidq":{"x":0,"y":0},"xl3rba":{"x":1920,"y":0}},"dsmOn":{"xi6ipp":true,"x9tvlp":true},"notes":"Teams full with a name key.","bgNames":{},"colors":{},"bgs":{},"layerSizes":{"x2jidq":{"2":{"wf":1,"hf":0.22,"xf":0,"yf":0.78},"1":{"wf":1,"hf":1,"xf":0,"yf":0}},"xl3rba":{"1":{"wf":1,"hf":1,"xf":0,"yf":0}}},"dsmContent":{"xi6ipp":"NOTES","x9tvlp":"PGM"}},{"id":"x00lrf","code":"P04","name":"Q&A","layers":{"x2jidq":{"1":"HANDYCAM"},"xl3rba":{"1":"HANDYCAM"}},"active":{},"positions":{"x2jidq":{"x":0,"y":0},"xl3rba":{"x":1920,"y":0}},"dsmOn":{"xi6ipp":true,"x9tvlp":true},"notes":"Audience camera full.","bgNames":{},"colors":{},"bgs":{},"dsmContent":{"xi6ipp":"CLOCK","x9tvlp":"PGM"},"layerSizes":{"x2jidq":{"1":{"wf":1,"hf":1,"xf":0,"yf":0}},"xl3rba":{"1":{"wf":1,"hf":1,"xf":0,"yf":0}}}},{"id":"xgdgl4","code":"P05","name":"VIDEO","layers":{"x2jidq":{},"xl3rba":{}},"active":{},"positions":{"x2jidq":{"x":0,"y":0},"xl3rba":{"x":1920,"y":0}},"dsmOn":{"xi6ipp":true,"x9tvlp":true},"notes":"Recap video, full bleed.","bgNames":{"x2jidq":"PLAYBACK","xl3rba":"PLAYBACK"},"colors":{"x2jidq":"#1d6244","xl3rba":"#1d6244"},"bgs":{},"dsmContent":{"xi6ipp":"CLOCK","x9tvlp":"PGM"},"layerSizes":{}}],"customLibrary":[{"l":"CEO PPT","c":"#3b82f6"},{"l":"CAM 1","c":"#e05a4f"}],"customTypes":{"machines":[],"devices":[]},"dsms":[{"id":"xi6ipp","name":"DSM 1","w":1920,"h":1080,"connectorType":"HDMI 2.0","deviceType":"Monitor","notes":"CEO confidence monitor"},{"id":"x9tvlp","name":"AUX 1","w":1920,"h":1080,"connectorType":"12G-SDI","deviceType":"Stream","notes":"Program to the hybrid stream"}],"multiviewers":[{"id":"x2njuy","name":"MV 1","connectorType":"MV","resolution":"1920x1080","deviceType":"Monitor","notes":"Operator monitor"}],"sources":[{"name":"CEO PPT","type":"PC","connectorType":"HDMI 2.0","resolution":"1920x1080","notes":"Exec laptop"},{"name":"CAM 1","type":"Camera","connectorType":"12G-SDI","resolution":"1920x1080","notes":"Podium camera"},{"name":"HANDYCAM","type":"Camera","connectorType":"3G-SDI","resolution":"1920x1080","notes":"Audience Q&A camera"},{"name":"TEAMS","type":"PC","connectorType":"HDMI 2.0","resolution":"1920x1080","notes":"Remote guests via Teams"},{"name":"PROMPTER","type":"Teleprompter","connectorType":"3G-SDI","resolution":"1920x1080","notes":"Prompter feed"},{"name":"LOGO","type":"Media Server","connectorType":"HDMI 2.0","resolution":"1920x1080","notes":"Company logo"},{"name":"PLAYBACK","type":"Media Server","connectorType":"12G-SDI","resolution":"1920x1080","notes":"Quarter recap video"},{"name":"LOWER 3RD","type":"Media Server","connectorType":"HDMI 2.0","resolution":"1920x1080","notes":"Name keys"}],"ioDests":[],"wireLayout":{},"wireThumbnails":{},"wireSettings":{"wireView":"simple","wireStyle":"curved","panes":{"src":true,"dst":true,"aux":true}},"wireAdvanced":{"sources":[],"dests":[],"dsms":[],"wires":[],"routers":[],"customSources":[],"customDests":[],"customDsms":[]},"ioAdvanced":{"view":"simple","page":0,"pages":[{"id":"p1","uid":"xmz5g6","name":"Page 1","sources":[{"id":"iamu4kifw5mdu4","name":"","connectorType":"","customType":"","resolution":"","notes":"","type":""}],"dests":[{"id":"iamu4kifw5lge1","name":"","connectorType":"","customType":"","resolution":"","notes":"","deviceType":""}],"mvs":[]},{"id":"p2","uid":"xhzxog","name":"Page 2","sources":[{"id":"iamu4kifw5y4h7","name":"","connectorType":"","customType":"","resolution":"","notes":"","type":""}],"dests":[{"id":"iamu4kifw5lyu7","name":"","connectorType":"","customType":"","resolution":"","notes":"","deviceType":""}],"mvs":[]},{"id":"p3","uid":"xlfyxc","name":"Page 3","sources":[{"id":"iamu4kifw5c64p","name":"","connectorType":"","customType":"","resolution":"","notes":"","type":""}],"dests":[{"id":"iamu4kifw5h5lp","name":"","connectorType":"","customType":"","resolution":"","notes":"","deviceType":""}],"mvs":[]}]}}}];
+/* 2026-09-20: the "example is open" message is built from the show that was opened (Town Hall has two destinations, not
+   three), and the phone build has no Save As, so on the phone it points at Send on the Show card instead. */
+function _lbExampleOpenMsg(ex){
+  const st=(ex&&ex.state)||{};
+  const words=['no','one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve'];
+  const cnt=function(n,one,many){ return ((n>=0&&n<words.length)?words[n]:String(n))+' '+(n===1?one:many); };
+  const nd=Array.isArray(st.screens)?st.screens.length:0;
+  const np=Array.isArray(st.presets)?st.presets.length:0;
+  const phone=!!(document.body&&document.body.classList.contains('is-mobile'));
+  return 'This is an example show: '+cnt(nd,'destination','destinations')+', '+cnt(np,'preset','presets')+', the I/O and the wiring all filled in. '
+    +(phone?'Look around and change anything you like. To keep or share the show file, tap Send (the paper plane) on the Show card.':'Look around, then Save As to make it your own.');
+}
 function lbOpenExample(id){
   const ex=_LB_EXAMPLES.find(function(x){ return x.id===id; }); if(!ex) return;
-  const go=function(){ if(typeof closeQS==='function') closeQS(); _fileHandle=null; if(typeof _desktopPath!=='undefined') _desktopPath=null; _applyProjectText(JSON.stringify(ex.state)); if(typeof showAlert==='function') showAlert({variant:'info',title:ex.name+' is open',message:'This is an example show: three destinations, five presets, the I/O and the wiring all filled in. Look around, then Save As to make it your own.'}); };
+  const go=function(){ if(typeof closeQS==='function') closeQS(); _fileHandle=null; if(typeof _desktopPath!=='undefined') _desktopPath=null; _applyProjectText(JSON.stringify(ex.state)); if(typeof showAlert==='function') showAlert({variant:'info',title:ex.name+' is open',message:_lbExampleOpenMsg(ex)}); };
   try{ _recomputeDirty(); }catch(e){}
   if(_isDirty&&typeof showConfirm==='function'){ showConfirm({variant:'warning',title:'Unsaved changes',message:'You have unsaved changes.\nOpen the example and discard them?',confirmLabel:'Open example',onConfirm:go}); return; }
   go();
@@ -28809,12 +28951,25 @@ document.addEventListener('keydown', e => {
     // so a narrow desktop window trips mobile for DevTools testing.
     var phoneLike    = window.matchMedia('(pointer: coarse) and (hover: none)').matches;
     var narrowWindow = window.innerWidth <= 768;
-    var isMobile = phoneLike || narrowWindow;
+    /* Gate rule: the class may only go on when the phone CSS (the three media blocks
+       '(max-width: 768px), (max-height: 600px)') will also be on. A touch device that is wider than 768
+       AND taller than 600 is a tablet: it gets the full desktop layout, not a half-switched phone build.
+       Phone landscape (844x390) is touch + short, so it stays in the phone layout. */
+    var cssGate = window.matchMedia('(max-width: 768px), (max-height: 600px)').matches;
+    var isMobile = narrowWindow || (phoneLike && cssGate);
     // Allow manual override via console for ad-hoc testing:
     //   window.LB_FORCE_MOBILE = true;  → forces mobile mode on
     //   window.LB_FORCE_MOBILE = false; → forces mobile mode off
     if(typeof window.LB_FORCE_MOBILE === 'boolean') isMobile = window.LB_FORCE_MOBILE;
     document.body.classList.toggle('is-mobile', isMobile);
+    /* 2026-09-20: the Quick Start examples hint promises Save As, which the phone does not have. */
+    try{
+      var _qh=document.querySelector('#qs-examples .qs-ex-hint');
+      if(_qh){
+        if(!_qh.dataset.deskText) _qh.dataset.deskText=_qh.textContent;
+        _qh.textContent=isMobile?'Opens a finished show you can explore and change. Or set up a fresh show below.':_qh.dataset.deskText;
+      }
+    }catch(e){}
     // Expose for console / future-feature gating without exporting more
     // globals than necessary. Read via: window.LB_isMobile()
     window.LB_isMobile = function(){ return isMobile; };
@@ -28895,7 +29050,12 @@ document.addEventListener('keydown', e => {
       +     '<div class="mb-empty-sub">Your show canvas is empty</div>'
       +     '<button type="button" class="mb-empty-cta" onclick="openQS()">'
       +       '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right:7px"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>'
-      +       'Click here to start'
+      +       'Tap here to start'
+      +     '</button>'
+      +     '<div class="ob-alt" role="button" tabindex="0" style="margin-top:0;padding:8px 12px" onclick="openQS()">or open an example show</div>'
+      +     '<button type="button" class="mb-empty-open" onclick="mobileOpenShow()">'
+      +       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/><path d="M12 11v6"/><polyline points="9 14 12 17 15 14"/></svg>'
+      +       'Open a show file'
       +     '</button>'
       +   '</div>'
       + '</div>';
@@ -28917,6 +29077,7 @@ document.addEventListener('keydown', e => {
     return ''
       + '<div class="qs-panel qs-cyan mb-guide-card" role="button" tabindex="0" onclick="openQSEdit()" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();openQSEdit();}" aria-label="Show info, tap to edit">'
       +   '<div class="qs-panel-hdr"><div class="qs-strip"></div><h4>Show</h4>'
+      +     '<button type="button" class="mb-guide-send mb-guide-open" onclick="event.stopPropagation();mobileOpenShow()" onkeydown="event.stopPropagation()" title="Open a show file" aria-label="Open a show file"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/><path d="M12 11v6"/><polyline points="9 14 12 17 15 14"/></svg></button>'
       +     '<button type="button" class="mb-guide-send" onclick="event.stopPropagation();shareProject()" title="Send / share this show file" aria-label="Send show file"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>'
       +   '</div>'
       +   '<div class="qs-panel-body">'
@@ -28956,9 +29117,11 @@ document.addEventListener('keydown', e => {
   }
 
   // Per-preset count chips, filling the space to the right of the action
-  // icons. Destinations / AUX / Outputs are global to the show; Layers is
-  // counted PER THIS PRESET (the number that actually varies preset to
-  // preset). Mirrors the desktop stats bar concept.
+  // icons. Destinations is global to the show; AUX, Outs and Layers are counted
+  // PER THIS PRESET: AUX = AUX / DSM outputs switched ON in this preset, Outs =
+  // destinations + those, Layers = layers used in this preset. (The desktop bar is
+  // show-wide: AUX on in any preset, Layers = the busiest preset.) Same pill colours
+  // as the desktop bar: orange / amber / pink / cyan.
   function mbPresetCountLayers(p){
     if(typeof getLayerNums!=='function' || typeof getL!=='function') return 0;
     var nums=getLayerNums(p.id), total=0;
@@ -28968,7 +29131,8 @@ document.addEventListener('keydown', e => {
   }
   function mbPresetStats(p){
     var nd=(typeof screens!=='undefined')?screens.length:0;
-    var na=(typeof dsms!=='undefined')?dsms.length:0;
+    var na=0;
+    if(typeof dsms!=='undefined' && typeof getDSMOn==='function'){ for(var _ai=0;_ai<dsms.length;_ai++){ if(getDSMOn(p.id, dsms[_ai].id)) na++; } }
     var nl=mbPresetCountLayers(p);
     // Mirrors the desktop bottom-bar pills exactly: a 3px colored "pillow"
     // strip + uppercase grey label + white number, same colours.
@@ -28978,8 +29142,8 @@ document.addEventListener('keydown', e => {
     return '<div class="mb-preset-stats">'
       + cell('orange','Dest',   nd)
       + cell('amber', 'AUX',    na)
-      + cell('cyan',  'Outs',   nd+na)
-      + cell('yellow','Layers', nl)
+      + cell('pink',  'Outs',   nd+na)
+      + cell('cyan',  'Layers', nl)
       + '</div>';
   }
 
@@ -29089,7 +29253,11 @@ document.addEventListener('keydown', e => {
     // Stale-guard: if the flag is set but NO panel element actually exists, it
     // got stranded (e.g. navigated away) — clear it and rebuild normally.
     if(window._mbInlinePanelOpen){
-      if(document.getElementById('layer-panel')||document.getElementById('screen-panel')||document.getElementById('dsm-panel')) return;
+      if(document.getElementById('layer-panel')||document.getElementById('screen-panel')||document.getElementById('dsm-panel')){
+        /* the accordion stays paused (the live panel must survive), the picture does not: redraw the visualiser in place */
+        if(typeof window.mbRefreshVis==='function') window.mbRefreshVis();
+        return;
+      }
       window._mbInlinePanelOpen=false; window._mbActiveLayer=null; window._mbActiveDest=null; window._mbActiveAux=null;
     }
     var el = ensureContainer();
@@ -29127,6 +29295,7 @@ document.addEventListener('keydown', e => {
         document.body.classList.remove('mb-detail', 'mb-view');
         document.body.classList.add('mb-layers');
         el.innerHTML = layersViewHTML(lp);
+        mbVisSync();
         return;
       }
       _mbView = 'list';
@@ -29165,6 +29334,31 @@ document.addEventListener('keydown', e => {
     html += '</div>';
     el.innerHTML = html;
   };
+
+  // Open a show file on a phone or tablet (empty state + Show tile, and the desktop Load button when the
+  // device is touch-only). Runs the desktop open flow: the hidden #load-file-input -> loadProjectFile
+  // (unsaved-changes confirm) -> _applyProjectText -> scheduleRender, which rebuilds the phone list for the
+  // opened show. The accept filter is REMOVED here: iOS and Android file pickers grey out extensions they do
+  // not know (.avlb), and loadProjectFile already rejects a wrong file with a plain alert. Inside the desktop
+  // app the native Open dialog is used instead. Mouse / trackpad computers are untouched.
+  var _mbOrigLoadPicker = (typeof window.loadProjectPicker === 'function') ? window.loadProjectPicker : null;
+  function mbTouchOnly(){ return !!(window.matchMedia && window.matchMedia('(pointer: coarse) and (hover: none)').matches); }
+  window.mobileOpenShow = function(){
+    var inp = document.getElementById('load-file-input');
+    var isNative = (typeof _lbNative === 'function' && !!_lbNative());
+    if(isNative || !inp){ if(_mbOrigLoadPicker) _mbOrigLoadPicker(); return; }
+    inp.removeAttribute('accept');
+    inp.value = '';
+    _mbTool = 'presets'; _mbView = 'list'; _mbDetailPid = null; _mbLayersPid = null;
+    inp.click();
+  };
+  if(_mbOrigLoadPicker && !_mbOrigLoadPicker._mbOpenWrapped){
+    window.loadProjectPicker = function(){
+      if(mbTouchOnly() && !(typeof _lbNative === 'function' && _lbNative())){ window.mobileOpenShow(); return; }
+      return _mbOrigLoadPicker.apply(this, arguments);
+    };
+    window.loadProjectPicker._mbOpenWrapped = true;
+  }
 
   // "+ New Preset" tap → reuse the desktop addPreset (deep-copies P01).
   // scheduleRender() rebuilds the mobile list with the new preset appended.
@@ -29207,6 +29401,63 @@ document.addEventListener('keydown', e => {
   // Visual preview of a destination's layers. Stage 2: each PIP can be
   // dragged to move and (when selected) corner-resized — pointer events
   // unify mouse + touch. Boxes positioned from each layer's xf/yf/wf/hf.
+  // Phone visualiser upkeep.
+  // mbRefreshVis() redraws ONLY the sticky visualiser, in place. The accordion and a docked panel are not touched, so the
+  // open panel, the focused field and the scroll position survive. Callers: the renderMobileMain guard while a panel is
+  // docked (every render() lands there), any input / change / click inside a docked panel (for edits that never call
+  // render, e.g. the layer name field), mbMoveDest, and a rotate / resize.
+  // mbVisSync() publishes the visualiser's bottom edge as --mb-vis-stick on #mobile-main (the docked panel header sticks
+  // there in portrait, see the .mb-inline-panel CSS) and watches the visualiser's box for size changes.
+  var _mbVisRO=null, _mbVisSeen=null, _mbVisBusy=false, _mbVisQueued=false;
+  function mbVisSync(){
+    try{
+      var host=document.getElementById('mobile-main'); var vis=host?host.querySelector('.mb-vis'):null; if(!vis) return;
+      var top=parseFloat(getComputedStyle(vis).top); if(!isFinite(top)) top=43;
+      host.style.setProperty('--mb-vis-stick', Math.floor(top+vis.getBoundingClientRect().height)+'px');
+      if(typeof ResizeObserver!=='undefined' && _mbVisSeen!==vis){
+        _mbVisSeen=vis; if(_mbVisRO) _mbVisRO.disconnect();
+        var w0=host.clientWidth;
+        _mbVisRO=new ResizeObserver(function(){
+          if(!vis.isConnected) return;
+          var w=host.clientWidth;
+          if(w && w!==w0){ w0=w; window.mbRefreshVis(); } else mbVisSync();
+        });
+        _mbVisRO.observe(vis);
+      }
+    }catch(_e){}
+  }
+  window.mbRefreshVis = function(){
+    if(_mbVisBusy) return; _mbVisBusy=true;
+    try{
+      if(document.body.classList.contains('is-mobile') && _mbView==='layers' && _mbLayersPid){
+        var host=document.getElementById('mobile-main'); var vis=host?host.querySelector('.mb-vis'):null;
+        var lp=(typeof presets!=='undefined')?presets.find(function(x){ return x.id===_mbLayersPid; }):null;
+        if(vis && lp && host.clientWidth){
+          var html=mbPresetVisual(lp);
+          if(html!==vis._mbSrc){ vis.outerHTML=html; vis=host.querySelector('.mb-vis'); if(vis) vis._mbSrc=html; }
+          mbVisSync();
+        }
+      }
+    }catch(_e){ if(window.console&&console.warn) console.warn('[mobile] mbRefreshVis failed:', _e); }
+    _mbVisBusy=false;
+  };
+  function mbRefreshVisSoon(){
+    if(_mbVisQueued) return; _mbVisQueued=true;
+    var run=function(){ _mbVisQueued=false; window.mbRefreshVis(); };
+    if(typeof requestAnimationFrame==='function') requestAnimationFrame(run); else setTimeout(run,16);
+  }
+  if(!window._mbVisLiveAttached){ window._mbVisLiveAttached=true;
+    /* capture phase: many panel buttons stop propagation. The redraw itself runs a frame later, after the panel's own handler. */
+    ['input','change','click'].forEach(function(evName){
+      document.addEventListener(evName, function(e){
+        if(!window._mbInlinePanelOpen) return;
+        var t=e.target; if(t && t.closest && t.closest('#mobile-main .mb-inline-panel')) mbRefreshVisSoon();
+      }, true);
+    });
+    window.addEventListener('resize', mbRefreshVisSoon);
+    window.addEventListener('orientationchange', function(){ setTimeout(mbRefreshVisSoon,160); });
+  }
+
   // 2026-06-15: whole-preset visualizer for the portrait Video-Presets view.
   // Renders the overview canvas (all destinations + AUX) fit to the phone
   // width by reusing the desktop helpers (_rcScreenBox/_rcChip/renderDSMVisual)
@@ -29217,7 +29468,11 @@ document.addEventListener('keydown', e => {
     function gv(id,d){ var e=document.getElementById(id); return e?(parseInt(e.value)||d):d; }
     var cw=gv('cv-w',1920), ch=gv('cv-h',1080);
     var host=document.getElementById('mobile-main');
-    var avail=((host&&host.clientWidth)||document.documentElement.clientWidth||360)-20;
+    /* Fit INSIDE the .mb-vis box: host width minus the host's own side padding (16 + 16), the .mb-vis padding (8 + 8),
+       the .screens-visual padding (10 + 10) and 2 px of slack. The old "- 20" ignored those paddings, so the canvas came
+       out 48 px wider than the box and the right-most destination was cut. */
+    var _hp=0; try{ var _hcs=host?getComputedStyle(host):null; if(_hcs) _hp=(parseFloat(_hcs.paddingLeft)||0)+(parseFloat(_hcs.paddingRight)||0); }catch(_e){}
+    var avail=((host&&host.clientWidth)||document.documentElement.clientWidth||360)-_hp-38;
     if(avail<220) avail=340;
     var sc=avail/cw;
     var vw=Math.max(80,Math.round(cw*sc)), vh=Math.max(40,Math.round(ch*sc));
@@ -29294,7 +29549,7 @@ document.addEventListener('keydown', e => {
     var h='<div class="mb-le-row mb-le-aux'+(open?' open':'')+'" data-key="'+key+'">';
     h+='<button class="mb-le-head" onclick="mbOpenAuxInline(\''+dsmId+'\')">'
       +  '<span class="mb-le-chev">'+ICON_CHEV+'</span>'
-      +  '<span class="mb-le-icon aux">AUX</span>'
+      +  '<span class="mb-le-icon aux">'+esc((typeof _sysResolveDsmType==='function')?_sysResolveDsmType(d):'AUX')+'</span>'
       +  '<span class="mb-le-name">'+esc(name)+'</span>'
       +  '<span class="mb-le-res">'+res+'</span>'
       +  '<span class="mb-le-sum">'+summary+'</span>'
@@ -29675,8 +29930,7 @@ document.addEventListener('keydown', e => {
     if(window._mbInlinePanelOpen){
       // A panel is open, so renderMobileMain is paused (it would destroy the live
       // panel). Refresh ONLY the visualizer in place so the move is visible.
-      var vis=document.querySelector('#mobile-main .mb-vis');
-      if(vis && typeof mbPresetVisual==='function') vis.outerHTML = mbPresetVisual(lp);
+      if(typeof window.mbRefreshVis==='function') window.mbRefreshVis();
     } else {
       window.renderMobileMain();
     }
@@ -29855,7 +30109,7 @@ document.addEventListener('keydown', e => {
     // Sources
     h+='<div class="mb-io-section"><span class="mb-io-sec-strip mb-io-strip-green"></span>SOURCES <span class="mb-io-sec-count">'+srcNames.length+' total</span></div>';
     if(srcNames.length){ srcNames.forEach(function(n,i){ h+=ioSourceCard(n,i); }); }
-    else { h+='<div class="mb-io-empty">No sources yet, they appear once content is assigned to layers.</div>'; }
+    else { h+='<div class="mb-io-empty">No sources yet. A source shows up here once it is used in a preset (on a layer, as a background, or on an AUX / DSM) or added by hand in the desktop app.</div>'; }
     // Destinations
     h+='<div class="mb-io-section"><span class="mb-io-sec-strip mb-io-strip-orange"></span>DESTINATIONS <span class="mb-io-sec-count">'+dests.length+' total · '+dstSub+'</span></div>';
     if(dests.length){ dests.forEach(function(it){ h+=ioDestCard(it); }); }
@@ -29908,8 +30162,49 @@ document.addEventListener('keydown', e => {
 
   // Called after openWireMode opens the desktop overlay on mobile: force
   // Simple view, bind touch pinch-zoom on the diagram scroller, fit once.
+  /* 2026-09-20: the phone always SHOWS Wire Simple, but it must not rewrite the show's own Simple / Advanced choice
+     (autosave and Send carried 'simple' back to the desktop, so an Advanced show reopened in Simple). While Wire is
+     open on the phone the live setting reads 'simple', so every renderer draws Simple; a non-enumerable toJSON on the
+     settings object keeps the REAL value in everything that gets written (browser draft, Send, Save, undo snapshots,
+     the dirty check). Closing Wire, or leaving the phone layout, puts the real value back. */
+  var _mbWvWant=false, _mbWvHold=null;
+  function mbWvApply(){
+    if(!_mbWvWant) return false;
+    if(!document.body.classList.contains('is-mobile')) return false;
+    if(typeof wireSettings!=='object' || !wireSettings) return false;
+    if(_mbWvHold && _mbWvHold.obj!==wireSettings) _mbWvHold=null;   /* a file load or undo swapped the settings object */
+    if(wireSettings.wireView!=='advanced') return false;
+    var hold=_mbWvHold;
+    if(hold){ hold.val='advanced'; } else { hold=_mbWvHold={obj:wireSettings, val:'advanced'}; }
+    wireSettings.wireView='simple';
+    try{
+      Object.defineProperty(wireSettings,'toJSON',{configurable:true,enumerable:false,writable:true,value:function(){
+        var c={},k; for(k in this){ if(Object.prototype.hasOwnProperty.call(this,k)) c[k]=this[k]; }
+        c.wireView=hold.val; return c;
+      }});
+    }catch(e){ wireSettings.wireView=hold.val; _mbWvHold=null; return false; }
+    return true;
+  }
+  window.mbWireViewForce = function(){ _mbWvWant=true; return mbWvApply(); };
+  window.mbWireViewRelease = function(){
+    var h=_mbWvHold; _mbWvWant=false; _mbWvHold=null;
+    if(!h) return false;
+    try{ delete h.obj.toJSON; }catch(e){}
+    if(h.obj.wireView==='simple') h.obj.wireView=h.val;
+    return true;
+  };
+  (function wrapWireClose(){
+    var orig = window.closeWireMode;
+    if(typeof orig !== 'function'){ document.addEventListener('DOMContentLoaded', wrapWireClose); return; }
+    if(orig._mbWvWrapped) return;
+    var wrapped = function(){ var r = orig.apply(this, arguments); try{ window.mbWireViewRelease(); }catch(e){} return r; };
+    wrapped._mbWvWrapped = true;
+    window.closeWireMode = wrapped;
+  })();
+
   window.mbWireSetupOverlay = function(){
-    if(typeof wireSettings==='object' && wireSettings) wireSettings.wireView='simple';
+    /* normally already applied BEFORE the overlay rendered (see the nav wrap); re-render only if it changed something here */
+    if(window.mbWireViewForce() && typeof _wireRender==='function'){ try{ _wireRender(); }catch(e){} }
     var scroll=_mbWireScroll();
     if(scroll && !scroll._mbWireBound){
       scroll.addEventListener('touchstart', mbWireTouchStart, {passive:false});
@@ -29933,6 +30228,7 @@ document.addEventListener('keydown', e => {
     if(window._origRenderForMobile) return;
     window._origRenderForMobile = window.render;
     window.render = function(){
+      try { mbWvApply(); } catch(e){}
       var result = window._origRenderForMobile.apply(this, arguments);
       try { window.renderMobileMain(); } catch(e) { console.warn('[mobile] renderMobileMain failed:', e); }
       return result;
@@ -29956,6 +30252,7 @@ document.addEventListener('keydown', e => {
           if(tool === 'wire'){
             // Wire uses the REAL desktop overlay (restyled for mobile).
             document.body.classList.add('mb-wire-active'); // gates the rotate prompt
+            if(typeof window.mbWireViewForce === 'function'){ try{ window.mbWireViewForce(); }catch(e){} }
             var r = orig.apply(this, arguments);   // opens #wire-overlay + renders it
             if(typeof _topbarSetActiveView === 'function') _topbarSetActiveView('wire');
             if(typeof window.mbWireSetupOverlay === 'function') window.mbWireSetupOverlay();
@@ -29994,6 +30291,7 @@ document.addEventListener('keydown', e => {
     var now = document.body.classList.contains('is-mobile');
     if(now !== lastIsMobile){
       lastIsMobile = now;
+      if(!now){ try{ if(window.mbWireViewRelease() && typeof _wireRefreshIfOpen==='function') _wireRefreshIfOpen(); }catch(e){} }
       try { window.renderMobileMain(); } catch(e){}
     }
   });

@@ -4,13 +4,14 @@
 //   node tests/run_smoke.mjs              compare deploy/lookbook_builder.html against tests/golden/  (exit 1 on any diff)
 //   node tests/run_smoke.mjs --golden     rebuild tests/golden/ from the current file (only from a version you trust)
 //   node tests/run_smoke.mjs --flows-only skip the three snapshots, run only the user-flow checks (faster while working)
+//   node tests/run_smoke.mjs --no-mobile  skip the phone stage (tests/run_mobile_stage.mjs: the phone build under phone emulation)
 //
 // Two probes run inside the real app in headless Chrome:
 //   tests/smoke_probe.js  snapshots what each example show PRODUCES (model, layouts, exports, wire labels)
 //   tests/flows_probe.js  DRIVES the app like a user in Simple and Advanced across all three tools and asserts results
 // Page errors (exceptions, console.error) raised anywhere during the run are collected and compared too.
 // A flow check that already fails at the trusted version sits in the golden as a KNOWN ISSUE and is listed every run.
-import { spawn } from 'node:child_process';
+import { spawn, spawnSync } from 'node:child_process';
 import { readFileSync, writeFileSync, mkdirSync, existsSync, rmSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -24,6 +25,7 @@ const SHOWS = ['general-session', 'awards-night', 'town-hall'];
 const PORT = 8097, CDP = 9343;
 const golden = process.argv.includes('--golden');
 const flowsOnly = process.argv.includes('--flows-only');
+const noMobile = process.argv.includes('--no-mobile');
 const CHROME = process.env.LB_CHROME || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
 
 const sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -180,5 +182,10 @@ try {
 } catch (e) {
   failed = true; console.log('✗ smoke run failed: ' + e.message);
 } finally { cleanup(); }
+// the phone build: its own page load under phone emulation, real touch taps, its own golden (tests/golden/mobile.json)
+if (!noMobile) {
+  const m = spawnSync(process.execPath, [join(ROOT, 'tests', 'run_mobile_stage.mjs'), '--quiet'].concat(golden ? ['--golden'] : []), { stdio: 'inherit' });
+  if (m.status !== 0) failed = true;
+}
 console.log(golden ? 'goldens in tests/golden/' : (failed ? 'SMOKE: FAIL' : 'SMOKE: PASS'));
 process.exit(failed && !golden ? 1 : 0);

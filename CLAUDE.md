@@ -16,7 +16,8 @@ the Excel cue sheet, the I/O Excel, the Wire drawing, and Send. (A CSV exporter 
   `welcome-preload.js`, `welcome.html`, `build/` icons. `package.json` version must equal the tag.
 - `.github/workflows/release.yml` — builds Mac + Windows installers on every `v*` tag; tags with a `-` are pre-releases.
 - `tests/` — the regression gate: `run_smoke.mjs`, `smoke_probe.js` (what each example show produces),
-  `flows_probe.js` (drives the app like a user, Simple + Advanced, all three tools), `golden/`.
+  `flows_probe.js` (drives the app like a user, Simple + Advanced, all three tools), `mobile_probe.js` +
+  `run_mobile_stage.mjs` (the phone build at 390x844 and 844x390 with real touch taps), `golden/`.
 - `tools/` — `check_js.py` (run after every page edit), `cdp.mjs` (drive the dev shell).
 - `deploy/quick_guide.html` / `.pdf` — the Quick Guide. `deploy/landing-*.html`, `site/` — website blocks, the download
   counter and the example packets (`site/packets/`).
@@ -26,7 +27,8 @@ the Excel cue sheet, the I/O Excel, the Wire drawing, and Send. (A CSV exporter 
 - `private/` — git-ignored; a dated copy of the assistant's memory folder lives here. The repo is PUBLIC.
 - `Test AV Look Book.command` — the owner's double-click launcher for the TEST copy (dev shell from this folder, own
   data folder). He tests every change there before anything is pushed or released (RELEASE.md).
-- `HANDBOOK.md` (how to work), `RELEASE.md` (the release gate). `app/` and the old Netlify site are retired.
+- `HANDBOOK.md` (how to work), `RELEASE.md` (the release gate), `PHONE.md` (the phone / tablet build: purpose, rules,
+  traps, how it is tested). `app/` and the old Netlify site are retired.
 
 To test, serve `deploy/` (`python3 -m http.server 8090 --directory deploy`) and open the page in Chrome. No build step.
 

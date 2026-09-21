@@ -102,4 +102,6 @@ anchor on the function name and replace the first occurrence after it, never all
   same folder as before (the home folder) to keep it, and keep this handbook current so the repo alone is enough.
 
 ---
+Phone / tablet build: read `PHONE.md` before touching anything under `initMobileShell` or the `body.is-mobile` CSS.
+
 Reading receipt: **HANDBOOK-12G-SDI**. Report this code to the owner after reading this handbook in full.
