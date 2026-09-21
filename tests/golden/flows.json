@@ -153,6 +153,10 @@
    "ok": true
   },
   {
+   "name": "Advanced: the transport strip keeps every key and both clocks inside it (it tightens, then wraps, never cuts)",
+   "ok": true
+  },
+  {
    "name": "Advanced: the Preset group has its own 30 / 20 / 10 and they move every clip to its last seconds",
    "ok": true
   },

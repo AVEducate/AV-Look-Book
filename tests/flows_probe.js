@@ -351,6 +351,10 @@
       const lit = $$('.fs-tl-bar button.on, .fs-tl-bar .on').length; const playing = $$('video').some(v => !v.paused); _fsPauseAll(); await wait(200);
       return is([playing, lit > 0], [true, true], 'playing / a lit key');
     });
+    await check('Advanced: the transport strip keeps every key and both clocks inside it (it tightens, then wraps, never cuts)', () => {
+      const bar = $('.fs-tl-bar'); if (!bar) return 'no transport strip'; const br = bar.getBoundingClientRect(); const out = [...bar.children].filter(e => { const r = e.getBoundingClientRect(); return r.width > 0 && (r.right > br.right + 1 || r.left < br.left - 1); }).map(e => e.id || e.className);
+      return is([out, bar.scrollWidth <= bar.clientWidth + 1, !!$('#fs-tl-rem'), !!$('#fs-tl-in'), !!$('#fs-tl-p10')], [[], true, true, true, true], 'parts outside the strip / no sideways overflow / count-down clock / Mark In / Preset 10');
+    });
     await check('Advanced: the Preset group has its own 30 / 20 / 10 and they move every clip to its last seconds', async () => {
       const keys = ['fs-tl-p30', 'fs-tl-p20', 'fs-tl-p10'].map(id => $('#' + id)); if (keys.some(k => !k)) return 'no Preset 30 / 20 / 10 keys'; const after = $('#fs-tl-ppause'); const placed = keys[0].getBoundingClientRect().left >= after.getBoundingClientRect().right - 1;
       _fsPauseAll(); await wait(150); const vids = Object.keys(_fsVideoEls).map(k => _fsVideoEls[k]).filter(v => isFinite(v.duration) && v.duration > 0); if (!vids.length) return 'no clip mounted';
