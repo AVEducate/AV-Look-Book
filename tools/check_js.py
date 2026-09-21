@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Post-edit check for deploy/lookbook_builder.html. Run after EVERY edit to the page:
 
-    python3 tools/check_js.py
+    python3 tools/check_js.py [path-to-another-copy-of-the-page]
 
 It extracts each inline <script> block, runs `node --check` on it, counts braces and parens, looks for duplicate
 top-level function names beyond the known harmless set, and prints the build stamp. Exit code 1 on a syntax error,
@@ -12,7 +12,7 @@ Reading receipt: BRACES-BALANCED (report after reading this file).
 import re, subprocess, collections, sys, os, tempfile
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-PAGE = os.path.join(ROOT, 'deploy', 'lookbook_builder.html')
+PAGE = sys.argv[1] if len(sys.argv) > 1 else os.path.join(ROOT, 'deploy', 'lookbook_builder.html')   # an optional path checks a scratch copy (it used to be ignored silently)
 KNOWN_DUPS = set('_c close esc esc2 find mv newPage nl pillStyle place union up'.split())
 
 s = open(PAGE, encoding='utf-8').read()

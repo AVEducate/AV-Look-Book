@@ -85,7 +85,7 @@
    "ok": true
   },
   {
-   "name": "Simple: Destination Properties Apply is one undo step, Undo brings back size, position and rotation together and nothing older",
+   "name": "Simple: Destination Properties Apply is one undo step, Undo brings back size, position and rotation together and nothing older (the Apply lands 40 px on the neighbour: refused with no undo step while Blend Zones is off, accepted through \"Add to blend\" with it on)",
    "ok": true
   },
   {
@@ -134,6 +134,126 @@
   },
   {
    "name": "Simple: a table note or P# edit is one undo step, a per-preset destination name shows on that preset's canvas, and the blend window shows all four digits of a resolution",
+   "ok": true
+  },
+  {
+   "name": "Pixel-Feet: the default is 16 PPI (1 foot = 192 px), a stored 96 PPI is kept, Reset returns to 16 / 192, and Help says 192",
+   "ok": true
+  },
+  {
+   "name": "Dead Space: a 576 px gap reads 3.00 FT, and 2 typed in FT makes the gap 384 px in one undo step",
+   "ok": true
+  },
+  {
+   "name": "Dead Space: a gap too narrow for the one-line read-out stacks FT under PX (centred, inside its box, large-gap mark kept, both boxes still set the gap), a roomy gap keeps one line, and five destinations stay readable",
+   "ok": true
+  },
+  {
+   "name": "Look Book: a printed dead-space read-out stacks only when its text does not fit the gap, feet follow 192 px per foot, and no number box or large-gap mark is printed",
+   "ok": true
+  },
+  {
+   "name": "move arrows: on a blended pair the ◀ sits on the far left of the left member and the ▶ on the far right of the right member, whichever member is picked; no arrow lies over the blend zone, nothing covers a live arrow, and a press still moves the pair one slot in one undo step",
+   "ok": true
+  },
+  {
+   "name": "move arrows: three blended destinations keep ◀ ▶ on the outer edges from every member (never over either blend zone) and a press moves all three as one block past a fourth destination",
+   "ok": true
+  },
+  {
+   "name": "move arrows: on the Advanced page a blended pair has the same outer-edge ◀ ▶ at two zoom levels, only ◀ ▶ are drawn, nothing covers the live arrow and a press moves the pair",
+   "ok": true
+  },
+  {
+   "name": "no overlap rule: a typed X onto the neighbour is BLOCKED by one \"Destinations can't overlap\" alert while Blend Zones and Free Position are both off (the pair and the preset are named, nothing moves, no undo step, the unsaved marker does not change); it asks \"Create Blend Zone?\" with Free Position on, with Blend Zones on and with both on; the same on the Advanced page",
+   "ok": true
+  },
+  {
+   "name": "no overlap rule: an arrow key held down on a destination that has a second row under it raises ONE alert, not a pile: the size goes back, OK changes nothing, no undo step is left, and a second guarded change made while the alert is still up is put back silently",
+   "ok": true
+  },
+  {
+   "name": "unsaved: the first look at Wire (random cable colours) leaves a clean show clean, and the colours stay in the show for the next save",
+   "ok": true
+  },
+  {
+   "name": "unsaved: Wire view settings (zoom, tool, folded panes, collapsed side panel) never light Save and are still written to the show file",
+   "ok": true
+  },
+  {
+   "name": "unsaved: the first look at Wire Advanced (page 1 built from Simple) and its page tabs leave the show clean, and so does Undo back past it",
+   "ok": true
+  },
+  {
+   "name": "unsaved: I/O Patch Advanced (first look: page 1 built from Simple), its page tabs and the way back to Simple leave the show clean",
+   "ok": true
+  },
+  {
+   "name": "unsaved: after the first looks a real edit still lights Save inside a second, looking again never clears it, and Undo returns to clean",
+   "ok": true
+  },
+  {
+   "name": "unsaved: a real change made in the very same tick as a first look is never hidden, whichever comes first",
+   "ok": true
+  },
+  {
+   "name": "unsaved: New after only looking asks the plain question; after a real edit it warns about unsaved changes",
+   "ok": true
+  },
+  {
+   "name": "unsaved: a Look Book with a wire sheet (Advanced, then Simple) and the Wire export window leave a clean show clean",
+   "ok": true
+  },
+  {
+   "name": "unsaved 2: a saved show with PBP A / GFX A content stays clean when I/O Patch opens (the automatic B twin), and the twin waits in the show for the next save",
+   "ok": true
+  },
+  {
+   "name": "unsaved 2: after a look at Wire, I/O Patch copies GFX B into the content library without lighting Save",
+   "ok": true
+  },
+  {
+   "name": "unsaved 2: straight after launch the blank show has its MV 1 before any look, and the first look at I/O Patch leaves it clean",
+   "ok": true
+  },
+  {
+   "name": "unsaved 2: a show WITHOUT a multiviewer (the launch state of older builds) stays clean when I/O Patch puts MV 1 back",
+   "ok": true
+  },
+  {
+   "name": "unsaved 2: a destination renamed and saved stays clean when Wire Advanced is looked at; the switcher cell follows the rename in the same undo step",
+   "ok": true
+  },
+  {
+   "name": "unsaved 2: a destination renamed and saved stays clean when I/O Patch Advanced is looked at, and the old name does not come back as an I/O-only destination",
+   "ok": true
+  },
+  {
+   "name": "unsaved 2: a show file from an older build (stale switcher cell, unsettled cells, a dead cable, duplicate custom source names) stays clean through Wire Advanced and I/O Patch Advanced",
+   "ok": true
+  },
+  {
+   "name": "unsaved 2: opening the Backup window (it pairs \"X A\" / \"X B\" rows by itself) leaves a saved show clean, and a pair set by hand still lights Save",
+   "ok": true
+  },
+  {
+   "name": "unsaved 2: an older show whose clip lacks its codec info is opened: the info is filled in a moment later and Save stays clean",
+   "ok": true
+  },
+  {
+   "name": "unsaved 2: visiting everything (every tool, view, page tab and window) on all three examples stays clean, as shipped and with GFX A / GFX B / PBP A / PBP B saved into them",
+   "ok": true
+  },
+  {
+   "name": "move arrows: a blended destination that is REMOVED FROM THIS PRESET and picked from its table row still shows the live ▶ on the outer edge of its partner, nothing covers it, and a press moves the pair",
+   "ok": true
+  },
+  {
+   "name": "Pixel-Feet: Help shows the value IN FORCE: with 96 PPI stored the field reads 96 and \"1 ft = 1152 px\" when Help is opened, with nothing stored it reads 16 and 192",
+   "ok": true
+  },
+  {
+   "name": "no overlap rule: a REFUSED change keeps the Redo history (\"Nothing was changed\" includes Redo): edit, Undo, then a typed X onto the neighbour is refused and Redo still brings the edit back",
    "ok": true
   },
   {
@@ -301,6 +421,10 @@
    "ok": true
   },
   {
+   "name": "Advanced: the dead-space read-out makes the same choice at 100% and zoomed in (narrow gap stacked, roomy gap one line), stays centred on the gap, and a typed PX still sets the gap",
+   "ok": true
+  },
+  {
    "name": "Advanced: dragging a destination in Free Position does not pan the view, and the red snap guide sits on the snapped edge",
    "ok": true
   },
@@ -329,23 +453,23 @@
    "ok": true
   },
   {
-   "name": "no overlap: a typed X in Destination Properties that lands on the neighbour asks \"Create Blend Zone?\"; Cancel puts it back with no undo step; Add to blend is ONE undo step, marks the show unsaved and survives save + reload without a question",
+   "name": "no overlap: a typed X in Destination Properties that lands on the neighbour is BLOCKED while Blend Zones is off (nothing moves, no undo step); with Blend Zones on it asks \"Create Blend Zone?\"; Cancel puts it back with no undo step; Add to blend is ONE undo step, marks the show unsaved and survives save + reload without a question",
    "ok": true
   },
   {
-   "name": "no overlap: a typed Rotation whose tilted footprint reaches the neighbour asks; Cancel takes the rotation back with no undo step; a 90 degree turn on a clean strip still re-packs without a question",
+   "name": "no overlap: a typed Rotation whose tilted footprint reaches the neighbour is BLOCKED while Blend Zones is off (rotation back, no undo step) and asks with Blend Zones on; Cancel takes the rotation back with no undo step; a 90 degree turn on a clean strip still re-packs without a question or an alert",
    "ok": true
   },
   {
-   "name": "no overlap: a pasted position that sits on another destination asks; Cancel puts it back with no undo step and the panel closes",
+   "name": "no overlap: a pasted position that sits on another destination is BLOCKED while Blend Zones is off and asks with Blend Zones on; either way it is back where it was with no undo step and the panel closes",
    "ok": true
   },
   {
-   "name": "no overlap: with a second row under destination 1, a height change (corner handle, typed H, I/O Patch resolution) that would drop the row onto the strip asks each time, and Cancel puts every destination back",
+   "name": "no overlap: with a second row under destination 1, a height change (corner handle, typed H, I/O Patch resolution) that would drop the row onto the strip is BLOCKED each time while Blend Zones is off and asks each time with Blend Zones on; every destination is back afterwards with no undo step",
    "ok": true
   },
   {
-   "name": "no overlap: a wider Dead Space value that pushes a destination onto the next one asks, and so does putting a removed destination back into a slot that was taken; Cancel undoes both",
+   "name": "no overlap: a wider Dead Space value that pushes a destination onto the next one, and putting a removed destination back into a slot that was taken, are both BLOCKED while Blend Zones is off and both ask with Blend Zones on; everything is back afterwards with no undo step",
    "ok": true
   },
   {

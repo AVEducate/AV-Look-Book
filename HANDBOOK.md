@@ -86,14 +86,31 @@ anchor on the function name and replace the first occurrence after it, never all
   Presets, because a source is ONE thing (name, cover, cable type, resolution) shown in several places, which is why it is
   drag-and-drop. Every page after page 1 is a CUSTOM build that feeds nothing back. Random cable colours on the first look
   at Wire are intended; a colour the user picked must never change again.
+- **Looking is not a change** (owner, 2026-09-21). Save turns gold, and New / Load / close ask, ONLY after a real edit. Opening Wire,
+  I/O Patch or Advanced, a Look Book with a wire sheet, zoom, tool, folded panes, page tabs and Simple / Advanced never do. View
+  settings are still written to the show file; they are only left out of the unsaved comparison (`_LB_DIRTY_VIEW_KEYS`). What the app
+  fills in by itself on a first look goes through `_lbNotAChange(fn)` and is written with the next save (the desktop app also writes
+  it with the 30 s autosave and when the window closes). Testing it: the `unsaved:` checks in `tests/flows_probe.js`; a new
+  automatic write shows up there as a gold Save after only looking. Consequence to know: in the browser edition, first-look colours
+  that were never saved are picked again (new random ones) the next time the file is opened.
 - **The arrow KEYS on a picked destination RESIZE it 1 px (Shift 10)**, in Simple and in Advanced: an accessibility feature
   from 2026-06-01, kept on purpose (owner 2026-09-21: "keep this the way it is"). The on-canvas ◀ ▶ are what SWAP a
-  destination with its neighbour. The key resize goes through `updateScreenSize` (neighbours are pushed along) so it can
+  destination with its neighbour. On a blended group (one block, `_lbMvBlocks`) they are drawn on the group's OUTER
+  edges, ◀ far left of the left-most member and ▶ far right of the right-most member, whichever member is picked, and
+  never over the blend zone (blend-arrows, owner 2026-09-21). A destination that is not blended keeps `left:6px` / `right:6px`.
+  The key resize goes through `updateScreenSize` (neighbours are pushed along) so it can
   never park a destination on another one; a burst of presses is one undo step.
 - **The Modifiers menu** (AOI Overlays, Blend Zones, Dead Space, Free Position, Fit Canvas) opens from the MODIFIERS button
   on each preset tile only. The status-bar button that also opened it is now a greyed-out **Educator** placeholder
   (`#tb-educator`, disabled) for a future build. The switches are one session-wide view state: not per preset, not in the
   show file, all OFF at every launch (`loadAdvSettings`, a deliberate 2026-06-02 decision).
+- **Dead Space feet: 16 PPI by default, 1 foot = 192 px** (owner 2026-09-21: the most common LED tile is 192 px per foot;
+  it was 96 PPI / 1152 px). `_PPI`, the `setA11yPPI` fallback, `resetA11y` and the Help text all say 16 / 192. A PPI the
+  user stored (`localStorage lookbook_a11y_settings`, `s.ppi`) is KEPT by `_loadPPI`: never migrate it. The left / right
+  read-out drawn by `_rcDeadVis` STACKS (PX over FT) only when the gap is narrower than the one-line read-out: on screen that
+  is a fixed 132 px (144 with the large-gap mark), printed it is text (44 px + 6 px a character; the Look Book passes
+  `_print`). The Advanced zoom is a CSS scale of the whole tile, so zooming never changes the choice. Inline styles only:
+  CSS rules with `dead-` in the selector are copied into every exported Look Book. Top / bottom gaps are left as they were.
 - **Before building anything the owner recommends, check it against the rules already in place** (this section, the
   manual, the build log) and TELL HIM FIRST when it would break one or change something that was put in on purpose
   (example: the arrow-key resize of a destination was an accessibility feature added 2026-06-01, not an accident).
@@ -109,8 +126,10 @@ anchor on the function name and replace the first occurrence after it, never all
 - Wire cables are always orthogonal; there is no style choice anywhere, including the Look Book export window.
 - No accidental overlaps (owner rule, 2026-09-21): a destination never lands on another one, Simple or Advanced, unless the user came
   through a blend control. Any code that writes a destination position, size or rotation outside a blend control brackets itself with
-  `const t=_ovlBegin();` ... `_ovlEnd(t);`. A NEW overlapping pair in any preset raises "Create Blend Zone?"; Cancel restores the
-  pre-action snapshot and drops the undo step. The one geometric test is `_overlapPairsForPreset(p)`. Never call the guard on load.
+  `const t=_ovlBegin();` ... `_ovlEnd(t);`. A NEW overlapping pair in any preset is BLOCKED while Blend Zones and Free
+  Position are both off (owner, 2026-09-21: "if its off that isnt an option, unless they are in FREE GRID then you need to ask"): the
+  pre-action snapshot comes back, no undo step, one alert "Destinations can't overlap". With Free Position on, or Blend Zones on, it
+  raises "Create Blend Zone?"; Cancel restores the pre-action snapshot and drops the undo step. The one geometric test is `_overlapPairsForPreset(p)`. Never call the guard on load.
 - A new router / switcher is placed by `_wireAdvFreeSpot` (never on another tile); a tile that grows pushes the tiles
   stacked under it down (`_wireAdvPushBelow`).
 - THE NAME: the product is "AV Look Book". The page's `<title>` and every `document.title` still end in

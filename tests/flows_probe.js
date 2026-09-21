@@ -224,15 +224,22 @@
     if (hid) toggleAdvFeature('aoi');   // the view switch is remembered per browser: leave it as it was
     await restore(); return out;
   });
-  await check('Simple: Destination Properties Apply is one undo step, Undo brings back size, position and rotation together and nothing older', async () => {
+  // REPLACES (Simple section, not the no-overlap block): 'Simple: Destination Properties Apply is one undo step, Undo brings back size, position and rotation together and nothing older'
+  await check('Simple: Destination Properties Apply is one undo step, Undo brings back size, position and rotation together and nothing older (the Apply lands 40 px on the neighbour: refused with no undo step while Blend Zones is off, accepted through "Add to blend" with it on)', async () => {
     const p = presets[1].id, sid = screens[0].id; const S = () => screens.find(x => x.id === sid), P = () => presets.find(x => x.id === p);
+    const blendIs = () => !document.body.classList.contains('adv-hide-blend'), blendSet = on => { if (blendIs() !== on) actions.toggleAdvFeature('blend'); closeAdvancedMenu(); }; const wasBlend = blendIs(), wasFree = document.body.classList.contains('adv-free-position');
+    if (wasFree) actions.toggleAdvFeature('freePos'); blendSet(false);
     pushUndo(); setL(p, sid, 2, 'CLOCK'); scheduleRender(); await wait(200);   // an older edit that Undo must NOT touch
-    openScreenPanel(fakeEv, p, sid); await wait(400); const pop = $('#screen-panel'); if (!pop) return 'Destination Properties did not open';
-    const n = _undoStack.length; $('#sp-w', pop).value = '2000'; $('#sp-h', pop).value = '1200'; $('#sp-x', pop).value = '40'; $('#sp-rot', pop).value = '90';
-    $('#sp-apply', pop).click(); await wait(400); okDialogs(); await wait(300);
+    const fill = async () => { openScreenPanel(fakeEv, p, sid); await wait(400); const pop = $('#screen-panel'); if (!pop) return false; $('#sp-w', pop).value = '2000'; $('#sp-h', pop).value = '1200'; $('#sp-x', pop).value = '40'; $('#sp-rot', pop).value = '90'; $('#sp-apply', pop).click(); await wait(400); return true; };
+    const keep = async () => { if (dlgOpen() && /Keep your layout/.test(dialogText())) { $('#dlg-confirm').click(); await wait(500); } };   // the quarter turn on a moved destination asks "Keep your layout?" first; "Keep my layout" is what okDialogs() always pressed here, and the overlap guard runs after that answer
+    const n = _undoStack.length; if (!(await fill())) { blendSet(wasBlend); if (wasFree) actions.toggleAdvFeature('freePos'); return 'Destination Properties did not open'; } await keep();
+    const refused = [dlgOpen() && /Destinations can.t overlap/.test(dialogText()) && !$('#dlg-cancel'), parseInt(S().w), parseInt(S().h), getRotation(p, sid), _undoStack.length - n, getL(p, sid, 2)];
+    if (dlgOpen()) { ($('#dlg-cancel') || $('#dlg-confirm')).click(); await wait(400); }   // OK on the alert; on a page that still asks, Cancel (never "Add to blend")
+    blendSet(true); await wait(150); await fill(); await keep(); const asked = dlgOpen() && /Create Blend Zone/.test(dialogText()); okDialogs(); await wait(400);   // Blend Zones on: "Create Blend Zone?" comes up and okDialogs() presses Add to blend, as this check always did
     const applied = [parseInt(S().w), parseInt(S().h), getRotation(p, sid)], steps = _undoStack.length - n;
     doUndo(); await wait(300); const back = [parseInt(S().w), parseInt(S().h), (P().positions[sid] || {}).x, getRotation(p, sid), getL(p, sid, 2)];
-    const out = is([applied, steps, back], [[2000, 1200, 90], 1, [1920, 1080, 0, 0, 'CLOCK']], 'applied / undo steps / after one Undo'); await restore(); return out;
+    blendSet(wasBlend); if (wasFree) actions.toggleAdvFeature('freePos'); closeAdvancedMenu();
+    const out = is([refused, asked, applied, steps, back], [[true, 1920, 1080, 0, 0, 'CLOCK'], true, [2000, 1200, 90], 1, [1920, 1080, 0, 0, 'CLOCK']], 'refused with Blend Zones off (alert, W, H, rotation, undo steps, older edit) / asked with it on / applied / undo steps / after one Undo'); await restore(); return out;
   });
   await check('Simple: Destination Properties copies and pastes Size, Position and Rotation between destinations and presets, resets them, shows the aspect ratio', async () => {
     const a = { p: presets[1].id, s: screens[1].id }, b = { p: presets[2].id, s: screens[0].id }; const S = () => screens.find(x => x.id === b.s), P = () => presets.find(x => x.id === b.p);
@@ -361,6 +368,470 @@
     openBlendPopup(p.id, screens[0].id, screens[1].id); await wait(250); const cut = $$('.blend-popup input[onchange*="setDestResFromPopup"]').filter(i => i.scrollWidth > i.clientWidth + 1).length; closeBlendPopup(); document.body.classList.toggle('adv-hide-blend', wasB);
     out.push(cut); await restore();
     return is(out, [1, 'NEW NOTE', true, 'PANEL WALL', true, 0], 'note undo steps, note / every row of that destination follows / per-preset name on its canvas, first preset keeps the global name / resolution fields cut off');
+  });
+
+  // ── Dead Space: 16 PPI default and the stacked read-out (round 16kr, dead-space, owner report 2026-09-21) ───────────
+  // BLOCK A (the ds* helpers + four checks): INSERT in the Simple section of tests/flows_probe.js, BEFORE the line
+  //   "// ── Video Presets, Advanced"   (later setup loads test media; these checks need none).
+  // BLOCK B (one check, marked below): INSERT in the section "Video Presets canvas: blends, dead space, destination drag,
+  //   Fit Canvas", straight AFTER the check 'Dead Space: a gap over 500 px carries the "Large gap, check alignment" mark, ...'.
+  //   It uses the ds* helpers of Block A, which sit earlier in the same function, so Block A must go in too.
+  // Every check fails on build 16kq and passes with patch.py applied (run_checks.mjs proves both). Each one puts back what it
+  // touches: the Dead Space switch, the stored Pixel-Feet setting (localStorage lookbook_a11y_settings), the zoom, the show.
+  // Synthetic events on purpose (the probe runs inside the page); the same flows were driven with real clicks and keys in proof.mjs.
+  const dsAdv = (f, on) => { const isOn = !document.body.classList.contains('adv-hide-' + f); if (isOn !== on) actions.toggleAdvFeature(f); closeAdvancedMenu(); return isOn; };
+  const dsLay = async gaps => { const p = presets[0]; let x = 0; screens.forEach((s, i) => { setPosition(p, s.id, x, 0); x += getEffectiveDims(s, p.id).w + (gaps[i] || 0); }); render(); await wait(250); if (fsPresetId) { renderFullscreen(); await wait(250); } };
+  const dsGap = i => { const p = presets[0]; return p.positions[screens[i + 1].id].x - (p.positions[screens[i].id].x + getEffectiveDims(screens[i], p.id).w); };
+  const dsBoxes = root => $$('.preset-row[data-pid="' + presets[0].id + '"] .dead-vis', root).filter(v => $('input[data-dir="h"]', v));
+  // one word per left / right read-out, measured ON SCREEN: 'stacked' or 'one line', plus whatever is wrong with it
+  const dsRead = (root, hitTest) => dsBoxes(root).map(v => {
+    const l = $('.dead-label', v), ins = $$('input', l), w = $('.gap-warn', l), R = e => e.getBoundingClientRect(); const V = R(v), L = R(l), A = R(ins[0]), B = R(ins[1]);
+    const t = 1.5 * Math.max(1, V.width / (v.offsetWidth || 1)), stacked = B.top >= A.bottom - t, bad = [];
+    if (Math.abs((L.left + L.right) / 2 - (V.left + V.right) / 2) > t) bad.push('off centre');
+    if (L.top < V.top - t || L.bottom > V.bottom + t) bad.push('outside its box');
+    if (hitTest && !ins.every(i => { const r = R(i); return document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2) === i; })) bad.push('a number box is covered');
+    if ((parseInt(ins[0].value, 10) > 500) !== !!(w && R(w).width > 0 && R(w).right <= L.right + t)) bad.push('large-gap mark wrong');
+    if (stacked) { if (Math.abs(A.left - B.left) > t) bad.push('FT is not under PX'); if (v.offsetWidth >= 150) bad.push('stacked with room to spare'); }
+    else { if (Math.abs(A.top - B.top) > t) bad.push('neither stacked nor one line'); if (L.width > V.width + t) bad.push('wider than the gap'); }
+    return (stacked ? 'stacked' : 'one line') + (bad.length ? ': ' + bad.join(', ') : '');
+  });
+  // the Pixel-Feet DEFAULT, reached the way the Reset button reaches it; the returned function puts the user's own setting back
+  const dsDefaultPPI = () => {
+    const raw = localStorage.getItem(_A11Y_KEY), keep = _PPI, zoom = document.body.style.zoom, cls = ['a11y-reduce-motion', 'a11y-high-contrast'].filter(c => document.body.classList.contains(c));
+    resetA11y();
+    return () => { if (raw === null) localStorage.removeItem(_A11Y_KEY); else localStorage.setItem(_A11Y_KEY, raw); _PPI = keep; document.body.style.zoom = zoom; cls.forEach(c => document.body.classList.add(c)); try { _a11yReflectActive(); } catch (e) {} scheduleRender(); };
+  };
+
+  await check('Pixel-Feet: the default is 16 PPI (1 foot = 192 px), a stored 96 PPI is kept, Reset returns to 16 / 192, and Help says 192', async () => {
+    const back = dsDefaultPPI(); await wait(150); const field = $('#a11y-ppi-input'), lbl = $('#a11y-px-per-ft');
+    const reset = [_PPI, _pxPerFoot(), _pxToFt(576), _ftToPx(2), field.value, lbl.textContent, _a11yLoad().ppi === undefined];
+    const s = _a11yLoad(); s.ppi = 96; _a11ySave(s); _loadPPI(); const stored = [_PPI, _pxPerFoot(), _pxToFt(576)];   // what a user who set 96 before the update has on disk
+    field.value = ''; fire(field, 'change'); await wait(100); const empty = [_PPI, lbl.textContent];                     // an emptied field falls back to the default
+    const help = ($('#help-overlay').textContent || '').replace(/\s+/g, ' '); const text = [/16 PPI/.test(help), /1 foot = 192 pixels/.test(help), /96 PPI|1,152/.test(help)];
+    back(); await wait(150);
+    return is({ reset, stored, empty, text }, { reset: [16, 192, '3.00', 384, '16', '192', true], stored: [96, 1152, '0.50'], empty: [16, '192'], text: [true, true, false] },
+      'after Reset [PPI, px per foot, 576 px in ft, 2 ft in px, field, read-out, nothing stored] / with 96 stored / field emptied / Help text [16 PPI, 192, old numbers left]');
+  });
+  await check('Dead Space: a 576 px gap reads 3.00 FT, and 2 typed in FT makes the gap 384 px in one undo step', async () => {
+    const back = dsDefaultPPI(); const was = dsAdv('dead', true); await dsLay([576, 3000]);
+    const v = dsBoxes($('#canvas-area'))[0]; if (!v) { dsAdv('dead', was); back(); await restore(); return 'no dead-space read-out on the tile'; }
+    const ins = $$('input', v); const shown = [ins[0].value, ins[1].value]; const u0 = _undoStack.length;
+    ins[1].value = '2'; fire(ins[1], 'change'); await wait(300); const asked = dlgOpen(); if (asked) { $('#dlg-cancel').click(); await wait(300); }
+    const g = dsGap(0), steps = _undoStack.length - u0; doUndo(); await wait(300); const undone = dsGap(0);
+    dsAdv('dead', was); back(); await restore();
+    return is([shown, asked, g, steps, undone], [['576', '3.00'], false, 384, 1, 576], 'PX and FT shown / a dialog came up / gap after 2 FT / undo steps / gap after undo');
+  });
+  await check('Dead Space: a gap too narrow for the one-line read-out stacks FT under PX (centred, inside its box, large-gap mark kept, both boxes still set the gap), a roomy gap keeps one line, and five destinations stay readable', async () => {
+    const back = dsDefaultPPI(); const was = dsAdv('dead', true); const area = $('#canvas-area'); area.scrollTop = 0;
+    await dsLay([576, 2000]); const three = dsRead(area, true);
+    const px = $$('input', dsBoxes(area)[0])[0]; px.value = '400'; fire(px, 'change'); await wait(300); const g1 = dsGap(0);
+    const ft = $$('input', dsBoxes(area)[0])[1]; ft.value = '1.5'; fire(ft, 'change'); await wait(300); const g2 = dsGap(0);
+    duplicateScreen(screens[2].id); await wait(400); okDialogs(); duplicateScreen(screens[2].id); await wait(400); okDialogs();
+    await dsLay([576, 192, 1000, 384]); const n = screens.length, five = dsRead(area, true);
+    dsAdv('dead', was); back(); await restore();
+    return is({ three, typed: [g1, g2], n, five }, { three: ['stacked', 'one line'], typed: [400, 288], n: 5, five: ['stacked', 'stacked', 'stacked', 'stacked'] },
+      'three destinations, 576 and 2000 px gaps / gap after 400 PX then 1.5 FT typed in the stacked read-out / destinations / five destinations, 576 192 1000 384 px gaps');
+  });
+  await check('Look Book: a printed dead-space read-out stacks only when its text does not fit the gap, feet follow 192 px per foot, and no number box or large-gap mark is printed', async () => {
+    const back = dsDefaultPPI(); const was = dsAdv('dead', true); await dsLay([576, 1200]);
+    const keep = window._pdfOpts; let html = ''; window._pdfOpts = Object.assign({}, _pdfOptsForSend(), { showDead: true }); try { html = exportPDF(true) || ''; } finally { window._pdfOpts = keep; }
+    const doc = new DOMParser().parseFromString(html, 'text/html'); const labs = $$('.pp-livecanvas .dead-label', doc);
+    const kinds = labs.map(l => (/flex-direction:\s*column/.test(l.getAttribute('style') || '') ? 'stacked ' : 'one line ') + l.textContent.replace(/\s+/g, ''));
+    const sum = $$('.adv-val', doc).map(e => e.textContent.trim()).filter(x => / ft$/.test(x));
+    const out = is([kinds, sum, $$('.pp-livecanvas .dead-label input', doc).length, /class="gap-warn"/.test(html)], [['stacked 576PX3.00FT', 'one line 1200PX6.25FT'], ['576 px / 3.00 ft', '1200 px / 6.25 ft'], 0, false],
+      'printed read-outs / Modifiers summary lines / number boxes left in print / large-gap mark in print');
+    dsAdv('dead', was); back(); await restore(); return out;
+  });
+
+
+  // ── blend-arrows (owner 2026-09-21): the on-canvas ◀ ▶ of a BLENDED group sit on the group's OUTER edges ─────────────────────
+  //    WHERE THIS BLOCK GOES: tests/flows_probe.js, in the Simple section, straight BEFORE the line
+  //        "  // ── Video Presets, Advanced ───…"
+  //    (it needs no media file; the third check opens the Advanced page itself and closes it again).
+  //    It is self-contained: it uses only the probe's own helpers ($, $$, vis, is, wait, check, okDialogs, restore) and its own _ba* helpers.
+  //    Every check puts back what it changes, in a finally block so a throw cannot leak into the next check: the Blend Zones switch, the pick,
+  //    the Advanced page and the show (restore()).
+  //    All three FAIL on build 16kq (an arrow sits over the blend zone) and PASS with patch.py applied.
+  const _baScope = () => (fsPresetId ? '#fs-canvas' : '#canvas-area');
+  const _baBox = (pid, sid) => $(_baScope() + ' .screen-box[data-pid="' + pid + '"][data-sid="' + sid + '"]');
+  const _baPick = async (pid, sid) => { hideMoveSymbol(); doSelect(null, null); selLayer = null; await wait(120); _baBox(pid, sid).click(); await wait(300); };
+  const _baBlend = on => { const isOn = !document.body.classList.contains('adv-hide-blend'); if (isOn !== on) toggleAdvFeature('blend'); };
+  const _baTidy = async wasB => { try { hideMoveSymbol(); doSelect(null, null); if (fsPresetId) { closeFullscreen(); await wait(400); } } catch (e) {} _baBlend(wasB); await restore(); };
+  const _baPress = async glyph => { const b = $$('.move-symbol button').find(x => x.textContent === glyph); if (!b || b.style.pointerEvents === 'none') return false; b.click(); await wait(450); return true; };
+  // One word per arrow that does not depend on the zoom: glyph, on / grey, WHICH destination's outer edge it hugs (D1 = ids[0] …),
+  // OVER-BLEND when it lies over a drawn blend zone, COVERED when a live arrow is not the top element at its own centre,
+  // TIP? when its tooltip is not what _lbMoveTip gives for the picked destination.
+  const _baRead = (pid, sid, ids) => {
+    const R = el => el.getBoundingClientRect(), k = fsPresetId ? fsZoom : 1, near = (a, b) => Math.abs(a - b) <= 14 * k;
+    const zones = $$(_baScope() + ' .overlap-vis[data-pid="' + pid + '"]').filter(vis).map(R);
+    return $$('.move-symbol button').map(b => {
+      const r = R(b), live = b.style.pointerEvents !== 'none', dir = b.textContent === '◀' ? 'left' : b.textContent === '▶' ? 'right' : b.textContent;
+      const hug = ids.map((id, i) => { const x = R(_baBox(pid, id)); return (dir === 'left' ? near(r.left, x.left) : near(r.right, x.right)) ? 'D' + (i + 1) : ''; }).filter(Boolean).join('/');
+      const over = zones.some(z => r.left < z.right && r.right > z.left && r.top < z.bottom && r.bottom > z.top);
+      const top = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+      return b.textContent + (live ? 'on' : 'grey') + '@' + (hug || 'none') + (over ? ' OVER-BLEND' : '') + (live && top !== b ? ' COVERED' : '') + (b.title === _lbMoveTip(pid, sid, dir, live) ? '' : ' TIP?');
+    }).join(' ');
+  };
+  await check('move arrows: on a blended pair the ◀ sits on the far left of the left member and the ▶ on the far right of the right member, whichever member is picked; no arrow lies over the blend zone, nothing covers a live arrow, and a press still moves the pair one slot in one undo step', async () => {
+    await restore(); const wasB = !document.body.classList.contains('adv-hide-blend'); try { _baBlend(true); const ids = screens.map(s => s.id), [a, b, c] = ids, pid = presets[0].id;
+    presets.forEach(p => { initStripPositions(p.id); setPosition(p, b, 1720, 0); }); render(); await wait(350); const zone = $$('#canvas-area .overlap-vis[data-pid="' + pid + '"]').filter(vis).length;
+    await _baPick(pid, a); const fromLeft = _baRead(pid, a, ids); await _baPick(pid, b); const fromRight = _baRead(pid, b, ids);
+    await _baPick(pid, c); const alone = _baRead(pid, c, ids) + ' ' + $$('.move-symbol button').map(x => [x.style.left, x.style.right, x.style.top].join('|')).join(' ');
+    await _baPick(pid, b); const u0 = _undoStack.length; const pressed = await _baPress('▶'); const q = presets[0].positions; const moved = [pressed, [q[c].x, q[a].x, q[b].x], _undoStack.length - u0, _baRead(pid, b, ids)];
+    doUndo(); await wait(400); const q0 = presets[0].positions; const back = [q0[a].x, q0[b].x, q0[c].x];
+    return is([zone, fromLeft, fromRight, alone, moved, back], [1, '◀grey@D1 ▶on@D2', '◀grey@D1 ▶on@D2', '◀on@D3 ▶grey@D3 6px||50% |6px|50%', [true, [0, 2120, 3840], 1, '◀on@D1 ▶grey@D2'], [0, 1720, 3840]],
+      'blend zones drawn / picked the LEFT member / picked the RIGHT member / a destination that is not blended (arrows + their left|right|top styles) / after ▶ [pressed, x of D3 D1 D2, undo steps, arrows] / x after Undo');
+    } finally { await _baTidy(wasB); }
+  });
+  await check('move arrows: three blended destinations keep ◀ ▶ on the outer edges from every member (never over either blend zone) and a press moves all three as one block past a fourth destination', async () => {
+    await restore(); const wasB = !document.body.classList.contains('adv-hide-blend'); try { _baBlend(true);
+    actions.addDestination(); await wait(350); if (!vis($('#modal'))) return 'the Add Destination window did not open';
+    $('#ms-n').value = 'FOURTH'; $('#ms-w').value = '1920'; $('#ms-h').value = '1080'; confirmScreen(); await wait(450); okDialogs(); await wait(200);
+    const ids = screens.map(s => s.id), [a, b, c, d] = ids, pid = presets[0].id; if (ids.length !== 4) return 'the fourth destination was not added';
+    presets.forEach(p => { initStripPositions(p.id); setPosition(p, a, 0, 0); setPosition(p, b, 1720, 0); setPosition(p, c, 3440, 0); setPosition(p, d, 5360, 0); }); render(); await wait(400);
+    const zones = $$('#canvas-area .overlap-vis[data-pid="' + pid + '"]').filter(vis).length, ov0 = presets.map(p => _overlapPairsForPreset(p).size).join(','); const seen = [];
+    for (const id of [a, b, c]) { await _baPick(pid, id); seen.push(_baRead(pid, id, ids)); }
+    await _baPick(pid, d); const fourth = _baRead(pid, d, ids);
+    await _baPick(pid, b); const u0 = _undoStack.length; const pressed = await _baPress('▶'); const q = presets[0].positions;
+    const moved = [pressed, [q[d].x, q[a].x, q[b].x, q[c].x], _undoStack.length - u0, presets.map(p => _overlapPairsForPreset(p).size).join(',') === ov0, _baRead(pid, b, ids)];
+    return is([zones, seen, fourth, moved], [2, ['◀grey@D1 ▶on@D3', '◀grey@D1 ▶on@D3', '◀grey@D1 ▶on@D3'], '◀on@D4 ▶grey@D4', [true, [0, 1920, 3640, 5360], 1, true, '◀on@D1 ▶grey@D3']],
+      'blend zones drawn / arrows with D1, D2, D3 picked / the fourth destination (not blended) / after ▶ from the middle member [pressed, x of D4 D1 D2 D3, undo steps, blends kept, arrows]');
+    } finally { await _baTidy(wasB); }
+  });
+  await check('move arrows: on the Advanced page a blended pair has the same outer-edge ◀ ▶ at two zoom levels, only ◀ ▶ are drawn, nothing covers the live arrow and a press moves the pair', async () => {
+    await restore(); const wasB = !document.body.classList.contains('adv-hide-blend'); try { _baBlend(true); const ids = screens.map(s => s.id), [a, b, c] = ids, pid = presets[0].id;
+    presets.forEach(p => { initStripPositions(p.id); setPosition(p, b, 1720, 0); }); render(); await wait(300); openFullscreen(pid); await wait(800); const out = [];
+    const z1 = fsZoom; await _baPick(pid, a); out.push(_baRead(pid, a, ids), $$('.move-symbol button').length); await _baPick(pid, b); out.push(_baRead(pid, b, ids));
+    fsZoomBy(-0.3); await wait(250); const z2 = fsZoom; await _baPick(pid, a); out.push(_baRead(pid, a, ids)); await _baPick(pid, b); out.push(_baRead(pid, b, ids));
+    const u0 = _undoStack.length; const pressed = await _baPress('▶'); const q = presets[0].positions; out.push([pressed, [q[c].x, q[a].x, q[b].x], _undoStack.length - u0, _baRead(pid, b, ids)], Math.abs(z2 - z1) > 0.05);
+    return is(out, ['◀grey@D1 ▶on@D2', 2, '◀grey@D1 ▶on@D2', '◀grey@D1 ▶on@D2', '◀grey@D1 ▶on@D2', [true, [0, 2120, 3840], 1, '◀on@D1 ▶grey@D2'], true],
+      'first zoom: picked LEFT member, arrows drawn, picked RIGHT member / second zoom: LEFT, RIGHT / after ▶ [pressed, x of D3 D1 D2, undo steps, arrows] / the zoom really changed');
+    } finally { await _baTidy(wasB); }
+  });
+
+  // ══ overlap-rule (2026-09-21, patch marker OVL-BLOCK-16kr) ═══════════════════════════════════════════════════════════
+  // Owner rule: with Blend Zones OFF and Free Position OFF a new overlap is BLOCKED (everything back, one alert
+  // "Destinations can't overlap"); with Free Position ON, or Blend Zones ON, the app asks "Create Blend Zone?" as before.
+  //
+  // This file has TWO parts. Paste each part where its header says.
+  //   PART 1  NEW checks (2). Self-contained: their helpers start with obk and use nothing defined later in the file.
+  //           INSERT in the Simple section, straight BEFORE the line
+  //               // ── Video Presets, Advanced ───────────...
+  //           (no media is needed and none is loaded; the modifier switches, the show and the selection are put back).
+  //   PART 2  REPLACES: the corrected version of the SIX existing checks that the patch makes fail (found by running the
+  //           real gate on the patched page: gate_repo_probe_on_new.log). Each one REPLACES, IN PLACE, the existing
+  //           check named in the comment above it.
+  //           - Five of them expected the question while every modifier is off. They live in the block that starts with
+  //               // ── no-overlap guard (2026-09-21): INSERT in tests/flows_probe.js straight AFTER the check
+  //             and keep using that block's helpers (ovlPairs, ovlAsked, ovlStrip, ovlTwoRows, ovlGeo, cvAdv, vpDrag);
+  //             the two extra helpers (ovlBlocked, ovlShut) go straight after the line that defines ovlGeo.
+  //             The sixth check of that block ('no overlap (existing behaviour, pinned): ...') is NOT touched: it still passes.
+  //           - One sits in the Simple section ('Simple: Destination Properties Apply is one undo step ...'): its Apply
+  //             types X = 40 on the first destination, which lands it 40 px on its neighbour; the old page asked and the
+  //             check pressed "Add to blend" through okDialogs(). Its replacement is self-contained.
+  // Every check below FAILS on build 16kq without patch.py and PASSES with it (proof: run_checks.mjs, results in
+  // checks_old.json / checks_new.json; merged into a copy of the real probe and run through a copy of the real runner:
+  // gate_merged_probe_on_new.log). The golden has to be regenerated on purpose after the merge: 6 names go, 8 arrive.
+
+  // ── PART 1: NEW checks ─ INSERT straight BEFORE the line "// ── Video Presets, Advanced" ────────────────────────────
+  const obkMods = (blend, free) => { const c = document.body.classList; const was = [!c.contains('adv-hide-blend'), c.contains('adv-free-position')]; if (was[0] !== blend) actions.toggleAdvFeature('blend'); if (was[1] !== free) actions.toggleAdvFeature('freePos'); closeAdvancedMenu(); return was; };
+  const obkPairs = () => presets.map(p => [..._overlapPairsForPreset(p)].length).join(',');
+  const obkStrip = async () => { presets.forEach(p => repackPositions(p.id)); render(); await wait(200); };
+  const obkTitle = () => dlgOpen() ? (($('#dlg-box h3') || {}).textContent || '') : '';
+  const obkShut = async () => { if (dlgOpen()) { ($('#dlg-cancel') || $('#dlg-confirm')).click(); await wait(400); } };   // Cancel on a question, OK on an alert: never "Add to blend"
+  const obkTypeX = async (dx) => { const b = screens[1].id, x0 = presets[0].positions[b].x; openScreenPanel(fakeEv, presets[0].id, b); await wait(400); const pop = $('#screen-panel'); if (!pop) return false; $('#sp-x', pop).value = String(x0 + dx); $('#sp-apply', pop).click(); await wait(450); return true; };
+
+  await check('no overlap rule: a typed X onto the neighbour is BLOCKED by one "Destinations can\'t overlap" alert while Blend Zones and Free Position are both off (the pair and the preset are named, nothing moves, no undo step, the unsaved marker does not change); it asks "Create Blend Zone?" with Free Position on, with Blend Zones on and with both on; the same on the Advanced page', async () => {
+    const was = obkMods(false, false); const none = presets.map(() => 0).join(',');
+    const matrix = async () => {
+      const got = [];
+      for (const [blend, free] of [[false, false], [false, true], [true, false], [true, true]]) {
+        obkMods(blend, free); await obkStrip(); _recomputeDirty(); const b = screens[1].id, x0 = presets[0].positions[b].x, n = _undoStack.length, dirty = _isDirty;   // recompute first: opening Advanced can light the unsaved marker by itself a moment later
+        if (!(await obkTypeX(-300))) { got.push('Destination Properties did not open'); continue; }
+        const title = obkTitle(), text = dialogText(), buttons = $$('#dlg-box button').map(x => x.textContent.trim()).join(' / ');
+        const moved = presets[0].positions[screens[1].id].x - x0;
+        if (!blend && !free) { await wait(350); _recomputeDirty(); got.push([title, buttons, /LEFT LED . CENTER LED \(P01\)/.test(text) && /Nothing was changed/.test(text) && /turn on Blend Zones in Modifiers/.test(text), moved, obkPairs(), _undoStack.length - n, _isDirty === dirty]); await obkShut(); got.push([dlgOpen(), presets[0].positions[screens[1].id].x - x0, _undoStack.length - n]); }
+        else { got.push([title, buttons, moved]); await obkShut(); got.push([presets[0].positions[screens[1].id].x - x0, obkPairs(), _undoStack.length - n]); }
+      }
+      return got;
+    };
+    const want = [["Destinations can't overlap", 'OK', true, 0, none, 0, true], [false, 0, 0], ['Create Blend Zone?', 'Cancel / Add to blend', -300], [0, none, 0], ['Create Blend Zone?', 'Cancel / Add to blend', -300], [0, none, 0], ['Create Blend Zone?', 'Cancel / Add to blend', -300], [0, none, 0]];
+    const simple = await matrix(); openFullscreen(presets[0].id); await wait(700); const adv = await matrix(); closeFullscreen(); await wait(400);
+    obkMods(was[0], was[1]); await restore();
+    return is([simple, adv], [want, want], 'per page, per modifier pair (all off / Free Position / Blend Zones / both): [title, buttons, ...] then the state after the dialog was closed');
+  });
+  await check('no overlap rule: an arrow key held down on a destination that has a second row under it raises ONE alert, not a pile: the size goes back, OK changes nothing, no undo step is left, and a second guarded change made while the alert is still up is put back silently', async () => {
+    const was = obkMods(false, false); await obkStrip(); const P = () => presets[0], A = () => screens[0], last = screens[screens.length - 1].id;
+    setPosition(P(), last, 0, parseInt(A().h) + 40); render(); await wait(250);
+    const geo = () => JSON.stringify([screens.map(s => [s.w, s.h]), presets.map(p => p.positions)]); const g0 = geo(), n = _undoStack.length; let opened = 0;
+    const mo = new MutationObserver(() => { if ($('#dlg-overlay').classList.contains('show')) opened++; }); mo.observe($('#dlg-overlay'), { attributes: true, attributeFilter: ['class'] });
+    const key = rep => document.body.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowUp', bubbles: true, cancelable: true, repeat: rep }));
+    doSelect(P().id, A().id); selLayer = null; await wait(150);
+    for (let i = 0; i < 12; i++) { key(i > 0); await wait(30); } await wait(400);
+    const held = [obkTitle(), opened, geo() === g0];
+    doSelect(P().id, A().id); selLayer = null; key(false); await wait(300);   // the selection is dropped by the put-back; pick it again and press once more UNDER the alert
+    const under = [obkTitle(), opened, geo() === g0];
+    await obkShut(); await wait(700); const after = [dlgOpen(), opened, geo() === g0, _undoStack.length - n]; mo.disconnect();
+    await obkShut(); doSelect(null, null); obkMods(was[0], was[1]); await restore();
+    return is([held, under, after], [["Destinations can't overlap", 1, true], ["Destinations can't overlap", 1, true], [false, 1, true, 0]], 'after 12 repeats [alert, times a dialog opened, everything back] / after one more press under the alert / after OK [dialog up, times opened, everything back, undo steps]');
+  });
+
+
+  // ── LOOKING IS NOT A CHANGE (patch unsaved-16kr, owner's decision 2026-09-21). INSERT the whole block in
+  //    tests/flows_probe.js at the END of the Simple section: straight BEFORE the line
+  //        "  // ── Video Presets, Advanced ──..."
+  //    (not later: the Advanced section loads test media; these checks need none and never open Video Presets Advanced).
+  //    Every check starts from restore() (the General Session example exactly as opened: no cable colours yet, Wire and
+  //    I/O Patch Advanced page 1 not built yet), closes Wire / I/O Patch and ends on restore(). No modifier switch,
+  //    _lfxLock or media is touched (the Look Book check puts window._pdfOpts back). All eight FAIL on build 16kq (looking
+  //    lit Save) and pass with the patch.
+  const _usMark = () => { _recomputeDirty(); return [eval('_isDirty'), $('#tb-dirty').closest('button').classList.contains('save-dirty')]; };
+  const _usClean = [false, false], _usGold = [true, true];
+  const _usHome = async () => { try { closeWireMode(); } catch (e) {} try { closeSystem(); } catch (e) {} await restore(); await wait(250); };
+  const _usWireAdv = async () => { const b = $('#wire-overlay [onclick*="_wireSwitchToAdvanced()"]'); if (b) b.click(); await wait(400); okDialogs(); await wait(900); };
+
+  await check('unsaved: the first look at Wire (random cable colours) leaves a clean show clean, and the colours stay in the show for the next save', async () => {
+    await _usHome(); const before = _usMark(); const had = sources.filter(s => s && s.wireColor).length;
+    $('#topbar-nav-wire').click(); await wait(900); const after = _usMark();
+    const st = getProjectState(); const coloured = st.sources.length > 0 && st.sources.every(s => !!(s && s.wireColor)); const armed = !!eval('_autoSaveTimer');
+    await _usHome(); return is([before, had, after, coloured, armed], [_usClean, 0, _usClean, true, true], 'before / colours before / after the first look / every source coloured in getProjectState / autosave armed');
+  });
+  await check('unsaved: Wire view settings (zoom, tool, folded panes, collapsed side panel) never light Save and are still written to the show file', async () => {
+    await _usHome(); openWireMode(); await wait(800); _captureCleanBaseline(); _recomputeDirty();   /* a clean mark with Wire already open: this check is about the view settings alone */
+    const press = async sel => { const b = $(sel); if (!b) throw new Error('no control: ' + sel); b.click(); await wait(200); };
+    await press('#wire-overlay [onclick*="_wireZoomBy(0.1)"]'); await press('#wire-tool-hand'); await press('#wire-overlay [onclick*="_wireTogglePane(\'src\')"]');
+    await press('.wire-rpane-hdr[data-rpane="info"]'); await press('#wire-overlay [onclick*="_wireTogglePanelCollapse(\'left\')"]'); await wait(500);
+    const mark = _usMark(); const ws = JSON.parse(JSON.stringify(getProjectState())).wireSettings;
+    const written = [ws.zoom, ws.tool, ws.panes.src, ws.rpanes.info, !!(ws.panelCollapse && ws.panelCollapse.left)];
+    await _usHome(); return is([mark, written], [_usClean, [1.1, 'hand', false, false, true]], 'unsaved mark / what the show file would hold (zoom, tool, Sources pane, Info pane, left panel collapsed)');
+  });
+  await check('unsaved: the first look at Wire Advanced (page 1 built from Simple) and its page tabs leave the show clean, and so does Undo back past it', async () => {
+    await _usHome(); openWireMode(); await wait(800); await _usWireAdv();
+    const built = wireSettings.wireView === 'advanced' && wireAdvanced.routers.length === 1 && wireAdvanced.wires.length > 0; const a = _usMark();
+    for (const p of ['p1', 'p2', 'p0']) { const t = $('#wire-overlay [onclick*="_wireSwitchPage(\'' + p + '\')"]'); if (!t) { await _usHome(); return 'no page tab ' + p; } t.click(); await wait(350); }
+    const b = _usMark(); const st = getProjectState(); const inShow = !!st.wireAdvanced._pages[0].seed && st.wireAdvanced._activePageId === 'p0' && st.wireSettings.wireView === 'advanced';
+    const marks = []; let n = eval('_undoStack').length; const steps = n; while (n-- > 0) { doUndo(); await wait(350); marks.push(_usMark()[0]); }
+    await _usHome(); return is([built, a, b, inShow, steps > 0, marks.some(Boolean)], [true, _usClean, _usClean, true, true, false], 'page 1 built / mark after the first look / after the page tabs / page 1 + view in getProjectState / it recorded undo steps / any Undo lit Save');
+  });
+  await check('unsaved: I/O Patch Advanced (first look: page 1 built from Simple), its page tabs and the way back to Simple leave the show clean', async () => {
+    await _usHome(); $('#topbar-nav-iop').click(); await wait(700); const open = _usMark();
+    $('#sys-overlay [onclick*="_ioSetView(\'advanced\')"]').click(); await wait(900); okDialogs(); await wait(200);
+    const built = ioAdvanced.view === 'advanced' && ioAdvanced.pages[0].dests.some(r => r && r.name === screens[0].name); const a = _usMark();
+    const t2 = $('#sys-overlay [onclick*="_ioSetPage(1)"]'); if (!t2) { await _usHome(); return 'no page tab 2'; } t2.click(); await wait(350); const onPage2 = ioAdvanced.page;
+    $('#sys-overlay [onclick*="_ioSetPage(0)"]').click(); await wait(350); $('#sys-overlay [onclick*="_ioSetView(\'simple\')"]').click(); await wait(500); const b = _usMark();
+    const st = getProjectState(); const inShow = !!st.ioAdvanced.pages[0].seed && st.ioAdvanced.view === 'simple';
+    doUndo(); await wait(350); doUndo(); await wait(350); const undone = _usMark();
+    await _usHome(); return is([open, built, a, onPage2, b, inShow, undone], [_usClean, true, _usClean, 1, _usClean, true, _usClean], 'I/O open / page 1 built / mark after the first look / page 2 opened / mark back in Simple / page 1 in getProjectState / mark after Undo x2');
+  });
+  await check('unsaved: after the first looks a real edit still lights Save inside a second, looking again never clears it, and Undo returns to clean', async () => {
+    await _usHome(); $('#topbar-nav-wire').click(); await wait(900); const looked = _usMark(); const c0 = sources[0].wireColor;
+    const sh = $('#wire-sources-panel .wire-color-shuffle'); if (!sh) { await _usHome(); return 'no shuffle button on the first source card'; }
+    sh.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true, cancelable: true, pointerId: 1, isPrimary: true, button: 0, buttons: 1 })); sh.click(); window.dispatchEvent(new PointerEvent('pointerup', { bubbles: true, pointerId: 1, isPrimary: true }));
+    await wait(900); const lit = [eval('_isDirty'), $('#tb-dirty').closest('button').classList.contains('save-dirty')]; const changed = sources[0].wireColor !== c0;   /* no forced re-check: the app has to notice by itself */
+    $('#topbar-nav-iop').click(); await wait(600); $('#sys-overlay [onclick*="_ioSetView(\'advanced\')"]').click(); await wait(900); okDialogs(); const stillLit = _usMark();
+    let n = eval('_undoStack').length; while (n-- > 0) { doUndo(); await wait(300); } await wait(400); const back = _usMark();
+    await _usHome(); return is([looked, changed, lit, stillLit, back], [_usClean, true, _usGold, _usGold, _usClean], 'mark after the first look / colour changed / mark 0.9 s after the pick / mark after looking at I/O Advanced / mark after Undo');
+  });
+  await check('unsaved: a real change made in the very same tick as a first look is never hidden, whichever comes first', async () => {
+    await _usHome(); openWireMode(); await wait(900); const lookOnly = _usMark(); await _usHome();
+    setScreenName(presets[0].id, screens[0].id, 'TICK A'); openWireMode(); await wait(900); const editThenLook = _usMark(); await _usHome();
+    openWireMode(); setScreenName(presets[0].id, screens[0].id, 'TICK B'); await wait(900); const lookThenEdit = _usMark(); await _usHome();
+    openSystem(); await wait(500); (sources[0] || {}).notes = 'typed in the same tick'; _ioSetView('advanced'); await wait(900); const editInsideSwitch = _usMark();
+    await _usHome(); return is([lookOnly, editThenLook[0], lookThenEdit[0], editInsideSwitch[0]], [_usClean, true, true, true], 'look only / edit then look / look then edit / edit right before the I/O view switch');
+  });
+  await check('unsaved: New after only looking asks the plain question; after a real edit it warns about unsaved changes', async () => {
+    await _usHome(); openWireMode(); await wait(800); await _usWireAdv(); closeWireMode(); openSystem(); await wait(400); _ioSetView('advanced'); await wait(800); okDialogs(); closeSystem(); await wait(300);
+    newShow(); await wait(450); const q1 = dialogText(); if (dlgOpen()) $('#dlg-cancel').click(); await wait(300);
+    pushUndo(); setL(presets[0].id, screens[0].id, 4, 'TIMER'); scheduleRender(); await wait(300);
+    newShow(); await wait(450); const q2 = dialogText(); if (dlgOpen()) $('#dlg-cancel').click(); await wait(300);
+    const kept = presets.length > 0; await _usHome();
+    return is([/unsaved/i.test(q1), /start a new show/i.test(q1), /unsaved/i.test(q2), kept], [false, true, true, true], '"unsaved" asked after looking / plain question asked / "unsaved" asked after an edit / the show is still open');
+  });
+  await check('unsaved: a Look Book with a wire sheet (Advanced, then Simple) and the Wire export window leave a clean show clean', async () => {
+    await _usHome(); const keep = window._pdfOpts;
+    const lookBook = async view => { openPdfExportModal(); await wait(350); const rb = $('#pdf-opt-wire-view-' + view); if (rb) rb.checked = true; const real = exportPDF; let html = ''; window.exportPDF = function () { html = real(true); }; try { _pdfConfirmExport(); } finally { window.exportPDF = real; } await wait(400); return /id="pdf-wire"/.test(html || ''); };
+    let out;
+    try {
+      const adv = await lookBook('advanced'); const a = _usMark(); await _usHome();
+      const sim = await lookBook('simple'); const b = _usMark(); const coloured = sources.length > 0 && sources.every(s => !!(s && s.wireColor)); await _usHome();
+      openWireMode(); await wait(700); openWireExportModal(); await wait(300); const sheet = getProjectState().wireSettings.sheet; closeWireExportModal(); await wait(300); const c = _usMark();
+      out = is([adv, a, sim, b, coloured, sheet, c], [true, _usClean, true, _usClean, true, 'letter', _usClean], 'Advanced wire sheet made / mark / Simple wire sheet made / mark / the export gave the sources their colours / default sheet written / mark after the Wire export window');
+    } finally { window._pdfOpts = keep; }
+    await _usHome(); return out;
+  });
+
+  // ── LOOKING IS NOT A CHANGE, second pass (patch unsaved-16kr2). INSERT the whole block in tests/flows_probe.js straight
+  //    AFTER the first patch's block (flows_checks.js of patch unsaved-16kr) and BEFORE the line
+  //        "  // ── Video Presets, Advanced ──..."
+  //    It stands alone too (own helper names). Every check starts and ends on restore() (the General Session example as
+  //    opened), closes Wire / I/O Patch / Video Presets Advanced, touches no modifier switch and no _lfxLock. The media
+  //    check makes ONE silent clip on a canvas, never plays it and removes it again; the launch check opens the page in
+  //    an invisible frame and removes it; window._pdfOpts and the autosave draft are put back.
+  //    All ten FAIL on the merged r16kr page (first patch only) and pass with patch2.
+  const _u2Gold = () => { const raw = !!eval('_isDirty'); _recomputeDirty(); return raw || !!eval('_isDirty') || $('#tb-dirty').closest('button').classList.contains('save-dirty'); };
+  const _u2Home = async () => { try { _ioBackupClose(); } catch (e) {} try { closeWireExportModal(); } catch (e) {} try { closePdfExportModal(); } catch (e) {} try { closeHelp(); } catch (e) {} try { closeQS(); } catch (e) {} try { if (eval('fsPresetId') !== null) closeFullscreen(); } catch (e) {} try { closeWireMode(); } catch (e) {} try { closeSystem(); } catch (e) {} await restore(); await wait(200); };
+  const _u2AsSaved = async st => { _applyProjectText(typeof st === 'string' ? st : JSON.stringify(st)); await wait(700); okDialogs(); await wait(150); okDialogs(); };   /* what Load runs with the text of a saved file */
+  const _u2Saved = () => { _captureCleanBaseline(); eval('_isDirty=false'); _updateDirtyIndicator(); };   /* what Save does once the file is written */
+  const _u2Answer = () => { for (let i = 0; i < 4 && dlgOpen(); i++) { const keep = /changed since/i.test(dialogText()); const b = $(keep ? '#dlg-cancel' : '#dlg-confirm'); if (b) b.click(); else break; } };   /* "Rebuild from Simple?" is answered "Keep my page": rebuilding would be a real choice */
+  const _u2WireAdv = async () => { const b = $('#wire-overlay [onclick*="_wireSwitchToAdvanced()"]'); if (b) b.click(); await wait(450); _u2Answer(); await wait(800); _u2Answer(); };
+  const _u2IoAdv = async () => { const b = $('#sys-overlay [onclick*="_ioSetView(\'advanced\')"]'); if (b) b.click(); await wait(600); _u2Answer(); await wait(200); };
+  const _u2Rename = (to) => { const inp = $('#table-panel input[title^="Destination name"]'); if (!inp) throw new Error('no destination name field in the table'); inp.value = to; fire(inp, 'blur'); };   /* the table field commits on blur */
+  const _u2Cell = nm => { for (const r of (wireAdvanced.routers || [])) for (const c of (r.outputs || [])) if (c && c.name === nm) return true; return false; };
+
+  await check('unsaved 2: a saved show with PBP A / GFX A content stays clean when I/O Patch opens (the automatic B twin), and the twin waits in the show for the next save', async () => {
+    await _u2Home(); setL(presets[0].id, screens[0].id, 1, 'PBP A'); setL(presets[0].id, screens[0].id, 2, 'GFX A'); await _u2AsSaved(getProjectState()); const opened = _u2Gold();
+    clearTimeout(eval('_autoSaveTimer')); eval('_autoSaveTimer=null'); $('#topbar-nav-iop').click(); await wait(700); const looked = _u2Gold();
+    const twins = ['PBP B', 'GFX B'].map(n => getProjectState().sources.some(s => s && s.name === n && !!s.autoB)); const armed = !!eval('_autoSaveTimer');
+    await _u2Home(); return is([opened, looked, twins, armed], [false, false, [true, true], true], 'gold when opened / gold after ONE look at I/O Patch / PBP B and GFX B in getProjectState / autosave armed');
+  });
+  await check('unsaved 2: after a look at Wire, I/O Patch copies GFX B into the content library without lighting Save', async () => {
+    await _u2Home(); setL(presets[0].id, screens[0].id, 1, 'GFX B'); await _u2AsSaved(getProjectState());
+    $('#topbar-nav-wire').click(); await wait(800); const afterWire = _u2Gold(); $('#topbar-nav-iop').click(); await wait(700); const afterIo = _u2Gold();
+    const inLib = getProjectState().customLibrary.some(c => c && c.l === 'GFX B');
+    await _u2Home(); return is([afterWire, afterIo, inLib], [false, false, true], 'gold after Wire / gold after I/O Patch / GFX B in the library of getProjectState');
+  });
+  await check('unsaved 2: straight after launch the blank show has its MV 1 before any look, and the first look at I/O Patch leaves it clean', async () => {
+    await _u2Home(); const KEY = eval('_AUTO_SAVE_KEY'); const draft = localStorage.getItem(KEY); localStorage.removeItem(KEY);
+    const f = document.createElement('iframe'); f.setAttribute('aria-hidden', 'true'); f.style.cssText = 'position:fixed;left:0;top:0;width:1440px;height:900px;border:0;opacity:0;pointer-events:none;z-index:-1';
+    f.src = location.pathname + '?u2launch=' + Date.now(); document.body.appendChild(f); let out;
+    try {
+      let up = false; for (let i = 0; i < 80 && !up; i++) { await wait(250); try { up = f.contentDocument.readyState === 'complete' && typeof f.contentWindow.lbOpenExample === 'function' && f.contentWindow.eval('_savedState') !== null; } catch (e) {} }
+      if (!up) out = 'the page did not start inside the frame';
+      else {
+        const w = f.contentWindow, d = f.contentDocument; await wait(400);
+        const o = d.getElementById('dlg-overlay'); if (o && o.classList.contains('show')) { const c = d.getElementById('dlg-cancel'); if (c) c.click(); await wait(300); }   /* "Start fresh" if a draft slipped in */
+        try { w.closeQS(); } catch (e) {}
+        const mark = () => { const raw = !!w.eval('_isDirty'); w._recomputeDirty(); return raw || !!w.eval('_isDirty'); };
+        const atLaunch = w.eval('multiviewers.map(function(m){ return m.name; })'); const blank = w.eval('screens.length+presets.length'); const g0 = mark();
+        d.getElementById('topbar-nav-iop').click(); await wait(700); const g1 = mark(); const after = w.eval('multiviewers.map(function(m){ return m.name; })');
+        out = is([blank, atLaunch, g0, g1, after], [0, ['MV 1'], false, false, ['MV 1']], 'destinations + presets at launch / multiviewers at launch / gold at launch / gold after ONE look at I/O Patch / multiviewers after it');
+      }
+    } finally { f.remove(); if (draft !== null) localStorage.setItem(KEY, draft); else localStorage.removeItem(KEY); }
+    await _u2Home(); return out;
+  });
+  await check('unsaved 2: a show WITHOUT a multiviewer (the launch state of older builds) stays clean when I/O Patch puts MV 1 back', async () => {
+    await _u2Home(); await _u2AsSaved(getProjectState()); multiviewers.length = 0; _u2Saved(); const before = _u2Gold();
+    $('#topbar-nav-iop').click(); await wait(700); const after = _u2Gold(); const names = multiviewers.map(m => m.name);
+    await _u2Home(); return is([before, after, names], [false, false, ['MV 1']], 'gold before / gold after ONE look at I/O Patch / multiviewers');
+  });
+  await check('unsaved 2: a destination renamed and saved stays clean when Wire Advanced is looked at; the switcher cell follows the rename in the same undo step', async () => {
+    await _u2Home(); openWireMode(); await wait(700); await _u2WireAdv(); closeWireMode(); await wait(250); const old = screens[0].name; const had = _u2Cell(old); const looked = _u2Gold();
+    _u2Rename('U2 RENAMED'); await wait(450); const lit = _u2Gold(); const follows = [screens[0].name, _u2Cell('U2 RENAMED'), _u2Cell(old)];
+    _u2Saved(); $('#topbar-nav-wire').click(); await wait(500); _u2Answer(); await wait(600); const afterLook = _u2Gold(); closeWireMode(); await wait(200);
+    doUndo(); await wait(400); const undone = [screens[0].name, _u2Cell(old), _u2Cell('U2 RENAMED')];
+    await _u2Home(); return is([had, looked, lit, follows, afterLook, undone], [true, false, true, ['U2 RENAMED', true, false], false, [old, true, false]], 'a switcher cell showed the old name / gold after the first look / gold after the rename / name, new cell, old cell right after the rename / gold after Save + ONE look at Wire / name, old cell, new cell after ONE Undo');
+  });
+  await check('unsaved 2: a destination renamed and saved stays clean when I/O Patch Advanced is looked at, and the old name does not come back as an I/O-only destination', async () => {
+    await _u2Home(); openSystem(); await wait(500); await _u2IoAdv(); closeSystem(); await wait(250); const old = screens[0].name; const n0 = ioDests.length; const looked = _u2Gold();
+    _u2Rename('U2 RENAMED'); await wait(450); const lit = _u2Gold(); _u2Saved();
+    $('#topbar-nav-iop').click(); await wait(600); _u2Answer(); await wait(300); const afterLook = _u2Gold();
+    const rows = ioAdvanced.pages[0].dests.map(r => r && r.name); const out = is([looked, lit, afterLook, ioDests.length - n0, ioDests.some(d => d && d.name === old), rows.indexOf('U2 RENAMED') >= 0, rows.indexOf(old) >= 0], [false, true, false, 0, false, true, false], 'gold after the first look / gold after the rename / gold after Save + ONE look at I/O Patch Advanced / I/O-only destinations added / the old name came back / page 1 shows the new name / page 1 still shows the old name');
+    await _u2Home(); return out;
+  });
+  await check('unsaved 2: a show file from an older build (stale switcher cell, unsettled cells, a dead cable, duplicate custom source names) stays clean through Wire Advanced and I/O Patch Advanced', async () => {
+    await _u2Home(); openWireMode(); await wait(700); await _u2WireAdv(); closeWireMode(); openSystem(); await wait(500); await _u2IoAdv(); closeSystem(); await wait(200);
+    const st = JSON.parse(JSON.stringify(getProjectState())); st.screens[0].name = 'U2 OLD BUILD';
+    (st.wireAdvanced.routers || []).forEach(r => (r.inputs || []).concat(r.outputs || []).forEach(c => { if (c) { delete c.wireId; delete c.ptAuto; delete c.pt; } }));   /* cells an older build never settled (their auto mark is kept, so the name still follows) */
+    st.wireAdvanced.customSources = [{ id: 'u2a', name: 'U2 Spare' }, { id: 'u2b', name: 'U2 Spare' }]; st.wireAdvanced.wires.push({ id: 'u2dead', fromId: 'asrc:u2gone', toId: 'adst:u2gone' });
+    await _u2AsSaved(st); const opened = _u2Gold(); const gold = [];
+    $('#topbar-nav-wire').click(); await wait(500); _u2Answer(); await wait(500); _u2Answer(); gold.push(_u2Gold());
+    for (const p of ['p1', 'p0']) { const t = $('#wire-overlay [onclick*="_wireSwitchPage(\'' + p + '\')"]'); if (t) t.click(); await wait(350); _u2Answer(); gold.push(_u2Gold()); }
+    $('#topbar-nav-iop').click(); await wait(600); _u2Answer(); await wait(200); gold.push(_u2Gold());
+    const repaired = [_u2Cell('U2 OLD BUILD'), wireAdvanced.wires.some(w => w.id === 'u2dead'), wireAdvanced.customSources.map(c => c.name).join('|')];
+    await _u2Home(); return is([opened, gold, repaired], [false, [false, false, false, false], [true, false, 'U2 Spare|U2 Spare 2']], 'gold when opened / gold after Wire, page tab 2, page tab 1, I/O Patch / cell follows, dead cable still there, custom source names');
+  });
+  await check('unsaved 2: opening the Backup window (it pairs "X A" / "X B" rows by itself) leaves a saved show clean, and a pair set by hand still lights Save', async () => {
+    await _u2Home(); openSystem(); await wait(500); await _u2IoAdv(); _ioSetPage(1); await wait(250);
+    const pg = ioAdvanced.pages[1]; const a = _ioAdvBlank('src'), b = _ioAdvBlank('src'), c = _ioAdvBlank('src'); a.name = 'U2 CAM A'; b.name = 'U2 CAM B'; c.name = 'U2 SPARE'; pg.sources = [a, b, c]; _sysRender(); await wait(250); _u2Saved();
+    const icon = $$('#io-adv .sys-bk-btn').find(vis); if (!icon) { await _u2Home(); return 'no backup icon on the page'; } icon.click(); await wait(450);
+    const opened = _u2Gold(); const paired = b.backupOf === a.id;
+    _ioBkPick('bk-primary', a.id); _ioBkPick('bk-backup', c.id); await wait(150); const pb = $('#sys-bk-overlay [onclick="_ioBkCommit()"]'); if (pb) pb.click(); await wait(250);
+    eval('_isDirty=false'); _recomputeDirty(); const byHand = [c.backupOf === a.id, !!eval('_isDirty')];   /* the Pair button; the exact comparison alone has to find the change */
+    await _u2Home(); return is([opened, paired, byHand], [false, true, [true, true]], 'gold after opening the window / it paired A and B by itself / a pair set with the Pair button: made, and found by the exact comparison');
+  });
+  await check('unsaved 2: an older show whose clip lacks its codec info is opened: the info is filled in a moment later and Save stays clean', async () => {
+    await _u2Home(); let clip = false;
+    try {
+      const c2 = document.createElement('canvas'); c2.width = 320; c2.height = 180; const g3 = c2.getContext('2d'); g3.fillStyle = '#10131a'; g3.fillRect(0, 0, 320, 180);
+      const rec = new MediaRecorder(c2.captureStream(30), { mimeType: 'video/webm' }); const chunks = []; rec.ondataavailable = e => { if (e.data.size) chunks.push(e.data); };
+      rec.start(100); const iv = setInterval(() => { g3.fillStyle = '#2dd4bf'; g3.fillRect(Math.random() * 200, 40, 60, 80); }, 40); await wait(600); clearInterval(iv); rec.stop(); await new Promise(r => rec.onstop = r);
+      _fsAttachBlob('U2 OLD CLIP', new Blob(chunks, { type: 'video/webm' })); clip = chunks.length > 0;
+      const st = JSON.parse(JSON.stringify(getProjectState())); st.customLibrary.push({ l: 'U2 OLD CLIP', kind: 'video', c: '#334455', img: c2.toDataURL('image/jpeg', .5), media: { w: 320, h: 180, dur: .6, fps: 30, type: 'video/webm', fileName: 'u2_old_clip.webm' } });
+      await _u2AsSaved(st); await wait(1600);
+    } catch (e) { clip = false; }
+    const it = customLibrary.find(x => x && x.l === 'U2 OLD CLIP'); const filled = !!(it && it.media && it.media.vcodec !== undefined && it.media.bitDepth !== undefined); const gold = _u2Gold();
+    try { const u = eval('_fsMediaURL'), bl = eval('_fsMediaBlob'); if (u['U2 OLD CLIP']) URL.revokeObjectURL(u['U2 OLD CLIP']); delete u['U2 OLD CLIP']; delete bl['U2 OLD CLIP']; } catch (e) {}
+    $$('video').forEach(v => { try { v.muted = true; v.pause(); } catch (e) {} });
+    await _u2Home(); return is([clip, filled, gold], [true, true, false], 'silent test clip made / codec info filled in by the load / gold without a click');
+  });
+  await check('unsaved 2: visiting everything (every tool, view, page tab and window) on all three examples stays clean, as shipped and with GFX A / GFX B / PBP A / PBP B saved into them', async () => {
+    await _u2Home(); const keep = window._pdfOpts; const lit = []; let steps = 0;
+    const visit = async (tag) => {
+      const at = async (label, fn, ms) => { try { await fn(); } catch (e) { lit.push(tag + ': ' + label + ' COULD NOT: ' + String((e && e.message) || e).slice(0, 60)); return; } await wait(ms || 220); _u2Answer(); steps++; if (_u2Gold()) { lit.push(tag + ': ' + label); _u2Saved(); } };   /* after a hit the mark is cleared so every later step is judged on its own */
+      const press = sel => { const b = $$(sel).find(vis) || $(sel); if (!b) throw new Error('no control ' + sel); b.click(); };
+      await at('opened', async () => {});
+      await at('Video Presets Advanced', () => press('[onclick*="_vpSetView(\'advanced\')"]'), 700);
+      await at('Display output note, cancelled', async () => { press('#fs-display-btn'); await wait(300); if (dlgOpen()) $('#dlg-cancel').click(); });
+      await at('Video Presets Simple', () => press('[onclick*="_vpSetView(\'simple\')"]'), 400);
+      await at('Wire', () => press('#topbar-nav-wire'), 700);
+      await at('Wire export window, cancelled', async () => { openWireExportModal(); await wait(200); closeWireExportModal(); });
+      await at('Wire Advanced', () => _u2WireAdv());
+      for (const p of (wireAdvanced._pages || []).map(x => x.id).slice(1).concat(['p0'])) await at('Wire page tab ' + p, () => press('#wire-overlay [onclick*="_wireSwitchPage(\'' + p + '\')"]'), 300);
+      await at('Wire Simple', () => press('#wire-overlay [onclick*="_wireSwitchToSimple()"]'), 400);
+      await at('I/O Patch', () => press('#topbar-nav-iop'), 600);
+      await at('I/O Patch Advanced', () => _u2IoAdv());
+      for (const i of ioAdvanced.pages.map((x, k) => k).slice(1).concat([0])) await at('I/O page tab ' + (i + 1), () => press('#sys-overlay [onclick*="_ioSetPage(' + i + ')"]'));
+      await at('Backup window, closed', async () => { const b = $$('#io-adv .sys-bk-btn:not(.off)').find(vis); if (b) { b.click(); await wait(250); _ioBackupClose(); } });
+      await at('I/O Patch Simple', () => press('#sys-overlay [onclick*="_ioSetView(\'simple\')"]'), 400);
+      await at('Wire again', () => press('#topbar-nav-wire'), 600);
+      await at('I/O Patch again', () => press('#topbar-nav-iop'), 600);
+      await at('Video Presets', () => press('#topbar-nav-vp'), 400);
+      await at('Help, closed', async () => { openHelp(); await wait(150); closeHelp(); });
+      await at('Quick Setup, cancelled', async () => { openQS(); await wait(200); $('#qs-cancel-btn').click(); });
+      for (const tick of [true, false]) await at('Look Book window, wire sheet ' + (tick ? 'ticked' : 'not ticked') + ', cancelled', async () => { openPdfExportModal(); await wait(250); const cb = $('#pdf-opt-wire'); if (cb && cb.checked !== tick) cb.click(); await wait(100); closePdfExportModal(); });
+      for (const view of ['simple', 'advanced']) await at('Look Book built with the ' + view + ' wire sheet', async () => { openPdfExportModal(); await wait(250); const cb = $('#pdf-opt-wire'); if (cb && !cb.checked) cb.click(); const rb = $('#pdf-opt-wire-view-' + view); if (rb) rb.checked = true; const real = exportPDF; window.exportPDF = function () { real(true); }; try { _pdfConfirmExport(); } finally { window.exportPDF = real; } }, 400);
+      await at('Excel pre-export check, closed', async () => { actions.exportExcel(); await wait(300); const p = $('#validation-panel'); if (p && getComputedStyle(p).display !== 'none') { const c = $('#validation-panel .pm-btn-cancel'); if (c) c.click(); } });
+    };
+    try {
+      for (const ex of eval('_LB_EXAMPLES')) {
+        await _u2AsSaved(ex.state); await visit(ex.id + ' as shipped'); await _u2Home();
+        await _u2AsSaved(ex.state); ['GFX A', 'GFX B', 'PBP A', 'PBP B'].forEach((c, i) => setL(presets[0].id, screens[0].id, i + 1, c)); await _u2AsSaved(getProjectState()); await visit(ex.id + ' + common content'); await _u2Home();
+      }
+    } finally { window._pdfOpts = keep; }
+    await _u2Home(); return is([steps > 150, lit], [true, []], 'enough steps were really taken / the steps that lit Save');
+  });
+
+  // ── 16kr merge fixes (attacker findings, 2026-09-22). Goes AFTER the blend-arrows, dead-space and overlap-rule blocks (it uses _ba*, dsDefaultPPI and ovlShut-style helpers of its own).
+  //    All three FAIL on build 16kq and on the un-fixed builder patches, and PASS on the merged page. Each puts back what it touches.
+  await check('move arrows: a blended destination that is REMOVED FROM THIS PRESET and picked from its table row still shows the live ▶ on the outer edge of its partner, nothing covers it, and a press moves the pair', async () => {
+    await restore(); const wasB = !document.body.classList.contains('adv-hide-blend'); try { _baBlend(true); const ids = screens.map(s => s.id), [a, b, c] = ids, pid = presets[0].id;
+    presets.forEach(p => { initStripPositions(p.id); setPosition(p, b, 1720, 0); }); const p0 = presets[0]; p0.hiddenScreens = p0.hiddenScreens || {}; p0.hiddenScreens[a] = true; render(); await wait(400);
+    const ghost = !!$('#canvas-area .screen-box.screen-hidden[data-pid="' + pid + '"][data-sid="' + a + '"]');
+    hideMoveSymbol(); doSelect(null, null); await wait(120);
+    const row = $('#table-panel tr[data-pid="' + pid + '"][data-sid="' + a + '"]'); if (!row) return 'no table row for the hidden destination';
+    const td = [...row.children].find(x => !x.getAttribute('onclick') && !x.querySelector('[draggable="true"]')) || row; td.click(); await wait(400);
+    const picked = !!sel && sel.sid === a, seen = _baRead(pid, a, ids);
+    const pressed = await _baPress('▶'); const q = presets[0].positions; const moved = [pressed, [q[c].x, q[a].x, q[b].x]];
+    return is([ghost, picked, seen, moved], [true, true, '◀grey@D1 ▶on@D2', [true, [0, 2120, 3840]]], 'drawn as a removed (dashed) box / picked from its row / arrows / after ▶ [pressed, x of D3 D1 D2]');
+    } finally { await _baTidy(wasB); }
+  });
+  await check('Pixel-Feet: Help shows the value IN FORCE: with 96 PPI stored the field reads 96 and "1 ft = 1152 px" when Help is opened, with nothing stored it reads 16 and 192', async () => {
+    const back = dsDefaultPPI(); await wait(120); const field = $('#a11y-ppi-input'), lbl = $('#a11y-px-per-ft');
+    try { const s = _a11yLoad(); s.ppi = 96; _a11ySave(s); field.value = '16'; lbl.textContent = '192';   /* what the page holds right after a fresh load, before anything syncs it */
+      _loadPPI(); openHelp(); await wait(250); const stored = [field.value, lbl.textContent, _pxPerFoot()]; closeHelp();
+      localStorage.removeItem(_A11Y_KEY); _PPI = 16; _loadPPI(); openHelp(); await wait(250); const none = [field.value, lbl.textContent, _pxPerFoot()]; closeHelp();
+      return is([stored, none], [['96', '1152', 1152], ['16', '192', 192]], 'with 96 stored [field, read-out, px per foot in force] / with nothing stored');
+    } finally { try { closeHelp(); } catch (e) {} back(); await wait(150); }
+  });
+  await check('no overlap rule: a REFUSED change keeps the Redo history ("Nothing was changed" includes Redo): edit, Undo, then a typed X onto the neighbour is refused and Redo still brings the edit back', async () => {
+    await restore(); const [a, b, c] = screens.map(s => s.id), pid = presets[0].id; try {
+    pushUndo(); screens.find(s => s.id === c).name = 'REDO ME'; scheduleRender(); await wait(300); doUndo(); await wait(400); const redo0 = _redoStack.length;
+    doSelect(pid, b); openScreenPanel(fakeEv, pid, b); await wait(500); const x = $('#sp-x'); if (!x) return 'Destination Properties did not open';
+    x.value = '1620'; fire(x, 'input'); fire(x, 'change'); $('#sp-apply').click(); await wait(600);
+    const said = []; for (let i = 0; i < 3 && dlgOpen(); i++) { const t = ($('#dlg-box h3') || {}).textContent || ''; said.push(t); (/Create Blend/.test(t) ? $('#dlg-cancel') : $('#dlg-confirm')).click(); await wait(450); }
+    const xAfter = presets[0].positions[b].x, redo1 = _redoStack.length; doRedo(); await wait(400); const name = screens.find(s => s.id === c).name;
+    return is([redo0, said[said.length - 1], xAfter, redo1, name], [1, "Destinations can't overlap", 1920, 1, 'REDO ME'], 'redo steps before / the last window shown / X after the refusal / redo steps after / the name after Redo');
+    } finally { try { closeScreenPanel(); } catch (e) {} await restore(); }
   });
 
   // ── Video Presets, Advanced ─────────────────────────────────────────────────────────────────────────────────────
@@ -697,6 +1168,17 @@
     cvAdv('dead', was); await restore();
     return is([big ? big.title : null, !!small, printed], ['Large gap, check alignment', false, false], '900 px mark / 300 px mark / in print');
   });
+  // ── BLOCK B: INSERT straight AFTER the check 'Dead Space: a gap over 500 px carries the "Large gap, check alignment" mark, ...' ──
+  await check('Advanced: the dead-space read-out makes the same choice at 100% and zoomed in (narrow gap stacked, roomy gap one line), stays centred on the gap, and a typed PX still sets the gap', async () => {
+    const back = dsDefaultPPI(); const was = dsAdv('dead', true); await dsLay([576, 2000]);
+    openFullscreen(presets[0].id); await wait(700); okDialogs(); renderFullscreen(); await wait(300); const fs = $('#fs-canvas');
+    const z1 = Math.round(fsZoom * 100), a = dsRead(fs, false);
+    for (let i = 0; i < 4; i++) fsZoomBy(0.15); await wait(250); const z2 = Math.round(fsZoom * 100), b = dsRead(fs, false);
+    const px = $$('input', dsBoxes(fs)[0])[0]; px.value = '384'; fire(px, 'change'); await wait(350); const g = dsGap(0), c = dsRead(fs, false);
+    fsZoomReset(); closeFullscreen(); await wait(400); okDialogs(); dsAdv('dead', was); back(); await restore();
+    return is({ zoomedIn: z2 > z1, a, b, g, c }, { zoomedIn: true, a: ['stacked', 'one line'], b: ['stacked', 'one line'], g: 384, c: ['stacked', 'one line'] },
+      'zoom went up / read-outs at the first zoom / at the second zoom / gap after 384 typed in PX / read-outs after');
+  });
   await check('Advanced: dragging a destination in Free Position does not pan the view, and the red snap guide sits on the snapped edge', async () => {
     const was = cvAdv('freePos', true);
     await cvLay([0, 0], [1920, 0], [3840 + 400, 0]);
@@ -788,62 +1270,91 @@
   const ovlStrip = async () => { presets.forEach(p => repackPositions(p.id)); render(); await wait(200); };
   const ovlTwoRows = async () => { await ovlStrip(); const last = screens[screens.length - 1]; setPosition(presets[0], last.id, 0, parseInt(screens[0].h) + 40); render(); await wait(200); };
   const ovlGeo = () => JSON.stringify(screens.map(s => [parseInt(s.w), parseInt(s.h), presets[0].positions[s.id], getRotation(presets[0].id, s.id), _screenHidden(presets[0], s.id)]));
+  // Add these two helpers straight after the existing line  "const ovlGeo = () => JSON.stringify(...)":
+  const ovlBlocked = () => dlgOpen() && /Destinations can.t overlap/.test(dialogText()) && !$('#dlg-cancel');
+  const ovlShut = async () => { if (dlgOpen()) { ($('#dlg-cancel') || $('#dlg-confirm')).click(); await wait(400); } };   // Cancel on a question, OK on an alert: never "Add to blend"
 
-  await check('no overlap: a typed X in Destination Properties that lands on the neighbour asks "Create Blend Zone?"; Cancel puts it back with no undo step; Add to blend is ONE undo step, marks the show unsaved and survives save + reload without a question', async () => {
+  // REPLACES: 'no overlap: a typed X in Destination Properties that lands on the neighbour asks "Create Blend Zone?"; Cancel puts it back with no undo step; Add to blend is ONE undo step, marks the show unsaved and survives save + reload without a question'
+  await check('no overlap: a typed X in Destination Properties that lands on the neighbour is BLOCKED while Blend Zones is off (nothing moves, no undo step); with Blend Zones on it asks "Create Blend Zone?"; Cancel puts it back with no undo step; Add to blend is ONE undo step, marks the show unsaved and survives save + reload without a question', async () => {
     await ovlStrip(); const b = screens[1].id; const X = () => presets[0].positions[b].x; const x0 = X(), n = _undoStack.length;
     const apply = async () => { openScreenPanel(fakeEv, presets[0].id, b); await wait(400); const pop = $('#screen-panel'); if (!pop) return false; $('#sp-x', pop).value = String(x0 - 300); $('#sp-apply', pop).click(); await wait(400); return true; };
-    if (!(await apply())) return 'Destination Properties did not open';
-    if (!ovlAsked()) { const got = ovlPairs(); await restore(); return 'no question: destination 2 went 300 px over destination 1 silently (overlaps now: ' + got + ')'; }
+    const wasOff = cvAdv('blend', false), wasFree = cvAdv('freePos', false);
+    if (!(await apply())) { cvAdv('blend', wasOff); cvAdv('freePos', wasFree); return 'Destination Properties did not open'; }
+    if (!ovlBlocked()) { const got = dialogText().slice(0, 60) || 'no dialog'; await ovlShut(); cvAdv('blend', wasOff); cvAdv('freePos', wasFree); await restore(); return 'not blocked with Blend Zones off: ' + got + ' (overlaps now: ' + ovlPairs() + ')'; }
+    const blocked = [X(), ovlPairs(), _undoStack.length - n]; await ovlShut();
+    cvAdv('blend', true); await wait(150);
+    await apply(); if (!ovlAsked()) { const got = ovlPairs(); await ovlShut(); cvAdv('blend', wasOff); cvAdv('freePos', wasFree); await restore(); return 'no question with Blend Zones on: destination 2 went 300 px over destination 1 silently (overlaps now: ' + got + ')'; }
     $('#dlg-cancel').click(); await wait(400); const cancel = [X(), ovlPairs(), _undoStack.length - n];
     await apply(); const asked2 = ovlAsked(); $('#dlg-confirm').click(); await wait(700); const add = [X(), ovlPairs(), _undoStack.length - n, _isDirty];
     doUndo(); await wait(300); const undone = [X(), ovlPairs()]; doRedo(); await wait(300);
-    _applyProjectText(JSON.stringify(getProjectState())); await wait(800); const onLoad = [ovlAsked(), ovlPairs()]; okDialogs();
-    await restore(); return is([asked2, cancel, add, undone, onLoad], [true, [x0, '', 0], [x0 - 300, '1+2', 1, true], [x0, ''], [false, '1+2']], 'asked again / after Cancel (X, overlaps, undo steps) / after Add to blend (X, overlaps, undo steps, unsaved) / after Undo / after save + reload (question, overlaps)');
+    _applyProjectText(JSON.stringify(getProjectState())); await wait(800); const onLoad = [ovlAsked() || ovlBlocked(), ovlPairs()]; okDialogs();
+    cvAdv('blend', wasOff); cvAdv('freePos', wasFree);
+    await restore(); return is([blocked, asked2, cancel, add, undone, onLoad], [[x0, '', 0], true, [x0, '', 0], [x0 - 300, '1+2', 1, true], [x0, ''], [false, '1+2']], 'blocked with Blend Zones off (X, overlaps, undo steps) / asked again with it on / after Cancel (X, overlaps, undo steps) / after Add to blend (X, overlaps, undo steps, unsaved) / after Undo / after save + reload (dialog, overlaps)');
   });
-  await check('no overlap: a typed Rotation whose tilted footprint reaches the neighbour asks; Cancel takes the rotation back with no undo step; a 90 degree turn on a clean strip still re-packs without a question', async () => {
+  // REPLACES: 'no overlap: a typed Rotation whose tilted footprint reaches the neighbour asks; Cancel takes the rotation back with no undo step; a 90 degree turn on a clean strip still re-packs without a question'
+  await check('no overlap: a typed Rotation whose tilted footprint reaches the neighbour is BLOCKED while Blend Zones is off (rotation back, no undo step) and asks with Blend Zones on; Cancel takes the rotation back with no undo step; a 90 degree turn on a clean strip still re-packs without a question or an alert', async () => {
     await ovlStrip(); const a = screens[0].id, n = _undoStack.length;
     const rot = async v => { openScreenPanel(fakeEv, presets[0].id, a); await wait(400); const pop = $('#screen-panel'); if (!pop) return false; $('#sp-rot', pop).value = String(v); $('#sp-apply', pop).click(); await wait(400); return true; };
-    if (!(await rot(30))) return 'Destination Properties did not open';
-    if (!ovlAsked()) { const got = ovlPairs(); await restore(); return 'no question: the 30 degree footprint went over the neighbour silently (overlaps now: ' + got + ')'; }
-    $('#dlg-cancel').click(); await wait(400); const cancel = [getRotation(presets[0].id, a), ovlPairs(), _undoStack.length - n];
-    await rot(90); const quiet = [dlgOpen(), getRotation(presets[0].id, a), ovlPairs()]; okDialogs();
-    await restore(); return is([cancel, quiet], [[0, '', 0], [false, 90, '']], 'after Cancel (rotation, overlaps, undo steps) / 90 on a clean strip (question, rotation, overlaps)');
+    const wasOff = cvAdv('blend', false), wasFree = cvAdv('freePos', false);
+    if (!(await rot(30))) { cvAdv('blend', wasOff); cvAdv('freePos', wasFree); return 'Destination Properties did not open'; }
+    if (!ovlBlocked()) { const got = dialogText().slice(0, 60) || 'no dialog'; await ovlShut(); cvAdv('blend', wasOff); cvAdv('freePos', wasFree); await restore(); return 'not blocked with Blend Zones off: ' + got + ' (overlaps now: ' + ovlPairs() + ')'; }
+    const blocked = [getRotation(presets[0].id, a), ovlPairs(), _undoStack.length - n]; await ovlShut();
+    await rot(90); const quiet = [dlgOpen(), getRotation(presets[0].id, a), ovlPairs()]; okDialogs(); await restore(); await ovlStrip(); const n2 = _undoStack.length;
+    cvAdv('blend', true); await wait(150); await rot(30);
+    if (!ovlAsked()) { const got = ovlPairs(); await ovlShut(); cvAdv('blend', wasOff); cvAdv('freePos', wasFree); await restore(); return 'no question with Blend Zones on: the 30 degree footprint went over the neighbour silently (overlaps now: ' + got + ')'; }
+    $('#dlg-cancel').click(); await wait(400); const cancel = [getRotation(presets[0].id, a), ovlPairs(), _undoStack.length - n2];
+    cvAdv('blend', wasOff); cvAdv('freePos', wasFree);
+    await restore(); return is([blocked, quiet, cancel], [[0, '', 0], [false, 90, ''], [0, '', 0]], 'blocked with Blend Zones off (rotation, overlaps, undo steps) / 90 on a clean strip (dialog, rotation, overlaps) / with Blend Zones on, after Cancel (rotation, overlaps, undo steps)');
   });
-  await check('no overlap: a pasted position that sits on another destination asks; Cancel puts it back with no undo step and the panel closes', async () => {
-    await ovlStrip(); const a = screens[0].id, c = screens[2].id, n0 = () => _undoStack.length; const x0 = presets[0].positions[c].x;
-    openScreenPanel(fakeEv, presets[0].id, a); await wait(400); let pop = $('#screen-panel'); if (!pop) return 'Destination Properties did not open';
-    $('[data-sp-key="pos"][data-sp-tool="copy"]', pop).click(); closeScreenPanel(); await wait(150);
-    openScreenPanel(fakeEv, presets[0].id, c); await wait(400); pop = $('#screen-panel'); const n = n0();
-    $('[data-sp-key="pos"][data-sp-tool="paste"]', pop).click(); await wait(400);
-    if (!ovlAsked()) { const got = ovlPairs(); closeScreenPanel(); await restore(); return 'no question: destination 3 was pasted on top of destination 1 silently (overlaps now: ' + got + ')'; }
-    $('#dlg-cancel').click(); await wait(400); const out = is([presets[0].positions[c].x, ovlPairs(), n0() - n, !!$('#screen-panel')], [x0, '', 0, false], 'after Cancel: X / overlaps / undo steps / panel still open');
-    await restore(); return out;
+  // REPLACES: 'no overlap: a pasted position that sits on another destination asks; Cancel puts it back with no undo step and the panel closes'
+  await check('no overlap: a pasted position that sits on another destination is BLOCKED while Blend Zones is off and asks with Blend Zones on; either way it is back where it was with no undo step and the panel closes', async () => {
+    const out = []; const wasOff = cvAdv('blend', false), wasFree = cvAdv('freePos', false);
+    for (const blendOn of [false, true]) {
+      cvAdv('blend', blendOn); await ovlStrip(); const a = screens[0].id, c = screens[2].id, n0 = () => _undoStack.length; const x0 = presets[0].positions[c].x;
+      openScreenPanel(fakeEv, presets[0].id, a); await wait(400); let pop = $('#screen-panel'); if (!pop) { cvAdv('blend', wasOff); cvAdv('freePos', wasFree); return 'Destination Properties did not open'; }
+      $('[data-sp-key="pos"][data-sp-tool="copy"]', pop).click(); closeScreenPanel(); await wait(150);
+      openScreenPanel(fakeEv, presets[0].id, c); await wait(400); pop = $('#screen-panel'); const n = n0();
+      $('[data-sp-key="pos"][data-sp-tool="paste"]', pop).click(); await wait(400);
+      const saw = ovlBlocked() ? 'blocked' : ovlAsked() ? 'asked' : 'silent ' + ovlPairs(); await ovlShut();
+      out.push([saw, presets[0].positions[c].x === x0, ovlPairs(), n0() - n, !!$('#screen-panel')]); closeScreenPanel(); await restore();
+    }
+    cvAdv('blend', wasOff); cvAdv('freePos', wasFree);
+    return is(out, [['blocked', true, '', 0, false], ['asked', true, '', 0, false]], 'Blend Zones off / on: [what came up, X back, overlaps, undo steps, panel still open]');
   });
-  await check('no overlap: with a second row under destination 1, a height change (corner handle, typed H, I/O Patch resolution) that would drop the row onto the strip asks each time, and Cancel puts every destination back', async () => {
-    const out = []; let miss = '';
-    const run = async (label, act) => {
-      await ovlTwoRows(); const g0 = ovlGeo(), n = _undoStack.length; await act(); await wait(450);
-      if (!ovlAsked()) { miss += label + ' made ' + (ovlPairs() || 'no overlap') + ' with no question; '; okDialogs(); return; }
-      $('#dlg-cancel').click(); await wait(400); out.push([label, ovlGeo() === g0, _undoStack.length - n]);
+  // REPLACES: 'no overlap: with a second row under destination 1, a height change (corner handle, typed H, I/O Patch resolution) that would drop the row onto the strip asks each time, and Cancel puts every destination back'
+  await check('no overlap: with a second row under destination 1, a height change (corner handle, typed H, I/O Patch resolution) that would drop the row onto the strip is BLOCKED each time while Blend Zones is off and asks each time with Blend Zones on; every destination is back afterwards with no undo step', async () => {
+    const out = []; const wasOff = cvAdv('blend', false), wasFree = cvAdv('freePos', false);
+    const run = async (label, blendOn, act) => {
+      cvAdv('blend', blendOn); await ovlTwoRows(); const g0 = ovlGeo(), n = _undoStack.length; await act(); await wait(450);
+      const saw = ovlBlocked() ? 'blocked' : ovlAsked() ? 'asked' : 'silent ' + (ovlPairs() || 'no overlap'); await ovlShut();
+      out.push([label, blendOn ? 'on' : 'off', saw, ovlGeo() === g0, _undoStack.length - n]); doSelect(null, null); await restore();
     };
-    await run('corner handle', async () => { doSelect(presets[0].id, screens[0].id); await wait(250); await vpDrag($('.preset-row[data-pid="' + presets[0].id + '"] .screen-box[data-sid="' + screens[0].id + '"] > .rh-tr'), 0, 14); });
-    await run('typed H', async () => { openScreenPanel(fakeEv, presets[0].id, screens[0].id); await wait(400); const pop = $('#screen-panel'); $('#sp-h', pop).value = String(parseInt(screens[0].h) - 80); $('#sp-apply', pop).click(); });
-    await run('I/O Patch resolution', async () => { _sysSetMeta('dest', screens[0].id, 'resolution', parseInt(screens[0].w) + 'x' + (parseInt(screens[0].h) - 80)); });
-    doSelect(null, null); await restore();
-    return miss ? miss : is(out, [['corner handle', true, 0], ['typed H', true, 0], ['I/O Patch resolution', true, 0]], 'per path: everything back after Cancel / undo steps left');
+    for (const blendOn of [false, true]) {
+      await run('corner handle', blendOn, async () => { doSelect(presets[0].id, screens[0].id); await wait(250); await vpDrag($('.preset-row[data-pid="' + presets[0].id + '"] .screen-box[data-sid="' + screens[0].id + '"] > .rh-tr'), 0, 14); });
+      await run('typed H', blendOn, async () => { openScreenPanel(fakeEv, presets[0].id, screens[0].id); await wait(400); const pop = $('#screen-panel'); $('#sp-h', pop).value = String(parseInt(screens[0].h) - 80); $('#sp-apply', pop).click(); });
+      await run('I/O Patch resolution', blendOn, async () => { _sysSetMeta('dest', screens[0].id, 'resolution', parseInt(screens[0].w) + 'x' + (parseInt(screens[0].h) - 80)); });
+    }
+    cvAdv('blend', wasOff); cvAdv('freePos', wasFree);
+    const want = []; for (const m of [['off', 'blocked'], ['on', 'asked']]) for (const l of ['corner handle', 'typed H', 'I/O Patch resolution']) want.push([l, m[0], m[1], true, 0]);
+    return is(out, want, 'per path and Blend Zones state: [path, Blend Zones, what came up, everything back, undo steps left]');
   });
-  await check('no overlap: a wider Dead Space value that pushes a destination onto the next one asks, and so does putting a removed destination back into a slot that was taken; Cancel undoes both', async () => {
-    await ovlStrip(); const was = cvAdv('dead', true); const P = () => presets[0], w = i => parseInt(screens[i].w);
-    setPosition(P(), screens[1].id, w(0) + 100, P().positions[screens[1].id].y); setPosition(P(), screens[2].id, w(0) + 100 + w(1), P().positions[screens[2].id].y); render(); await wait(300);
-    const inp = $$('.preset-row[data-pid="' + P().id + '"] input').find(i => /setDeadPx/.test(i.getAttribute('onchange') || '')); if (!inp) { cvAdv('dead', was); await restore(); return 'no dead-space box on the tile'; }
-    const g0 = ovlGeo(), n = _undoStack.length; inp.value = '600'; fire(inp, 'change'); await wait(400);
-    const dead = ovlAsked() ? 'asked' : 'silent ' + ovlPairs(); if (ovlAsked()) { $('#dlg-cancel').click(); await wait(400); } else okDialogs();
-    const deadBack = [ovlGeo() === g0, _undoStack.length - n]; cvAdv('dead', was);
-    await ovlStrip(); const hid = screens[1].id; P().hiddenScreens = {}; P().hiddenScreens[hid] = true; setPosition(P(), screens[2].id, P().positions[hid].x, P().positions[hid].y); render(); await wait(250);
-    const g1 = ovlGeo(), n1 = _undoStack.length; _unhideScreen(P().id, hid); await wait(400);
-    const unhide = ovlAsked() ? 'asked' : 'silent ' + ovlPairs(); if (ovlAsked()) { $('#dlg-cancel').click(); await wait(400); } else okDialogs();
-    const out = is([dead, deadBack, unhide, ovlGeo() === g1, _undoStack.length - n1], ['asked', [true, 0], 'asked', true, 0], 'dead-space box / back after Cancel, undo steps / put back into preset / back after Cancel / undo steps');
-    await restore(); return out;
+  // REPLACES: 'no overlap: a wider Dead Space value that pushes a destination onto the next one asks, and so does putting a removed destination back into a slot that was taken; Cancel undoes both'
+  await check('no overlap: a wider Dead Space value that pushes a destination onto the next one, and putting a removed destination back into a slot that was taken, are both BLOCKED while Blend Zones is off and both ask with Blend Zones on; everything is back afterwards with no undo step', async () => {
+    const out = []; const wasOff = cvAdv('blend', false), wasFree = cvAdv('freePos', false), wasDead = cvAdv('dead', true); const P = () => presets[0], w = i => parseInt(screens[i].w);
+    for (const blendOn of [false, true]) {
+      cvAdv('blend', blendOn); await ovlStrip();
+      setPosition(P(), screens[1].id, w(0) + 100, P().positions[screens[1].id].y); setPosition(P(), screens[2].id, w(0) + 100 + w(1), P().positions[screens[2].id].y); render(); await wait(300);
+      const inp = $$('.preset-row[data-pid="' + P().id + '"] input').find(i => /setDeadPx/.test(i.getAttribute('onchange') || '')); if (!inp) { cvAdv('dead', wasDead); cvAdv('blend', wasOff); cvAdv('freePos', wasFree); await restore(); return 'no dead-space box on the tile'; }
+      const g0 = ovlGeo(), n = _undoStack.length; inp.value = '600'; fire(inp, 'change'); await wait(400);
+      const dead = ovlBlocked() ? 'blocked' : ovlAsked() ? 'asked' : 'silent ' + ovlPairs(); await ovlShut();
+      out.push(['dead space', blendOn ? 'on' : 'off', dead, ovlGeo() === g0, _undoStack.length - n]);
+      await restore(); await ovlStrip(); const hid = screens[1].id; P().hiddenScreens = {}; P().hiddenScreens[hid] = true; setPosition(P(), screens[2].id, P().positions[hid].x, P().positions[hid].y); render(); await wait(250);
+      const g1 = ovlGeo(), n1 = _undoStack.length; _unhideScreen(P().id, hid); await wait(400);
+      const unhide = ovlBlocked() ? 'blocked' : ovlAsked() ? 'asked' : 'silent ' + ovlPairs(); await ovlShut();
+      out.push(['put back into preset', blendOn ? 'on' : 'off', unhide, ovlGeo() === g1, _undoStack.length - n1]); await restore();
+    }
+    cvAdv('dead', wasDead); cvAdv('blend', wasOff); cvAdv('freePos', wasFree);
+    return is(out, [['dead space', 'off', 'blocked', true, 0], ['put back into preset', 'off', 'blocked', true, 0], ['dead space', 'on', 'asked', true, 0], ['put back into preset', 'on', 'asked', true, 0]], 'per action and Blend Zones state: [action, Blend Zones, what came up, everything back, undo steps left]');
   });
   await check('no overlap (existing behaviour, pinned): a Free Position drop on a neighbour asks and Cancel puts it back; the Blend Zones sideways drag and the blend PX box blend without a question; a typed Width on a strip, Add Destination, Duplicate and Fit Canvas make no overlap and ask nothing', async () => {
     await ovlStrip(); const wasF = cvAdv('freePos', true); const pid = presets[0].id; const boxOf = i => $('.preset-row[data-pid="' + pid + '"] .screen-box[data-sid="' + screens[i].id + '"]');

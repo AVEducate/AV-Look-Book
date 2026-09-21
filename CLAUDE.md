@@ -18,7 +18,7 @@ the Excel cue sheet, the I/O Excel, the Wire drawing, and Send. (A CSV exporter 
 - `tests/` — the regression gate: `run_smoke.mjs`, `smoke_probe.js` (what each example show produces),
   `flows_probe.js` (drives the app like a user, Simple + Advanced, all three tools), `mobile_probe.js` +
   `run_mobile_stage.mjs` (the phone build at 390x844 and 844x390 with real touch taps), `golden/`.
-- `tools/` — `check_js.py` (run after every page edit), `cdp.mjs` (drive the dev shell).
+- `tools/` — `check_js.py` (run after every page edit; give it a path to check a scratch copy), `cdp.mjs` (drive the dev shell).
 - `deploy/quick_guide.html` / `.pdf` — the Quick Guide. `deploy/landing-*.html`, `site/` — website blocks, the download
   counter and the example packets (`site/packets/`).
 - `backups/` — local snapshots, not in git. Snapshot before every page edit:
@@ -103,12 +103,33 @@ or a mutation manually poking the DOM).
 
 **No-overlap guard (2026-09-21)** — `_ovlBegin()` / `_ovlEnd(tok)` (+ `_ovlPairs`, `_ovlNew`, `_ovlRevert`), in front of `_bgGroups`.
 Bracket every writer of a destination position / size / rotation that is NOT a blend control (today: Destination Properties Apply,
-`_spTool` paste / reset, `startResize`, `setDeadPx`, `_sysSetMeta` dest resolution, `_unhideScreen`). New overlap = the drag's
-"Create Blend Zone?"; Cancel = pre-action snapshot back, no undo step. Not bracketed on purpose: blend controls, load, undo / redo,
-the move arrows and the arrow keys.
+`_spTool` paste / reset, `startResize`, `setDeadPx`, `_sysSetMeta` dest resolution, `_unhideScreen`, `_resizeSelDest`). New overlap with Blend Zones OFF and Free
+Position OFF (body has `adv-hide-blend`, lacks `adv-free-position`) = BLOCKED: `_ovlRevert` (pre-action snapshot back, no undo step)
+then ONE `showAlert` "Destinations can't overlap" (`_ovlBlockUp()` keeps a burst from raising a pile). With Free Position ON or
+Blend Zones ON = the drag's "Create Blend Zone?"; Cancel = the same put-back. Owner rule 2026-09-21. Not bracketed on purpose: blend controls, load, undo / redo,
+the move arrows (a swap that would overlap is greyed by `_lbMovePlan`), preset copy / paste and + Preset (they carry an existing
+blend over as it is). The arrow keys ARE bracketed since 16kq (`_resizeSelDest`).
+
+**Looking is not a change (2026-09-21)** — the unsaved mark (`_isDirty`, the gold Save button, the New / Load / close question)
+comes on ONLY for a real edit. Two rules, both next to `_dirtyStateString`: (1) view settings are SAVED as before but left out of
+the comparison: `_LB_DIRTY_VIEW_KEYS` (Wire view / zoom / tool / panes / collapsed panels / Align panel place, I/O view / open page)
+plus any key named `minimized`; keep that list small, `getProjectState()` is never filtered. (2) anything the app fills in BY ITSELF
+(random cable colours, Wire / I/O Advanced page 1 built from Simple, the empty default pages, the default print sheet, the
+"asked once" note) runs through `_lbNotAChange(fn)`: clean immediately before = the baseline is taken again immediately after, in
+the same tick; already unsaved = nothing is re-captured. Replaced baselines are kept in `_savedAlso` so Undo back past a first look
+still reads clean. Never wrap code that holds a user edit; a new automatic write that is not wrapped lights Save for nothing.
+Draw-time follow-ups (Wire / I/O Advanced syncs that run on every draw) use the draw form `_lbNotAChange(fn,get,set)` (one small
+JSON of the part per draw; the full comparison only when something was written); async fills end through `_lbNotAChangeDone`.
+A rename of a destination / AUX / multiviewer carries its follow-ups in the SAME edit and undo step (`_lbRenamedDest`).
 
 **VIEW layer — `render*` assemblers + `_rc/_rf/_fs/_lp` helpers + HTML templates**
 - `renderCanvas()` → `_rcChip`/`_rcAoiOverlay`/`_rcScreenBox`/`_rcOverlapVis`/`_rcDeadVis`
+- Move arrows (`_renderMoveSymbol`, blend-arrows 2026-09-21): a `.move-symbol` overlay inside the PICKED `.screen-box`. For a blend
+  group (the block from `_lbMvBlocks`) the ◀ lives in its OWN `.move-symbol` overlay inside the group's left-most box and the ▶
+  inside the right-most box (never offset out of the picked box: a destination removed from the preset is a ghost box that
+  clips its children, and the arrow vanished with it). Inline styles only: no CSS rule, nothing reaches an export.
+  (`_rcDeadVis(pos,sc,pid,_print)`: the left / right PX / FT read-out stacks when the gap is narrower than one line; feet
+  default to 16 PPI, 1 foot = 192 px, a stored PPI is kept. See HANDBOOK section 5.)
 - `renderFullscreen()` (Advanced) → the SAME tile as Simple: `_rcPresetRow` (so `_rcScreenBox`/`_rcChip`/`_rcOverlapVis`/
   `_rcDeadVis`), then `_fsMountVideos` + `renderFsPanel`. The old `_rf*` helpers are dead code since build 16hx.
 - `renderFsPanel()` → `_fsCrumb` + `_fsSourceBlockHTML` + `_fsInfoSectionsHTML` + `_lpAdvancedSection` (the same accordion

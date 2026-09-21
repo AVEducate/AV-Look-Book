@@ -169,7 +169,7 @@ Four switches for the whole page (a tick shows what is on) and one action for th
 
 **Pick.** Click a destination: orange outline, corner handles, and the move arrows ◀ ▶ on its edges. Click it again to let go. A click on its table row picks the same destination (without showing the move arrows).
 
-**Re-order.** Press ◀ or ▶ to swap the destination with its neighbour. The order is the same in every preset. A greyed arrow means there is nothing on that side, or the neighbour is its blend partner. The arrows disappear after one move; click the destination again to get them back. Dragging the ⇅ handle of a table row also re-orders, but puts every preset back to a clean strip.
+**Re-order.** Press ◀ or ▶ to swap the destination with its neighbour. The order is the same in every preset. A blended group (two or more destinations that overlap) moves as one block, so its arrows sit on the OUTER edges of the group: ◀ on the far left of the left-most member and ▶ on the far right of the right-most member, whichever member you picked. No arrow is drawn over the blend zone. A greyed arrow means there is nothing on that side, or the neighbour is its blend partner. The arrows disappear after one move; click the destination again to get them back. Dragging the ⇅ handle of a table row also re-orders, but puts every preset back to a clean strip.
 
 **Resize.** Drag a corner handle. Neighbours slide along, layers are kept inside, and a blend pair resizes together. With the destination picked, the arrow keys resize by 1 px (Shift = 10 px). Both change the real output resolution for the whole show. Exact numbers go in Destination Properties.
 
@@ -187,9 +187,9 @@ Four switches for the whole page (a tick shows what is on) and one action for th
 
 **Free Position.** Drag anywhere. If the drop makes a new overlap the app asks "Create Blend Zone?": *Add to blend* keeps it, *Cancel* puts the destination back. After a drop the layout slides back to 0,0 by itself.
 
-**No accidental overlaps.** A destination never lands on top of another one without asking, in Simple or in Advanced. A typed X / Y, Width / Height or Rotation in Destination Properties, a pasted or reset size / position / rotation, a corner-handle resize, a Dead Space value, a resolution picked in I/O Patch, or the eye button that brings a hidden destination back: when the result would cover a neighbour (fully or partly, in ANY preset, the message names the presets) the app asks the same "Create Blend Zone?". *Add to blend* keeps the change as its one Undo step. *Cancel* puts everything back the way it was before the action and leaves no Undo step. The blend controls themselves (the Blend Zones sideways drag, the PX and % boxes, the blend window) never ask: there the overlap is what you asked for. Opening a show never moves anything, so old shows keep their blends.
+**No accidental overlaps.** A destination never lands on top of another one by accident, in Simple or in Advanced. While **Blend Zones** and **Free Position** are both off (the way the app opens) an overlap is simply not on offer: the change is refused, everything stays exactly as it was, no Undo step is used, and one message, "Destinations can't overlap", names the pair and the presets and tells you to turn on Blend Zones in Modifiers if you want a blend. With Free Position on, or Blend Zones on, the app asks instead, as described next. A typed X / Y, Width / Height or Rotation in Destination Properties, a pasted or reset size / position / rotation, a corner-handle resize, a Dead Space value, a resolution picked in I/O Patch, or the eye button that brings a hidden destination back: when the result would cover a neighbour (fully or partly, in ANY preset, the message names the presets) the app asks the same "Create Blend Zone?". *Add to blend* keeps the change as its one Undo step. *Cancel* puts everything back the way it was before the action and leaves no Undo step. The blend controls themselves (the Blend Zones sideways drag, the PX and % boxes, the blend window) never ask: there the overlap is what you asked for. Opening a show never moves anything, so old shows keep their blends.
 
-**Dead Space.** Type the gap in PX or in FT on the blue arrow; the right-hand destination moves. A ⚠ marks a gap over 500 px. Feet follow the Pixel-Feet setting in Help › Accessibility, not the LED pitch.
+**Dead Space.** Type the gap in PX or in FT on the blue arrow; the right-hand destination moves. When the gap is too narrow on screen for the two numbers side by side, FT sits under PX; with room they share one line. A ⚠ marks a gap over 500 px. Feet follow the **Pixel ⇔ Feet Conversion** setting at the foot of Help › Quick Reference, not the LED pitch. It starts at 16 PPI (1 foot = 192 px, the most common LED tile); a PPI you typed there before is kept and Help shows the value in force; **↺ Reset All** (Help › Accessibility) goes back to 16.
 
 **Area of Interest (AOI Overlays on)**
 1. Pick a destination and press **A** (bottom right of the box). The red box is the AOI.
@@ -206,7 +206,7 @@ Double-click a destination, or press the chevron in the table's Name cell.
 - **Layers · this preset**: L1 to L4 buttons open that layer's panel. **↺ Reset** puts every layer on this destination back to its default place.
 - **Preset override · this preset**: **BG/Color**, **X / Y Position**, **Rotation** (any angle; a 90° turn asks whether to keep your layout or re-arrange), **EDID Note**. Each row has copy / paste / reset tools; paste acts at once.
 - **Apply** (or Enter) writes the fields as one Undo step and closes the window. **Copy** duplicates the destination. **Cancel**, ✕, Escape or a click outside close without applying typed numbers.
-- **Never on top of a neighbour without asking**: Apply, paste and reset check the result. If it would overlap another destination you get "Create Blend Zone?" (4.3); Cancel takes the whole Apply back.
+- **Never on top of a neighbour by accident**: Apply, paste and reset check the result. If it would overlap another destination the whole Apply is refused with "Destinations can't overlap" while Blend Zones and Free Position are off; with either of them on you get "Create Blend Zone?" (4.3) and Cancel takes the whole Apply back.
 - **Reset Preset Layout**: clean strip for this preset.
 - **Show Labels / Remove Labels**: name and resolution on or off for this destination in this preset.
 - **Remove from Preset**: hides the destination in this preset only (the ghost brings it back).
@@ -466,7 +466,7 @@ It is a reference picture next to your switcher, not a playback machine: H.264 a
 
 **Page 1 of Advanced IS the Simple drawing, carried over.** It starts as the pre-built Simple diagram so you can modify it and add to it. What you change there about a source or a destination (its name, its cover picture, its cable type, its resolution) is the same fact in Simple, in I/O Patch and in Video Presets: there is one source, shown in several places, which is why you can drag and drop it anywhere. **Every page after page 1 is a custom build**: start from nothing and draw any combination you need; those pages do not feed back into Simple.
 
-**Cable colours.** The first time you look at Wire, every source and destination that has no colour yet is given a random one. That is intended. **Once you have picked a colour yourself it never changes again.**
+**Cable colours.** The first time you look at Wire, every source and destination that has no colour yet is given a random one. That is intended, and it does not turn Save gold: the colours go into the file with your next save. **Once you have picked a colour yourself it never changes again.**
 
 The same split runs through I/O Patch: Simple lists what the show already has; Advanced page 1 starts as a copy of it and feeds back; the pages after it are your own.
 
@@ -684,7 +684,7 @@ Two views, chosen at the left of the page bar:
 
 | Control | What it does |
 |---|---|
-| Simple / Advanced | Switches the view. The first time you open Advanced, page 1 is built from the show. |
+| Simple / Advanced | Switches the view. The first time you open Advanced, page 1 is built from the show. Neither turns Save gold. |
 | Page tabs (Advanced only) | Click to open a page. Double-click to rename it (Enter keeps the name, Escape cancels). On the open tab: the copy icon duplicates the page, the × closes it (a page with rows asks first). |
 | Export | Writes the Excel patch book (chapter 9). |
 
@@ -818,7 +818,7 @@ Good to know
 - The canvas on the preset pages follows the **Canvas** size in the top bar. If you added destinations and the canvas was not refitted, use MODIFIERS ▾ › Fit Canvas first, or the destinations past the canvas edge are cut, on paper as on screen.
 - Clip settings (In / Out, loop, speed, level, fades, look) print on the BG line. A clip on a layer prints only its name and size. EDID notes are not printed anywhere.
 - The Version box belongs to the Look Book window and is not stored in the show. The Excel cover and the Wire title block use **Project Ver** from the show info instead.
-- The first Look Book with a wire sheet gives each source its cable colour, the same as opening Wire does, so the show then counts as changed. Save afterwards.
+- The first Look Book with a wire sheet gives each source its cable colour, the same as opening Wire does. That is not a change: Save stays as it was, and the colours go into the file with your next save.
 
 ### 9.2 Excel (the cue sheet)
 
@@ -890,9 +890,11 @@ One file (.avlb) is the whole show: destinations, presets, every layer with its 
 
 **The unsaved mark.** Save turns gold while there are changes that are not in the file. It compares the show with what was last saved, so Undo back to the saved state turns it off. It comes on within half a second of any change, including typing the show name and any edit in Wire. New, Load, an example show or closing the window ask first when it is on.
 
+**Looking is not a change.** Opening Wire, I/O Patch or Advanced, exporting, zooming, picking a tool, folding a pane, collapsing a side panel, switching a page tab or Simple / Advanced never turn Save gold. Those view settings are still kept in the show file: they are written with your next save (the desktop app also writes them with its 30 second autosave and when the window closes). The same goes for what the app fills in by itself the first time it draws a show: the random cable colours, and page 1 of Wire Advanced and of I/O Patch Advanced.
+
 > **CHECK (what lights up).** The exports engineer found that the Save button's text turns gold and the separate "dot" element is always hidden (the Help line about a gold dot was wrong). The undo chapter still calls it "the gold dot on Save", the toolbar chapter "the Save icon lights". This manual says "Save turns gold".
 
-Today, just looking can light it: the first time Wire (or Advanced, or a Look Book with a wire sheet) draws a show it gives every source a cable colour, and the first visit to I/O Patch Advanced builds page 1. Both are real changes to the file. Save once and it stays quiet.
+In the browser edition, cable colours that were given on a first look and never saved are picked again, as new random colours, the next time the file is opened. Save once after the first look at Wire if you want to keep them.
 
 ### 10.2 Autosave and drafts
 
@@ -909,7 +911,7 @@ The same history covers all three tools. Undo / Redo are in the top bar (dim whe
 - A drag, from press to release: moving or resizing a layer, a destination, an AOI box, a Wire tile, a cable handle, a fader.
 - A field, from the moment you click into it until you leave it or press Enter. Typing ten letters is one step, not ten.
 - Apply in Destination Properties is one step even when it changes size, position and rotation together, and the "Keep your layout?" question that may follow belongs to the same step.
-- "Create Blend Zone?" belongs to the action that raised it: *Add to blend* keeps that one step, *Cancel* leaves none (only after a Free Position DRAG does Cancel still leave one empty step).
+- A change refused with "Destinations can't overlap" leaves no step: nothing happened. "Create Blend Zone?" belongs to the action that raised it: *Add to blend* keeps that one step, *Cancel* leaves none (only after a Free Position DRAG does Cancel still leave one empty step).
 - A rename that runs through the whole show is one step and Undo puts the old name back everywhere.
 - In the layer panel, a custom name, a size and Apply together are one step.
 
@@ -1014,7 +1016,7 @@ Each item says what you see on build 2026-06-16ko and what to do. "Fixed by" nam
 | **A BG colour picked on the first preset does nothing** | The first preset's own BG colour wins over the show-wide colour | Fixed by the pending patches. |
 | **A preset name with a " in it reads cut** | The field cuts at the quote and the next click-away saves the cut text | Avoid " in names and notes until the fix (write 6in RISER). |
 | **Dragging a row or a preset tile lands one place off** | Drop position is counted wrong | Drop one place early, or use the ◀ ▶ arrows. Fixed by the pending patches. |
-| **Save is gold although I changed nothing** | Opening Wire, Advanced or I/O Patch Advanced, or exporting a Look Book with a wire sheet, assigns cable colours or builds page 1 | Save once. |
+| **Save is gold although I changed nothing** | Should not happen any more: looking (opening a tool, zoom, panes, page tabs, exporting) is not a change | Press Undo once: if Save goes dark, a real edit had been made. If not, note what you clicked last and report it with **Bug**. |
 | **Save did NOT turn gold after I worked in Wire** | Wire edits do not run the unsaved check today; the app may let you close without asking | Save by hand before closing. Fixed by the pending patches. |
 | **Cmd / Ctrl + S opened the browser's "Save page"** | The key is ignored while the cursor is in a field | Click outside the field, then save. Fixed by the pending patches. |
 | **"Restore draft?" on every start, for an empty show** | An empty draft is always written | Answer Start fresh. Fixed by the pending patches. |
