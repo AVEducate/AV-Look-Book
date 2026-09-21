@@ -121,6 +121,14 @@
    "ok": true
   },
   {
+   "name": "Advanced: a Display button sits left of Zoom, shows the format note first, and Cancel opens nothing",
+   "ok": true
+  },
+  {
+   "name": "Advanced: a blocked Display window says so and leaves the button unlit; an open one mirrors the preset clean and closes with the button",
+   "ok": true
+  },
+  {
    "name": "Advanced: closes cleanly",
    "ok": true
   },

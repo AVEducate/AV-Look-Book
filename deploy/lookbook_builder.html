@@ -746,6 +746,9 @@ body.is-mobile .dlg-btn-primary,body.is-mobile .dlg-btn-cancel{min-height:var(--
 #fs-topbar #fs-zoom-widget{height:34px !important;box-sizing:border-box}
 #fs-topbar #fs-zoom-widget>button{height:100%}
 #fs-topbar .page-export-btn{margin-left:0}
+/* Display output, stage 1 (2026-09-20): the Display button in the Advanced page bar. Lit in cyan while the output window is open; never on the phone build. */
+#fs-display-btn.on{color:var(--n-cyan) !important;border-color:rgba(var(--n-cyan-rgb),.75) !important;background:linear-gradient(180deg,rgba(var(--n-cyan-rgb),.20) 0%,rgba(var(--n-cyan-rgb),.07) 100%) !important;box-shadow:0 0 12px rgba(var(--n-cyan-rgb),.38),inset 0 0 0 1px rgba(var(--n-cyan-rgb),.22) !important}
+body.is-mobile #fs-display-btn{display:none !important}
 body.is-mobile #vp-tabs{display:none}
 /* 16hu: Video Presets → Advanced, the video-look page (Omar). All Sources left, ONE preset centre, Properties right, preset
    strip bottom. The engineer tools (lock / free move, AOI, blend, dead space, Fit Canvas, the four pods) are retired here. */
@@ -4282,7 +4285,7 @@ Also called DSM (Downstage Monitor) in broadcast and theater workflows, same thi
   <div class="bb-cell bb-pill bb-cyan" title="The largest number of layers used in any single preset, this is the figure to compare against your switcher's per-scene layer budget. (The most complex single moment in the show.)"><span class="bb-label">Layers</span><strong id="bb-layers">0</strong></div>
   <div id="bb-spacer"></div>
   <div class="bb-cell" id="bb-sel" style="font-size:10px;opacity:.5">—</div>
-  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy, hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16kj</div>
+  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy, hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16kk</div>
   <button class="bb-util" id="tb-adv" onclick="actions.advancedMenu(event)" title="Advanced features (AOI, Free Mode, Blend Zones, Dead Space)" aria-label="Advanced features (AOI, Free Mode, Blend Zones, Dead Space)" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Advanced<span class="adv-count" aria-hidden="true"></span><svg aria-hidden="true" id="tb-adv-chev" viewBox="0 0 10 10" fill="currentColor" width="8" height="8" style="opacity:.7"><path d="M2 4l3 3 3-3z"/></svg></button>
   <button class="bb-util" onclick="actions.help()" title="Help, quick reference, keyboard shortcuts, glossary, accessibility" aria-label="Help, quick reference, keyboard shortcuts, glossary, accessibility" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="4.93" y1="4.93" x2="9.17" y2="9.17"/><line x1="14.83" y1="14.83" x2="19.07" y2="19.07"/><line x1="14.83" y1="9.17" x2="19.07" y2="4.93"/><line x1="4.93" y1="19.07" x2="9.17" y2="14.83"/></svg>Help</button>
   <button class="bb-util" id="tb-bug" onclick="reportBug()" title="Report a bug, opens an email to AV Educate with the show file attached so we can see it on our side" aria-label="Report a bug" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="7.2"/><path d="M15.4 15.4L21 21" stroke-width="2.6"/><ellipse cx="10" cy="11" rx="2.5" ry="3.3" fill="currentColor" stroke="none"/><circle cx="10" cy="7" r="1.5" fill="currentColor" stroke="none"/><path d="M7.5 9.2l-1.7-.8M7.4 11.2H5.6M7.7 13.1l-1.5 1.1M12.5 9.2l1.7-.8M12.6 11.2h1.8M12.3 13.1l1.5 1.1M9.2 5.9l-.8-1.1M10.8 5.9l.8-1.1" stroke-width="1.3"/></svg>Bug</button>   <!-- 16jk (Omar): Report a bug, after Help -->
@@ -4621,6 +4624,7 @@ Also called DSM (Downstage Monitor) in broadcast and theater workflows, same thi
       <span id="fs-title" style="font-size:11px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px;letter-spacing:.02em;text-shadow:0 0 8px rgba(var(--n-cyan-rgb),.2)">—</span>
       <span id="fs-subtitle" style="font-size:11px;font-weight:500;color:var(--text2);white-space:nowrap;letter-spacing:.02em">—</span>
     </div>
+    <button class="tb-btn page-export-btn" id="fs-display-btn" type="button" onclick="_dispToggle()" aria-pressed="false" title="Display: send this preset, clean, to a second window for another monitor. Press again to close it." aria-label="Display output on a second window"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:6px"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>Display</button>
     <div id="fs-zoom-widget" style="display:inline-flex;align-items:center;gap:0;border:1px solid rgba(var(--n-cyan-rgb),.35);border-radius:999px;background:linear-gradient(180deg,#161a22 0%,#0b0d11 100%);box-shadow:var(--n-shadow-raised);overflow:hidden">
     <button onclick="fsZoomBy(-0.15)" style="background:transparent;border:none;color:var(--n-cyan);font-size:13px;font-weight:700;padding:4px 10px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;height:26px;min-width:26px" title="Zoom out" aria-label="Zoom out"><svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
     <button onclick="fsZoomReset()" id="fs-zoom-lbl" style="background:transparent;border:none;border-left:1px solid rgba(var(--n-cyan-rgb),.18);border-right:1px solid rgba(var(--n-cyan-rgb),.18);color:#fff;font-size:10px;font-weight:700;font-family:var(--font-mono);letter-spacing:.04em;padding:0 10px;cursor:pointer;height:26px;min-width:52px" title="Reset to 100% zoom" aria-label="Reset zoom">100%</button>
@@ -21967,6 +21971,198 @@ function closeFullscreen(){
   const _tb=document.getElementById('fs-toolbar'); if(_tb) _tb.innerHTML='';   // 16hu: no stale #fs-props behind the layer panel
   scheduleRender();
 }
+
+/* ══ DISPLAY OUTPUT, stage 1 (build 16kk, 2026-09-21, Omar): canvas mirror ═══════════════════════════════════════════════════
+   Video Presets > Advanced > Display sends ONLY the open preset to a clean second window (drag it onto the second
+   monitor, double-click = full screen). A REFERENCE visualiser next to a hardware switcher, never a replacement.
+   How: the output window holds a CLONE of the rendered tile (.screens-visual + the AUX / DSM band from #fs-canvas)
+   in which every <video> is replaced by a <canvas> carrying the same inline placement styles. A requestAnimationFrame
+   loop that runs IN THE OUTPUT WINDOW draws each editor <video> into its canvas with drawImage, so there is ONE
+   decoder per clip and play / pause / seek / step / speed / loop follow by construction. Opacity (fades), filter
+   (colour look), flips and crop follow because the canvas copies the editor element's inline style each frame.
+   Isolation: everything lives in this block. Nothing here runs until Display is pressed; while the output is open a
+   MutationObserver on #fs-canvas marks the clone stale (so no hooks inside renderFullscreen / _fsMountVideos /
+   closeFullscreen), and the loop reads fsPresetId to go black when Advanced closes. READ-ONLY: getters only, no data
+   setter, no pushUndo, no scheduleAutoSave, no storage. The clean look is CSS in the OUTPUT document only. */
+var _dispWin=null, _dispPairs={}, _dispObs=null, _dispPoll=0, _dispRaf=0, _dispDirty=true, _dispLive=false, _dispK=1, _dispVW=0, _dispVH=0, _dispDpr=0, _dispErr=null, _dispStats={ticks:0,draws:0,syncs:0};
+var _DISP_NOTE='Display sends the preset that is open in Advanced to a clean second window. It is for reference playback next to your switcher, it does not replace it.\n\n• H.264 and HEVC clips (MP4 / MOV) play.\n• ProRes and HAP clips do not play in this app, they show their cover picture instead.\n\nDrag the Display window onto the second monitor and double-click it for full screen (Esc leaves full screen).\nEverything is still controlled from this window.';
+var _DISP_CLEAN_CSS=''
+  +'html,body{margin:0 !important;padding:0 !important;width:100% !important;height:100% !important;min-width:0 !important;min-height:0 !important;background:#000 !important;overflow:hidden !important;display:block !important}'
+  +'html.disp-nocursor,html.disp-nocursor *{cursor:none !important}'
+  +'#disp-stage{position:absolute;left:0;top:0;width:max-content;transform-origin:0 0;pointer-events:none;user-select:none;-webkit-user-select:none}'
+  +'#disp-stage,#disp-stage *{pointer-events:none !important;transition:none !important;animation:none !important}'
+  +'#disp-stage .disp-tile{display:block;width:max-content;background:transparent}'
+  /* the checkerboard, the padding look and the band rule */
+  +'#disp-stage .screens-visual,#disp-stage .dsm-visual-row{background:none !important;border-color:transparent !important;box-shadow:none !important}'
+  /* destination frames, selection / AOI outlines, hover cues */
+  +'#disp-stage .screen-box{border-color:transparent !important;box-shadow:none !important;outline:none !important;background:transparent !important}'
+  +'#disp-stage .layer-chip,#disp-stage .chip-inner{outline:none !important}'
+  /* square corners: the tile's 2 / 4 px rounding is editor dressing and grows with the output scale (a real destination has none) */
+  +'#disp-stage .screen-box,#disp-stage .screen-inner,#disp-stage .layer-chip,#disp-stage .chip-inner,#disp-stage .chip-bg{border-radius:0 !important}'
+  +'#disp-stage .layer-chip.lsel{z-index:3 !important}'
+  +'#disp-stage .dsm-box{box-shadow:none !important}'
+  /* labels: destination name / resolution, layer name / size, source name, BG tag, opacity / flip badges */
+  +'#disp-stage .screen-box .screen-lbl,#disp-stage .screen-box .screen-res,#disp-stage .chip-res,#disp-stage .chip-inner>span:not(.disp-keep),#disp-stage .bg-tag:not(.disp-keep),#disp-stage .lfx-badge{display:none !important}'
+  /* whitelist: inside a destination only the known picture parts are ever drawn, so editor dressing added by a future build stays off the output by default */
+  +'#disp-stage .screens-visual>div>:not(.screen-box){display:none !important}'
+  +'#disp-stage .screen-box>:not(.screen-inner){display:none !important}'
+  +'#disp-stage .screen-inner>:not(.layer-chip):not(.lfx-ov):not(.fs-vid):not(.bg-tag){display:none !important}'
+  +'#disp-stage .layer-chip>:not(.chip-inner){display:none !important}'
+  +'#disp-stage .chip-inner>:not(.fs-vid):not(.chip-bg):not(span){display:none !important}'
+  /* handles, reset buttons, AOI, blend, dead space, off-box hatching, full-picture outline, ghosts, crop lines, move symbol, any control */
+  +'#disp-stage .rh,#disp-stage .lrh,#disp-stage .lc-reset,#disp-stage .chip-x{display:none !important}'
+  +'#disp-stage .aoi-mask,#disp-stage .aoi-box,#disp-stage .aoi-actions,#disp-stage .aoi-btn,#disp-stage .aoi-dim-row,#disp-stage .aoi-drag{display:none !important}'
+  +'#disp-stage .overlap-vis,#disp-stage .overlap-hatch,#disp-stage .blend-label,#disp-stage .blend-group-chip,#disp-stage .dead-vis,#disp-stage .dead-label{display:none !important}'
+  +'#disp-stage .fs-band,#disp-stage .fs-ovl-outline,#disp-stage .screen-box.screen-hidden,#disp-stage [title^="Cropped:"],#disp-stage .move-symbol{display:none !important}'
+  +'#disp-stage button,#disp-stage input,#disp-stage select,#disp-stage textarea,#disp-stage .preset-header,#disp-stage .dsm-toolbar{display:none !important}';
+function _dispIsOpen(){ try{ return !!(_dispWin&&!_dispWin.closed); }catch(e){ return false; } }
+function _dispBtnSync(){ const b=document.getElementById('fs-display-btn'); if(!b) return; const on=_dispIsOpen(); b.classList.toggle('on',on); b.setAttribute('aria-pressed',on?'true':'false'); }
+/* the Display button: a second press closes the output; opening shows the format note first, and the window opens from the
+   confirm button's own click (a user gesture, or the browser blocks it) */
+function _dispToggle(){
+  if(_dispIsOpen()){ _dispClose(); return; }
+  if(document.body.classList.contains('is-mobile')) return;
+  showConfirm({variant:'info',title:'Display output',message:_DISP_NOTE,confirmLabel:'Open Display',cancelLabel:'Cancel',onConfirm:_dispOpen});
+}
+function _dispOpen(){
+  if(_dispIsOpen()) return;
+  let w=null; try{ w=window.open('','lb-display','popup,width=1280,height=480'); }catch(e){ w=null; }
+  if(!w){ showAlert({variant:'warning',title:'Display window blocked',message:'The browser blocked the Display window.\nAllow pop-ups for this page, then press Display again.'}); return; }
+  try{ _dispBuildDoc(w); }catch(e){ try{ w.close(); }catch(e2){} showAlert({variant:'warning',title:'Display output',message:'The Display window could not be prepared. Close it and press Display again.'}); return; }
+  _dispWin=w; _dispPairs={}; _dispDirty=true; _dispLive=false; _dispVW=0; _dispVH=0; _dispDpr=0; _dispErr=null; _dispStats={ticks:0,draws:0,syncs:0};
+  const src=document.getElementById('fs-canvas');
+  if(src&&typeof MutationObserver==='function'){ _dispObs=new MutationObserver(_dispOnMutations); _dispObs.observe(src,{subtree:true,childList:true,attributes:true,characterData:true}); }
+  _dispPoll=setInterval(_dispWatch,400);
+  window.addEventListener('pagehide',_dispClose);   /* reloading or closing the editor closes the output */
+  _dispRaf=w.requestAnimationFrame(_dispTick);
+  _dispBtnSync();
+}
+function _dispClose(){ const w=_dispWin; _dispTeardown(); try{ if(w&&!w.closed) w.close(); }catch(e){} }
+function _dispTeardown(){
+  if(_dispObs){ try{ _dispObs.disconnect(); }catch(e){} _dispObs=null; }
+  if(_dispPoll){ clearInterval(_dispPoll); _dispPoll=0; }
+  try{ if(_dispRaf&&_dispWin&&!_dispWin.closed) _dispWin.cancelAnimationFrame(_dispRaf); }catch(e){}
+  _dispRaf=0; window.removeEventListener('pagehide',_dispClose);
+  _dispWin=null; _dispPairs={}; _dispLive=false; _dispBtnSync();
+}
+/* editor-side watchdog (only while open): un-lights the button when the user closes the output, re-arms a reloaded output */
+function _dispWatch(){
+  if(!_dispIsOpen()){ _dispTeardown(); return; }
+  try{ const w=_dispWin; if(!w.document.getElementById('disp-stage')){ _dispBuildDoc(w); _dispPairs={}; _dispDirty=true; _dispLive=false; _dispVW=0; try{ w.cancelAnimationFrame(_dispRaf); }catch(e){} _dispRaf=w.requestAnimationFrame(_dispTick); } }catch(e){}
+}
+/* the output document: standards mode, the app's own stylesheet rules (so the clone draws exactly like the tile), then the
+   output-only clean CSS. No keys, no clicks: the only gesture is a double-click for full screen; the cursor hides after 2 s */
+function _dispBuildDoc(w){
+  const d=w.document;
+  d.open(); d.write('<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>AV Look Book · Display</title></head><body></body></html>'); d.close();
+  let css='';
+  for(let i=0;i<document.styleSheets.length;i++){ let rules; try{ rules=document.styleSheets[i].cssRules; }catch(e){ continue; } if(!rules) continue; for(let j=0;j<rules.length;j++){ css+=rules[j].cssText+'\n'; } }
+  const a=d.createElement('style'); a.id='disp-app-css'; a.textContent=css; d.head.appendChild(a);
+  const c=d.createElement('style'); c.id='disp-clean-css'; c.textContent=_DISP_CLEAN_CSS; d.head.appendChild(c);
+  const st=d.createElement('div'); st.id='disp-stage'; d.body.appendChild(st);
+  let curT=0;
+  const wake=function(){ d.documentElement.classList.remove('disp-nocursor'); if(curT) w.clearTimeout(curT); curT=w.setTimeout(function(){ d.documentElement.classList.add('disp-nocursor'); },2000); };
+  d.addEventListener('mousemove',wake); wake();
+  d.addEventListener('dblclick',function(ev){ ev.preventDefault(); try{ if(d.fullscreenElement) d.exitFullscreen(); else { const r=d.documentElement.requestFullscreen(); if(r&&r.catch) r.catch(function(){}); } }catch(e){} });
+  d.addEventListener('contextmenu',function(ev){ ev.preventDefault(); });
+  w.addEventListener('pagehide',function(){ setTimeout(_dispWatch,60); });   /* the user closed the output: un-light the button at once (the editor's own timer; the 400 ms watchdog is the fallback) */
+}
+/* anything that changes the tile marks the clone stale; a <video>'s own attributes (fade opacity, look filter, re-fit) are
+   copied per frame by _dispDraw, so they never force a re-clone */
+function _dispOnMutations(recs){ for(let i=0;i<recs.length;i++){ const r=recs[i]; if(r.type==='attributes'&&r.target&&r.target.tagName==='VIDEO') continue; _dispDirty=true; return; } }
+/* deep clone into the output document WITHOUT ever cloning a <video> (a cloned one would open a second decoder): a video
+   becomes its canvas, kept across re-clones by its _fsVideoEls key so the picture never blinks. Inline on* handlers are dropped */
+function _dispClone(n,d,old,next){
+  if(n.nodeType!==1) return d.importNode(n,false);
+  if(n.tagName==='VIDEO'){
+    const key=(n.dataset&&n.dataset.key)||('?'+Object.keys(next).length);
+    let p=old[key];
+    if(!p||p.cv.ownerDocument!==d){ const cv=d.createElement('canvas'); cv.width=2; cv.height=2; const cx=cv.getContext('2d'); cx.globalCompositeOperation='copy'; p={cv:cv,ctx:cx,vid:null,css:null,t:-1,seek:false,ready:false,idle:0,resize:true,dead:false,cover:null,coverTried:false,coverDone:false,settle:0}; }
+    if(p.vid!==n){ p.vid=n; p.t=-1; p.ready=false; p.dead=false; p.cover=null; p.coverTried=false; p.coverDone=false; p.settle=4; }
+    p.cv.className=n.className; p.cv.setAttribute('data-key',key); p.css=null; p.resize=true;
+    next[key]=p; return p.cv;
+  }
+  const c=d.importNode(n,false);
+  if(c.attributes){ for(let i=c.attributes.length-1;i>=0;i--){ const an=c.attributes[i].name; if(an.length>2&&an.slice(0,2)==='on') c.removeAttribute(an); } }
+  for(let k=n.firstChild;k;k=k.nextSibling) c.appendChild(_dispClone(k,d,old,next));
+  return c;
+}
+function _dispSync(){
+  const w=_dispWin, d=w.document, stage=d.getElementById('disp-stage'); if(!stage) return;
+  _dispStats.syncs++;
+  const src=document.getElementById('fs-canvas');
+  if(!_dispLive||!src){ stage.replaceChildren(); _dispPairs={}; return; }   /* Advanced is closed: black, the window stays */
+  if(d.body.className!==document.body.className) d.body.className=document.body.className;   /* skin / view classes the tile CSS keys on */
+  const skin=document.body.getAttribute('data-skin'); if(skin!=null) d.body.setAttribute('data-skin',skin); else d.body.removeAttribute('data-skin');
+  const old=_dispPairs, next={};
+  const tile=d.createElement('div'); tile.className='disp-tile';
+  src.querySelectorAll('.screens-visual,.dsm-visual-row').forEach(function(n){ tile.appendChild(_dispClone(n,d,old,next)); });
+  /* a destination or a layer with NO picture (LOGO, CAM 1, a colour source) keeps its name, like the AUX boxes do; anything that shows a picture is clean */
+  tile.querySelectorAll('.screen-box').forEach(function(b){ const inner=b.querySelector(':scope>.screen-inner'); if(!inner) return; const pic=!!inner.querySelector(':scope>.fs-vid')||/url\(/.test(inner.getAttribute('style')||''); if(!pic){ const t=inner.querySelector(':scope>.bg-tag'); if(t) t.classList.add('disp-keep'); } });
+  tile.querySelectorAll('.chip-inner').forEach(function(ci){ const pic=!!ci.querySelector('.fs-vid,.chip-bg')||/url\(/.test(ci.getAttribute('style')||''); if(!pic){ const sp=ci.querySelector(':scope>span:not(.chip-res)'); if(sp) sp.classList.add('disp-keep'); } });
+  stage.replaceChildren(tile);
+  _dispPairs=next; _dispVW=0;   /* forces a re-fit (the picture's bounding box may have changed) on this same frame */
+}
+/* uniform fit of the REAL bounding box of the picture (every shown destination + every AUX / DSM box), centred on black */
+function _dispFit(){
+  const w=_dispWin, d=w.document, stage=d.getElementById('disp-stage'); if(!stage) return;
+  const W=w.innerWidth||1, H=w.innerHeight||1;
+  _dispVW=w.innerWidth; _dispVH=w.innerHeight; _dispDpr=w.devicePixelRatio||1;
+  stage.style.transform='none';
+  let x0=Infinity,y0=Infinity,x1=-Infinity,y1=-Infinity;
+  stage.querySelectorAll('.screen-box:not(.screen-hidden),.dsm-box').forEach(function(e){ const r=e.getBoundingClientRect(); if(!(r.width>0)||!(r.height>0)) return; if(r.left<x0) x0=r.left; if(r.top<y0) y0=r.top; if(r.right>x1) x1=r.right; if(r.bottom>y1) y1=r.bottom; });
+  if(!(x1>x0)||!(y1>y0)){ _dispK=1; stage.style.clipPath=''; return; }
+  { const sr=stage.getBoundingClientRect(); stage.style.clipPath='inset('+(y0-sr.top).toFixed(2)+'px '+(sr.right-x1).toFixed(2)+'px '+(sr.bottom-y1).toFixed(2)+'px '+(x0-sr.left).toFixed(2)+'px)'; }   /* nothing (a border, a shadow) is drawn outside the picture's outer box */
+  const k=Math.min(W/(x1-x0),H/(y1-y0)); _dispK=k;
+  stage.style.transform='translate('+((W-(x1-x0)*k)/2-x0*k).toFixed(3)+'px,'+((H-(y1-y0)*k)/2-y0*k).toFixed(3)+'px) scale('+k.toFixed(5)+')';
+  Object.keys(_dispPairs).forEach(function(key){ _dispPairs[key].resize=true; });
+}
+/* one clip, one frame: copy the editor element's inline style (placement, crop, flip, opacity, filter) when it changed, size
+   the canvas for the pixels it really covers on this monitor (never above the clip's own size), then copy the current frame */
+function _dispDraw(p,key){
+  const v=p.vid, cv=p.cv; if(!v||!cv) return;
+  const css=v.style.cssText; if(css!==p.css){ p.css=css; cv.style.cssText=css; p.resize=true; }
+  const dead=!!v.error||(v.readyState>=1&&!v.videoWidth);   /* a clip this app cannot decode (ProRes, HAP): its cover picture instead */
+  if(dead!==p.dead){ p.dead=dead; p.resize=true; p.t=-1; p.coverDone=false; }
+  if(dead&&!p.cover&&!p.coverTried){ p.coverTried=true; const q=_fsKeyParts(key); const nm=q.n?getL(q.pid,q.sid,q.n):((typeof getBgName==='function')?getBgName(q.pid,q.sid):''); const it=nm?_fsMediaItem(nm):null; if(it&&it.img){ p.cover=new Image(); p.cover.src=it.img; } }
+  const sw=dead?((p.cover&&p.cover.naturalWidth)||0):(v.videoWidth||0), sh=dead?((p.cover&&p.cover.naturalHeight)||0):(v.videoHeight||0);
+  if(p.resize&&sw&&sh){
+    p.resize=false;
+    const s=_dispK*_dispDpr;
+    const f=(v.style.objectFit==='none')?1:Math.min(1,Math.max((cv.offsetWidth*s)/sw,(cv.offsetHeight*s)/sh));
+    const of=v.style.objectFit; let bw, bh;
+    if(of&&of!=='fill'){ bw=sw; bh=sh; }   /* contain / cover / none: the bitmap keeps the clip's exact shape, so the picture is never bent */
+    else { bw=Math.max(2,Math.min(sw,Math.ceil(sw*f/16)*16)); bh=Math.max(2,Math.min(sh,Math.ceil(sh*f/16)*16)); }
+    if(cv.width!==bw||cv.height!==bh){ cv.width=bw; cv.height=bh; p.ctx.globalCompositeOperation='copy'; p.t=-1; p.coverDone=false; }
+  }
+  if(!sw||!sh) return;
+  if(dead){ if(!p.coverDone&&p.cover&&p.cover.complete){ try{ p.ctx.drawImage(p.cover,0,0,cv.width,cv.height); }catch(e){} p.coverDone=true; } return; }
+  const t=v.currentTime, ready=v.readyState>=2;
+  /* playing: every output frame. Paused: when the time moved (scrub, step, stop), while a seek is landing and for a few frames
+     after it (the decoder can hand the new picture over a moment later), and twice a second regardless */
+  if(v.paused&&(t!==p.t||p.seek||v.seeking||!p.ready)) p.settle=4;
+  if(!v.paused||p.settle>0||(++p.idle>=30)){
+    try{ p.ctx.drawImage(v,0,0,cv.width,cv.height); _dispStats.draws++; }catch(e){ _dispErr=String((e&&e.message)||e); }   /* no frame decoded yet = the browser draws nothing and the canvas keeps what it had */
+    p.t=t; p.seek=v.seeking; p.ready=ready; p.idle=0; if(p.settle>0) p.settle--;
+  }
+}
+/* runs on the OUTPUT window's requestAnimationFrame, so drawing is paced by the monitor the picture is on */
+function _dispTick(){
+  _dispRaf=0;
+  if(!_dispIsOpen()){ _dispTeardown(); return; }
+  const w=_dispWin;
+  try{
+    _dispStats.ticks++;
+    const ov=document.getElementById('fs-overlay');
+    const live=!!fsPresetId&&!!ov&&ov.style.display!=='none';
+    if(live!==_dispLive){ _dispLive=live; _dispDirty=true; }
+    if(_dispDirty){ _dispDirty=false; _dispSync(); }
+    if(w.innerWidth!==_dispVW||w.innerHeight!==_dispVH||(w.devicePixelRatio||1)!==_dispDpr) _dispFit();
+    if(_dispLive){ const ks=Object.keys(_dispPairs); for(let i=0;i<ks.length;i++) _dispDraw(_dispPairs[ks[i]],ks[i]); }
+  }catch(e){ _dispErr=String((e&&e.message)||e); try{ console.warn('Display output closed after an error: '+_dispErr); }catch(e2){} _dispClose(); return; }   /* fail closed: never loop on an error */
+  try{ _dispRaf=w.requestAnimationFrame(_dispTick); }catch(e){}
+}
+/* ══ end of Display output ══════════════════════════════════════════════════════════════════════════════════════ */
 
 // 16ht (Omar): Video Presets gets the Simple / Advanced pill the other two pages have. Simple = the
 // canvas + presets page; Advanced = engineer mode (pan / zoom, free position, AOI, blend zones, dead

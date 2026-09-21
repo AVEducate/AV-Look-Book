@@ -193,6 +193,21 @@
     await check('exports: a clip BG is written as a layer with its details', () => { const i = _bgExportInfo(A.pid, A.sid); return is([i.name, /^clip 640×360/.test(i.detail)], ['TEST CLIP', true], 'BG export line'); });
     await check('Advanced: clearing the BG source removes its picture too', async () => { selLayer = { pid: A.pid, sid: A.sid, n: 0 }; const hadOwn = !!getPBg(A.pid, A.sid); _fsSwapSource(''); await wait(350); return is([hadOwn, !!getPBg(A.pid, A.sid)], [true, false], 'cover'); });
   }
+  await check('Advanced: a Display button sits left of Zoom, shows the format note first, and Cancel opens nothing', async () => {
+    const b = $('#fs-display-btn'), z = $('#fs-zoom-widget'); if (!b || !z) return 'no Display button'; const before = JSON.stringify(getProjectState()), dirty = _isDirty;
+    const left = b.getBoundingClientRect().right <= z.getBoundingClientRect().left + 1 && b.nextElementSibling === z; b.click(); await wait(350);
+    const t = dialogText(); const asked = dlgOpen() && /Display output/i.test(t) && /H\.264/.test(t) && /ProRes/.test(t); const c = $('#dlg-cancel'); if (c) c.click(); await wait(300);
+    return is([left, /Display/.test(b.textContent), asked, _dispIsOpen(), b.classList.contains('on'), JSON.stringify(getProjectState()) === before, _isDirty === dirty], [true, true, true, false, false, true, true], 'place / label / note / window / lit / show unchanged / dirty flag');
+  });
+  await check('Advanced: a blocked Display window says so and leaves the button unlit; an open one mirrors the preset clean and closes with the button', async () => {
+    const real = window.open; let fake = null; window.open = function () { return null; }; _dispOpen(); await wait(300); const blockedMsg = /blocked/i.test(dialogText()); okDialogs(); await wait(200); const litWhenBlocked = $('#fs-display-btn').classList.contains('on');
+    const fr = document.createElement('iframe'); fr.style.cssText = 'position:fixed;left:-3000px;top:0;width:1280px;height:480px;border:0'; document.body.appendChild(fr); fake = fr.contentWindow; try { Object.defineProperty(fake, 'closed', { get() { return !fr.isConnected; }, configurable: true }); } catch (e) {} fake.close = function () { fr.remove(); };
+    window.open = function () { return fake; }; _dispOpen(); await wait(900); window.open = real;
+    const st = fake.document.getElementById('disp-stage'); const shown = st ? st.querySelectorAll('.screen-box').length : 0; const vis = q => st ? [...st.querySelectorAll(q)].filter(e => fake.getComputedStyle(e).display !== 'none').length : -1;
+    const lit = $('#fs-display-btn').classList.contains('on'); const dressing = vis('.screen-lbl,.screen-box .screen-res,.chip-res,.rh,.lrh,.lc-reset,.aoi-actions,.overlap-vis,.dead-vis,button,input'); const vids = fake.document.querySelectorAll('video').length;
+    $('#fs-display-btn').click(); await wait(500); const closed = !_dispIsOpen() && !$('#fs-display-btn').classList.contains('on'); if (fr.isConnected) fr.remove();
+    return is([blockedMsg, litWhenBlocked, shown, lit, dressing, vids, closed], [true, false, screens.length, true, 0, 0, true], 'blocked note / lit when blocked / destinations shown / lit / editor dressing visible / video elements in the output / closes');
+  });
   await check('Advanced: closes cleanly', async () => { try { _fsPauseAll(); } catch (e) {} closeFullscreen(); await wait(400); return is([getComputedStyle($('#fs-overlay')).display, document.body.classList.contains('fs-open')], ['none', false], 'closed'); });
   await restore();
 

@@ -57,7 +57,9 @@
     const orig = _buildXlsx; let rows = null;
     window._buildXlsx = function (r) { rows = r; return orig.apply(this, arguments); };
     try { _doExportExcel(true); } finally { window._buildXlsx = orig; }
-    return rows;
+    // the sheet prints "Exported <today>": keep the run date out of the golden (it made the gate fail the day after a golden was cut)
+    const dateless = v => (typeof v === 'string') ? v.replace(/(January|February|March|April|May|June|July|August|September|October|November|December) \d{1,2}, \d{4}/g, 'DATE').replace(/\d{2}\/\d{2}\/\d{4}/g, 'DATE').replace(/\d{4}-\d{2}-\d{2}/g, 'DATE') : v;
+    return rows ? rows.map(r => Array.isArray(r) ? r.map(dateless) : r) : rows;
   });
 
   // the Look Book exactly as a user gets it: through the export window with its default ticks (that is what adds the wire sheet)
