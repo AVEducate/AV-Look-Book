@@ -109,6 +109,14 @@
    "ok": true
   },
   {
+   "name": "Advanced: the move arrows re-order destinations exactly as in Simple, and no two destinations ever land on the same spot",
+   "ok": true
+  },
+  {
+   "name": "Advanced: + Destination opens its window ABOVE the Advanced page and adds the destination",
+   "ok": true
+  },
+  {
    "name": "Advanced: picking a plain layer shows Source, General, Position, Size, Opacity, Mask, Border, Shadow, Effects",
    "ok": true
   },

@@ -302,6 +302,17 @@
     hideMoveSymbol(); doSelect(null, null); _fsSetPropTab(tab); await wait(150);
     return is([picked, lit, box, byDbl, byBtn, asp], [true, 1, true, true, true, '16:9'], 'selected / one row lit / canvas box lit / opens on double-click / opens from the button / aspect');
   });
+  await check('Advanced: the move arrows re-order destinations exactly as in Simple, and no two destinations ever land on the same spot', async () => {
+    const pid = A.pid, p = () => presets.find(x => x.id === pid); const sid = screens[1].id, n0 = screens.length; const names0 = screens.map(s => s.name);
+    _execMove(pid, sid, 'left'); await wait(500); const spots = screens.map(s => { const q = (p().positions || {})[s.id] || {}; return q.x + ',' + q.y; }); const names1 = screens.map(s => s.name);
+    const out = is([screens.length, new Set(spots).size, names1[0], names1[1]], [n0, n0, names0[1], names0[0]], 'destinations / distinct positions / new first / new second'); doUndo(); await wait(500); return out;
+  });
+  await check('Advanced: + Destination opens its window ABOVE the Advanced page and adds the destination', async () => {
+    const n0 = screens.length; actions.addDestination(); await wait(400); const m = $('#modal'), ov = $('#fs-overlay'); const zi = e => parseInt(getComputedStyle(e).zIndex, 10) || 0;
+    const shown = m.classList.contains('show'), above = zi(m) > zi(ov); const r = $('#ms-n').getBoundingClientRect(); const top = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2); const reachable = !!top && (top === $('#ms-n') || m.contains(top));
+    $('#ms-n').value = 'ADV TEST DEST'; confirmScreen(); await wait(600); okDialogs(); const added = screens.length, drawn = $$('#fs-canvas .screen-box').length;
+    const out = is([shown, above, reachable, added, drawn], [true, true, true, n0 + 1, n0 + 1], 'window shown / above Advanced / clickable / destinations / drawn in Advanced'); doUndo(); await wait(500); return out;
+  });
   await check('Advanced: picking a plain layer shows Source, General, Position, Size, Opacity, Mask, Border, Shadow, Effects', async () => {
     _fsSelectLayer(A.pid, A.sid, 1); await wait(450);
     return is(secTitles().filter(t => t !== 'Media Info'), ['Source', 'General', 'Position', 'Size', 'Opacity', 'Mask', 'Border', 'Shadow', 'Effects'], 'sections');
