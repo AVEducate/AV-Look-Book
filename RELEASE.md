@@ -4,8 +4,8 @@ Two lines, two kinds of tag. Users only ever see full releases.
 
 | Line | Branch | Tags | Who gets it |
 |---|---|---|---|
-| Stable | `release/0.2` | `v0.2.149`, `v0.2.150` … (no suffix) | Every user: Windows self-update + Mac page update |
-| Development | `main` | `v0.3.0-beta.1`, `v0.3.0-beta.2` … (a `-` in the tag) | Nobody automatically. Install by hand from the pre-release |
+| Stable | `release/0.3` | `v0.3.1`, `v0.3.2` … (no suffix) | Every user: Windows self-update + Mac page update |
+| Development | `main` | `v0.4.0-beta.1`, `v0.4.0-beta.2` … (a `-` in the tag) | Nobody automatically. Install by hand from the pre-release |
 
 The workflow marks a tag with a `-` in it as a **pre-release**. The Windows updater and the in-app content updater
 (`releases/latest`) both ignore pre-releases, so a beta never reaches a user.
@@ -21,11 +21,12 @@ Nothing is pushed, tagged or released until the owner has tried it on his own Ma
    If he finds a problem: fix, re-run the gate, he tests again. Users have seen nothing in the meantime.
 
 ## Day to day
-- Build on `main`. Bump `electron/package.json` to the beta version (`0.3.0-beta.N`) and tag `v0.3.0-beta.N`.
-- A user-facing bug: fix it on `main`, then `git cherry-pick` that one commit onto `release/0.2`, bump the patch
-  version there (`0.2.149`), tag `v0.2.149`. Users get the fix and nothing else.
-- Features ship in one jump: when `main` is ready, run the gate below, then tag `v0.3.0` (no suffix) from `main`,
-  and cut `release/0.3` from that tag. `release/0.2` retires.
+- Build on `main`. Bump `electron/package.json` to the beta version (`0.4.0-beta.N`) and tag `v0.4.0-beta.N`.
+- A user-facing bug: fix it on `main`, then `git cherry-pick` that one commit onto `release/0.3`, bump the patch
+  version there (`0.3.1`), tag `v0.3.1`. Users get the fix and nothing else.
+- Features ship in one jump: when `main` is ready, run the gate below, then tag `v0.4.0` (no suffix) from `main`,
+  and cut `release/0.4` from that tag. `release/0.3` retires. (v0.3.0 shipped this way on 2026-09-22 from 16ks,
+  lifting the 2026-09-14 freeze; `release/0.2` / v0.2.148 retired.)
 
 ## The release gate (before any tag without a suffix)
 1. `node tests/run_smoke.mjs` prints `SMOKE: PASS`. Every difference it reports must be one we meant; if a change
@@ -55,13 +56,14 @@ Nothing is pushed, tagged or released until the owner has tried it on his own Ma
   `--flows-only` skips the three snapshots while you work. Randomness is seeded inside the probes (the app gives an
   uncoloured source a random cable colour), and dates are normalised, so two runs of the same page always match.
   Needs Node 22 and Chrome (`LB_CHROME=/path/to/chrome` to override).
-- On `release/0.2` `tests/golden/` is the behaviour of **v0.2.148**, the version users trust. On `main` it follows
+- On `release/0.3` `tests/golden/` is the behaviour of **v0.3.0**, the version users trust. On `main` it follows
   each intended change (regenerated in the same commit, named in the message). Regenerate only on purpose.
 
 ## Backups of the trusted version
-- Source: tag `v0.2.148`, branch `release/0.2`.
-- Installers and page: the GitHub release for v0.2.148 (Mac arm64 / x64 DMG, Windows EXE, `lookbook_builder.html`).
-- Local: `backups/lookbook_builder_2026-09-19_before-16kf.html` is the page at v0.2.148.
+- Source: tag `v0.3.0`, branch `release/0.3` (the previous trusted version: tag `v0.2.148`, branch `release/0.2`).
+- Installers and page: the GitHub release for v0.3.0 (Mac arm64 / x64 DMG, Windows EXE, `lookbook_builder.html`).
+- Local: the page at v0.3.0 is build 16ks (`deploy/lookbook_builder.html` at tag v0.3.0);
+  `backups/lookbook_builder_2026-09-19_before-16kf.html` is the page at v0.2.148.
 
 ---
 Reading receipt: **GATE-BEFORE-USERS**. Report this code to the owner after reading this checklist in full.
