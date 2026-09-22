@@ -257,6 +257,298 @@
    "ok": true
   },
   {
+   "name": "unsaved 3: a show with no I/O Patch Advanced block (older files, launch, New): edit + Undo is the saved show again, a first look at I/O Patch Advanced + Undo too; fresh, copied and normalised pages have ONE shape",
+   "ok": true
+  },
+  {
+   "name": "unsaved 3: an edit made while Save is still writing (file picker, the write takes 300 ms and 1000 ms) is NOT in the file, so Save stays gold and New warns; with no edit during the write Save ends clean, also when Wire is first looked at during the write",
+   "ok": true
+  },
+  {
+   "name": "unsaved 3: the same on the two other write paths: a browser without the file picker (the download) and the desktop app (Save and the autosave / close hook): the edit made during the write stays unsaved, no edit ends clean",
+   "ok": true
+  },
+  {
+   "name": "unsaved 3: clicking into an AUX cell or an empty layer cell of the Video Presets table and leaving it writes nothing (no AUX content object, no layer object, no undo step, Save clean); typing in the same cells still is one undo step each",
+   "ok": true
+  },
+  {
+   "name": "unsaved 3: I/O Patch: clicking into a custom Type field and leaving it writes nothing and records no undo step (a file that never \"remembered\" its custom types); a typed type name still lights Save, is remembered and is one undo step",
+   "ok": true
+  },
+  {
+   "name": "unsaved 3: Wire, Project Info: clicking into Venue (and every other box) and leaving it writes nothing: a blank venue stays blank and Save stays clean; a typed venue lights Save, and deleting it again is the saved show",
+   "ok": true
+  },
+  {
+   "name": "unsaved 3: click into EVERY visible field of every page and leave it, nothing typed (an older-style show, then the three examples): Save stays clean and no undo step is recorded",
+   "ok": true
+  },
+  {
+   "name": "bottom bar: the Advanced page, Wire and I/O Patch end at the top of the bar, and every bar item stays on top",
+   "ok": true
+  },
+  {
+   "name": "bottom bar: Help opens above each page from the bar, and Escape closes only Help",
+   "ok": true
+  },
+  {
+   "name": "bottom bar: Bug starts the bug report from each page, and the skin menu opens upward, fully on screen and clickable",
+   "ok": true
+  },
+  {
+   "name": "bottom bar: the Presets number follows + Preset while the Advanced page is open, and the number is on screen",
+   "ok": true
+  },
+  {
+   "name": "Advanced: after Fit every destination is inside the canvas view, and the timeline and side panels end at the bar",
+   "ok": true
+  },
+  {
+   "name": "Wire: the bottom strip is gone in Simple and Advanced, and I/O Tools floats bottom-middle of the Advanced drawing area only",
+   "ok": true
+  },
+  {
+   "name": "Wire Advanced: the floating I/O Tools menu opens upward inside the window, closes on Escape and on a press outside, and an entry drops a tile",
+   "ok": true
+  },
+  {
+   "name": "Wire exports: with the floating I/O Tools button on screen, the Wire sheet and the Look Book wire sheet do not carry it",
+   "ok": true
+  },
+  {
+   "name": "I/O Patch: the page ends at the bar, the last row scrolls clear of it, and its drop-down stays inside the window",
+   "ok": true
+  },
+  {
+   "name": "Wire Advanced: Fit, and the automatic Fit after every I/O Tools drop, keep the tiles clear of the floating I/O Tools button",
+   "ok": true
+  },
+  {
+   "name": "Wire Advanced: I/O Tools stays in the middle of the visible drawing when a side pane folds, the view switches or Wire is reopened",
+   "ok": true
+  },
+  {
+   "name": "top bar: Wire, I/O Patch and the Advanced page start right under the toolbar again after the toolbar changes height",
+   "ok": true
+  },
+  {
+   "name": "Help, Modifiers section: the menu is on the preset only (the sentence about a status-bar copy is gone)",
+   "ok": true
+  },
+  {
+   "name": "Escape in a text box: Add Destination, Destination Properties, the AUX panel, the colour window, the Look Book window and Help stay open, the old text is back, the cursor has left the box; the next Escape closes the window",
+   "ok": true
+  },
+  {
+   "name": "Escape in a live box of the Layer panel (Opacity, Mask, Width with the lock on): the show goes back exactly, the boxes next to it follow, no undo step, the panel stays open",
+   "ok": true
+  },
+  {
+   "name": "Escape in a page box puts the old text back and leaves the box: Show name, Wire Project Info and switcher name, I/O Patch source name; the page stays, and the next Escape on the idle page still goes back to Video Presets",
+   "ok": true
+  },
+  {
+   "name": "Advanced: the first Escape lets go of the picked layer or destination and the page stays, the second goes back to Simple; a menu on top still closes first; Escape in a box keeps the pick",
+   "ok": true
+  },
+  {
+   "name": "Escape in a box only takes back the TYPING: a corner-handle resize made while the cursor sat in the Width box survives (nothing typed / typed after the drag / typed in another box before the drag), and Undo still undoes that resize",
+   "ok": true
+  },
+  {
+   "name": "Escape in a box only takes back the TYPING, other pages: the Wire - output button pressed under a typed Project box keeps its change (the old project text is back), and a destination corner drag under the Show name box keeps its size",
+   "ok": true
+  },
+  {
+   "name": "Advanced: a fader that holds the cursor is not a text box (the first Escape lets go of the layer, the fader value stays); a lit AUX box is a pick (first Escape lets go of it, the second goes back to Simple); the layer strip ghost view ends on the same press as the pick",
+   "ok": true
+  },
+  {
+   "name": "Reset (preset header): a click opens ONE window \"Reset P02 WELCOME?\" with Reset All / Destinations / Layers / AUX all ticked, a sentence under each, and changes nothing yet",
+   "ok": true
+  },
+  {
+   "name": "Reset (preset header): un-ticking a child un-ticks Reset All and only that child, the last child back ticks Reset All, Reset All toggles all three, nothing ticked greys Reset",
+   "ok": true
+  },
+  {
+   "name": "Reset (preset header): Cancel, Escape and a press outside the window leave the preset alone and record no undo step",
+   "ok": true
+  },
+  {
+   "name": "Reset (preset header): Reset Destinations alone puts only that group back to the Quick Setup state, other presets untouched, one undo step that undoes and redoes",
+   "ok": true
+  },
+  {
+   "name": "Reset (preset header): Reset Layers alone puts only that group back to the Quick Setup state, other presets untouched, one undo step that undoes and redoes",
+   "ok": true
+  },
+  {
+   "name": "Reset (preset header): Reset AUX alone puts only that group back to the Quick Setup state, other presets untouched, one undo step that undoes and redoes",
+   "ok": true
+  },
+  {
+   "name": "Reset (preset header): Reset All makes P02 equal, field by field, to a preset Quick Setup creates; P01 (the master) resets the same way, keeps the show-wide BG names and AUX / DSM types and never changes the later presets",
+   "ok": true
+  },
+  {
+   "name": "Reset (preset header): a show built by Quick Setup: dirty P02, Reset All, and P02 is again exactly the preset Quick Setup built (save and reload keeps it)",
+   "ok": true
+  },
+  {
+   "name": "Reset (preset header): nothing to reset for what is ticked greys Reset, says so and records no undo step; ticking a group with work to do makes it live",
+   "ok": true
+  },
+  {
+   "name": "Reset (preset header): keys: Tab stays inside the window (the picked layer behind it does not change), Shift+Tab goes back, Enter = Reset, Enter on Cancel = Cancel",
+   "ok": true
+  },
+  {
+   "name": "Reset (preset header): the Advanced page tile has the same Reset: same window above the page, Escape closes only the window, Reset All clears the preset and redraws the tile",
+   "ok": true
+  },
+  {
+   "name": "Dialog is modal (Reset window): with a layer picked behind it, arrows, 1-9, Cmd/Ctrl+V, Cmd+Z, Ctrl+Y, Cmd+Shift+N, Backspace and Delete change nothing, record no undo step, do not scroll and keep the layer picked; ONE undo after Reset brings back the state the window opened on",
+   "ok": true
+  },
+  {
+   "name": "Dialog is modal (any confirm, any alert): the same page keys do nothing behind a confirm and behind an alert, and Tab stays inside the window instead of stepping to the next layer",
+   "ok": true
+  },
+  {
+   "name": "Dialog is modal (its own keys still work): Escape cancels, Enter confirms, Tab and Shift+Tab walk Cancel and the main button of a plain confirm, and nothing is held back once the window is closed",
+   "ok": true
+  },
+  {
+   "name": "Dialog is modal (a HELD Enter never answers): Enter held down on the focused amber Reset opens the window and its auto-repeats do not answer it; a fresh Enter then resets, in one undo step",
+   "ok": true
+  },
+  {
+   "name": "Dialog is modal (Advanced page, a clip picked): Space on a dialog button is left to the button: the page neither takes the key-down (play / pan) nor cancels the key-up (which is what presses the button)",
+   "ok": true
+  },
+  {
+   "name": "Reset (preset header): a double-click on Reset leaves the window open: the 2nd (and 3rd) click of the gesture that opened it is not for the window, whether it lands on the dimmed page or on the window's Reset button; a new click outside still cancels at once and a double-click inside the window is two clicks",
+   "ok": true
+  },
+  {
+   "name": "Reset (preset header) on the FIRST preset: the window promises only what a per-preset reset does: a rotation / name given on P01 stays (show-wide), the sentences and the \"Nothing to reset\" note say so, and P02 names what stays too",
+   "ok": true
+  },
+  {
+   "name": "Reset (preset header): Reset AUX on the FIRST preset keeps its AUX / DSM type map (a show from an older build: I/O Patch reads it show-wide), still clears P01's own AUX content in one undo step, and on P02 the type override is cleared as before",
+   "ok": true
+  },
+  {
+   "name": "Layer strip: every preset header has BG and one box per layer column between Notes and Actions, grey and inert until a destination of that preset is picked",
+   "ok": true
+  },
+  {
+   "name": "Layer strip: picking a chip lights that destination only (amber = assigned, the picked layer slow-pulses, tooltips name the content) and a plain canvas pick ghosts nothing",
+   "ok": true
+  },
+  {
+   "name": "Layer strip: BG picks a destination that a full-screen layer covers (move arrows, no undo step, show untouched) and shows its layers at 15 %, click-through",
+   "ok": true
+  },
+  {
+   "name": "Layer strip: double-click on BG opens Destination Properties, double-click on a layer opens its layer panel, and the ghost stays while the panel is open",
+   "ok": true
+  },
+  {
+   "name": "Layer strip: a layer under a full-screen layer is picked from the strip and can be dragged on the canvas; the layers above go 15 % click-through, their Level is untouched, the ghost follows a lower pick",
+   "ok": true
+  },
+  {
+   "name": "Layer strip: the ghost ends on another destination, on empty canvas, on a cleared selection, on Escape and when the page is left",
+   "ok": true
+  },
+  {
+   "name": "Layer strip: the ghost is never in the show file, the undo data, the Look Book or the Excel sheet, and a save + reload starts without it",
+   "ok": true
+  },
+  {
+   "name": "Layer strip: an empty box opens the layer panel of that layer (what its table cell opens) and a pick from the list fills it",
+   "ok": true
+  },
+  {
+   "name": "Layer strip: 12 layers never move the Actions group or resize the header; a long strip scrolls inside itself and brings the picked box into view",
+   "ok": true
+  },
+  {
+   "name": "Layer strip: the bottom-left label of a destination names the top-most displayed layer before the unchanged resolution, on the canvas and in the Look Book",
+   "ok": true
+  },
+  {
+   "name": "Layer strip: reduced motion swaps the pulse for a steady outline, and the phone build gets today's empty spacer instead of the strip",
+   "ok": true
+  },
+  {
+   "name": "Layer strip (Advanced page): the tile has the strip, BG picks a covered destination, a covered layer is picked with Properties on Layers, the Display output keeps the real look, leaving the page ends the ghost",
+   "ok": true
+  },
+  {
+   "name": "Layer strip fix (Advanced page): the tile header gives the strip room (Notes gives way first): BG and the first layer boxes are fully visible and on top, the header stays one line, the row and the Actions group are where they were",
+   "ok": true
+  },
+  {
+   "name": "Layer strip fix: with the ghost on, a double-click on the destination (through the 15 % layers) opens Destination Properties, never a layer panel, and the ghost stays (Simple and Advanced); one click still lets go",
+   "ok": true
+  },
+  {
+   "name": "Layer strip fix: the wheel over an overflowing pill is only taken while the pill can still scroll that way (Simple: at its end the page scrolls on; Advanced: never a canvas zoom)",
+   "ok": true
+  },
+  {
+   "name": "Layer strip fix: the pulse follows the box the user is working on: an empty box clicked while another layer is picked pulses while its content list is open, and the pulse goes back when the list closes",
+   "ok": true
+  },
+  {
+   "name": "Layer strip fix: Reset Layers in the Reset window while the ghost is on ends the ghost cleanly (BG ghost and layer ghost): nothing stays faded and a layer added right after comes up solid",
+   "ok": true
+  },
+  {
+   "name": "undo: an action that changes nothing leaves no undo step and leaves Undo dim (Reset Preset Layout with nothing to reset, a preset pasted onto itself)",
+   "ok": true
+  },
+  {
+   "name": "undo: a press never does nothing: an empty step on top is skipped, the same step is never stacked twice, and Undo / Redo are lit only when a press will do something",
+   "ok": true
+  },
+  {
+   "name": "undo: a click that ends up changing nothing gives Redo back (Undo, then Reset Preset Layout with nothing to reset: Redo stays lit and still works); a real change still clears Redo",
+   "ok": true
+  },
+  {
+   "name": "undo: ONE list of view keys: every key in it is left out of the undo snapshot AND of the unsaved comparison; the print sheet size is left out of Undo only",
+   "ok": true
+  },
+  {
+   "name": "Reset window: a Space HELD from before the window opened (auto-repeat) never answers it, and its key-up reaches the page; a Space first pressed on the window still works",
+   "ok": true
+  },
+  {
+   "name": "Reset window: the second click of a double-click on the amber Reset is dropped and the focus stays on the window's Reset button; the \"nothing to reset\" note sits OUTSIDE the scrolling tick block, next to the buttons",
+   "ok": true
+  },
+  {
+   "name": "undo: a folded preset that is deleted comes back FOLDED after Undo, and a preset folded after + Preset comes back folded after Undo / Redo",
+   "ok": true
+  },
+  {
+   "name": "layer strip: inside the hold after letting go of a ghosted destination, a FRESH click (click count 1) on a still-faded layer picks that layer, and a slow double-click (click count 2 after 700 ms) still keeps the ghost and lands on the destination",
+   "ok": true
+  },
+  {
+   "name": "unsaved 4: a save that ends while a name box is focused (desktop close hook / autosave) does not hide that box's next commit: the rename lights Save on its own, arms the autosave and records its undo step",
+   "ok": true
+  },
+  {
+   "name": "unsaved 4: a write still running when another show is opened never re-baselines the new show; typing \"NA\" into a blank Venue box is a real edit",
+   "ok": true
+  },
+  {
    "name": "Advanced: opens on a preset with the sources rail and the properties panel",
    "ok": true
   },
@@ -994,6 +1286,38 @@
   },
   {
    "name": "Show card edit (phone Quick Setup edit): confirming with nothing changed keeps a free layout",
+   "ok": true
+  },
+  {
+   "name": "undo: a Simple / Advanced switch in Wire or I/O Patch is not an undo step and keeps Redo; only the first switch, the one that builds page 1, is a step",
+   "ok": true
+  },
+  {
+   "name": "undo: Undo and Redo never change the view: Wire stays in Advanced on page 2 at 150 % with the Hand tool and a folded pane, I/O Patch stays in Advanced on page 2, a folded preset stays folded",
+   "ok": true
+  },
+  {
+   "name": "undo: closing a page that holds something, in Wire and in I/O Patch: Undo brings the page back and leaves you where you are; Redo closes it again and lands on a page that exists",
+   "ok": true
+  },
+  {
+   "name": "undo: Undo on a Wire Advanced page whose tiles the Undo removes leaves you on that page, empty, at your zoom",
+   "ok": true
+  },
+  {
+   "name": "undo: Undo back to the saved show from Wire Advanced page 2 leaves you on page 2 and turns the unsaved mark off; Redo lights it again, still on page 2",
+   "ok": true
+  },
+  {
+   "name": "undo: an empty step recorded on one Wire Advanced page is still recognised as empty from another page (steps are compared blind to the open tab); a real step recorded there is kept and still undoes",
+   "ok": true
+  },
+  {
+   "name": "undo: the x on an empty spare page tab (Wire Advanced page 3 and page 2, I/O Patch Advanced last page) only opens the tab in front: no undo step, nothing in the show changes, Redo is kept",
+   "ok": true
+  },
+  {
+   "name": "undo: a picture imported on the Advanced page is ONE undo step of its own, recorded when the picture lands: Undo takes back the picture and nothing else; a file that cannot be read leaves no step",
    "ok": true
   }
  ],

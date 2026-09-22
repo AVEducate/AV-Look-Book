@@ -85,7 +85,10 @@ or a mutation manually poking the DOM).
   `getDSMType`, etc. Resolution stays global per DSM; only name/type override.
 - Persistence: `getProjectState()` (`.avlb`, **schema v3**) → `saveProject` /
   `loadProjectFile`→`_loadProjectFileOnLoad`; autosave (30s) + undo/redo
-  (`pushUndo`/`doUndo`/`doRedo`, JSON snapshots). NOTE: `addPreset`,
+  (`pushUndo`/`doUndo`/`doRedo`, JSON snapshots of DATA: Undo / Redo never write VIEW state (Simple / Advanced,
+  zoom, tool, panes, open page tabs, folded presets). THE ONE LIST of view keys is `_LB_VIEW_KEYS`, next to `_snapshot`: the unsaved
+  comparison, the undo safety net and Undo all read it; `_lbViewStateGet` / `_lbViewStateApply` keep the user's view across a restore;
+  a step equal to the show as it stands is dropped (`_lbSameShow`, `_lbDropEmptySteps`), see HANDBOOK). NOTE: `addPreset`,   <!-- 16ks-undo-docs -->
   `deletePreset`, `setScreenApproved` push undo INTERNALLY; `addDSM` does NOT —
   don't double-push.
 
@@ -121,6 +124,39 @@ still reads clean. Never wrap code that holds a user edit; a new automatic write
 Draw-time follow-ups (Wire / I/O Advanced syncs that run on every draw) use the draw form `_lbNotAChange(fn,get,set)` (one small
 JSON of the part per draw; the full comparison only when something was written); async fills end through `_lbNotAChangeDone`.
 A rename of a destination / AUX / multiviewer carries its follow-ups in the SAME edit and undo step (`_lbRenamedDest`).
+
+**Escape (16ks-esc, 2026-09-21)**: one `window` capture `keydown` listener next to `_lbEscTop`. Text / number box: old text back (`_lbEscOrig`,
+noted on `focusin`) + an `input` event + `_lbEscRestoreShow` (puts the show back IN PLACE from `_lbEscOrig.s0`, the picture taken at the first keystroke (16ks-escfix: only typing is taken back, a mouse edit under a focused box is folded in by `_lbEscRebase`), mirrors the key list of
+`_snapshot()`: keep the two lists in step) + blur, then the key stops. Advanced page: `_fsEscLetGo()` clears the pick (layer, destination, lit AUX, layer strip ghost) before `closeFullscreen`; a focused fader is not a box.
+Not touched: Quick Setup, the rename / count boxes in `_LB_ESC_OWN`, SELECTs, the phone build (`is-mobile` returns first).
+
+**Layer strip + ghost view (round 16ks)** — `_ls*` block in front of `_rcPresetRow`: `_lsStripHTML(p)` fills the header's old flex:1 spacer,
+`_lsTopTag(p,s)` prefixes `.screen-res`, `_lsGhost` is editor-only view state (class `lb-ghost` on the live DOM of `#canvas-area` / `#fs-canvas`,
+re-applied after redraws by a MutationObserver; never in `_rcChip`, the show file, undo, exports or Display). Selection changes reach it through
+`doSelect`, `updateLayerSelDOM` and one click / keyup listener; clicks go through `layerChipClick`, the `screenClick` first-click steps and
+`_homeOpenDropdown`. Rules in HANDBOOK section 5.
+
+**Preset Reset (2026-09-21, 16ks)** — the amber Reset on a preset header (`_rcPresetRow`, Simple and Advanced): `actions.resetPreset(pid)` →
+`resetPreset` opens the ONE dialog with tick boxes (Reset All / Destinations / Layers / AUX) → `_presetResetRun(pid,parts)` (one undo
+step via `_vpSnap` / `_vpPush`, none when nothing changes, `scheduleRender()`) → `_presetResetApply(p,parts)` (DATA: puts the preset back to
+what `confirmQS` creates). Every per-preset field belongs to ONE group in `_PRESET_RESET_FIELDS` (+ `positions`, `layers` / `active`,
+`dsmOn`, which are rebuilt); id, code, name, notes, minimized and everything show-wide are never touched (that includes `presets[0].bgNames`:
+`getBgName` reads P01's names as the show-wide background names, so Reset Layers on P01 keeps them; and `presets[0].dsmType`, legacy shows
+only: `_sysResolveDsmType` reads it show-wide for I/O Patch, so Reset AUX on P01 keeps it. On P01 rotation / name / colour are written to the
+destination, so the window's sentences and its "Nothing to reset" note differ there: they say what stays). **A NEW per-preset field must be
+added to one of those groups**, or Reset All stops meaning "as Quick Setup made it". The dialog's tick boxes are generic: `_dlgOpen`
+`opts.checks=[{key,label,hint,all}]` + `opts.checksState(ticks)` → `{ok,note}`; `onConfirm(ticks)`; helpers `_dlgTicksHTML / Read / Wire / Key`
+(`_dlgTicksKey` = Enter on Cancel cancels). A dialog without `opts.checks` behaves exactly as before.
+
+**The ONE dialog is modal (2026-09-21, 16ks fix)** — while `#dlg-overlay` is shown the page hears no key. `_dlgKeyGuard` sits on WINDOW in
+the capture phase, so it runs before every document-level key listener; a new page shortcut needs no dialog check of its own. The dialog's
+own keys: Tab / Shift+Tab walk its boxes and buttons (every dialog), Space acts on the focused box or button (its key-up is held back too:
+the Advanced page's key-up handler calls preventDefault with a clip picked, which cancels the button press), Enter and Escape travel on
+untouched to `_dlgKey` and the Escape rules. An auto-repeating Enter is dropped (Enter HELD on a focused button opened the window and
+answered it unseen). A text box inside a dialog is never touched. Only keys whose default would act on the page behind are
+default-prevented; browser / system keys keep working. `_dlgClickGuard` drops the 2nd / 3rd click of the multi-click that OPENED the dialog
+(`_dlgOpenGesture`: raised by `_dlgOpen`, lowered by the next `detail===1` click; `detail 0` = keyboard or `btn.click()` is never looked at).
+Never add a time-based "ignore clicks for N ms": the phone gate taps the dialog's button the moment it appears (16 phone checks broke).
 
 **VIEW layer — `render*` assemblers + `_rc/_rf/_fs/_lp` helpers + HTML templates**
 - `renderCanvas()` → `_rcChip`/`_rcAoiOverlay`/`_rcScreenBox`/`_rcOverlapVis`/`_rcDeadVis`

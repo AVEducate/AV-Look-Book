@@ -235,7 +235,7 @@ decision on record; nobody wrote down whether it was left out on purpose.
    the keyboard does not lose focus. The next redraw picks them up.
 10. **Duplicated markup that must stay in step.** The I/O picker arrows (`chev`, `chipChev`) are defined in the
     desktop I/O builders and again in `ioSourceCard` and `ioDestCard`. The Wire style bar is drawn into both
-    `#wire-style-bar` and `#wire-style-bar-top`, so `#wire-router-menu-btn` exists twice in Advanced: always use the
+    `#wire-io-float` (the desktop's floating holder, hidden on the phone; it replaced the `#wire-style-bar` strip in round 16ks) and `#wire-style-bar-top`, so `#wire-router-menu-btn` exists twice in Advanced: always use the
     button that was clicked, never `getElementById`.
 11. **Class names built at run time look unused to a scanner**: `mb-bb-orange / amber / cyan / yellow` and
     `mb-io-dest / aux / dsm / mv`. They are live.

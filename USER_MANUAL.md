@@ -78,7 +78,7 @@ The top bar is the same on every page, so adding a destination, undoing, saving 
 3. Pick a colour: one of the eleven swatches, a hex value, **Pick…** for the full colour window (4.7), or the picture tile to upload an image as the destination's background.
 4. Press **Enter** or **＋ Add Destination**. The destination is added to the right of the last one in every preset. One Undo step.
 
-**Escape**, **Cancel** or the ✕ close the window without adding. A click outside does not close it, so a stray click cannot lose what you typed. On an empty show + Destination opens Quick Setup instead.
+**Escape**, **Cancel** or the ✕ close the window without adding (with the cursor in one of its boxes the first Escape only puts the old text back and leaves the box, the next one closes the window). A click outside does not close it, so a stray click cannot lose what you typed. On an empty show + Destination opens Quick Setup instead.
 
 ### 3.3 Quick Show Setup
 
@@ -105,7 +105,7 @@ Build My Show is one Undo step: the first Undo after it takes you back to an emp
 
 The desktop has no "Edit Show Info" window (the phone has one). Change date, venue and the title-block fields in Wire › Project Info.
 
-### 3.4 The status bar (Video Presets, Simple only)
+### 3.4 The status bar (every page)
 
 | Item | Meaning |
 |---|---|
@@ -119,7 +119,7 @@ The desktop has no "Edit Show Info" window (the phone has one). Change date, ven
 | **Help** | Quick Reference, Keyboard, Glossary, Vocabulary (how Look Book terms map to Aquilon, Spyder, Pixelhue, Barco) and Accessibility, plus links to Feedback and Support. On the Keyboard tab choose a Mac or PC keyboard; hover or click a shortcut to light its keys. |
 | **Bug** | Downloads the show file and opens an email to AV Educate with a short form and your build stamp. Remove the attachment if you would rather not share the show. |
 
-The Advanced page, Wire and I/O Patch cover the status bar. Go back to Video Presets Simple for Help and Bug.
+The status bar is on every page: Video Presets Simple and Advanced, Wire and I/O Patch all end just above it, the way they start just below the top bar. Help opens over whichever page you are on and Escape closes Help only, the page underneath stays open. The numbers follow the show while you work on any page. The phone layout has no status bar.
 
 ---
 
@@ -146,14 +146,31 @@ Two things follow the first preset in a different way:
 | Drag handle (six dots) | Drag the tile up or down to re-order presets. A line shows where it will land; it lands on that line. |
 | **Code** (P01) | Up to 4 characters. Used in the table, the exports and show calling. |
 | **Name**, **Notes** | Free text. Quotes and symbols are fine. |
+| **Layer strip** (BG, L1, L2 …) | The background and the layers of the destination you picked in this preset; picks a covered destination or a covered layer (4.5.1). |
 | **MODIFIERS ▾** | The tile's modifiers menu (4.2). |
 | **Paste** | Greyed until you copy a preset. Overwrites this preset's content and keeps this preset's own code, name and notes. No question is asked; Undo brings the old content back. |
 | **Copy** | Copies this preset. The button flashes "COPIED". |
-| **Reset** | Puts this preset's destinations back in a clean left-to-right strip (removes hand placement and blends in this preset only). |
+| **Reset** | Opens the **Reset** window (below): puts this preset back to the way Quick Setup made it, as far back as you choose. Nothing changes until you press Reset in that window. |
 | Chevron | Minimise / expand the tile. Double-clicking the empty part of the header does the same. |
 | Bin | Removes the preset at once. Undo brings it back. |
 
 Code, Name and Notes: Enter or a click away confirms, Escape cancels, and each edit is one Undo step.
+
+**The Reset window** ("Reset P02 WELCOME?"). Four tick boxes, all ticked when it opens:
+
+| Tick box | What it takes back, in THIS preset only |
+|---|---|
+| **Reset All** | Everything below. Un-tick any line under it and Reset All un-ticks too; tick the last one again and Reset All comes back. A click on Reset All ticks or un-ticks all three. |
+| **Reset Destinations** | The destinations go back to the clean left-to-right strip. This preset's own blends, free placement, rotation, AOI, hidden destinations (they show again), destination names, Remove Labels and EDID notes are cleared. A destination's size stays, and so does a rotation or name given on P01: those belong to the whole show. |
+| **Reset Layers** | Every layer is removed with its size, position, mask, border / shadow / effects and clip settings (In / Out, speed, level, look, fades). This preset's own backgrounds (BG colour, BG picture, BG name) are cleared, so the show-wide background shows again. |
+| **Reset AUX** | Every AUX / DSM output is switched on, with no content, no colour and no name or type of its own in this preset. |
+
+- **Reset** (or Enter) does it as ONE Undo step, whatever is ticked. **Cancel**, Escape or a click outside the window changes nothing. Tab moves between the boxes and buttons (it stays inside the window), Space ticks, and Enter while Cancel is highlighted cancels. While the window is open the page behind it does not hear the keyboard (chapter 12). A double-click on the amber Reset just opens the window: the second click of the double-click is not taken as an answer.
+- With nothing ticked, or when what is ticked is already the way Quick Setup made it, Reset is greyed and the window says why. No Undo step is recorded.
+- Only this preset changes. P01 is the master that NEW presets copy; resetting P01 does not reach into the presets that already exist.
+- **On P01 the window reads differently**, because P01 gives some things to the whole show (4.0): a rotation, a name or a background (colour, picture, BG name) given to a destination on P01 is the one every preset follows. Reset on P01 leaves those alone, the sentences under Reset All, Reset Destinations and Reset Layers say so, and the "Nothing to reset" note tells you where to change them: Destination Properties. In a show saved by an older build, P01 also keeps its AUX / DSM type list, which I/O Patch reads for the whole show.
+- Never touched: the preset's code, name and notes, and everything that belongs to the whole show: a destination's size, the name / colour / rotation you gave a destination on P01, an AUX output's own name and size, the library, Wire and I/O Patch entries. On P01 the background NAMES also stay: they are the show's background names, which every preset without its own background reads.
+- The same button on the Advanced page's tile opens the same window. **Reset Preset Layout** in Destination Properties (4.4) is still the quick "clean strip only" reset.
 
 ### 4.2 The MODIFIERS ▾ menu
 
@@ -175,7 +192,7 @@ Four switches for the whole page (a tick shows what is on) and one action for th
 
 **Double-click** opens Destination Properties (4.4). **Cmd / Ctrl + D** duplicates the picked destination. Delete / Backspace never removes a destination.
 
-**A destination fully covered by a full-screen layer cannot be clicked on the canvas.** Pick it from its table row, or open its properties with the chevron in the table's Name cell.
+**A destination fully covered by a full-screen layer cannot be clicked on the canvas** (the click picks the layer). Click that layer, then press **BG** in the layer strip of the preset header (4.5.1): the destination itself is picked, with its move arrows and handles, and its layers go see-through until you are done. Its table row and the chevron in the table's Name cell still work too.
 
 **A destination hidden in one preset** shows as a dashed ghost with an eye button. Press it to bring the destination back in that preset.
 
@@ -205,7 +222,7 @@ Double-click a destination, or press the chevron in the table's Name cell.
 - **Destination · all presets**: Width and Height (67 to 7680 × 4320) with the aspect read-out. Small tools on the right: copy, paste, reset (back to what it was when the window opened).
 - **Layers · this preset**: L1 to L4 buttons open that layer's panel. **↺ Reset** puts every layer on this destination back to its default place.
 - **Preset override · this preset**: **BG/Color**, **X / Y Position**, **Rotation** (any angle; a 90° turn asks whether to keep your layout or re-arrange), **EDID Note**. Each row has copy / paste / reset tools; paste acts at once.
-- **Apply** (or Enter) writes the fields as one Undo step and closes the window. **Copy** duplicates the destination. **Cancel**, ✕, Escape or a click outside close without applying typed numbers.
+- **Apply** (or Enter) writes the fields as one Undo step and closes the window. **Copy** duplicates the destination. **Cancel**, ✕, Escape or a click outside close without applying typed numbers (from inside a box Escape first puts the old number back and leaves the box; the next Escape closes the window).
 - **Never on top of a neighbour by accident**: Apply, paste and reset check the result. If it would overlap another destination the whole Apply is refused with "Destinations can't overlap" while Blend Zones and Free Position are off; with either of them on you get "Create Blend Zone?" (4.3) and Cancel takes the whole Apply back.
 - **Reset Preset Layout**: clean strip for this preset.
 - **Show Labels / Remove Labels**: name and resolution on or off for this destination in this preset.
@@ -226,7 +243,7 @@ A layer is a coloured chip inside the destination. A new layer starts as a centr
 
 Drags, corner drags and nudges are each an Undo step that really goes back.
 
-**The Layer panel.** The pill at the top switches **Simple / Advanced**. ✕, Escape or a click outside closes it; drag it by its title.
+**The Layer panel.** The pill at the top switches **Simple / Advanced**. ✕, Escape or a click outside closes it; drag it by its title. Escape inside one of its number boxes puts the old number back (the layer goes back with it, no Undo step) and leaves the box; the panel stays open.
 
 *Simple mode*
 - **Custom name**: type a name and press Enter (or Apply). This makes a new grey library item with that name and puts it on the layer, replacing what was there.
@@ -242,6 +259,37 @@ Drags, corner drags and nudges are each an Undo step that really goes back.
 - **Remove from ALL presets** (asks first).
 
 The smallest layer is 67 × 67 px. A layer can never be bigger than its destination.
+
+### 4.5.1 The layer strip (BG, L1, L2 …)
+
+*(round 16ks.)* In every preset header, between **Notes** and **MODIFIERS**, sits a small pill of square boxes: **BG**, then **L1**, **L2** … one box for every layer column of the table (four to start with; it grows as the table grows, up to 64). It looks like the page tabs on Wire. The same pill is on the Advanced tile.
+
+**Why it is there.** One bar serves every destination of the preset, so it always shows the layers of the destination you picked, and only that one. It answers two problems at once: a destination that a full-screen layer covers could not be picked on the canvas at all, and a layer that sits under a full-screen layer could not be reached. The owner's case: the BG is good, L1 is full screen, L3 is another full-screen layer with an alpha channel, and only L1 has to change. Now it can.
+
+| What you see | What it means |
+|---|---|
+| All boxes grey, nothing happens on a click | No destination of this preset is picked. Pick one (canvas, a layer chip, or its table row). |
+| **Amber** box | Something is assigned: a background or colour for BG, content for that layer. Hover for the name ("L2: CAM 1", "BG: LOGO"). |
+| Grey box | Empty ("L3: empty"). |
+| **Slow pulse** | The box you are on: the picked layer, or BG after you picked the destination through BG. With Reduce Motion on it is a steady bright outline instead. |
+
+**Clicks**
+- **A filled layer box** picks that layer, exactly like a click on its chip: same handles, same panel. Click again = Layer panel (Simple) or let go (Advanced), double-click = Layer panel in Advanced mode, as on the chip.
+- **BG** picks **the destination itself**: orange outline, the move arrows ◀ ▶, the corner handles, Cmd / Ctrl + C, Cmd / Ctrl + D. Double-click BG = Destination Properties. This is how you pick a destination that a full-screen layer covers. While the see-through view is on, a double-click on the destination itself on the canvas (through the faded layers) opens Destination Properties too, and the view stays on while that window is open.
+- **An empty layer box** opens the same content list the table cell of that layer opens, next to the box, so you can fill the layer from the strip. While that list is open the pulse sits on the box you clicked, also when another layer is still picked; it goes back when the list closes. (On the Advanced page it picks the empty layer in Properties › Layers, where a source is dropped or picked.)
+
+**The see-through view (15 %).** After a click on a layer box, every layer **above** it on that destination is drawn at 15 % and lets clicks through, so you can see, drag, resize and mask the layer you picked even under a full-screen layer. You still see that the upper layers are there. After a click on BG, all layers of that destination go to 15 %. Higher layer numbers sit on top.
+- It is only a **view in the editor**. It never changes a layer's Level / opacity, it is not saved in the show, it is not an Undo step, it never marks the show unsaved, and it is never in the Look Book, the Excel sheet, the Wire drawing or on the **Display** output (the output keeps showing the real look).
+- It follows you while you stay on the same destination: pick a lower layer on the canvas and the view moves with it. Pick a higher one in the strip.
+- It ends when you pick another destination, click empty canvas, let go of the selection, press Escape, or leave the page (Simple ↔ Advanced, Wire, I/O Patch). One click on the picked destination lets go of it, as always; the faded layers turn solid about half a second later, because the app first waits to see whether that click was the start of a double-click. **Reset › Reset Layers** ends it as well: a layer you add afterwards comes up solid. A plain click on the canvas never starts it: nothing looks different until you use the strip.
+
+**Many layers, little room.** The pill grows with the layers but never pushes MODIFIERS and never changes the header. When there is not enough room (many layers, or the narrower Advanced tile) it scrolls sideways inside itself: drag its thin bar or roll the mouse wheel over it. The box you are on is brought into view. On the Simple page the wheel goes back to scrolling the preset list as soon as the pill is at its end. On the Advanced page the wheel over the pill never zooms the canvas.
+
+**On the Advanced tile the Notes box gives way first.** The tile header is short of room there, so Notes gets narrower (down to about 90 px) before the strip does. At the default 1440 x 900 window you see BG and at least three layers without scrolling, at the smallest window (1024 x 768) BG and at least one. MODIFIERS and the other Actions stay exactly where they were.
+
+**Top layer tag.** The bottom-left label of every destination now names the layer you are looking at in front of the resolution: **L3 · 1920x1080**. It reads **BG · …** when only a background is assigned and shows the bare resolution on an empty destination. So you can tell the layer you SEE on top from the layer you have PICKED in the strip. The tag prints in the Look Book pictures and shows on the Display output, the same places the resolution shows.
+
+The phone build does not have the strip.
 
 ### 4.6 DSM / AUX band
 
@@ -353,7 +401,7 @@ Whatever you drop on is picked, so its properties and, for a clip, the timeline 
 
 It is the Simple tile, so chapter 4 applies: destinations (pick, ◀ ▶ re-order, double-click for properties), layers (drag, corner handles, ↺), the gear menu (AOI Overlays, Blend Zones, Dead Space, Free Position, Fit Canvas), Paste / Copy / Reset / Trash, the AUX band, and the preset number, name and notes typed straight into the header. The page title and the thumbnail follow the name.
 
-Clicking a layer picks it and opens the Layers tab on the right.
+Clicking a layer picks it and opens the Layers tab on the right. The **layer strip** (4.5.1) is in this header too; the tile is narrower here, so Notes gets narrower to make room and the pill scrolls when there are more layers than fit (mouse wheel over it, or its thin bar). Escape leaves the Advanced page, which also ends the see-through view.
 
 > **CHECK (second click on a layer).** The Simple chapter says a second click on a selected layer opens the Layer panel. The Advanced chapter says a second click on the picked layer lets go of it. Both engineers drove their own page; it is likely the pages differ on purpose (Advanced has the properties on the right), but neither chapter says so.
 
@@ -409,7 +457,7 @@ Picking another layer stops what was playing, unless you started playback with P
 2. Press **Open Display**. A second window opens with ONLY the open preset: no panels, no handles.
 3. Drag it to the other monitor and double-click it for full screen (Esc leaves full screen).
 
-It follows everything you do: play, pause, scrub, a different preset. If you go back to Simple it goes black until you return. Press Display again, or close the window, to end it.
+It follows everything you do: play, pause, scrub, a different preset. The 15 % see-through view of the layer strip (4.5.1) is never sent to it: the output always shows the real look. If you go back to Simple it goes black until you return. Press Display again, or close the window, to end it.
 
 It is a reference picture next to your switcher, not a playback machine: H.264 and HEVC clips play, ProRes and HAP show their cover picture.
 
@@ -483,7 +531,7 @@ It answers "what is plugged into the switcher and what comes out". It does not s
 | **Simple / Advanced** | Simple is this automatic drawing. Advanced is the free-form builder (chapter 7). |
 | **− / +** | Zoom out / in by 10 %, from 25 % to 300 %. The drawing stays centred. |
 | **The percentage** | Click it to go back to 100 %. |
-| **Fit** | Shows the whole drawing between the two side panels, including anything you dragged away. It never zooms past 100 %. |
+| **Fit** | Shows the whole drawing between the two side panels, including anything you dragged away. It never zooms past 100 %, and in Advanced it keeps the drawing above the floating I/O Tools button. |
 | **Reset Layout** | Puts every moved node, the switcher and every moved cable back to the automatic layout. One Undo brings your layout back. |
 | **Export** | Opens the Export window (6.5). |
 
@@ -573,14 +621,14 @@ The panels, zoom, tools, Presets, Details, Project Info and Export are as in cha
 
 - **Left panel**: drag a card onto the canvas to place it. Drag the same card twice if the machine appears twice on the drawing.
 - **Canvas**: an endless grid. Tiles go anywhere.
-- **I/O Tools** (bottom centre): add a router, a switcher, a converter, a network switch, or a tile built from an I/O Patch page.
+- **I/O Tools**: a floating button at the bottom centre of the drawing, just above the status bar, in Advanced only (Simple has no such button, and Wire no longer has a strip of its own along the bottom). Its menu opens upward: add a router, a switcher, a converter, a network switch, or a tile built from an I/O Patch page. A press anywhere outside, or Escape, closes the menu. The button sits in the middle of the drawing you can see, between the two side panels, and moves with them when a panel folds. Fit keeps the drawing clear of it, and a tile you add from the menu lands above it. If the drawing is too big to fit even at 25 % (the smallest zoom), Fit lines the bottom of the drawing up above the button and the rest runs off the top: scroll or pan up to see it. When you zoom in or pan yourself, the button can sit over a tile; pan a little to reach it. The button is never part of an export.
 
 ### 7.1 Pages
 
 - **Page 1 is your show.** It opens already built: every source cabled into a switcher tile, every destination and AUX cabled out of it. It takes the show name.
 - The last page is always an empty spare. Use it and a new spare appears, up to 25 pages.
 - **Click** a tab to open the page. **Double-click** the tab to rename it: Enter keeps the name, Escape puts the old one back and stays in Wire; a rename is one Undo step.
-- On the open tab: the **copy icon** makes "<name> copy" on the spare page. The **×** closes the page; a page with anything on it asks first, and Undo brings it back. Long names are shortened on the tab so the two icons are always reachable.
+- On the open tab: the **copy icon** makes "<name> copy" on the spare page. The **×** closes the page; a page with anything on it asks first, and Undo brings it back. On an empty spare page the × only takes you to the tab in front: the app would make the same empty page again at once, so nothing is closed and there is nothing to undo (I/O Patch Advanced works the same way). Long names are shortened on the tab so the two icons are always reachable.
 - If sources, destinations or AUX change in the show after page 1 was built, opening Advanced offers **Rebuild from Simple** once. "Keep my page" leaves your drawing alone. A rebuild replaces page 1 only and can be undone.
 
 ### 7.2 Tiles
@@ -911,24 +959,24 @@ The same history covers all three tools. Undo / Redo are in the top bar (dim whe
 - A drag, from press to release: moving or resizing a layer, a destination, an AOI box, a Wire tile, a cable handle, a fader.
 - A field, from the moment you click into it until you leave it or press Enter. Typing ten letters is one step, not ten.
 - Apply in Destination Properties is one step even when it changes size, position and rotation together, and the "Keep your layout?" question that may follow belongs to the same step.
-- A change refused with "Destinations can't overlap" leaves no step: nothing happened. "Create Blend Zone?" belongs to the action that raised it: *Add to blend* keeps that one step, *Cancel* leaves none (only after a Free Position DRAG does Cancel still leave one empty step).
+- A change refused with "Destinations can't overlap" leaves no step: nothing happened. "Create Blend Zone?" belongs to the action that raised it: *Add to blend* keeps that one step, *Cancel* leaves none.
+- An action that ends up changing nothing leaves no step and does not cost you your Redo: a destination dragged in the strip layout that snaps back, Reset positions or Reset Preset Layout when nothing had moved, a drag that ends where it began, a preset pasted onto itself (the preset header's Reset never records an empty step either: with nothing to reset its button is greyed). **An Undo press always changes something**, and Undo / Redo are lit only when a press will do something.
+- A picture or video added on the Video tab is one step, recorded when the file has been read (a long clip takes a few seconds): files picked together are one step, and a file that cannot be read leaves none.
 - A rename that runs through the whole show is one step and Undo puts the old name back everywhere.
 - In the layer panel, a custom name, a size and Apply together are one step.
 
 > **Arrow-key nudges of a layer are one Undo step per burst.** Nudge as many times as you like; when you pause for about half a second the burst is closed, and one Undo puts the layer back where the burst started.
 
-**What does NOT use a step:** selecting, opening or closing a window, switching tools, switching presets in Advanced, zoom, pan, collapsing presets, opening a Wire or I/O page tab, playing a clip. Looking around never destroys your Redo.
+**What does NOT use a step:** selecting, opening or closing a window, switching tools, switching presets in Advanced, switching Wire or I/O Patch between Simple and Advanced, zoom, pan, collapsing presets, opening a Wire or I/O page tab, the × on an empty spare page tab, playing a clip. Looking around never destroys your Redo. One exception: the FIRST switch to Advanced in Wire, and in I/O Patch, builds page 1 from the show, and that build is one step (Undo empties page 1 again and leaves you in Advanced; Redo brings it back).
 
 **Not covered by Undo:** the show name, date, venue, the Project Info fields, the company logo, the canvas size and the AUX / DSM label choice. Change them back by hand. A colour change to a built-in content type is not covered either.
 
 History holds the last 50 steps. It starts empty when a show is opened (New, Load, Restore draft) and is not stored in the file. A new change after an Undo clears Redo; to compare two versions, Shift-click Save first.
 
-Undo restores the show, not the view: it does not scroll for you and it clears the current selection. Re-open a properties window after an Undo so it shows the restored values.
+Undo restores the show, not the view: it never flips Wire or I/O Patch between Simple and Advanced, never changes the Wire zoom, tool or folded panes, never changes the Advanced zoom or pan, never opens another page tab and never unfolds a preset. You stay where you are and the data changes under you; a change made on another page is undone there, out of sight. If the page tab you are on is removed by an Undo or a Redo, you land on the tab in front of it. Undo back to the saved show turns the unsaved mark off from whatever page tab you are on. It does not scroll for you and it clears the current selection. Re-open a properties window after an Undo so it shows the restored values.   <!-- 16ks-undo-docs -->
 
 **Quirks to know**
 - The first time Wire draws a show it picks cable colours; undoing back past that point lets Wire pick new colours.
-- A destination dragged in the normal strip layout snaps back and still uses one (empty) step; so do Reset positions and Reset Preset Layout when nothing moved, and Cancel on "Create Blend Zone?". Press Undo once more.
-- Switching Wire or I/O Patch between Simple and Advanced uses a step; Undo straight after a switch flips the view back. In Wire the zoom level rides in the step too.
 - Holding an arrow key on a selected destination (resize) uses one step per pixel.
 - The phone layout has no Undo button.
 
@@ -940,14 +988,14 @@ Everything that opens over a page (messages, Add Destination, the colour window,
 
 **Closing.** A window with a dark area around it closes with a click on that dark area. Panels and lists close with a press anywhere outside **(after the fix for the Modifiers menu, the colour window and the Wire I/O Tools menu, which stayed open when the press landed on a destination, a layer or the drawing)**. Add Destination is the exception on purpose. Two lists are never open together; the three properties panels (Layer, Destination, AUX) are one at a time.
 
-**Escape: one press closes one thing.**
-1. If a list, a menu, a message or a window is open, Escape closes the top-most one and nothing else. A list open inside a window closes first; the next press closes the window.
-2. If you are typing in a text box on a page, Escape never throws you off the page. In a rename box (Wire page, I/O page, Wire source), a Wire resolution field, an I/O note, and a Video Presets table or tile-header cell, it puts the old text back.
-3. With nothing open and no text box active:
+**Escape: one press does one thing.** Three rules, the same everywhere on the desktop (build 16ks-esc):
+1. **In any text or number box**, Escape puts the OLD text back (what the box held when you clicked into it), takes the cursor out of the box, keeps nothing you typed and does nothing else: the panel, the window and the page the box sits in all stay open. The next Escape then closes that panel or window. This is true for every box: Show name, preset code / name / notes, the table cells, Destination Properties, the Layer and AUX panels (the fader number boxes included: the picture goes back too, and no Undo step is made), Add Destination, the dead-space PX / FT and blend px boxes, the AOI boxes, the clip boxes on the Advanced page, the colour window, Wire (Project Info, switcher / router / device names and IDs, port names, IP address, resolution, the custom size window), I/O Patch (names, notes, counts, the custom resolution and Backup windows), Help > Accessibility and the Look Book export window. Rename boxes (Wire page, I/O page, Wire source) close themselves and keep the old name. **The one exception is Quick Setup:** Escape closes the wizard from anywhere in it, as it always has. **Only your typing is taken back** (build 16ks-escfix): what you changed with the mouse while the cursor still sat in the box (a corner handle on the canvas, an AOI handle, the Wire + / - output buttons) stays, and Undo still undoes it. With nothing typed, Escape only leaves the box.
+2. **If a list, a menu, a message or a window is open** and the cursor is not in a box, Escape closes the top-most one and nothing else. A list open over a box or inside a window closes first; the next press goes on from there.
+3. **With nothing open and no box active**, the page steps down:
    - Video Presets Simple: lets go of the picked destination or layer.
-   - Video Presets Advanced: goes back to Simple.
-   - Wire: clears the picked cable, then the picked tiles, then the preset filter, then leaves Wire.
-   - I/O Patch: leaves I/O Patch.
+   - Video Presets Advanced: the FIRST Escape lets go of the picked layer, destination or AUX box, together with the layer strip's see-through view (the page stays); the SECOND Escape goes back to Simple. A fader you just moved is not a text box: the same press lets go. With nothing picked, one Escape goes back to Simple.
+   - Wire: clears the picked cable, then the picked tiles (or the armed router key), then the preset filter, then goes back to Video Presets.
+   - I/O Patch: goes back to Video Presets.
 
 Today, Escape with a window or menu open over Advanced, Wire or I/O Patch closes the page underneath as well, and can leave the window or menu floating over Video Presets. Until the fix, close windows with their ✕ and menus with a click outside.
 
@@ -957,13 +1005,15 @@ Today, Escape with a window or menu open over Advanced, Wire or I/O Patch closes
 - In Destination Properties and AUX Properties, Enter is Apply: the values are taken and the panel closes.
 - In Add Destination, Quick Setup and the Custom router window, Enter is the main button.
 - In the colour window, Enter in the name box is Apply.
-- In a message, Enter is the highlighted button and Escape is Cancel.
+- In a message, Enter is the highlighted button and Escape is Cancel. Tab and Shift + Tab move between its buttons (and tick boxes) and never leave the message; Space presses the one that has the focus. A key that is HELD DOWN never answers a message: if Enter on a button opened it, let go and press Enter again. In the same way a double-click on the button that opened a message counts as one click.
 
 ---
 
 ## 12. Keyboard shortcuts
 
 All single-key shortcuts are switched off while a text box, a number box or a dropdown has the focus: the key types into the box instead.
+
+While a message or a question of the app is open (the small window with the dark area around it), NO shortcut acts on the page behind it: arrows, Delete / Backspace, the number keys, Cmd / Ctrl + C, V, Z, Y, S and the Advanced keys do nothing until the window is closed. Only the window's own keys work: Tab, Space, Enter and Escape (chapter 11).
 
 | Keys | Where | What it does |
 |---|---|---|
@@ -994,7 +1044,11 @@ All single-key shortcuts are switched off while a text box, a number box or a dr
 | Shift while dragging | Video Presets | No snap |
 | Shift while dragging the level line | Advanced timeline | 1 % steps instead of 5 % |
 | Shift + click Save | top bar | Save As |
-| Enter, Escape | everywhere | Chapter 11 |
+| Escape | in any text or number box | Puts the old text back and leaves the box. Nothing typed is kept and nothing else closes (Quick Setup is the exception: it closes). Chapter 11 |
+| Escape | a list, menu, message or window open | Closes the top-most one, one per press |
+| Escape | Video Presets Advanced, nothing open | First press: lets go of the picked layer, destination or AUX box (also right after moving a fader). Next press: back to Simple |
+| Escape | Wire, I/O Patch, nothing open | Wire: picked cable, picked tiles, preset filter, then back to Video Presets. I/O Patch: back to Video Presets |
+| Enter | everywhere | Chapter 11 |
 
 > **Arrow keys on a picked destination in Advanced do what they do in Simple:** they resize it 1 px (Shift 10 px) in one Undo step and never move it. (Open question 1 for the owner: whether the arrows should MOVE the destination instead when the canvas is on Free Position.)
 
@@ -1039,7 +1093,6 @@ Each item says what you see on build 2026-06-16ko and what to do. "Fixed by" nam
 | **I/O Patch: a source or destination I renamed or deleted came back** | Advanced page 1 kept the old row and copied it back | Delete the ghost row. Partly fixed by the pending patches (question 31 for the rest). |
 | **I/O Patch: LOGO shows the LED wall's note** | A source that is a background shows the destination's note | Do not type in that cell; it rewrites the destination's note. Question 30. |
 | **A red pill in I/O Patch** | The connector cannot carry that pixel count | Change the connector or the resolution. |
-| **I cannot find Help** | Advanced, Wire and I/O Patch cover the bottom bar | Go to Video Presets Simple. |
+| **I cannot find Help** | It is at the right end of the status bar, at the bottom of the window | The status bar is on every desktop page. The phone layout has no status bar and no Help button. |
 | **Typing in the Canvas W / H boxes does nothing** | The canvas is calculated from the destinations | Resize the destinations; use Fit Canvas to trim. |
-| **One Undo after switching Simple / Advanced in Wire or I/O flipped the view back** | The switch itself is an Undo step | Press Undo again for your last edit. |
 | **Safari / Firefox: every Save downloads a new file** | Only Chrome and Edge can overwrite quietly | Use Chrome or Edge, or the desktop app. |

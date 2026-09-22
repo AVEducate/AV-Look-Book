@@ -47,7 +47,9 @@ anchor on the function name and replace the first occurrence after it, never all
   to fill an empty Advanced page, `closeWireMode()`. The panel `#wire-sources-panel` scrolls; `#wire-diagram-scroll`
   holds the canvas.
 - The app has ONE dialog (`#dlg-overlay`, open when it has class `show`): answer it by clicking `#dlg-confirm` /
-  `#dlg-cancel`. Never hide or remove it in a test, or every later confirm silently does nothing.
+  `#dlg-cancel`. Never hide or remove it in a test, or every later confirm silently does nothing. While it is open the page hears no key
+  (`_dlgKeyGuard`: only Tab / Space / Enter / Escape work, inside the dialog) and the rest of the multi-click that opened it is dropped
+  (`_dlgClickGuard`), so a test that wants a page shortcut closes the dialog first; `el.click()` and a fresh single click always count.
 - A real user exports the Look Book through its window (`openPdfExportModal` then `_pdfConfirmExport`), which is what
   ticks the wire sheet; a bare `exportPDF(true)` skips those options. Stub `exportPDF` to capture the HTML.
 - Exports without a download: `exportPDF(true)` returns the Look Book HTML; `_doExportExcel(true)` returns the xlsx
@@ -100,6 +102,12 @@ anchor on the function name and replace the first occurrence after it, never all
   never over the blend zone (blend-arrows, owner 2026-09-21). A destination that is not blended keeps `left:6px` / `right:6px`.
   The key resize goes through `updateScreenSize` (neighbours are pushed along) so it can
   never park a destination on another one; a burst of presses is one undo step.
+- **Escape, three rules** (owner decision 5, build 16ks-esc). (i) In ANY text / number box Escape puts back the text the box had at
+  focus, blurs it, commits nothing and closes nothing; Quick Setup is the one exception (it closes). (ii) Video Presets Advanced: first
+  Escape clears `selLayer` / `sel` / a lit `selDSM` and the layer strip ghost (`_fsEscPicked`, `_fsEscLetGo`), the next one is `closeFullscreen()`; a fader, tick box, swatch or dropdown that holds focus is NOT a box (16ks-escfix). (iii) Idle Wire / I/O Patch: back to Video Presets, Wire's
+  step-down order unchanged. One window-capture listener owns (i) and (ii) (search `16ks-esc`); a list / menu / window floating ABOVE
+  the box still closes first (`_lbEscTop`, 16kp). A new text box needs nothing; a new live box is covered as long as it writes the
+  show from its `input` event (16ks-escfix: the show is put back in place from the picture taken at the FIRST keystroke, `_lbEscOrig.s0`; nothing typed = nothing put back; a mouse edit made while the box kept focus is folded into that picture by `_lbEscRebase`, so it survives).
 - **The Modifiers menu** (AOI Overlays, Blend Zones, Dead Space, Free Position, Fit Canvas) opens from the MODIFIERS button
   on each preset tile only. The status-bar button that also opened it is now a greyed-out **Educator** placeholder
   (`#tb-educator`, disabled) for a future build. The switches are one session-wide view state: not per preset, not in the
@@ -114,6 +122,29 @@ anchor on the function name and replace the first occurrence after it, never all
 - **Before building anything the owner recommends, check it against the rules already in place** (this section, the
   manual, the build log) and TELL HIM FIRST when it would break one or change something that was put in on purpose
   (example: the arrow-key resize of a destination was an accessibility feature added 2026-06-01, not an accident).
+- **The layer strip and its ghost view (round 16ks, owner decision 10).** Every preset header (`_rcPresetRow`, so Simple and the Advanced tile)
+  carries one pill between Notes and Actions: BG, L1 … Ln (`getLayerNums`, the table's L columns) for the destination picked in THAT preset
+  (`_lsPicked`: `selLayer`, else an open `#layer-panel`, else `sel`). Amber = assigned, grey = empty, slow pulse = the box the user is on. A filled Ln
+  calls `layerChipClick` (never a second selection path), BG picks the destination itself (the first-click branch of `screenClick`, never the
+  toggle), an empty Ln goes through `_homeOpenDropdown`. `_lsGhost` ({pid,sid,n}) is EDITOR-ONLY view state: layers above n get the class
+  `lb-ghost` (15 %, click-through) on the live DOM of `#canvas-area` / `#fs-canvas` only, put there after every redraw by a MutationObserver. It is
+  never emitted by `_rcChip`, so the Look Book, the preset cards, the phone picture and the Display clone cannot carry it; it is not in
+  `getProjectState`, not an undo step, never marks the show unsaved, never touches a layer's Level. It follows the pick on the same destination and
+  ends on another destination, a cleared pick, empty canvas, Escape, or a page change (`_vpSyncTabs`, `_topbarSetActiveView`). A plain canvas pick
+  never starts it. The pill lives inside today's flex:1 spacer, absolutely placed, so it can never widen the header or move Actions; it scrolls
+  inside itself. Do NOT give it `scrollbar-width:thin`: in Chrome 14x a scrolled scroller with it stops hit-testing its children. The phone gets the
+  old empty spacer. `.screen-res` now starts with the top-most displayed layer (`_lsTopTag`: "L3 · 1920x1080", "BG · …", nothing on an empty
+  destination); it prints in the Look Book and shows on Display on purpose. There is no layer on / off switch today (`p.active` stays empty);
+  `_lsLayerOff` is the one place that would read it.
+  Fix round (16ks, after the attack): (1) in `#fs-canvas` only, the header's Notes group shrinks first (180 → 90 px, `flex:0 1000 auto`) and the
+  slot asks for `--lsw` (`_lsNeed`); flex-basis is not part of the header's intrinsic width, so the row width and Actions never move. The gate check
+  compares the header with and without those rules. (2) `_lsHold`: a click inside the ghost's own `.screen-box` holds the ghost for 500 ms when the
+  pick was let go, so the second click and the dblclick of a double-click still pass through the faded layers (Destination Properties for the
+  destination; on the Advanced tile the second click on the picked layer reaches that layer, not the full-screen one above). Any key, a click
+  elsewhere and `_lsGhostEnd` drop the hold. An open `#screen-panel` counts in `_lsPicked` (last, after `sel`). (3) `_lsWheel` only takes the wheel
+  while the pill can scroll that way; on `#fs-canvas` it always takes it (the viewport would zoom). (4) the pulse (`on` in `_lsState`) follows an
+  open `#layer-panel` on the same destination. (5) a ghost that has faded something (`had`) ends when the destination has no layer left
+  (`_lsAnyLayer`): Reset window › Reset Layers.
 - The BG is a layer: `selLayer.n === 0` everywhere; its media, look and crop live in `layerMedia[sid][0]`.
 - A layer window is the picture: Size (px) and Scale (% of the cropped source) are one thing; the aspect lock
   (`_lfxLock`, default on) keeps the shape; unlocked = stretch. No push-in zoom; a push-in is a tighter source crop.
@@ -130,6 +161,55 @@ anchor on the function name and replace the first occurrence after it, never all
   Position are both off (owner, 2026-09-21: "if its off that isnt an option, unless they are in FREE GRID then you need to ask"): the
   pre-action snapshot comes back, no undo step, one alert "Destinations can't overlap". With Free Position on, or Blend Zones on, it
   raises "Create Blend Zone?"; Cancel restores the pre-action snapshot and drops the undo step. The one geometric test is `_overlapPairsForPreset(p)`. Never call the guard on load.
+- Preset Reset (owner rule, 2026-09-21): the Reset on a preset header brings THAT preset back to what Quick Setup creates, and asks
+  first how far back (Reset All / Destinations / Layers / AUX, all ticked by default; the three lines are disjoint groups of per-preset
+  fields, table in CLAUDE.md `_PRESET_RESET_FIELDS`). One undo step for the whole reset; nothing to do = greyed button, no step. It only
+  ever writes the one preset: resetting P01 does not reach later presets, and show-wide values (destination size, the name / colour /
+  rotation set on P01, AUX name / size, and P01's own `bgNames` / `dsmType` maps, which the app reads show-wide) are never touched; on P01
+  the window's sentences say what stays and where to change it. The result is a clean strip, so the no-overlap guard is not involved.
+  Destination Properties keeps its own quick "Reset Preset Layout" (strip only, no question).
+- THE BOTTOM BAR IS ON EVERY PAGE (owner's decision 6, 2026-09-21), the way the top bar is. `--bottombar-h` (declared on `html`, 28 px; 0 for
+  `body.is-mobile`, which has no bar) is the bar's height AND the gap the Advanced page (`#fs-overlay`), Wire (`#wire-overlay`) and I/O Patch
+  (`.sys-overlay`) leave at the bottom: `bottom:var(--bottombar-h)`. A new full-page view must do the same. The bar is not positioned, so any
+  fixed pop-up near the bottom edge draws OVER it, never behind it. Wire has no bottom strip any more: the Advanced-only I/O Tools button is
+  drawn by `_wireRenderStyleBar` into `#wire-io-float` (a sibling of the scroller, outside `#wire-diagram`, so no export sees it); the phone
+  keeps `#wire-style-bar-top`. TRAP: the Wire export copies every CSS rule whose selector STARTS with `:root` or `#wire-overlay` into the
+  exported sheet and the Look Book, so page-only CSS must not start with either (that is why the variable sits on `html`).
+- Undo restores DATA, never VIEW (owner's decision 2026-09-21: Undo / Redo NEVER change Simple / Advanced, open page tabs, zoom, pan,
+  tool, folded panes, which page is open). THE ONE LIST of view keys is `_LB_VIEW_KEYS`, next to `_snapshot()`: `wireSettings`
+  (wireView, wireStyle, panes, rpanes, panelCollapse, tool, zoom, alignPanelPos), `ioAdvanced` (view, page), `eachPreset` (minimized)
+  and `wireSettingsUndoOnly` (sheet: the print sheet size lights Save but has never been an undo step). Three readers, no copies:
+  `_dirtyStateString` (through the alias `_LB_DIRTY_VIEW_KEYS`), the undo safety net (`_lbUNStrip`, alias `_LB_UN_VIEW_KEYS`) and
+  `_snapshot` / `_lbRestoreData`. A new view setting goes into that list and nowhere else, and a view switch never calls `pushUndo()`.
+  The open Wire page tab (`wireAdvanced._activePageId`) cannot be a list entry, because the open page's tiles sit on `wireAdvanced`
+  itself: it stays in the snapshot; after a restore the user's own tab is opened again (`_lbWirePageOpen`, the data half of
+  `_wireSwitchPage`, run through `_lbNotAChange` so Undo back to the saved show reads clean from any tab), or the tab in front of it when
+  that page is gone. `_lbRestoreData` (doUndo / doRedo) reads the view with `_lbViewStateGet()`, writes the data, puts the view back with
+  `_lbViewStateApply()`; the `wireSettings` data keys are written IN PLACE in the key order the live object has (keeps the phone's Wire
+  override attached, and the saved file reads the same again). Building page 1 on the first switch to Advanced is data, so it is a
+  step (Wire: inside `_wireAdvSeedFromSimple`; I/O: `_ioSetViewNow` via `pushUndoFrom`, with `_lbKeepIfLooking()` where `pushUndo` used to run).
+- An Undo press never does nothing. ONE rule, no local fixes: a step whose snapshot is the same show as the one on screen
+  (`_lbSameShow`: text first, and blind to the open Wire page tab when the two were taken on different tabs) is (a) never stacked on
+  an equal one (`pushUndo` / `pushUndoFrom`), (b) dropped once the action has settled (`_lbUndoTidy` -> `_lbDropEmptySteps`, called by
+  the undo safety net at the end of every gesture; not while a press is held or a question is open), (c) skipped by `doUndo` /
+  `doRedo`, and (d) `_syncUndoButtons` lights a button only when some step differs from the show as it stands. So an action may
+  call `pushUndo()` before it knows whether anything will change, PROVIDED the change follows in the same gesture. Work that finishes
+  later (a file being read) records its step when it LANDS, straight before the write: `_fsImportFiles` hands `_fsImportOne` a
+  one-shot `land()` for that. `pushUndo` remembers the Redo history it clears (`_lbRedoKept`); when its step is dropped as empty and
+  nothing else happened, Redo comes back. The x on an empty spare page tab touches no data (`_lbCloseChangesNothing`). Do not count
+  steps with `_undoStack.length` deltas around an action that may change nothing.   <!-- 16ks-undo-docs -->
+- I/O TOOLS FLOAT, THE RULES (round 16ks fix). `_wireIoFloatReserve()` is the band at the bottom of the drawing area that belongs to the
+  button (its height + the 20 px under it + 12 px; 0 when it is not shown: Simple, the phone). `_wireZoomFit` takes it off the height it fits
+  into and `_wireScrollToContentCenter` centres in the space above it, so anything that fits a drawing must go through those two. After a Fit
+  `_wireIoFloatClearBottom` handles the drawing that is too tall even at the 25 % floor (lowest tile above the button, overflow off the top),
+  and the five I/O Tools add functions call `_wireZoomFit(newTileId)` so `_wireIoFloatClearTile` scrolls the new tile into view above the
+  button. A NEW add function must pass its id the same way. `_wireIoFloatPlace` centres the button on `_wireVisibleGap()` (between the two
+  side panes as they are drawn NOW); one ResizeObserver (`_wireIoFloatWatch`, armed by the first `_wireRender`) keeps it there. It sets an
+  inline `left`, no CSS rule, so nothing reaches an export.
+- `--toolbar-h` FOLLOWS THE TOOLBAR (round 16ks fix). When `resize` fires the toolbar is still wrapped the old way and settles a frame later,
+  so one measurement in the resize listener left the variable stale (Wire / I/O Patch / the Advanced page started 66 px too low after 1440 to
+  1100). `_lbToolbarWatch` (a ResizeObserver on `#toolbar`, armed on load) calls `_topbarMeasureHeight` whenever the height changes; the resize
+  listener also measures again on the next two frames and after 300 ms. Never cache the toolbar height anywhere else.
 - A new router / switcher is placed by `_wireAdvFreeSpot` (never on another tile); a tile that grows pushes the tiles
   stacked under it down (`_wireAdvPushBelow`).
 - THE NAME: the product is "AV Look Book". The page's `<title>` and every `document.title` still end in
