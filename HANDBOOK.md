@@ -88,6 +88,32 @@ anchor on the function name and replace the first occurrence after it, never all
   Presets, because a source is ONE thing (name, cover, cable type, resolution) shown in several places, which is why it is
   drag-and-drop. Every page after page 1 is a CUSTOM build that feeds nothing back. Random cable colours on the first look
   at Wire are intended; a colour the user picked must never change again.
+- **The Look Book prints the wire pages, not the open tab** (owner, decision 36, 2026-09-22). With Wire view =
+  Advanced the book carries one sheet per Advanced page that has something on it (`_wireAdvPageUsed`), in page
+  order, each titled with the page tab's own name and counted in the book's page numbers and contents rows;
+  the contents label is escaped with `_esc` like every other printed name, and for a page still called "Page 2"
+  the drawing frame's title block reads "Signal Flow" (`_lbWireSheetTitle`, the same test `_wireExportSheetList`
+  already used) so the Look Book and the Wire tool do not print one page under two titles;
+  the page the user is on is put back afterwards. Nothing drawn in Advanced = the SIMPLE drawing, never an
+  "(Empty page)" sheet. Simple prints exactly what it always printed. The list is `_lbBookWireSheets(opts)`,
+  next to `_wireExportSheetList`; the Wire tool's own export already worked this way.
+  I/O Patch page 1 (round 16kt, decision 31): a row page 1 COPIED from the show carries `fromShow:true` (in the file); a row typed by
+  hand has no flag. ONE scan, `_ioAdvScanShowRows`: a copied row whose source / destination / AUX / multiviewer is not in the show is
+  marked `gone:true` (in the file) and STAYS with its data; it never becomes an I/O-only twin (`_ioAdvSyncPage1ToSimple` skips it),
+  the Advanced draw dims it with a "not in the show" tag (`_ioAdvGoneRow`, CSS `.sys-row.io-gone`), the page-1 sheet of the I/O
+  Excel leaves it out (`_ioAdvRowPrints`), a page copy drops it (`_ioAdvStripGone`), `_ioAdvEnsureAutoPairs` makes no B for it;
+  the mark clears when an item of that name is back. Only Rebuild from Simple and the row's trash remove it. The scan runs on
+  EVERY I/O Patch draw in front of the view branch of `_sysRender` (`_ioAdvFollowShow`, whatever view or page tab is open) and
+  once more in `_sysExportIOExcel`. A rename is never a row that left: every label-rename path calls `_ioAdvRenameTwin`
+  (`_sysApplyGlobalRename` for I/O Patch Simple, Wire and the phone card; `_fsRenameContent` for the Advanced Video Presets
+  Source box; `_lbRenamedDest` for destinations). The table cell (`homeSetL`) and the Simple layer panel's Custom Name box SWAP a
+  layer's content, they never rename a label. Unflagged rows of an older file whose name is a show item's own (never the twin
+  page 1 made) are marked on that draw. A hand rename drops both flags (`_sysSetMetaNow`, Advanced-row branch). These writes
+  are draw follow-ups (`_lbNotAChange` draw form) and never an undo step: `_ioAdvNetRebase` moves the undo safety net's open
+  gesture picture along, the way `_lbStillClean` moves `t.saved`, only when that gesture had changed nothing else. A NEW way of
+  taking an item out of the show needs nothing: the next draw sees it. A NEW way of RENAMING a label must call
+  `_ioAdvRenameTwin`. A NEW row-making path on page 1 must decide: copied (mark it) or hand-typed. Known gap: a Wire patch tile
+  built from page 1 (`_wireAdvAddPatchTile`) still takes every named row, gone ones included.
 - **Looking is not a change** (owner, 2026-09-21). Save turns gold, and New / Load / close ask, ONLY after a real edit. Opening Wire,
   I/O Patch or Advanced, a Look Book with a wire sheet, zoom, tool, folded panes, page tabs and Simple / Advanced never do. View
   settings are still written to the show file; they are only left out of the unsaved comparison (`_LB_DIRTY_VIEW_KEYS`). What the app
@@ -122,6 +148,25 @@ anchor on the function name and replace the first occurrence after it, never all
 - **Before building anything the owner recommends, check it against the rules already in place** (this section, the
   manual, the build log) and TELL HIM FIRST when it would break one or change something that was put in on purpose
   (example: the arrow-key resize of a destination was an accessibility feature added 2026-06-01, not an accident).
+- **The narrow preset header (round 16kt, owner rule 2026-09-22).** When the TILE cannot give the layer strip the width it
+  asks for (`--lsw`, written on `.lb-lslot` by `_lsStripHTML`), `_lbnSync` walks the header down the owner's ladder with four
+  cumulative classes on `.preset-row`: `lbn-s1` the MODIFIERS button drops its word (the app's own icon-only state —
+  `font-size:0`, 9 px side padding — which also has to lift the 150 px floor `.del-btn[onclick*="toggleAdvancedMenu"]` pins on
+  it), `lbn-s2` pins Notes and the preset name at half (90 px and 79 px — on the Advanced page Notes may already be under 180 px before this, because the app's own `flex:0 1000 auto` lets it slide 180→90 there), `lbn-s3` Notes goes, `lbn-s4` the name goes. `.p-code`
+  and the strip are never hidden and never shrunk; past step 4 the strip scrolls inside itself as before. `_lbnSync` resets
+  every row to step 0 and walks UP, so the step is a pure function of the tile's width and the layer count — no hysteresis, the
+  same width always gives the same answer going down and coming back up. It measures with `body.lbn-measuring` on, which takes `transition` off `.preset-header` and everything inside it for the length of the pass — without that it reads back widths that are still animating (`.p-name` is `transition:all .15s`, `.del-btn` `.18s`), which made the first cut of this change climb a rung further than it needed and give a different answer at the same width after an ordinary edit. Rungs 0 and 1 add nothing at all to the Notes box, so rung 0 is the header the build drew before the ladder existed. It runs from `renderCanvas` and `renderFullscreen`
+  (same frame, before paint) and from a ResizeObserver on `#canvas-area` and `#fs-viewport` — both sized by the window and the
+  side panels, NEVER by their contents, which is what stops the observer feeding itself. NOT a container query: the step
+  depends on `--lsw`, which is the layer count (146 px at 4 layers, 382 at 12, 958 at 30, 1278 at 40, measured on the General Session example), and a `@container` condition
+  cannot read a custom property. All lengths read are LAYOUT lengths, so the Advanced page's zoom (a transform on `#fs-world`)
+  magnifies the tile without moving the ladder, and the narrower Advanced tile steps down sooner than Simple on its own.
+  Note `#fs-canvas` is shrink-to-fit, so once the tile is narrow enough for the HEADER's own
+  max-content to be what sizes the row, the rung changes the tile's width too: measured at 1440 the header is 826 px at
+  every rung, at 1340 it is 779 px at rung 0 and 726 px from rung 1 on, and at 1260 it is 779 / 687 / 660 / 660 / 660
+  px at rungs 0-4 (the 660 floor is `renderFullscreen`'s `tileW = max(640, fs-viewport.clientWidth - 52)` plus the
+  tile's padding). `fsFitScreen` then re-fits. On Simple the row is min-width driven and does not move at all.
+  The patch is CSS + `_lbnSync` only — `_rcPresetRow` is byte-for-byte unchanged, so no export or preset card can drift.
 - **The layer strip and its ghost view (round 16ks, owner decision 10).** Every preset header (`_rcPresetRow`, so Simple and the Advanced tile)
   carries one pill between Notes and Actions: BG, L1 … Ln (`getLayerNums`, the table's L columns) for the destination picked in THAT preset
   (`_lsPicked`: `selLayer`, else an open `#layer-panel`, else `sel`). Amber = assigned, grey = empty, slow pulse = the box the user is on. A filled Ln
@@ -210,6 +255,18 @@ anchor on the function name and replace the first occurrence after it, never all
   so one measurement in the resize listener left the variable stale (Wire / I/O Patch / the Advanced page started 66 px too low after 1440 to
   1100). `_lbToolbarWatch` (a ResizeObserver on `#toolbar`, armed on load) calls `_topbarMeasureHeight` whenever the height changes; the resize
   listener also measures again on the next two frames and after 300 ms. Never cache the toolbar height anywhere else.
+- WAYFINDING ON THE ADVANCED PAGE (owner decision 19, round 16kt, patch marker `16kt-way`). Four rules, in the `_way*` block in front of
+  `fsSwitchPreset`. (1) Every route to + Preset goes through `actions.addPreset()`, which calls `_wayAfterAdd()` when a preset
+  was really added: with the Advanced page open the new preset is OPENED there (`fsSwitchPreset`, so `fsFitScreen` centres it)
+  and `_wayCardIntoView` scrolls its card into the list by that list's own `scrollTop` (never `scrollIntoView`, which also
+  scrolls the Simple canvas behind the page). (2) From Wire or I/O Patch it draws `_wayNote('P06 added')`, the only toast the
+  app has: ONE body-level pill, `pointer-events:none`, never focused, removed by its own Web Animation. Keep it at body level
+  and out of `#canvas-area`, `#fs-canvas` and `#wire-diagram`, or an export will pick it up. (3) 1 to 9 pick a preset: Simple
+  scrolls to it, Advanced opens it (`_wayPresetKey`, called inside the Advanced key handler's own text-box guard). Simple's
+  branch stands down while `fsPresetId` is set, so one key is one action. (4) The crumb trail and the ◀ Preset button are
+  pinned by ONE sticky rule on `#fs-toolbar>.fs-crumb` (desktop only); its side margins and flat shadow cover the scroller's
+  10 px padding, because a sticky box stops at the scroller's content box. None of the four writes show data, pushes an undo
+  step or lights Save: which preset is open is view state.
 - A new router / switcher is placed by `_wireAdvFreeSpot` (never on another tile); a tile that grows pushes the tiles
   stacked under it down (`_wireAdvPushBelow`).
 - THE NAME: the product is "AV Look Book". The page's `<title>` and every `document.title` still end in
@@ -225,6 +282,27 @@ anchor on the function name and replace the first occurrence after it, never all
   no undo step. Fit Canvas is the only item that edits the show (one undo step; tile = that preset, Advanced page = the
   open preset, status bar = every preset).
 - Exports list the BG like a layer (`BG: name (detail)`); a BG whose picture is a library clip resolves to that clip.
+- I/O PATCH NOTES ARE PER ROW (owner decision 30, 2026-09-22). A source row shows and edits `sources[].notes` (`_sysGetSourceMeta` /
+  `_sysSetSourceMeta`), a destination row `screens[].notes`, an AUX row `dsms[].notes`, in the Simple patch, the Video I-O Excel tab and
+  the Look Book's Sources page alike (Advanced page 1 always held the source's own note). The old rule that a source which is a BG
+  somewhere shows and writes the first BG destination's note is retired: LOGO's note rewrote all three LED walls. Never route a
+  source's note through `_sysFindBGAssignments` again; that helper stays for Add Source's automatic BG placement only.
+- **I/O Patch small rules (decision 33, 2026-09-22, build 16kt).** (1) The multiviewer row on the Simple patch is a name box
+  (`_sysRowHtml`, kind `mv`, same branch as `dest` / `aux`): its rename goes through the shared blur handler -> `pushUndo` ->
+  `_sysSetMeta('mv',id,'name')` -> `_lbRenamedDest` (Advanced page 1 + Wire follow in the same step). (2) "Set for all" > Type >
+  "Custom..." never turns every row into an empty box: `_sysAllCustomAsk` swaps the Set-for-all chip for ONE inline
+  `.sys-type-input` (kind `src-all` / `dst-all` / `adv*-all`), `_sysAllCustomCommit` (the type-box blur handler) feeds the typed
+  name to `_sysApplyToAll` / `_ioAdvApplyToAll` as `{value:'Custom',customName}` (one undo step) and remembers it; empty or
+  Escape = the kept chip goes back in place (`_sysAllCustomBack`), nothing written, no redraw; a commit writes the data first
+  and redraws through `_sysRenderAfterPress` (at once from the keyboard; after the press that took the focus when a pointer
+  is down, so the click that left the box still lands: the Advanced toggle, a row's chip, a name box). A rename follows its
+  own kind: `_lbRenamedDest(old,new,kind)` -> `_ioAdvRenameTwin('mv' | 'dest')` (`_ioAdvTwinRows`: 'mv' = page-1 mvs, 'dest'
+  = page-1 dests, 'dst' = both, kept for the Delete paths); the name menu's "Used in this show" lists destination names for
+  a destination and multiviewer names for a multiviewer (`_sysBuildDstNameOptions(kind)`). Reset on a row whose connector /
+  resolution / note are already empty changes nothing (`_sysRowResetNeeded`): no write, no unsaved mark, no undo step.
+  (3) The Custom Resolution window (`_sysOpenCustomResModal`, every caller) gates Save
+  with `_sysCfGate(w,h)` from `recalc()`: Save disabled + `#sys-cf-hint` while Width or Height is blank or 0. No `alert()` in
+  I/O Patch windows; the one left in the page is the Excel export failure.
 - Declined by the owner, do not resurface: mask shapes, anchor points, hardware profiles, canvas/WebGL renderer,
   interpolation filter toggles, upscale-factor notes, per-layer "sharp pixels", any licence mention.
 

@@ -45,7 +45,7 @@ Rename a source in any tool and it is renamed in all three. Add a destination an
 8. Press **Copy** on that tile and **Paste** on another tile to carry the look across.
 9. Open **Wire**, press **Fit**, set a Cable Type on each card, type the switcher's real name.
 10. Open **I/O Patch**, use the **Set for all** row for the house connector and resolution, then fix the exceptions.
-11. Press **Save**. Then **Look Book** for the PDF, **Excel** for the cue sheet, or **Send** for both in one email.
+11. Press **Save**. Then **Look Book** for the PDF, **Excel** for the cue sheet, or **Send** to email the book, the cue sheet and the show file together.
 
 Or press one of the three examples at the top of Quick Setup (General Session, Awards Night, Town Hall) and explore a finished show. Shift-click Save to make it yours.
 
@@ -60,16 +60,16 @@ The top bar is the same on every page, so adding a destination, undoing, saving 
 | Group | Control | What it does |
 |---|---|---|
 | Show | **Show name** | Names the window, the saved file and every export. Typing here is not an Undo step. |
-| Canvas | **W × H** | The total canvas in pixels, calculated from your destinations (side by side, plus any blend or free position). Change the destinations, not this number. See the CHECK below. |
+| Canvas | **W × H** | A read-out: the total canvas in pixels, calculated from your destinations (side by side, plus any blend or free position). It cannot be typed in and Tab skips it; hover it for the note "Calculated from the destinations". Change the destinations, not this number; MODIFIERS ▾ › Fit Canvas trims it. When the window gets too narrow for the top row, the read-out gives up its width and the ×, leaving **CANVAS** and the height; hover **CANVAS** for the exact size. Narrower still and the top row takes a second line, and the status bar's own canvas figure goes off screen below about 768 px. Display only: Excel, the Look Book, Send and the Pre-Export Check always use the real canvas. |
 | Add | **+ Destination** | Opens Add Destination (3.2). From Wire and I/O Patch the window opens on top of the page. |
-| Add | **+ Preset** | Adds a preset after the last one, copied from P01. Needs at least one destination. Pressed from Wire or I/O Patch it adds the preset with nothing on screen to tell you. |
+| Add | **+ Preset** | Adds a preset after the last one, copied from P01. Needs at least one destination. Pressed from Wire or I/O Patch, a short note ("P06 added") appears under the toolbar for a moment and fades by itself. Pressed with the Advanced page open, the new preset opens on the canvas and its card is scrolled into view. |
 | History & Presets | **Undo / Redo** | Chapter 10. |
 | History & Presets | **Collapse all / Expand all** | Folds every preset tile down to its header, or opens them all. A view action; it does not mark the show unsaved. |
 | Project | **Save**, **New**, **Load** | Chapter 10. |
 | Export | **Excel**, **Look Book**, **Send** | Chapter 9. |
-| Bottom row | **Wire · Video Presets · I/O Patch** | The tool switch. One tool is open at a time. The label on the left tells you where you are. |
+| Bottom row | **Video Presets · I/O Patch · Wire** | The tool switch, left to right in the order the work happens. One tool is open at a time. The label on the left tells you where you are. The three names, the label and their icons read white; the lit pill behind one name is what marks the tool you are on. |
 
-> **CHECK (Canvas W × H).** The toolbar engineer reports the boxes as a read-out that accepts typing and then throws it away on the next redraw. The keys engineer reports that in Simple they take the cursor but discard every key, and that "the canvas is resized in Advanced with the canvas on Free". Both agree typing there does nothing useful in Simple today. Question 22 asks to make them plainly read-only.
+> Until build 16kt the Canvas boxes looked like fields: they took the cursor and threw every key away on the next redraw. They are a plain read-out now (decision 22).
 
 ### 3.2 Add Destination
 
@@ -86,7 +86,7 @@ Opens by itself on a new show, from **New**, from Cmd / Ctrl + N, and from the "
 
 | Control | What it does |
 |---|---|
-| **Start from an example** | General Session, Awards Night, Town Hall. Asks first if the open show has unsaved changes. |
+| **Start from an example** | General Session, Awards Night, Town Hall. Asks first if the open show has unsaved changes or is a restored draft that has not been saved. |
 | **Show name** | Required. Without it the build will not run; the box is outlined in amber and you are told why. |
 | **Date, Venue** | Date defaults to today, venue to N/A. |
 | **Client, Job No, Designer, Drawn By, Project Ver, Show dates, Show format, Venue address** | Title-block and cover information. All optional; all can be changed later in Wire › Project Info. |
@@ -103,7 +103,7 @@ With a resolution list open, Escape closes the list only; the next Escape closes
 
 Build My Show is one Undo step: the first Undo after it takes you back to an empty canvas (Redo brings the show back).
 
-The desktop has no "Edit Show Info" window (the phone has one). Change date, venue and the title-block fields in Wire › Project Info.
+**Edit Show Info (desktop).** The small pencil right next to the Show name box in the top bar (tooltip "Edit show info") reopens this window pre-filled from the open show, the way the phone's Show card does: title **Edit Show Info**, the example row hidden, the show name, date, venue and the drawing / Excel cover fields, the destination names and resolutions, and the three counts. Presets and layers are kept. **Update Show** (or Enter) writes it as ONE Undo step: a renamed destination, a new resolution, an added or removed destination, AUX or preset all come back with one Undo. The show name, date and venue are outside Undo (as in Wire › Project Info). **Cancel** or Escape closes with nothing changed and no Undo step; Update Show with nothing changed records no step and does not light Save; it writes only what you changed (a name, venue or cover field that already reads the same, spaces aside, is left as it is). While the window is open the page's keyboard shortcuts stand down, exactly as under a dialog: Backspace, Delete, the arrows, Cmd/Ctrl + D, Cmd/Ctrl + Shift + N, Cmd/Ctrl + S and Cmd/Ctrl + Z do nothing to the show behind it, and the pencil lets go of whatever was picked on the canvas; typing in the window's boxes, Tab / Shift + Tab between its controls, Enter (Update Show) and Escape (Cancel) are the window's own keys. The three counters start at the show's real counts and move one at a time, however many presets, destinations or AUX the show already has (the wizard's 24 / 8 / 12 limits belong to a fresh build): lowering a count removes from the end on Update Show, as one Undo step, with no further question. A blank Show name is refused ("Show name needed"), the window stays open. A changed resolution or count re-lays every preset's strip (as on the phone): hand-placed positions and blend zones in every preset are replaced by a clean strip, and Undo brings them back. On an empty show the pencil opens the plain wizard (Build My Show), like + Destination does. <!-- 16kt-sic -->
 
 ### 3.4 The status bar (every page)
 
@@ -155,6 +155,25 @@ Two things follow the first preset in a different way:
 | Bin | Removes the preset at once. Undo brings it back. |
 
 Code, Name and Notes: Enter or a click away confirms, Escape cancels, and each edit is one Undo step.
+
+**When the tile runs out of room (round 16kt, owner rule 2026-09-22).** The header never wraps to a second row and
+never lets anything be cut off. As the tile gets narrower it gives things up one at a time, in this order, and only as
+far as it has to:
+
+1. **MODIFIERS** drops its word and keeps the gear icon — the same thing Paste, Copy and Reset already do. Its tooltip
+   and its menu are unchanged; hover it to read what it is.
+2. **Notes** and the preset **Name** each go to half their width. On the Advanced page the Notes box is a stretchy one to begin with — the app has always let it narrow from 180 px to 90 px to keep the tile together — so there it can already be part-way to half before this step.
+3. **Notes** disappears. Nothing is lost: the note is still in the show, it still prints in the Look Book, and the box
+   comes straight back when there is room again.
+4. The preset **Name** disappears. The name is still in the show, the table and the exports.
+
+**Never given up: the preset number (P01) and the layer strip.** They keep their size at every window size. If the
+strip still has more boxes than fit after all four steps it scrolls sideways inside itself, the way it always has
+(4.5.1). Paste, Copy, Reset, the chevron and the bin keep working the whole way down.
+
+It follows the TILE, not the window: the Advanced tile is narrower than the Simple one at the same window size, so it
+reaches each step sooner. Zooming the Advanced page magnifies the tile and never changes which boxes are on screen.
+
 
 **The Reset window** ("Reset P02 WELCOME?"). Four tick boxes, all ticked when it opens:
 
@@ -250,13 +269,13 @@ Drags, corner drags and nudges are each an Undo step that really goes back.
 - **Content type**: LOGO, GFX A, GFX B, PBP A, PBP B, IMAG. One click assigns and closes.
 - **Other library items**: your own items first, then the built-in list. Click a row to assign. **✎** changes that item's colour everywhere. **×** (your own items only) removes the item from the library and from every layer that uses it, with no question. For a video or picture this also deletes the app's stored copy of the file.
 - **Size**: Width / Height in pixels, Enter or Apply. This mode does not follow the aspect lock. **Fill** makes it full destination. **↺ Reset** = default size and place.
-- **Remove from this preset**.
+- **Remove from this preset** and **Remove from ALL presets**. The second one asks first; one Undo brings the layer back in every preset. On a phone — and on any window narrow enough that the app switches to the phone layout — this mode has only **Remove from this preset**: there is no Undo button there, so the key that empties a layer out of every preset is not left one tap away. It is in the phone's Advanced mode, where the window says the removal cannot be undone on a phone.
 
 *Advanced mode*
 - **Show Labels / Shape Only**.
 - Seven sections, each with copy / paste / reset tools (paste works between layers): **Position** (X, Y), **Size** (Width, Height, the padlock keeps the shape), **Opacity** (0 to 256, or percent), **Mask** (Top / Bottom / Left / Right in pixels, up to 99 % a side), **Border** (on / off, colour, opacity, horizontal and vertical thickness), **Shadow** (on / off, colour, opacity, X and Y offset), **Effects** (Flip H, Flip V).
 - With the padlock on, type a Width and the Height follows: 640 on a 16:9 layer gives 640 × 360.
-- **Remove from ALL presets** (asks first).
+- **Remove from this preset** and **Remove from ALL presets**, the same two keys as Simple mode. They are in the Advanced page's docked Properties panel too.
 
 The smallest layer is 67 × 67 px. A layer can never be bigger than its destination.
 
@@ -285,7 +304,7 @@ The smallest layer is 67 × 67 px. A layer can never be bigger than its destinat
 
 **Many layers, little room.** The pill grows with the layers but never pushes MODIFIERS and never changes the header. When there is not enough room (many layers, or the narrower Advanced tile) it scrolls sideways inside itself: drag its thin bar or roll the mouse wheel over it. The box you are on is brought into view. On the Simple page the wheel goes back to scrolling the preset list as soon as the pill is at its end. On the Advanced page the wheel over the pill never zooms the canvas.
 
-**On the Advanced tile the Notes box gives way first.** The tile header is short of room there, so Notes gets narrower (down to about 90 px) before the strip does. At the default 1440 x 900 window you see BG and at least three layers without scrolling, at the smallest window (1024 x 768) BG and at least one. MODIFIERS and the other Actions stay exactly where they were.
+**The header gives way before the strip does (round 16kt).** The strip is never pushed below the width it asks for while the header still has something left to give. (It is the stretchy part of the header, so above that width it does give room back.) When the tile is short of room the header drops things in the owner's order instead — the MODIFIERS word first, then Notes and the preset name to half, then Notes, then the preset name (4.1) — and hands what it frees to the strip. The preset number and the strip itself are never given up. On the Advanced tile, which is narrower than the Simple one at the same window size, the first steps are usually already taken: at the default 1440 x 900 window the strip gets the full width it asks for with four layers, by which point the MODIFIERS word has gone; with twelve layers it has gone as far as dropping Notes, and the preset name is still there at half its width. Only when all four steps are not enough does the pill scroll inside itself.
 
 **Top layer tag.** The bottom-left label of every destination now names the layer you are looking at in front of the resolution: **L3 · 1920x1080**. It reads **BG · …** when only a background is assigned and shows the bare resolution on an empty destination. So you can tell the layer you SEE on top from the layer you have PICKED in the strip. The tag prints in the Look Book pictures and shows on the Display output, the same places the resolution shows.
 
@@ -305,7 +324,7 @@ Under every tile: the output boxes, and a toolbar.
 
 Opens from a BG/Color button, the table's BG swatch, a library ✎, a Border / Shadow swatch, or Add Destination › Pick….
 
-Label field (BG only), colour square, hue bar, alpha bar, Hex, R G B A, eleven quick colours, **Image** (pick a picture as the background), **Apply**. ✕ or Escape closes it without applying, and leaves the panel under it open.
+Label field (BG only), colour square, hue bar, alpha bar, Hex, R G B A, eleven quick colours, **Image** (pick a picture as the background), **Apply**. ✕, Escape or a press anywhere outside the window closes it without applying, and leaves the panel under it open. A press on the swatch, button or chevron that opened it does what it always did (the swatch re-opens it for that destination, the table chevron closes it). It is the press that counts, not the release: a drag on the hue or colour square that ends outside the window keeps the window open and keeps the colour you dragged to; Apply then writes it. Opened from Add Destination › Pick…, a press on any Add Destination box closes the colour window and leaves Add Destination open. Opened from the layer panel's Edge or Shadow swatch (Advanced), the panel counts as the window's owner: a press on the panel's own boxes and section headers keeps the colour window and the colour you picked, so both stay usable side by side; a press anywhere else, or the panel's ✕, closes it. <!-- 16kt-sic-fix -->
 
 On the first preset the colour becomes the show-wide colour of that destination; on any other preset it is that preset's own.
 
@@ -323,7 +342,7 @@ One block per preset, one row per destination.
 | Name | On the FIRST preset: renames the destination everywhere. On any other preset: a name for that preset only, shown on that preset's canvas and in the exports. Empty = back to the global name. Chevron = Destination Properties. |
 | Notes | One note per destination, shared by every preset. |
 | Red pill | Non-standard resolution. Click it: the window lists the closest standard sizes (to read, not to click) and has the "Engineer reviewed & approved" tick that clears the warning. |
-| L1 to L4 (more appear as you use them) | Type a content name and Enter; empty clears the layer. Chevron = Layer panel (Simple). Double-click = Layer panel (Advanced). |
+| LAYER 01 to LAYER 04 (more appear as you use them) | Type a content name and Enter; empty clears the layer. Chevron = Layer panel (Simple). Double-click = Layer panel (Advanced). The heading is always two digits, so LAYER 10 and up do not make the column any wider. The exported Look Book and the Excel still write L1, L2 …: the change is the table's headings only. |
 | DSM / AUX columns | Content per preset; chevron or double-click = AUX Properties. |
 | ✕ | Only on the first destination row of each block. Deletes that destination from the whole show at once, no question. Undo brings it back. |
 
@@ -393,15 +412,16 @@ Each file card shows its cover, size, frame rate, length, type and whether it ha
 **Using a source.** Drag a card:
 - onto a **layer** in the tile: that layer now shows this source;
 - onto a **destination** (anywhere that is not a layer): it becomes that destination's background (BG);
-- onto a row in the **Layers** tab: same thing, handy for small layers. Dropping on an empty "L2 - drop a source" row adds a layer.
+- onto a row in the **Layers** tab: same thing, handy for small layers. Dropping on an empty "L2 - drop a source" row adds a layer;
+- onto an **AUX box** in the band under the destinations: that AUX shows this source in THIS preset. It is the same thing as typing the name into the AUX column of the Simple table (one Undo step, the other presets keep theirs). An AUX switched off in this preset has no box to drop on, exactly as it has no cell in the table.
 
-Whatever you drop on is picked, so its properties and, for a clip, the timeline are in front of you straight away. Dropping a source on an AUX box does nothing; what an AUX shows is chosen in the Simple table.
+Whatever you drop on is picked, so its properties and, for a clip, the timeline are in front of you straight away. An AUX box is the exception: the drop sets what that AUX shows and leaves your pick where it was.
 
 ### 5.3 The centre tile
 
 It is the Simple tile, so chapter 4 applies: destinations (pick, ◀ ▶ re-order, double-click for properties), layers (drag, corner handles, ↺), the gear menu (AOI Overlays, Blend Zones, Dead Space, Free Position, Fit Canvas), Paste / Copy / Reset / Trash, the AUX band, and the preset number, name and notes typed straight into the header. The page title and the thumbnail follow the name.
 
-Clicking a layer picks it and opens the Layers tab on the right. The **layer strip** (4.5.1) is in this header too; the tile is narrower here, so Notes gets narrower to make room and the pill scrolls when there are more layers than fit (mouse wheel over it, or its thin bar). Escape leaves the Advanced page, which also ends the see-through view.
+Clicking a layer picks it and opens the Layers tab on the right. The **layer strip** (4.5.1) is in this header too; the tile is narrower here, so the header has usually already dropped the MODIFIERS word and narrowed Notes and the name to make room (4.1), and the pill scrolls when there are still more layers than fit (mouse wheel over it, or its thin bar). Escape leaves the Advanced page, which also ends the see-through view.
 
 > **CHECK (second click on a layer).** The Simple chapter says a second click on a selected layer opens the Layer panel. The Advanced chapter says a second click on the picked layer lets go of it. Both engineers drove their own page; it is likely the pages differ on purpose (Advanced has the properties on the right), but neither chapter says so.
 
@@ -409,13 +429,13 @@ Two things from Simple are not here because only one preset is on screen: minimi
 
 ### 5.4 Properties › Preset tab
 
-Every preset as a live thumbnail. Click one to bring it to the centre. The chips under a thumbnail switch that preset's AUX outputs without leaving the one you are on. **+** adds a preset (a copy of the first preset's layout) at the end of the list; the centre stays on the preset you were on.
+Every preset as a live thumbnail. Click one to bring it to the centre. The chips under a thumbnail switch that preset's AUX outputs without leaving the one you are on. **+** adds a preset (a copy of the first preset's layout) at the end of the list, puts it in the centre and scrolls its card into view, so you land on the preset you have just made.
 
 ### 5.5 Properties › Layers tab
 
 With nothing picked you get the **overview**: each destination (click = select, double-click or the small key = Destination Properties) with its BG row and layer rows. Click a row to pick it. Rows that read "drop a source" are empty.
 
-With a layer or a BG picked, the line at the top reads where you are (P02 · D01 · L1) and **Preset** takes you back to the overview. Each section opens and closes on its header. Most have copy, paste and reset keys in the header.
+With a layer or a BG picked, the line at the top reads where you are (P02 · D01 · L1) and **Preset** takes you back to the overview. Both stay at the top of the panel while the sections scroll underneath, so halfway down a long panel you can still read what you are editing and get back out in one click. Each section opens and closes on its header. Most have copy, paste and reset keys in the header.
 
 | Section | What it does |
 |---|---|
@@ -499,10 +519,10 @@ It is a reference picture next to your switcher, not a playback machine: H.264 a
 
 - Files live inside the app on this computer. Open the show on another machine and the cards ask for a relink; nothing else is lost.
 - The app keeps one stored copy per clip name, shared by every show on this computer. Removing a clip deletes that copy; another show that used the same name asks for a relink.
-- What an AUX / DSM shows is chosen in the Simple table; Advanced switches outputs on and off and renames them.
+- What an AUX / DSM shows can be set in either place: type it into the Simple table, or drag a source onto the AUX box on the Advanced page. Advanced also switches outputs on and off and renames them.
 - A full-size layer has nowhere to move: X and Y stay at 0.
 - The non-standard-resolution window (the red pill) can only be opened from the Simple table.
-- The 1 to 9 keys do nothing you can see in Advanced.
+- The 1 to 9 keys put that preset on the canvas in Advanced (1 is the first preset), the same numbering as Simple. A number higher than the number of presets does nothing, and the keys stay out of the way while you are typing in a box or a window is open.
 
 ---
 
@@ -643,7 +663,7 @@ The panels, zoom, tools, Presets, Details, Project Info and Export are as in cha
 - **+** on the top left corner adds a **backup input**; the two points are then tagged PRI and BKP. Drop a second source on a tile that is already fed and the backup point appears by itself and takes the cable. A third source is refused.
 - You can also pull a cable the other way: drag from the input dot back onto a source tile, a router row or a converter port.
 
-**Custom tiles.** The **+** on each left panel heading adds a custom source, destination or AUX that exists only in Wire (a record deck, an encoder). Type its name and resolution on the card, then drag it onto the canvas. A custom source also has a cable colour and cable type; a custom destination or AUX has neither. The **×** on the card removes it together with its tiles and cables on that page; Undo brings everything back. Names are kept unique: a second "New Source" becomes "New Source 2". Custom cards belong to the page they were made on.
+**Custom tiles.** The **+** on each left panel heading adds a custom source, destination or AUX that exists only in Wire (a record deck, an encoder). Type its name and resolution on the card, then drag it onto the canvas. All three kinds carry a **Cable Type** (a custom source also has a cable colour). **One library for the whole show**: a card made on any page is offered in the left panel on every page, and the tile you drop stays on the page you dropped it on. Drop the same card on two pages and each page has its own tile. The **×** on the card removes the card and its tiles and cables on every page, from whichever page you press it; one Undo brings everything back. Names are kept unique across the show for all three kinds: a second card called "RECORD DECK" becomes "RECORD DECK 2". A show saved before this was one library per page: it opens with the lists merged into one. Two pages that held the *same* card end up with one card and both pages' tiles on it. Two cards that share a name but differ in any way — resolution, size, cable type, cable colour — are **both kept**, and the second is numbered ("RECORD DECK 2"), with each page's tiles on the card it was made from: nothing you made is lost. Nothing is marked unsaved by the merge alone.
 
 **Router (video hub).** Left half: inputs (# · Source · ID). Right half: outputs (Destination · ID · #). The numbered keys in the middle are the matrix panel:
 1. Press an **Out** key (it blinks).
@@ -672,7 +692,7 @@ One input can feed many outputs; an output has one input. The routed source's na
 - **Select**: click a cable. It shows a white handle on every straight run: drag a handle to move that run. **Double-click a handle** to reset the route.
 - **Move an end**: drag a plugged input port to another port. **Option-drag** an output dot to move the source end.
 - **Delete**: select it and press Delete or Backspace, or **double-click the cable**. (Double-clicking a cable deletes it; it does not reset its route.)
-- **Colour and pattern** come from the cable type: the output point's own type first, then the source's, then the converter port's.
+- **Colour and pattern** come from the cable type: the output point's own type first, then the source's, then the converter port's. A cable that still has no type of its own takes the type of the custom destination or custom AUX it lands on.
 
 ### 7.4 Select, move, align
 
@@ -741,16 +761,16 @@ Two views, chosen at the left of the page bar:
 | Column | How to use it |
 |---|---|
 | Badge | S1, S2 … sources. D1 … destinations. A1 … AUX / DSM. IO = an I/O-only destination. MV = multiviewer. |
-| Name | Type a new name and press Enter, or click the chevron for the list: "Type your own name", the names already in the show, then common names. On an output the list offers destination names only. |
+| Name | Type a new name and press Enter, or click the chevron for the list: "Type your own name", the names already in the show, then common names. On an output the list offers destination names only, and the multiviewer row lists multiviewer names (a multiviewer and a destination can still be typed the same name; renaming one never renames the other). |
 | Connector | Click for the cable menu: HDMI family, DisplayPort / DVI / USB-C, 3G / 6G / 12G-SDI, NDI, ST-2110, SRT / RTMP / RTSP, Fiber, SFP, Dante, MV, Ethernet, Genlock, LTC. "Clear" empties it. A source's tile colour in Wire follows the cable you pick. |
-| Type | Sources: PC, Workstation, Mac, Camera, PTZ, Media Server, Switcher, Teleprompter. Outputs: LED, Projection, Monitor, Stream. "Custom…" turns the cell into a text box; the name you type is remembered and offered in the menu from then on. |
+| Type | Sources: PC, Workstation, Mac, Camera, PTZ, Media Server, Switcher, Teleprompter. Outputs: LED, Projection, Monitor, Stream. "Custom…" turns the cell into a text box; the name you type is remembered and offered in the menu from then on. In the Set-for-all row, "Custom…" asks for the name once and gives it to every row. |
 | Resolution | Click for the list: sizes already used in the show first, then Standard HD, UHD / 4K, DCI, ultra-wide, 5K and up, LED wall sizes, SD. "Custom resolution…" opens the calculator (8.4). "Clear" empties a source's resolution. |
 | Red pill | Lights up between Resolution and Notes when the connector cannot carry that resolution (3840×2160 on 3G-SDI, for example). Hover it for the reason. It compares pixel count with the connector only; frame rate and bit depth are not stored per row. |
-| Notes | Free text. Enter or clicking away keeps it, Escape throws the edit away. |
-| Reset (round arrow) | Asks, then clears connector and notes (and the resolution on a source). Name and type stay. |
+| Notes | Free text. Enter or clicking away keeps it, Escape throws the edit away. A source row holds the source's own note and a destination row the destination's: a source that is a background on a destination no longer shows or rewrites that destination's note (decision 30, 2026-09-22). |
+| Reset (round arrow) | Asks, then clears connector and notes (and the resolution on a source). Name and type stay. When they are already empty nothing changes: Save stays as it was and there is no Undo step. |
 | Trash | On a source that lives in the presets: asks, then removes it from every preset, background and AUX, and from the library. On an I/O-only row: removes it straight away. On a destination or AUX: asks, then removes it from the canvas and every preset. Undo brings any of them back **(after the fix; today these deletes are permanent)**. |
 
-**Set for all.** The first row of each table (S0 / D0) sets the connector, type or resolution of every row under it in one go. One Undo step takes the whole change back. On the output side it sets destinations, AUX / DSM and I/O-only destinations; the multiviewer is left alone.
+**Set for all.** The first row of each table (S0 / D0) sets the connector, type or resolution of every row under it in one go. One Undo step takes the whole change back. On the output side it sets destinations, AUX / DSM and I/O-only destinations; the multiviewer is left alone. Type › "Custom…" in this row asks for the name once, in a box in the row itself: Enter gives it to every row (one Undo step, and the name joins the menu); Escape, or leaving the box empty, puts the menu back and changes nothing. The Set-for-all rows on an Advanced page work the same way.
 
 ### 8.3 Sources, destinations, multiviewers
 
@@ -762,16 +782,17 @@ PBP and GFX travel in pairs: name a source **PBP A** or **GFX A** and its **B** 
 
 Destinations and AUX outputs are added and removed in Video Presets (or with + Destination in the top bar); the patch follows.
 
-**Multiviewers.** Every show has one multiviewer row (MV 1). **Add MV** adds another; **Remove MV** opens a list to pick from. Multiviewers live only here and in the Excel export, never on the canvas. Delete the last one and a fresh MV 1 comes back. A multiviewer cannot be renamed in Simple (it can on an Advanced page).
+**Multiviewers.** Every show has one multiviewer row (MV 1). **Add MV** adds another; **Remove MV** opens a list to pick from. Multiviewers live only here and in the Excel export, never on the canvas. Delete the last one and a fresh MV 1 comes back. Its name is a box like every other row: type a new name and press Enter (or click away). Advanced page 1 and the Remove MV list follow, it is one Undo step, and Escape puts the old name back.
 
 ### 8.4 Custom Resolution window (the bandwidth calculator)
 
-Width, Height, Refresh (23.976 to 120 Hz) and 8 / 10 / 12-bit tabs. It shows total pixels, pixel rate and the bandwidth at 4:4:4 and 4:2:0, and a grid of connectors marked OK, tight or over for that signal. **Save** writes Width × Height into the row (the refresh rate and bit depth are for the calculation only). Cancel, the ×, a click outside or Escape close it without saving.
+Width, Height, Refresh (23.976 to 120 Hz) and 8 / 10 / 12-bit tabs. It shows total pixels, pixel rate and the bandwidth at 4:4:4 and 4:2:0, and a grid of connectors marked OK, tight or over for that signal. **Save** writes Width × Height into the row (the refresh rate and bit depth are for the calculation only). While Width or Height is blank or 0, Save is greyed out and a red line under the boxes says which one to fill in (the box is outlined too); the window never uses the browser's own alert box. Cancel, the ×, a click outside or Escape close it without saving.
 
 ### 8.5 Advanced view
 
 **Pages**
-- **Page 1 is the show.** It starts as a copy of the Simple patch under the show's name. A source you name there also appears in Simple (as an I/O-only row) and in Wire; a destination or multiviewer you name there appears in Simple only. Nothing on any Advanced page changes the Video Presets.
+- **Page 1 is the show.** It starts as a copy of the Simple patch under the show's name. A source you name there also appears in Simple (as an I/O-only row) and in Wire; a destination or multiviewer you name there appears in Simple only, and its IO row in Simple follows the page-1 row (connector, type, resolution, notes) the way its name does; a change made on that IO row in Simple is written to the page-1 row as part of the same edit, so the Video I-O tab and the page-1 tab of an exported workbook agree. Nothing on any Advanced page changes the Video Presets.
+- **The rows page 1 copied from the show follow the show.** A source, destination, AUX or multiviewer renamed in Video Presets (the layer panel's Source box in Advanced, the destination name in the table), in I/O Patch Simple or in Wire is renamed on page 1 too, with its notes. One removed in Video Presets (deleted, or no longer used by any preset) stays on page 1 the next time the I/O Patch draws, dimmed and tagged "not in the show": it keeps its connector, type, resolution and notes, never comes back to Simple as an I/O-only row, and is left out of the I/O Excel and the Look Book. The moment an item of that name is in the show again the row is a normal row again, notes and all. Only "Rebuild from Simple" and the row's own trash remove a dimmed row (a page copy leaves it out). Undo of the deletion brings the item back on the canvas and on page 1 in one step. Only rows you typed on page 1 yourself are yours to keep or delete; a copied row you rename by hand becomes such a row.
 - If the Simple side changed since page 1 was built, opening Advanced asks once: **Rebuild from Simple** (replaces every row on page 1) or **Keep my page**.
 - **Pages 2 and up stand alone.**
 - The last page is always an empty spare. As soon as it has a row, a new spare appears (25 pages maximum). There is no "add page" button.
@@ -822,9 +843,7 @@ Names ending in " A" and " B" with the same stem (PPT A / PPT B) pair by themsel
 ### 8.7 Limits
 
 - Rows cannot be re-ordered by hand.
-- I/O-only destinations print on the Advanced page-1 tab, not on the Video I-O tab.
-- A source that is a background on a destination shows that destination's note in Simple, and typing there rewrites the destination's note (an old rule; question 30).
-- A destination, AUX or source removed in Video Presets can come back on the patch as an I/O-only ghost row the next time Advanced opens (open fault; question 31). Delete the ghost row in I/O Patch.
+- A show file saved by a build before this one cannot tell a row you typed on page 1 from a row that was copied from the show and whose item is already gone: such a row stays and comes back to Simple as an I/O-only row until you delete it there once. From the first draw on, the rows that are the show's own are marked and follow the show.
 
 ---
 
@@ -848,7 +867,7 @@ Everything that leaves the building sits in the top bar and stays there whicheve
 | Destinations I/O reference | Destinations, AUX / DSM and multiviewers, same columns. |
 | Per-preset pages | One block per preset: the notes, the canvas exactly as the program canvas shows it, the layer resolutions, AUX / DSM content and the destination breakdown: one column per destination with the BG line first, then L1, L2 … A preset that does not fit on one page continues on the next with its header repeated. |
 | Summary page | The whole show in one table: one row per preset, one column per destination, then the AUX / DSM table. |
-| Wire Diagram | The wire sheet with the cable colour key and the project block. **Wire view** picks Simple or Advanced. Advanced prints only the page that is active in Wire Advanced, labelled "Page 1"; if that page was never drawn the sheet reads "(Empty page…)". |
+| Wire Diagram | The wire sheet with the cable colour key and the project block. **Wire view** picks Simple or Advanced. Simple prints the one drawing. Advanced prints one sheet per Advanced page that has something on it, in page order, each under the page tab's own name and with its own page number in the book; empty pages are skipped, and if no Advanced page was ever drawn you get the Simple drawing instead of an empty sheet. A page still called "Page 2" or "Page 3" keeps that name on the sheet header and in the contents, while the drawing frame's title block reads "Signal Flow" - the same substitution the Wire tool's own export makes, so the two exports of one page agree. |
 
 | Details | Adds |
 |---|---|
@@ -862,8 +881,13 @@ The four Details start the way your Modifiers menu is set. **Version** is stampe
 > **CHECK (are the Look Book window choices remembered?).** The toolbar chapter says "your choices are remembered until you close the app". The exports chapter says "choices are remembered only when you export" and that they go back to the defaults after a reload. Both agree they are not stored in the show file.
 
 Good to know
-- The Look Book does not run the Pre-Export Check (the two Excel exports do).
-- The canvas on the preset pages follows the **Canvas** size in the top bar. If you added destinations and the canvas was not refitted, use MODIFIERS ▾ › Fit Canvas first, or the destinations past the canvas edge are cut, on paper as on screen.
+- The Look Book runs the same check the **cue-sheet Excel** runs, but only as warnings: the check opens before the Look Book
+  window, lists what it found, and **Export Anyway** carries on to the window. Nothing stops a Look Book, not even a blank
+  show name (the book prints "Untitled Show" and the check says so). The cue-sheet Excel is still stopped by a blank name.
+  The **Export** button on the I/O Patch page is a different check again, and nothing stops that one.
+- The canvas on the preset pages follows the **Canvas** size in the top bar. When it no longer matches the destinations the check
+  says so before the window opens; use MODIFIERS ▾ › Fit Canvas first, or the destinations past the canvas edge are cut, on paper
+  as on screen.
 - Clip settings (In / Out, loop, speed, level, fades, look) print on the BG line. A clip on a layer prints only its name and size. EDID notes are not printed anywhere.
 - The Version box belongs to the Look Book window and is not stored in the show. The Excel cover and the Wire title block use **Project Ver** from the show info instead.
 - The first Look Book with a wire sheet gives each source its cable colour, the same as opening Wire does. That is not a change: Save stays as it was, and the colours go into the file with your next save.
@@ -876,25 +900,40 @@ Good to know
 
 The **Export** button on the I/O Patch page writes `<show>_video-io.xlsx`:
 1. **Cover**: the same cover titled "I/O PATCH".
-2. **Video I-O**: the Simple patch. Sources (Slot, Connector, Source Name, Type, Resolution, Notes), then Destinations, AUX and Multiviewers.
+2. **Video I-O**: the Simple patch, row for row as the screen shows it. Sources (Slot, Connector, Source Name, Type, Resolution, Notes; a backup source's Type reads "PC · Backup of PPT A", as in the Look Book), then Destinations, AUX, then the I/O-only destinations (I/O Dest 1 …, the IO rows that came from Advanced page 1), then Multiviewers.
 3. **One tab per Advanced page that has rows**, named after the page, with a **P/B** column marking primaries and backups.
 
 ### 9.3 The Pre-Export Check
 
-Both Excel exports look the show over first. If everything is in order the file is written at once.
-- **Errors stop the export:** blank show name, no destinations, no presets.
+Every export looks something over first, but not the same something. The cue-sheet Excel and the Look Book both run the
+check on the **show**; the **Export** button on the I/O Patch page runs its own check on the **sources and destinations**
+instead. If nothing is found the export happens at once, with nothing to answer.
+- **Errors stop the cue-sheet Excel:** blank show name, no destinations, no presets. It is the only export an error stops.
+- **The Look Book is never stopped.** It runs the same show check, but everything arrives as a warning, so **Export Anyway**
+  is always there. A book of a nameless show is still a book: it prints "Untitled Show".
+- **The I/O Patch Export is never stopped either.** Its check only ever warns, and it never reads the show name at all, so a
+  blank name does not stop it and is not even mentioned.
 - **Warnings let you go on:** a destination with a non-standard size that the engineer has not approved, or one above DCI 4K; a preset with no name; a preset with nothing on it (a BG-only look such as a walk-in logo is fine **(after the fix; today it is flagged)**); a Canvas size that does not match the layout. On the I/O Patch: sources or destinations with no connector or no resolution, and a cable that cannot carry the resolution.
-- **Export Anyway** writes the file. **Close**, the ✕, a click outside, or Esc go back to the show. The check never changes the show itself, and it has no "fix it" button.
+- **Export Anyway** writes the file, or opens the Look Book window. **Close**, the ✕, a click outside, or Esc go back to the show
+  and nothing is exported. The check never changes the show itself, and it has no "fix it" button.
 
 ### 9.4 Send
 
 **Send** builds the hand-off in one click.
 - **Desktop app:** a confirmation, then the Look Book as a real PDF, the Excel cue sheet and the show file are written to *Documents › AV Look Book › Outbox › your show*, and a new email opens with all three attached (Apple Mail on the Mac; elsewhere the mail text is on the clipboard and the folder opens so you can drag the files in).
-- **Browser / phone:** the share sheet opens with the Excel cue sheet and the Look Book (an .html file that opens in any browser and prints to PDF). Where there is no share sheet the two files download and a draft email opens with a note to attach them. The show file is not included; attach the .avlb yourself if the crew needs it.
+- **Browser, in a desktop window:** **Send** builds the same three files the desktop app sends: the Excel cue sheet, the Look
+  Book (an .html file that opens in any browser and prints to PDF) and the show file (.avlb). Where the system share sheet
+  takes files they go straight to it; where it does not, the three files download to your Downloads folder
+  and a draft email opens naming them, ready for you to attach yourself. In a browser nothing is ever attached for you.
+- **Phone:** the top-bar **Send**, **Look Book** and **Excel** buttons and the Bug button are not on the phone layout at all.
+  The one Send there is the small arrow on the Show card: it shares the show file (`.avlb`) on its own, through the phone's
+  share sheet, and opens no email draft.
 
 The Look Book that Send attaches is the one the Look Book window would give you, wire sheet included.
 
-In a browser, Send and Bug open your mail program by leaving the page for a moment; with unsaved changes the browser asks "Leave site?". Save first, or answer Leave: the show stays open.
+In a browser in a desktop window, Send and Bug hand the draft to your mail program without moving the page: the browser never
+asks "Leave site?", and the show is still in front of you, with the same unsaved changes, when the draft opens. On the phone
+layout the question never comes up: there is no Bug button, and the Show card's Send opens no draft.
 
 ### 9.5 Common jobs
 
@@ -933,10 +972,10 @@ One file (.avlb) is the whole show: destinations, presets, every layer with its 
 | **Save** | Writes the show file. The first time it asks where; after that it overwrites the same file quietly (Chrome and Edge; Safari and Firefox download a new copy each time). |
 | **Shift + click Save** | Save As. Save now writes to the new file. |
 | **Cmd / Ctrl + S** | Save from anywhere, including while you are typing in a box (the box is committed first). Add Shift for Save As. |
-| **Load** | Opens a show file. If the open show has unsaved changes you are asked first. A damaged file, or one that is not a show, is refused with a message and your show stays as it was. |
+| **Load** | Opens a show file. If the open show has unsaved changes, or was restored from a draft and not saved since, you are asked first. A damaged file, or one that is not a show, is refused with a message and your show stays as it was. |
 | **New** | Asks first, clears the show, then opens Quick Setup. Cmd / Ctrl + N does the same **(after the fix; today the key opens Quick Setup over the open show and Build My Show adds to it)**. In the desktop app New opens a new window instead; every show has its own window. |
 
-**The unsaved mark.** Save turns gold while there are changes that are not in the file. It compares the show with what was last saved, so Undo back to the saved state turns it off. It comes on within half a second of any change, including typing the show name and any edit in Wire. New, Load, an example show or closing the window ask first when it is on.
+**The unsaved mark.** Save turns gold while there are changes that are not in the file. It compares the show with what was last saved, so Undo back to the saved state turns it off. It comes on within half a second of any change, including typing the show name and any edit in Wire. New, Load, an example show or closing the window ask first when it is on. New, Load and the example shows also ask while the open show is a restored browser draft that has not been saved yet (Save stays dark: nothing changed since the restore, but nothing is in a file either).
 
 **Looking is not a change.** Opening Wire, I/O Patch or Advanced, exporting, zooming, picking a tool, folding a pane, collapsing a side panel, switching a page tab or Simple / Advanced never turn Save gold. Those view settings are still kept in the show file: they are written with your next save (the desktop app also writes them with its 30 second autosave and when the window closes). The same goes for what the app fills in by itself the first time it draws a show: the random cable colours, and page 1 of Wire Advanced and of I/O Patch Advanced.
 
@@ -948,7 +987,7 @@ In the browser edition, cable colours that were given on a first look and never 
 
 - **Desktop app:** the show file itself is written about every 30 seconds once the show has a file and an unsaved change, and again when the window closes. It lives in Documents › AV Look Book. If an autosave ever fails, a red note appears bottom right: save by hand.
 - **Browser:** the app keeps a draft inside the browser 30 seconds after a change and again when the tab closes. Next time you open the page it asks **Restore draft** or **Start fresh**. An empty show is never offered, and the draft is safe while that question is on screen, even if you reload again before answering. A draft is a safety net, not a save: it lives in that browser on that computer only.
-- A restored browser draft puts the destinations back on the plain left-to-right strip. If you built blend zones or dead space with Free Position, open the saved file instead of the draft to get them back.
+- A restored browser draft comes back exactly as it was written, the same as opening a file: blend zones, dead space and free positions included. It opens clean (Save dark) with an empty Undo history, but it is not a file yet: until you Save, Load, New (Cmd / Ctrl + N) and the example shows ask before replacing it ("This show was restored from a draft and has not been saved"), and the draft stays put until you answer. Blend Zones, Dead Space and Free Position are session switches, so switch them on again in MODIFIERS ▾ to see the blends drawn. The desktop app never uses the browser draft: it writes the show file itself.
 
 ### 10.3 Undo and Redo
 
@@ -969,7 +1008,7 @@ The same history covers all three tools. Undo / Redo are in the top bar (dim whe
 
 **What does NOT use a step:** selecting, opening or closing a window, switching tools, switching presets in Advanced, switching Wire or I/O Patch between Simple and Advanced, zoom, pan, collapsing presets, opening a Wire or I/O page tab, the × on an empty spare page tab, playing a clip. Looking around never destroys your Redo. One exception: the FIRST switch to Advanced in Wire, and in I/O Patch, builds page 1 from the show, and that build is one step (Undo empties page 1 again and leaves you in Advanced; Redo brings it back).
 
-**Not covered by Undo:** the show name, date, venue, the Project Info fields, the company logo, the canvas size and the AUX / DSM label choice. Change them back by hand. A colour change to a built-in content type is not covered either.
+**Not covered by Undo:** the show name, date, venue, the Project Info fields, the company logo, the canvas size and the AUX / DSM label choice. Change them back by hand. A colour given to a built-in content type with the ✎ swatch IS covered: it belongs to the show.
 
 History holds the last 50 steps. It starts empty when a show is opened (New, Load, Restore draft) and is not stored in the file. A new change after an Undo clears Redo; to compare two versions, Shift-click Save first.
 
@@ -978,7 +1017,7 @@ Undo restores the show, not the view: it never flips Wire or I/O Patch between S
 **Quirks to know**
 - The first time Wire draws a show it picks cable colours; undoing back past that point lets Wire pick new colours.
 - Holding an arrow key on a selected destination (resize) uses one step per pixel.
-- The phone layout has no Undo button.
+- The phone layout has no Undo button, and the undo history is not saved with the show, so a change made on a phone cannot be taken back there OR on the desktop afterwards. Save under a new name before editing on a phone. This is why the phone's Layer panel keeps **Remove from ALL presets** out of Simple mode.
 
 ---
 
@@ -986,7 +1025,7 @@ Undo restores the show, not the view: it never flips Wire or I/O Patch between S
 
 Everything that opens over a page (messages, Add Destination, the colour window, the properties panels, dropdown lists, the export windows, Help) opens ABOVE the page you are on, including Wire and I/O Patch **(after the fix; today + Destination opens behind Wire and I/O Patch, and a warning raised from a Wire window can open behind that window)**.
 
-**Closing.** A window with a dark area around it closes with a click on that dark area. Panels and lists close with a press anywhere outside **(after the fix for the Modifiers menu, the colour window and the Wire I/O Tools menu, which stayed open when the press landed on a destination, a layer or the drawing)**. Add Destination is the exception on purpose. Two lists are never open together; the three properties panels (Layer, Destination, AUX) are one at a time.
+**Closing.** A window with a dark area around it closes with a click on that dark area. Panels, lists and the colour window close with a press anywhere outside (the press, not the release: a colour drag that ends outside the window keeps it open; a press on the control that opened the window toggles or re-targets it as before). Add Destination is the exception on purpose: no outside press closes it, and its Pick… colour window follows the ordinary rule. Two lists are never open together; the three properties panels (Layer, Destination, AUX) are one at a time.
 
 **Escape: one press does one thing.** Three rules, the same everywhere on the desktop (build 16ks-esc):
 1. **In any text or number box**, Escape puts the OLD text back (what the box held when you clicked into it), takes the cursor out of the box, keeps nothing you typed and does nothing else: the panel, the window and the page the box sits in all stay open. The next Escape then closes that panel or window. This is true for every box: Show name, preset code / name / notes, the table cells, Destination Properties, the Layer and AUX panels (the fader number boxes included: the picture goes back too, and no Undo step is made), Add Destination, the dead-space PX / FT and blend px boxes, the AOI boxes, the clip boxes on the Advanced page, the colour window, Wire (Project Info, switcher / router / device names and IDs, port names, IP address, resolution, the custom size window), I/O Patch (names, notes, counts, the custom resolution and Backup windows), Help > Accessibility and the Look Book export window. Rename boxes (Wire page, I/O page, Wire source) close themselves and keep the old name. **The one exception is Quick Setup:** Escape closes the wizard from anywhere in it, as it always has. **Only your typing is taken back** (build 16ks-escfix): what you changed with the mouse while the cursor still sat in the box (a corner handle on the canvas, an AOI handle, the Wire + / - output buttons) stays, and Undo still undoes it. With nothing typed, Escape only leaves the box.
@@ -1026,6 +1065,7 @@ While a message or a question of the app is open (the small window with the dark
 | Cmd / Ctrl + V | Video Presets, a destination picked | Paste onto the preset of the picked destination (the target keeps its number and name) |
 | Cmd / Ctrl + D | Video Presets, a destination picked | Duplicate the destination |
 | 1 to 9 | Video Presets Simple | Scroll to that preset |
+| 1 to 9 | Video Presets Advanced | Put that preset on the canvas and light its card. A number above the preset count does nothing |
 | Arrows, Shift + Arrows, a layer picked | Video Presets, Simple and Advanced | Move the layer 10 px, 100 px |
 | Arrows, Shift + Arrows, a destination picked, no layer | Video Presets Simple | Resize the destination 1 px, 10 px |
 | Arrows, Shift + Arrows, a destination picked, no layer | Video Presets Advanced | Resize the destination 1 px / 10 px, as in Simple (see the note below) |
@@ -1074,10 +1114,10 @@ Each item says what you see on build 2026-06-16ko and what to do. "Fixed by" nam
 | **Save did NOT turn gold after I worked in Wire** | Wire edits do not run the unsaved check today; the app may let you close without asking | Save by hand before closing. Fixed by the pending patches. |
 | **Cmd / Ctrl + S opened the browser's "Save page"** | The key is ignored while the cursor is in a field | Click outside the field, then save. Fixed by the pending patches. |
 | **"Restore draft?" on every start, for an empty show** | An empty draft is always written | Answer Start fresh. Fixed by the pending patches. |
-| **Restored a draft and my blends are gone** | A restored draft is put back on the plain strip on purpose | Load the saved .avlb instead. |
-| **The browser asks "Leave site?" on Send or Bug** | Mail is opened by leaving the page | Save first, or answer Leave; the show stays open. |
+| **Restored a draft and my blends are gone** | Until build 16kt a restored draft was put back on the plain strip on purpose | Fixed in 16kt: the draft comes back as written. On an older build, load the saved .avlb instead. |
+| **The browser asks "Leave site?" on Send or Bug** | Mail used to be opened by leaving the page | Fixed in this build: the draft opens without moving the page. On an older build, save first, or answer Leave; the show stays open. |
 | **Look Book: the canvas picture is cut at the right edge, contents links are dead, contents page numbers are wrong, table lines end in "…"** | Faults in the Look Book layout | Fixed by the pending patches. Until then check page numbers by hand. |
-| **Look Book: destinations at the right of the canvas are missing** | The Canvas size was not refitted after adding destinations | MODIFIERS ▾ › Fit Canvas, then export again. |
+| **Look Book: destinations at the right of the canvas are missing** | The Canvas size no longer matches the destinations | The Pre-Export Check now says so before the window opens: MODIFIERS ▾ › Fit Canvas, then export again. |
 | **Excel check warns "P01 WALK-IN has no layers"** | The check ignores the BG | Press Export Anyway. Fixed by the pending patches. |
 | **The Look Book from Send has no wire sheet** | Send builds the book without the window's options | Export the Look Book from its window and attach it yourself. Fixed by the pending patches. |
 | **A video card is dim and reads "relink"** | The app's stored copy is not on this computer | Click the card and pick the file again. |
@@ -1090,9 +1130,12 @@ Each item says what you see on build 2026-06-16ko and what to do. "Fixed by" nam
 | **Wire: Reset Layout in Advanced seemed to do nothing** | It silently reset the SIMPLE drawing | Undo at once. Fixed by the pending patches. |
 | **With Wire open, Delete also removed a layer in Video Presets** | Keys reach the hidden page | Let go of the layer in Video Presets (Escape) before opening Wire. Fixed for Wire by the pending patches; not yet checked for I/O Patch. |
 | **I/O Patch: renamed a source to an existing name and lost a row** | The two sources merge silently | Load the last saved file. Fixed by the pending patches. |
-| **I/O Patch: a source or destination I renamed or deleted came back** | Advanced page 1 kept the old row and copied it back | Delete the ghost row. Partly fixed by the pending patches (question 31 for the rest). |
-| **I/O Patch: LOGO shows the LED wall's note** | A source that is a background shows the destination's note | Do not type in that cell; it rewrites the destination's note. Question 30. |
+| **I/O Patch: a source or destination I renamed or deleted came back** | Advanced page 1 kept the old row and copied it back (files saved by older builds only) | Delete the row in I/O Patch once; from then on the rows page 1 copied from the show follow the show. |
 | **A red pill in I/O Patch** | The connector cannot carry that pixel count | Change the connector or the resolution. |
 | **I cannot find Help** | It is at the right end of the status bar, at the bottom of the window | The status bar is on every desktop page. The phone layout has no status bar and no Help button. |
-| **Typing in the Canvas W / H boxes does nothing** | The canvas is calculated from the destinations | Resize the destinations; use Fit Canvas to trim. |
+| **The Canvas W / H boxes cannot be typed in** | They are a read-out, calculated from the destinations (since 16kt they no longer take the cursor) | Resize the destinations; use Fit Canvas to trim. |
 | **Safari / Firefox: every Save downloads a new file** | Only Chrome and Edge can overwrite quietly | Use Chrome or Edge, or the desktop app. |
+<!-- 16kt-canvas-draft: Canvas W / H read-out (decision 22), Restore draft keeps positions (decision 23) -->
+<!-- 16kt-canvas-draft-fix: a restored draft is protected until it is saved (Open / Load / New / examples ask) -->
+
+<!-- 16kt-way: 1 to 9 in Advanced, the + Preset note, the pinned crumb (owner decision 19) -->

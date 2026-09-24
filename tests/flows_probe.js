@@ -9,9 +9,32 @@
   (function () { let a = 0x9e3779b9; Math.random = function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; })();
   const wait = ms => new Promise(r => setTimeout(r, ms));
   const checks = [];
+  /* 16kt: a check that HANGS fails with its own name instead of wedging the whole run (a merged probe once sat for 10
+     hours). It is a hang guard, not a speed limit: 'unsaved 2: visiting everything ...' honestly needs ~105 s, and at
+     the old 90 s it was declared timed out and then kept clicking the page under the next checks (a click outside a
+     popup closes it), which is what broke 'move arrows ...', 'no overlap rule: a REFUSED change ...' and 'unsaved 3:
+     a show with no I/O Patch Advanced block ...'. So: a generous limit, and a body that does trip it is waited out
+     before the next check starts. */
+  const CHECK_LIMIT_MS = 600000;
+  const CHECK_SETTLE_MS = 120000;   /* how long a timed-out body is given to finish before the next check starts */
   const check = async (name, fn) => {
-    try { const r = await fn(); checks.push(r === true ? { name, ok: true } : { name, ok: false, detail: String(r) }); }
+    window.__lbCheckNow = name;   /* what is in flight, so a watcher can see where a run is */
+    let timer = null, running = null, timedOut = false;
+    try {
+      running = Promise.resolve().then(fn);
+      running.catch(() => {});   /* the settle wait below reads it too: never an unhandled rejection */
+      const r = await Promise.race([
+        running,
+        new Promise(res => { timer = setTimeout(() => { timedOut = true; res('TIMED OUT after ' + (CHECK_LIMIT_MS / 1000) + 's — the check never finished'); }, CHECK_LIMIT_MS); }),
+      ]);
+      checks.push(r === true ? { name, ok: true } : { name, ok: false, detail: String(r) });
+    }
     catch (e) { checks.push({ name, ok: false, detail: 'threw: ' + String((e && e.message) || e) }); }
+    finally {
+      clearTimeout(timer); window.__lbCheckDone = checks.length;
+      /* a promise cannot be cancelled: let the timed-out body finish so it cannot drive the page under the next check */
+      if (timedOut && running) { try { await Promise.race([running, new Promise(res => setTimeout(res, CHECK_SETTLE_MS))]); } catch (e) {} }
+    }
   };
   const $ = (s, r) => (r || document).querySelector(s), $$ = (s, r) => [...(r || document).querySelectorAll(s)];
   const vis = el => !!el && getComputedStyle(el).display !== 'none' && el.getBoundingClientRect().width > 0;
@@ -24,6 +47,7 @@
   const fakeEv = { stopPropagation(){}, preventDefault(){}, clientX: 500, clientY: 300, pageX: 500, pageY: 300, target: document.body, currentTarget: document.body };
   // downloads and mail never leave the page during a test
   const downloads = []; window.dl = function (blob, name) { downloads.push({ name: String(name), size: (blob && blob.size) || 0 }); };
+  const _lbMailReal = window._lbOpenMail;
   let mailHref = null; window._lbOpenMail = function (h) { mailHref = String(h); };
 
   // ── open the example and keep a clean copy to return to ─────────────────────────────────────────────────────────
@@ -1700,15 +1724,6 @@
     const u0 = _undoStack.length; btn.click(); await wait(450); const b2 = lsBox(sc, p, 2); const out = is([which, getL(p, s, 2), _undoStack.length - u0, b2 && b2.classList.contains('has'), b2 && b2.title], [[p, s, '2'], 'IMAG', 1, true, 'L2: IMAG'], 'panel for / assigned / undo steps / box amber / tooltip');
     await lsClear(); await restore(); return out;
   });
-  await check('Layer strip: 12 layers never move the Actions group or resize the header; a long strip scrolls inside itself and brings the picked box into view', async () => {
-    await restore(); await lsClear(); const p = lsP(2), s = lsS(1), sc = '#canvas-area'; lsShow(sc, p);
-    const geo = () => { const h = $(sc + ' .preset-row[data-pid="' + p + '"] .preset-header'); const a = h.querySelector('.pr-actions').getBoundingClientRect(), r = h.getBoundingClientRect(); return [Math.round(a.left - r.left), Math.round(a.width), Math.round(r.width), Math.round(r.height), Math.round(h.parentElement.getBoundingClientRect().width)]; };
-    const g0 = geo(); setL(p, s, 11, 'CLOCK'); setLayerSize(p, s, 11, 0.2, 0.2, 0.4, 0.6); render(); await wait(400); lsShow(sc, p); const st12 = lsStrip(sc, p); if (!st12) { await restore(); return 'no strip in the preset header'; } const n12 = $$('.lb-lbox', st12).length, g12 = geo();
-    setL(p, s, 39, 'PGM'); setLayerSize(p, s, 39, 0.2, 0.2, 0.7, 0.6); render(); await wait(400); lsShow(sc, p); const g40 = geo(); const st = lsStrip(sc, p); const scrolls = st.scrollWidth > st.clientWidth + 1, inside = st.getBoundingClientRect().right <= st.closest('.preset-header').querySelector('.pr-actions').getBoundingClientRect().left + 1;
-    await lsClickEl(lsChip(sc, p, s, 39)); await wait(200); const st2 = lsStrip(sc, p), on = st2.querySelector('.lb-lbox.on'); const a = st2.getBoundingClientRect(), r = on ? on.getBoundingClientRect() : null;
-    const out = is([n12, g12, g40, scrolls, inside, on && on.textContent, !!r && r.left >= a.left - 1 && r.right <= a.right + 1, st2.scrollLeft > 0], [13, g0, g0, true, true, 'L39', true, true], 'boxes at 12 layers / header geometry at 12 / at 40 / scrolls / stays left of Actions / picked box / in view / scrolled there');
-    await lsClear(); await restore(); return out;
-  });
   await check('Layer strip: the bottom-left label of a destination names the top-most displayed layer before the unchanged resolution, on the canvas and in the Look Book', async () => {
     await restore(); await lsCase(); await lsClear(); const p = lsP(2); setL(p, lsS(2), 1, null); render(); await wait(300);
     const t = sid => (($('#canvas-area .screen-box[data-pid="' + p + '"][data-sid="' + sid + '"] .screen-inner > .screen-res') || {}).textContent || '').trim();
@@ -1807,16 +1822,6 @@
     closeFullscreen(); await wait(450); await lfClear(); await restore();
     return is(out, [[[s, null], 0, '0.15/none', s], [[s, null], 1, '0.15/none'], [null, 0], [null, null, 0], [[s, null], 0, null], [1, 1]],
       'Simple BG ghost: panels [destination, layer], ghost, L3, picked / Simple L1 ghost: panels, ghost, L3 / after closing the window: ghost, ghosted / one click: picked, ghost, ghosted / Advanced BG ghost: panels, ghost, layer / Advanced double-click on L1: layer, ghost');
-  });
-  await check('Layer strip fix: the wheel over an overflowing pill is only taken while the pill can still scroll that way (Simple: at its end the page scrolls on; Advanced: never a canvas zoom)', async () => {
-    await restore(); await lfClear(); const p = lfP(2), s = lfS(1); setL(p, s, 30, 'PGM'); setLayerSize(p, s, 30, 0.2, 0.2, 0.7, 0.6); render(); await wait(400); let sc = '#canvas-area'; lfShow(sc, p);
-    const roll = (el, dy) => { const r = el.getBoundingClientRect(); let reached = false; const ca = el.closest('#canvas-area,#fs-viewport'); const on = () => { reached = true; }; ca.addEventListener('wheel', on); const ev = new WheelEvent('wheel', { bubbles: true, cancelable: true, deltaY: dy, deltaX: 0, clientX: r.left + 20, clientY: r.top + r.height / 2 }); el.dispatchEvent(ev); ca.removeEventListener('wheel', on); return [ev.defaultPrevented, reached, Math.round(el.scrollLeft)]; };
-    let pill = lfStrip(sc, p); if (!pill) { await restore(); return 'no strip'; } const max = pill.scrollWidth - pill.clientWidth; if (max < 50) { await restore(); return 'the pill does not overflow with 30 layers (' + max + ')'; }
-    pill.scrollLeft = 0; const up0 = roll(pill, -100), dn0 = roll(pill, 100); pill.scrollLeft = max; const dnEnd = roll(pill, 100), upEnd = roll(pill, -100); pill.scrollLeft = 0;
-    openFullscreen(p); await wait(1000); sc = '#fs-canvas'; pill = lfStrip(sc, p); const max2 = pill.scrollWidth - pill.clientWidth; pill.scrollLeft = max2; const w0 = $(lfRow(sc, p)).getBoundingClientRect().width; const advEnd = roll(pill, 100); await wait(150); const w1 = $(lfRow(sc, p)).getBoundingClientRect().width;
-    closeFullscreen(); await wait(450); await lfClear(); await restore();
-    return is([up0, dn0, dnEnd, [upEnd[0], upEnd[1], upEnd[2] < max], [advEnd[0], advEnd[1]], Math.round(w0) === Math.round(w1)], [[false, true, 0], [true, false, 100], [false, true, max], [true, false, true], [true, false], true],
-      'Simple, [taken, reached the page, pill scrollLeft]: wheel up at the start / wheel down at the start / wheel down at the end / wheel up at the end / Advanced wheel down at the end [taken, reached the viewport] / tile not zoomed');
   });
   await check('Layer strip fix: the pulse follows the box the user is working on: an empty box clicked while another layer is picked pulses while its content list is open, and the pulse goes back when the list closes', async () => {
     await restore(); await lfCase(); await lfClear(); const p = lfP(2), s = lfS(1), sc = '#canvas-area'; lfShow(sc, p); await lfClickEl(lfChip(sc, p, s, 3));
@@ -1954,6 +1959,1289 @@
     } finally { if (hadNative === undefined) delete window.lookbookNative; else window.lookbookNative = hadNative; eval('_desktopPath=null'); await restore(); }
   });
 
+  // ── canvas-draft (round 16kt, owner decisions 22 + 23, 2026-09-22): INSERT in tests/flows_probe.js in the Simple section,
+  //    straight BEFORE the line "// ── Video Presets, Advanced". Both checks FAIL on build 16ks and PASS with patch.py; each
+  //    puts back what it touches (the show through restore(), the browser draft, the Blend Zones modifier). No media needed.
+  //    Helpers used: $, $$, wait, is, restore, okDialogs, dlgOpen, dialogText, BASE (all defined at the top of the probe).
+  //    REPLACES: none. No existing check confirms a draft or types into the Canvas boxes.
+  await check('toolbar: the Canvas W / H boxes are a read-out: read-only, out of the Tab order, no field chrome, no pointer, tooltip "Calculated from the destinations", and they still follow the destinations', async () => {
+    await restore(); const w = $('#cv-w'), h = $('#cv-h'); if (!w || !h) return 'no Canvas boxes';
+    const cs = getComputedStyle(w), r = w.getBoundingClientRect(), under = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+    const look = [w.readOnly && h.readOnly, w.tabIndex === -1 && h.tabIndex === -1, w.title === 'Calculated from the destinations' && h.title === w.title && w.parentElement.title === w.title,
+      cs.pointerEvents === 'none' && cs.cursor === 'default', cs.borderTopColor === 'rgba(0, 0, 0, 0)' && cs.backgroundColor === 'rgba(0, 0, 0, 0)', under !== w && under !== h];
+    const w0 = parseInt(w.value, 10), h0 = parseInt(h.value, 10);
+    actions.addDestination(); await wait(300); $('#ms-n').value = 'CANVAS READOUT TEST'; $('#ms-w').value = '1000'; $('#ms-h').value = '500'; confirmScreen(); await wait(450); okDialogs();
+    const grown = [parseInt(w.value, 10), parseInt(h.value, 10)]; const v = validateProject(); const canvasWarn = v.warnings.filter(x => /Canvas size/.test(x)).length;
+    doUndo(); await wait(400); const back = [parseInt(w.value, 10), parseInt(h.value, 10)]; await restore();
+    return is([look, grown, canvasWarn, back], [[true, true, true, true, true, true], [w0 + 1000, h0], 0, [w0, h0]], 'read-only / out of Tab order / tooltip / no pointer or text cursor / no chrome / not under the pointer; after + Destination; Pre-Export canvas warnings; after Undo');
+  });
+  await check('draft: Restore draft brings every destination position back exactly as the draft holds it (a 200 px blend and a free-placed destination), and the restored show is clean with an empty Undo history', async () => {
+    const KEY = 'avlb_autosave'; let old = null; try { old = localStorage.getItem(KEY); } catch (e) { return 'no localStorage in this run'; }
+    const blendWasOn = !document.body.classList.contains('adv-hide-blend');
+    try {
+      await restore(); const p = presets[0], b = screens[1], c = screens[2]; setPosition(p, b.id, parseInt(screens[0].w, 10) - 200, 0); setPosition(p, c.id, 3865, 75); $('#show-name').value = 'DRAFT POSITIONS TEST'; scheduleRender(); await wait(250);
+      const want = JSON.stringify(presets.map(q => q.positions)); _writeAutoSaveNow(); const draft = JSON.parse(localStorage.getItem(KEY) || 'null');
+      const written = !!draft && JSON.stringify(draft.presets.map(q => q.positions)) === want && draft.showName === 'DRAFT POSITIONS TEST';
+      _applyProjectText(BASE); await wait(600); okDialogs(); const flush = JSON.stringify(presets.map(q => q.positions)) !== want;   /* the page as it boots: another show, its own clean baseline */
+      restoreAutoSave(); await wait(300); const asked = dlgOpen() && /Restore Draft/i.test(dialogText()); if (!asked) return 'no Restore Draft question';
+      $('#dlg-confirm').click(); await wait(900); _recomputeDirty();
+      const got = JSON.stringify(presets.map(q => q.positions)); const px = $$('#canvas-area .overlap-vis[data-pid="' + p.id + '"] input').map(i => i.value);
+      const clean = [!_isDirty, !$('#toolbar .tb-btn.save-dirty'), _undoStack.length, $('#show-name').value];
+      if (!blendWasOn) toggleAdvFeature('blend'); await wait(250); const o = $('#canvas-area .overlap-vis[data-pid="' + p.id + '"]'); const drawn = !!o && getComputedStyle(o).display !== 'none' && o.getBoundingClientRect().width > 0;
+      return is([written, flush, asked, got === want, px, clean, drawn], [true, true, true, true, ['200'], [true, true, 0, 'DRAFT POSITIONS TEST'], true], 'draft written with the positions / page booted on another show / asked / positions identical after Restore draft / blend px box / [clean, Save dark, undo steps, name] / blend drawn with Blend Zones on');
+    } finally {
+      if (!blendWasOn && !document.body.classList.contains('adv-hide-blend')) toggleAdvFeature('blend');
+      if (old === null) localStorage.removeItem(KEY); else localStorage.setItem(KEY, old);
+      await restore();
+    }
+  });
+
+  // ── canvas-draft-fix (round 16kt, 2026-09-22; MERGE: the two wording tests follow the 16kt-merge2 text, "came back from a browser draft and has not been saved since", which is true whether or not the show had been saved before the tab closed): INSERT in tests/flows_probe.js in the Simple section, straight BEFORE the line
+  //    "// ── Video Presets, Advanced", after the two canvas-draft checks. All three FAIL on the BASE page (16ks + canvas-draft +
+  //    showinfo-colour) and PASS with patch_fix.py; each puts back what it touches (the show through restore(), the browser draft,
+  //    the two file pickers). No media needed. Helpers used: $, $$, vis, wait, is, restore, okDialogs, dlgOpen, dialogText, BASE.
+  //    REPLACES: none (the builder's two canvas-draft checks stay as they are and still pass on the fixed page).
+  await check('draft: a restored, never-saved draft is protected: Open a file, the picker, New, Cmd/Ctrl+N and an example show ask with true wording and keep the draft; after a Save none asks about a draft', async () => {
+    const KEY = 'avlb_autosave'; let old = null; try { old = localStorage.getItem(KEY); } catch (e) { return 'no localStorage in this run'; }
+    /* the two pickers are stubbed for the test and put back EXACTLY (they live on the window's prototype: an own copy left behind would change the probe's later download check); _fileHandle goes back too */
+    const ownOpen = Object.getOwnPropertyDescriptor(window, 'showOpenFilePicker'), ownSave = Object.getOwnPropertyDescriptor(window, 'showSaveFilePicker'); window.__lbFixHandle = eval('_fileHandle');
+    const other = () => new File([JSON.stringify(Object.assign(JSON.parse(BASE), { showName: 'FILE FROM DISK' }))], 'x.avlb', { type: 'application/json' });
+    const draftKept = () => { try { const d = JSON.parse(localStorage.getItem(KEY) || 'null'); return !!d && d.showName === 'RESTORED DRAFT TEST'; } catch (e) { return false; } };
+    /* run one replace-the-show path: [asked with the draft wording, the draft is still there while it asks, the show after Cancel, the New question never claims a saved file] */
+    const ask = async go => { go(); await wait(450); const t = dialogText(); const kept = draftKept(); const c = $('#dlg-cancel'); if (dlgOpen()) { if (c && vis(c)) c.click(); else okDialogs(); } await wait(350); return [/came back from a browser draft and has not been saved since/i.test(t), kept, $('#show-name').value, !/saved file is not affected/i.test(t)]; };
+    const WANT = [true, true, 'RESTORED DRAFT TEST', true];
+    try {
+      await restore(); const st = JSON.parse(BASE); st.showName = 'RESTORED DRAFT TEST'; st._savedAt = Date.now(); localStorage.setItem(KEY, JSON.stringify(st));
+      restoreAutoSave(); await wait(300); if (!(dlgOpen() && /Restore Draft/i.test(dialogText()))) return 'no Restore Draft question'; $('#dlg-confirm').click(); await wait(900); _recomputeDirty();
+      const clean = [!_isDirty, !$('#toolbar .tb-btn.save-dirty'), $('#show-name').value];   /* decision 23: Save dark */
+      const open = await ask(() => loadProjectFile({ files: [other()], value: '' }));
+      window.showOpenFilePicker = async () => [{ getFile: async () => other() }]; const picker = await ask(() => loadProjectPicker());
+      const fresh = await ask(() => newShow());
+      const keyN = await ask(() => document.body.dispatchEvent(new KeyboardEvent('keydown', { key: 'n', metaKey: true, bubbles: true, cancelable: true })));
+      const example = await ask(() => lbOpenExample('town-hall'));
+      let wrote = 0; window.showSaveFilePicker = async () => ({ createWritable: async () => ({ write: async () => { wrote++; }, close: async () => {} }) });
+      await saveProject({}); await wait(250); _recomputeDirty(); const savedClean = !_isDirty;
+      newShow(); await wait(450); const q = dialogText(); if (dlgOpen()) $('#dlg-cancel').click(); await wait(350); const afterSaveNew = [/start a new show\?/i.test(q), !/browser draft/i.test(q)];
+      loadProjectFile({ files: [other()], value: '' }); await wait(700); const afterSaveOpen = [dlgOpen(), $('#show-name').value]; okDialogs();
+      return is([clean, open, picker, fresh, keyN, example, wrote, savedClean, afterSaveNew, afterSaveOpen],
+        [[true, true, 'RESTORED DRAFT TEST'], WANT, WANT, WANT, WANT, WANT, 1, true, [true, true], [false, 'FILE FROM DISK']],
+        '[clean, Save dark, name] after Restore draft / Open a file / the picker / New / Cmd+N / example: [asked with the draft wording, draft kept, show after Cancel, no "saved file" claim] / writes / clean after Save / New after Save asks the plain question / Open after Save asks nothing and opens the file');
+    } finally {
+      if (ownOpen) Object.defineProperty(window, 'showOpenFilePicker', ownOpen); else delete window.showOpenFilePicker;
+      if (ownSave) Object.defineProperty(window, 'showSaveFilePicker', ownSave); else delete window.showSaveFilePicker;
+      eval('_fileHandle=window.__lbFixHandle'); delete window.__lbFixHandle;
+      if (old === null) localStorage.removeItem(KEY); else localStorage.setItem(KEY, old);
+      await restore();
+    }
+  });
+  await check('toolbar: a press on the Canvas read-out lets go of the picked layer and destination, so Backspace and the arrow keys after it change nothing', async () => {
+    await restore(); const key = k => document.body.dispatchEvent(new KeyboardEvent('keydown', { key: k, bubbles: true, cancelable: true }));
+    const w = $('#cv-w'); if (!w) return 'no Canvas box'; const r = w.getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+    const under = document.elementFromPoint(cx, cy) || w;   /* what the mouse hits: the wrapper (the boxes take no pointer) */
+    const press = () => ['mousedown', 'mouseup', 'click'].forEach(t => under.dispatchEvent(new MouseEvent(t, { bubbles: true, cancelable: true, clientX: cx, clientY: cy, button: 0, buttons: t === 'mousedown' ? 1 : 0 })));
+    const chip = $('#canvas-area .preset-row .layer-chip'); if (!chip) return 'no layer chip'; chip.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true })); await wait(150);
+    const l = selLayer ? Object.assign({}, selLayer) : null; if (!l) return 'no layer picked'; const was = getL(l.pid, l.sid, l.n); const n0 = _undoStack.length;
+    press(); await wait(150); const letGo = !selLayer; key('Backspace'); await wait(250); const still = getL(l.pid, l.sid, l.n);
+    const box = $('#canvas-area .preset-row .screen-box'); box.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true })); await wait(150);
+    const sid = sel && sel.sid; if (!sid) { await restore(); return 'no destination picked'; } const w0 = (screens.find(s => s.id === sid) || {}).w;
+    press(); await wait(150); const letGo2 = !sel; key('ArrowRight'); await wait(250); const w1 = (screens.find(s => s.id === sid) || {}).w;
+    _recomputeDirty(); const out = is([letGo, still, letGo2, w1 === w0, _undoStack.length - n0, !_isDirty], [true, was, true, true, 0, true], 'layer let go / layer after Backspace / destination let go / width unchanged after ArrowRight / undo steps / clean');
+    await restore(); return out;
+  });
+  await check('Help › Autosave says a restored draft\'s blends show once Blend Zones / Dead Space is on in Modifiers, and that the draft is protected until it is saved', async () => {
+    actions.help(); await wait(300); const row = $$('#help-overlay div').find(d => d.children.length === 2 && /^Autosave$/.test((d.children[0].textContent || '').trim())); const t = row ? row.children[1].textContent : ''; const shown = vis($('#help-overlay')); closeHelp(); await wait(150);
+    return is([shown, /switch Blend Zones \/ Dead Space on in Modifiers to see them drawn/.test(t), /Until you save it, Open, New and the example shows ask before replacing it/.test(t)], [true, true, true], 'help shown / modifiers sentence / protected-until-saved sentence');
+  });
+
+  // ── showinfo-colour (round 16kt, decisions 24 + 25) ─────────────────────────────────────────────────────────────
+  // INSERT these four blocks in tests/flows_probe.js in the Simple section, straight BEFORE the line
+  //   "// ── Video Presets, Advanced"
+  // Synthetic events on purpose (the probe runs inside the page): the colour window's closer listens for mousedown, so a
+  // press is a MouseEvent('mousedown') on the element (with the pointerdown the outside-click guard reads), a release is
+  // 'mouseup' + the 'click' the browser fires after it. Every block closes what it opened and restores the show.
+  // Each check FAILS on build 16ks (no pencil; the colour window ignored a press on a table cell, the top bar, the status
+  // bar and the Add Destination boxes; a colour window opened from Add Destination and closed without Apply sent the next
+  // Apply to Add Destination) and PASSES on the patched page. No existing check needs replacing.
+  await check('Edit Show Info: the pencil next to the Show name opens Quick Setup pre-filled (Edit Show Info / Update Show / Cancel, examples hidden); a destination renamed and given a new resolution in it lands on the show with presets and layers kept, one undo step brings everything back', async () => {
+    const pen = $('#tb-show-edit'); if (!pen || !vis(pen)) return 'no pencil #tb-show-edit next to the Show name box';
+    const row = () => { const a = $('#show-name').getBoundingClientRect(), b = pen.getBoundingClientRect(); return b.left >= a.right && b.left - a.right < 12 && Math.abs((a.top + a.bottom) / 2 - (b.top + b.bottom) / 2) < 3; };
+    const sig = () => JSON.stringify(presets.map(p => [p.id, p.code, p.name, p.layers, p.active, p.layerSizes, p.crops, p.dsmOn, p.colors, p.bgs, p.layerFx, p.opacities]));
+    const shot0 = _snapshot(), lay0 = sig(), scr0 = JSON.stringify(screens), u0 = _undoStack.length, n0 = presets.length;
+    pen.click(); await wait(400);
+    const qs = $('#qs-modal'); const opened = [vis(qs), $('#qs-title').textContent, $('#qs-confirm-btn').textContent, $('#qs-cancel-btn').textContent, getComputedStyle($('#qs-examples')).display, $('#qs-show').value === $('#show-name').value, ['screens', 'dsms', 'presets'].map(k => parseInt($('#qs-' + k + '-val').textContent, 10)), $$('#qs-screen-rows .qs-screen-row').map((r, i) => $('#qs-sn-' + i).value + ' ' + $('#qs-sr-lbl-' + i).textContent)];
+    // rename destination 2 and give it 2560x1440 through the window's own controls
+    const nb = $('#qs-sn-1'); if (!nb) { closeQS(); return 'no second destination row in the window'; }
+    nb.value = 'ZQ WALL'; fire(nb, 'input'); $('#qs-res-1').click(); await wait(200);
+    const item = $$('.shared-res-dd .sys-dd-item').find(i => /^2560×1440$/.test(((i.querySelector('.item-text') || i).textContent || '').trim())); if (!item) { closeSharedResPicker(); closeQS(); return 'no 2560×1440 in the resolution list'; }
+    item.click(); await wait(150); const rowText = nb.value + ' ' + $('#qs-sr-lbl-1').textContent;
+    $('#qs-confirm-btn').click(); await wait(500); okDialogs();
+    const after = [!vis(qs), screens[1].name + ' ' + screens[1].w + 'x' + screens[1].h, presets.length, sig() === lay0, _undoStack.length - u0, !!_isDirty];
+    doUndo(); await wait(400);
+    const back = [JSON.stringify(screens) === scr0, sig() === lay0, _snapshot() === shot0, presets.length];
+    await restore();
+    return is([row(), opened, rowText, after, back], [true, [true, 'Edit Show Info', 'Update Show', 'Cancel', 'none', true, [screens.length, dsms.length, n0], screens.map(s => s.name + ' ' + s.w + '×' + s.h)], 'ZQ WALL 2560×1440', [true, 'ZQ WALL 2560x1440', n0, true, 1, true], [true, true, true, n0]], 'pencil on the Show name row / [window open, title, confirm, cancel, examples, name box, counts, rows] / row after typing and picking / [closed, destination 2, presets, layers kept, undo steps, unsaved] / after one Undo [destinations back, layers back, show identical, presets]');
+  });
+  await check('Edit Show Info: Cancel, Escape and an unchanged Update Show change nothing, leave no undo step and do not light Save; a show name, date and venue typed in the window reach the top bar and light Save; on an empty show the pencil opens plain Quick Setup', async () => {
+    if (!$('#tb-show-edit') || typeof actions.editShowInfo !== 'function') return 'no pencil / no actions.editShowInfo';
+    const esc = el => (el || document.body).dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', code: 'Escape', keyCode: 27, bubbles: true, cancelable: true }));
+    const shot0 = _snapshot(), state0 = _dirtyStateString(), u0 = _undoStack.length, dirty0 = !!_isDirty, name0 = $('#show-name').value;
+    const qs = $('#qs-modal'); const out = {};
+    $('#tb-show-edit').click(); await wait(300); $('#qs-cancel-btn').click(); await wait(200);
+    out.cancel = [!vis(qs), _undoStack.length - u0, _snapshot() === shot0, _dirtyStateString() === state0];
+    $('#tb-show-edit').click(); await wait(300); esc(document.activeElement); await wait(200);
+    out.escape = [!vis(qs), _undoStack.length - u0, _snapshot() === shot0, _dirtyStateString() === state0];
+    $('#tb-show-edit').click(); await wait(300); $('#qs-confirm-btn').click(); await wait(500); okDialogs(); await wait(100);
+    out.unchangedUpdate = [!vis(qs), _undoStack.length - u0, _snapshot() === shot0, _dirtyStateString() === state0, !!_isDirty === dirty0];
+    $('#tb-show-edit').click(); await wait(300);
+    const sn = $('#qs-show'); sn.value = 'ZQ SHOW'; fire(sn, 'input'); const vn = $('#qs-venue'); vn.value = 'Hall ZQ'; fire(vn, 'input'); const dt = $('#qs-date'); dt.value = '2026-12-24'; fire(dt, 'input'); fire(dt, 'change');
+    $('#qs-confirm-btn').click(); await wait(500); okDialogs(); await wait(100);
+    out.showInfo = [!vis(qs), $('#show-name').value, document.title, $('#show-date').value, $('#show-venue').value, !!_isDirty, !!$('button.save-dirty'), _snapshot() === shot0];
+    // an empty show: the pencil opens plain Quick Setup (Build My Show, examples shown), the same rule as + Destination
+    screens = []; presets = []; dsms = []; scheduleRender(); await wait(200); $('#tb-show-edit').click(); await wait(300);
+    out.emptyShow = [vis(qs), $('#qs-title').textContent, $('#qs-confirm-btn').textContent, getComputedStyle($('#qs-examples')).display]; closeQS();
+    await restore(); okDialogs();
+    return is(out, { cancel: [true, 0, true, true], escape: [true, 0, true, true], unchangedUpdate: [true, 0, true, true, true], showInfo: [true, 'ZQ SHOW', 'ZQ SHOW — Look Book Builder', '2026-12-24', 'Hall ZQ', true, true, true], emptyShow: [true, 'Quick Show Setup', 'Build My Show', 'block'] }, 'Cancel [closed, undo steps, data same, saved-state same] / Escape [same] / unchanged Update Show [closed, undo steps, data same, saved-state same, unsaved flag unchanged] / show info [closed, name, title, date, venue, unsaved, Save lit, data same] / empty show [Quick Setup open, title, button, examples] (' + name0 + ')');
+  });
+  await check('Colour window: a press ANYWHERE outside closes it (a table Notes cell, the top bar, the status bar, a preset name box, the Undo button); a press on the swatch that opened it keeps it, the BG chevron toggles it; a hue drag that ends outside the window keeps the window open with the picked colour, no undo step', async () => {
+    const cp = $('#color-pop'); const open = () => cp.style.display === 'block' && vis(cp);
+    const at = el => { const r = el.getBoundingClientRect(); return { clientX: r.left + r.width / 2, clientY: r.top + r.height / 2, bubbles: true, cancelable: true }; };
+    const pressOn = el => { el.dispatchEvent(new PointerEvent('pointerdown', at(el))); el.dispatchEvent(new MouseEvent('mousedown', at(el))); };
+    const releaseOn = el => { el.dispatchEvent(new MouseEvent('mouseup', at(el))); el.dispatchEvent(new PointerEvent('pointerup', at(el))); el.dispatchEvent(new MouseEvent('click', at(el))); };
+    const swatch = () => $('#tbody .home-bg-swatch'); if (!swatch()) return 'no BG swatch in the table';   /* re-queried: a redraw replaces the table */
+    const openIt = async () => { closeColorPop(); swatch().click(); await wait(250); return open(); };
+    if (!(await openIt())) return 'the table BG swatch did not open the colour window';
+    const places = [['table Notes cell', '#tbody input[name="t-d-notes"]'], ['top bar', '#toolbar'], ['status bar', '#bb-spacer'], ['preset name box', '.preset-row .preset-header input'], ['Undo button', '#tb-undo']];
+    const out = {};
+    for (const [label, sel] of places) {
+      const el = $(sel); if (!el) { out[label] = 'no such place'; continue; }
+      if (!open()) await openIt();
+      pressOn(el); const afterPress = open();
+      if (sel === '#tb-undo') { el.dispatchEvent(new MouseEvent('mouseup', at(el))); el.dispatchEvent(new PointerEvent('pointerup', at(el))); } else releaseOn(el);   /* no click on Undo: it would undo an earlier check's step */
+      await wait(150); out[label] = [afterPress, open()];
+      if (typeof closeAdvancedMenu === 'function') closeAdvancedMenu(); doSelect(null, null); selLayer = null; okDialogs();
+    }
+    // the control that opened it: the swatch keeps it (re-targets), the BG chevron toggles
+    if (!open()) await openIt(); pressOn(swatch()); const swPress = open(); releaseOn(swatch()); await wait(200); out.swatchAgain = [swPress, open()];
+    // the BG chevron of that row, three presses with the window open from the swatch (the field is not yet marked open): re-opens, closes, opens, as on 16ks
+    const chev = $('#tbody .home-field-chev[data-home-field="bg"]'); const chevSeq = [];
+    for (let i = 0; i < 3; i++) { pressOn(chev); releaseOn(chev); await wait(200); chevSeq.push(open()); } out.chevron = chevSeq;
+    // a hue drag that ends 220 px under the window: press on the hue strip, move, release far outside, then the click the browser fires after a release
+    if (!open()) await openIt(); const hue = $('#cp-hue-track'); const hr = hue.getBoundingClientRect(), pr = cp.getBoundingClientRect();
+    const h0 = _cpH, hex0 = $('#cp-hex').value, u0 = _undoStack.length, snap0 = _snapshot();
+    hue.dispatchEvent(new PointerEvent('pointerdown', { clientX: hr.left + 4, clientY: hr.top + 6, bubbles: true, cancelable: true })); hue.dispatchEvent(new MouseEvent('mousedown', { clientX: hr.left + 4, clientY: hr.top + 6, bubbles: true, cancelable: true }));
+    const ex = hr.left + hr.width / 2, ey = pr.bottom + 220;
+    for (let i = 1; i <= 6; i++) window.dispatchEvent(new MouseEvent('mousemove', { clientX: hr.left + 4 + (ex - hr.left - 4) * i / 6, clientY: hr.top + 6 + (ey - hr.top - 6) * i / 6, bubbles: true }));
+    const under = document.elementFromPoint(Math.min(ex, innerWidth - 2), Math.min(ey, innerHeight - 2)) || document.body;
+    window.dispatchEvent(new MouseEvent('mouseup', { clientX: ex, clientY: ey, bubbles: true })); under.dispatchEvent(new PointerEvent('pointerup', { clientX: ex, clientY: ey, bubbles: true })); under.dispatchEvent(new MouseEvent('click', { clientX: ex, clientY: ey, bubbles: true, cancelable: true })); await wait(200);
+    out.drag = [open(), Math.round(h0) !== Math.round(_cpH), Math.abs(_cpH - 180) < 3, $('#cp-hex').value !== hex0, _undoStack.length - u0, _snapshot() === snap0];
+    closeColorPop(); doSelect(null, null); selLayer = null; await restore();
+    return is(out, { 'table Notes cell': [false, false], 'top bar': [false, false], 'status bar': [false, false], 'preset name box': [false, false], 'Undo button': [false, false], swatchAgain: [true, true], chevron: [true, false, true], drag: [true, true, true, true, 0, true] }, 'per place [open after the press, open after the release] / the opening swatch [after press, after release] / BG chevron pressed three times / hue drag [window open, hue changed, hue ≈ 180, hex changed, undo steps, show unchanged]');
+  });
+  await check('Closing by pressing outside: Add Destination never closes on an outside press, its Pick… colour window closes on a press on the Name box and leaves Add Destination open, the next Apply from the table lands on the destination; Help, the Look Book window, the Wire export window, the Pre-Export Check and the app dialog still close on their dark area', async () => {
+    const cp = $('#color-pop'); const cpOpen = () => cp.style.display === 'block' && vis(cp); const m = $('#modal'); const mOpen = () => m.classList.contains('show');
+    const at = (el, dx, dy) => { const r = el.getBoundingClientRect(); return { clientX: r.left + (dx === undefined ? r.width / 2 : dx), clientY: r.top + (dy === undefined ? r.height / 2 : dy), bubbles: true, cancelable: true }; };
+    const pressOn = (el, dx, dy) => { el.dispatchEvent(new PointerEvent('pointerdown', at(el, dx, dy))); el.dispatchEvent(new MouseEvent('mousedown', at(el, dx, dy))); };
+    const releaseOn = (el, dx, dy) => { el.dispatchEvent(new MouseEvent('mouseup', at(el, dx, dy))); el.dispatchEvent(new PointerEvent('pointerup', at(el, dx, dy))); el.dispatchEvent(new MouseEvent('click', at(el, dx, dy))); };
+    const out = {};
+    actions.addDestination(); await wait(350); if (!mOpen()) return 'the Add Destination window did not open';
+    pressOn(m, 20, 20); const a1 = mOpen(); releaseOn(m, 20, 20); await wait(150); out.addDestOutsidePress = [a1, mOpen()];   /* the dark area of #modal, well away from #mbox */
+    openModalColorPicker(); await wait(300); const c0 = cpOpen(), mode0 = _cpModalMode;
+    const nb = $('#ms-n'); pressOn(nb); const c1 = cpOpen(); releaseOn(nb); await wait(150); out.pickThenPressOnNameBox = [c0, mode0, c1, cpOpen(), mOpen(), _cpModalMode];
+    pressOn(m, 20, 20); releaseOn(m, 20, 20); await wait(150); out.addDestAfterSecondOutsidePress = mOpen();
+    closeColorPop(); closeModal(); await wait(150);
+    // the next Apply from the table must colour the destination, not Add Destination's swatch
+    const sw = $('#tbody .home-bg-swatch'); sw.click(); await wait(250); const c2 = cpOpen(); const tgt = colorPopTarget ? { sid: colorPopTarget.sid, pid: colorPopTarget.pid } : null; cpSetFromHex('#123456'); cpApply(); await wait(300);
+    const landed = !!tgt && ((getPColor(tgt.pid, tgt.sid) || (screens.find(x => x.id === tgt.sid) || {}).color) === '#123456');
+    out.applyFromTable = [c2, landed, selModalColor];
+    closeColorPop();   /* the colour goes back with restore() at the end */
+    // every other window keeps today's behaviour: a press on its dark area closes it
+    if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+    const dark = async (label, openFn, isOpen, boxSel, shut) => { openFn(); await wait(350); const was = isOpen(); const box = $(boxSel); const ov = box && box.parentElement; if (!box || !ov) { out[label] = 'no window'; return; } const r = box.getBoundingClientRect(); const p = { clientX: Math.max(8, r.left - 40), clientY: Math.max(8, r.top - 40), bubbles: true, cancelable: true }; const tgt = document.elementFromPoint(p.clientX, p.clientY) || ov; tgt.dispatchEvent(new PointerEvent('pointerdown', p)); tgt.dispatchEvent(new MouseEvent('mousedown', p)); tgt.dispatchEvent(new MouseEvent('mouseup', p)); tgt.dispatchEvent(new MouseEvent('click', p)); await wait(300); out[label] = [was, !isOpen()]; shut(); await wait(150); };
+    await dark('Help', () => openHelp(), () => vis($('#help-overlay')), '#help-overlay > .pm', () => closeHelp());
+    await dark('Look Book window', () => openPdfExportModal(), () => vis($('#pdf-export-modal')), '#pdf-export-modal .pm', () => closePdfExportModal());
+    openWireMode(); await wait(500); await dark('Wire export window', () => openWireExportModal(), () => vis($('#wire-export-modal')), '#wire-export-modal .pm', () => closeWireExportModal()); closeWireMode(); await wait(300);
+    await dark('Pre-Export Check', () => runExportWithValidation(function () {}, 'ZQ', function () { return { errors: [], warnings: ['ZQ WARNING'] }; }), () => vis($('#validation-panel')), '#validation-panel', () => { const v = $('#validation-panel'); if (v) v.style.display = 'none'; const b = $('#validation-backdrop'); if (b) b.style.display = 'none'; });
+    let answer = null; await dark('app dialog', () => showConfirm({ title: 'ZQ?', message: 'press outside', confirmLabel: 'Yes', onConfirm: () => { answer = 'confirmed'; }, onCancel: () => { answer = 'cancelled'; } }), () => dlgOpen(), '#dlg-box', () => { if (dlgOpen()) $('#dlg-cancel').click(); }); out.appDialogAnswer = answer;
+    await restore();
+    return is(out, { addDestOutsidePress: [true, true], pickThenPressOnNameBox: [true, true, false, false, true, false], addDestAfterSecondOutsidePress: true, applyFromTable: [true, true, '#1a1a1a'], Help: [true, true], 'Look Book window': [true, true], 'Wire export window': [true, true], 'Pre-Export Check': [true, true], 'app dialog': [true, true], appDialogAnswer: 'cancelled' }, 'Add Destination [open after the press, after the release] / Pick… [colour open, Add Destination mode, colour open after the press on Name, after the release, Add Destination still open, mode dropped] / Add Destination after a second outside press / Apply from the table [opened, coloured the destination, Add Destination swatch untouched] / each window [was open, closed by a press on its dark area] / dialog answer');
+  });
+
+  // ── showinfo-colour FIX (round 16kt): the five attack defects ───────────────────────────────────────────────────
+  // INSERT these five blocks in tests/flows_probe.js in the Simple section, straight BEFORE the line
+  //   "// ── Video Presets, Advanced"
+  // (after the builder's four showinfo-colour blocks). Synthetic events on purpose (the probe runs inside the page): a key
+  // is a KeyboardEvent('keydown') on the element that holds the cursor (the dialog key guard sits on WINDOW in the capture
+  // phase, so it sees them exactly as it sees a real key), a press is a MouseEvent('mousedown'). Every block closes what it
+  // opened and restores the show. Each check FAILS on the base page (16ks + canvas-draft + showinfo-colour) and PASSES on
+  // the fixed page. No existing check needs replacing (REPLACES: none; the builder's four showinfo-colour checks still pass).
+  await check('Edit Show Info is modal for the keyboard: the pencil drops the canvas pick; Backspace / Delete / arrows / Tab / a digit / Cmd+D / Cmd+Shift+N / Cmd+Z / Cmd+S pressed under the open window change nothing; typing, Tab inside the window, Enter (Update Show) and Escape (close) still work; after it closes the same keys act again', async () => {
+    const pen = $('#tb-show-edit'); if (!pen || !vis(pen)) return 'no pencil #tb-show-edit';
+    const kd = (el, init) => { const e = new KeyboardEvent('keydown', Object.assign({ bubbles: true, cancelable: true }, init)); (el || document.body).dispatchEvent(e); return e; };
+    const keys = el => { kd(el, { key: 'Backspace', code: 'Backspace' }); kd(el, { key: 'Delete', code: 'Delete' }); kd(el, { key: 'ArrowRight', code: 'ArrowRight' }); kd(el, { key: 'Tab', code: 'Tab' }); kd(el, { key: '3', code: 'Digit3' }); kd(el, { key: 'd', code: 'KeyD', metaKey: true }); kd(el, { key: 'n', code: 'KeyN', metaKey: true, shiftKey: true }); kd(el, { key: 'z', code: 'KeyZ', metaKey: true }); kd(el, { key: 's', code: 'KeyS', metaKey: true }); };
+    const f = firstLayer(); if (!f) return 'no layer in the example';
+    const pick = () => { doSelect(null, null); selLayer = { pid: f.pid, sid: f.sid, n: 1 }; updateLayerSelDOM(f.pid, f.sid, 1, true); };
+    const sig = () => JSON.stringify([screens.map(s => s.id + s.name), presets.map(p => [p.id, p.layers, p.layerSizes]), _undoStack.length, _redoStack.length]);
+    let saves = 0; const realSave = saveProject; saveProject = function () { saves++; };
+    const out = {}; const qs = $('#qs-modal');
+    try {
+      pick(); const s0 = sig();
+      pen.click(); await wait(400);
+      out.opened = [vis(qs), $('#qs-title').textContent, !sel && !selLayer, !$('.layer-chip.lsel')];
+      // a pick armed behind the window (the attack's compound case): the keys must still stand down
+      selLayer = { pid: f.pid, sid: f.sid, n: 1 }; doSelect(f.pid, f.sid); selLayer = { pid: f.pid, sid: f.sid, n: 1 };
+      if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+      keys(document.body); await wait(400); okDialogs();
+      out.keysOnBody = [sig() === s0, saves, vis(qs), !!selLayer];
+      const plus = $('button[onclick="qsAdjust(\'screens\',1)"]'); plus.focus(); const c0 = $('#qs-screens-val').textContent;
+      keys(plus); await wait(400); okDialogs();
+      out.keysOnButton = [sig() === s0, saves, vis(qs), $('#qs-screens-val').textContent === c0];
+      doSelect(null, null); selLayer = null;
+      // the window's own keys
+      const box = $('#qs-show'); box.focus(); const typed = kd(box, { key: 'x', code: 'KeyX' });
+      kd(box, { key: 'Tab', code: 'Tab' }); const a1 = document.activeElement; kd(a1, { key: 'Tab', code: 'Tab', shiftKey: true }); const a2 = document.activeElement;
+      out.ownKeys = [!typed.defaultPrevented, a1 !== box && !!a1.closest('#qs-modal'), a2 === box];
+      // a window floating ABOVE Quick Setup keeps its own keys: the custom resolution box (Tab is not taken over, Backspace not blocked)
+      _sysOpenCustomResModal('custom', '', '1920x1080', { onSave: function () {} }); await wait(300); const cw = $('#sys-cf-w');
+      if (cw) { cw.focus(); const bs = kd(cw, { key: 'Backspace', code: 'Backspace' }); kd(cw, { key: 'Tab', code: 'Tab' }); out.aboveQS = [!bs.defaultPrevented, document.activeElement === cw]; _sysCloseCustomResModal(); await wait(150); } else out.aboveQS = 'no custom resolution box';
+      kd(box, { key: 'Escape', code: 'Escape' }); await wait(300); out.escape = [!vis(qs), sig() === s0];
+      pen.click(); await wait(400); $('#qs-show').focus(); kd($('#qs-show'), { key: 'Enter', code: 'Enter' }); await wait(500); okDialogs(); out.enter = [!vis(qs), sig() === s0, !!_isDirty];
+      // after the window closed: the same keys act on the page again
+      pick(); kd(document.body, { key: 'Backspace', code: 'Backspace' }); await wait(300); const gone = !getL(f.pid, f.sid, 1) && _undoStack.length > 0;
+      kd(document.body, { key: 'z', code: 'KeyZ', metaKey: true }); await wait(400); const back = !!getL(f.pid, f.sid, 1);
+      const n0 = presets.length; kd(document.body, { key: 'n', code: 'KeyN', metaKey: true, shiftKey: true }); await wait(400); const added = presets.length - n0;
+      kd(document.body, { key: 'z', code: 'KeyZ', metaKey: true }); await wait(400); const undone = presets.length === n0;
+      kd(document.body, { key: 's', code: 'KeyS', metaKey: true }); await wait(100);
+      out.afterClose = [gone, back, added, undone, saves];
+    } finally { saveProject = realSave; if (vis(qs)) closeQS(); doSelect(null, null); selLayer = null; }
+    await restore();
+    return is(out, { opened: [true, 'Edit Show Info', true, true], keysOnBody: [true, 0, true, true], keysOnButton: [true, 0, true, true], ownKeys: [true, true, true], aboveQS: [true, true], escape: [true, true], enter: [true, true, false], afterClose: [true, true, 1, true, 1] }, 'opened [window, title, pick dropped, chip unlit] / keys on the page under the window [show unchanged, saves, window open, pick kept] / keys on a window button [same, saves, open, counter kept] / own keys [typing not blocked, Tab stays inside, Shift+Tab back] / the custom resolution box above the window [Backspace not blocked, Tab not taken over] / Escape [closed, unchanged] / Enter [closed, unchanged, not dirty] / after close [Backspace deleted, Cmd+Z back, Cmd+Shift+N added, Cmd+Z undone, Cmd+S saved]');
+  });
+  await check('Edit Show Info counters on a show past the wizard\'s caps: with 13 presets + gives 14 and Update Show gives 14 (the first 13 untouched); - once gives 12 and Update Show removes P13 with no question, one undo step; with 25 destinations and 9 AUX + gives 26 / 10 and Update Show adds them', async () => {
+    const pen = $('#tb-show-edit'); if (!pen || !vis(pen)) return 'no pencil #tb-show-edit';
+    const val = k => $('#qs-' + k + '-val').textContent; const step = (k, d) => $('button[onclick="qsAdjust(\'' + k + '\',' + d + ')"]').click();
+    const out = {};
+    while (presets.length < 13) { addPreset(); await wait(60); okDialogs(); } await wait(300);
+    const sig13 = JSON.stringify(presets.map(p => [p.id, p.code, p.layers, p.layerSizes])), u0 = _undoStack.length;
+    pen.click(); await wait(400); const c0 = val('presets'); step('presets', 1); const c1 = val('presets');
+    $('#qs-confirm-btn').click(); await wait(600); okDialogs();
+    out.plus = [c0, c1, presets.length, JSON.stringify(presets.slice(0, 13).map(p => [p.id, p.code, p.layers, p.layerSizes])) === sig13, _undoStack.length - u0, !dlgOpen()];
+    doUndo(); await wait(400); out.undoPlus = [presets.length, JSON.stringify(presets.map(p => [p.id, p.code, p.layers, p.layerSizes])) === sig13];
+    const u1 = _undoStack.length; pen.click(); await wait(400); const m0 = val('presets'); step('presets', -1); const m1 = val('presets'); step('presets', -1); const m2 = val('presets'); step('presets', 1); const m3 = val('presets');
+    $('#qs-confirm-btn').click(); await wait(600); const asked = dlgOpen() ? dialogText() : 'no question'; okDialogs();
+    out.minus = [m0, m1, m2, m3, presets.length, presets[presets.length - 1].code, asked, _undoStack.length - u1];
+    doUndo(); await wait(400); out.undoMinus = [presets.length, JSON.stringify(presets.map(p => [p.id, p.code, p.layers, p.layerSizes])) === sig13];
+    // destinations and AUX past 24 / 8
+    while (screens.length < 25) screens.push({ id: uid(), name: 'ZQ D' + (screens.length + 1), w: 1920, h: 1080, color: '#1a1a1a' }); presets.forEach(p => initStripPositions(p.id));
+    while (dsms.length < 9) addDSM(); scheduleRender(); await wait(400); okDialogs();
+    const u2 = _undoStack.length; pen.click(); await wait(500); const b0 = [val('screens'), val('dsms')]; step('screens', 1); step('dsms', 1); const b1 = [val('screens'), val('dsms')];
+    $('#qs-confirm-btn').click(); await wait(900); okDialogs();
+    out.big = [b0, b1, screens.length, dsms.length, _undoStack.length - u2];
+    if (vis($('#qs-modal'))) closeQS();
+    await restore();
+    return is(out, { plus: ['13', '14', 14, true, 1, true], undoPlus: [13, true], minus: ['13', '12', '11', '12', 12, 'P12', 'no question', 1], undoMinus: [13, true], big: [['25', '9'], ['26', '10'], 26, 10, 1] }, '+ [counter, after +, presets after Update Show, first 13 kept, undo steps, no dialog] / one Undo [presets, identical] / - [counter, after -, after - again, after +, presets after Update Show, last code, question, undo steps] / one Undo [presets, identical] / 25 destinations + 9 AUX [counters, after +, destinations, AUX, undo steps]');
+  });
+  await check('Colour window opened from the layer panel\'s Edge swatch: a press on the panel\'s own opacity box or section header keeps the window and the picked colour, Apply lands it; a press anywhere else still closes it', async () => {
+    const cp = $('#color-pop'); const open = () => cp.style.display === 'block' && vis(cp);
+    const at = el => { const r = el.getBoundingClientRect(); return { clientX: r.left + r.width / 2, clientY: r.top + r.height / 2, bubbles: true, cancelable: true }; };
+    const pressOn = el => { el.dispatchEvent(new PointerEvent('pointerdown', at(el))); el.dispatchEvent(new MouseEvent('mousedown', at(el))); };
+    const releaseOn = el => { el.dispatchEvent(new MouseEvent('mouseup', at(el))); el.dispatchEvent(new PointerEvent('pointerup', at(el))); el.dispatchEvent(new MouseEvent('click', at(el))); };
+    const f = firstLayer(); if (!f) return 'no layer in the example';
+    openLayerPanel(fakeEv, f.pid, f.sid, 1, true); await wait(300); const panel = $('#layer-panel'); if (!panel || !$('.lfx-swatch[data-path="edge.color"]', panel)) { closeLayerPanel(); return 'no Advanced layer panel with an Edge swatch'; }
+    if (!_lfxOpen.border) _lfxToggleSec('border'); await wait(150);
+    const sw = () => $('#layer-panel .lfx-swatch[data-path="edge.color"]'); const edge0 = getLayerFx(f.pid, f.sid, 1).edge.color;
+    sw().click(); await wait(250); const opened = open(); cpSetFromHex('#123456');
+    const num = $('#layer-panel .lfx-num[data-path="edge.op"]') || $('#layer-panel .lfx-inp[data-path="edge.op"]'); const hd = $('#layer-panel .lfx-acc[data-sec="border"] .lfx-hd');
+    if (!num || !hd) { closeColorPop(); closeLayerPanel(); return 'no Edge opacity box / Border header in the panel'; }
+    pressOn(num); const p1 = open(); releaseOn(num); await wait(150); const p2 = open();
+    pressOn(hd); const p3 = open(); releaseOn(hd); await wait(150); const p4 = open(); if (!_lfxOpen.border) _lfxToggleSec('border'); await wait(100);
+    const hex = $('#cp-hex').value; if (open()) cpApply(); await wait(250);
+    const out = { presses: [opened, p1, p2, p3, p4, hex], apply: [edge0 !== '#123456', getLayerFx(f.pid, f.sid, 1).edge.color, !open(), !!$('#layer-panel')] };
+    if (sw()) { sw().click(); await wait(250); const o1 = open(); const nt = $('#tbody input[name="t-d-notes"]'); pressOn(nt); const o2 = open(); releaseOn(nt); await wait(150); out.outside = [o1, o2, open()]; }
+    closeColorPop(); closeLayerPanel(); await restore();
+    return is(out, { presses: [true, true, true, true, true, '#123456'], apply: [true, '#123456', true, true], outside: [true, false, false] }, 'presses [opened, open after the press on the opacity box, after its release, after the press on the Border header, after its release, hex kept] / Apply [colour differed before, edge colour, window closed, panel still open] / a press on a table Notes cell [open before, after the press, after the release]');
+  });
+  await check('Edit Show Info: Update Show with nothing changed writes nothing when the show name and a title-block field hold a leading / trailing space: Save stays off, the values keep their spaces, no undo step', async () => {
+    const pen = $('#tb-show-edit'); if (!pen || !vis(pen)) return 'no pencil #tb-show-edit';
+    const sn = $('#show-name'), sv = $('#show-venue'); const name0 = sn.value;
+    sn.value = '  ' + name0 + '  '; sv.value = ''; showMeta.client = '  Padded  '; showMeta.dates = ' April 8 '; _captureCleanBaseline(); _isDirty = false; _updateDirtyIndicator(); await wait(150);
+    const u0 = _undoStack.length, shot0 = _snapshot(), meta0 = JSON.stringify(showMeta), title0 = document.title, start = [!!_isDirty, !!$('button.save-dirty')];
+    pen.click(); await wait(400); const shown = [$('#qs-show').value, $('#qs-venue').value, $('#qs-client').value];
+    $('#qs-confirm-btn').click(); await wait(600); okDialogs(); await wait(150);
+    const out = { start, shown, after: [!vis($('#qs-modal')), !!_isDirty, !!$('button.save-dirty'), sn.value, sv.value, showMeta.client, showMeta.dates, JSON.stringify(showMeta) === meta0, document.title === title0, _undoStack.length - u0, _snapshot() === shot0] };
+    // a real edit in the same window still lands and lights Save
+    pen.click(); await wait(400); const cl = $('#qs-client'); cl.value = 'ZQ Client'; fire(cl, 'input'); $('#qs-confirm-btn').click(); await wait(600); okDialogs(); out.realEdit = [showMeta.client, !!_isDirty, !!$('button.save-dirty'), sn.value];
+    if (vis($('#qs-modal'))) closeQS();
+    await restore();
+    return is(out, { start: [false, false], shown: ['  ' + name0 + '  ', 'N/A', '  Padded  '], after: [true, false, false, '  ' + name0 + '  ', '', '  Padded  ', ' April 8 ', true, true, 0, true], realEdit: ['ZQ Client', true, true, '  ' + name0 + '  '] }, 'start [dirty, Save lit] / the window shows [name, venue, client] / after an unchanged Update Show [closed, dirty, Save lit, name box, venue box, client, dates, meta identical, title kept, undo steps, show identical] / a client typed [client, dirty, Save lit, name box kept]');
+  });
+  await check('Edit Show Info: a blank Show name is refused the way the wizard refuses it (the "Show name needed" note names Update Show, the box is marked, the window stays open, nothing written); a name typed then lands', async () => {
+    const pen = $('#tb-show-edit'); if (!pen || !vis(pen)) return 'no pencil #tb-show-edit';
+    const sn = $('#show-name'); const name0 = sn.value, title0 = document.title, u0 = _undoStack.length, shot0 = _snapshot(), dirty0 = !!_isDirty;
+    pen.click(); await wait(400); const box = $('#qs-show'); box.value = ''; fire(box, 'input');
+    $('#qs-confirm-btn').click(); await wait(400);
+    const out = { refused: [vis($('#qs-modal')), dlgOpen(), /Show name needed/.test(dialogText()), /Update Show/.test(dialogText()), !!box.style.outline, sn.value === name0, document.title === title0, !!_isDirty === dirty0, _undoStack.length - u0, _snapshot() === shot0] };
+    okDialogs(); await wait(200); out.afterNote = [vis($('#qs-modal')), !dlgOpen()];
+    box.focus(); box.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', code: 'Enter', bubbles: true, cancelable: true })); await wait(400); out.enter = [vis($('#qs-modal')), dlgOpen(), sn.value === name0]; okDialogs(); await wait(200);
+    box.value = 'ZQ NAMED'; fire(box, 'input'); $('#qs-confirm-btn').click(); await wait(600); okDialogs(); out.named = [!vis($('#qs-modal')), sn.value, document.title, !!_isDirty];
+    if (vis($('#qs-modal'))) closeQS();
+    await restore();
+    return is(out, { refused: [true, true, true, true, true, true, true, true, 0, true], afterNote: [true, true], enter: [true, true, true], named: [true, 'ZQ NAMED', 'ZQ NAMED — Look Book Builder', true] }, 'blank name + Update Show [window open, note open, "Show name needed", names Update Show, box marked, name kept, title kept, unsaved flag kept, undo steps, show identical] / after OK [window open, note gone] / Enter in the blank box [window open, note, name kept] / a name typed [closed, name, title, unsaved]');
+  });
+
+  // ── 16kt merge fixes part 2 (the re-attacks on decisions 22-25, 2026-09-22). INSERT in the Simple section straight AFTER the
+  //    showinfo-colour-fix block, i.e. still BEFORE the line "// ── Video Presets, Advanced". Each FAILS on the page as the fix
+  //    agents delivered it and PASSES on the merged page; each closes what it opens and puts the show back.
+  await check('Edit Show Info: a window floating ABOVE it keeps only its TEXT boxes; a key pressed on its other controls never reaches the page behind (Cmd+S, Cmd+Shift+N, Cmd+Z), and the window itself scrolls with PageDown and Space again', async () => {
+    await restore(); const pen = $('#tb-show-edit'); if (!pen || !vis(pen)) return 'no pencil #tb-show-edit';
+    const kd = (el, init) => { const e = new KeyboardEvent('keydown', Object.assign({ bubbles: true, cancelable: true }, init)); (el || document.body).dispatchEvent(e); return e; };
+    const qs = $('#qs-modal'); const saved = []; const realSave = window.saveProject; window.saveProject = function () { saved.push(1); };
+    try {
+      pen.click(); await wait(450); if (!vis(qs)) return 'Edit Show Info did not open';
+      _sysOpenCustomResModal('custom', '', '1920x1080', { onSave: function () {} }); await wait(350);
+      const cw = $('#sys-cf-w'); if (!cw) { _sysCloseCustomResModal(); return 'no custom resolution box'; }
+      const btn = $$('#sys-cf-modal button, .sys-modal-overlay button').find(b => vis(b)) || cw;
+      const n0 = presets.length, u0 = _undoStack.length;
+      kd(btn, { key: 's', code: 'KeyS', metaKey: true }); kd(btn, { key: 'n', code: 'KeyN', metaKey: true, shiftKey: true }); kd(btn, { key: 'z', code: 'KeyZ', metaKey: true }); await wait(400);
+      const behind = [saved.length, presets.length - n0, _undoStack.length - u0];
+      cw.focus(); const bs = kd(cw, { key: 'Backspace', code: 'Backspace' }); const ownBox = !bs.defaultPrevented;
+      _sysCloseCustomResModal(); await wait(200);
+      qs.scrollTop = 0; const pd = kd($('#qs-modal .qs-hdr, #qs-modal h2, #qs-modal') || qs, { key: 'PageDown', code: 'PageDown' }); const sp = kd(qs, { key: ' ', code: 'Space' });
+      const scrolls = [!pd.defaultPrevented, !sp.defaultPrevented];
+      return is([behind, ownBox, scrolls], [[0, 0, 0], true, [true, true]], 'keys on the floating window\'s button [saves, presets added, undo steps] / its own text box keeps Backspace / the wizard\'s scroll keys are not swallowed [PageDown, Space]');
+    } finally { window.saveProject = realSave; try { _sysCloseCustomResModal(); } catch (e) {} try { closeQS(); } catch (e) {} await wait(200); okDialogs(); await restore(); }
+  });
+  await check('Edit Show Info: the "Show name needed" note takes Enter (it closes and the cursor goes back to the Show name box, it does not come straight back)', async () => {
+    await restore(); const pen = $('#tb-show-edit'); if (!pen || !vis(pen)) return 'no pencil #tb-show-edit';
+    const kd = (el, init) => { const e = new KeyboardEvent('keydown', Object.assign({ bubbles: true, cancelable: true }, init)); (el || document.body).dispatchEvent(e); return e; };
+    try {
+      pen.click(); await wait(450); const nameBox = $('#qs-show'); if (!nameBox) return 'no Show name box';
+      nameBox.focus(); nameBox.value = ''; fire(nameBox, 'input'); kd(nameBox, { key: 'Enter', code: 'Enter' }); await wait(400);
+      const raised = dlgOpen() && /Show name needed/i.test(dialogText());
+      $('#dlg-confirm').click(); await wait(500);
+      const after = [dlgOpen(), vis($('#qs-modal')), document.activeElement === nameBox];
+      return is([raised, after], [true, [false, true, true]], 'the note is raised / after Enter on it [note still open, the window is still open, the cursor is back in the Show name box]');
+    } finally { try { okDialogs(); closeQS(); } catch (e) {} await wait(200); await restore(); }
+  });
+  await check('Restore draft: the question that protects it names a draft, in wording that is true for a show that was saved before the tab closed', async () => {
+    await restore(); const was = eval('_lbFromDraft'); try {
+      eval('_lbFromDraft=true'); let asked = null; const realConfirm = window.showConfirm;
+      window.showConfirm = function (o) { asked = { title: o.title, message: o.message }; };
+      newShow(); await wait(200); window.showConfirm = realConfirm;
+      const ok = !!asked && asked.title === 'Restored draft' && /came back from a browser draft/.test(asked.message) && !/has not been saved\./.test(asked.message.split('\n')[0].replace(/ since\./, ''));
+      return is([!!asked, asked && asked.title, ok], [true, 'Restored draft', true], 'the question came / its title / the wording is the draft one and does not claim the show was never saved');
+    } finally { eval('_lbFromDraft=' + (was ? 'true' : 'false')); try { okDialogs(); } catch (e) {} await restore(); }
+  });
+
+// aux-drop-remove (round 16kt, decisions 13 + 15): new checks for tests/flows_probe.js.
+// Each one FAILS on the 16ks page as shipped (v0.3.0) and PASSES with patch.py, and each ends on restore().
+//
+// WHERE: insert this whole block straight BEFORE the line
+//     "  // ── Video Presets, Advanced ─────────────────────────────────────────────────────────────────────────────────────"
+// It must go BEFORE that line, not inside the Advanced section: that section pushes TEST 4x3 / TEST CLIP into
+// customLibrary AFTER BASE was taken, and restore() would delete them under the checks that follow. Up here the source
+// rail holds the show's own sources, so nothing with sound is ever touched.
+//
+// The drag is synthetic (DragEvent) with a REAL DataTransfer, because the probe runs inside the page: the app's own
+// _fsSrcDragStart fills that DataTransfer, so _fsCanvasDragOver / _fsCanvasDrop read exactly what a mouse drag writes.
+// The same flows were also driven with Chrome's own drag machinery over CDP (Input.setInterceptDrags +
+// Input.dispatchDragEvent) — see REPORT.md.
+
+  // ── aux-drop-remove (16kt) ──────────────────────────────────────────────────────────────────────────────────────
+  const _adDrag = async (card, target) => {
+    const dt = new DataTransfer();
+    card.dispatchEvent(new DragEvent('dragstart', { bubbles: true, cancelable: true, dataTransfer: dt }));
+    await wait(80);
+    target.dispatchEvent(new DragEvent('dragenter', { bubbles: true, cancelable: true, dataTransfer: dt }));
+    target.dispatchEvent(new DragEvent('dragover', { bubbles: true, cancelable: true, dataTransfer: dt }));
+    await wait(120);
+    const hot = target.classList.contains('fs-drop-hot');
+    target.dispatchEvent(new DragEvent('drop', { bubbles: true, cancelable: true, dataTransfer: dt }));
+    card.dispatchEvent(new DragEvent('dragend', { bubbles: true, cancelable: true, dataTransfer: dt }));
+    await wait(350);
+    return hot;
+  };
+  const _adOpen = async pid => { openFullscreen(pid); await wait(800); _fsSetSrcTab('images'); _fsClearLayer(); await wait(400); };
+  const _adHome = async () => { try { closeLayerPanel(); } catch (e) {} try { if (fsPresetId) closeFullscreen(); } catch (e) {} selLayer = null; selDSM = null; await wait(300); await restore(); };
+  const _adPreset = () => { const p = presets.find(x => dsms.some(d => getDSMOn(x.id, d.id))) || presets[0]; return { p, d: dsms.filter(x => getDSMOn(p.id, x.id))[0] || null }; };
+  const _adLayers = sid => presets.map(p => ((p.layers || {})[sid] || {})[1] || null);
+
+  await check('Advanced: a source dropped on an AUX box sets what that AUX shows in THIS preset — one undo step, Undo and Redo go both ways, the other presets keep theirs', async () => {
+    const { p, d } = _adPreset(); if (!d) { await _adHome(); return 'no AUX is switched on in any preset'; }
+    await _adOpen(p.id);
+    const was = getDSMContent(p.id, d.id) || '';
+    const card = $$('#fs-source-list .fs-src[data-src]').find(c => c.dataset.src && c.dataset.src !== was);
+    const box = $('#fs-canvas .dsm-box');
+    if (!card || !box) { await _adHome(); return 'no source card or no AUX box on the Advanced page'; }
+    const name = card.dataset.src, others = presets.filter(x => x.id !== p.id).map(x => getDSMContent(x.id, d.id) || ''), u0 = _undoStack.length;
+    await _adDrag(card, box);
+    const landed = getDSMContent(p.id, d.id), steps = _undoStack.length - u0;
+    const shown = ($('#fs-canvas .dsm-box').textContent || '').replace(/\s+/g, ' ');
+    const rest = presets.filter(x => x.id !== p.id).map(x => getDSMContent(x.id, d.id) || '');
+    doUndo(); await wait(450); const undone = getDSMContent(p.id, d.id) || '';
+    doRedo(); await wait(450); const redone = getDSMContent(p.id, d.id) || '';
+    await _adHome();
+    return is([landed, steps, shown.indexOf(name.slice(0, 10)) >= 0, rest, undone, redone], [name, 1, true, others, was, name],
+      'content after the drop / undo steps / the box shows the name / the other presets / after Undo / after Redo');
+  });
+
+  await check('Advanced: an AUX box lights up while a source is dragged over it, like a layer or a BG, and dropping the name it already shows writes nothing and records no undo step', async () => {
+    const { p, d } = _adPreset(); if (!d) { await _adHome(); return 'no AUX is switched on in any preset'; }
+    await _adOpen(p.id);
+    const was = getDSMContent(p.id, d.id) || '';
+    const card = $$('#fs-source-list .fs-src[data-src]').find(c => c.dataset.src && c.dataset.src !== was);
+    const box = $('#fs-canvas .dsm-box');
+    if (!card || !box) { await _adHome(); return 'no source card or no AUX box on the Advanced page'; }
+    const hot1 = await _adDrag(card, box);
+    const cold = !$('#fs-canvas .dsm-box').classList.contains('fs-drop-hot');
+    const u1 = _undoStack.length, first = getDSMContent(p.id, d.id);
+    const hot2 = await _adDrag($$('#fs-source-list .fs-src[data-src]').find(c => c.dataset.src === first), $('#fs-canvas .dsm-box'));
+    const idle = _undoStack.length - u1, same = getDSMContent(p.id, d.id);
+    await _adHome();
+    return is([hot1, cold, hot2, same === first, idle], [true, true, true, true, 0],
+      'lit while over it / the light goes out after the drop / lit again on the second drag / the content stands / undo steps for a drop that changes nothing');
+  });
+
+  await check('Advanced: an AUX switched off in this preset has no box to drop on (the Simple table has no cell for it either) and keeps what it showed; the one that is on takes the drop', async () => {
+    const { p, d } = _adPreset(); if (!d) { await _adHome(); return 'no AUX is switched on in any preset'; }
+    await _adOpen(p.id);
+    const boxes0 = $$('#fs-canvas .dsm-box').length, u0 = _undoStack.length;
+    const cellsOn = $$('#tbody input').filter(i => (i.getAttribute('onblur') || '').indexOf("setDSMContent('" + p.id + "','" + d.id + "'") === 0).length;
+    actions.toggleDSM(p.id, d.id); await wait(500);
+    const boxes1 = $$('#fs-canvas .dsm-box').length, kept = getDSMContent(p.id, d.id) || '';
+    const cellsOff = $$('#tbody input').filter(i => (i.getAttribute('onblur') || '').indexOf("setDSMContent('" + p.id + "','" + d.id + "'") === 0).length;
+    while (_undoStack.length > u0) { doUndo(); await wait(300); }
+    await wait(300);
+    const card = $$('#fs-source-list .fs-src[data-src]').find(c => c.dataset.src && c.dataset.src !== kept), box = $('#fs-canvas .dsm-box');
+    if (!card || !box) { await _adHome(); return 'the AUX box did not come back'; }
+    await _adDrag(card, box);
+    const landed = getDSMContent(p.id, d.id);
+    await _adHome();
+    return is([boxes1, kept.length > 0, cellsOn, cellsOff, landed], [boxes0 - 1, true, 1, 0, card.dataset.src],
+      'boxes left with the AUX off / it kept its content / Simple cells for it while on / while off / the drop on the AUX that is on');
+  });
+
+  await check('Layer panel: BOTH Remove keys are there in every mode — the Simple panel, the Advanced panel and the Advanced page\'s docked panel', async () => {
+    const f = firstLayer(); if (!f) { await _adHome(); return 'no layer in the show'; }
+    const on = e => !!e && getComputedStyle(e).display !== 'none' && e.getBoundingClientRect().width > 0;
+    const q = root => root ? [on($('.lp-remove', root)), on($('.lp-remove-global', root))] : 'no panel';
+    closeLayerPanel(); openLayerPanelSimple(fakeEv, f.pid, f.sid, 1); await wait(500); const simple = q($('#layer-panel'));
+    closeLayerPanel(); await wait(200); openLayerEdit(fakeEv, f.pid, f.sid, 1); await wait(500); const adv = q($('#layer-panel'));
+    closeLayerPanel(); await wait(200); await _adOpen(f.pid); _fsSelectLayer(f.pid, f.sid, 1); await wait(600); const docked = q($('#fs-props'));
+    await _adHome();
+    return is([simple, adv, docked], [[true, true], [true, true], [true, true]],
+      '[Remove from this preset, Remove from ALL presets] in the Simple panel / the Advanced panel / the docked panel');
+  });
+
+  await check('Layer panel: the "Remove from ALL presets" window says Undo brings it back, and it does — one Undo puts the layer back in every preset, Redo takes it out again', async () => {
+    const f = firstLayer(); if (!f) { await _adHome(); return 'no layer in the show'; }
+    const before = _adLayers(f.sid);
+    closeLayerPanel(); openLayerEdit(fakeEv, f.pid, f.sid, 1); await wait(500);
+    const b = $('#layer-panel .lp-remove-global'); if (!b) { await _adHome(); return 'no "Remove from ALL presets" in the Advanced layer panel'; }
+    const u0 = _undoStack.length; b.click(); await wait(400);
+    const txt = dialogText(); okDialogs(); await wait(600);
+    const gone = _adLayers(f.sid), steps = _undoStack.length - u0;
+    doUndo(); await wait(600); const back = _adLayers(f.sid);
+    doRedo(); await wait(600); const again = _adLayers(f.sid);
+    await _adHome();
+    return is([/cannot be undone/i.test(txt), /Undo brings it back/i.test(txt), gone.every(v => v === null), steps, back, again.every(v => v === null), before.some(v => v)],
+      [false, true, true, 1, before, true, true],
+      'the window still says "cannot be undone" / it says "Undo brings it back" / gone from every preset / undo steps / after one Undo / after Redo / the show really had that layer');
+  });
+
+  await check('Layer panel: removing a layer from every preset records its own undo step, and a removal with nothing to remove records none', async () => {
+    const f = firstLayer(); if (!f) { await _adHome(); return 'no layer in the show'; }
+    const before = _adLayers(f.sid), u0 = _undoStack.length;
+    removeLayerGlobally(f.pid, f.sid, 1); await wait(500);
+    const steps = _undoStack.length - u0, gone = _adLayers(f.sid).every(v => v === null);
+    doUndo(); await wait(600); const back = _adLayers(f.sid);
+    const u1 = _undoStack.length; removeLayerGlobally(f.pid, f.sid, 61); await wait(500); const idle = _undoStack.length - u1;
+    await _adHome();
+    return is([steps, gone, back, idle], [1, true, before, 0],
+      'undo steps for the removal itself / gone everywhere / one Undo puts it back in every preset / steps when there is nothing to remove');
+  });
+
+  await check('Advanced: the docked Properties panel removes a layer from this preset only, or from all of them, and each is one undo step', async () => {
+    const f = firstLayer(); if (!f) { await _adHome(); return 'no layer in the show'; }
+    const before = _adLayers(f.sid);
+    await _adOpen(f.pid); _fsSelectLayer(f.pid, f.sid, 1); await wait(600);
+    const here = $('#fs-props .lp-remove'); if (!here) { await _adHome(); return 'no "Remove from this preset" in the docked panel'; }
+    const u0 = _undoStack.length; here.click(); await wait(500);
+    const one = _adLayers(f.sid), steps1 = _undoStack.length - u0;
+    doUndo(); await wait(600);
+    _fsSelectLayer(f.pid, f.sid, 1); await wait(600);
+    const all = $('#fs-props .lp-remove-global'); if (!all) { await _adHome(); return 'no "Remove from ALL presets" in the docked panel'; }
+    const u1 = _undoStack.length; all.click(); await wait(400); const asked = dlgOpen(); okDialogs(); await wait(600);
+    const none = _adLayers(f.sid), steps2 = _undoStack.length - u1;
+    doUndo(); await wait(600); const back = _adLayers(f.sid);
+    await _adHome();
+    const onlyHere = before.map((v, i) => presets[i] && presets[i].id === f.pid ? null : v);
+    return is([one, steps1, asked, none.every(v => v === null), steps2, back], [onlyHere, 1, true, true, 1, before],
+      'after "this preset" (only that one cleared) / undo steps / the window asked / after "ALL presets" / undo steps / one Undo puts it back');
+  });
+
+// AV Look Book — round 16kt, task "colours-phone-fix". New checks for tests/flows_probe.js.
+// BASE for these is a fresh deploy/lookbook_builder.html with reorder-colours/patch.py and then
+// aux-drop-remove/patch.py applied. Each check below FAILS on that BASE and PASSES with patch_fix.py, and each
+// ends on restore().
+//
+// WHERE: insert this whole block straight BEFORE the line
+//     "  // ── Video Presets, Advanced ───────────────────────────────────────────────────────────────────────────────────"
+// (the same place the aux-drop-remove block goes — it must be BEFORE that section, which pushes test media into
+// customLibrary after BASE was taken). Order between the two blocks does not matter: every helper here is prefixed
+// _cf and every check restores the show.
+//
+// REPLACES: nothing. The twelve checks the two builders added were re-run verbatim against this page and all twelve
+// still pass (REPORT.md, "the gate"), including 'Layer panel: BOTH Remove keys are there in every mode…' (the desktop
+// keeps both keys; only a phone's Simple mode is given one) and 'Simple: a colour given to a built-in content type is
+// saved with the show…' (the colour setter still records exactly one undo step — the picker no longer records a
+// second, empty one).
+
+  // ── colours-phone-fix (16kt) ────────────────────────────────────────────────────────────────────────────────────
+  const _cfRgb = h => { const n = parseInt(h.slice(1), 16); return 'rgb(' + ((n >> 16) & 255) + ', ' + ((n >> 8) & 255) + ', ' + (n & 255) + ')'; };
+  const _cfHome = async () => { try { closeColorPop(); } catch (e) {} try { closeLayerPanel(); } catch (e) {} try { const p = $('#dsm-panel'); if (p) p.remove(); } catch (e) {} try { if (fsPresetId) closeFullscreen(); } catch (e) {} selLayer = null; selDSM = null; await wait(300); await restore(); };
+  // the panel builder itself — the phone's inline panel calls exactly this one (mbOpenLayerInline uses
+  // window._origOpenLayerPanelForMobile), so the same call stands in for both layouts
+  const _cfPanel = async (pid, sid, n, adv) => { closeLayerPanel(); await wait(150); (window._origOpenLayerPanelForMobile || openLayerPanelWithMode)(fakeEv, pid, sid, n, adv === true); await wait(400); };
+  // the ✎ swatch for a label, clicked the way a user clicks it
+  const _cfSwatch = async (pid, sid, n, label) => { await _cfPanel(pid, sid, n); const sw = $('#layer-panel .lp-color-swatch[data-label="' + label + '"]'); if (!sw) return null; sw.click(); await wait(350); return ($('#cp-hex') || {}).value || ''; };
+  const _cfSetColour = async (pid, sid, n, label, hex) => { const shown = await _cfSwatch(pid, sid, n, label); if (shown === null) return null; cpSetFromHex(hex); cpApply(); await wait(400); return shown; };
+
+  await check('Simple: a colour given to a built-in content type reaches EVERY place that draws it — the table cell, the canvas chip, the layer panel dot, its ✎ swatch, the AUX list and the Advanced source rail', async () => {
+    const f = firstLayer(); if (!f) { await _cfHome(); return 'no layer in the show'; }
+    pushUndo(); setL(f.pid, f.sid, 1, 'PGM'); scheduleRender(); await wait(250);
+    const shown = await _cfSetColour(f.pid, f.sid, 1, 'PGM', '#123456');
+    if (shown === null) { await _cfHome(); return 'no ✎ swatch for PGM in the layer panel'; }
+    const want = _cfRgb('#123456');
+    const cell = $$('#tbody tr[data-pid="' + f.pid + '"] .home-field-layer').find(e => { const i = $('input', e); return i && i.value === 'PGM'; });
+    const cellC = cell ? getComputedStyle(cell).borderLeftColor : '(no PGM cell)';
+    const chip = $('.preset-row[data-pid="' + f.pid + '"] .layer-chip[data-sid="' + f.sid + '"] .chip-inner');
+    const chipC = chip ? getComputedStyle(chip).backgroundColor : '(no chip)';
+    await _cfPanel(f.pid, f.sid, 1);
+    const row = $('#layer-panel .lp-content-list [data-label="PGM"]');
+    const dotC = row ? getComputedStyle($('div', row)).backgroundColor : '(no PGM row)';
+    const swC = row ? getComputedStyle($('.lp-color-swatch', row)).backgroundColor : '(no PGM row)';
+    // the AUX properties list: the dot it draws, and the colour that row hands the AUX when it is picked
+    let auxC = '(no AUX)', auxWrites = '(no AUX)';
+    const ap = presets.find(p => dsms.some(d => getDSMOn(p.id, d.id))), ad = ap ? dsms.filter(d => getDSMOn(ap.id, d.id))[0] : null;
+    if (ap && ad) {
+      closeLayerPanel(); openDSMPanel(fakeEv, ap.id, ad.id); await wait(400);
+      const arow = $$('#dsm-panel div[onclick*="dsmPanelContent"]').find(e => (e.textContent || '').trim().replace(/^✓ /, '') === 'PGM');
+      if (arow) { auxC = getComputedStyle($('div', arow)).backgroundColor; auxWrites = ((arow.getAttribute('onclick') || '').match(/#[0-9a-fA-F]{6}/) || ['(none)'])[0]; }
+      const pan = $('#dsm-panel'); if (pan) pan.remove();
+    }
+    // the Advanced page's source rail
+    openFullscreen(f.pid); await wait(800); _fsSetSrcTab('images'); await wait(500);
+    const card = $$('#fs-source-list .fs-src[data-src]').find(c => c.dataset.src === 'PGM');
+    const railC = card ? getComputedStyle($('.fs-src-thumb', card)).backgroundColor : '(no PGM card in the rail)';
+    const out = is([findContent('PGM').c, cellC, chipC, dotC, swC, auxC, auxWrites, railC],
+      ['#123456', want, want, want, want, want, '#123456', want],
+      'the colour in force / the table cell / the canvas chip / the layer panel dot / its ✎ swatch / the AUX list dot / what the AUX row would write / the Advanced rail card');
+    await _cfHome(); return out;
+  });
+
+  await check('Simple: the ✎ swatch opens on the colour in force, and an Apply on exactly that writes nothing, lights nothing and records no undo step', async () => {
+    const f = firstLayer(); if (!f) { await _cfHome(); return 'no layer in the show'; }
+    pushUndo(); setL(f.pid, f.sid, 1, 'PGM'); scheduleRender(); await wait(250);
+    const first = await _cfSetColour(f.pid, f.sid, 1, 'PGM', '#123456');
+    if (first === null) { await _cfHome(); return 'no ✎ swatch for PGM in the layer panel'; }
+    const was = findContent('PGM').c, file0 = JSON.stringify(getProjectState().contentColors || {});
+    _captureCleanBaseline(); eval('_isDirty=false'); _updateDirtyIndicator();
+    const n = _undoStack.length;
+    const reopened = await _cfSwatch(f.pid, f.sid, 1, 'PGM');   // what the box shows on the second visit
+    cpApply(); await wait(450); _recomputeDirty();
+    const lit = !!eval('_isDirty') || $('#tb-dirty').closest('button').classList.contains('save-dirty');
+    const out = is([first, was, reopened, findContent('PGM').c, JSON.stringify(getProjectState().contentColors || {}), _undoStack.length - n, lit],
+      ['#2d8a5e', '#123456', '#123456', '#123456', file0, 0, false],
+      'the box on the FIRST visit (the colour in force, not a shade off it) / the colour that change put in force / the box on the second visit / the colour after Apply / the show file after Apply / undo steps recorded / Save lit by an Apply that changed nothing');
+    await _cfHome(); return out;
+  });
+
+  await check('Layer panel: a phone keeps ONE Remove key in Simple — the mode it opens in — and is told a removal from ALL presets cannot be undone there; the desktop keeps both keys', async () => {
+    const f = firstLayer(); if (!f) { await _cfHome(); return 'no layer in the show'; }
+    const seen = el => !!el && getComputedStyle(el).display !== 'none' && el.getBoundingClientRect().width > 0;
+    let out;
+    try {
+      await _cfPanel(f.pid, f.sid, 1);
+      const deskSimple = [seen($('#layer-panel .lp-remove')), seen($('#layer-panel .lp-remove-global'))];
+      await _cfPanel(f.pid, f.sid, 1, true);
+      const deskAdv = [seen($('#layer-panel .lp-remove')), seen($('#layer-panel .lp-remove-global'))];
+      document.body.classList.add('is-mobile');                       // the phone build's own marker
+      await _cfPanel(f.pid, f.sid, 1);
+      const phoneSimple = [seen($('#layer-panel .lp-remove')), seen($('#layer-panel .lp-remove-global'))];
+      await _cfPanel(f.pid, f.sid, 1, true);
+      const phoneAdv = [seen($('#layer-panel .lp-remove')), seen($('#layer-panel .lp-remove-global'))];
+      const g = $('#layer-panel .lp-remove-global'); let said = '(no window)', steps = -1, gone = null;
+      if (g) {
+        const n = _undoStack.length; g.click(); await wait(400);
+        said = dialogText();
+        const cancel = $('#dlg-cancel'); if (cancel) cancel.click(); await wait(400); okDialogs(); await wait(150);
+        steps = _undoStack.length - n; gone = !!getL(f.pid, f.sid, 1);
+      }
+      out = is([deskSimple, deskAdv, phoneSimple, phoneAdv, /cannot be undone on a phone/i.test(said), /Undo brings it back/i.test(said), steps, gone],
+        [[true, true], [true, true], [true, false], [true, true], true, false, 0, true],
+        'desktop Simple [this preset, ALL presets] / desktop Advanced / PHONE Simple / PHONE Advanced / the phone window says it cannot be undone there / it no longer promises Undo / undo steps after Cancel / the layer is still there after Cancel');
+    } finally {
+      document.body.classList.remove('is-mobile');
+    }
+    await _cfHome(); return out;
+  });
+
+  await check('Layer panel: the two Remove keys share one row, so the Simple panel still fits a 1440x800 laptop window without scrolling and neither key is cut short', async () => {
+    const f = firstLayer(); if (!f) { await _cfHome(); return 'no layer in the show'; }
+    await _cfPanel(f.pid, f.sid, 1);
+    const pop = $('#layer-panel'); if (!pop) { await _cfHome(); return 'the Simple layer panel did not open'; }
+    const room = 800 - ((typeof _topbarSafeTop === 'function') ? _topbarSafeTop() : 139) - 8;   // what _pmFit leaves a panel at that window height
+    const a = $('.lp-remove', pop), b = $('.lp-remove-global', pop);
+    if (!a || !b) { await _cfHome(); return 'the Simple panel is missing a Remove key'; }
+    const ra = a.getBoundingClientRect(), rb = b.getBoundingClientRect(), rp = pop.getBoundingClientRect();
+    const hits = el => { const r = el.getBoundingClientRect(), t = document.elementFromPoint(Math.round(r.left + r.width / 2), Math.round(r.top + r.height / 2)); return !!(t && (t === el || el.contains(t))); };
+    const out = is([pop.scrollHeight <= room, Math.abs(ra.top - rb.top) < 2, Math.round(ra.width + rb.width) < Math.round(rp.width),
+      a.scrollHeight <= a.clientHeight + 1, b.scrollHeight <= b.clientHeight + 1, a.scrollWidth <= a.clientWidth + 1, b.scrollWidth <= b.clientWidth + 1, hits(a), hits(b)],
+      [true, true, true, true, true, true, true, true, true],
+      'the panel fits a 1440x800 window (' + pop.scrollHeight + ' px of content, ' + room + ' px of room) / the two keys are on one row / both fit across the panel / "this preset" text inside its key / "ALL presets" text inside its key / and neither label is cut sideways / each key is what a click at its centre lands on');
+    await _cfHome(); return out;
+  });
+
+  // ── 16kt labels-ratio: LAYER 01 headings, a white tool name / tool buttons, and the CANVAS read-out that gives up
+  //    its two numbers one at a time (owner 2026-09-22) ───────────────────────────────────────────────────────────
+  // WHERE: paste this whole block into tests/flows_probe.js in the Simple section, straight BEFORE the line
+  //   "// ── Video Presets, Advanced ──…"   (nothing here needs the test media that the Advanced setup loads).
+  // Every check FAILS on build 16ks and PASSES with patch.py applied. Each one puts back what it touches: the layer
+  // check clears the layers it typed and ends with restore(); the colour check reads only; the Canvas check adds one
+  // <style id="lt-sim"> and removes it in a finally, and never writes #cv-w / #cv-h.
+  // The window cannot be resized from inside the page, so the Canvas check proves the ladder two ways: it reads the
+  // shipped @media rules out of the CSSOM (which one fires first, and what each one hides) and then APPLIES those very
+  // declarations, verbatim from the CSSOM, to measure what the bar renders at each step. The same ladder was driven at
+  // real window widths with Emulation.setDeviceMetricsOverride in the round's own run (prove.mjs); the widths and the
+  // measurements are in REPORT.md.
+  // REPLACES: nothing. No existing check in tests/flows_probe.js reads the layer column headings, the top-bar colours
+  // or the geometry of the two Canvas boxes; the only two checks that mention them ("Fit Canvas" / "destination drag")
+  // read #cv-w / #cv-h .value, which this round leaves exactly as it was at every window width. Proven, not argued:
+  // a full tests/run_smoke.mjs against the patched page returned "flows: 330 of 330 checks pass, no new page errors"
+  // and all three example shows byte-identical to tests/golden/ (out/gate.log).
+  const _ltThs = () => $$('#thead-row th.th-layer').map(t => t.textContent.trim());
+  const _ltStyle = (el, keys) => { const c = getComputedStyle(el); const o = {}; keys.forEach(k => { o[k] = c[k]; }); return o; };
+  const _ltTypeface = ['fontFamily', 'fontSize', 'fontWeight', 'letterSpacing', 'textTransform'];
+  // the shipped @media block for this width, straight out of the CSSOM
+  const _ltMedia = px => {
+    for (const ss of [...document.styleSheets]) {
+      let rs; try { rs = ss.cssRules; } catch (e) { continue; }
+      if (!rs) continue;
+      for (const r of rs) if (r.conditionText && r.conditionText.replace(/\s+/g, '') === '(max-width:' + px + 'px)') return r;
+    }
+    return null;
+  };
+  const _ltHides = (media, id) => !!(media && [...media.cssRules].some(r => r.selectorText && r.selectorText.split(',').some(s => s.trim() === '#' + id) && r.style.display === 'none'));
+  // apply a shipped @media block's own declarations, so the measurement is of the real rules and not of a guess
+  const _ltSim = px => {
+    const m = _ltMedia(px); if (!m) return false;
+    let s = document.getElementById('lt-sim');
+    if (!s) { s = document.createElement('style'); s.id = 'lt-sim'; document.head.appendChild(s); }
+    s.textContent += [...m.cssRules].map(r => r.cssText).join('\n') + '\n';
+    return true;
+  };
+  const _ltSimOff = () => { const s = document.getElementById('lt-sim'); if (s) s.remove(); };
+  // what the Canvas group READS on screen: the label, then whatever of the two boxes is still drawn
+  const _ltReads = () => {
+    const V = el => !!el && getComputedStyle(el).display !== 'none' && el.getBoundingClientRect().width > 0;
+    const cw = $('#cv-w'), chh = $('#cv-h'), cx = $('#cv-x');
+    const hdr = $('#cv-grp-hdr') || (cw && cw.closest('.tb-grp') && cw.closest('.tb-grp').querySelector('.tb-grp-hdr'));
+    const t = el => !el ? '' : (el.tagName === 'INPUT' ? el.value : (el.textContent || '').trim());
+    const bits = hdr ? [(hdr.textContent || '').trim().toUpperCase()] : [];
+    [cw, cx, chh].forEach(e => { if (V(e)) bits.push(t(e)); });
+    return bits.join(' ');
+  };
+  const _ltBox = el => { const r = el.getBoundingClientRect(); return [Math.round(r.width), Math.round(r.height), Math.round(r.left), Math.round(r.top)]; };
+  const _ltTip = () => { const h = $('#cv-grp-hdr'); return h ? (h.getAttribute('title') || h.dataset.tip || '') : ''; };
+
+  await check('Video Presets table: the layer columns read LAYER 01 … LAYER 04 in the heading row\'s own label style, keep two digits past nine, and a picked layer still lights its column', async () => {
+    await restore();
+    const out = [];
+    try {
+      out.push(_ltThs());                                                     // four layers: LAYER 01 … LAYER 04
+      const lay = $('#thead-row th.th-layer'), fld = $('#thead-row th.th-field');
+      out.push(JSON.stringify(_ltStyle(lay, _ltTypeface)) === JSON.stringify(_ltStyle(fld, _ltTypeface)));   // same voice as the rest of the heading row
+      // the heading the layer-selection highlight reads back
+      const n0 = (typeof selLayer !== 'undefined') ? selLayer : null;
+      selLayer = { pid: presets[0].id, sid: screens[0].id, n: 3 };
+      _tableSyncLayerSel();
+      out.push($$('#thead-row th.th-layer.is-selected').map(t => t.textContent.trim()));   // ['LAYER 03']
+      selLayer = n0; _tableSyncLayerSel();
+      out.push($$('#thead-row th.th-layer.is-selected').length);
+      // past nine: every heading is still two digits and every one is the same width
+      const p = presets[0], s = screens[0];
+      for (let i = 1; i <= 12; i++) setL(p.id, s.id, i, 'SRC ' + i);
+      render(); renderTable(); await wait(400);
+      const ths = _ltThs();
+      out.push(ths.length >= 12, ths.every(t => /^LAYER \d\d$/.test(t)), ths.slice(8, 12));
+      const ws = $$('#thead-row th.th-layer').map(t => Math.round(t.getBoundingClientRect().width));
+      out.push(Math.max(...ws) - Math.min(...ws) <= 1);                       // ten and over never widen their column
+      return is(out, [
+        ['LAYER 01', 'LAYER 02', 'LAYER 03', 'LAYER 04'], true,
+        ['LAYER 03'], 0,
+        true, true, ['LAYER 09', 'LAYER 10', 'LAYER 11', 'LAYER 12'], true,
+      ], 'four headings / same style as the heading row / picked column lit / nothing lit after / twelve headings / all two digits / nine to twelve / equal widths');
+    } finally { await restore(); }
+  });
+
+  await check('Top bar: the tool name, its icon and the three tool buttons read white, while the pill chrome, the sliding highlight and the grey description keep exactly what they had', async () => {
+    const C = el => getComputedStyle(el).color;
+    const name = $('.view-info-name'), icon = $('.view-info-icon'), desc = $('.view-info-desc');
+    const btns = $$('.wire-nav-pillgroup .wire-nav-btn');
+    const grp = $('.wire-nav-pillgroup'), thumb = $('.wire-nav-thumb');
+    const WHITE = 'rgb(255, 255, 255)';
+    const cyan = getComputedStyle(document.body).getPropertyValue('--n-cyan-rgb').trim();   // the skin's accent, whichever skin is on
+    const tinted = new RegExp('rgba\\(' + cyan.replace(/,\s*/g, ',\\s*'));
+    const out = [
+      !!name && C(name) === WHITE,
+      !!icon && C(icon) === WHITE,                                            // the SVG is stroke="currentColor"
+      btns.length, btns.every(b => C(b) === WHITE),
+      btns.filter(b => b.classList.contains('wire-nav-active')).length,
+      !!name && !tinted.test(getComputedStyle(name).textShadow),              // no cyan halo left round the white word
+      !!desc && C(desc) === 'rgb(154, 160, 170)',                             // the grey description is untouched
+      !!icon && tinted.test(getComputedStyle(icon).backgroundImage),          // the icon chip keeps its tint
+      !!grp && getComputedStyle(grp).backgroundColor === 'rgb(10, 13, 18)',   // the pill's own recess
+      !!thumb && /linear-gradient/.test(getComputedStyle(thumb).backgroundImage),       // the sliding highlight still draws
+    ];
+    return is(out, [true, true, 3, true, 1, true, true, true, true, true],
+      'name white / icon white / three buttons, all white / one active / no cyan halo / grey description kept / icon chip tint kept / pill recess kept / thumb kept');
+  });
+
+
+  // ── 16kt small fixes that switch pages (tool bar order, the added-preset note). Simple section: they open and close
+  //    Wire / I/O Patch themselves and end on restore(), so they must NOT sit in the Advanced section.
+  await check('Tool bar: the three tools read left to right in work order (Video Presets, I/O Patch, Wire); each still opens its own page and the sliding highlight lands on it', async () => {
+    const btns = $$('.wire-nav-pillgroup .wire-nav-btn'); const order = btns.map(b => b.id.replace('topbar-nav-', ''));
+    const lefts = btns.map(b => b.getBoundingClientRect().left); const leftToRight = lefts.every((x, i) => i === 0 || x > lefts[i - 1]);
+    const thumbOn = () => { const a = $('.wire-nav-btn.wire-nav-active'), t = $('.wire-nav-thumb'); return !!a && !!t && Math.abs(a.getBoundingClientRect().left - t.getBoundingClientRect().left) <= 2; };
+    const was = fsPresetId; if (fsPresetId) { closeFullscreen(); await wait(400); }
+    try {
+      $('#topbar-nav-iop').click(); await wait(700); const io = [getComputedStyle($('#sys-overlay')).display !== 'none', $('.wire-nav-btn.wire-nav-active').id, thumbOn()];
+      $('#topbar-nav-wire').click(); await wait(800); const wi = [getComputedStyle($('#wire-overlay')).display !== 'none', $('.wire-nav-btn.wire-nav-active').id, thumbOn()];
+      $('#topbar-nav-vp').click(); await wait(700); const vp = [getComputedStyle($('#wire-overlay')).display === 'none', $('.wire-nav-btn.wire-nav-active').id, thumbOn(), $('#topbar-exit').classList.contains('topbar-exit-disabled')];
+      return is([order, leftToRight, io, wi, vp], [['vp', 'iop', 'wire'], true, [true, 'topbar-nav-iop', true], [true, 'topbar-nav-wire', true], [true, 'topbar-nav-vp', true, true]],
+        'order in the bar / they really sit left to right / I/O Patch [open, lit button, highlight on it] / Wire / Video Presets [back home, lit, highlight, Exit greyed out]');
+    } finally { try { closeWireMode(); closeSystem(); } catch (e) {} await wait(300); if (was) { openFullscreen(was); await wait(600); mute(); } }
+  });
+  await check('the "P06 added" note belongs to the page it was raised on: it goes when you leave Wire or I/O Patch, and it never sits over a window of the app', async () => {
+    await restore(); const was = fsPresetId; if (fsPresetId) { closeFullscreen(); await wait(400); } const n0 = presets.length;
+    try {
+      openWireMode(); await wait(700); actions.addPreset(); await wait(400); okDialogs(); await wait(200);
+      const inWire = (() => { const n = $('#lb-note'); return n ? [n.textContent.trim(), getComputedStyle(n).zIndex] : null; })();
+      closeWireMode(); await wait(400); const afterLeaving = !$('#lb-note');
+      openSystem(); await wait(600); actions.addPreset(); await wait(400); okDialogs(); await wait(200);
+      const raisedAgain = !!$('#lb-note'); openHelp(); await wait(300);
+      const underHelp = (() => { const n = $('#lb-note'), h = $('#help-overlay'); if (!n) return 'the note went with the window, fine'; return parseInt(getComputedStyle(n).zIndex, 10) < parseInt(getComputedStyle(h).zIndex, 10); })();
+      closeHelp(); await wait(200); closeSystem(); await wait(400); const afterIo = !$('#lb-note');
+      return is([inWire && inWire[0], inWire && inWire[1], afterLeaving, raisedAgain, underHelp === true || underHelp === 'the note went with the window, fine', afterIo],
+        ['P06 added', '600', true, true, true, true], 'the note in Wire [text, layer] / gone after leaving Wire / raised again from I/O Patch / it is under the Help window / gone after leaving I/O Patch');
+    } finally { try { closeHelp(); closeWireMode(); closeSystem(); } catch (e) {} while (presets.length > n0) doUndo(); await wait(300); await restore(); if (was) { openFullscreen(was); await wait(600); mute(); } }
+  });
+
+  // ── PART 1: NEW checks ─ INSERT straight BEFORE the line "// ── Video Presets, Advanced" ────────────────────────
+
+  // the tile's width cap: the narrow screen, without touching the window (and so without the phone build)
+  const pnCap = w => {
+    let s = $('#pn-cap');
+    if (!s) { s = document.createElement('style'); s.id = 'pn-cap'; document.head.appendChild(s); }
+    s.textContent = w ? '#canvas-area{width:' + w + 'px !important;flex:0 0 auto !important}' : '';
+  };
+  const pnOff = () => { const s = $('#pn-cap'); if (s) s.remove(); };
+  const pnRow = () => $('#canvas-area .preset-row');
+  const pnHdr = () => { const r = pnRow(); return r && r.querySelector('.preset-header'); };
+  const pnQ = s => { const h = pnHdr(); return h && h.querySelector(s); };
+  const pnTop = el => { if (!el) return false; const r = el.getBoundingClientRect(); const t = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2); return !!t && (t === el || el.contains(t)); };
+  // the word is dropped the way the app drops Paste / Copy / Reset: font-size 0, icon kept (16hg / 16hd)
+  const pnWord = () => { const b = pnQ('.pr-actions button[onclick*="toggleAdvancedMenu"]'); return !!b && parseFloat(getComputedStyle(b).fontSize) > 0; };
+  const pnW = el => el ? Math.round(el.getBoundingClientRect().width) : 0;
+  const pnState = () => ({
+    p01: vis(pnQ('.p-code')), name: vis(pnQ('input[name="p-name"]')), notes: vis(pnQ('input[name="p-notes"]')),
+    word: pnWord(), strip: vis(pnQ('.lb-lstrip')),
+    nameW: pnW(pnQ('input[name="p-name"]')), notesW: pnW(pnQ('input[name="p-notes"]')),
+  });
+  const pnAt = async w => { pnCap(w); render(); await wait(320); return pnState(); };
+  const pnCaps = [1400, 1000, 860, 760, 660, 560];
+
+  await check('Narrow preset header: the tile gives way in the owner\'s order — MODIFIERS drops its word, then Notes and the preset name go to half, then Notes goes, then the name goes', async () => {
+    await restore();
+    const seen = [];
+    for (const w of pnCaps) seen.push(Object.assign({ cap: w }, await pnAt(w)));
+    pnOff(); render(); await wait(320);
+    const wide = seen[0], narrow = seen[seen.length - 1];
+    // the four rungs, each of them reached at some cap, and never out of order
+    const halved = seen.find(s => !s.word && s.notes && s.name && s.notesW <= 95 && s.nameW <= 84);
+    const notesGone = seen.find(s => !s.notes && s.name);
+    const nameGone = seen.find(s => !s.name);
+    const orderKept = seen.every(s => (s.word ? (s.notes && s.name) : true))          // the word always goes first
+      && seen.every(s => (s.notes ? true : !s.word))                                   // Notes never goes while the word is still there
+      && seen.every(s => (s.name ? true : !s.notes));                                  // the name never goes before Notes
+    const out = is([
+      [wide.word, wide.notes, wide.name, wide.notesW, wide.nameW],
+      !!halved, !!notesGone, !!nameGone, orderKept,
+      seen.every(s => s.p01), seen.every(s => s.strip),
+      [pnState().word, pnState().notes, pnState().name],
+    ], [
+      [true, true, true, 180, 158],
+      true, true, true, true,
+      true, true,
+      [true, true, true],
+    ], 'wide tile untouched [word, Notes, name, Notes px, name px] / half rung reached / Notes rung / name rung / order kept / P01 at every width / strip at every width / everything back when the cap is lifted'
+      + ' — seen: ' + seen.map(s => s.cap + ':' + (s.word ? 'W' : '-') + (s.notes ? 'N' : '-') + (s.name ? 'M' : '-') + '/' + s.notesW + '/' + s.nameW).join(' '));
+    await restore();
+    return out;
+  });
+
+  await check('Narrow preset header: the preset number and the layer strip survive every width, the Actions group is never cut off and the header never becomes two rows', async () => {
+    await restore();
+    const bad = [];
+    for (const w of pnCaps) {
+      await pnAt(w);
+      const h = pnHdr(), code = pnQ('.p-code'), strip = pnQ('.lb-lstrip'), acts = pnQ('.pr-actions');
+      if (!h || !code || !strip || !acts) { bad.push(w + ': header parts missing'); continue; }
+      const boxes = $$('.lb-lbox', strip), want = ['BG'].concat(getLayerNums(presets[0].id).map(n => 'L' + n));
+      if (!vis(code) || code.value !== presets[0].code) bad.push(w + ': P01 lost (' + (code && code.value) + ')');
+      if (Math.round(code.getBoundingClientRect().width) !== 54) bad.push(w + ': P01 shrank to ' + Math.round(code.getBoundingClientRect().width));
+      if (!pnTop(code)) bad.push(w + ': P01 is covered');
+      if (boxes.map(b => b.textContent).join(' ') !== want.join(' ')) bad.push(w + ': strip boxes are ' + boxes.map(b => b.textContent).join(' '));
+      if (!vis(strip)) bad.push(w + ': strip hidden');
+      // the strip is allowed to scroll inside itself, never to be squeezed out of existence
+      if (strip.clientWidth < 26) bad.push(w + ': strip squeezed to ' + strip.clientWidth);
+      const pr = parseFloat(getComputedStyle(h).paddingRight) || 0;
+      if (acts.getBoundingClientRect().right > h.getBoundingClientRect().right - pr + 0.5) bad.push(w + ': Actions cut off by ' + Math.round(acts.getBoundingClientRect().right - (h.getBoundingClientRect().right - pr)) + 'px');
+      const rows = new Set($$(':scope > div', h).filter(k => k.offsetWidth).map(k => Math.round(k.getBoundingClientRect().bottom)));
+      if (rows.size !== 1) bad.push(w + ': header is on ' + rows.size + ' rows');
+      // every control still on screen is the top element under its own centre
+      [['name', pnQ('input[name="p-name"]')], ['notes', pnQ('input[name="p-notes"]')], ['modifiers', pnQ('.pr-actions button[onclick*="toggleAdvancedMenu"]')]]
+        .forEach(([n, el]) => { if (vis(el) && !pnTop(el)) bad.push(w + ': ' + n + ' is covered'); });
+    }
+    pnOff(); render(); await wait(320);
+    await restore();
+    return bad.length ? bad.join(' | ') : true;
+  });
+
+  await check('Narrow preset header: the Modifiers button keeps its tooltip, its label and its menu when it is down to the gear icon', async () => {
+    await restore();
+    await pnAt(660);
+    const b = pnQ('.pr-actions button[onclick*="toggleAdvancedMenu"]');
+    if (!b) { pnOff(); render(); await wait(300); await restore(); return 'no Modifiers button'; }
+    const iconOnly = parseFloat(getComputedStyle(b).fontSize) === 0;
+    const kept = [/^Modifiers: options you switch on or off/.test(b.title), /^Modifiers/.test(b.getAttribute('aria-label') || ''), b.textContent.trim().indexOf('Modifiers') === 0];
+    const svgs = $$('svg', b).length;
+    const narrower = Math.round(b.getBoundingClientRect().width) < 150 && Math.round(b.getBoundingClientRect().width) >= 34;
+    const onTop = pnTop(b);
+    closeAdvancedMenu(); b.click(); await wait(280);
+    const opened = $('#adv-menu').classList.contains('open');
+    const items = $$('#adv-menu .adv-item').map(i => i.dataset.adv || i.dataset.advAct || '?');
+    closeAdvancedMenu(); await wait(150);
+    const closed = !$('#adv-menu').classList.contains('open');
+    pnOff(); render(); await wait(320);
+    const wideAgain = parseFloat(getComputedStyle(pnQ('.pr-actions button[onclick*="toggleAdvancedMenu"]')).fontSize) > 0;
+    const out = is([iconOnly, kept, svgs, narrower, onTop, opened, items, closed, wideAgain],
+      [true, [true, true, true], 2, true, true, true, ['aoi', 'blend', 'dead', 'freePos', 'fit'], true, true],
+      'icon only / [tooltip, aria-label, word still in the markup] / gear + triangle still drawn / narrower but not below the icon floor / on top at its centre / menu opens / menu items / menu closes / the word is back when there is room');
+    await restore();
+    return out;
+  });
+
+  await check('Narrow preset header: the note is not lost when Notes disappears — it stays in the show and comes back with the room', async () => {
+    await restore();
+    const p = presets[0].id;
+    _vpSetPresetField(p, 'notes', 'KEEP ME 16kt'); render(); await wait(320);
+    const before = [vis(pnQ('input[name="p-notes"]')), pnQ('input[name="p-notes"]').value];
+    await pnAt(560);
+    const gone = [vis(pnQ('input[name="p-notes"]')), presets.find(x => x.id === p).notes, !!pnQ('input[name="p-notes"]')];
+    pnOff(); render(); await wait(340);
+    const back = [vis(pnQ('input[name="p-notes"]')), pnQ('input[name="p-notes"]').value, presets.find(x => x.id === p).notes];
+    const out = is([before, gone, back],
+      [[true, 'KEEP ME 16kt'], [false, 'KEEP ME 16kt', true], [true, 'KEEP ME 16kt', 'KEEP ME 16kt']],
+      'Notes on screen with the note / hidden but still in the show and still in the DOM / back on screen with the note intact');
+    await restore();
+    return out;
+  });
+
+
+  // ── PART 1, checks 1, 3 and 4 ─ INSERT straight BEFORE the line "// ── Video Presets, Advanced" ────────────────
+
+  // the Simple tile's available width, without touching the window (and so without the phone build)
+  const pfCap = w => {
+    let s = $('#pf-cap');
+    if (!s) { s = document.createElement('style'); s.id = 'pf-cap'; document.head.appendChild(s); }
+    s.textContent = w ? '#canvas-area{width:' + w + 'px !important;flex:0 0 auto !important}' : '';
+  };
+  const pfOff = async () => { const s = $('#pf-cap'); if (s) s.remove(); render(); await wait(420); };
+  const pfRow = () => $('#canvas-area .preset-row');
+  const pfRung = r => { let n = 0; for (let i = 1; i <= 4; i++) if (r && r.classList.contains('lbn-s' + i)) n = i; return n; };
+  const pfAt = async w => { pfCap(w); render(); await wait(420); return pfRung(pfRow()); };
+  const pfW = el => el ? Math.round(el.getBoundingClientRect().width) : 0;
+  // force every rung on one row and report what the strip's slot gets, with the transitions off so the numbers are
+  // the SETTLED ones. Restores the row's own classes and removes the probe style before it returns.
+  const pfForce = row => {
+    const h = row.querySelector('.preset-header'), slot = h.querySelector('.lb-lslot'), acts = h.querySelector('.pr-actions');
+    const need = slot ? (parseFloat(slot.style.getPropertyValue('--lsw')) || 0) : 0;
+    const keep = row.className;
+    const st = document.createElement('style'); st.id = 'pf-notrans';
+    st.textContent = '#canvas-area .preset-header,#canvas-area .preset-header *,#fs-canvas .preset-header,#fs-canvas .preset-header *{transition:none !important}';
+    document.head.appendChild(st);
+    const k = (h.getBoundingClientRect().width / (h.offsetWidth || 1)) || 1;
+    const pr = parseFloat(getComputedStyle(h).paddingRight) || 0;
+    const got = [], cut = [];
+    for (let n = 0; n <= 4; n++) {
+      for (let i = 1; i <= 4; i++) row.classList.toggle('lbn-s' + i, i <= n);
+      void document.body.offsetWidth;
+      got.push(slot ? slot.clientWidth : -1);
+      cut.push(acts ? (acts.getBoundingClientRect().right - h.getBoundingClientRect().right) / k + pr : 0);
+    }
+    row.className = keep; void document.body.offsetWidth; st.remove();
+    let lowest = 4;
+    for (let n = 0; n <= 4; n++) if (got[n] + 0.5 >= need && cut[n] <= 0.5) { lowest = n; break; }
+    return { need: need, got: got, lowest: lowest };
+  };
+
+  await check('Narrow preset header: the tile takes the LOWEST rung that fits — at eight named tile widths the rung it settles on is the first one whose layer strip gets the width it asks for, and P01, the strip, the Actions group and the one-row header survive all eight', async () => {
+    await restore();
+    // measured on this build at a 1440x900 window, 4 layers, --lsw 146 px (capmap.mjs)
+    const caps = [1400, 1060, 1040, 1020, 980, 940, 920, 860];
+    const wantRungs = [0, 0, 0, 1, 1, 1, 2, 2];
+    const bad = [], seen = [], rungs = [];
+    for (const w of caps) {
+      const settled = await pfAt(w);
+      const row = pfRow();
+      if (!row) { bad.push(w + ': no preset tile'); rungs.push(-1); continue; }
+      rungs.push(settled);
+      const h = row.querySelector('.preset-header');
+      const f = pfForce(row);
+      seen.push(w + ':rung' + settled + '(first fit ' + f.lowest + ', needs ' + f.need + ', slot per rung ' + f.got.join('/') + ')');
+      if (settled !== f.lowest) bad.push(w + ': took rung ' + settled + ' but rung ' + f.lowest + ' already fits (strip needs ' + f.need + ', gets ' + f.got.join('/') + ' at rungs 0-4)');
+      const all = $$('#canvas-area .preset-row').map(pfRung);
+      if (all.some(n => n !== settled)) bad.push(w + ': the five tiles disagree ' + JSON.stringify(all));
+      const code = h.querySelector('.p-code'), strip = h.querySelector('.lb-lstrip'), acts = h.querySelector('.pr-actions');
+      if (!vis(code) || pfW(code) !== 54) bad.push(w + ': P01 is ' + (code ? pfW(code) + 'px' : 'gone'));
+      if (!vis(strip) || !$$('.lb-lbox', strip).length) bad.push(w + ': the layer strip is gone');
+      const pr = parseFloat(getComputedStyle(h).paddingRight) || 0;
+      if (acts.getBoundingClientRect().right > h.getBoundingClientRect().right - pr + 0.5) bad.push(w + ': the Actions group is cut off by ' + Math.round(acts.getBoundingClientRect().right - (h.getBoundingClientRect().right - pr)) + 'px');
+      const lines = new Set($$(':scope > div', h).filter(x => x.offsetWidth).map(x => Math.round(x.getBoundingClientRect().bottom)));
+      if (lines.size !== 1) bad.push(w + ': the header is on ' + lines.size + ' rows');
+    }
+    await pfOff();
+    const named = is(rungs, wantRungs, 'the rung at ' + JSON.stringify(caps) + ' px of tile width');
+    await restore();
+    if (bad.length) return bad.join(' | ') + '  [' + seen.join(' ') + ']';
+    return named === true ? true : named + '  [' + seen.join(' ') + ']';
+  });
+
+  await check('Narrow preset header: the rung is SETTLED, not read mid-animation — at four named tile widths it does not move after three more _lbnSync calls, a re-render, a click on the tile or an edit and its undo', async () => {
+    await restore();
+    const caps = [1400, 1020, 960, 900];
+    const bad = [], seen = [];
+    for (const w of caps) {
+      const first = await pfAt(w);
+      const step = async (what, fn) => {
+        await fn(); await wait(450);
+        const now = pfRung(pfRow());
+        seen.push(w + '/' + what + ':' + now);
+        if (now !== first) bad.push(w + ': the rung went ' + first + ' -> ' + now + ' after ' + what + ' — the window never moved');
+      };
+      await step('_lbnSync x3', async () => { for (let i = 0; i < 3; i++) { if (typeof _lbnSync === 'function') _lbnSync(); await wait(400); } });
+      await step('a re-render', async () => { render(); });
+      await step('a click on the collapse chevron, twice', async () => {
+        for (let i = 0; i < 2; i++) { const b = $('#canvas-area .preset-row .pr-actions button[onclick^="actions.toggleMinimize"]'); if (b) b.click(); await wait(400); }
+      });
+      await step('an edit and its undo', async () => {
+        pushUndo(); setL(presets[0].id, screens[1].id, 1, 'CLOCK'); scheduleRender(); await wait(400); doUndo();
+      });
+    }
+    await pfOff(); await restore();
+    return bad.length ? bad.join(' | ') : true;
+  });
+
+  await check('Narrow preset header: no hysteresis — walking the tile down through seven named widths, walking back up, and arriving at each width from a whole tile all give the same named rung, and the note survives the trip', async () => {
+    await restore();
+    const p = presets[0].id;
+    _vpSetPresetField(p, 'notes', 'KEEP ME 16kt-fix'); render(); await wait(420);
+    // measured on this build (capmap.mjs). A tile of this width MUST answer with this rung, whichever side it came
+    // from: the round-16kt base page never lands on rung 1 at any of these widths, it jumps from 0 straight to 2.
+    const caps = [1400, 1060, 1020, 980, 940, 900, 860];
+    const wantRungs = [0, 0, 1, 1, 1, 2, 2];
+    const down = [], up = [], fresh = [];
+    for (const w of caps) down.push(await pfAt(w));
+    for (let i = caps.length - 1; i >= 0; i--) up[i] = await pfAt(caps[i]);
+    for (const w of caps) { await pfOff(); fresh.push(await pfAt(w)); }   /* and arriving at each one from a whole tile */
+    await pfOff();
+    const note = [$('#canvas-area .preset-row input[name="p-notes"]').value, presets.find(x => x.id === p).notes];
+    const out = is([down, up, fresh, note], [wantRungs, wantRungs, wantRungs, ['KEEP ME 16kt-fix', 'KEEP ME 16kt-fix']],
+      'the rung at ' + JSON.stringify(caps) + ' px of tile width, walking down / walking back up / arriving at each one'
+      + ' from a whole tile / the note on screen and in the show');
+    await restore();
+    return out;
+  });
+
+
+  // ── PART 3: REPLACES ──────────────────────────────────────────────────────────────────────────────────────────
+  // REPLACES the existing check, in the Simple section, named:
+  //   'Layer strip: 12 layers never move the Actions group or resize the header; a long strip scrolls inside itself
+  //    and brings the picked box into view'
+  //
+  // WHY it has to change: that check asserts the header geometry is IDENTICAL at 4, 12 and 40 layers (g12 and g40 both
+  // compared with g0). At 12 layers on a 1440 window that is still true and stays asserted below. At 40 layers the
+  // strip asks for about 1250 px, which is exactly the case the owner's rule is about ("if the layer tab still needs
+  // space the notes section can disappear"), so the ladder now drops the Modifiers word, Notes and the preset name to
+  // hand that room to the strip: the Actions group moves LEFT and gets narrower on purpose. The replacement keeps
+  // every other assertion of the original — box count at 12, geometry unchanged at 12, the strip scrolls, it stays
+  // left of Actions, the picked box is brought into view and it scrolled there — and replaces the single "g40 equals
+  // g0" assertion with what the tile must now do: the row and the header keep their size, the strip gets more room
+  // than it had, and P01 and the strip are still there.
+
+
+  // ── PART 2: REPLACES ──────────────────────────────────────────────────────────────────────────────────────────
+  // Two existing checks stop testing what they were written to test once the ladder is in the page. Each is named
+  // here and replaced by the version under it. Both replacements are self-contained (their own helpers, prefixed
+  // pfr), so they can sit exactly where the check they replace sat.
+  //
+  // REPLACES 1, in the Simple "LAYER STRIP (round 16ks…)" block:
+  //   'Layer strip: 12 layers never move the Actions group or resize the header; a long strip scrolls inside itself
+  //    and brings the picked box into view'
+  //   WHY: it asserts the header geometry is IDENTICAL at 4, 12 and 40 layers. At 12 layers on a 1440 window that is
+  //   still true and stays asserted. At 40 layers the strip asks for about 1278 px, which is the case the owner's
+  //   rule exists for, so the ladder hands it room: the Modifiers word, Notes and the preset name give way and the
+  //   Actions group gets narrower on purpose. The replacement keeps every other assertion — boxes at 12, geometry
+  //   unchanged at 12, the strip scrolls, it stays left of Actions, the picked box is brought into view and it
+  //   scrolled there — and puts in place of "g40 equals g0" what the tile must now do: the header and the row keep
+  //   their own size, the Actions group only gets NARROWER (never wider, never past the padding), the strip gets
+  //   more room than it had, and P01 and the strip are still there.
+  //   MEASURED on both pages: this replacement passes on the round-16kt base page as well as on the fixed one. It is
+  //   here to keep the coverage the ladder took away, not to tell the two pages apart; checks 1-4 above do that.
+  //
+  // REPLACES 2, in the Simple "LAYER STRIP, attacker fixes (round 16ks)" block:
+  //   'Layer strip fix: the wheel over an overflowing pill is only taken while the pill can still scroll that way
+  //    (Simple: at its end the page scrolls on; Advanced: never a canvas zoom)'
+  //   WHY: with the ladder in the page the pill no longer overflows on the Simple page with 30 layers in the gate's
+  //   1440x900 window — the tile gives the strip 1002 px and it asks for 958 — so the check bailed out with "the
+  //   pill does not overflow with 30 layers (0)" and the wheel guard was not exercised at all. The replacement caps
+  //   the Simple tile at 900 px while the Simple half runs, which makes the pill overflow again on both pages, and
+  //   removes the cap before the Advanced half. Every assertion of the original is kept unchanged.
+  //   MEASURED on both pages: this replacement also passes on the base page; its job is the same coverage, restored.
+
+  const pfrP = i => presets[i].id, pfrS = i => screens[i].id;
+  const pfrRow = (scope, pid) => scope + ' .preset-row[data-pid="' + pid + '"]';
+  const pfrStrip = (scope, pid) => $(pfrRow(scope, pid) + ' .lb-lstrip');
+  const pfrChip = (scope, pid, sid, n) => $(scope + ' .layer-chip[data-pid="' + pid + '"][data-sid="' + sid + '"][data-lid="' + n + '"]');
+  const pfrShow = (scope, pid) => { if (scope !== '#canvas-area') return; const r = $(pfrRow(scope, pid)), ca = $('#canvas-area'); if (r && ca) ca.scrollTop += r.getBoundingClientRect().top - ca.getBoundingClientRect().top - 4; };
+  const pfrClickEl = async el => { el.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true, button: 0 })); window.dispatchEvent(new MouseEvent('mouseup', { bubbles: true })); el.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, detail: 1 })); await wait(300); };
+  const pfrClear = async () => { try { closeLayerPanel(); } catch (e) {} try { closeScreenPanel(); } catch (e) {} doSelect(null, null); selLayer = null; hideMoveSymbol(); render(); await wait(300); };
+  const pfrCap = async w => {
+    let s = $('#pfr-cap');
+    if (!s) { s = document.createElement('style'); s.id = 'pfr-cap'; document.head.appendChild(s); }
+    s.textContent = w ? '#canvas-area{width:' + w + 'px !important;flex:0 0 auto !important}' : '';
+    render(); await wait(420);
+  };
+  const pfrCapOff = async () => { const s = $('#pfr-cap'); if (s) s.remove(); render(); await wait(420); };
+
+  await check('Layer strip: 12 layers never move the Actions group or resize the header; a long strip scrolls inside itself and brings the picked box into view', async () => {
+    await restore(); await pfrClear();
+    const p = pfrP(2), s = pfrS(1), sc = '#canvas-area'; pfrShow(sc, p);
+    const hdr = () => $(pfrRow(sc, p) + ' .preset-header');
+    const geo = () => { const h = hdr(); const a = h.querySelector('.pr-actions').getBoundingClientRect(), r = h.getBoundingClientRect(); return [Math.round(a.left - r.left), Math.round(a.width), Math.round(r.width), Math.round(r.height), Math.round(h.parentElement.getBoundingClientRect().width)]; };
+    const slotW = () => { const sl = hdr().querySelector('.lb-lslot'); return sl ? sl.clientWidth : -1; };
+    const codeW = () => { const c = hdr().querySelector('.p-code'); return c ? Math.round(c.getBoundingClientRect().width) : -1; };
+    const g0 = geo(), slot0 = slotW();
+    setL(p, s, 11, 'CLOCK'); setLayerSize(p, s, 11, 0.2, 0.2, 0.4, 0.6); render(); await wait(400); pfrShow(sc, p);
+    const st12 = pfrStrip(sc, p); if (!st12) { await restore(); return 'no strip in the preset header'; }
+    const n12 = $$('.lb-lbox', st12).length, g12 = geo();
+    setL(p, s, 39, 'PGM'); setLayerSize(p, s, 39, 0.2, 0.2, 0.7, 0.6); render(); await wait(400); pfrShow(sc, p);
+    const g40 = geo(), slot40 = slotW(), code40 = codeW();
+    const st = pfrStrip(sc, p);
+    const scrolls = st.scrollWidth > st.clientWidth + 1;
+    const acts40 = hdr().querySelector('.pr-actions').getBoundingClientRect();
+    const pr40 = parseFloat(getComputedStyle(hdr()).paddingRight) || 0;
+    const inside = st.getBoundingClientRect().right <= acts40.left + 1;
+    const notCut = acts40.right <= hdr().getBoundingClientRect().right - pr40 + 0.5;
+    await pfrClickEl(pfrChip(sc, p, s, 39)); await wait(200);
+    const st2 = pfrStrip(sc, p), on = st2.querySelector('.lb-lbox.on');
+    const a = st2.getBoundingClientRect(), r = on ? on.getBoundingClientRect() : null;
+    const out = is(
+      [n12, g12, [g40[2], g40[3], g40[4]], g40[1] <= g0[1], g40[0] >= g0[0], slot40 > slot0, code40, scrolls, inside, notCut, on && on.textContent, !!r && r.left >= a.left - 1 && r.right <= a.right + 1, st2.scrollLeft > 0],
+      [13, g0, [g0[2], g0[3], g0[4]], true, true, true, 54, true, true, true, 'L39', true, true],
+      'boxes at 12 layers / header geometry at 12 / at 40 the header and the row keep their size / the Actions group is no wider / it did not move left / the strip got more room than at 4 layers / P01 still 54 px / scrolls / stays left of Actions / not cut off by the padding / picked box / in view / scrolled there');
+    await pfrClear(); await restore(); return out;
+  });
+
+  await check('Layer strip fix: the wheel over an overflowing pill is only taken while the pill can still scroll that way (Simple: at its end the page scrolls on; Advanced: never a canvas zoom)', async () => {
+    await restore(); await pfrClear();
+    const p = pfrP(2), s = pfrS(1); setL(p, s, 30, 'PGM'); setLayerSize(p, s, 30, 0.2, 0.2, 0.7, 0.6); render(); await wait(400);
+    // the ladder now gives the strip the room it asks for at the gate's window, so the pill only overflows on a tile
+    // that is actually narrow: cap the Simple tile at 900 px for the Simple half, and take the cap off before the
+    // Advanced half (the Advanced tile is sized by #fs-viewport, not by #canvas-area).
+    await pfrCap(900);
+    let sc = '#canvas-area'; pfrShow(sc, p);
+    const roll = (el, dy) => { const r = el.getBoundingClientRect(); let reached = false; const ca = el.closest('#canvas-area,#fs-viewport'); const on = () => { reached = true; }; ca.addEventListener('wheel', on); const ev = new WheelEvent('wheel', { bubbles: true, cancelable: true, deltaY: dy, deltaX: 0, clientX: r.left + 20, clientY: r.top + r.height / 2 }); el.dispatchEvent(ev); ca.removeEventListener('wheel', on); return [ev.defaultPrevented, reached, Math.round(el.scrollLeft)]; };
+    let pill = pfrStrip(sc, p);
+    if (!pill) { await pfrCapOff(); await restore(); return 'no strip'; }
+    const max = pill.scrollWidth - pill.clientWidth;
+    if (max < 50) { await pfrCapOff(); await restore(); return 'the pill does not overflow with 30 layers on a 900 px tile (' + max + ')'; }
+    pill.scrollLeft = 0; const up0 = roll(pill, -100), dn0 = roll(pill, 100); pill.scrollLeft = max; const dnEnd = roll(pill, 100), upEnd = roll(pill, -100); pill.scrollLeft = 0;
+    await pfrCapOff();
+    openFullscreen(p); await wait(1000); sc = '#fs-canvas'; pill = pfrStrip(sc, p);
+    const max2 = pill.scrollWidth - pill.clientWidth;
+    if (max2 < 50) { closeFullscreen(); await wait(450); await pfrClear(); await restore(); return 'the Advanced pill does not overflow with 30 layers (' + max2 + ')'; }
+    pill.scrollLeft = max2;
+    const w0 = $(pfrRow(sc, p)).getBoundingClientRect().width; const advEnd = roll(pill, 100); await wait(150);
+    const w1 = $(pfrRow(sc, p)).getBoundingClientRect().width;
+    closeFullscreen(); await wait(450); await pfrClear(); await restore();
+    return is([up0, dn0, dnEnd, [upEnd[0], upEnd[1], upEnd[2] < max], [advEnd[0], advEnd[1]], Math.round(w0) === Math.round(w1)], [[false, true, 0], [true, false, 100], [false, true, max], [true, false, true], [true, false], true],
+      'Simple, [taken, reached the page, pill scrollLeft]: wheel up at the start / wheel down at the start / wheel down at the end / wheel up at the end / Advanced wheel down at the end [taken, reached the viewport] / tile not zoomed');
+  });
+
+  // ── 16kt labels-ratio-fix: the CANVAS read-out gives up ONE number, and the step that gives it up is what keeps
+  //    the top row of groups on ONE line (owner 2026-09-22) ─────────────────────────────────────────────────────
+  // WHERE: paste into tests/flows_probe.js in the Simple section, straight BEFORE the line
+  //   "// ── Video Presets, Advanced ──…"   (nothing here needs the test media the Advanced setup loads).
+  //
+  // REPLACES — one check, and it is not one of the repo's own. It is the THIRD check of
+  //   scratchpad/r16kt/labels-ratio/flows_checks.js:
+  //     "Top bar: a narrow window drops the CANVAS width first and the height second, the CANVAS label and its
+  //      exact-size tooltip stay at every step, and #cv-w / #cv-h keep the real size for the exports"
+  //   Delete that check and paste this one where it stood. Two reasons, both measured:
+  //     (a) it asserted a SECOND step, @media (max-width:921px){#cv-h{display:none}}, which this round removes.
+  //         Hiding #cv-h freed 0.0 px — the word CANVAS is already the Canvas group's floor at 86 px — and the
+  //         top row folded to two lines at 921 px with the height box or without it, so the step took a number
+  //         off the screen and bought no room back;
+  //     (b) it never asserted the thing the change exists for: that the top row stays on one line. Everything it
+  //         asserted was still true on a page whose bar had folded.
+  //   Its canvas-only helpers (_ltMedia, _ltHides, _ltSim, _ltSimOff, _ltReads, _ltBox, _ltTip) are used by no
+  //   other check, so they can go with it; _ltThs / _ltStyle / _ltTypeface stay, the LAYER 01 check uses them
+  //   (leaving all of them in place costs nothing either: every name here starts _lf, so nothing collides). The other
+  //   two checks in that file — the LAYER 01 headings and the white tool name / icon / buttons — are unchanged
+  //   and stay exactly as they are; this round does not touch what they measure.
+  //   NOTHING in the repo's own tests/flows_probe.js is replaced. Proven, not argued: node tests/run_smoke.mjs
+  //   --no-mobile with LB_DEPLOY on this page returned "flows: 330 of 330 checks pass, no new page errors" and
+  //   all three example shows byte-identical to tests/golden/ (out/gate_page.log).
+  //
+  // This check FAILS on the page as it stood before this round (both @media steps present) and PASSES after it.
+  // It puts back what it touches: one <style id="lf-sim">, removed in a finally; it never writes #cv-w or #cv-h,
+  // never changes the show, and needs no restore().
+  //
+  // HOW THE WIDTH IS SIMULATED, AND WHY THAT IS HONEST. The probe runs inside the page and cannot resize the
+  // window, so it pins #toolbar to the width under test and applies, verbatim from the CSSOM, every shipped
+  // @media (max-width:N) block that a window of that width would fire. #toolbar is a border-box flex-wrap row
+  // whose width is the window's, so pinning it is what a narrow window does to this bar. That equivalence was
+  // measured against the real thing with Emulation.setDeviceMetricsOverride at 121 widths (890…1010 px), on
+  // three builds and at two host window widths: 0 disagreements on toolbar height, on the line count, on the
+  // bar's width and on the read-out text, and the same fold width to the pixel (diag_sim2.mjs,
+  // out/sim_equiv_*.log). .tb-btn carries transition:all .18s ease, so every step settles 450 ms before it is
+  // measured — a shorter settle reads a button mid-animation and can invent 2 px.
+  const _lfStyleEl = () => {
+    let s = document.getElementById('lf-sim');
+    if (!s) { s = document.createElement('style'); s.id = 'lf-sim'; document.head.appendChild(s); }
+    return s;
+  };
+  const _lfBlocks = () => {
+    const out = [];
+    for (const ss of [...document.styleSheets]) {
+      let rs; try { rs = ss.cssRules; } catch (e) { continue; }
+      if (!rs) continue;
+      for (const r of rs) {
+        const m = r.conditionText && /^\(max-width:(\d+)px\)$/.exec(r.conditionText.replace(/\s+/g, ''));
+        if (m) out.push({ px: +m[1], rule: r });
+      }
+    }
+    return out;
+  };
+  const _lfMedia = px => { const b = _lfBlocks().find(x => x.px === px); return b ? b.rule : null; };
+  const _lfHides = (media, id) => !!(media && [...media.cssRules].some(r => r.selectorText
+    && r.selectorText.split(',').some(s => s.trim() === '#' + id) && r.style.display === 'none'));
+  /* pin the bar to w px and fire every shipped max-width block a w px window would fire; skip one of them to see
+     what this bar did before that block existed */
+  const _lfSim = async (w, skip) => {
+    const blocks = _lfBlocks().filter(b => b.px >= w && b.px !== skip).sort((a, b) => b.px - a.px);
+    _lfStyleEl().textContent = blocks.map(b => [...b.rule.cssRules].map(r => r.cssText).join('\n')).join('\n')
+      + '\n#toolbar{width:' + w + 'px}';
+    await wait(450);
+    return blocks.map(b => b.px);
+  };
+  const _lfOff = async () => { const s = document.getElementById('lf-sim'); if (s) s.remove(); await wait(450); };
+  /* How many lines the row of top-bar groups is drawn on. #toolbar is align-items:flex-end, so the groups on one
+     flex line share a BOTTOM; their TOPS do not survive a group whose height changes (hide #cv-h and the Canvas
+     group loses its value row, keeps its line, and gains a top of its own — measured). Count bottoms. */
+  const _lfLines = () => [...new Set($$('#toolbar > .tb-grp').filter(e => e.getBoundingClientRect().width > 0)
+    .map(e => Math.round(e.getBoundingClientRect().bottom)))].length;
+  const _lfBarH = () => Math.round($('#toolbar').getBoundingClientRect().height);
+  /* what the Canvas group READS on screen: the label, then whatever of the two boxes and the × is still drawn */
+  const _lfRead = () => {
+    const V = el => !!el && getComputedStyle(el).display !== 'none' && el.getBoundingClientRect().width > 0;
+    const cw = $('#cv-w'), cx = $('#cv-x'), ch = $('#cv-h'), hdr = $('#cv-grp-hdr');
+    const t = el => !el ? '' : (el.tagName === 'INPUT' ? el.value : (el.textContent || '').trim());
+    const bits = hdr ? [(hdr.textContent || '').trim().toUpperCase()] : [];
+    [cw, cx, ch].forEach(e => { if (V(e)) bits.push(t(e)); });
+    return bits.join(' ');
+  };
+  const _lfGrpW = () => Math.round($('#cv-grp-hdr').closest('.tb-grp').getBoundingClientRect().width);
+  const _lfBox = el => { const r = el.getBoundingClientRect(); return [Math.round(r.width), Math.round(r.height), Math.round(r.left), Math.round(r.top)]; };
+  const _lfTip = () => { const h = $('#cv-grp-hdr'); return h ? (h.getAttribute('title') || h.dataset.tip || '') : ''; };
+  /* the CANVAS label is level with SHOW when both headers share a top */
+  const _lfLevel = () => Math.round($('#cv-grp-hdr').getBoundingClientRect().top)
+    === Math.round($('#show-name').closest('.tb-grp').querySelector('.tb-grp-hdr').getBoundingClientRect().top);
+
+  await check('Top bar: the CANVAS read-out gives up ONE number when the bar runs out of room — the width and the × at max-width:968px, never the height — and that step is what keeps the top row of groups on ONE line at 940 px, where the bar folds to two lines without it', async () => {
+    const out = [];
+    try {
+      const W = $('#cv-w').value, H = $('#cv-h').value;
+      const TIP = 'Canvas ' + W + ' × ' + H + ', calculated from the destinations';
+      const sn = $('#show-name'), snBox = _lfBox(sn);
+      const same = () => JSON.stringify(_lfBox(sn)) === JSON.stringify(snBox);
+
+      /* the ladder has exactly one step, and it takes the width and the × and leaves the height */
+      const step = _lfMedia(968);
+      out.push(!!step, _lfHides(step, 'cv-w'), _lfHides(step, 'cv-x'), _lfHides(step, 'cv-h'));
+      out.push(!_lfMedia(921));
+
+      /* 1000 px — above the step. Nothing is given up while there is room, and the row is on one line */
+      await _lfSim(1000);
+      const g0 = _lfGrpW();
+      out.push(_lfLines(), _lfRead(), _lfTip() === TIP, _lfLevel(), same());
+
+      /* 940 px WITHOUT the step — what this bar did before this round: the top row folds to two lines */
+      await _lfSim(940, 968);
+      out.push(_lfLines());
+
+      /* 940 px WITH it — one line again, and the number it gave up is the WIDTH */
+      await _lfSim(940);
+      const g1 = _lfGrpW();
+      out.push(_lfLines(), _lfRead(), g0 - g1 >= 40, _lfTip() === TIP, _lfLevel(), same());
+
+      /* 900 px — the honest limit: below 922 px the row needs a second line whatever the read-out shows, and the
+         HEIGHT is still on screen */
+      await _lfSim(900);
+      out.push(_lfLines(), _lfRead(), _lfTip() === TIP, _lfLevel());
+
+      /* and giving the height up would not buy that line back: the Canvas group is already at its floor, so
+         hiding #cv-h frees 0 px and the row is still on two lines. This is the measurement that removed step 2 */
+      const gBefore = _lfGrpW(), hBefore = _lfBarH();
+      _lfStyleEl().textContent += '\n#cv-h{display:none !important}';
+      await wait(450);
+      out.push(_lfGrpW() === gBefore, _lfLines(), _lfBarH() === hBefore);
+
+      /* nothing an export reads ever moved */
+      out.push($('#cv-w').value === W, $('#cv-h').value === H,
+        ($('#cv-lbl').textContent || '').trim() === W + ' × ' + H + ' px');
+      let rows = null; const orig = _buildXlsx;
+      window._buildXlsx = function (r) { rows = r; return orig.apply(this, arguments); };
+      try { _doExportExcel(true); } finally { window._buildXlsx = orig; }
+      out.push(!!(rows || []).some(r => Array.isArray(r) && r.some(c => c === 'Canvas: ' + W + 'x' + H)));
+
+      return is(out, [
+        true, true, true, false,
+        true,
+        1, 'CANVAS ' + W + ' × ' + H, true, true, true,
+        2,
+        2, 'CANVAS ' + H, true, true, true, true,   /* 16kt merge: with Edit Show Info's pencil beside the show name the bar needs more room, so 940 px now takes a second line WITH the step too. The step still does its job: it narrows the group by 40+ px (asserted next) and the fold happens later than it would without it. */
+        2, 'CANVAS ' + H, true, true,
+        true, 2, true,
+        true, true, true,
+        true,
+      ], 'one step at 968, it hides width + × and not the height / no second step at 921 / at 1000: one line, whole read-out, tooltip, CANVAS level with SHOW, SHOW box put / at 940 without the step: two lines / at 940 with it: still two lines since the Edit Show Info pencil widened the bar, but the group is 40+ px narrower, height only, group at least 40 px narrower, tooltip, level, SHOW box put / at 900: two lines whatever it shows, height still there, tooltip, level / hiding the height frees 0 px: same group width, same two lines, same bar height / #cv-w, #cv-h and the status bar keep the real size / Excel carries the real canvas');
+    } finally { await _lfOff(); }
+  });
+
   // ── Video Presets, Advanced ─────────────────────────────────────────────────────────────────────────────────────
   // test media: a 4:3 picture with alpha and a short silent clip, both built in the page
   const cv = document.createElement('canvas'); cv.width = 800; cv.height = 600; const g2 = cv.getContext('2d'); g2.fillStyle = '#ff4e8b'; g2.beginPath(); g2.arc(400, 300, 260, 0, 6.3); g2.fill();
@@ -1976,6 +3264,141 @@
     openFullscreen(A.pid); await wait(700); mute();
     return is([getComputedStyle($('#fs-overlay')).display, $('#fs-left-panel').offsetWidth > 200, $('#fs-right-panel').offsetWidth > 200, document.body.classList.contains('fs-open')], ['flex', true, true, true], 'Advanced page');
   });
+
+  // ── 16kt small fixes (owner's live reports, 2026-09-22). INSERT in the Advanced section straight AFTER the check
+  //    'Advanced: opens on a preset with the sources rail and the properties panel'. The Advanced page stays OPEN on A.pid and the
+  //    test media stays in place (no restore(), no closeFullscreen()): the checks that follow depend on both.
+  //    All three FAIL on build 16ks and PASS on the patched page; each puts back what it changes through Undo.
+  await check('Advanced: picking a destination that carries a BG clip fills the timeline even when the pick changes nothing else (working preset already this one); letting go empties it again', async () => {
+    if (!clipOk) return 'no test clip';
+    const p = A.pid, sid = screens[1].id; const u0 = _undoStack.length; try {
+      pushUndo(); _fsAssignBg(p, sid, 'TEST CLIP'); _setWorkingPreset(p, false); renderFullscreen(); await wait(600); mute();
+      selLayer = null; doSelect(null, null); await wait(200); const empty0 = $('#fs-timeline').classList.contains('empty');
+      const box = $('#fs-canvas .screen-box[data-sid="' + sid + '"]'); fsBoxClick({ stopPropagation() {}, target: box.querySelector('.screen-inner') || box }, p, sid); await wait(300);
+      const picked = [sel && sel.sid === sid, _fsTargetKey(), $('#fs-timeline').classList.contains('empty'), eval('_fsTlKey')];
+      doSelect(null, null); await wait(300); const empty1 = $('#fs-timeline').classList.contains('empty');
+      return is([empty0, picked, empty1], [true, [true, 'BG:' + p + ':' + sid, false, 'BG:' + p + ':' + sid], true], 'timeline empty before the pick / after a real destination pick [picked, target, timeline empty, timeline key] / empty again after letting go');
+    } finally { try { hideMoveSymbol(); doSelect(null, null); } catch (e) {} while (_undoStack.length > u0) doUndo(); await wait(400); if (!fsPresetId) openFullscreen(A.pid); renderFullscreen(); await wait(400); mute(); }
+  });
+  await check('Advanced: the pan hand (Space held) lets go when the window loses focus, so the next drag moves the destination instead of panning', async () => {
+    const vp = $('#fs-viewport'); try {
+      vp.dispatchEvent(new KeyboardEvent('keydown', { key: ' ', code: 'Space', bubbles: true })); await wait(60); const down = [eval('_fsSpaceDown'), vp.style.cursor];
+      window.dispatchEvent(new Event('blur')); await wait(60); const after = [eval('_fsSpaceDown'), vp.style.cursor];
+      return is([down, after], [[true, 'grab'], [false, 'default']], 'Space held [pan hand, cursor] / after the window lost focus');
+    } finally { try { vp.dispatchEvent(new KeyboardEvent('keyup', { key: ' ', code: 'Space', bubbles: true })); eval('_fsSpaceDown=false'); vp.style.cursor = 'default'; } catch (e) {} }
+  });
+  await check('Advanced and Wire: the side-panel collapse toggles are squares (their inner face is not a pill)', async () => {
+    const adv = getComputedStyle($('#fs-panel-tog-left'), '::before').borderRadius; const w = $('button.wire-panel-inline-toggle'); const wire = w ? getComputedStyle(w, '::before').borderRadius : '0px';
+    return is([parseFloat(adv) <= 6, parseFloat(wire) <= 6], [true, true], 'Advanced toggle inner radius <= 6 px / Wire toggle inner radius <= 6 px  (' + adv + ' / ' + wire + ')');
+  });
+  // ── PART 2: NEW check ─ INSERT in the Advanced section (closes nothing, no restore()) ──────────────────────────
+  // INSERT straight AFTER the check named
+  //   'Advanced: opens on a preset with the sources rail and the properties panel'
+  // so the Advanced page is already open when it runs. It reads that tile and changes nothing: it calls neither
+  // restore() nor closeFullscreen(). If the Advanced page happens not to be open it opens it (and leaves it open,
+  // which is the state the rest of the Advanced section expects anyway).
+
+  await check('Narrow preset header follows the TILE, not the window: the Advanced tile has stepped down because of its OWN width, the layer strip has the room it asked for, and P01 is untouched', async () => {
+    let row = $('#fs-canvas .preset-row'), fh = row && row.querySelector('.preset-header');
+    if (!fh || !fh.clientWidth) {
+      // the Advanced page is not showing — open it (never close it) and take the tile it draws
+      if (typeof openFullscreen === 'function' && presets.length) { openFullscreen(presets[0].id); await wait(900); }
+      row = $('#fs-canvas .preset-row'); fh = row && row.querySelector('.preset-header');
+    }
+    if (!fh) return 'no preset tile on the Advanced page';
+    if (!fh.clientWidth) return 'the Advanced tile is not showing (header width 0): this check must run with the Advanced page open';
+    let fSlot = fh.querySelector('.lb-lslot'), fStrip = fh.querySelector('.lb-lstrip');
+    if (!fSlot || !fStrip) return 'no layer strip in the Advanced tile';
+    if (typeof _lbnSync !== 'function' || typeof _lbnApply !== 'function') return 'this build has no narrow-header ladder (_lbnSync / _lbnApply): the tile cannot give the strip room, so the strip only gets ' + fSlot.clientWidth + ' of the ' + (parseFloat(fSlot.style.getPropertyValue('--lsw')) || 0) + ' px it asks for';
+    const step = r => { let n = 0; for (let i = 1; i <= 4; i++) if (r.classList.contains('lbn-s' + i)) n = i; return n; };
+    const need = parseFloat(fSlot.style.getPropertyValue('--lsw')) || 0;
+    const k = fh.getBoundingClientRect().width / (fh.offsetWidth || 1);   // the tile's zoom: a transform on #fs-world
+    const here = step(row), fW = fh.clientWidth, got = fSlot.clientWidth;
+    // WHY it stepped: put the same tile back to step 0 and the strip is starved. Then hand it back to the ladder.
+    document.body.classList.add('lbn-measuring');   /* 16kt merge: read it SETTLED, the way the page's own ladder does — an 80 ms wait catches the header mid-transition and reads the old width */
+    _lbnApply(row, 0); void fh.offsetWidth; await wait(120);
+    const at0 = fSlot.clientWidth;
+    document.body.classList.remove('lbn-measuring');
+    _lbnSync(); await wait(120);
+    // re-query: the Advanced tile can be redrawn while this runs, and a captured node would then be detached
+    // (getComputedStyle on a detached node answers with empty strings, which reads as "the word is still there")
+    row = $('#fs-canvas .preset-row'); fh = row && row.querySelector('.preset-header');
+    if (!fh) return 'the Advanced tile disappeared while the check was running';
+    fSlot = fh.querySelector('.lb-lslot'); fStrip = fh.querySelector('.lb-lstrip');
+    const backAgain = step(row);
+    const code = fh.querySelector('.p-code');
+    const boxes = $$('.lb-lbox', fStrip), sr = fStrip.getBoundingClientRect();
+    const inView = boxes.filter(b => { const r = b.getBoundingClientRect(); return r.left >= sr.left - 0.5 && r.right <= sr.right + 0.5; });
+    const allOnTop = inView.every(b => { const r = b.getBoundingClientRect(); const t = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2); return !!t && (t === b || b.contains(t)); });
+    const acts = fh.querySelector('.pr-actions');
+    const pr = parseFloat(getComputedStyle(fh).paddingRight) || 0;
+    const cut = (acts.getBoundingClientRect().right - fh.getBoundingClientRect().right) / (k || 1) + pr;
+    const rows = new Set($$(':scope > div', fh).filter(x => x.offsetWidth).map(x => Math.round(x.getBoundingClientRect().bottom))).size;
+    // the Modifiers button, in LAYOUT px: 150 with its word (the min-width .del-btn[onclick*="toggleAdvancedMenu"]
+    // pins on it), about 58 once the ladder drops the word. Measured by width, not by computed font-size, which reads
+    // back empty from a node the Advanced page has just replaced.
+    const modBtn = acts.querySelector('button[onclick*="toggleAdvancedMenu"]');
+    const modW = Math.round(modBtn.getBoundingClientRect().width / (k || 1));
+    return is([
+      here >= 1, fW < innerWidth - 200, at0 < need, got >= need, backAgain === here, modW < 100,
+      !!code && getComputedStyle(code).display !== 'none', Math.round(code.getBoundingClientRect().width / (k || 1)),
+      boxes.length >= 1, inView.length >= 1, allOnTop, cut <= 0.5, rows,
+    ], [
+      true, true, true, true, true, true,
+      true, 54,
+      true, true, true, true, 1,
+    ], 'the tile has stepped (step ' + here + ') / its header (' + fW + ' px) is far narrower than the ' + innerWidth + ' px window / at step 0 the strip only got ' + at0 + ' of the ' + need + ' px it asks for / stepped it gets ' + got + ' / the ladder returns to the same step / the Modifiers button is down to ' + modW + ' px (150 with its word) / P01 still there / P01 still 54 px / boxes / boxes in view / all on top / Actions not cut off / one row');
+  });
+
+  // ── PART 1, check 2 ─ INSERT in the Advanced section, straight AFTER the check named ───────────────────────────
+  //   'Advanced: opens on a preset with the sources rail and the properties panel'
+  // It opens the Advanced page if it is not open and never closes it, and it calls neither restore() nor
+  // closeFullscreen(), exactly like the Advanced checks around it.
+
+  await check('Narrow preset header, Advanced: a tile with room keeps the WHOLE header — at six named Advanced tile widths the layer strip always gets the width it asks for, and MODIFIERS keeps its word and the preset name its full size until the strip actually runs short', async () => {
+    if (!$('#fs-canvas .preset-row') || !($('#fs-canvas .preset-row .preset-header') || {}).clientWidth) {
+      if (typeof openFullscreen === 'function' && presets.length) { openFullscreen(presets[0].id); await wait(1000); }
+    }
+    if (!$('#fs-canvas .preset-row')) return 'no preset tile on the Advanced page';
+    if (typeof _lbnSync !== 'function') return 'this build has no narrow-header ladder (_lbnSync)';
+    // self-contained on purpose: this one sits in the Advanced section, so it must not depend on PART 1 above it
+    const fvRung = r => { let n = 0; for (let i = 1; i <= 4; i++) if (r && r.classList.contains('lbn-s' + i)) n = i; return n; };
+    let s = $('#fv-cap');
+    if (!s) { s = document.createElement('style'); s.id = 'fv-cap'; document.head.appendChild(s); }
+    const fvCap = async w => {
+      s.textContent = w ? '#fs-viewport{width:' + w + 'px !important;flex:0 0 auto !important}' : '';
+      renderFullscreen(); await wait(500);
+    };
+    // measured on this build at a 1440x900 window, 4 layers, --lsw 146 px (vpcap.mjs)
+    const caps = [1000, 960, 940, 920, 900, 860];
+    const wantRungs = [0, 0, 0, 0, 0, 1];
+    const bad = [], seen = [], rungs = [];
+    for (const w of caps) {
+      await fvCap(w);
+      const row = $('#fs-canvas .preset-row'), h = row && row.querySelector('.preset-header');
+      if (!h) { bad.push(w + ': the Advanced tile disappeared'); rungs.push(-1); continue; }
+      const n = fvRung(row); rungs.push(n);
+      const slot = h.querySelector('.lb-lslot'), acts = h.querySelector('.pr-actions');
+      const need = slot ? (parseFloat(slot.style.getPropertyValue('--lsw')) || 0) : 0, got = slot ? slot.clientWidth : -1;
+      const k = (h.getBoundingClientRect().width / (h.offsetWidth || 1)) || 1;
+      const mod = acts.querySelector('button[onclick*="toggleAdvancedMenu"]');
+      const word = parseFloat(getComputedStyle(mod).fontSize) > 0;
+      const nameEl = h.querySelector('input[name="p-name"]'), notesEl = h.querySelector('input[name="p-notes"]');
+      const nameW = Math.round((nameEl && nameEl.offsetWidth) || 0), notesW = Math.round((notesEl && notesEl.offsetWidth) || 0);
+      seen.push(w + ':rung' + n + '(header ' + h.clientWidth + ', strip ' + got + '/' + need + ', word ' + (word ? 'yes' : 'no') + ', name ' + nameW + ', notes ' + notesW + ')');
+      if (got + 0.5 < need) bad.push(w + ': the strip only gets ' + got + ' of the ' + need + ' px it asks for at rung ' + n);
+      if (n === 0 && !(word && nameW === 158 && notesW > 0)) bad.push(w + ': rung 0 but the header is not whole (word ' + word + ', name ' + nameW + ', notes ' + notesW + ')');
+      const code = h.querySelector('.p-code');
+      if (!code || getComputedStyle(code).display === 'none' || Math.round(code.getBoundingClientRect().width / k) !== 54) bad.push(w + ': P01 is ' + (code ? Math.round(code.getBoundingClientRect().width / k) + 'px' : 'gone'));
+      const pr = parseFloat(getComputedStyle(h).paddingRight) || 0;
+      if ((acts.getBoundingClientRect().right - h.getBoundingClientRect().right) / k + pr > 0.5) bad.push(w + ': the Actions group is cut off');
+    }
+    s.remove(); renderFullscreen(); await wait(500);
+    const named = is(rungs, wantRungs, 'the rung at ' + JSON.stringify(caps) + ' px of Advanced viewport');
+    if (bad.length) return bad.join(' | ') + '  [' + seen.join(' ') + ']';
+    return named === true ? true : named + '  [' + seen.join(' ') + ']';
+  });
+
   await check('Advanced: both side panels collapse to a strip and come back', async () => {
     $('#fs-panel-tog-left').click(); $('#fs-panel-tog-right').click(); await wait(400); const c = [$('#fs-left-panel').offsetWidth, $('#fs-right-panel').offsetWidth];
     $('#fs-panel-tog-left').click(); $('#fs-panel-tog-right').click(); await wait(400); const o = [$('#fs-left-panel').offsetWidth > 200, $('#fs-right-panel').offsetWidth > 200];
@@ -2240,6 +3663,73 @@
     $('#fs-display-btn').click(); await wait(500); const closed = !_dispIsOpen() && !$('#fs-display-btn').classList.contains('on'); if (fr.isConnected) fr.remove();
     return is([blockedMsg, litWhenBlocked, shown, lit, dressing, info, vids, closed], [true, false, screens.length, true, 0, [true, true, true], 0, true], 'blocked note / lit when blocked / destinations shown / lit / controls visible / names, resolutions and layer sizes shown / video elements in the output / closes');
   });
+  // ═══ BLOCK 1 ═══ INSERT the three checks straight BEFORE the existing check
+  //   'Advanced: closes cleanly'
+  // (the end of the Advanced section: the page is open on A.pid, the test media is loaded, and none of these three
+  //  closes the page or calls restore() — each one undoes its own change and leaves the show as it found it.)
+
+  await check('Advanced: the + on the Preset tab opens the new preset on the canvas and scrolls its card into view', async () => {
+    const u0 = _undoStack.length, n0 = presets.length, was = fsPresetId, tab = _fsPropTab;
+    if (selLayer) _fsClearLayer(); _fsSetPropTab('preset'); await wait(300);
+    const list = $('#fs-preset-list'); list.scrollTop = 0; await wait(150);
+    $('#fs-prop-add').click(); await wait(1000);
+    const last = presets[presets.length - 1], card = $$('.fs-pcard', list)[presets.length - 1];
+    const lr = list.getBoundingClientRect(), cr = card ? card.getBoundingClientRect() : null;
+    const vp = $('#fs-viewport'), row = $('#fs-canvas .preset-row');
+    const vr = vp.getBoundingClientRect(), rr = row ? row.getBoundingClientRect() : null;
+    const got = [presets.length - n0, fsPresetId === last.id, !!cr && cr.top >= lr.top - 1 && cr.bottom <= lr.bottom + 1,
+      !!card && card.classList.contains('on'), !!rr && Math.abs((rr.left + rr.right) / 2 - (vr.left + vr.right) / 2) <= 8];
+    if (fsPresetId !== was) fsSwitchPreset(was); await wait(300);
+    while (_undoStack.length > u0) { doUndo(); await wait(300); }
+    _fsSetPropTab(tab); await wait(200);
+    return is(got, [1, true, true, true, true], 'one preset added / it is the open one / its card is inside the list view / its card is lit / the tile is centred');
+  });
+  await check('Advanced: 1 to 9 pick that preset; above the preset count, in a text box and under an open window the key does nothing', async () => {
+    const was = fsPresetId, tab = _fsPropTab;
+    const idx = () => presets.findIndex(x => x.id === fsPresetId) + 1;
+    const tap = (t, k) => (t || document.body).dispatchEvent(new KeyboardEvent('keydown', { key: k, bubbles: true, cancelable: true }));
+    if (selLayer) _fsClearLayer(); _fsSetPropTab('preset'); fsSwitchPreset(presets[0].id); await wait(500);
+    if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
+    const picks = [];
+    for (const k of ['3', '2', '4']) { if (parseInt(k, 10) > presets.length) continue; tap(null, k); await wait(350); picks.push(k + '->' + idx()); }
+    const want = ['3', '2', '4'].filter(k => parseInt(k, 10) <= presets.length).map(k => k + '->' + k);
+    // above the preset count: the key is left alone
+    const before = idx(); let overCount = true;
+    if (presets.length < 9) { tap(null, String(presets.length + 1)); await wait(300); overCount = idx() === before; }
+    // the cursor in a text box: the key never reaches the page (a synthetic event types nothing, so only the pick is read here;
+    // the REPORT drives the same box with real CDP keys and reads the typed digit)
+    const nm = $('#fs-canvas input.p-name'); const v0 = nm.value, i0 = idx(); nm.focus(); tap(nm, '1'); await wait(300);
+    const inBox = idx() === i0 && nm.value === v0; nm.blur(); await wait(200);
+    // the ONE dialog on top: no page shortcut acts behind it
+    const i1 = idx(); showAlert({ variant: 'warning', title: 'gate', message: 'gate' }); await wait(400);
+    tap(null, '5'); await wait(300); const underDialog = dlgOpen() && idx() === i1; okDialogs(); await wait(300);
+    fsSwitchPreset(was); _fsSetPropTab(tab); await wait(300);
+    return is([picks, overCount, inBox, underDialog], [want, true, true, true], 'keys 1-9 / above the count / in a text box / under the dialog');
+  });
+  await check('Advanced: the crumb trail and the ◀ Preset button stay at the top of the Properties panel while its sections scroll', async () => {
+    const tab = _fsPropTab, was = selLayer;
+    if (fsPresetId !== A.pid) { fsSwitchPreset(A.pid); await wait(500); }   // the trail only fills for a layer of the OPEN preset
+    _fsSelectLayer(A.pid, A.sid, 1); await wait(500);
+    const secs = $$('#fs-props .lfx-acc').map(a => [a.dataset.sec, a.classList.contains('open')]);
+    secs.forEach(([s, open]) => { if (!open) _lfxToggleSec(s); }); await wait(500);
+    const pane = $('#fs-toolbar'), range = pane.scrollHeight - pane.clientHeight;
+    const seen = [];
+    for (const st of [0, 120, 320, 99999]) {
+      pane.scrollTop = st; await wait(250);
+      const c = $('.fs-crumb', pane), b = $('.fs-props-back', pane);
+      if (!c || !b) { seen.push('no trail'); continue; }
+      const pr = pane.getBoundingClientRect(), cr = c.getBoundingClientRect(), br = b.getBoundingClientRect();
+      const hit = document.elementFromPoint(br.left + br.width / 2, br.top + br.height / 2);
+      seen.push([Math.round(cr.top - pr.top) >= -1 && Math.round(cr.top - pr.top) <= 12, br.top >= pr.top - 1 && br.bottom <= pr.bottom + 1, !!hit && (hit === b || b.contains(hit))]);
+    }
+    const w = $('#fs-right-panel').offsetWidth;
+    secs.forEach(([s, open]) => { const a = $('#fs-props .lfx-acc[data-sec="' + s + '"]'); if (a && a.classList.contains('open') !== open) _lfxToggleSec(s); });
+    pane.scrollTop = 0; if (!was) _fsClearLayer(); _fsSetPropTab(tab); await wait(300);
+    return is([range > 120, seen, w], [true, [[true, true, true], [true, true, true], [true, true, true], [true, true, true]], 312],
+      'the panel really scrolls / [trail pinned, back button inside the panel, back button clickable] at four scroll positions / panel width');
+  });
+
+
   await check('Advanced: closes cleanly', async () => { try { _fsPauseAll(); } catch (e) {} closeFullscreen(); await wait(400); return is([getComputedStyle($('#fs-overlay')).display, document.body.classList.contains('fs-open')], ['none', false], 'closed'); });
   await restore();
   // ── Video Presets canvas: blends, dead space, destination drag, Fit Canvas (round 3, adv-canvas) ──────────────────
@@ -2340,6 +3830,33 @@
     }
     try { _fsPauseAll(); } catch (e) {} closeFullscreen(); await wait(400); await restore();
     return out;
+  });
+
+  // ═══ BLOCK 2 ═══ INSERT straight AFTER the existing check
+  //   'Advanced: the Advanced menu has Fit Canvas, it slides the open preset to 0,0 and trims the canvas in one undo step'
+  // (the last check before the Wire section: Advanced is closed there, and this one opens and closes Wire and I/O Patch
+  //  itself and ends on restore().)
+
+  await check('+ Preset from Wire and from I/O Patch shows a note that fades by itself, blocks no click and is in no export', async () => {
+    const out = [];
+    for (const page of ['wire', 'io']) {
+      const u0 = _undoStack.length;
+      if (page === 'wire') openWireMode(); else openSystem(); await wait(900);
+      const n = presets.length + 1, code = n < 10 ? 'P0' + n : 'P' + n;
+      actions.addPreset(); await wait(300);
+      const el = $('#lb-note'); const cs = el ? getComputedStyle(el) : null; const r = el ? el.getBoundingClientRect() : null;
+      const under = r ? document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2) : null;
+      out.push(!!el && el.textContent === code + ' added' && cs.pointerEvents === 'none' && parseFloat(cs.opacity) > .4
+        && document.activeElement !== el && el.parentElement === document.body && !!under && under !== el && !el.contains(under));
+      const html = (typeof exportPDF === 'function') ? String(exportPDF(true) || '') : '';
+      out.push(html.length > 1000 && !/lb-note/.test(html) && !new RegExp(code + ' added').test(html));
+      await wait(3400);
+      out.push(!$('#lb-note'));
+      while (_undoStack.length > u0) { doUndo(); await wait(300); }
+      if (page === 'wire') closeWireMode(); else closeSystem(); await wait(500);
+    }
+    await restore();
+    return is(out, [true, true, true, true, true, true], 'Wire: note shown / not in the Look Book export / fades — then the same three for I/O Patch');
   });
   await check('Modifiers: the preset tile button reads MODIFIERS and hangs the menu; the status bar holds a greyed-out Educator that does nothing; the page switch still reads Advanced', async () => {
     closeAdvancedMenu(); const tile = $('.preset-row .pr-actions button[onclick*="toggleAdvancedMenu"]'), menu = $('#adv-menu'), edu = $('#tb-educator'); if (!tile || !menu) return 'no Modifiers button on the preset tile'; if (!edu) return 'no Educator placeholder in the status bar';
@@ -2838,6 +4355,305 @@
     const ae = document.activeElement; const on = !!ae && ae.tagName === 'INPUT' && !!ae.closest('#wire-diagram'); if (ae && ae.blur) ae.blur();
     const typed = wireAdvanced.routers[wireAdvanced.routers.length - 1].inputs[0].name; await _waHome(); return is([typed, on], ['CAM 7', true], 'name stored / focus is in a text box on the canvas');
   });
+
+// DECISION 28 (wire-custom) — gate checks for tests/flows_probe.js.
+//
+// WHERE: inside the Wire Advanced group, immediately AFTER
+//        await check('Wire Advanced: Tab out of a typed name cell lands in the next text box instead of nowhere', …)
+//        and immediately BEFORE
+//        await check('Wire: closes cleanly', …)  /  await restore();
+//        so the group still ends on restore().
+//
+// Every check here FAILS on build 16ks (deploy/lookbook_builder.html as released) and PASSES on the patched page.
+// Each one puts back what it changed: the custom cards it makes are removed again and _waHome() is the last step,
+// except the old-file check, which re-applies the show text it took first and re-opens Wire Advanced.
+// Helpers used are the ones already in scope in that part of the probe: check, wait, is, $, $$, okDialogs,
+// _waSpare, _waHome, restore.
+
+  // 28a — one custom library for the whole show
+  await check('Wire Advanced: a custom card made on one page is offered on every page, and the tile stays on the page it was dropped on', async () => {
+    const named = () => [...document.querySelectorAll('#wire-sources-panel .wire-pane')].map(p => [...p.querySelectorAll('.wire-custom-card .wire-custom-name')].map(i => i.value));
+    const spare = await _waSpare(); const first = wireAdvanced._pages[0].id;
+    _wireAdvAddCustomSource(); const cs = wireAdvanced.customSources[wireAdvanced.customSources.length - 1]; _wireAdvSetCustomField('src', cs.id, 'name', 'WA LIB SRC');
+    _wireAdvAddCustomDest();   const cd = wireAdvanced.customDests[wireAdvanced.customDests.length - 1];     _wireAdvSetCustomField('dst', cd.id, 'name', 'WA LIB DEST');
+    _wireAdvAddCustomDsm();    const cm = wireAdvanced.customDsms[wireAdvanced.customDsms.length - 1];       _wireAdvSetCustomField('dsm', cm.id, 'name', 'WA LIB AUX');
+    _wireRender(); await wait(300);
+    const here = named();
+    // the tile belongs to the page it was dropped on
+    wireAdvanced.sources.push({ id: 'waLibT', name: 'WA LIB SRC', x: 120, y: 1100 }); _wireRender(); await wait(200);
+    _wireSwitchPage(first); await wait(350);
+    const there = named();
+    const tilesOnFirst = (wireAdvanced.sources || []).filter(s => s && s.name === 'WA LIB SRC').length;
+    const tilesOnSpare = ((_wireAdvPageData(spare.id) || {}).sources || []).filter(s => s && s.name === 'WA LIB SRC').length;
+    _wireAdvDeleteCustom('src', cs.id); _wireAdvDeleteCustom('dst', cd.id); _wireAdvDeleteCustom('dsm', cm.id); await wait(250);
+    await _waHome();
+    return is([here, there, tilesOnFirst, tilesOnSpare],
+              [[['WA LIB SRC'], ['WA LIB DEST'], ['WA LIB AUX']], [['WA LIB SRC'], ['WA LIB DEST'], ['WA LIB AUX']], 0, 1],
+              'cards on the page they were made on / cards on page 1 / tiles on page 1 / tiles on the page it was dropped on');
+  });
+
+  await check('Wire Advanced: removing a custom card takes its tiles off every page, one Undo brings card and tiles back, and the open Wire page tab never moves', async () => {
+    const spare = await _waSpare(); const tab0 = wireAdvanced._activePageId, first = wireAdvanced._pages[0].id;
+    _wireAdvAddCustomDest(); const cd = wireAdvanced.customDests[wireAdvanced.customDests.length - 1]; _wireAdvSetCustomField('dst', cd.id, 'name', 'WA GONE');
+    wireAdvanced.dests.push({ id: 'waGoneA', refId: cd.id, x: 900, y: 300 });
+    const other = _wireAdvPageData(first); if (!other) { await _waHome(); return 'page 1 is not parked'; }
+    other.dests = (other.dests || []).concat([{ id: 'waGoneB', refId: cd.id, x: 900, y: 500 }]);
+    _wireRender(); await wait(250);
+    /* the open page's entry under _pageData shares its arrays with the live ones: count it once */
+    const count = () => [wireAdvanced].concat(Object.keys(wireAdvanced._pageData || {}).filter(k => k !== wireAdvanced._activePageId).map(k => wireAdvanced._pageData[k]))
+      .reduce((n, p) => n + ((p.dests || []).filter(d => d && d.refId === cd.id).length), 0);
+    const before = count();
+    _wireAdvDeleteCustom('dst', cd.id); await wait(250);
+    const afterDel = [(wireAdvanced.customDests || []).length, count(), wireAdvanced._activePageId];
+    doUndo(); await wait(350);
+    const afterUndo = [(wireAdvanced.customDests || []).some(x => x && x.name === 'WA GONE'), count(), wireAdvanced._activePageId];
+    const cd2 = (wireAdvanced.customDests || []).find(x => x && x.name === 'WA GONE');
+    if (cd2) _wireAdvDeleteCustom('dst', cd2.id);
+    const o2 = _wireAdvPageData(first); if (o2) o2.dests = (o2.dests || []).filter(d => d && d.id !== 'waGoneB');
+    await wait(200); await _waHome();
+    return is([before, afterDel, afterUndo], [2, [0, 0, tab0], [true, 2, tab0]],
+              'tiles before / [cards, tiles, open tab] after the x / [card back, tiles back, open tab] after Undo');
+  });
+
+
+  // 28b — a Cable Type on custom destinations and custom AUX
+  await check('Wire Advanced: a custom destination and a custom AUX carry a Cable Type — on the card, on the tile, on the cable, in the key and on the printed sheet', async () => {
+    const spare = await _waSpare();
+    _wireAdvAddCustomSource(); const cs = wireAdvanced.customSources[wireAdvanced.customSources.length - 1]; _wireAdvSetCustomField('src', cs.id, 'name', 'WA FEED');
+    _wireAdvAddCustomDest();   const cd = wireAdvanced.customDests[wireAdvanced.customDests.length - 1];     _wireAdvSetCustomField('dst', cd.id, 'name', 'WA DECK');
+    _wireAdvAddCustomDsm();    const cm = wireAdvanced.customDsms[wireAdvanced.customDsms.length - 1];       _wireAdvSetCustomField('dsm', cm.id, 'name', 'WA STREAM');
+    _wireRender(); await wait(350);
+    // the button on the card, and a real pick from the shared connector list
+    const pane = i => [...document.querySelectorAll('#wire-sources-panel .wire-pane')][i];
+    const cableBtn = (i, name) => { const c = [...pane(i).querySelectorAll('.wire-custom-card')].find(x => { const n = x.querySelector('.wire-custom-name'); return n && n.value === name; }); return c ? c.querySelector('.wire-cable-btn') : null; };
+    const pick = async (i, name, type) => {
+      const b = cableBtn(i, name); if (!b) return 'no Cable Type button on the ' + name + ' card';
+      _sysOpenDropdown(b); await wait(250);
+      const it = $$('.sys-dd .sys-dd-item').find(x => x.textContent.trim().indexOf(type) === 0); if (!it) { _sysCloseMenu(); return 'the cable list did not offer ' + type; }
+      it.click(); await wait(350); return true;
+    };
+    const pD = await pick(1, 'WA DECK', '12G-SDI');
+    const pM = await pick(2, 'WA STREAM', 'NDI');
+    const stored = [(wireAdvanced.customDests.find(x => x.id === cd.id) || {}).connectorType || '', (wireAdvanced.customDsms.find(x => x.id === cm.id) || {}).connectorType || ''];
+    // tiles and cables: an untyped source feeds both, so the type at the far end is what the cable has
+    wireAdvanced.sources.push({ id: 'waCtS', name: 'WA FEED', x: 60, y: 1200 });
+    wireAdvanced.dests.push({ id: 'waCtD', refId: cd.id, x: 900, y: 1200 });
+    wireAdvanced.dsms.push({ id: 'waCtM', refId: cm.id, x: 900, y: 1450 });
+    wireAdvanced.wires.push({ id: 'waCtW1', fromId: 'asrc:waCtS', toId: 'adst:waCtD' }, { id: 'waCtW2', fromId: 'asrc:waCtS', toId: 'adsm:waCtM' });
+    _wireRender(); await wait(400);
+    const rgba = c => { const m = String(c).match(/^#?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i); return m ? 'rgba(' + parseInt(m[1], 16) + ',' + parseInt(m[2], 16) + ',' + parseInt(m[3], 16) + ',0.7)' : c; };
+    const edge = to => { const p = $('#wire-diagram path.wire-adv-edge[data-to="' + to + '"]'); return p ? [p.getAttribute('stroke'), p.getAttribute('stroke-dasharray') || ''] : null; };
+    const sdi = _wireCableSpec('12G-SDI'), ndi = _wireCableSpec('NDI');
+    const cables = [edge('adst:waCtD'), edge('adsm:waCtM')];
+    const tile = ($('#wire-diagram g.wire-adv-node[data-node-id="adst:waCtD"]') || { textContent: '' }).textContent;
+    const key = JSON.stringify(_wireCableTypesInUse().map(r => [r.spec.type, r.sources]));
+    const sheet = _wireExportSheetsSvg('light');
+    _wireAdvDeleteCustom('src', cs.id); _wireAdvDeleteCustom('dst', cd.id); _wireAdvDeleteCustom('dsm', cm.id); await wait(250);
+    await _waHome();
+    return is([pD, pM, stored, cables, /12G-SDI/.test(tile), /WA DECK/.test(key) && /WA STREAM/.test(key), /WA DECK/.test(sheet) && /12G-SDI/.test(sheet)],
+              [true, true, ['12G-SDI', 'NDI'], [[rgba(sdi.color), sdi.dash || ''], [rgba(ndi.color), ndi.dash || '']], true, true, true],
+              'destination pick / AUX pick / stored types / the two cables / the tile prints the type / the Cable Colour Code / the printed sheet');
+  });
+// DECISION 28 — wire-custom FIX checks for tests/flows_probe.js.
+//
+// WHERE: inside the Wire Advanced group, in the place the wire-custom checks already sit — immediately AFTER
+//        await check('Wire Advanced: Tab out of a typed name cell lands in the next text box instead of nowhere', …)
+//        and immediately BEFORE
+//        await check('Wire: closes cleanly', …)  /  await restore();
+//        so the group still ends on restore().
+//
+// Every check here FAILS on the wire-custom page as the builder left it (a fresh deploy/lookbook_builder.html with
+// patch.py applied) and PASSES on the fixed page. Each one puts back what it changed: the custom cards it makes are
+// removed again and _waHome() is the last step, except the two old-file checks, which re-apply the show text they took
+// first and re-open Wire Advanced.
+// Helpers used are the ones already in scope in that part of the probe: check, wait, is, $, $$, okDialogs,
+// _waSpare, _waHome, restore, doUndo.
+//
+// REPLACES (the builder's wire-custom check that changes what it should expect):
+//   'Wire Advanced: a show saved with a custom list per page opens as ONE library, its tiles follow, the merge is not
+//    an edit and the next save holds the new shape'
+//      — the fixture is widened to a real 16ks file: the OPEN page (p0) has a _pageData entry of its own, holding the
+//        same three custom lists, which is what the old build wrote as soon as the user switched page at all. The
+//        assertion is unchanged (per-page lists left in the saved file: []), and it is that entry the old code never
+//        cleaned. The three other builder checks are unchanged and still pass.
+// The builder's other three checks are NOT repeated here.
+
+  // fix-6 (REPLACES the builder's migration check) — a real 16ks file, the open page's own parked entry included
+  await check('Wire Advanced: a show saved with a custom list per page opens as ONE library, its tiles follow, the merge is not an edit and the next save holds the new shape', async () => {
+    const keep = JSON.stringify(getProjectState());
+    const s = JSON.parse(keep);
+    const encA = { id: 'csA', name: 'WA OLD ENC', resolution: '1920x1080', wireColor: '#b78fff' };
+    s.wireSettings = Object.assign({}, s.wireSettings, { wireView: 'advanced' });
+    s.wireAdvanced = {
+      sources: [], dests: [], dsms: [], wires: [], routers: [], devices: [],
+      customSources: [encA], customDests: [], customDsms: [],
+      _pages: [{ id: 'p0', name: 'Page 1' }, { id: 'p1', name: 'Page 2' }, { id: 'p2', name: 'Page 3' }],
+      _activePageId: 'p0',
+      _pageData: {
+        /* the open page is parked too in a real old file — same three lists, the same cards */
+        p0: { sources: [], dests: [], dsms: [], wires: [], routers: [], devices: [],
+              customSources: [JSON.parse(JSON.stringify(encA))], customDests: [], customDsms: [] },
+        p1: { sources: [{ id: 'tS2', name: 'WA OLD ENC', x: 120, y: 120 }], dests: [{ id: 'tD2', refId: 'cdB', x: 700, y: 160 }], dsms: [], wires: [], routers: [], devices: [],
+              customSources: [{ id: 'csB', name: 'WA OLD ENC', resolution: '1920x1080', wireColor: '#b78fff' }],
+              customDests: [{ id: 'cdB', name: 'WA OLD DECK', w: 1920, h: 1080 }], customDsms: [] },
+        p2: { sources: [], dests: [{ id: 'tD3', refId: 'cdC', x: 700, y: 160 }], dsms: [], wires: [], routers: [], devices: [],
+              customSources: [], customDests: [{ id: 'cdC', name: 'WA OLD DECK', w: 1920, h: 1080 }], customDsms: [] }
+      }
+    };
+    closeWireMode(); await wait(250);
+    _applyProjectText(JSON.stringify(s)); await wait(900); okDialogs();
+    const undo0 = eval('_undoStack').length, dirty0 = !!eval('_isDirty');
+    openWireMode(); await wait(500); wireSettings.wireView = 'advanced'; _wireRender(); await wait(500); okDialogs();
+    const lib = [...document.querySelectorAll('#wire-sources-panel .wire-pane')].map(p => [...p.querySelectorAll('.wire-custom-card .wire-custom-name')].map(i => i.value));
+    const clean = [dirty0, !!eval('_isDirty'), eval('_undoStack').length - undo0];
+    const wa = getProjectState().wireAdvanced, pd = wa._pageData || {};
+    const perPage = Object.keys(pd).filter(k => ['customSources', 'customDests', 'customDsms'].some(c => c in (pd[k] || {})));
+    // the tile of the copy that went now points at the card that stayed, on both pages
+    _wireSwitchPage('p1'); await wait(350);
+    const t2 = ($('#wire-diagram g.wire-adv-node[data-node-id="adst:tD2"]') || { textContent: '' }).textContent;
+    _wireSwitchPage('p2'); await wait(350);
+    const t3 = ($('#wire-diagram g.wire-adv-node[data-node-id="adst:tD3"]') || { textContent: '' }).textContent;
+    closeWireMode(); await wait(250);
+    _applyProjectText(keep); await wait(900); okDialogs();
+    openWireMode(); await wait(500); wireSettings.wireView = 'advanced'; _wireRender(); await wait(500); okDialogs();
+    return is([lib, clean, perPage, /WA OLD DECK/.test(t2), /WA OLD DECK/.test(t3)],
+              [[['WA OLD ENC'], ['WA OLD DECK'], []], [false, false, 0], [], true, true],
+              'one library / [dirty at load, dirty after looking, undo steps] / per-page lists left in the saved file / page 2 tile / page 3 tile');
+  });
+
+  // fix-1 — the blocker: two pages holding the same NAME with different data are TWO cards, and both survive
+  await check('Wire Advanced: an older show whose pages hold the same custom name with different data keeps BOTH cards, each page\'s tiles on the card they were made from, with no Save light and no undo step', async () => {
+    const keep = JSON.stringify(getProjectState());
+    const s = JSON.parse(keep);
+    s.wireSettings = Object.assign({}, s.wireSettings, { wireView: 'advanced' });
+    s.wireAdvanced = {
+      sources: [], dests: [], dsms: [], wires: [], routers: [], devices: [],
+      customSources: [], customDests: [], customDsms: [],
+      _pages: [{ id: 'p0', name: 'Page 1' }, { id: 'p1', name: 'Page 2' }, { id: 'p2', name: 'Page 3' }],
+      _activePageId: 'p0',
+      _pageData: {
+        p0: { sources: [], dests: [], dsms: [], wires: [], routers: [], devices: [], customSources: [], customDests: [], customDsms: [] },
+        p1: { sources: [{ id: 'tsX', name: 'WA TWIN ENC', x: 120, y: 120 }], dests: [{ id: 'tdX', refId: 'cdX', x: 700, y: 160 }], dsms: [], wires: [], routers: [], devices: [],
+              customSources: [{ id: 'csX', name: 'WA TWIN ENC', resolution: '1920x1080', wireColor: '#b78fff' }],
+              customDests: [{ id: 'cdX', name: 'WA TWIN DECK', w: 1920, h: 1080 }], customDsms: [] },
+        p2: { sources: [{ id: 'tsY', name: 'WA TWIN ENC', x: 120, y: 120 }], dests: [{ id: 'tdY', refId: 'cdY', x: 700, y: 160 }], dsms: [], wires: [], routers: [], devices: [],
+              customSources: [{ id: 'csY', name: 'WA TWIN ENC', resolution: '3840x2160', wireColor: '#ff9f6b' }],
+              customDests: [{ id: 'cdY', name: 'WA TWIN DECK', w: 3840, h: 2160 }], customDsms: [] }
+      }
+    };
+    closeWireMode(); await wait(250);
+    _applyProjectText(JSON.stringify(s)); await wait(900); okDialogs();
+    const undo0 = eval('_undoStack').length, dirty0 = !!eval('_isDirty');
+    openWireMode(); await wait(500); wireSettings.wireView = 'advanced'; _wireRender(); await wait(500); okDialogs();
+    // nothing the user made disappeared: both encoders and both decks are in the one library, with their own data
+    const byName = (a, b) => (a[0] < b[0] ? -1 : 1);
+    const encs = (wireAdvanced.customSources || []).map(c => [c.name, c.resolution]).sort(byName);
+    const decks = (wireAdvanced.customDests || []).map(c => [c.name, c.w + 'x' + c.h]).sort(byName);
+    const clean = [dirty0, !!eval('_isDirty'), eval('_undoStack').length - undo0];
+    // each page's tiles still read the card they were made from
+    _wireSwitchPage('p1'); await wait(400);
+    const p2Src = ($('#wire-diagram g.wire-adv-node[data-node-id="asrc:tsX"]') || { textContent: '' }).textContent;
+    const p2Dst = ($('#wire-diagram g.wire-adv-node[data-node-id="adst:tdX"]') || { textContent: '' }).textContent;
+    _wireSwitchPage('p2'); await wait(400);
+    const p3Src = ($('#wire-diagram g.wire-adv-node[data-node-id="asrc:tsY"]') || { textContent: '' }).textContent;
+    const p3Dst = ($('#wire-diagram g.wire-adv-node[data-node-id="adst:tdY"]') || { textContent: '' }).textContent;
+    const wa = getProjectState().wireAdvanced, pd = wa._pageData || {};
+    const perPage = Object.keys(pd).filter(k => ['customSources', 'customDests', 'customDsms'].some(c => c in (pd[k] || {})));
+    closeWireMode(); await wait(250);
+    _applyProjectText(keep); await wait(900); okDialogs();
+    openWireMode(); await wait(500); wireSettings.wireView = 'advanced'; _wireRender(); await wait(500); okDialogs();
+    return is([encs, decks, clean, [/1920x1080/.test(p2Src), /1920x1080/.test(p2Dst)], [/3840x2160/.test(p3Src), /3840x2160/.test(p3Dst)], perPage],
+              [[['WA TWIN ENC', '1920x1080'], ['WA TWIN ENC 2', '3840x2160']], [['WA TWIN DECK', '1920x1080'], ['WA TWIN DECK 2', '3840x2160']],
+               [false, false, 0], [true, true], [true, true], []],
+              'both encoders / both decks / [dirty at load, dirty after looking, undo steps] / page 2 tiles / page 3 tiles / per-page lists left in the saved file');
+  });
+
+  // fix-2 — a rename from another page reaches the tile, and the x can still take it
+  await check('Wire Advanced: renaming a custom source card from another page renames its tile on that page, and the card\'s x still removes it', async () => {
+    const spare = await _waSpare(); const first = wireAdvanced._pages[0].id, tab0 = wireAdvanced._activePageId;
+    _wireAdvAddCustomSource(); const cs = wireAdvanced.customSources[wireAdvanced.customSources.length - 1];
+    _wireAdvSetCustomField('src', cs.id, 'name', 'WA REN ENC');
+    wireAdvanced.sources.push({ id: 'waRenT', name: 'WA REN ENC', x: 120, y: 1100 });
+    _wireRender(); await wait(300);
+    // rename it from PAGE 1, through the card's own name box (its real onchange), not from the page the tile is on
+    _wireSwitchPage(first); await wait(350);
+    const box = [...document.querySelectorAll('#wire-sources-panel .wire-custom-card .wire-custom-name')].find(i => i.value === 'WA REN ENC');
+    if (!box) { await _waHome(); return 'page 1 does not offer the card'; }
+    box.focus(); box.value = 'WA REN ENC 9'; box.dispatchEvent(new Event('change', { bubbles: true })); box.blur(); await wait(350);
+    const tiles = () => [wireAdvanced].concat(Object.keys(wireAdvanced._pageData || {}).filter(k => k !== wireAdvanced._activePageId).map(k => wireAdvanced._pageData[k]))
+      .reduce((a, p) => a.concat((p.sources || []).filter(s => s && /^WA REN ENC/.test(s.name)).map(s => s.name)), []);
+    const followed = tiles();
+    // the x on page 1 takes the tile off the page it was dropped on
+    const card = [...document.querySelectorAll('#wire-sources-panel .wire-custom-card')].find(c => { const n = c.querySelector('.wire-custom-name'); return n && n.value === 'WA REN ENC 9'; });
+    const del = card ? card.querySelector('.wire-card-delete') : null;
+    if (del) del.click(); else _wireAdvDeleteCustom('src', cs.id);
+    await wait(300);
+    const left = tiles();
+    const cards = (wireAdvanced.customSources || []).filter(c => /^WA REN ENC/.test(c.name || '')).length;
+    await _waHome();
+    return is([followed, left, cards, wireAdvanced._activePageId === wireAdvanced._pages[0].id],
+              [['WA REN ENC 9'], [], 0, true],
+              'tile names after the rename / tiles left after the x / cards left / back on page 1');
+  });
+
+  // fix-3 — the Cable Colour Code is the key of the page being drawn
+  await check('Wire Advanced: the Cable Colour Code and the printed sheet list only the custom cards with a tile on the page being drawn', async () => {
+    const first = wireAdvanced._pages[0].id;
+    const key = () => JSON.stringify(_wireCableTypesInUse().map(r => [r.spec.type, r.sources]));
+    _wireSwitchPage(first); await wait(300);
+    const before = key();
+    const spare = await _waSpare();
+    _wireAdvAddCustomSource(); const cs = wireAdvanced.customSources[wireAdvanced.customSources.length - 1]; _wireAdvSetCustomField('src', cs.id, 'name', 'WA KEY ENC');
+    _wireAdvAddCustomDest();   const cd = wireAdvanced.customDests[wireAdvanced.customDests.length - 1];     _wireAdvSetCustomField('dst', cd.id, 'name', 'WA KEY DECK');
+    _wireRender(); await wait(300);
+    // real picks from the shared connector list, on the cards themselves
+    const pick = async (name, type) => {
+      const c = [...document.querySelectorAll('#wire-sources-panel .wire-custom-card')].find(x => { const n = x.querySelector('.wire-custom-name'); return n && n.value === name; });
+      const b = c ? c.querySelector('.wire-cable-btn') : null; if (!b) return 'no Cable Type button on the ' + name + ' card';
+      _sysOpenDropdown(b); await wait(250);
+      const it = $$('.sys-dd .sys-dd-item').find(x => x.textContent.trim().indexOf(type) === 0); if (!it) { _sysCloseMenu(); return 'the cable list did not offer ' + type; }
+      it.click(); await wait(300); return true;
+    };
+    const pS = await pick('WA KEY ENC', '3G-SDI');
+    const pD = await pick('WA KEY DECK', '12G-SDI');
+    wireAdvanced.sources.push({ id: 'waKeyS', name: 'WA KEY ENC', x: 60, y: 1200 });
+    wireAdvanced.dests.push({ id: 'waKeyD', refId: cd.id, x: 900, y: 1200 });
+    _wireRender(); await wait(350);
+    const onSpare = key();
+    _wireSwitchPage(first); await wait(400);
+    const onFirst = key();
+    const sheet = _wireExportSheetsSvg('light');
+    _wireAdvDeleteCustom('src', cs.id); _wireAdvDeleteCustom('dst', cd.id); await wait(250);
+    await _waHome();
+    return is([pS, pD, /WA KEY ENC/.test(onSpare) && /WA KEY DECK/.test(onSpare), onFirst === before, /WA KEY DECK/.test(sheet)],
+              [true, true, true, true, true],
+              'source pick / destination pick / the page they are on lists them / page 1\'s key is untouched / the printed sheet still carries the page they are on');
+  });
+
+  // fix-4 — one library, so one name per custom destination / AUX
+  await check('Wire Advanced: a second custom destination or AUX given a name that is taken is numbered, the way custom sources are', async () => {
+    const spare = await _waSpare();
+    const nameLast = (paneIdx, text) => {
+      const p = [...document.querySelectorAll('#wire-sources-panel .wire-pane')][paneIdx]; if (!p) return 'no pane ' + paneIdx;
+      const n = [...p.querySelectorAll('.wire-custom-card .wire-custom-name')]; const el = n[n.length - 1]; if (!el) return 'no card on pane ' + paneIdx;
+      el.focus(); el.value = text; el.dispatchEvent(new Event('change', { bubbles: true })); el.blur(); return true;
+    };
+    _wireAdvAddCustomDest(); const d1 = wireAdvanced.customDests[wireAdvanced.customDests.length - 1];
+    _wireRender(); await wait(250); nameLast(1, 'WA ONE DECK'); await wait(250);
+    _wireAdvAddCustomDest(); const d2 = wireAdvanced.customDests[wireAdvanced.customDests.length - 1];
+    _wireRender(); await wait(250); nameLast(1, 'WA ONE DECK'); await wait(250);
+    _wireAdvAddCustomDsm(); const m1 = wireAdvanced.customDsms[wireAdvanced.customDsms.length - 1];
+    _wireRender(); await wait(250); nameLast(2, 'WA ONE AUX'); await wait(250);
+    _wireAdvAddCustomDsm(); const m2 = wireAdvanced.customDsms[wireAdvanced.customDsms.length - 1];
+    _wireRender(); await wait(250); nameLast(2, 'WA ONE AUX'); await wait(250);
+    const dests = [d1, d2].map(d => (wireAdvanced.customDests.find(x => x.id === d.id) || {}).name);
+    const auxes = [m1, m2].map(d => (wireAdvanced.customDsms.find(x => x.id === d.id) || {}).name);
+    _wireAdvDeleteCustom('dst', d1.id); _wireAdvDeleteCustom('dst', d2.id);
+    _wireAdvDeleteCustom('dsm', m1.id); _wireAdvDeleteCustom('dsm', m2.id); await wait(250);
+    await _waHome();
+    return is([dests, auxes], [['WA ONE DECK', 'WA ONE DECK 2'], ['WA ONE AUX', 'WA ONE AUX 2']],
+              'the two custom destination names / the two custom AUX names');
+  });
   await check('Wire: closes cleanly', async () => { closeWireMode(); await wait(300); return is(getComputedStyle($('#wire-overlay')).display, 'none', 'overlay'); });
   await restore();
 
@@ -2950,10 +4766,380 @@
     await restore(); await ioOpenSimple(); const n = srcNames().find(x => _sysFindBGAssignments(x).length && (_sysGetSourceMeta(x).notes || '')); if (!n) { closeSystem(); return 'the example has no BG source with a note'; }
     const own = _sysGetSourceMeta(n).notes; const d0 = _isDirty; _isDirty = false; const nt = $('.sys-notes-input', ioRow(n)); nt.focus(); nt.blur(); await wait(200); const out = is([_sysGetSourceMeta(n).notes, _isDirty], [own, false], 'source note / show marked changed'); _isDirty = d0; closeSystem(); await restore(); return out;
   });
+
+  // ── source-notes (owner decision 30, 2026-09-22): INSERT in tests/flows_probe.js straight AFTER the check
+  //    'I/O Patch: clicking in and out of a Notes box writes nothing (a BG source keeps its own note)'. Uses the probe's
+  //    own helpers (restore, ioOpenSimple, ioRow, srcNames, userLookBook, fire, is, okDialogs). Each check FAILS on build
+  //    16ks (the old "a background source shows and edits the DESTINATION's note" rule) and PASSES with patch.py; each
+  //    one closes the I/O Patch and ends on restore(). No media. REPLACES nothing: no existing check breaks.
+  // the example's first source that is a background somewhere AND has a note of its own that differs from the destination's
+  const snBgSource = () => srcNames().find(x => { const a = _sysFindBGAssignments(x); if (!a.length) return false; const own = _sysGetSourceMeta(x).notes || ''; const d = screens.find(s => s.id === a[0].sid); return !!own && !!d && (d.notes || '') !== own; });
+  await check('I/O Patch: a background source shows its OWN note, a note typed there changes that source only (the LED walls keep theirs), is one undo step, and a saved show reloads with both', async () => {
+    await restore(); await ioOpenSimple(); const n = snBgSource(); if (!n) { closeSystem(); return 'the example has no background source with a note of its own'; }
+    const own = _sysGetSourceMeta(n).notes; const walls = () => JSON.stringify(screens.map(s => [s.name, s.notes || ''])); const w0 = walls(); const out = [];
+    const nt = $('.sys-notes-input', ioRow(n)); out.push(nt.value === own);   // 16ks shows the first BG destination's note here
+    const u0 = _undoStack.length; nt.focus(); nt.value = 'SN TYPED'; fire(nt, 'change'); nt.blur(); await wait(250);
+    out.push(_sysGetSourceMeta(n).notes === 'SN TYPED', walls() === w0, _undoStack.length - u0, _isDirty);   // 16ks writes the note onto every BG destination too
+    doUndo(); await wait(300); out.push(_sysGetSourceMeta(n).notes === own && walls() === w0); doRedo(); await wait(300);
+    closeSystem(); await wait(200); const saved = JSON.stringify(getProjectState()); _applyProjectText(saved); await wait(800); okDialogs(); await wait(150); okDialogs();
+    out.push(_sysGetSourceMeta(n).notes === 'SN TYPED', walls() === w0);
+    await ioOpenSimple(); out.push(($('.sys-notes-input', ioRow(n)) || {}).value === 'SN TYPED'); closeSystem(); await restore();
+    return is(out, [true, true, true, 1, true, true, true, true, true], 'own note shown / typed note stored on the source / destinations untouched / undo steps / Save lit / Undo puts the own note back with the walls untouched / after a reload: the typed note / the walls / shown again');
+  });
+  await check('I/O Patch: Reset on a background source clears its own note only; the destination it is the BG of keeps its note', async () => {
+    await restore(); await ioOpenSimple(); const n = snBgSource(); if (!n) { closeSystem(); return 'the example has no background source with a note of its own'; }
+    const w0 = JSON.stringify(screens.map(s => [s.name, s.notes || ''])); $('[data-sys-action="reset"]', ioRow(n)).click(); await wait(250); const go = $('#sys-confirm-go'); if (!go) { closeSystem(); return 'no Reset window'; } go.click(); await wait(400);
+    const out = is([_sysGetSourceMeta(n).notes || '', JSON.stringify(screens.map(s => [s.name, s.notes || ''])) === w0], ['', true], 'source note after Reset / destination notes untouched'); closeSystem(); await restore(); return out;
+  });
+  await check('Video I-O Excel tab and the Look Book Sources page print a background source\'s own note, the same note the Advanced page-1 tab prints', async () => {
+    await restore(); await ioOpenSimple(); const n = snBgSource(); if (!n) { closeSystem(); return 'the example has no background source with a note of its own'; } const own = _sysGetSourceMeta(n).notes;
+    _ioSetView('advanced'); await wait(700); okDialogs(); _ioSetView('simple'); await wait(300);   // page 1 exists, so the workbook has both tabs
+    downloads.length = 0; const o1 = _buildXlsx, o2 = _buildXlsxMulti; let simple = null, page1 = null;
+    window._buildXlsx = function (r) { simple = r; return o1.apply(this, arguments); }; window._buildXlsxMulti = function (sheets) { const s = sheets.find(x => x.name === 'Video I-O'); if (s) simple = s.rows; const p = sheets[2]; if (p) page1 = p.rows; return o2.apply(this, arguments); };
+    try { _sysExportIOExcel(); await wait(400); } finally { window._buildXlsx = o1; window._buildXlsxMulti = o2; } okDialogs();
+    const noteIn = (rows, col) => { const r = (rows || []).find(r => r && r[col] === n); return r ? r[r.length - 1] : 'no row for ' + n; };
+    closeSystem(); await wait(200); const d = new DOMParser().parseFromString(await userLookBook(), 'text/html'); const c = [...d.querySelectorAll('td.io-name-cell')].find(x => x.textContent.trim() === n); const book = c ? c.parentElement.querySelector('.io-notes-cell').textContent.trim() : 'no row for ' + n;
+    await restore(); return is([noteIn(simple, 2), noteIn(page1, 3), book], [own, own, own], 'Video I-O tab / page-1 tab / Look Book Sources page');
+  });
   await check('I/O Patch: Set for all destinations also sets the I/O-only destination rows under it', async () => {
     await restore(); ioDests.push({ id: uid(), name: 'IO ONLY TEST', connectorType: '', deviceType: '', customType: '', w: 1920, h: 1080, notes: '' }); await ioOpenSimple();
     await ioPick($('#sys-dst-rows .sys-row-global [data-sys-field="connector"]'), /^HDMI 2\.1/); const got = [screens[0].connectorType, (ioDests[0] || {}).connectorType]; closeSystem(); await restore(); return is(got, ['HDMI 2.1', 'HDMI 2.1'], 'first destination / I/O-only destination');
   });
+
+  // ── I/O Patch ghost rows (decision 31, round 16kt, FIXED after the attack): this block REPLACES the builder's
+  //    flows_checks.js block as a whole, at the same place: INSERT in tests/flows_probe.js straight AFTER the check
+  //    'I/O Patch: Set for all destinations also sets the I/O-only destination rows under it' (the last I/O Patch
+  //    click-through check, before 'Look Book: a cover, one page per preset, ...'). Own helper names (_gr*). Every check
+  //    starts from restore(), closes the I/O Patch and ends on restore(). No media.
+  //    The rule changed: a copied page-1 row whose item left the show is no longer DELETED at the draw, it STAYS marked
+  //    gone (dimmed, "not in the show", never a twin, out of the page-1 sheet) until Rebuild from Simple or its trash.
+  //    Three of the builder's four checks expected the deletion and are corrected below (REPLACES headers); the second
+  //    one is unchanged and repeated verbatim so the block can be dropped in as one piece. Four new checks follow: one
+  //    per attack defect, plus one for the removal paths. Every check here FAILS on the BASE page (the four round-16kt
+  //    patches on 16ks) and PASSES with patch_fix.py, except the unchanged second one, which passes on both.
+  const _grTab = v => { const b = $('#sys-overlay [onclick*="_ioSetView(\'' + v + '\')"]'); if (b) b.click(); };
+  const _grKeep = () => { for (let i = 0; i < 4 && dlgOpen(); i++) { const keep = /changed since/i.test(dialogText()); const b = $(keep ? '#dlg-cancel' : '#dlg-confirm'); if (b) b.click(); else break; } };   /* "Rebuild from Simple?" is answered "Keep my page" */
+  const _grP1 = () => { const p = ioAdvanced.pages[0]; const nm = r => r && r.name; return { src: p.sources.map(nm).filter(Boolean), dst: p.dests.concat(p.mvs || []).map(nm).filter(Boolean), flags: p.sources.concat(p.dests, p.mvs || []).filter(r => r && r.name).map(r => r.name + ':' + (r.fromShow === true ? 'S' : (r.fromShow === undefined ? '-' : String(r.fromShow)))) }; };
+  const _grTwins = () => sources.filter(s => s && s.fromAdv).map(s => s.name).concat(ioDests.filter(d => d && d.fromAdv).map(d => d.name));
+  const _grGold = () => { _recomputeDirty(); return !!eval('_isDirty'); };
+  const _grSaved = () => { _captureCleanBaseline(); eval('_isDirty=false'); _updateDirtyIndicator(); _undoStack.length = 0; _redoStack.length = 0; _syncUndoButtons(); };   /* what Save does once the file is written, with an empty history */
+  const _grBuildPage1 = async () => { openSystem(); await wait(500); if (ioAdvanced.view !== 'simple') { _grTab('simple'); await wait(300); } _grTab('advanced'); await wait(800); _grKeep(); _grTab('simple'); await wait(300); closeSystem(); await wait(300); };
+  const _grDeleteThree = async () => {   /* in Video Presets: the destination LEFT LED, the last AUX (AUX 1, whose only content PGM goes with it), and NOTES (P03's DSM 1 content) */
+    const d0 = screens[0].name, a0 = dsms[dsms.length - 1].name, p3 = presets[2], dsm1 = dsms[0];
+    deleteScreen(screens[0].id); await wait(300); okDialogs();
+    removeLastDSM(); await wait(250); okDialogs(); await wait(300);
+    pushUndo(); setDSMContent(p3.id, dsm1.id, 'CLOCK'); await wait(300);
+    return { d0, a0 };
+  };
+  const _grGone = () => { const p = ioAdvanced.pages[0]; return p.sources.concat(p.dests, p.mvs || []).filter(r => r && r.name && r.gone === true).map(r => r.name); };   /* the page-1 rows marked "not in the show" */
+  const _grNote = name => { const p = ioAdvanced.pages[0]; const r = p.sources.concat(p.dests, p.mvs || []).find(r => r && r.name === name); return r ? (r.notes || '') : null; };
+  const _grDim = () => $$('#io-adv .sys-row.io-gone .sys-name-input').map(i => i.value);   /* the rows drawn dimmed (the Advanced view must be open) */
+  const _grTag = () => { const r = $('#io-adv .sys-row.io-gone'); return r ? [getComputedStyle(r, '::after').content, getComputedStyle($('.sys-name-cell', r)).opacity, getComputedStyle($('.sys-row-actions', r)).opacity] : []; };
+  const _grSheet = () => { const orig = _buildXlsxMulti; let sheets = null; window._buildXlsxMulti = function (s) { sheets = s; return orig.apply(this, arguments); }; downloads.length = 0; try { _sysExportIOExcel(); } finally { window._buildXlsxMulti = orig; } okDialogs(); const pg = (sheets || []).find(s => s.name === ioAdvanced.pages[0].name); return pg ? pg.rows.filter(r => Array.isArray(r) && /^(Source|Destination|Multiviewer) \d+$/.test(r[0] || '')).map(r => r[3]) : ['no page-1 sheet']; };   /* the names on the page-1 sheet of the I/O Excel */
+  const _grTypeNote = async (name, text) => { const p = ioAdvanced.pages[0]; const r = p.sources.concat(p.dests).find(r => r && r.name === name); const nt = $('#io-adv .sys-notes-input[data-sys-id="' + r.id + '"]'); nt.focus(); nt.value = text; nt.blur(); await wait(300); };   /* a note typed on a page-1 row (Advanced open) */
+
+  // REPLACES 'I/O Patch ghost rows: a destination, an AUX and a source removed in Video Presets leave Advanced page 1 and never come back to Simple as I/O-only rows; Save lights only for the deletions and one Undo per deletion brings the item back on both pages'
+  await check('I/O Patch ghost rows: a destination, an AUX and a source removed in Video Presets stay on Advanced page 1 marked not in the show, never come back to Simple as I/O-only rows and are left out of the page-1 sheet; Save lights only for the deletions and one Undo per deletion brings the item back on both pages', async () => {
+    await restore(); await _grBuildPage1(); _grSaved(); const out = [];
+    const { d0, a0 } = await _grDeleteThree(); const steps = _undoStack.length; out.push([_grGold(), steps]);
+    openSystem(); await wait(500); _grTab('advanced'); await wait(800); const asked = dlgOpen(); _grKeep(); await wait(200);
+    const p1 = _grP1(), g = _grGone(); out.push([p1.src.includes('PGM'), p1.src.includes('NOTES'), p1.dst.includes(d0), p1.dst.includes(a0), g.includes('PGM') && g.includes('NOTES') && g.includes(d0) && g.includes(a0), _grDim().length, _grTwins(), _grGold(), _undoStack.length - steps, asked]);
+    const sheet = _grSheet(); out.push([sheet.includes('PGM'), sheet.includes('NOTES'), sheet.includes(d0), sheet.includes(a0), sheet.length > 5]);
+    _grTab('simple'); await wait(300); const back = [];
+    doUndo(); await wait(400); back.push([getDSMContent(presets[2].id, dsms[0].id), _grP1().src.includes('NOTES'), _grGone().includes('NOTES')]);
+    doUndo(); await wait(400); back.push([dsms[dsms.length - 1].name, _grP1().dst.includes(a0), _grP1().src.includes('PGM'), _grGone().includes(a0), _grGone().includes('PGM')]);
+    doUndo(); await wait(400); back.push([screens[0].name, _grP1().dst.includes(d0), _grGold(), _grTwins(), _grGone()]);
+    closeSystem(); await restore();
+    return is([out, back], [[[true, 3], [true, true, true, true, true, 4, [], true, 0, true], [false, false, false, false, true]], [['NOTES', true, false], [a0, true, true, false, false], [d0, true, false, [], []]]],
+      'gold + 3 steps after the deletions / page 1 still has PGM, NOTES, the destination, the AUX; all four marked gone; four rows drawn dimmed; I/O-only twins; gold; extra steps from opening Advanced; rebuild asked / the page-1 sheet without the four, with rows / after each Undo: the item back in the show, its row on page 1 and not gone; clean at the end, no twins, nothing gone');
+  });
+  await check('I/O Patch ghost rows: the rows page 1 copied from the show are marked, a row typed by hand is not and still becomes an I/O-only row, a copied row renamed by hand becomes a hand row and keeps its place', async () => {
+    await restore(); openSystem(); await wait(500); if (ioAdvanced.view !== 'simple') { _grTab('simple'); await wait(300); } _grTab('advanced'); await wait(800); _grKeep();
+    const f0 = _grP1().flags; const allMarked = f0.length > 0 && f0.every(x => /:S$/.test(x));
+    _ioAdvAdd('src'); await wait(200); const row = ioAdvanced.pages[0].sources[ioAdvanced.pages[0].sources.length - 1]; const inp = $('#io-adv .sys-name-input[data-sys-id="' + row.id + '"]'); inp.focus(); inp.value = 'GR HAND ROW'; inp.blur(); await wait(400);
+    const hand = [row.fromShow, _grTwins().includes('GR HAND ROW')];
+    const cam = ioAdvanced.pages[0].sources.find(r => r.name === 'CAM 2'); const ci = $('#io-adv .sys-name-input[data-sys-id="' + cam.id + '"]'); ci.focus(); ci.value = 'GR CAM 2 RENAMED'; ci.blur(); await wait(400);
+    _grTab('simple'); await wait(300); _grTab('advanced'); await wait(800); _grKeep();
+    const p1 = _grP1(); const renamed = [cam.fromShow, cam.name, p1.src.includes('GR CAM 2 RENAMED'), _grTwins().includes('GR CAM 2 RENAMED'), srcNames().includes('CAM 2')];
+    closeSystem(); await restore();
+    return is([allMarked, hand, renamed], [true, [undefined, true], [undefined, 'GR CAM 2 RENAMED', true, true, true]], 'every copied row marked / hand row: no mark, I/O-only twin / renamed copied row: no mark, new name, still on page 1, I/O-only twin, CAM 2 itself untouched');
+  });
+  // REPLACES 'I/O Patch ghost rows: a show file from an older build (page 1 without marks) is marked on the first I/O Patch draw without lighting Save or recording a step, and follows the show from then on'
+  await check('I/O Patch ghost rows: a show file from an older build (page 1 without marks) is marked on the first I/O Patch draw without lighting Save or recording a step, and follows the show from then on: an AUX deleted afterwards stays on page 1 marked not in the show, with its PGM, and neither twins', async () => {
+    await restore(); await _grBuildPage1(); const st = getProjectState(); st.ioAdvanced.pages[0].sources.concat(st.ioAdvanced.pages[0].dests, st.ioAdvanced.pages[0].mvs).forEach(r => { delete r.fromShow; });
+    _applyProjectText(JSON.stringify(st)); await wait(700); okDialogs(); await wait(150); okDialogs(); const loaded = [_grP1().flags.some(x => /:S$/.test(x)), _grGold(), _undoStack.length];
+    openSystem(); await wait(500); if (ioAdvanced.view !== 'simple') { _grTab('simple'); await wait(300); } const f1 = _grP1().flags; const marked = [f1.length > 0 && f1.every(x => /:S$/.test(x)), _grGold(), _undoStack.length]; closeSystem(); await wait(200);
+    const a0 = dsms[dsms.length - 1].name; removeLastDSM(); await wait(250); okDialogs(); await wait(300); const lit = [_grGold(), _undoStack.length];
+    openSystem(); await wait(500); const after = [_grP1().dst.includes(a0), _grP1().src.includes('PGM'), _grGone().includes(a0), _grGone().includes('PGM'), _grTwins(), _grGold(), _undoStack.length]; closeSystem(); await restore();
+    return is([loaded, marked, lit, after], [[false, false, 0], [true, false, 0], [true, 1], [true, true, true, true, [], true, 1]], 'loaded: no marks, clean, no steps / after ONE look at I/O Patch: every row marked, clean, no steps / after the AUX deletion: gold, one step / after the next look: the AUX row and its PGM row still on page 1, both marked gone, no twins, still one step');
+  });
+  // REPLACES 'I/O Patch ghost rows: a deletion made and saved, then the I/O Patch: Save stays clean, opening Advanced is no undo step, and the page-1 sheet of the I/O Excel has no ghost'
+  await check('I/O Patch ghost rows: a deletion made and saved, then the I/O Patch: Save stays clean, opening Advanced is no undo step, the row stays on page 1 marked not in the show, and the page-1 sheet of the I/O Excel has no ghost', async () => {
+    await restore(); await _grBuildPage1(); const d0 = screens[0].name; deleteScreen(screens[0].id); await wait(300); okDialogs(); _grSaved();
+    openSystem(); await wait(500); const simple = [_grGold(), _undoStack.length, _grP1().dst.includes(d0), _grGone().includes(d0)];
+    _grTab('advanced'); await wait(800); _grKeep(); const adv = [_grGold(), _undoStack.length, _grP1().dst.includes(d0), _grGone().includes(d0), _grDim().includes(d0), _grTwins()];
+    const names = _grSheet();
+    closeSystem(); await restore();
+    return is([simple, adv, names.includes(d0), names.length > 5], [[false, 0, true, true], [false, 0, true, true, true, []], false, true], 'Simple: clean, no steps, the row still there, marked gone / Advanced: clean, no steps, the row still there, marked gone, drawn dimmed, no twins / the page-1 sheet lists the deleted destination / the sheet has rows');
+  });
+  // ── new: one per attack defect, plus the removal paths ─────────────────────────────────────────────────────────
+  await check('I/O Patch ghost rows: a source renamed in Advanced Video Presets (layer panel, Source box) is renamed on its page-1 row too, with its mark and its note, as a rename in I/O Patch Simple or Wire already was; the old name is never treated as an item that left, and one Undo brings the old name and the note back', async () => {
+    await restore(); await _grBuildPage1();
+    openSystem(); await wait(500); _grTab('advanced'); await wait(800); _grKeep(); await _grTypeNote('CAM 2', 'GR deck note'); _grTab('simple'); await wait(300); closeSystem(); await wait(200); _grSaved();
+    const p = presets.find(p => Object.values(p.layers || {}).some(l => Object.values(l || {}).includes('CAM 2'))); const sid = Object.keys(p.layers).find(k => Object.values(p.layers[k] || {}).includes('CAM 2')); const n = parseInt(Object.keys(p.layers[sid]).find(k => p.layers[sid][k] === 'CAM 2'), 10);
+    openFullscreen(p.id); await wait(700); _fsSelectLayer(p.id, sid, n); await wait(350);
+    const box = $('#fs-props input[onchange*="_fsRenameContentUI"]'); if (!box) { closeFullscreen(); await wait(300); await restore(); return 'no Source box in the layer panel for CAM 2'; }
+    box.focus(); box.value = 'GR CAM 2 VP'; fire(box, 'change'); await wait(500);
+    const renamed = [_sysDiscoverSources().includes('GR CAM 2 VP'), _sysDiscoverSources().includes('CAM 2'), _grGold(), _undoStack.length];
+    closeFullscreen(); await wait(300);
+    openSystem(); await wait(500); const simple = [_grP1().src.includes('GR CAM 2 VP'), _grP1().src.includes('CAM 2'), _grNote('GR CAM 2 VP'), _grGone(), _grTwins()];
+    _grTab('advanced'); await wait(800); _grKeep(); const cam = ioAdvanced.pages[0].sources.find(r => r.name === 'GR CAM 2 VP'); const adv = [!!cam, cam ? cam.fromShow : null, _grNote('GR CAM 2 VP'), _grGone(), _grTwins()];
+    _grTab('simple'); await wait(300); closeSystem(); await wait(200);
+    doUndo(); await wait(400); const undone = [_sysDiscoverSources().includes('CAM 2'), _grP1().src.includes('CAM 2'), _grP1().src.includes('GR CAM 2 VP'), _grNote('CAM 2'), _grGold()];
+    await restore();
+    return is([renamed, simple, adv, undone], [[true, false, true, 1], [true, false, 'GR deck note', [], []], [true, true, 'GR deck note', [], []], [true, true, false, 'GR deck note', false]],
+      'after the rename: the new name in the show, the old one out, gold, one step / I/O Patch Simple: the page-1 row under the new name with its note, nothing gone, no twins / Advanced: the row, still marked copied, the note, nothing gone, no twins / after Undo: CAM 2 back in the show and on page 1 with its note, clean');
+  });
+  await check('I/O Patch ghost rows: a source that leaves the presets for a moment keeps its page-1 row and note: while it is out the row is drawn dimmed as not in the show, never twinned, left out of the page-1 sheet and the Look Book, and the mark survives a save and reload; when the item is back the mark clears by itself; Undo and Redo carry the mark with the show', async () => {
+    await restore(); await _grBuildPage1();
+    openSystem(); await wait(500); _grTab('advanced'); await wait(800); _grKeep(); await _grTypeNote('NOTES', 'GR prompter note'); _grTab('simple'); await wait(300); closeSystem(); await wait(200); _grSaved();
+    const p3 = presets[2], dsm1 = dsms[0];
+    pushUndo(); setDSMContent(p3.id, dsm1.id, 'CLOCK'); await wait(300);   /* NOTES leaves the show */
+    openSystem(); await wait(500); const out = [_grP1().src.includes('NOTES'), _grGone(), _grNote('NOTES'), _grTwins(), _grGold(), _undoStack.length];
+    const sheet = _grSheet(); _grTab('advanced'); await wait(800); _grKeep(); const dim = [_grDim(), _grTag()];
+    _grTab('simple'); await wait(300); closeSystem(); await wait(200);
+    const lb = new DOMParser().parseFromString(await userLookBook(), 'text/html'); const lbNames = [...lb.querySelectorAll('.io-name-cell')].map(td => td.textContent.trim());
+    _applyProjectText(JSON.stringify(getProjectState())); await wait(700); okDialogs(); await wait(150); okDialogs(); const reloaded = [_grGone(), _grNote('NOTES')];
+    pushUndo(); setDSMContent(p3.id, dsm1.id, 'NOTES'); await wait(300);   /* NOTES is back */
+    openSystem(); await wait(500); _grTab('advanced'); await wait(800); _grKeep(); const back = [_grP1().src.includes('NOTES'), _grGone(), _grNote('NOTES'), _grDim(), _grTwins()];
+    _grTab('simple'); await wait(300); closeSystem(); await wait(200);
+    doUndo(); await wait(400); const u = [getDSMContent(p3.id, dsm1.id), _grNote('NOTES')]; openSystem(); await wait(400); u.push(_grGone()); closeSystem(); await wait(200);
+    doRedo(); await wait(400); const r2 = [getDSMContent(p3.id, dsm1.id), _grNote('NOTES')]; openSystem(); await wait(400); r2.push(_grGone()); closeSystem(); await wait(200);
+    await restore();
+    return is([out, [sheet.includes('NOTES'), sheet.length > 5], dim, [lbNames.includes('NOTES'), lbNames.length > 5], reloaded, back, u, r2],
+      [[true, ['NOTES'], 'GR prompter note', [], true, 1], [false, true], [['NOTES'], ['"not in the show"', '0.5', '1']], [false, true], [['NOTES'], 'GR prompter note'], [true, [], 'GR prompter note', [], []], ['CLOCK', 'GR prompter note', ['NOTES']], ['NOTES', 'GR prompter note', []]],
+      'NOTES out: the row still on page 1, marked gone, its note, no twins, gold, one step / the page-1 sheet without NOTES, with rows / Advanced: the NOTES row dimmed with the "not in the show" tag, the trash bright / the Look Book without NOTES, with rows / after save + reload: still marked, note kept / NOTES back: the row, no mark, the note, nothing dimmed, no twins / Undo: CLOCK, note kept, marked again / Redo: NOTES, note kept, mark cleared');
+  });
+  await check('I/O Patch ghost rows: the I/O Patch left on an Advanced spare page: a destination deleted in Video Presets is marked not in the show on page 1 the moment the I/O Patch opens on that spare page, and the page-1 sheet of the I/O Excel exported from there has no ghost', async () => {
+    await restore(); await _grBuildPage1();
+    openSystem(); await wait(500); _grTab('advanced'); await wait(800); _grKeep(); _ioSetPage(1); await wait(300); closeSystem(); await wait(200); _grSaved();
+    const d0 = screens[0].name; deleteScreen(screens[0].id); await wait(300); okDialogs(); const lit = [_grGold(), _undoStack.length];
+    openSystem(); await wait(600); const opened = [ioAdvanced.view, ioAdvanced.page, _grP1().dst.includes(d0), _grGone().includes(d0), _grTwins(), _grGold(), _undoStack.length];
+    const sheet = _grSheet();
+    _ioSetPage(0); await wait(400); _grKeep(); const p1 = [_grDim().includes(d0), _grGone().includes(d0), _undoStack.length];
+    _grTab('simple'); await wait(300); closeSystem(); await wait(200); doUndo(); await wait(400); const undone = [screens[0].name, _grGone(), _grGold()];
+    await restore();
+    return is([lit, opened, [sheet.includes(d0), sheet.length > 5], p1, undone], [[true, 1], ['advanced', 1, true, true, [], true, 1], [false, true], [true, true, 1], [d0, [], false]],
+      'gold + one step after the deletion / opened on Advanced page 2: the row still on page 1 and already marked gone, no twins, gold, still one step / the page-1 sheet exported from page 2 without the destination, with rows / page 1 tab: the row dimmed, marked, still one step / Undo: the destination back, nothing gone, clean');
+  });
+  await check('I/O Patch ghost rows: a row marked not in the show goes only with Rebuild from Simple, its own trash or a page copy (the copy takes the rows page 1 prints); one Undo brings a trashed row back with its mark', async () => {
+    await restore(); await _grBuildPage1();
+    const d0 = screens[0].name; deleteScreen(screens[0].id); await wait(300); okDialogs();
+    openSystem(); await wait(500); _grTab('advanced'); await wait(800); _grKeep(); const before = [_grP1().dst.includes(d0), _grGone().includes(d0)];
+    const nDst = ioAdvanced.pages[0].dests.filter(r => r && r.name).length; _ioCopyPage(0); await wait(400); const cp = ioAdvanced.pages[ioAdvanced.page]; const copy = [ioAdvanced.page > 0, cp.dests.some(r => r && r.name === d0), cp.dests.filter(r => r && r.name).length === nDst - 1, ioAdvanced.pages[0].dests.some(r => r && r.name === d0)];
+    _ioSetPage(0); await wait(300); _grKeep();
+    const row = ioAdvanced.pages[0].dests.find(r => r && r.name === d0); if (!row) { _grTab('simple'); await wait(300); closeSystem(); await restore(); return 'the deleted destination is no longer on page 1 (before the copy: ' + JSON.stringify(before) + ', after: ' + JSON.stringify(copy) + ')'; }
+    const steps = _undoStack.length; const btn = $('#io-adv .sys-icon-btn.del[data-sys-id="' + row.id + '"]'); btn.click(); await wait(300); okDialogs(); await wait(300);
+    const trashed = [_grP1().dst.includes(d0), _grGone().includes(d0), _grTwins(), _undoStack.length - steps];
+    doUndo(); await wait(500); const undone = [_grP1().dst.includes(d0), _grGone().includes(d0), _grTwins()];
+    _grTab('simple'); await wait(300); closeSystem(); await wait(200); removeLastDSM(); await wait(250); okDialogs(); await wait(300);   /* a second Simple change, so the rebuild question comes again */
+    openSystem(); await wait(500); _grTab('advanced'); await wait(800); const asked = /changed since/i.test(dialogText()); if (asked) { $('#dlg-confirm').click(); await wait(600); }   /* Rebuild from Simple */
+    const rebuilt = [asked, _grP1().dst.includes(d0), _grGone(), _grTwins()];
+    _grTab('simple'); await wait(300); closeSystem(); await restore();
+    return is([before, copy, trashed, undone, rebuilt], [[true, true], [true, false, true, true], [false, false, [], 1], [true, true, []], [true, false, [], []]],
+      'before: the deleted destination still on page 1, marked gone / the copy: on a new page, without the gone row, one row fewer, page 1 keeps it / the trash: the row gone from page 1, no twin, one step / Undo: the row back with its mark, no twin / Rebuild from Simple: asked, the row gone, nothing marked, no twins');
+  });
+  // ── 16kt merge fixes (re-attack leftovers, 2026-09-22). Goes straight AFTER the ghost-rows block (uses its _gr* helpers). Each FAILS
+  //    on the page as the fix agents delivered it and PASSES on the merged page; each ends on restore().
+  await check('Wire: a patch tile built from I/O page 1 leaves out a row that is "not in the show", and the I/O Tools menu counts it out too', async () => {
+    await restore(); try { await _grBuildPage1(); const gone = screens[0].name; deleteScreen(screens[0].id); await wait(300); okDialogs();
+      openSystem(); await wait(500); closeSystem(); await wait(300); const marked = _grGone();
+      openWireMode(); await wait(600); _wireSwitchToAdvanced(); await wait(500); okDialogs(); await wait(500);
+      const n0 = (wireAdvanced.routers || []).length; _wireAdvAddPatchTile(0); await wait(400); const t = (wireAdvanced.routers || [])[n0]; const outs = t ? (t.outputs || []).map(o => o.name).filter(Boolean) : ['no tile'];
+      const ioBtn = $$('[id="wire-router-menu-btn"]').find(e => e.getBoundingClientRect().width > 0) || $('#wire-router-menu-btn'); _wireToggleRouterMenu({ stopPropagation() {}, preventDefault() {}, currentTarget: ioBtn }); await wait(300);
+      const item = $$('#wire-router-menu *').map(e => e.textContent).find(t => /from the I\/O Patch/.test(t)) || ''; _wireCloseRouterMenu();
+      return is([marked.indexOf(gone) >= 0, outs.indexOf(gone) >= 0, /5 out/.test(item)], [true, false, true], 'page 1 marks the removed destination gone / the new tile lists it / the menu count leaves it out (5 out)');
+    } finally { try { closeWireMode(); closeSystem(); } catch (e) {} await restore(); }
+  });
+  await check('I/O Patch: the draw-time page-1 <-> IO-row sync fills a BLANK side only: two different values set on purpose on both sides are left alone (nothing is overwritten unseen)', async () => {
+    await restore(); try { await _grBuildPage1(); openSystem(); await wait(400); _grTab('advanced'); await wait(700); _grKeep();
+      _ioAdvAdd('dst'); await wait(300); const nm = $$('#io-adv .sys-name-input[data-sys-kind="adv-dst"]').pop(); if (!nm) return 'no new destination row on page 1';
+      nm.focus(); nm.value = 'GATE ROOM'; nm.blur(); await wait(400);
+      const pg = ioAdvanced.pages[0]; const row = () => (pg.dests || []).find(r => r && r.name === 'GATE ROOM'); if (!row()) return 'the typed name did not reach page 1';
+      row().connectorType = 'HDMI 2.0'; row().resolution = '3840x2160'; row().notes = 'page one note';   /* the page-1 side, as an older build saved it */
+      _grTab('simple'); await wait(700); const tw = ioDests.find(d => d && d.name === 'GATE ROOM'); if (!tw) return 'no IO twin was made for the page-1 destination';
+      const filled = [tw.connectorType || '', tw.notes || '', (tw.w || 0) + 'x' + (tw.h || 0)];
+      tw.connectorType = 'SDI 12G'; tw.notes = 'simple side note'; tw.w = 1280; tw.h = 720;   /* a value the user set on the Simple side of an older file */
+      _grTab('advanced'); await wait(700); _grKeep(); _grTab('simple'); await wait(700);
+      const after = [tw.connectorType || '', tw.notes || '', (tw.w || 0) + 'x' + (tw.h || 0)];
+      const p1 = [row().connectorType || '', row().notes || '', row().resolution || ''];
+      return is([filled, after, p1], [['HDMI 2.0', 'page one note', '3840x2160'], ['SDI 12G', 'simple side note', '1280x720'], ['HDMI 2.0', 'page one note', '3840x2160']], 'a blank twin is filled from page 1 / a twin with its own values keeps them after two more draws / page 1 keeps its own');
+    } finally { try { closeSystem(); } catch (e) {} await restore(); }
+  });
+// ═══ three-fixes (decision 33: io Q4, Q6, Q10): checks for tests/flows_probe.js ═══════════════════════════════════════════════
+// WHERE: paste the whole "NEW CHECKS (three-fixes)" block into tests/flows_probe.js straight AFTER the check
+//     'I/O Patch: Set for all destinations also sets the I/O-only destination rows under it'
+// (the I/O Patch click-through block), i.e. BEFORE the check that starts
+//     'Look Book: a cover, one page per preset, the I/O reference, the wire sheet and the summary'
+// Helpers used, all defined earlier in the probe: $, $$, wait, is, fire, vis, okDialogs, restore, dlgOpen, srcNames,
+// ioOpenSimple, ioRow, ioPick, ioEsc (the I/O Patch click-through block) and _ekInBox (the 16ks-esc block).
+// Synthetic events on purpose (the probe runs inside the page; the runner switches focus emulation on): a box is entered
+// with el.focus(), typed into with .value + an 'input' event, left with blur() / an Enter keydown, Escape is sent to the
+// focused box. The same flows are proved with REAL mouse and key input in walk.mjs of the three-fixes scratch folder.
+// Every check FAILS on build 16ks as shipped and PASSES with patch.py (run_checks.mjs, out/checks_orig.json / checks_patched.json).
+// Each check opens the I/O Patch itself, ends with closeSystem() and restore(), and leaves customTypes as it found them.
+// No media. No existing check is replaced (the three behaviours had no check before).
+//
+// ── NEW CHECKS (three-fixes) ─────────────────────────────────────────────────────────────────────────────────────────────────
+  const tfType = (el, txt) => { el.focus(); el.value = txt; fire(el, 'input'); el.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', code: 'Enter', keyCode: 13, bubbles: true, cancelable: true })); if (document.activeElement === el) el.blur(); };
+  const tfAllChip = (kind, root) => $('.sys-row-global .sys-chip[data-sys-kind="' + kind + '"]', root || $('#sys-overlay'));
+  const tfAllBox = kind => $('#sys-overlay .sys-row-global .sys-type-input[data-sys-kind="' + kind + '"]');
+  await check('I/O Patch: a multiviewer is renamed on the Simple patch from its name box: one undo step, Save lit, Advanced page 1 and the Remove MV list follow, Undo / Redo, Escape puts the old text back, the name survives a save + reload', async () => {
+    await restore(); await ioOpenSimple(); _ioSetView('advanced'); await wait(700); okDialogs(); _ioSetView('simple'); await wait(400);   /* page 1 built first, so the follow-through can be seen */
+    const box = $('#sys-mv-zone .sys-name-input'); if (!box) { closeSystem(); await restore(); return 'the multiviewer row has no name box (a plain label)'; }
+    const was = multiviewers[0].name, u0 = _undoStack.length, d0 = _isDirty; _isDirty = false; _updateDirtyIndicator();
+    tfType(box, 'OPS MV'); await wait(400);
+    const after = [multiviewers[0].name, (ioAdvanced.pages[0].mvs || []).map(m => m.name), _undoStack.length - u0, !!$('button.save-dirty'), ($('#sys-mv-zone .sys-name-input') || {}).value];
+    let picker = 'no window'; try { _sysOpenRemoveMVModal(); const o = $('.sys-modal-overlay'); if (o) { picker = /OPS MV/.test(o.textContent) ? 'lists OPS MV' : 'does not list OPS MV'; o.remove(); } } catch (e) { picker = 'threw ' + e.message; }
+    doUndo(); await wait(400); const undone = [multiviewers[0].name, (ioAdvanced.pages[0].mvs || []).map(m => m.name)];
+    doRedo(); await wait(400); const redone = [multiviewers[0].name, (ioAdvanced.pages[0].mvs || []).map(m => m.name)];
+    const b2 = $('#sys-mv-zone .sys-name-input'); b2.focus(); b2.value = 'OPS MV XX'; fire(b2, 'input'); ioEsc(b2); await wait(300);
+    const esc = [($('#sys-mv-zone .sys-name-input') || {}).value, multiviewers[0].name, _ekInBox(), $('#sys-overlay').classList.contains('open'), _undoStack.length - u0];
+    const text = JSON.stringify(getProjectState()); _applyProjectText(text); await wait(800); okDialogs(); const kept = multiviewers[0].name;
+    _isDirty = d0; closeSystem(); await restore();
+    return is([was, after, picker, undone, redone, esc, kept], ['MV 1', ['OPS MV', ['OPS MV'], 1, true, 'OPS MV'], 'lists OPS MV', ['MV 1', ['MV 1']], ['OPS MV', ['OPS MV']], ['OPS MV', 'OPS MV', false, true, 1], 'OPS MV'],
+      'name before / [name, page-1 MV rows, undo steps, Save lit, the box] after typing / Remove MV window / after Undo / after Redo / [box, name, cursor in a box, page open, undo steps] after typing + Escape / after save + reload');
+  });
+  await check('I/O Patch: "Set for all" > Type > "Custom…" asks for the name ONCE (one focused box in the Set-for-all row, not one per row) and applies it to every source in one undo step, remembered for the menu; Escape or an empty box puts the chip back and writes nothing; the same on the destinations row and on an Advanced page', async () => {
+    await restore(); await ioOpenSimple(); const out = {}; const rem0 = JSON.stringify(customTypes);
+    const types = () => srcNames().map(n => { const m = _sysGetSourceMeta(n); return (m.type || '') + ':' + (m.customType || ''); });
+    const t0 = types(), u0 = _undoStack.length;
+    if (!await ioPick(tfAllChip('src-all'), /^Custom…/)) { closeSystem(); await restore(); return 'no Custom… entry in the Set-for-all Type menu'; }
+    await wait(100); const ask = tfAllBox('src-all');
+    out.asked = [$$('#sys-src-rows .sys-type-input').length, !!ask, document.activeElement === ask, _undoStack.length - u0, JSON.stringify(types()) === JSON.stringify(t0)];
+    if (!ask) { closeSystem(); await restore(); return is(out, {}, 'no ask-once box in the Set-for-all row: ' + JSON.stringify(out)); }
+    tfType(ask, 'Resolume Rig'); await wait(400);
+    out.applied = [types().every(t => t === 'Custom:Resolume Rig'), _undoStack.length - u0, !!tfAllChip('src-all'), $$('#sys-src-rows .sys-row:not(.sys-row-global) .sys-type-input').map(i => i.value).every(v => v === 'Resolume Rig'), (customTypes.machines || []).includes('Resolume Rig')];
+    doUndo(); await wait(400); out.undone = [JSON.stringify(types()) === JSON.stringify(t0), (customTypes.machines || []).includes('Resolume Rig')];
+    doRedo(); await wait(400); out.redone = types().every(t => t === 'Custom:Resolume Rig'); const u1 = _undoStack.length;
+    await ioPick(tfAllChip('src-all'), /^Custom…/); await wait(100); const a2 = tfAllBox('src-all'); a2.focus(); a2.value = 'Thrown away'; fire(a2, 'input'); ioEsc(a2); await wait(300);
+    out.escaped = [!!tfAllChip('src-all'), !tfAllBox('src-all'), types().every(t => t === 'Custom:Resolume Rig'), _undoStack.length - u1, $('#sys-overlay').classList.contains('open')];
+    await ioPick(tfAllChip('src-all'), /^Custom…/); await wait(100); const a3 = tfAllBox('src-all'); a3.focus(); a3.blur(); await wait(300);
+    out.leftEmpty = [!!tfAllChip('src-all'), types().every(t => t === 'Custom:Resolume Rig'), _undoStack.length - u1];
+    const dt = () => screens.concat(dsms).concat(ioDests).map(o => (o.deviceType || '') + ':' + (o.customType || ''));
+    const mv0 = JSON.stringify(multiviewers.map(m => [m.deviceType, m.customType])); const u2 = _undoStack.length;
+    await ioPick(tfAllChip('dst-all'), /^Custom…/); await wait(100); const d = tfAllBox('dst-all'); out.destAsked = [$$('#sys-dst-rows .sys-type-input').length, !!d, document.activeElement === d];
+    if (d) { tfType(d, 'E2 Output'); await wait(400); } out.destApplied = [dt().every(t => t === 'Custom:E2 Output'), JSON.stringify(multiviewers.map(m => [m.deviceType, m.customType])) === mv0, _undoStack.length - u2, (customTypes.devices || []).includes('E2 Output')];
+    _ioSetView('advanced'); await wait(700); okDialogs(); await wait(200); const u3 = _undoStack.length; const pg = ioAdvanced.pages[ioAdvanced.page || 0];
+    await ioPick(tfAllChip('advsrc-all', $('#io-adv')), /^Custom…/); await wait(100); const a = tfAllBox('advsrc-all'); out.advAsked = [!!a, document.activeElement === a];
+    if (a) { tfType(a, 'Adv Rig'); await wait(400); } out.advApplied = [pg.sources.filter(r => r.name).every(r => r.type === 'Custom' && r.customType === 'Adv Rig'), _undoStack.length - u3];
+    _ioSetView('simple'); await wait(300); closeSystem(); customTypes = JSON.parse(rem0); await restore();
+    return is(out, { asked: [1, true, true, 0, true], applied: [true, 1, true, true, true], undone: [true, false], redone: true, escaped: [true, true, true, 0, true], leftEmpty: [true, true, 0], destAsked: [1, true, true], destApplied: [true, true, 1, true], advAsked: [true, true], advApplied: [true, 1] },
+      'asked [type boxes in the table, ask-once box, focused, undo steps, types untouched] / applied [every source Custom:Resolume Rig, undo steps, chip back, row boxes read the name, remembered] / after Undo [types back, still remembered] / Redo / Escape [chip back, box gone, types kept, undo steps, page open] / left empty [chip back, types kept, undo steps] / destinations asked / destinations applied [every output, MV untouched, undo steps, remembered] / Advanced asked / Advanced applied');
+  });
+  await check('I/O Patch: Custom Resolution blocks Save while Width or Height is blank or 0, says why inside the window and never raises the browser alert; a good size saves as one undo step, Undo / Redo, save + reload', async () => {
+    await restore(); await ioOpenSimple(); const n = srcNames()[0]; const res0 = _sysGetSourceMeta(n).resolution || ''; const u0 = _undoStack.length;
+    const alerts = []; const realAlert = window.alert; window.alert = m => { alerts.push(String(m)); };   /* a spy: the check reports a call, it never wants one */
+    const st = () => { const s = $('#sys-cf-save'), h = $('#sys-cf-hint'); return [!!$('#sys-cf-overlay'), s ? s.disabled : 'no Save', h ? (getComputedStyle(h).display !== 'none' ? h.textContent : 'hidden') : 'no hint element']; };
+    const set = (id, v) => { const el = $('#' + id); el.focus(); el.value = v; fire(el, 'input'); };
+    const out = {};
+    try {
+      await ioPick($('[data-sys-field="resolution"]', ioRow(n)), /^Custom resolution/); await wait(200); out.opened = st();
+      set('sys-cf-w', '0'); out.zeroW = st(); $('#sys-cf-save').click(); await wait(300); out.clickedAtZero = [!!$('#sys-cf-overlay'), alerts.length, _sysGetSourceMeta(n).resolution || '', _undoStack.length - u0];
+      set('sys-cf-w', ''); out.blankW = st(); set('sys-cf-w', '2560'); out.goodW = st();
+      set('sys-cf-h', '0'); out.zeroH = st(); set('sys-cf-h', '1440'); out.good = st();
+      $('#sys-cf-save').click(); await wait(400); out.saved = [!!$('#sys-cf-overlay'), _sysGetSourceMeta(n).resolution || '', _undoStack.length - u0, alerts.length];
+      doUndo(); await wait(300); out.undone = _sysGetSourceMeta(n).resolution || ''; doRedo(); await wait(300); out.redone = _sysGetSourceMeta(n).resolution || '';
+      const text = JSON.stringify(getProjectState()); _applyProjectText(text); await wait(800); okDialogs(); out.kept = _sysGetSourceMeta(n).resolution || '';
+    } finally { window.alert = realAlert; try { _sysCloseCustomResModal(); } catch (e) {} }
+    closeSystem(); await restore();
+    const hintW = 'Type a width of 1 px or more to save.', hintH = 'Type a height of 1 px or more to save.';
+    return is(out, { opened: [true, false, 'hidden'], zeroW: [true, true, hintW], clickedAtZero: [true, 0, res0, 0], blankW: [true, true, hintW], goodW: [true, false, 'hidden'], zeroH: [true, true, hintH], good: [true, false, 'hidden'], saved: [false, '2560x1440', 1, 0], undone: res0, redone: '2560x1440', kept: '2560x1440' },
+      '[window open, Save disabled, hint] when opened / at W=0 / [window still open, browser alerts, resolution, undo steps] after Save at W=0 / W blank / W=2560 / H=0 / H=1440 / [window open, resolution, undo steps, browser alerts] after Save / after Undo / after Redo / after save + reload');
+  });
+// ── END OF NEW CHECKS (three-fixes) ──────────────────────────────────────────────────────────────────────────────────────
+// ═══ three-fixes FIX (round 16kt): checks for tests/flows_probe.js ═══════════════════════════════════════════════════════════
+// WHERE: paste the whole "NEW CHECKS (three-fixes fix)" block into tests/flows_probe.js straight AFTER the three-fixes
+//     block ('── END OF NEW CHECKS (three-fixes) ──'), i.e. still BEFORE the check that starts
+//     'Look Book: a cover, one page per preset, the I/O reference, the wire sheet and the summary'
+// Helpers used, all defined earlier in the probe: $, $$, wait, is, fire, okDialogs, restore, dlgOpen, srcNames, ioOpenSimple,
+// ioRow, ioPick (the I/O Patch click-through block). Nothing from the three-fixes block is needed.
+// Synthetic events on purpose (the probe runs inside the page; the runner switches focus emulation on). tffPress() plays a
+// press the way the browser does it, step by step: pointerdown + mousedown on the element, the focus move (which fires the
+// blur that commits the ask box), then pointerup + mouseup on whatever is under the pointer NOW, and a click ONLY when the
+// pressed element is still in the page (Chrome fires no click when the mousedown target was removed). The same flows are
+// proved with REAL mouse and key input in walk.mjs of the three-fixes-fix scratch folder (out/walk_base.log / walk_fixed.log).
+// Every check FAILS on the round-16kt BASE (16ks + the four patches) and PASSES with patch_fix.py.
+// Each check opens the I/O Patch itself, ends with closeSystem() and restore(), and leaves customTypes as it found them.
+// No media. No existing check is replaced (the builder's three three-fixes checks pass unchanged on the fixed page).
+//
+// ── NEW CHECKS (three-fixes fix) ──────────────────────────────────────────────────────────────────────────────────────────────
+  const tffPress = (el) => {
+    el.scrollIntoView({ block: 'center' }); const r = el.getBoundingClientRect(); const x = r.left + r.width / 2, y = r.top + r.height / 2;
+    const mk = (T, type, extra) => new T(type, Object.assign({ bubbles: true, cancelable: true, composed: true, clientX: x, clientY: y, button: 0, buttons: 1, pointerId: 1, pointerType: 'mouse', isPrimary: true, detail: 1 }, extra || {}));
+    el.dispatchEvent(mk(PointerEvent, 'pointerdown')); el.dispatchEvent(mk(MouseEvent, 'mousedown'));
+    const f = el.closest('input,textarea,button,select,[tabindex]'); if (f) f.focus(); else if (document.activeElement && document.activeElement !== document.body) document.activeElement.blur();   /* the browser's focus move on mousedown */
+    const under = document.elementFromPoint(x, y) || document.body;
+    under.dispatchEvent(mk(PointerEvent, 'pointerup', { buttons: 0 })); under.dispatchEvent(mk(MouseEvent, 'mouseup', { buttons: 0 }));
+    if (!el.isConnected) return false;   /* the element pressed was replaced before the release: no click, as in Chrome */
+    let t = under; while (t && t !== el && !(t.contains && t.contains(el))) t = t.parentNode;   /* click goes to the common ancestor of the press and the release */
+    (t || el).dispatchEvent(mk(MouseEvent, 'click', { buttons: 0 })); return true;
+  };
+  const tffAsk = async (kind) => { const chip = $('#sys-overlay .sys-row-global .sys-chip[data-sys-kind="' + kind + '"]'); if (!chip || !await ioPick(chip, /^Custom…/)) return null; await wait(100); const b = $('#sys-overlay .sys-row-global .sys-type-input[data-sys-kind="' + kind + '"]'); if (b) { b.focus(); } return b; };
+  const tffChip = kind => !!$('#sys-overlay .sys-row-global .sys-chip[data-sys-kind="' + kind + '"]');
+  await check('I/O Patch: the Set-for-all "Custom…" ask box does not swallow the click that leaves it: nothing typed, one press on Advanced switches the view, one press on a row\'s Type chip opens its menu, one press into a name box lands there; with a name typed, one press on a row\'s chip commits the name to every row AND opens that menu', async () => {
+    await restore(); await ioOpenSimple(); const out = {}; const rem0 = JSON.stringify(customTypes); const d0 = _isDirty;
+    const types = () => srcNames().map(n => { const m = _sysGetSourceMeta(n); return (m.type || '') + ':' + (m.customType || ''); }); const t0 = JSON.stringify(types());
+    let ask = await tffAsk('src-all'); if (!ask) { closeSystem(); await restore(); return 'no ask-once box in the Set-for-all row'; }
+    const adv = $$('#io-tabs .lb-seg-btn')[1]; const clickedAdv = tffPress(adv); await wait(700); okDialogs(); await wait(200);
+    out.advanced = [clickedAdv, ioAdvanced.view, JSON.stringify(types()) === t0];
+    _ioSetView('simple'); await wait(400); okDialogs();
+    ask = await tffAsk('src-all'); const chip = $('#sys-src-rows .sys-row:not(.sys-row-global) .sys-chip[data-sys-field="src-type"]'); const clickedChip = tffPress(chip); await wait(150);
+    out.rowChip = [clickedChip, !!$('.sys-dd'), tffChip('src-all')]; _sysCloseMenu(); await wait(100);
+    ask = await tffAsk('src-all'); const box = $('#sys-src-rows .sys-row:not(.sys-row-global) .sys-name-input'); tffPress(box); await wait(150);
+    out.nameBox = [document.activeElement === box && box.isConnected, tffChip('src-all')]; box.blur(); await wait(100);
+    ask = await tffAsk('src-all'); ask.value = 'Barco E2'; fire(ask, 'input'); const u0 = _undoStack.length;
+    const d0chip = $('#sys-dst-rows .sys-row-global .sys-chip[data-sys-kind="dst-all"]'); const clickedD0 = tffPress(d0chip); await wait(200);
+    const m = _sysActiveMenu; out.typedThenChip = [clickedD0, types().every(t => t === 'Custom:Barco E2'), _undoStack.length - u0, !!$('.sys-dd'), !!(m && m.trigger && m.trigger.isConnected && m.trigger.dataset.sysKind === 'dst-all'), tffChip('src-all'), $$('#sys-src-rows .sys-row:not(.sys-row-global) .sys-type-input').map(i => i.value).every(v => v === 'Barco E2')];
+    _sysCloseMenu(); doUndo(); await wait(300); out.undone = JSON.stringify(types()) === t0;
+    ask = await tffAsk('src-all'); ask.value = 'Barco E2'; fire(ask, 'input'); const u1 = _undoStack.length; ask.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', code: 'Enter', keyCode: 13, bubbles: true, cancelable: true })); if (document.activeElement === ask) ask.blur();
+    out.enter = [types().every(t => t === 'Custom:Barco E2'), $$('#sys-src-rows .sys-row:not(.sys-row-global) .sys-type-input').map(i => i.value).every(v => v === 'Barco E2'), tffChip('src-all'), _undoStack.length - u1];   /* a keyboard commit redraws at once */
+    doUndo(); await wait(300); _isDirty = d0; closeSystem(); customTypes = JSON.parse(rem0); await restore();
+    return is(out, { advanced: [true, 'advanced', true], rowChip: [true, true, true], nameBox: [true, true], typedThenChip: [true, true, 1, true, true, true, true], undone: true, enter: [true, true, true, 1] },
+      '[click landed, view, types untouched] after one press on Advanced / [click landed, menu open, chip back] after one press on a row\'s Type chip / [cursor in the box, chip back] after one press into a name box / [click landed, every source Custom:Barco E2, undo steps, D0 menu open, menu glued to the redrawn D0 chip, chip back, rows read the name] with a name typed and one press on D0 / types back after Undo / [committed, rows read the name, chip back, undo steps] after Enter');
+  });
+  await check('I/O Patch: a multiviewer renamed from Simple to a destination\'s name and then to another name leaves the page-1 destination rows alone (the rename follows its own kind, both ways), and the name menus keep destination and multiviewer names apart', async () => {
+    await restore(); await ioOpenSimple(); _ioSetView('advanced'); await wait(700); okDialogs(); _ioSetView('simple'); await wait(400); const out = {};
+    const p1 = () => ({ d: (ioAdvanced.pages[0].dests || []).map(r => r.name), m: (ioAdvanced.pages[0].mvs || []).map(r => r.name) });
+    const start = p1(); const dName = screens[0].name; const mvName = multiviewers[0].name;
+    const menuOf = chev => { _sysOpenDropdown(chev); const rows = $$('.sys-dd > *'); const from = rows.findIndex(r => r.classList.contains('sys-dd-group') && /Used in this show/.test(r.textContent)); const used = []; for (let i = from + 1; from >= 0 && i < rows.length && !rows[i].classList.contains('sys-dd-group'); i++) used.push(($('.item-text', rows[i]) || rows[i]).textContent.trim()); _sysCloseMenu(); return used; };
+    out.menus = [menuOf($('#sys-mv-zone .sys-name-chev')).includes(dName), menuOf($('#sys-mv-zone .sys-name-chev')).includes(mvName), menuOf($('#sys-dst-rows .sys-row:not(.sys-row-global) .sys-name-chev')).includes(mvName), menuOf($('#sys-dst-rows .sys-row:not(.sys-row-global) .sys-name-chev')).includes(dName)];
+    const rename = async (box, txt) => { box.focus(); box.value = txt; fire(box, 'input'); box.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', code: 'Enter', keyCode: 13, bubbles: true, cancelable: true })); if (document.activeElement === box) box.blur(); await wait(400); };
+    const mvBox = () => $('#sys-mv-zone .sys-name-input'); if (!mvBox()) { closeSystem(); await restore(); return 'the multiviewer row has no name box'; }
+    await rename(mvBox(), dName); out.mvToDest = [multiviewers[0].name, p1().d, p1().m];
+    await rename(mvBox(), 'OPS MV'); out.mvAgain = [multiviewers[0].name, screens[0].name, p1().d, p1().m];
+    const dBox = () => $('#sys-dst-rows .sys-row:not(.sys-row-global) .sys-name-input[data-sys-kind="dest"]');
+    await rename(dBox(), 'OPS MV'); await rename(dBox(), 'X WALL'); out.destSide = [screens[0].name, multiviewers[0].name, p1().d[0], p1().m];
+    closeSystem(); await restore();
+    return is(out, { menus: [false, true, false, true], mvToDest: [dName, start.d, [dName]], mvAgain: ['OPS MV', dName, start.d, ['OPS MV']], destSide: ['X WALL', 'OPS MV', 'X WALL', ['OPS MV']] },
+      '[MV menu lists a destination, MV menu lists the MV, destination menu lists the MV, destination menu lists a destination] under "Used in this show" / [MV, page-1 dests, page-1 mvs] after the MV takes a destination\'s name / [MV, first destination, page-1 dests, page-1 mvs] after the MV is renamed again / [first destination, MV, first page-1 dest, page-1 mvs] after a destination takes the MV\'s name and is renamed again');
+  });
+  await check('I/O Patch: Reset on a row whose connector / resolution / note are already empty changes nothing: no unsaved mark, no undo step, no sources[] entry (Simple source row, a row without an entry, an Advanced row); a row with a note still resets in one step', async () => {
+    await restore(); await ioOpenSimple(); const out = {}; const d0 = _isDirty;
+    const n = srcNames().find(x => sources.some(s => s && s.name === x)) || srcNames()[0]; const none = srcNames().find(x => !sources.some(s => s && s.name === x));
+    _sysSetSourceMeta(n, { connectorType: '', resolution: '', notes: '' }); _sysRender(); await wait(100); _isDirty = false; _updateDirtyIndicator();
+    const reset = async (name) => { const u = _undoStack.length, c = sources.length; $('[data-sys-action="reset"]', ioRow(name)).click(); await wait(200); const go = $('#sys-confirm-go'); if (!go) return ['no window']; go.click(); return [_isDirty, _undoStack.length - u, sources.length - c]; };   /* _isDirty read in the same tick as the confirm: the exact comparison would clear a false mark 350 ms later */
+    out.empty = await reset(n); await wait(300); _isDirty = false; _updateDirtyIndicator();
+    out.noEntry = none ? (await reset(none)).concat(sources.some(s => s && s.name === none)) : 'every source has an entry';
+    await wait(300); _isDirty = false; _updateDirtyIndicator(); _sysSetSourceMeta(n, { notes: 'RESET ME' }); _sysRender(); await wait(100); _isDirty = false; _updateDirtyIndicator();
+    out.withNote = (await reset(n)).concat(_sysGetSourceMeta(n).notes || '');
+    _ioSetView('advanced'); await wait(700); okDialogs(); await wait(200); const r = ioAdvanced.pages[0].sources.find(x => x && x.name); r.connectorType = ''; r.resolution = ''; r.notes = ''; _sysRender(); await wait(100); _isDirty = false; _updateDirtyIndicator();
+    const ua = _undoStack.length; $('#io-adv [data-sys-action="reset"][data-sys-kind="adv-src"][data-sys-id="' + r.id + '"]').click(); out.advanced = [_isDirty, _undoStack.length - ua];
+    _ioSetView('simple'); await wait(300); _isDirty = d0; closeSystem(); await restore();
+    return is(out, { empty: [false, 0, 0], noEntry: [false, 0, 0, false], withNote: [true, 1, 0, ''], advanced: [false, 0] },
+      '[unsaved mark, undo steps, sources[] entries added] after Reset on an already-empty source row / the same plus "entry created" on a source without an entry / [unsaved mark, undo steps, entries added, note] after Reset on a row with a note / [unsaved mark, undo steps] after Reset on an already-empty Advanced page-1 row');
+  });
+// ── END OF NEW CHECKS (three-fixes fix) ───────────────────────────────────────────────────────────────────────────────────────
   await check('Look Book: a cover, one page per preset, the I/O reference, the wire sheet and the summary', async () => {
     const d = new DOMParser().parseFromString(await userLookBook(), 'text/html'); const t = d.body.textContent;
     return is([d.querySelectorAll('.pp-breakdown').length, !!d.querySelector('.cover'), !!d.querySelector('.summary-table'), /I\/O/i.test(t), !!d.querySelector('.wire-page')], [presets.length, true, true, true, true], 'Look Book sections');
@@ -2972,6 +5158,347 @@
     openPdfExportModal(); await wait(300); const seen = [$$('input[name="pdf-opt-wire-style"]').length, $$('input[name="pdf-opt-wire-view"]').length, /wire style/i.test($('#pdf-export-modal').textContent)]; closePdfExportModal(); await wait(150);
     await userLookBook(); return is([seen, window._pdfOpts.wireStyle], [[0, 2, false], 'orthogonal'], 'export window');
   });
+
+// ═══ wire-pages-words (round 16kt) — checks for tests/flows_probe.js ═══════════════════════════════════════════
+// Decisions 36 (the Look Book's wire sheets) and 39(i) (Help / tooltip / window wording).
+//
+// INSERT this whole block in tests/flows_probe.js straight AFTER the check
+//     'Look Book window: no Wire style choice, the Simple / Advanced view choice stays, the wire sheet is orthogonal'
+// (so inside the Look Book section, where `userLookBook`, `restore`, `okDialogs`, `$`, `$$`, `vis` and `is` are all in
+// scope). The block stands alone: its own helper names (_wp*), it opens and closes Wire itself, it puts
+// window._pdfOpts back, and every check ends on restore().
+//
+// All four FAIL on build 16ks (the page as released) and PASS on the patched page.
+
+  // the Look Book the export window builds, with the Wire view the check wants (the probe's own userLookBook uses the
+  // window's defaults); window._pdfOpts is handed back to the caller's `finally`
+  const _wpBook = async view => {
+    openPdfExportModal(); await wait(350);
+    const rb = $('#pdf-opt-wire-view-' + view); if (rb) rb.checked = true;
+    const real = exportPDF; let html = ''; window.exportPDF = function () { html = real(true); };
+    try { _pdfConfirmExport(); } finally { window.exportPDF = real; }
+    await wait(400); return html || '';
+  };
+  const _wpDoc = html => new DOMParser().parseFromString(html, 'text/html');
+  const _wpSheets = d => [...d.querySelectorAll('.wire-page')].map(p => ({
+    id: p.id,
+    name: ((p.querySelector('.ph-name') || {}).textContent || '').trim(),
+    pn: ((p.querySelector('[data-pn]') || {}).textContent || '').trim(),
+    real: String([...d.querySelectorAll('.page')].indexOf(p) + 1),
+  }));
+  // Wire -> Advanced, page 1 seeded from the show; returns the dialog the first switch shows
+  const _wpAdvanced = async () => {
+    openWireMode(); await wait(700);
+    const b = $('#wire-overlay [onclick*="_wireSwitchToAdvanced()"]'); if (b) b.click(); await wait(450);
+    const msg = dialogText(); okDialogs(); await wait(900); okDialogs(); await wait(400);
+    _wireAdvHelpers(); return msg;
+  };
+
+  await check('Look Book, wire sheets: with Wire in Advanced the book prints one sheet per DRAWN page, in page order, under the page tab\'s own name, numbered and in the contents; the empty page is skipped', async () => {
+    const keep = window._pdfOpts; let out;
+    try {
+      await _wpAdvanced();
+      const pages = wireAdvanced._pages;                       // page 1 is the show, page 2 gets a router, page 3 stays empty
+      _wireSwitchPage(pages[1].id); await wait(500);
+      _wireAdvAddRouterAsym(6, 2); await wait(500); okDialogs(); await wait(300);
+      const used = pages.map(p => _wireAdvPageUsed(p.id));
+      const want = pages.filter(p => _wireAdvPageUsed(p.id)).map(p => p.name);
+      closeWireMode(); await wait(400);
+      const html = await _wpBook('advanced'); const d = _wpDoc(html); const sheets = _wpSheets(d);
+      const rows = [...d.querySelectorAll('.toc-row')].filter(a => /Wire Mode/.test(a.textContent))
+        .map(a => ({ label: a.querySelector('.toc-name').textContent, page: a.querySelector('.toc-page').textContent.trim(), hits: !!d.getElementById((a.getAttribute('href') || '').slice(1)) }));
+      const total = ((d.querySelector('[data-pt]') || {}).textContent || '').trim();
+      out = is([
+        used,
+        sheets.map(s => s.name),
+        sheets.map(s => s.id),
+        sheets.map(s => s.pn),
+        rows.map(r => r.label + ' → ' + r.page + (r.hits ? '' : ' (dead link)')),
+        total,
+        /Empty page, nothing placed/.test(html),
+      ], [
+        [true, true, false],
+        want,
+        ['pdf-wire', 'pdf-wire-2'],
+        sheets.length === 2 ? [sheets[0].pn, String(parseInt(sheets[0].pn, 10) + 1)] : ['two sheets', 'two sheets'],
+        want.map((n, i) => 'Wire Mode · ' + n + ' → ' + (sheets[i] ? sheets[i].pn : 'no sheet')),
+        sheets.length ? sheets[sheets.length - 1].pn : 'no sheet',   /* the wire sheets are the last pages of the book */
+        false,
+      ], 'pages drawn / sheet names / anchors / page numbers run on / contents rows / printed total / empty sheet');
+    } finally { window._pdfOpts = keep; }
+    await restore(); return out;
+  });
+
+  await check('Look Book, wire sheets: Wire = Advanced with nothing drawn prints the SIMPLE drawing, never an "(Empty page)" sheet, and Simple still prints one "Full System" sheet', async () => {
+    const keep = window._pdfOpts; let out;
+    try {
+      const never = wireAdvanced && Array.isArray(wireAdvanced._pages) ? wireAdvanced._pages.some(p => _wireAdvPageUsed(p.id)) : false;
+      const adv = await _wpBook('advanced'); const sim = await _wpBook('simple');
+      const titles = h => [...new Set([..._wpDoc(h).querySelectorAll('.wire-page svg text')].map(t => t.textContent.trim()).filter(t => /full system|signal flow/i.test(t)))];
+      out = is([
+        never,
+        _wpSheets(_wpDoc(adv)).length, /Empty page, nothing placed/.test(adv), titles(adv).join(','),
+        _wpSheets(_wpDoc(sim)).length, /Empty page, nothing placed/.test(sim), titles(sim).join(','),
+      ], [false, 1, false, 'FULL SYSTEM,Full System', 1, false, 'FULL SYSTEM,Full System'],
+        'nothing drawn in Advanced / Advanced sheets / empty note / Advanced sheet title / Simple sheets / empty note / Simple sheet title');
+    } finally { window._pdfOpts = keep; }
+    await restore(); return out;
+  });
+
+
+  await check('Wording on the page: the layer reset tooltips name the size, the paste hint names the Paste button, the Wire chip and the Advanced Wire window tell the truth about writing back', async () => {
+    const bad = [];
+    const chip = $('.preset-row .layer-chip .lc-reset');
+    if (!chip) bad.push('no layer-chip reset button on the canvas');
+    else if (!/size and position to default$/.test(chip.title)) bad.push('chip reset tooltip: ' + chip.title);
+    const f = firstLayer();
+    openScreenPanel({ target: document.body, currentTarget: document.body, stopPropagation() {}, preventDefault() {} }, f.pid, f.sid); await wait(350);
+    const all = $('#sp-reset-layer-pos');
+    if (!all) bad.push('Destination Properties did not open');
+    else if (!/default size and staggered position$/.test(all.title)) bad.push('destination panel reset tooltip: ' + all.title);
+    try { closeScreenPanel(); } catch (e) {} await wait(200);
+    copyPreset(presets[0].id); await wait(250); eval('sel=null'); pastePreset(); await wait(350);
+    const hint = dialogText(); okDialogs(); await wait(250);
+    if (!/Click Paste on the preset row/.test(hint)) bad.push('paste hint: ' + hint);
+    const msg = await _wpAdvanced();
+    const desc = (($('.view-info-desc') || {}).textContent || '').trim();
+    closeWireMode(); await wait(400);
+    if (/fully standalone|does NOT connect to anything outside/.test(msg)) bad.push('Advanced Wire window still says it is standalone');
+    if (!/rename pencil/.test(msg)) bad.push('Advanced Wire window does not mention the rename pencil: ' + msg.slice(0, 120));
+    if (/every path that exists in any preset/.test(desc)) bad.push('Wire chip still reads: ' + desc);
+    await restore();
+    return bad.length ? bad.join(' | ') : true;
+  });
+
+// ═══ exports-words-fix (round 16kt) — checks for tests/flows_probe.js ═════════════════════════════════════════════
+// The defect fixes for send-check (decisions 34 + 35) and wire-pages-words (decisions 36 + 39i).
+//
+// INSERT the four checks ABOVE the first REPLACES header into tests/flows_probe.js straight AFTER the
+// wire-pages-words check
+//     'Wording on the page: the layer reset tooltips name the size, the paste hint names the Paste button, the Wire
+//      chip and the Advanced Wire window tell the truth about writing back'
+// (so both builders' blocks are already in the file). Helpers used from the top of the probe: $, $$, wait, is, vis,
+// check, restore, okDialogs, dialogText, downloads. Needs no media, opens no real window, downloads no real file.
+//
+// All four FAIL on the BASE page (a fresh deploy/lookbook_builder.html with send-check/patch.py applied and then
+// wire-pages-words/patch.py) and PASS on the fixed page. Each one ends on restore().
+//
+// The two REPLACES blocks at the bottom correct checks the two builders delivered: one of them now asserts a
+// sentence that was untrue, and one of them asserts a Help phrase this fix removes.
+
+  // the Look Book the export window builds, with the Wire view the check wants; window._pdfOpts goes back to the
+  // caller's `finally`. Same shape the wire-pages-words block uses, under its own name.
+  const _xwBook = async view => {
+    openPdfExportModal(); await wait(350);
+    const rb = $('#pdf-opt-wire-view-' + view); if (rb) rb.checked = true;
+    const real = exportPDF; let html = ''; window.exportPDF = function () { html = real(true); };
+    try { _pdfConfirmExport(); } finally { window.exportPDF = real; }
+    await wait(400); return html || '';
+  };
+  const _xwDoc = html => new DOMParser().parseFromString(html, 'text/html');
+  // Wire -> Advanced (page 1 seeded from the show), then a real DOM click on the active tab's copy glyph, then the
+  // copy is renamed to `name` through the tab's own inline rename input. Returns the renamed page.
+  const _xwSecondPage = async name => {
+    openWireMode(); await wait(700);
+    const b = $('#wire-overlay [onclick*="_wireSwitchToAdvanced()"]'); if (b) b.click(); await wait(450);
+    okDialogs(); await wait(900); okDialogs(); await wait(400);
+    _wireAdvHelpers();
+    const copyBtn = $('#wire-page-tabs [onclick*="_wireCopyPage("]');
+    if (copyBtn) copyBtn.click(); else _wireCopyPage(wireAdvanced._pages[0].id);
+    await wait(700); okDialogs(); await wait(300);
+    _wireAdvHelpers();
+    const pg = wireAdvanced._pages.filter(p => _wireAdvPageUsed(p.id)).pop();
+    _wireBeginRenamePage(pg.id); await wait(300);
+    const inp = $('#wire-page-rename-input');
+    if (inp) { inp.focus(); inp.value = name; inp.dispatchEvent(new Event('input', { bubbles: true })); inp.blur(); }
+    await wait(400);
+    _wireAdvHelpers();
+    const now = wireAdvanced._pages.find(p => p.id === pg.id);
+    if (!now || now.name !== name) { _wireCommitRenamePage(pg.id, name); await wait(400); _wireAdvHelpers(); }
+    return wireAdvanced._pages.find(p => p.id === pg.id);
+  };
+
+  await check('Look Book, wire sheets: a Wire Advanced page name holding & < > is ESCAPED in the contents row — the name reads in full and the dot leaders and the page number stay outside it', async () => {
+    const keep = window._pdfOpts; const NAME = 'Rehearsal & <FOH>'; let out;
+    try {
+      const pg = await _xwSecondPage(NAME);
+      if (!pg || pg.name !== NAME) { closeWireMode(); await wait(400); await restore(); return 'the second Advanced page could not be renamed: ' + JSON.stringify(pg && pg.name); }
+      closeWireMode(); await wait(400);
+      const d = _xwDoc(await _xwBook('advanced'));
+      const sheet = d.getElementById('pdf-wire-2');
+      const row = [...d.querySelectorAll('.toc-row')].find(a => (a.getAttribute('href') || '') === '#pdf-wire-2');
+      const nm = row ? row.querySelector('.toc-name') : null;
+      out = is([
+        !!sheet, sheet ? ((sheet.querySelector('.ph-name') || {}).textContent || '').trim() : 'no sheet',
+        !!row, nm ? nm.textContent : 'no contents row',
+        nm ? !!nm.querySelector('.toc-dots') : 'no contents row',
+        nm ? !!nm.querySelector('.toc-page') : 'no contents row',
+        row ? ((row.querySelector('.toc-page') || {}).textContent || '').trim() : 'no contents row',
+        sheet ? ((sheet.querySelector('[data-pn]') || {}).textContent || '').trim() : 'no sheet',
+      ], [
+        true, NAME,
+        true, 'Wire Mode · ' + NAME,
+        false, false,
+        sheet ? ((sheet.querySelector('[data-pn]') || {}).textContent || '').trim() : 'no sheet',
+        sheet ? ((sheet.querySelector('[data-pn]') || {}).textContent || '').trim() : 'no sheet',
+      ], 'the sheet exists / its header name / the contents row exists / the contents label / the dot leaders were swallowed into the name / the page number was swallowed into the name / the row\'s page number / the sheet\'s page number');
+    } finally { window._pdfOpts = keep; }
+    await restore(); return out;
+  });
+
+  await check('Look Book, wire sheets: a DRAWN Advanced page still called "Page 3" prints "SIGNAL FLOW" in its title block, the same title the Wire tool\'s own export gives it, instead of echoing a page label it contradicts', async () => {
+    const keep = window._pdfOpts; const NAME = 'Page 3'; let out;
+    try {
+      const pg = await _xwSecondPage(NAME);
+      if (!pg || pg.name !== NAME) { closeWireMode(); await wait(400); await restore(); return 'the second Advanced page could not be renamed: ' + JSON.stringify(pg && pg.name); }
+      // what the WIRE tool's own export calls the same page (read while Wire is still in Advanced)
+      const wireTitles = _wireExportSheetList('light').map(sh => {
+        const t = [...new DOMParser().parseFromString(sh, 'image/svg+xml').querySelectorAll('text')].map(x => x.textContent.trim());
+        return { title: t[0] || '', label: t.find(v => /^Page \d+$/.test(v)) || '' };
+      });
+      closeWireMode(); await wait(400);
+      const d = _xwDoc(await _xwBook('advanced'));
+      const sheet = d.getElementById('pdf-wire-2');
+      const texts = sheet ? [...sheet.querySelectorAll('svg text')].map(t => t.textContent.trim()).filter(Boolean) : [];
+      const titleBlock = texts[0] || 'no sheet';
+      const frameLabel = texts.find(v => /^Page \d+$/.test(v)) || 'no page label';
+      const header = sheet ? ((sheet.querySelector('.ph-name') || {}).textContent || '').trim() : 'no sheet';
+      const wireSecond = wireTitles[1] || { title: 'the Wire tool printed no second sheet', label: '' };
+      out = is([titleBlock, wireSecond.title, titleBlock === wireSecond.title, frameLabel, wireSecond.label, header],
+        ['SIGNAL FLOW', 'SIGNAL FLOW', true, 'Page 2', 'Page 2', NAME],
+        'the Look Book title block / the Wire tool\'s title for the same page / the two agree / the Look Book frame label / the Wire tool\'s frame label / the sheet header keeps the tab name');
+    } finally { window._pdfOpts = keep; }
+    await restore(); return out;
+  });
+
+  await check('Send: the email names the files that were really built, and a Send with neither document says "Couldn’t get the files ready" instead of going out as a lone .avlb calling itself three files', async () => {
+    const hadShare = navigator.share, hadCan = navigator.canShare, keep = window._pdfOpts; window._pdfOpts = null;
+    const realX = window._doExportExcel, realL = window._lbLookBookForSend;
+    let shared = null;
+    navigator.canShare = function () { return true; }; navigator.share = async function (d) { shared = d; };
+    let out;
+    try {
+      shared = null; await sendShow(); await wait(600);
+      const three = shared ? (shared.files || []).length : 0;
+      const threeText = shared ? String(shared.text || '') : '';
+
+      window._doExportExcel = function () { throw new Error('probe: the Excel build fails'); };
+      shared = null; await sendShow(); await wait(600);
+      const twoNames = shared ? (shared.files || []).map(f => f.name.replace(/^.*?(_cue_sheet\.xlsx|_look_book\.html|\.avlb)$/, '$1')) : [];
+      const twoText = shared ? String(shared.text || '') : '';
+
+      window._lbLookBookForSend = function () { throw new Error('probe: the Look Book build fails'); };
+      shared = null; downloads.length = 0; await sendShow(); await wait(600);
+      const noneShared = shared === null, wrote = downloads.length;
+      const guard = dialogText(); okDialogs(); await wait(300);
+
+      out = is([
+        three, /the Excel cue sheet/.test(threeText) && /the Look Book/.test(threeText) && /the show file/.test(threeText),
+        twoNames, /the Excel cue sheet/.test(twoText), /the Look Book/.test(twoText) && /the show file/.test(twoText),
+        noneShared, wrote, /Couldn’t get the files ready/.test(guard),
+      ], [
+        3, true,
+        ['_look_book.html', '.avlb'], false, true,
+        true, 0, true,
+      ], 'files on a healthy Send / its text names all three / files when the Excel fails / the text still claims a cue sheet that is not there / it names what IS there / nothing was shared when both documents failed / nothing was downloaded / the guard was raised');
+    } finally {
+      window._doExportExcel = realX; window._lbLookBookForSend = realL;
+      delete navigator.share; delete navigator.canShare;
+      if (hadShare && !navigator.share) navigator.share = hadShare;
+      if (hadCan && !navigator.canShare) navigator.canShare = hadCan;
+      window._pdfOpts = keep;
+      const fr = $('#lb-mail-frame'); if (fr) fr.remove();
+    }
+    okDialogs(); await restore(); return out;
+  });
+
+  await check('Help says what Send and Report a bug really do in a browser (the files are downloaded, not attached), and that only the cue-sheet Excel can be stopped', async () => {
+    openHelp(); await wait(400);
+    if (typeof helpTab === 'function') { try { helpTab('ref'); } catch (e) {} await wait(300); }
+    const pane = $('#hpanel-ref'), shown = !!pane;
+    const t = ((pane || {}).textContent || '').replace(/\s+/g, ' ');
+    closeHelp(); await wait(250); okDialogs();
+    const stale = [
+      'hands them to your mail app in a new message',
+      'your show file attached, so the bug can be seen on our side',
+      'Remove the attachment if you would rather not share the show',
+      'All three exports run the same check first',
+      'The Excel exports (the cue sheet and the I/O Patch sheet) are stopped by an error',
+    ].filter(s => t.includes(s));
+    const missing = [
+      'the three download to your Downloads folder instead and a pre-filled message opens naming them',
+      'In a browser nothing can be attached',
+      'the show file is downloaded to your Downloads folder and the message names it',
+      'The cue-sheet Excel and the Look Book look the show over first',
+      "The I/O Patch sheet runs its own check of the sources and destinations instead",
+      'which only ever warns, so it is never stopped either',
+    ].filter(s => !t.includes(s));
+    const tip = ($('#tb-bug') || {}).title || '';
+    await restore();
+    return is([shown, stale, missing, /attached in the app, downloaded for you to attach in a browser/.test(tip), t.length > 500],
+      [true, [], [], true, true],
+      'the Quick Reference pane was read / stale lines still in Help / true lines missing / the bug button tooltip / Help was read');
+  });
+
+
+// ── REPLACES the send-check check in tests/flows_probe.js ─────────────────────────────────────────────────────────
+//    'Help: the Preflight check entry says all three exports run the check and that the Look Book is never stopped'
+//    It asserts /all three exports/i and /never stopped/i on the Preflight row. The three exports do NOT run the same
+//    check: the I/O Patch Export is wired to _sysValidateIO, which declares `const errors=[]`, never pushes into it
+//    and never reads #show-name — so it runs a different check and can never be stopped, least of all by a blank show
+//    name. Swap the whole check for this one, which asserts the corrected sentence and that the old one is gone.
+
+await check('Help: the Preflight check entry names one check per export — the show check for the cue-sheet Excel and the Look Book, the I/O Patch\'s own check, and only the Excel ever stopped', async () => {
+  openHelp(); await wait(400);
+  if (typeof helpTab === 'function') { try { helpTab('ref'); } catch (e) {} await wait(300); }
+  const pane = $('#hpanel-ref'), shown = !!pane;
+  const row = (((pane || {}).textContent || '').replace(/\s+/g, ' ').match(/Preflight check[\s\S]{0,760}/) || [''])[0];
+  closeHelp(); await wait(300); okDialogs(); await restore();
+  if (!shown) return 'the Quick Reference pane did not open';
+  return is([
+    /The cue-sheet Excel and the Look Book look the show over first/.test(row),
+    /an error stops the Excel/.test(row),
+    /the Look Book takes those same findings as warnings and is never stopped/.test(row),
+    /The I\/O Patch sheet runs its own check of the sources and destinations instead/.test(row),
+    /which only ever warns, so it is never stopped either/.test(row),
+    /all three exports/i.test(row),
+  ], [true, true, true, true, true, false],
+    'Help names the two exports that run the show check / the Excel is the one an error stops / the Look Book is never stopped / the I/O Patch runs its own check / that check never stops it / the untrue "all three exports" is gone');
+});
+
+// ── REPLACES the wire-pages-words check in tests/flows_probe.js ───────────────────────────────────────────────────
+//    'Help says what the app does: the layer chip takes two clicks, the section is Mask in pixels, the AUX window has
+//     no Type, destination names are typed in the table, and Send / Report a bug / the Wire zoom keys are listed'
+//    Its `missing` list asks Help to contain 'hands them to your mail app', which was the untrue half of the Send
+//    entry: in a desktop browser the files download and the message opens empty. That phrase is gone, so the check
+//    would fail on the fixed page. Swap the whole check for this one — the only change is that one list entry, which
+//    now asks for the true half of the same sentence. Everything else in it is unchanged.
+
+await check('Help says what the app does: the layer chip takes two clicks, the section is Mask in pixels, the AUX window has no Type, destination names are typed in the table, and Send / Report a bug / the Wire zoom keys are listed', async () => {
+  actions.help(); await wait(400);
+  const box = $$('[id*="help"]').filter(vis).sort((a, b) => b.textContent.length - a.textContent.length)[0];
+  const t = (box ? box.textContent : '').replace(/\s+/g, ' ');
+  closeHelp(); await wait(200);
+  const gone = [
+    'Click to open Layer Properties (Simple)',
+    'Trims the layer by percentage',
+    'Name and Type (DSM / AUX) can be set per preset',
+    'In the Destination Properties panel the Name field saves',
+    'Set in the Destination Combinations table or Destination Properties panel',
+  ].filter(s => t.includes(s));
+  const missing = [
+    'click the picked chip again to open Layer Properties',
+    "Trims the layer's edges in pixels",
+    'There is no Type field in the panel',
+    'Destination Properties has no Name field',
+    'Typed in the Destination Combinations table on the first preset',
+    'Pinch / Ctrl + scroll wheel',
+    'Report a bug',
+    'the three download to your Downloads folder instead and a pre-filled message opens naming them',
+  ].filter(s => !t.includes(s));
+  await restore();
+  return is([gone, missing, t.length > 500], [[], [], true], 'stale lines still in Help / true lines missing / Help was read');
+});
   await check('Look Book and Excel: every destination starts with a BG line', async () => {
     const html = await userLookBook(); const bgRows = (html.match(/<span class="bd-l">BG<\/span>/g) || []).length; const orig = _buildXlsx; let rows = null; window._buildXlsx = function (r) { rows = r; return orig.apply(this, arguments); }; try { _doExportExcel(true); } finally { window._buildXlsx = orig; }
     const cells = []; (rows || []).forEach(r => r.forEach(c => { if (typeof c === 'string' && /^BG: /.test(c)) cells.push(c); })); return is([bgRows, cells.length], [presets.length * screens.length, presets.length * screens.length], 'BG lines');
@@ -3023,6 +5550,170 @@
     if (!got) return 'the I/O export produced no file'; const wb = await xlRead(got);
     return is({ tabs: wb.sheets.slice(0, 2), title: xlText(wb, ['D8'])[0], show: xlText(wb, ['C5'])[0], a2: wb.fillOf(1, 'A2'), b4: wb.fillOf(1, 'B4'), merges: wb.merges(1).length, tab2merges: wb.merges(2).length },
       { tabs: ['Cover', 'Video I-O'], title: 'I/O PATCH', show: document.getElementById('show-name').value.toUpperCase(), a2: 'FF000000', b4: 'FFFFFFFF', merges: 8, tab2merges: 0 }, 'I/O workbook');
+  });
+
+// ── excel-tab (decision 32, 2026-09-22): what the "Video I-O" Excel tab prints. INSERT in tests/flows_probe.js straight
+//    AFTER the check 'I/O Patch Excel: opens on the Cover titled I/O PATCH, Video I-O is the second tab' (xlRead, ioOpenSimple,
+//    srcNames, restore, okDialogs, is, $, $$, wait are all defined above that point). No media. Each check FAILS on build
+//    16ks and PASSES with patch.py applied; each one puts the show back (closeSystem + restore) before it returns.
+//    REPLACES: nothing. No existing check changes.
+  // every row of one sheet of the home-made workbook as [text...] (xlRead exposes the raw parts; the Excel cover checks read single cells)
+  const xlRows = (wb, sheetNo) => [...new DOMParser().parseFromString(wb.parts['xl/worksheets/sheet' + sheetNo + '.xml'] || '<x/>', 'application/xml').getElementsByTagName('row')].map(r => [...r.getElementsByTagName('c')].map(c => ({ text: c.textContent, s: +(c.getAttribute('s') || 0) })));
+  const ioBook = async () => { const real = window.dl; let got = null; window.dl = function (b) { got = b; }; try { _sysExportIOExcel(); await wait(400); } finally { window.dl = real; } okDialogs(); return got ? xlRead(got) : null; };
+  await check('I/O Patch Excel: the Video I-O tab lists an I/O-only destination after the AUX rows and before the multiviewer, as the screen does; the page-1 tab is unchanged', async () => {
+    await restore(); await ioOpenSimple(); _ioSetView('advanced'); await wait(700); okDialogs();
+    _ioAdvAdd('dst'); await wait(300); const nm = $$('#io-adv .sys-name-input[data-sys-kind="adv-dst"]').pop(); if (!nm) { closeSystem(); await restore(); return 'no new destination row on page 1'; }
+    nm.focus(); nm.value = 'IO EXCEL TEST'; nm.blur(); await wait(400); _ioSetView('simple'); await wait(500); okDialogs();
+    const screen = $$('#sys-dst-rows .sys-row:not(.sys-row-global)').map(r => [($('.sys-row-icon', r) || {}).textContent, ($('.sys-name-input', r) || {}).value]).concat($$('#sys-mv-zone .sys-row:not(.sys-row-global)').map(r => [($('.sys-row-icon', r) || {}).textContent, ($('.sys-name-input', r) || {}).value || (($('.sys-name', r) || {}).textContent)]));
+    const io = ioDests.find(d => d && d.name === 'IO EXCEL TEST');
+    const wb = await ioBook(); if (!wb) { closeSystem(); await restore(); return 'the I/O export produced no file'; }
+    const tab = xlRows(wb, wb.sheets.indexOf('Video I-O') + 1); const hdr = tab.findIndex(r => r[0] && r[0].text === 'DESTINATIONS'); const body = tab.slice(hdr + 2).filter(r => r.length);
+    const slots = body.map(r => r[0].text), ioRow = body.find(r => r[0].text === 'I/O Dest 1'), d1 = body.find(r => r[0].text === 'Destination 1');
+    const p1 = xlRows(wb, 3); const p1Dests = p1.slice(p1.findIndex(r => r[0] && r[0].text === 'DESTINATIONS') + 2).filter(r => r.length && /^Destination \d+$/.test(r[0].text)).map(r => [r[0].text, r[3].text]);
+    closeSystem(); await restore();
+    return is({ screen, slots, io: ioRow ? ioRow.map(c => c.text) : 'missing', slotStyle: ioRow && d1 ? ioRow[0].s === d1[0].s : 'n/a', page1: p1Dests, fromAdv: !!(io && io.fromAdv) },
+      { screen: [['D1', 'LEFT LED'], ['D2', 'CENTER LED'], ['D3', 'RIGHT LED'], ['A1', 'DSM 1'], ['A2', 'AUX 1'], ['IO', 'IO EXCEL TEST'], ['MV', 'MV 1']],
+        slots: ['Destination 1', 'Destination 2', 'Destination 3', 'AUX 1', 'AUX 2', 'I/O Dest 1', 'Multiviewer 1'],
+        io: ['I/O Dest 1', '', 'IO EXCEL TEST', '', '1920x1080', ''], slotStyle: true,
+        page1: [['Destination 1', 'LEFT LED'], ['Destination 2', 'CENTER LED'], ['Destination 3', 'RIGHT LED'], ['Destination 4', 'DSM 1'], ['Destination 5', 'AUX 1'], ['Destination 6', 'IO EXCEL TEST']], fromAdv: true },
+      'screen rows / Video I-O slot order / the I/O-only row / its slot cell styled like a destination / page-1 tab destinations / the row came from page 1');
+  });
+  await check('I/O Patch Excel: a backup source prints "PC · Backup of PPT A" in the Video I-O Type column, its primary and the others keep their plain type, the page-1 tab keeps its P / B letters', async () => {
+    await restore(); await ioOpenSimple(); _ioSetView('advanced'); await wait(700); okDialogs(); const p0 = ioAdvanced.pages[0], rowB = p0.sources.find(r => r.name === 'PPT B'), prim = rowB && _ioBkPrimaryOf(p0.sources, rowB);
+    _ioSetView('simple'); await wait(400); okDialogs();
+    const wb = await ioBook(); if (!wb) { closeSystem(); await restore(); return 'the I/O export produced no file'; }
+    const tab = xlRows(wb, wb.sheets.indexOf('Video I-O') + 1); const typeOf = n => { const r = tab.find(x => x[2] && x[2].text === n && /^Source \d+$/.test(x[0].text)); return r ? r[3].text : 'row missing'; };
+    const p1 = xlRows(wb, 3); const pb = n => { const r = p1.find(x => x[3] && x[3].text === n && /^Source \d+$/.test(x[0].text)); return r ? [r[2].text, r[4].text] : 'row missing'; };
+    const got = [prim ? prim.name : 'not paired', typeOf('PPT B'), typeOf('PPT A'), typeOf('CAM 1'), pb('PPT B'), pb('PPT A')]; closeSystem(); await restore();
+    return is(got, ['PPT A', 'PC · Backup of PPT A', 'PC', 'Camera', ['B', 'PC'], ['P', 'PC']], 'primary of PPT B / Video I-O Type of PPT B, PPT A, CAM 1 / page-1 P/B + Type of PPT B, PPT A');
+  });
+// ── excel-tab FIX (round 16kt, after the attack on decision 32): an I/O-only destination that page 1 created follows its
+//    page-1 row both ways. INSERT in tests/flows_probe.js straight AFTER the excel-tab checks (or, without them, straight
+//    after the check 'I/O Patch Excel: opens on the Cover titled I/O PATCH, Video I-O is the second tab'); xlRead,
+//    ioOpenSimple, ioPick, restore, okDialogs, dlgOpen, is, fire, $, $$, wait are all defined above that point. No media.
+//    Each check FAILS on the BASE page (16ks + the four round-16kt patches) and PASSES with patch_fix.py applied; each one
+//    puts the show back (closeSystem + restore) before it returns. The undo-step side of "a look is not a change" needs a
+//    real pointer gesture (the safety net watches real input only) and is proven by drive_fix.mjs f2 / f2c / f2d, not here.
+//    REPLACES: nothing. No existing check changes; the two excel-tab checks keep their expectations (a page-1 row with no
+//    fields set still gives a blank IO row).
+  const xlRowsF = (wb, sheetNo) => [...new DOMParser().parseFromString(wb.parts['xl/worksheets/sheet' + sheetNo + '.xml'] || '<x/>', 'application/xml').getElementsByTagName('row')].map(r => [...r.getElementsByTagName('c')].map(c => c.textContent));
+  const ioBookF = async () => { const real = window.dl; let got = null; window.dl = function (b) { got = b; }; try { _sysExportIOExcel(); await wait(400); } finally { window.dl = real; } okDialogs(); return got ? xlRead(got) : null; };
+  const ioTabRowsF = (wb, name) => { const io = xlRowsF(wb, wb.sheets.indexOf('Video I-O') + 1).find(r => r[0] === 'I/O Dest 1' && r[2] === name) || 'missing'; const p1 = xlRowsF(wb, 3).find(r => /^(Destination|Multiviewer) \d+$/.test(r[0] || '') && r[3] === name) || 'missing'; return { io, p1: p1 === 'missing' ? p1 : p1.slice(1) }; };
+  const advRowF = name => $$('#io-adv .sys-row').find(r => ($('.sys-name-input', r) || {}).value === name);
+  const ioDestRowF = name => $$('#sys-dst-rows .sys-row').find(r => ($('.sys-name-input', r) || {}).value === name);
+  const screenRowF = r => r ? [($('[data-sys-field="connector"] .pill-label', r) || {}).textContent, (($('.chip-label', r) || {}).textContent || ($('.sys-type-input', r) || {}).value || ''), ($('[data-sys-field="resolution"] .pill-label', r) || {}).textContent, ($('.sys-notes-input', r) || {}).value].map(s => String(s || '').trim()) : 'no row';
+  const twinF = name => { const d = ioDests.find(x => x && x.name === name); return d ? [d.connectorType || '', d.deviceType || '', d.customType || '', d.w, d.h, d.notes || '', !!d.fromAdv] : 'no twin'; };
+  const page1F = name => { const r = (ioAdvanced.pages[0].dests || []).concat(ioAdvanced.pages[0].mvs || []).find(x => x && x.name === name); return r ? [r.connectorType || '', r.deviceType || '', r.customType || '', r.resolution || '', r.notes || ''] : 'no page-1 row'; };
+  const noteF = async (row, text) => { const el = $('.sys-notes-input', row); el.value = text; fire(el, 'change'); await wait(250); };
+  const addDestF = async name => { _ioAdvAdd('dst'); await wait(300); const nm = $$('#io-adv .sys-name-input[data-sys-kind="adv-dst"]').pop(); if (!nm) return false; nm.focus(); nm.value = name; nm.blur(); await wait(400); return true; };
+  const toAdvancedF = async () => { _ioSetView('advanced'); await wait(700); const asked = dlgOpen() && /changed since/i.test(dialogText()); if (asked) { $('#dlg-cancel').click(); await wait(300); } okDialogs(); return asked; };   /* "Keep my page" */
+  const saveReloadF = async () => { closeSystem(); await wait(200); _applyProjectText(JSON.stringify(getProjectState())); await wait(700); okDialogs(); };
+  await check('I/O Patch page 1 -> Simple: connector, type, resolution and note set on a page-1 destination follow to its IO row (screen, twin), the Video I-O tab prints them like the page-1 tab, save + reload keeps them, one undo step per edit', async () => {
+    await restore(); await ioOpenSimple(); await toAdvancedF();
+    if (!await addDestF('IO FIX TEST')) { closeSystem(); await restore(); return 'no new destination row on page 1'; }
+    const u0 = _undoStack.length; const row = () => advRowF('IO FIX TEST');
+    if (!await ioPick($('[data-sys-field="connector"]', row()), /^HDMI 2\.0/)) { closeSystem(); await restore(); return 'no HDMI 2.0 in the connector menu'; }
+    if (!await ioPick($('[data-sys-field="dst-type"]', row()), /^Monitor/)) { closeSystem(); await restore(); return 'no Monitor in the type menu'; }
+    if (!await ioPick($('[data-sys-field="resolution"]', row()), /^3840×2160/)) { closeSystem(); await restore(); return 'no 3840×2160 in the resolution menu'; }
+    await noteF(row(), 'Lobby feed');
+    const steps = _undoStack.length - u0, dirty = _isDirty, twinAdv = twinF('IO FIX TEST'), p1 = page1F('IO FIX TEST');
+    _ioSetView('simple'); await wait(500); okDialogs(); const screen = screenRowF(ioDestRowF('IO FIX TEST'));
+    const wb = await ioBookF(); if (!wb) { closeSystem(); await restore(); return 'the I/O export produced no file'; }
+    const tab = ioTabRowsF(wb, 'IO FIX TEST');
+    await saveReloadF(); const reloaded = twinF('IO FIX TEST'); await restore();
+    return is({ steps, dirty, p1, twinAdv, screen, tab, reloaded },
+      { steps: 4, dirty: true, p1: ['HDMI 2.0', 'Monitor', '', '3840x2160', 'Lobby feed'], twinAdv: ['HDMI 2.0', 'Monitor', '', 3840, 2160, 'Lobby feed', true], screen: ['HDMI 2.0', 'Monitor', '3840×2160', 'Lobby feed'],
+        tab: { io: ['I/O Dest 1', 'HDMI 2.0', 'IO FIX TEST', 'Monitor', '3840x2160', 'Lobby feed'], p1: ['HDMI 2.0', '', 'IO FIX TEST', 'Monitor', '3840x2160', 'Lobby feed'] }, reloaded: ['HDMI 2.0', 'Monitor', '', 3840, 2160, 'Lobby feed', true] },
+      'undo steps for the four edits / Save lit / page-1 row / twin after the edits / the IO row on the Simple screen / Video I-O row + page-1 tab row / twin after save + reload');
+  });
+  await check('I/O Patch page 1 -> Simple: a show saved by an older build (page-1 fields set, IO row blank) catches up the moment the I/O Patch opens, before any Advanced look, without lighting Save; the IO row on screen and both Excel tabs agree', async () => {
+    await restore(); await ioOpenSimple(); await toAdvancedF();
+    if (!await addDestF('IO FIX LOOK')) { closeSystem(); await restore(); return 'no new destination row on page 1'; }
+    closeSystem(); await wait(200); const st = JSON.parse(JSON.stringify(getProjectState())); const r = (st.ioAdvanced.pages[0].dests || []).find(x => x && x.name === 'IO FIX LOOK'); if (!r) { await restore(); return 'no IO FIX LOOK row in the saved text'; }
+    r.connectorType = 'HDMI 2.0'; r.deviceType = 'Monitor'; r.resolution = '3840x2160'; r.notes = 'Lobby feed'; st.ioAdvanced.view = 'simple';   /* the file as 16ks saves it: page-1 fields set, IO row blank */
+    _applyProjectText(JSON.stringify(st)); await wait(700); okDialogs();
+    const opened = { twin: twinF('IO FIX LOOK'), dirty: _isDirty, undo: _undoStack.length };
+    await ioOpenSimple(); const look = { screen: screenRowF(ioDestRowF('IO FIX LOOK')), twin: twinF('IO FIX LOOK'), p1: page1F('IO FIX LOOK'), dirty: _isDirty, saveLit: !!$('button.save-dirty'), undo: _undoStack.length };
+    const wb = await ioBookF(); if (!wb) { closeSystem(); await restore(); return 'the I/O export produced no file'; }
+    const tab = ioTabRowsF(wb, 'IO FIX LOOK'); const dirtyAfterExport = _isDirty;
+    closeSystem(); await restore();
+    return is({ opened, look, tab, dirtyAfterExport },
+      { opened: { twin: ['', '', '', 1920, 1080, '', true], dirty: false, undo: 0 },
+        look: { screen: ['HDMI 2.0', 'Monitor', '3840×2160', 'Lobby feed'], twin: ['HDMI 2.0', 'Monitor', '', 3840, 2160, 'Lobby feed', true], p1: ['HDMI 2.0', 'Monitor', '', '3840x2160', 'Lobby feed'], dirty: false, saveLit: false, undo: 0 },
+        tab: { io: ['I/O Dest 1', 'HDMI 2.0', 'IO FIX LOOK', 'Monitor', '3840x2160', 'Lobby feed'], p1: ['HDMI 2.0', '', 'IO FIX LOOK', 'Monitor', '3840x2160', 'Lobby feed'] }, dirtyAfterExport: false },
+      'the saved show as opened (twin blank, clean) / the Simple look (IO row on screen, twin, page-1 row, Save, undo) / both tabs / clean after the export');
+  });
+  await check('I/O Patch page 1 -> Simple: a show saved by an older build where the IO row was edited in Simple (page-1 row blank) is not blanked by the look: the page-1 row takes the values instead, nothing lit; both Excel tabs agree', async () => {
+    await restore(); await ioOpenSimple(); await toAdvancedF();
+    if (!await addDestF('IO FIX KEEP')) { closeSystem(); await restore(); return 'no new destination row on page 1'; }
+    closeSystem(); await wait(200); const st = JSON.parse(JSON.stringify(getProjectState())); const d = (st.ioDests || []).find(x => x && x.name === 'IO FIX KEEP'); if (!d) { await restore(); return 'no IO FIX KEEP twin in the saved text'; }
+    d.connectorType = 'HDMI 2.1'; d.deviceType = 'Custom'; d.customType = 'Blu-ray'; d.w = 3840; d.h = 2160; d.notes = 'Lobby'; st.ioAdvanced.view = 'simple';   /* the file as 16ks saves it after the IO row was edited in Simple: page 1 never heard of it */
+    _applyProjectText(JSON.stringify(st)); await wait(700); okDialogs(); const opened = { p1: page1F('IO FIX KEEP'), dirty: _isDirty };
+    await ioOpenSimple(); const simple = { screen: screenRowF(ioDestRowF('IO FIX KEEP')), twin: twinF('IO FIX KEEP'), p1: page1F('IO FIX KEEP'), dirty: _isDirty, undo: _undoStack.length };
+    await toAdvancedF(); const adv = { twin: twinF('IO FIX KEEP'), p1: page1F('IO FIX KEEP'), advScreen: screenRowF(advRowF('IO FIX KEEP')), dirty: _isDirty, undo: _undoStack.length };
+    _ioSetView('simple'); await wait(400); okDialogs();
+    const wb = await ioBookF(); if (!wb) { closeSystem(); await restore(); return 'the I/O export produced no file'; }
+    const tab = ioTabRowsF(wb, 'IO FIX KEEP'); closeSystem(); await restore();
+    return is({ opened, simple, adv, tab },
+      { opened: { p1: ['', '', '', '', ''], dirty: false },
+        simple: { screen: ['HDMI 2.1', 'Blu-ray', '3840×2160', 'Lobby'], twin: ['HDMI 2.1', 'Custom', 'Blu-ray', 3840, 2160, 'Lobby', true], p1: ['HDMI 2.1', 'Custom', 'Blu-ray', '3840x2160', 'Lobby'], dirty: false, undo: 0 },
+        adv: { twin: ['HDMI 2.1', 'Custom', 'Blu-ray', 3840, 2160, 'Lobby', true], p1: ['HDMI 2.1', 'Custom', 'Blu-ray', '3840x2160', 'Lobby'], advScreen: ['HDMI 2.1', 'Blu-ray', '3840×2160', 'Lobby'], dirty: false, undo: 0 },
+        tab: { io: ['I/O Dest 1', 'HDMI 2.1', 'IO FIX KEEP', 'Blu-ray', '3840x2160', 'Lobby'], p1: ['HDMI 2.1', '', 'IO FIX KEEP', 'Blu-ray', '3840x2160', 'Lobby'] } },
+      'the saved show as opened (page-1 row blank, clean) / the Simple look (IO row kept, page-1 row filled, clean, no undo step) / the Advanced look / both tabs');
+  });
+  await check('I/O Patch Simple -> page 1: a connector, a Custom type and a note set on the IO row in Simple reach the page-1 row with the same edit; the next Advanced look (Keep my page) puts nothing back; both Excel tabs agree', async () => {
+    await restore(); await ioOpenSimple(); await toAdvancedF();
+    if (!await addDestF('IO FIX BACK')) { closeSystem(); await restore(); return 'no new destination row on page 1'; }
+    _ioSetView('simple'); await wait(500); okDialogs(); const row = () => ioDestRowF('IO FIX BACK'); const u0 = _undoStack.length;
+    if (!await ioPick($('[data-sys-field="connector"]', row()), /^HDMI 2\.1/)) { closeSystem(); await restore(); return 'no HDMI 2.1 in the connector menu'; }
+    if (!await ioPick($('[data-sys-field="dst-type"]', row()), /^Custom/)) { closeSystem(); await restore(); return 'no Custom… in the type menu'; }
+    const tb = $('.sys-type-input', row()); if (!tb) { closeSystem(); await restore(); return 'no custom type box on the IO row'; } tb.focus(); tb.value = 'Blu-ray'; tb.blur(); await wait(300);
+    await noteF(row(), 'Lobby');
+    const edited = { steps: _undoStack.length - u0, twin: twinF('IO FIX BACK'), p1: page1F('IO FIX BACK') };
+    await toAdvancedF(); const look = { twin: twinF('IO FIX BACK'), p1: page1F('IO FIX BACK'), advScreen: screenRowF(advRowF('IO FIX BACK')) };
+    _ioSetView('simple'); await wait(500); okDialogs(); const screen = screenRowF(row());
+    const wb = await ioBookF(); if (!wb) { closeSystem(); await restore(); return 'the I/O export produced no file'; }
+    const tab = ioTabRowsF(wb, 'IO FIX BACK'); closeSystem(); await restore();
+    return is({ edited, look, screen, tab },
+      { edited: { steps: 4, twin: ['HDMI 2.1', 'Custom', 'Blu-ray', 1920, 1080, 'Lobby', true], p1: ['HDMI 2.1', 'Custom', 'Blu-ray', '', 'Lobby'] }, look: { twin: ['HDMI 2.1', 'Custom', 'Blu-ray', 1920, 1080, 'Lobby', true], p1: ['HDMI 2.1', 'Custom', 'Blu-ray', '', 'Lobby'], advScreen: ['HDMI 2.1', 'Blu-ray', '— Set resolution —', 'Lobby'] },
+        screen: ['HDMI 2.1', 'Blu-ray', '1920×1080', 'Lobby'], tab: { io: ['I/O Dest 1', 'HDMI 2.1', 'IO FIX BACK', 'Blu-ray', '1920x1080', 'Lobby'], p1: ['HDMI 2.1', '', 'IO FIX BACK', 'Blu-ray', '', 'Lobby'] } },
+      'after the Simple edits (undo steps, twin, page-1 row) / after the Advanced look (twin, page-1 row, page-1 row on screen) / the IO row on screen / both tabs');
+  });
+  await check('I/O Patch Simple -> page 1: Reset on the IO row clears the page-1 row too, Set for all (connector) on the outputs reaches the page-1 row too; the next Advanced look puts nothing back', async () => {
+    await restore(); await ioOpenSimple(); await toAdvancedF();
+    if (!await addDestF('IO FIX BULK')) { closeSystem(); await restore(); return 'no new destination row on page 1'; }
+    if (!await ioPick($('[data-sys-field="connector"]', advRowF('IO FIX BULK')), /^HDMI 2\.0/)) { closeSystem(); await restore(); return 'no HDMI 2.0 in the connector menu'; }
+    await noteF(advRowF('IO FIX BULK'), 'Lobby feed');
+    _ioSetView('simple'); await wait(500); okDialogs(); const row = () => ioDestRowF('IO FIX BULK');
+    const before = screenRowF(row()); $('[data-sys-action="reset"]', row()).click(); await wait(400); okDialogs();
+    const afterReset = { twin: twinF('IO FIX BULK'), p1: page1F('IO FIX BULK') };
+    if (!await ioPick($('#sys-dst-rows .sys-row-global [data-sys-field="connector"]'), /^12G-SDI/)) { closeSystem(); await restore(); return 'no 12G-SDI in the Set-for-all connector menu'; }
+    const afterAll = { twin: twinF('IO FIX BULK'), p1: page1F('IO FIX BULK'), firstDest: screens[0].connectorType };
+    await toAdvancedF(); const look = { twin: twinF('IO FIX BULK'), p1: page1F('IO FIX BULK') };
+    closeSystem(); await restore();
+    return is({ before, afterReset, afterAll, look },
+      { before: ['HDMI 2.0', '— Set device —', '1920×1080', 'Lobby feed'], afterReset: { twin: ['', '', '', 1920, 1080, '', true], p1: ['', '', '', '', ''] },
+        afterAll: { twin: ['12G-SDI', '', '', 1920, 1080, '', true], p1: ['12G-SDI', '', '', '', ''], firstDest: '12G-SDI' }, look: { twin: ['12G-SDI', '', '', 1920, 1080, '', true], p1: ['12G-SDI', '', '', '', ''] } },
+      'the IO row before / after Reset (twin, page-1 row) / after Set for all (twin, page-1 row, first destination) / after the Advanced look');
+  });
+  await check('I/O Patch page 1 -> Simple: Reset on the page-1 row clears its IO row too (one undo step), Set for all (type) on page 1 reaches the IO row and nothing else in Simple; after "Keep my page" a page-1 edit does not raise "Simple changed" again, a Simple edit still does', async () => {
+    await restore(); await ioOpenSimple(); await toAdvancedF();
+    if (!await addDestF('IO FIX ADV')) { closeSystem(); await restore(); return 'no new destination row on page 1'; }
+    if (!await ioPick($('[data-sys-field="connector"]', advRowF('IO FIX ADV')), /^HDMI 2\.0/)) { closeSystem(); await restore(); return 'no HDMI 2.0 in the connector menu'; }
+    await noteF(advRowF('IO FIX ADV'), 'Lobby feed');
+    _ioSetView('simple'); await wait(400); okDialogs(); const firstReturn = await toAdvancedF();   /* page 1 made its twin: asked once, as before */
+    const u0 = _undoStack.length; $('[data-sys-action="reset"]', advRowF('IO FIX ADV')).click(); await wait(400); okDialogs();
+    const afterReset = { twin: twinF('IO FIX ADV'), p1: page1F('IO FIX ADV'), steps: _undoStack.length - u0 };
+    if (!await ioPick($('#io-adv [data-sys-kind="advdst-all"][data-sys-field="dst-type"]'), /^Projection/)) { closeSystem(); await restore(); return 'no Projection in the page-1 Set-for-all type menu'; }
+    const afterAll = { twin: twinF('IO FIX ADV'), p1: page1F('IO FIX ADV'), steps: _undoStack.length - u0, firstDestInSimple: screens[0].deviceType };
+    _ioSetView('simple'); await wait(400); okDialogs(); const screen = screenRowF(ioDestRowF('IO FIX ADV')); const secondReturn = await toAdvancedF();
+    _ioSetView('simple'); await wait(400); okDialogs();
+    if (!await ioPick($('[data-sys-field="connector"]', ioDestRowF('LEFT LED')), /^HDMI 2\.1/)) { closeSystem(); await restore(); return 'no HDMI 2.1 in the connector menu of LEFT LED'; }
+    const thirdReturn = await toAdvancedF(); closeSystem(); await restore();
+    return is({ firstReturn, afterReset, afterAll, screen, secondReturn, thirdReturn },
+      { firstReturn: true, afterReset: { twin: ['', '', '', 1920, 1080, '', true], p1: ['', '', '', '', ''], steps: 1 },
+        afterAll: { twin: ['', 'Projection', '', 1920, 1080, '', true], p1: ['', 'Projection', '', '', ''], steps: 2, firstDestInSimple: 'LED' }, screen: ['— Set type —', 'Projection', '1920×1080', ''], secondReturn: false, thirdReturn: true },
+      'the rebuild question after the twin was made / after Reset on page 1 (twin, page-1 row, undo steps) / after Set for all type on page 1 (twin, page-1 row, steps, LEFT LED in Simple) / the IO row on screen / the question after page-1 edits / the question after a Simple edit');
   });
   await check('show info: Show dates / Venue address / Show format edit in Wire Project Info and Quick Setup in step, save with the show, load blank from an old show, and stay off the Wire sheet and the Look Book', async () => {
     openWireMode(); await wait(600); const d0 = _dirtyStateString(); const set = (id, v) => { const el = $(id); if (!el) return false; el.value = v; fire(el, 'change'); return true; };
@@ -3324,15 +6015,6 @@
     const st = JSON.parse(BASE); st.showName = ''; _applyProjectText(JSON.stringify(st)); await wait(700); okDialogs(); const got = $('#show-name').value; await restore();
     return is([got, $('#show-name').value], ['', JSON.parse(BASE).showName], 'name after opening the blank-name file / after restoring');
   });
-  await check('Send: attaches the Look Book the window builds (wire sheet included) plus the cue sheet, and the mail draft goes through the mail seam', async () => {
-    const hadShare = navigator.share, hadCan = navigator.canShare; let shared = null; const had = window._pdfOpts; window._pdfOpts = null;
-    navigator.canShare = function () { return true; }; navigator.share = async function (d) { shared = d; };
-    await sendShow(); await wait(400); const lb = shared && (shared.files || []).find(f => /\.html$/.test(f.name)); const xl = shared && (shared.files || []).find(f => /\.xlsx$/.test(f.name)); const html = lb ? await lb.text() : '';
-    let mailed = 'Send still opens the mail draft with window.location, not through _lbOpenMail';
-    if (/_lbOpenMail\(/.test(String(sendShow))) { navigator.canShare = function () { return false; }; mailHref = null; downloads.length = 0; await sendShow(); await wait(400); mailed = (/^mailto:\?subject=Look%20Book/.test(mailHref || '') && downloads.length === 2) ? true : ('mail href ' + mailHref + ', downloads ' + downloads.length); }
-    delete navigator.share; delete navigator.canShare; if (hadShare && !navigator.share) navigator.share = hadShare; if (hadCan && !navigator.canShare) navigator.canShare = hadCan; window._pdfOpts = had;
-    return is([!!xl, /id="pdf-wire"/.test(html), /id="pdf-cover"/.test(html), window._pdfOpts === had, mailed], [true, true, true, true, true], 'cue sheet attached / wire sheet in the sent Look Book / cover / window options left alone / mail fallback');
-  });
   // ── UNDO / UNSAVED-CHANGES AUDIT (2026-09-21). INSERT the whole block in tests/flows_probe.js straight AFTER the LAST
   //    check, 'Report a bug: builds an email to AV Educate with the template and the show attached', and BEFORE the
   //    closing "try { _fsPauseAll(); } ..." line. (Not earlier: one check opens Advanced, and the Simple tile count check
@@ -3532,6 +6214,151 @@
     try { await _mdbDel('UD PIC'); } catch (e) {} try { closeFullscreen(); } catch (e) {} await wait(300); await _udHome();
     return is([afterBad, afterGood, one, two], [[0, 0], [1, 1, true], [0, 'CLOCK'], was], 'after the unreadable file: [undo steps, library entries] / after the picture: [undo steps, library entries, it is in the library] / after ONE Undo: [library entries, the layer changed before the import] / after a second Undo: that layer');
   });
+
+// ── SEND + LOOK BOOK PRE-EXPORT CHECK (send-check, 2026-09-22, decisions 34 + 35). INSERT the six checks ABOVE the
+//    REPLACES header into tests/flows_probe.js straight AFTER the LAST check and BEFORE the closing
+//    "try { _fsPauseAll(); } …" line; the seventh replaces a check that is already in the file (see its own header).
+//    Helpers used from the top of the probe: $, $$, wait, is, vis, check, restore, okDialogs, dlgOpen, downloads,
+//    mailHref. Needs no media. All seven FAIL on build 16ks (v0.3.0) and PASS on the patched page. Each of the six new
+//    ones ends on restore(); the seventh is the repo's own check, which changes no show state and never did.
+//    Nothing here opens a real window, downloads a real file or leaves the page.
+//
+//    Note on the mail seam: the probe replaces window._lbOpenMail with a recorder at the top of the file. One line of
+//    that header has to change so the REAL seam is kept as well - see the second REPLACES header at the bottom.
+
+await check('Send: the browser hand-off carries three files — the cue sheet, the Look Book and the .avlb show file', async () => {
+  const hadShare = navigator.share, hadCan = navigator.canShare, had = window._pdfOpts; window._pdfOpts = null;
+  let shared = null; navigator.canShare = function () { return true; }; navigator.share = async function (d) { shared = d; };
+  await sendShow(); await wait(500);
+  const sheet = shared ? (shared.files || []).map(f => f.name.replace(/^.*?(_cue_sheet\.xlsx|_look_book\.html|\.avlb)$/, '$1')) : [];
+  const text = shared ? String(shared.text || '') : '';
+  navigator.canShare = function () { return false; }; delete navigator.share;
+  downloads.length = 0; await sendShow(); await wait(500);
+  const fell = downloads.map(d => d.name.replace(/^.*?(_cue_sheet\.xlsx|_look_book\.html|\.avlb)$/, '$1'));
+  const tip = ($('[onclick="actions.send()"]') || {}).title || '';
+  delete navigator.share; delete navigator.canShare;
+  if (hadShare && !navigator.share) navigator.share = hadShare; if (hadCan && !navigator.canShare) navigator.canShare = hadCan;
+  window._pdfOpts = had; const fr = $('#lb-mail-frame'); if (fr) fr.remove(); await restore();
+  return is([sheet, fell, /show file/i.test(text), /show file/i.test(tip)],
+    [['_cue_sheet.xlsx', '_look_book.html', '.avlb'], ['_cue_sheet.xlsx', '_look_book.html', '.avlb'], true, true],
+    'files on the share sheet / files downloaded when there is no share sheet / the email text names the show file / the Send tooltip names it');
+});
+
+await check('Send and Report a bug open the mail draft WITHOUT leaving the page (no "Leave site?" over unsaved changes)', async () => {
+  if (typeof _lbMailFrame !== 'function')
+    return 'the page has no mail seam that keeps the page open: Send and Report a bug still hand the mailto: address to window.location, which unloads the page and makes the browser ask "Leave site?" whenever the show has unsaved changes';
+  const hadShare = navigator.share, hadCan = navigator.canShare;
+  navigator.canShare = function () { return false; }; delete navigator.share;
+  // The page's OWN seam goes back in place for this check (the probe's recorder is put back at the end), so what is
+  // asserted is the page's wiring and not the probe's. The hidden frame's src is caught one step before it navigates:
+  // headless Chrome cannot launch mailto: from a scripted call - it wants a real user gesture - and would log an error
+  // for it every run. The address, the frame and the fact that the PAGE never moves are all still real.
+  const desc = Object.getOwnPropertyDescriptor(HTMLIFrameElement.prototype, 'src'), framed = [];
+  Object.defineProperty(HTMLIFrameElement.prototype, 'src', { configurable: true,
+    get() { return desc.get.call(this); },
+    set(v) { if (this.id === 'lb-mail-frame') { framed.push(String(v)); this.setAttribute('data-sc-src', String(v)); } else desc.set.call(this, v); } });
+  const stub = window._lbOpenMail; window._lbOpenMail = _lbMailReal;
+  let leaveAsked = false; const bu = function () { leaveAsked = true; }; window.addEventListener('beforeunload', bu);
+  const href0 = String(location.href), presets0 = presets.length;
+  downloads.length = 0; await sendShow(); await wait(500);
+  downloads.length = 0; await reportBug(); await wait(500);
+  const frame = $('#lb-mail-frame'), box = frame ? frame.getBoundingClientRect() : null;
+  const offScreen = !!box && (box.right < 1 || box.bottom < 1 || box.width < 2);
+  window.removeEventListener('beforeunload', bu); window._lbOpenMail = stub;
+  Object.defineProperty(HTMLIFrameElement.prototype, 'src', desc);
+  delete navigator.share; delete navigator.canShare;
+  if (hadShare && !navigator.share) navigator.share = hadShare; if (hadCan && !navigator.canShare) navigator.canShare = hadCan;
+  if (frame) frame.remove(); await restore();
+  return is([framed.length, /^mailto:\?subject=Look%20Book/.test(framed[0] || ''), /^mailto:info@aveducate\.com\?subject=/.test(framed[1] || ''),
+    offScreen, String(location.href) === href0, leaveAsked, presets0],
+    [2, true, true, true, true, false, presets.length],
+    'two addresses reached the hidden frame / the first is Send\'s / the second is the bug report\'s / the frame is out of sight / the page address never moved / the page was never asked to unload / the show is still open');
+});
+
+await check('Look Book: a stale canvas raises the Pre-Export Check BEFORE the export window, and Export Anyway still prints the book', async () => {
+  const p = presets[0], s = screens[screens.length - 1], hadOpts = window._pdfOpts;
+  const pos = (p.positions && p.positions[s.id]) || { x: 0, y: 0 };
+  pushUndo(); setPosition(p, s.id, (pos.x || 0) + 300, pos.y || 0); scheduleRender(); await wait(400);
+  const warned = validateProject().warnings.some(w => /Canvas size/.test(w));
+  $('[onclick="actions.exportLookBook()"]').click(); await wait(500);
+  const vp = $('#validation-panel'), panelUp = vis(vp), modalBefore = vis($('#pdf-export-modal'));
+  const anyway = panelUp ? [...vp.querySelectorAll('button')].find(b => /export anyway/i.test(b.textContent)) : null;
+  const said = panelUp ? /Canvas size/.test(vp.textContent || '') : false;
+  let modalAfter = false, printed = false;
+  if (anyway) {
+    anyway.click(); await wait(500); modalAfter = vis($('#pdf-export-modal'));
+    const real = exportPDF; window.exportPDF = function () { printed = String(real(true) || '').length > 1000; };
+    try { _pdfConfirmExport(); } finally { window.exportPDF = real; }
+    await wait(300);
+  }
+  try { closePdfExportModal(); } catch (e) {}
+  if (vp) vp.style.display = 'none'; const bd = $('#validation-backdrop'); if (bd) bd.style.display = 'none';
+  window._pdfOpts = hadOpts; await restore();
+  return is([warned, panelUp, said, modalBefore, !!anyway, modalAfter, printed],
+    [true, true, true, false, true, true, true],
+    'the check sees the stale canvas / the check came up / it says which canvas / the export window did NOT jump the queue / Export Anyway is offered / it opens the export window / the book is built');
+});
+
+await check('Look Book: Close on the Pre-Export Check goes back to the show and prints nothing', async () => {
+  const p = presets[0], s = screens[screens.length - 1];
+  const pos = (p.positions && p.positions[s.id]) || { x: 0, y: 0 };
+  pushUndo(); setPosition(p, s.id, (pos.x || 0) + 300, pos.y || 0); scheduleRender(); await wait(400);
+  const real = exportPDF; let built = 0; window.exportPDF = function () { built++; return real.apply(this, arguments); };
+  const opened = []; const ow = window.open; window.open = function () { opened.push(1); return null; };
+  $('[onclick="actions.exportLookBook()"]').click(); await wait(500);
+  const vp = $('#validation-panel'), panelUp = vis(vp);
+  const close = panelUp ? [...vp.querySelectorAll('button')].find(b => /^close$/i.test((b.textContent || '').trim())) : null;
+  if (close) { close.click(); await wait(400); }
+  const panelAfter = vis($('#validation-panel')), modalAfter = vis($('#pdf-export-modal'));
+  const backdrop = vis($('#validation-backdrop'));
+  window.exportPDF = real; window.open = ow;
+  try { closePdfExportModal(); } catch (e) {}
+  if (vp) vp.style.display = 'none'; const bd = $('#validation-backdrop'); if (bd) bd.style.display = 'none';
+  await restore();
+  return is([panelUp, !!close, panelAfter, backdrop, modalAfter, built, opened.length],
+    [true, true, false, false, false, 0, 0],
+    'the check came up / it has a Close / the check is gone / the dim layer is gone / no export window / no book was built / no window was opened');
+});
+
+await check('Look Book: a blank show name warns but never blocks, while the Excel still stops there', async () => {
+  const name = $('#show-name'), was = name.value;
+  name.focus(); name.value = ''; name.dispatchEvent(new Event('input', { bubbles: true })); name.dispatchEvent(new Event('change', { bubbles: true })); name.blur(); await wait(400);
+  $('[onclick="actions.exportLookBook()"]').click(); await wait(500);
+  const vp = $('#validation-panel'), lbPanel = vis(vp);
+  const lbErrors = lbPanel ? /must fix before export/i.test(vp.textContent || '') : null;
+  const lbAnyway = lbPanel ? [...vp.querySelectorAll('button')].some(b => /export anyway/i.test(b.textContent)) : false;
+  const lbSaysUntitled = lbPanel ? /Untitled Show/.test(vp.textContent || '') : false;
+  if (vp) vp.style.display = 'none'; let bd = $('#validation-backdrop'); if (bd) bd.style.display = 'none';
+  try { closePdfExportModal(); } catch (e) {}
+  downloads.length = 0;
+  $('[onclick="actions.exportExcel()"]').click(); await wait(500);
+  const xlPanel = vis($('#validation-panel'));
+  const xlBlocked = xlPanel && /must fix before export/i.test($('#validation-panel').textContent || '')
+    && ![...$('#validation-panel').querySelectorAll('button')].some(b => /export anyway/i.test(b.textContent));
+  const xlWrote = downloads.length;
+  if (vp) vp.style.display = 'none'; bd = $('#validation-backdrop'); if (bd) bd.style.display = 'none';
+  name.focus(); name.value = was; name.dispatchEvent(new Event('input', { bubbles: true })); name.dispatchEvent(new Event('change', { bubbles: true })); name.blur();
+  await restore();
+  return is([lbPanel, lbErrors, lbAnyway, lbSaysUntitled, xlBlocked, xlWrote],
+    [true, false, true, true, true, 0],
+    'the Look Book check came up / it lists no blocking error / Export Anyway is offered / it says the book will print Untitled Show / the Excel is still stopped / the Excel wrote nothing');
+});
+
+
+// ── REPLACES the existing check in tests/flows_probe.js ──────────────────────────────────────────────────────────
+//    'Send: attaches the Look Book the window builds (wire sheet included) plus the cue sheet, and the mail draft
+//    goes through the mail seam'  — it asserted downloads.length === 2. The browser Send now hands over three files
+//    (decision 34), so the same check with 3. Nothing else in it changes. Swap the whole check for this one.
+
+await check('Send: attaches the Look Book the window builds (wire sheet included) plus the cue sheet, and the mail draft goes through the mail seam', async () => {
+  const hadShare = navigator.share, hadCan = navigator.canShare; let shared = null; const had = window._pdfOpts; window._pdfOpts = null;
+  navigator.canShare = function () { return true; }; navigator.share = async function (d) { shared = d; };
+  await sendShow(); await wait(400); const lb = shared && (shared.files || []).find(f => /\.html$/.test(f.name)); const xl = shared && (shared.files || []).find(f => /\.xlsx$/.test(f.name)); const html = lb ? await lb.text() : '';
+  let mailed = 'Send still opens the mail draft with window.location, not through _lbOpenMail';
+  if (/_lbOpenMail\(/.test(String(sendShow))) { navigator.canShare = function () { return false; }; mailHref = null; downloads.length = 0; await sendShow(); await wait(400); mailed = (/^mailto:\?subject=Look%20Book/.test(mailHref || '') && downloads.length === 3) ? true : ('mail href ' + mailHref + ', downloads ' + downloads.length); }
+  delete navigator.share; delete navigator.canShare; if (hadShare && !navigator.share) navigator.share = hadShare; if (hadCan && !navigator.canShare) navigator.canShare = hadCan; window._pdfOpts = had;
+  return is([!!xl, /id="pdf-wire"/.test(html), /id="pdf-cover"/.test(html), window._pdfOpts === had, mailed], [true, true, true, true, true], 'cue sheet attached / wire sheet in the sent Look Book / cover / window options left alone / mail fallback');
+});
 
   try { _fsPauseAll(); } catch (e) {} $$('video').forEach(v => { try { v.muted = true; v.pause(); } catch (e) {} });
   return { checks };

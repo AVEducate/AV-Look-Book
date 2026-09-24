@@ -473,10 +473,6 @@
    "ok": true
   },
   {
-   "name": "Layer strip: 12 layers never move the Actions group or resize the header; a long strip scrolls inside itself and brings the picked box into view",
-   "ok": true
-  },
-  {
    "name": "Layer strip: the bottom-left label of a destination names the top-most displayed layer before the unchanged resolution, on the canvas and in the Look Book",
    "ok": true
   },
@@ -494,10 +490,6 @@
   },
   {
    "name": "Layer strip fix: with the ghost on, a double-click on the destination (through the 15 % layers) opens Destination Properties, never a layer panel, and the ghost stays (Simple and Advanced); one click still lets go",
-   "ok": true
-  },
-  {
-   "name": "Layer strip fix: the wheel over an overflowing pill is only taken while the pill can still scroll that way (Simple: at its end the page scrolls on; Advanced: never a canvas zoom)",
    "ok": true
   },
   {
@@ -549,7 +541,195 @@
    "ok": true
   },
   {
+   "name": "toolbar: the Canvas W / H boxes are a read-out: read-only, out of the Tab order, no field chrome, no pointer, tooltip \"Calculated from the destinations\", and they still follow the destinations",
+   "ok": true
+  },
+  {
+   "name": "draft: Restore draft brings every destination position back exactly as the draft holds it (a 200 px blend and a free-placed destination), and the restored show is clean with an empty Undo history",
+   "ok": true
+  },
+  {
+   "name": "draft: a restored, never-saved draft is protected: Open a file, the picker, New, Cmd/Ctrl+N and an example show ask with true wording and keep the draft; after a Save none asks about a draft",
+   "ok": true
+  },
+  {
+   "name": "toolbar: a press on the Canvas read-out lets go of the picked layer and destination, so Backspace and the arrow keys after it change nothing",
+   "ok": true
+  },
+  {
+   "name": "Help › Autosave says a restored draft's blends show once Blend Zones / Dead Space is on in Modifiers, and that the draft is protected until it is saved",
+   "ok": true
+  },
+  {
+   "name": "Edit Show Info: the pencil next to the Show name opens Quick Setup pre-filled (Edit Show Info / Update Show / Cancel, examples hidden); a destination renamed and given a new resolution in it lands on the show with presets and layers kept, one undo step brings everything back",
+   "ok": true
+  },
+  {
+   "name": "Edit Show Info: Cancel, Escape and an unchanged Update Show change nothing, leave no undo step and do not light Save; a show name, date and venue typed in the window reach the top bar and light Save; on an empty show the pencil opens plain Quick Setup",
+   "ok": true
+  },
+  {
+   "name": "Colour window: a press ANYWHERE outside closes it (a table Notes cell, the top bar, the status bar, a preset name box, the Undo button); a press on the swatch that opened it keeps it, the BG chevron toggles it; a hue drag that ends outside the window keeps the window open with the picked colour, no undo step",
+   "ok": true
+  },
+  {
+   "name": "Closing by pressing outside: Add Destination never closes on an outside press, its Pick… colour window closes on a press on the Name box and leaves Add Destination open, the next Apply from the table lands on the destination; Help, the Look Book window, the Wire export window, the Pre-Export Check and the app dialog still close on their dark area",
+   "ok": true
+  },
+  {
+   "name": "Edit Show Info is modal for the keyboard: the pencil drops the canvas pick; Backspace / Delete / arrows / Tab / a digit / Cmd+D / Cmd+Shift+N / Cmd+Z / Cmd+S pressed under the open window change nothing; typing, Tab inside the window, Enter (Update Show) and Escape (close) still work; after it closes the same keys act again",
+   "ok": true
+  },
+  {
+   "name": "Edit Show Info counters on a show past the wizard's caps: with 13 presets + gives 14 and Update Show gives 14 (the first 13 untouched); - once gives 12 and Update Show removes P13 with no question, one undo step; with 25 destinations and 9 AUX + gives 26 / 10 and Update Show adds them",
+   "ok": true
+  },
+  {
+   "name": "Colour window opened from the layer panel's Edge swatch: a press on the panel's own opacity box or section header keeps the window and the picked colour, Apply lands it; a press anywhere else still closes it",
+   "ok": true
+  },
+  {
+   "name": "Edit Show Info: Update Show with nothing changed writes nothing when the show name and a title-block field hold a leading / trailing space: Save stays off, the values keep their spaces, no undo step",
+   "ok": true
+  },
+  {
+   "name": "Edit Show Info: a blank Show name is refused the way the wizard refuses it (the \"Show name needed\" note names Update Show, the box is marked, the window stays open, nothing written); a name typed then lands",
+   "ok": true
+  },
+  {
+   "name": "Edit Show Info: a window floating ABOVE it keeps only its TEXT boxes; a key pressed on its other controls never reaches the page behind (Cmd+S, Cmd+Shift+N, Cmd+Z), and the window itself scrolls with PageDown and Space again",
+   "ok": true
+  },
+  {
+   "name": "Edit Show Info: the \"Show name needed\" note takes Enter (it closes and the cursor goes back to the Show name box, it does not come straight back)",
+   "ok": true
+  },
+  {
+   "name": "Restore draft: the question that protects it names a draft, in wording that is true for a show that was saved before the tab closed",
+   "ok": true
+  },
+  {
+   "name": "Advanced: a source dropped on an AUX box sets what that AUX shows in THIS preset — one undo step, Undo and Redo go both ways, the other presets keep theirs",
+   "ok": true
+  },
+  {
+   "name": "Advanced: an AUX box lights up while a source is dragged over it, like a layer or a BG, and dropping the name it already shows writes nothing and records no undo step",
+   "ok": true
+  },
+  {
+   "name": "Advanced: an AUX switched off in this preset has no box to drop on (the Simple table has no cell for it either) and keeps what it showed; the one that is on takes the drop",
+   "ok": true
+  },
+  {
+   "name": "Layer panel: BOTH Remove keys are there in every mode — the Simple panel, the Advanced panel and the Advanced page's docked panel",
+   "ok": true
+  },
+  {
+   "name": "Layer panel: the \"Remove from ALL presets\" window says Undo brings it back, and it does — one Undo puts the layer back in every preset, Redo takes it out again",
+   "ok": true
+  },
+  {
+   "name": "Layer panel: removing a layer from every preset records its own undo step, and a removal with nothing to remove records none",
+   "ok": true
+  },
+  {
+   "name": "Advanced: the docked Properties panel removes a layer from this preset only, or from all of them, and each is one undo step",
+   "ok": true
+  },
+  {
+   "name": "Simple: a colour given to a built-in content type reaches EVERY place that draws it — the table cell, the canvas chip, the layer panel dot, its ✎ swatch, the AUX list and the Advanced source rail",
+   "ok": true
+  },
+  {
+   "name": "Simple: the ✎ swatch opens on the colour in force, and an Apply on exactly that writes nothing, lights nothing and records no undo step",
+   "ok": true
+  },
+  {
+   "name": "Layer panel: a phone keeps ONE Remove key in Simple — the mode it opens in — and is told a removal from ALL presets cannot be undone there; the desktop keeps both keys",
+   "ok": true
+  },
+  {
+   "name": "Layer panel: the two Remove keys share one row, so the Simple panel still fits a 1440x800 laptop window without scrolling and neither key is cut short",
+   "ok": true
+  },
+  {
+   "name": "Video Presets table: the layer columns read LAYER 01 … LAYER 04 in the heading row's own label style, keep two digits past nine, and a picked layer still lights its column",
+   "ok": true
+  },
+  {
+   "name": "Top bar: the tool name, its icon and the three tool buttons read white, while the pill chrome, the sliding highlight and the grey description keep exactly what they had",
+   "ok": true
+  },
+  {
+   "name": "Tool bar: the three tools read left to right in work order (Video Presets, I/O Patch, Wire); each still opens its own page and the sliding highlight lands on it",
+   "ok": true
+  },
+  {
+   "name": "the \"P06 added\" note belongs to the page it was raised on: it goes when you leave Wire or I/O Patch, and it never sits over a window of the app",
+   "ok": true
+  },
+  {
+   "name": "Narrow preset header: the tile gives way in the owner's order — MODIFIERS drops its word, then Notes and the preset name go to half, then Notes goes, then the name goes",
+   "ok": true
+  },
+  {
+   "name": "Narrow preset header: the preset number and the layer strip survive every width, the Actions group is never cut off and the header never becomes two rows",
+   "ok": true
+  },
+  {
+   "name": "Narrow preset header: the Modifiers button keeps its tooltip, its label and its menu when it is down to the gear icon",
+   "ok": true
+  },
+  {
+   "name": "Narrow preset header: the note is not lost when Notes disappears — it stays in the show and comes back with the room",
+   "ok": true
+  },
+  {
+   "name": "Narrow preset header: the tile takes the LOWEST rung that fits — at eight named tile widths the rung it settles on is the first one whose layer strip gets the width it asks for, and P01, the strip, the Actions group and the one-row header survive all eight",
+   "ok": true
+  },
+  {
+   "name": "Narrow preset header: the rung is SETTLED, not read mid-animation — at four named tile widths it does not move after three more _lbnSync calls, a re-render, a click on the tile or an edit and its undo",
+   "ok": true
+  },
+  {
+   "name": "Narrow preset header: no hysteresis — walking the tile down through seven named widths, walking back up, and arriving at each width from a whole tile all give the same named rung, and the note survives the trip",
+   "ok": true
+  },
+  {
+   "name": "Layer strip: 12 layers never move the Actions group or resize the header; a long strip scrolls inside itself and brings the picked box into view",
+   "ok": true
+  },
+  {
+   "name": "Layer strip fix: the wheel over an overflowing pill is only taken while the pill can still scroll that way (Simple: at its end the page scrolls on; Advanced: never a canvas zoom)",
+   "ok": true
+  },
+  {
+   "name": "Top bar: the CANVAS read-out gives up ONE number when the bar runs out of room — the width and the × at max-width:968px, never the height — and that step is what keeps the top row of groups on ONE line at 940 px, where the bar folds to two lines without it",
+   "ok": true
+  },
+  {
    "name": "Advanced: opens on a preset with the sources rail and the properties panel",
+   "ok": true
+  },
+  {
+   "name": "Advanced: picking a destination that carries a BG clip fills the timeline even when the pick changes nothing else (working preset already this one); letting go empties it again",
+   "ok": true
+  },
+  {
+   "name": "Advanced: the pan hand (Space held) lets go when the window loses focus, so the next drag moves the destination instead of panning",
+   "ok": true
+  },
+  {
+   "name": "Advanced and Wire: the side-panel collapse toggles are squares (their inner face is not a pill)",
+   "ok": true
+  },
+  {
+   "name": "Narrow preset header follows the TILE, not the window: the Advanced tile has stepped down because of its OWN width, the layer strip has the room it asked for, and P01 is untouched",
+   "ok": true
+  },
+  {
+   "name": "Narrow preset header, Advanced: a tile with room keeps the WHOLE header — at six named Advanced tile widths the layer strip always gets the width it asks for, and MODIFIERS keeps its word and the preset name its full size until the strip actually runs short",
    "ok": true
   },
   {
@@ -693,6 +873,18 @@
    "ok": true
   },
   {
+   "name": "Advanced: the + on the Preset tab opens the new preset on the canvas and scrolls its card into view",
+   "ok": true
+  },
+  {
+   "name": "Advanced: 1 to 9 pick that preset; above the preset count, in a text box and under an open window the key does nothing",
+   "ok": true
+  },
+  {
+   "name": "Advanced: the crumb trail and the ◀ Preset button stay at the top of the Properties panel while its sections scroll",
+   "ok": true
+  },
+  {
    "name": "Advanced: closes cleanly",
    "ok": true
   },
@@ -726,6 +918,10 @@
   },
   {
    "name": "Advanced: the Advanced menu has Fit Canvas, it slides the open preset to 0,0 and trims the canvas in one undo step",
+   "ok": true
+  },
+  {
+   "name": "+ Preset from Wire and from I/O Patch shows a note that fades by itself, blocks no click and is in no export",
    "ok": true
   },
   {
@@ -965,6 +1161,38 @@
    "ok": true
   },
   {
+   "name": "Wire Advanced: a custom card made on one page is offered on every page, and the tile stays on the page it was dropped on",
+   "ok": true
+  },
+  {
+   "name": "Wire Advanced: removing a custom card takes its tiles off every page, one Undo brings card and tiles back, and the open Wire page tab never moves",
+   "ok": true
+  },
+  {
+   "name": "Wire Advanced: a custom destination and a custom AUX carry a Cable Type — on the card, on the tile, on the cable, in the key and on the printed sheet",
+   "ok": true
+  },
+  {
+   "name": "Wire Advanced: a show saved with a custom list per page opens as ONE library, its tiles follow, the merge is not an edit and the next save holds the new shape",
+   "ok": true
+  },
+  {
+   "name": "Wire Advanced: an older show whose pages hold the same custom name with different data keeps BOTH cards, each page's tiles on the card they were made from, with no Save light and no undo step",
+   "ok": true
+  },
+  {
+   "name": "Wire Advanced: renaming a custom source card from another page renames its tile on that page, and the card's x still removes it",
+   "ok": true
+  },
+  {
+   "name": "Wire Advanced: the Cable Colour Code and the printed sheet list only the custom cards with a tile on the page being drawn",
+   "ok": true
+  },
+  {
+   "name": "Wire Advanced: a second custom destination or AUX given a name that is taken is numbered, the way custom sources are",
+   "ok": true
+  },
+  {
    "name": "Wire: closes cleanly",
    "ok": true
   },
@@ -1045,7 +1273,83 @@
    "ok": true
   },
   {
+   "name": "I/O Patch: a background source shows its OWN note, a note typed there changes that source only (the LED walls keep theirs), is one undo step, and a saved show reloads with both",
+   "ok": true
+  },
+  {
+   "name": "I/O Patch: Reset on a background source clears its own note only; the destination it is the BG of keeps its note",
+   "ok": true
+  },
+  {
+   "name": "Video I-O Excel tab and the Look Book Sources page print a background source's own note, the same note the Advanced page-1 tab prints",
+   "ok": true
+  },
+  {
    "name": "I/O Patch: Set for all destinations also sets the I/O-only destination rows under it",
+   "ok": true
+  },
+  {
+   "name": "I/O Patch ghost rows: a destination, an AUX and a source removed in Video Presets stay on Advanced page 1 marked not in the show, never come back to Simple as I/O-only rows and are left out of the page-1 sheet; Save lights only for the deletions and one Undo per deletion brings the item back on both pages",
+   "ok": true
+  },
+  {
+   "name": "I/O Patch ghost rows: the rows page 1 copied from the show are marked, a row typed by hand is not and still becomes an I/O-only row, a copied row renamed by hand becomes a hand row and keeps its place",
+   "ok": true
+  },
+  {
+   "name": "I/O Patch ghost rows: a show file from an older build (page 1 without marks) is marked on the first I/O Patch draw without lighting Save or recording a step, and follows the show from then on: an AUX deleted afterwards stays on page 1 marked not in the show, with its PGM, and neither twins",
+   "ok": true
+  },
+  {
+   "name": "I/O Patch ghost rows: a deletion made and saved, then the I/O Patch: Save stays clean, opening Advanced is no undo step, the row stays on page 1 marked not in the show, and the page-1 sheet of the I/O Excel has no ghost",
+   "ok": true
+  },
+  {
+   "name": "I/O Patch ghost rows: a source renamed in Advanced Video Presets (layer panel, Source box) is renamed on its page-1 row too, with its mark and its note, as a rename in I/O Patch Simple or Wire already was; the old name is never treated as an item that left, and one Undo brings the old name and the note back",
+   "ok": true
+  },
+  {
+   "name": "I/O Patch ghost rows: a source that leaves the presets for a moment keeps its page-1 row and note: while it is out the row is drawn dimmed as not in the show, never twinned, left out of the page-1 sheet and the Look Book, and the mark survives a save and reload; when the item is back the mark clears by itself; Undo and Redo carry the mark with the show",
+   "ok": true
+  },
+  {
+   "name": "I/O Patch ghost rows: the I/O Patch left on an Advanced spare page: a destination deleted in Video Presets is marked not in the show on page 1 the moment the I/O Patch opens on that spare page, and the page-1 sheet of the I/O Excel exported from there has no ghost",
+   "ok": true
+  },
+  {
+   "name": "I/O Patch ghost rows: a row marked not in the show goes only with Rebuild from Simple, its own trash or a page copy (the copy takes the rows page 1 prints); one Undo brings a trashed row back with its mark",
+   "ok": true
+  },
+  {
+   "name": "Wire: a patch tile built from I/O page 1 leaves out a row that is \"not in the show\", and the I/O Tools menu counts it out too",
+   "ok": true
+  },
+  {
+   "name": "I/O Patch: the draw-time page-1 <-> IO-row sync fills a BLANK side only: two different values set on purpose on both sides are left alone (nothing is overwritten unseen)",
+   "ok": true
+  },
+  {
+   "name": "I/O Patch: a multiviewer is renamed on the Simple patch from its name box: one undo step, Save lit, Advanced page 1 and the Remove MV list follow, Undo / Redo, Escape puts the old text back, the name survives a save + reload",
+   "ok": true
+  },
+  {
+   "name": "I/O Patch: \"Set for all\" > Type > \"Custom…\" asks for the name ONCE (one focused box in the Set-for-all row, not one per row) and applies it to every source in one undo step, remembered for the menu; Escape or an empty box puts the chip back and writes nothing; the same on the destinations row and on an Advanced page",
+   "ok": true
+  },
+  {
+   "name": "I/O Patch: Custom Resolution blocks Save while Width or Height is blank or 0, says why inside the window and never raises the browser alert; a good size saves as one undo step, Undo / Redo, save + reload",
+   "ok": true
+  },
+  {
+   "name": "I/O Patch: the Set-for-all \"Custom…\" ask box does not swallow the click that leaves it: nothing typed, one press on Advanced switches the view, one press on a row's Type chip opens its menu, one press into a name box lands there; with a name typed, one press on a row's chip commits the name to every row AND opens that menu",
+   "ok": true
+  },
+  {
+   "name": "I/O Patch: a multiviewer renamed from Simple to a destination's name and then to another name leaves the page-1 destination rows alone (the rename follows its own kind, both ways), and the name menus keep destination and multiviewer names apart",
+   "ok": true
+  },
+  {
+   "name": "I/O Patch: Reset on a row whose connector / resolution / note are already empty changes nothing: no unsaved mark, no undo step, no sources[] entry (Simple source row, a row without an entry, an Advanced row); a row with a note still resets in one step",
    "ok": true
   },
   {
@@ -1058,6 +1362,42 @@
   },
   {
    "name": "Look Book window: no Wire style choice, the Simple / Advanced view choice stays, the wire sheet is orthogonal",
+   "ok": true
+  },
+  {
+   "name": "Look Book, wire sheets: with Wire in Advanced the book prints one sheet per DRAWN page, in page order, under the page tab's own name, numbered and in the contents; the empty page is skipped",
+   "ok": true
+  },
+  {
+   "name": "Look Book, wire sheets: Wire = Advanced with nothing drawn prints the SIMPLE drawing, never an \"(Empty page)\" sheet, and Simple still prints one \"Full System\" sheet",
+   "ok": true
+  },
+  {
+   "name": "Wording on the page: the layer reset tooltips name the size, the paste hint names the Paste button, the Wire chip and the Advanced Wire window tell the truth about writing back",
+   "ok": true
+  },
+  {
+   "name": "Look Book, wire sheets: a Wire Advanced page name holding & < > is ESCAPED in the contents row — the name reads in full and the dot leaders and the page number stay outside it",
+   "ok": true
+  },
+  {
+   "name": "Look Book, wire sheets: a DRAWN Advanced page still called \"Page 3\" prints \"SIGNAL FLOW\" in its title block, the same title the Wire tool's own export gives it, instead of echoing a page label it contradicts",
+   "ok": true
+  },
+  {
+   "name": "Send: the email names the files that were really built, and a Send with neither document says \"Couldn’t get the files ready\" instead of going out as a lone .avlb calling itself three files",
+   "ok": true
+  },
+  {
+   "name": "Help says what Send and Report a bug really do in a browser (the files are downloaded, not attached), and that only the cue-sheet Excel can be stopped",
+   "ok": true
+  },
+  {
+   "name": "Help: the Preflight check entry names one check per export — the show check for the cue-sheet Excel and the Look Book, the I/O Patch's own check, and only the Excel ever stopped",
+   "ok": true
+  },
+  {
+   "name": "Help says what the app does: the layer chip takes two clicks, the section is Mask in pixels, the AUX window has no Type, destination names are typed in the table, and Send / Report a bug / the Wire zoom keys are listed",
    "ok": true
   },
   {
@@ -1078,6 +1418,38 @@
   },
   {
    "name": "I/O Patch Excel: opens on the Cover titled I/O PATCH, Video I-O is the second tab",
+   "ok": true
+  },
+  {
+   "name": "I/O Patch Excel: the Video I-O tab lists an I/O-only destination after the AUX rows and before the multiviewer, as the screen does; the page-1 tab is unchanged",
+   "ok": true
+  },
+  {
+   "name": "I/O Patch Excel: a backup source prints \"PC · Backup of PPT A\" in the Video I-O Type column, its primary and the others keep their plain type, the page-1 tab keeps its P / B letters",
+   "ok": true
+  },
+  {
+   "name": "I/O Patch page 1 -> Simple: connector, type, resolution and note set on a page-1 destination follow to its IO row (screen, twin), the Video I-O tab prints them like the page-1 tab, save + reload keeps them, one undo step per edit",
+   "ok": true
+  },
+  {
+   "name": "I/O Patch page 1 -> Simple: a show saved by an older build (page-1 fields set, IO row blank) catches up the moment the I/O Patch opens, before any Advanced look, without lighting Save; the IO row on screen and both Excel tabs agree",
+   "ok": true
+  },
+  {
+   "name": "I/O Patch page 1 -> Simple: a show saved by an older build where the IO row was edited in Simple (page-1 row blank) is not blanked by the look: the page-1 row takes the values instead, nothing lit; both Excel tabs agree",
+   "ok": true
+  },
+  {
+   "name": "I/O Patch Simple -> page 1: a connector, a Custom type and a note set on the IO row in Simple reach the page-1 row with the same edit; the next Advanced look (Keep my page) puts nothing back; both Excel tabs agree",
+   "ok": true
+  },
+  {
+   "name": "I/O Patch Simple -> page 1: Reset on the IO row clears the page-1 row too, Set for all (connector) on the outputs reaches the page-1 row too; the next Advanced look puts nothing back",
+   "ok": true
+  },
+  {
+   "name": "I/O Patch page 1 -> Simple: Reset on the page-1 row clears its IO row too (one undo step), Set for all (type) on page 1 reaches the IO row and nothing else in Simple; after \"Keep my page\" a page-1 edit does not raise \"Simple changed\" again, a Simple edit still does",
    "ok": true
   },
   {
@@ -1233,10 +1605,6 @@
    "ok": true
   },
   {
-   "name": "Send: attaches the Look Book the window builds (wire sheet included) plus the cue sheet, and the mail draft goes through the mail seam",
-   "ok": true
-  },
-  {
    "name": "undo: Add Destination (its window, the Add button) is one undo step",
    "ok": true
   },
@@ -1318,6 +1686,30 @@
   },
   {
    "name": "undo: a picture imported on the Advanced page is ONE undo step of its own, recorded when the picture lands: Undo takes back the picture and nothing else; a file that cannot be read leaves no step",
+   "ok": true
+  },
+  {
+   "name": "Send: the browser hand-off carries three files — the cue sheet, the Look Book and the .avlb show file",
+   "ok": true
+  },
+  {
+   "name": "Send and Report a bug open the mail draft WITHOUT leaving the page (no \"Leave site?\" over unsaved changes)",
+   "ok": true
+  },
+  {
+   "name": "Look Book: a stale canvas raises the Pre-Export Check BEFORE the export window, and Export Anyway still prints the book",
+   "ok": true
+  },
+  {
+   "name": "Look Book: Close on the Pre-Export Check goes back to the show and prints nothing",
+   "ok": true
+  },
+  {
+   "name": "Look Book: a blank show name warns but never blocks, while the Excel still stops there",
+   "ok": true
+  },
+  {
+   "name": "Send: attaches the Look Book the window builds (wire sheet included) plus the cue sheet, and the mail draft goes through the mail seam",
    "ok": true
   }
  ],
