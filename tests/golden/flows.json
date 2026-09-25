@@ -541,7 +541,7 @@
    "ok": true
   },
   {
-   "name": "toolbar: the Canvas W / H boxes are a read-out: read-only, out of the Tab order, no field chrome, no pointer, tooltip \"Calculated from the destinations\", and they still follow the destinations",
+   "name": "toolbar: the Canvas W / H boxes are a read-out in their 16ks boxes: read-only, out of the Tab order, the Show name box's field look, no pointer, tooltip \"Calculated from the destinations\", and they still follow the destinations",
    "ok": true
   },
   {
@@ -561,7 +561,7 @@
    "ok": true
   },
   {
-   "name": "Edit Show Info: the pencil next to the Show name opens Quick Setup pre-filled (Edit Show Info / Update Show / Cancel, examples hidden); a destination renamed and given a new resolution in it lands on the show with presets and layers kept, one undo step brings everything back",
+   "name": "Edit Show Info: the pencil on the SHOW label row opens Quick Setup pre-filled (Edit Show Info / Update Show / Cancel, examples hidden); a destination renamed and given a new resolution in it lands on the show with presets and layers kept, one undo step brings everything back",
    "ok": true
   },
   {
@@ -657,11 +657,35 @@
    "ok": true
   },
   {
-   "name": "Top bar: the tool name, its icon and the three tool buttons read white, while the pill chrome, the sliding highlight and the grey description keep exactly what they had",
+   "name": "Top bar: the tool name and its icon read white, and of the three tool buttons only the one under the sliding highlight does (word and icon); the other two read grey (--ss-t3) and lift to --ss-t2 on hover, never to white; the pill chrome, the sliding highlight and the grey description keep exactly what they had",
+   "ok": true
+  },
+  {
+   "name": "Top bar: the Edit Show Info pencil sits at the right end of the SHOW label row (26 x 26, its right edge on the name box's right edge, its bottom clear of the box, level with the label); the label row, the name box and the group height stay as they were, the SHOW group is no wider than the name box, a press on the pencil's own point opens Edit Show Info, and Tab reaches the pencil before the name box",
+   "ok": true
+  },
+  {
+   "name": "Top bar: the Edit Show Info pencil's keyboard focus ring shows on all four sides, inside the window and clear of the Show name box (drawn on the pencil's own edge, 2 px, the app's ring colour); the pencil does not move",
+   "ok": true
+  },
+  {
+   "name": "toolbar: the Canvas read-out wears the 16ks look again: two dark recessed boxes, 62 and 56 px by 32, with the Show name box's own field look (#0a0d12, the soft border, the inset shadow, 12 px numbers, 4 x 12 padding), 4 px either side of the grey 11 px ×; only the pointer and the cursor tell them from a field",
+   "ok": true
+  },
+  {
+   "name": "toolbar: a canvas 10000 px or taller reads in full in the Canvas height box (10800, not \"1080\"): the box keeps its 56 x 32 and its 12 px numbers and gives up only its right padding; a 5-digit width fits the width box as it is, and a 4-digit canvas keeps the 16ks boxes exactly",
    "ok": true
   },
   {
    "name": "Tool bar: the three tools read left to right in work order (Video Presets, I/O Patch, Wire); each still opens its own page and the sliding highlight lands on it",
+   "ok": true
+  },
+  {
+   "name": "Tool bar: the white moves WITH the sliding highlight: at every switch (Video Presets, I/O Patch and Wire in both directions, and from the Advanced page) the new tool turns white as the highlight lands and the old one turns grey as it leaves, frame by frame in step with the slide, the tool it passes never lights, and at rest only the tool under the highlight is white",
+   "ok": true
+  },
+  {
+   "name": "Tool bar: a second tool picked while the highlight is still sliding (Wire, Video Presets, then I/O Patch 120 ms later; Video Presets, Wire, then I/O Patch; I/O Patch, Video Presets, then Wire): the highlight's width and the colour fades start on the highlight's own clock, the new tool turns white frame by frame in step with the highlight, a fade still running from the switch before keeps its own clock, and at rest only the tool under the highlight is white",
    "ok": true
   },
   {
@@ -705,7 +729,7 @@
    "ok": true
   },
   {
-   "name": "Top bar: the CANVAS read-out gives up ONE number when the bar runs out of room — the width and the × at max-width:968px, never the height — and that step is what keeps the top row of groups on ONE line at 940 px, where the bar folds to two lines without it",
+   "name": "Top bar: the CANVAS read-out gives up ONE number exactly when the bar runs out of room — the width and the × at max-width:968px, never the height: the whole row fits at 969, folds at 968 without the step and not with it, stays on ONE line at 940 and down to 922, folds at 921 whatever the read-out shows, and giving up the height too would free 0 px",
    "ok": true
   },
   {

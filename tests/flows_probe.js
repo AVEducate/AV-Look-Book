@@ -1964,16 +1964,21 @@
   //    puts back what it touches (the show through restore(), the browser draft, the Blend Zones modifier). No media needed.
   //    Helpers used: $, $$, wait, is, restore, okDialogs, dlgOpen, dialogText, BASE (all defined at the top of the probe).
   //    REPLACES: none. No existing check confirms a draft or types into the Canvas boxes.
-  await check('toolbar: the Canvas W / H boxes are a read-out: read-only, out of the Tab order, no field chrome, no pointer, tooltip "Calculated from the destinations", and they still follow the destinations', async () => {
+  // ── 16ku-topbar (Omar 2026-09-24): the show pencil on the SHOW label row, only the tool under the sliding highlight
+  //    in white, the Canvas read-out back in its 16ks boxes. Seven blocks from scratchpad r16ku/build/flows_checks.js
+  //    (its header says why each REPLACES block had to change): C here, A in the Edit Show Info checks, E + B + D in
+  //    the 16kt top-bar checks, F after the tool-bar order check, G in place of the old narrow-window check.
+  // 16ku-topbar C: REPLACES 'toolbar: the Canvas W / H boxes are a read-out: read-only, out of the Tab order, no field chrome, no pointer, …'
+  await check('toolbar: the Canvas W / H boxes are a read-out in their 16ks boxes: read-only, out of the Tab order, the Show name box\'s field look, no pointer, tooltip "Calculated from the destinations", and they still follow the destinations', async () => {
     await restore(); const w = $('#cv-w'), h = $('#cv-h'); if (!w || !h) return 'no Canvas boxes';
-    const cs = getComputedStyle(w), r = w.getBoundingClientRect(), under = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
+    const cs = getComputedStyle(w), r = w.getBoundingClientRect(), under = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2), sn = getComputedStyle($('#show-name'));
     const look = [w.readOnly && h.readOnly, w.tabIndex === -1 && h.tabIndex === -1, w.title === 'Calculated from the destinations' && h.title === w.title && w.parentElement.title === w.title,
-      cs.pointerEvents === 'none' && cs.cursor === 'default', cs.borderTopColor === 'rgba(0, 0, 0, 0)' && cs.backgroundColor === 'rgba(0, 0, 0, 0)', under !== w && under !== h];
+      cs.pointerEvents === 'none' && cs.cursor === 'default', cs.borderTopColor === sn.borderTopColor && cs.backgroundColor === sn.backgroundColor && cs.boxShadow === sn.boxShadow && cs.backgroundColor === 'rgb(10, 13, 18)', under !== w && under !== h];
     const w0 = parseInt(w.value, 10), h0 = parseInt(h.value, 10);
     actions.addDestination(); await wait(300); $('#ms-n').value = 'CANVAS READOUT TEST'; $('#ms-w').value = '1000'; $('#ms-h').value = '500'; confirmScreen(); await wait(450); okDialogs();
     const grown = [parseInt(w.value, 10), parseInt(h.value, 10)]; const v = validateProject(); const canvasWarn = v.warnings.filter(x => /Canvas size/.test(x)).length;
     doUndo(); await wait(400); const back = [parseInt(w.value, 10), parseInt(h.value, 10)]; await restore();
-    return is([look, grown, canvasWarn, back], [[true, true, true, true, true, true], [w0 + 1000, h0], 0, [w0, h0]], 'read-only / out of Tab order / tooltip / no pointer or text cursor / no chrome / not under the pointer; after + Destination; Pre-Export canvas warnings; after Undo');
+    return is([look, grown, canvasWarn, back], [[true, true, true, true, true, true], [w0 + 1000, h0], 0, [w0, h0]], 'read-only / out of Tab order / tooltip / no pointer or text cursor / the Show name box\'s field look (#0a0d12, its border, its inset shadow) / not under the pointer; after + Destination; Pre-Export canvas warnings; after Undo');
   });
   await check('draft: Restore draft brings every destination position back exactly as the draft holds it (a 200 px blend and a free-placed destination), and the restored show is clean with an empty Undo history', async () => {
     const KEY = 'avlb_autosave'; let old = null; try { old = localStorage.getItem(KEY); } catch (e) { return 'no localStorage in this run'; }
@@ -2062,9 +2067,10 @@
   // Each check FAILS on build 16ks (no pencil; the colour window ignored a press on a table cell, the top bar, the status
   // bar and the Add Destination boxes; a colour window opened from Add Destination and closed without Apply sent the next
   // Apply to Add Destination) and PASSES on the patched page. No existing check needs replacing.
-  await check('Edit Show Info: the pencil next to the Show name opens Quick Setup pre-filled (Edit Show Info / Update Show / Cancel, examples hidden); a destination renamed and given a new resolution in it lands on the show with presets and layers kept, one undo step brings everything back', async () => {
-    const pen = $('#tb-show-edit'); if (!pen || !vis(pen)) return 'no pencil #tb-show-edit next to the Show name box';
-    const row = () => { const a = $('#show-name').getBoundingClientRect(), b = pen.getBoundingClientRect(); return b.left >= a.right && b.left - a.right < 12 && Math.abs((a.top + a.bottom) / 2 - (b.top + b.bottom) / 2) < 3; };
+  // 16ku-topbar A: REPLACES 'Edit Show Info: the pencil next to the Show name opens Quick Setup pre-filled (Edit Show Info / Update Show / …'
+  await check('Edit Show Info: the pencil on the SHOW label row opens Quick Setup pre-filled (Edit Show Info / Update Show / Cancel, examples hidden); a destination renamed and given a new resolution in it lands on the show with presets and layers kept, one undo step brings everything back', async () => {
+    const pen = $('#tb-show-edit'); if (!pen || !vis(pen)) return 'no pencil #tb-show-edit on the SHOW label row';
+    const row = () => { const a = $('#show-name').getBoundingClientRect(), b = pen.getBoundingClientRect(); return pen.parentElement === $('#show-name').closest('.tb-grp').querySelector('.tb-grp-hdr') && Math.abs(b.right - a.right) <= 2 && b.bottom <= a.top; };
     const sig = () => JSON.stringify(presets.map(p => [p.id, p.code, p.name, p.layers, p.active, p.layerSizes, p.crops, p.dsmOn, p.colors, p.bgs, p.layerFx, p.opacities]));
     const shot0 = _snapshot(), lay0 = sig(), scr0 = JSON.stringify(screens), u0 = _undoStack.length, n0 = presets.length;
     pen.click(); await wait(400);
@@ -2079,7 +2085,7 @@
     doUndo(); await wait(400);
     const back = [JSON.stringify(screens) === scr0, sig() === lay0, _snapshot() === shot0, presets.length];
     await restore();
-    return is([row(), opened, rowText, after, back], [true, [true, 'Edit Show Info', 'Update Show', 'Cancel', 'none', true, [screens.length, dsms.length, n0], screens.map(s => s.name + ' ' + s.w + '×' + s.h)], 'ZQ WALL 2560×1440', [true, 'ZQ WALL 2560x1440', n0, true, 1, true], [true, true, true, n0]], 'pencil on the Show name row / [window open, title, confirm, cancel, examples, name box, counts, rows] / row after typing and picking / [closed, destination 2, presets, layers kept, undo steps, unsaved] / after one Undo [destinations back, layers back, show identical, presets]');
+    return is([row(), opened, rowText, after, back], [true, [true, 'Edit Show Info', 'Update Show', 'Cancel', 'none', true, [screens.length, dsms.length, n0], screens.map(s => s.name + ' ' + s.w + '×' + s.h)], 'ZQ WALL 2560×1440', [true, 'ZQ WALL 2560x1440', n0, true, 1, true], [true, true, true, n0]], 'pencil on the SHOW label row, right edge on the name box\'s, above the box / [window open, title, confirm, cancel, examples, name box, counts, rows] / row after typing and picking / [closed, destination 2, presets, layers kept, undo steps, unsaved] / after one Undo [destinations back, layers back, show identical, presets]');
   });
   await check('Edit Show Info: Cancel, Escape and an unchanged Update Show change nothing, leave no undo step and do not light Save; a show name, date and venue typed in the window reach the top bar and light Save; on an empty show the pencil opens plain Quick Setup', async () => {
     if (!$('#tb-show-edit') || typeof actions.editShowInfo !== 'function') return 'no pencil / no actions.editShowInfo';
@@ -2684,27 +2690,132 @@
     } finally { await restore(); }
   });
 
-  await check('Top bar: the tool name, its icon and the three tool buttons read white, while the pill chrome, the sliding highlight and the grey description keep exactly what they had', async () => {
+  // 16ku-topbar E: REPLACES 'Top bar: the tool name, its icon and the three tool buttons read white, while the pill chrome, the sliding hig…'
+  await check('Top bar: the tool name and its icon read white, and of the three tool buttons only the one under the sliding highlight does (word and icon); the other two read grey (--ss-t3) and lift to --ss-t2 on hover, never to white; the pill chrome, the sliding highlight and the grey description keep exactly what they had', async () => {
     const C = el => getComputedStyle(el).color;
     const name = $('.view-info-name'), icon = $('.view-info-icon'), desc = $('.view-info-desc');
     const btns = $$('.wire-nav-pillgroup .wire-nav-btn');
     const grp = $('.wire-nav-pillgroup'), thumb = $('.wire-nav-thumb');
     const WHITE = 'rgb(255, 255, 255)';
+    const tok = v => { const s = document.createElement('span'); s.style.color = v; document.body.appendChild(s); const r = getComputedStyle(s).color; s.remove(); return r; };
+    const GREY = tok('var(--ss-t3)'), LIFT = tok('var(--ss-t2)');
     const cyan = getComputedStyle(document.body).getPropertyValue('--n-cyan-rgb').trim();   // the skin's accent, whichever skin is on
     const tinted = new RegExp('rgba\\(' + cyan.replace(/,\s*/g, ',\\s*'));
+    const active = btns.filter(b => b.classList.contains('wire-nav-active'));
+    const tl = thumb.getBoundingClientRect(), al = active[0] ? active[0].getBoundingClientRect() : { left: -99 };
+    /* hover cannot be synthesised in the page: read the cascade instead. The LAST rule for the idle hover state sets the colour
+       (1210 and this round's rule have the same specificity), and the white rule comes after it, so the lit tool stays white under the mouse */
+    const rules = []; for (const ss of [...document.styleSheets]) { let rs; try { rs = ss.cssRules; } catch (e) { continue; } for (const r of rs || []) if (r.selectorText && r.style && r.style.color) rules.push(r); }
+    const idx = sel => { let k = -1; rules.forEach((r, i) => { if (r.selectorText.split(',').some(s => s.trim() === sel)) k = i; }); return k; };
+    const hov = idx('.wire-nav-pillgroup .wire-nav-btn:hover'), lit = idx('.wire-nav-pillgroup .wire-nav-btn.lb-nav-lit');
     const out = [
       !!name && C(name) === WHITE,
       !!icon && C(icon) === WHITE,                                            // the SVG is stroke="currentColor"
-      btns.length, btns.every(b => C(b) === WHITE),
-      btns.filter(b => b.classList.contains('wire-nav-active')).length,
+      btns.length, active.length, Math.abs(tl.left - al.left) <= 2,           // one tool open, the highlight on it
+      btns.map(b => b.classList.contains('wire-nav-active') ? C(b) === WHITE : C(b) === GREY),
+      btns.map(b => getComputedStyle(b.querySelector('svg')).stroke === C(b)),   // each icon wears its word's colour
+      hov >= 0 && tok(rules[hov].style.color) === LIFT && LIFT !== WHITE, lit > hov,
       !!name && !tinted.test(getComputedStyle(name).textShadow),              // no cyan halo left round the white word
       !!desc && C(desc) === 'rgb(154, 160, 170)',                             // the grey description is untouched
       !!icon && tinted.test(getComputedStyle(icon).backgroundImage),          // the icon chip keeps its tint
       !!grp && getComputedStyle(grp).backgroundColor === 'rgb(10, 13, 18)',   // the pill's own recess
       !!thumb && /linear-gradient/.test(getComputedStyle(thumb).backgroundImage),       // the sliding highlight still draws
     ];
-    return is(out, [true, true, 3, true, 1, true, true, true, true, true],
-      'name white / icon white / three buttons, all white / one active / no cyan halo / grey description kept / icon chip tint kept / pill recess kept / thumb kept');
+    return is(out, [true, true, 3, 1, true, [true, true, true], [true, true, true], true, true, true, true, true, true, true],
+      'name white / icon white / three buttons / one active / highlight on it / [white if under the highlight, else --ss-t3] per button / icon = word per button / idle hover lifts to --ss-t2, not white / the white rule comes after the hover rule / no cyan halo / grey description kept / icon chip tint kept / pill recess kept / thumb kept');
+  });
+  // 16ku-topbar B: NEW
+  await check('Top bar: the Edit Show Info pencil sits at the right end of the SHOW label row (26 x 26, its right edge on the name box\'s right edge, its bottom clear of the box, level with the label); the label row, the name box and the group height stay as they were, the SHOW group is no wider than the name box, a press on the pencil\'s own point opens Edit Show Info, and Tab reaches the pencil before the name box', async () => {
+    const pen = $('#tb-show-edit'), sn = $('#show-name'); if (!pen || !sn) return 'no pencil / no Show name box';
+    const grp = sn.closest('.tb-grp'), hdr = grp.querySelector('.tb-grp-hdr'), cvHdr = $('#cv-grp-hdr'), cvGrp = cvHdr && cvHdr.closest('.tb-grp');
+    const R = e => e.getBoundingClientRect(); const p = R(pen), n = R(sn), h = R(hdr), g = R(grp), dot = R(hdr.querySelector('.tbc-dot')), tb = R($('#toolbar'));
+    const at = document.elementFromPoint(p.left + p.width / 2, p.top + p.height / 2);
+    const out = [
+      pen.parentElement === hdr,                                                 // on the SHOW label row
+      [Math.round(p.width), Math.round(p.height)],                               // the pencil keeps its size
+      Math.abs(p.right - n.right) <= 2,                                          // right edge on the name box's right edge
+      p.left > dot.right,                                                        // at the right end, after SHOW and its dot
+      p.bottom <= n.top - 1,                                                     // clear of the name box, no overlap
+      Math.abs((p.top + p.bottom) / 2 - (h.top + h.bottom) / 2) <= 4,           // level with the label
+      p.top >= tb.top,                                                           // inside the top bar
+      Math.round(h.height) === Math.round(R(cvHdr).height),                      // the label row did not grow
+      [Math.round(n.width), Math.round(n.height), getComputedStyle(sn).fontSize],  // the name box never changes size
+      Math.round(g.width) === Math.round(n.width),                               // the group is the name box's width (16kt: +30)
+      Math.round(g.height) === Math.round(R(cvGrp).height),                      // and as tall as its neighbour
+      at === pen || pen.contains(at),                                            // nothing covers it
+      !!(pen.compareDocumentPosition(sn) & Node.DOCUMENT_POSITION_FOLLOWING),    // Tab order = reading order: label row, then box
+      [pen.tabIndex, sn.tabIndex, pen.title, pen.getAttribute('aria-label'), pen.getAttribute('onclick')],
+    ];
+    const qs = $('#qs-modal');
+    try { at.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, clientX: p.left + p.width / 2, clientY: p.top + p.height / 2 })); await wait(400); out.push([vis(qs), $('#qs-title').textContent]); }
+    finally { if (vis(qs)) closeQS(); await wait(200); }
+    return is(out, [true, [26, 26], true, true, true, true, true, true, [130, 32, '12px'], true, true, true, true,
+      [0, 0, 'Edit show info', 'Edit show info', 'actions.editShowInfo()'], [true, 'Edit Show Info']],
+      'in the SHOW label row / size / right edges / after the dot / clear of the box / level with the label / inside the top bar / label row height = CANVAS label row / name box [w, h, font] / group width = name box / group height = Canvas group / top element at its point / before the name box in Tab order / [tab indexes, title, aria-label, action] / a press at its point [Edit Show Info open, title]');
+  });
+  // 16ku-topbar-fix H: NEW
+  await check('Top bar: the Edit Show Info pencil\'s keyboard focus ring shows on all four sides, inside the window and clear of the Show name box (drawn on the pencil\'s own edge, 2 px, the app\'s ring colour); the pencil does not move', async () => {
+    const pen = $('#tb-show-edit'), sn = $('#show-name'); if (!pen || !sn) return 'no pencil / no Show name box';
+    const R = e => e.getBoundingClientRect(); const p0 = R(pen);
+    const ringColour = (() => { const s = document.createElement('span'); s.style.color = 'var(--ss-ring)'; document.body.appendChild(s); const v = getComputedStyle(s).color; s.remove(); return v; })();
+    const was = document.activeElement; let out;
+    try {
+      pen.focus(); await wait(450);   /* .tb-btn fades every property over 0.18 s, the outline included */
+      const cs = getComputedStyle(pen), p = R(pen), n = R(sn), ic = R(pen.querySelector('svg'));
+      const w = parseFloat(cs.outlineWidth), off = parseFloat(cs.outlineOffset);
+      const outer = { l: p.left - off - w, t: p.top - off - w, r: p.right + off + w, b: p.bottom + off + w };
+      const inner = { l: p.left - off, t: p.top - off, r: p.right + off, b: p.bottom + off };
+      out = [
+        document.activeElement === pen && pen.matches(':focus-visible'),
+        [cs.outlineStyle, w, cs.outlineColor === ringColour],
+        outer.t >= 0 && outer.l >= 0 && outer.r <= innerWidth,                           // every side inside the window
+        outer.b <= n.top,                                                                  // clear of the Show name box
+        ic.left >= inner.l && ic.right <= inner.r && ic.top >= inner.t && ic.bottom <= inner.b,   // the ring does not cross the pencil icon
+        [p.left, p.top, p.width, p.height].join() === [p0.left, p0.top, p0.width, p0.height].join(),   // the pencil did not move
+      ];
+    } finally { pen.blur(); if (was && was !== pen && was.focus) was.focus(); await wait(250); }
+    return is(out, [true, ['solid', 2, true], true, true, true, true],
+      'focused with the keyboard ring / [style, width, the app ring colour] / all four sides inside the window / clear of the Show name box / clear of the icon / pencil unmoved');
+  });
+  // 16ku-topbar D: NEW
+  await check('toolbar: the Canvas read-out wears the 16ks look again: two dark recessed boxes, 62 and 56 px by 32, with the Show name box\'s own field look (#0a0d12, the soft border, the inset shadow, 12 px numbers, 4 x 12 padding), 4 px either side of the grey 11 px ×; only the pointer and the cursor tell them from a field', async () => {
+    const w = $('#cv-w'), h = $('#cv-h'), x = $('#cv-x') || (w && w.nextElementSibling), sn = $('#show-name'); if (!w || !h || !x || !sn) return 'no Canvas boxes / × / Show name box';
+    const LOOK = ['backgroundColor', 'backgroundImage', 'borderTopWidth', 'borderRightWidth', 'borderBottomWidth', 'borderLeftWidth', 'borderTopStyle', 'borderTopColor', 'borderRightColor', 'borderBottomColor', 'borderLeftColor',
+      'borderTopLeftRadius', 'borderBottomRightRadius', 'boxShadow', 'paddingTop', 'paddingRight', 'paddingBottom', 'paddingLeft', 'height', 'fontSize', 'fontWeight', 'color', 'lineHeight', 'letterSpacing', 'textAlign', 'opacity'];
+    const differs = (el, ref) => { const a = getComputedStyle(el), b = getComputedStyle(ref); return LOOK.filter(k => a[k] !== b[k]).map(k => k + ' ' + a[k] + ' vs ' + b[k]); };
+    const c = el => getComputedStyle(el); const R = el => el.getBoundingClientRect();
+    const t3 = (() => { const s = document.createElement('span'); s.style.color = 'var(--text3)'; document.body.appendChild(s); const v = getComputedStyle(s).color; s.remove(); return v; })();
+    const out = [
+      differs(w, sn), differs(h, sn),                                                                 // the same field look as the Show name box
+      [c(w).backgroundColor, c(w).borderTopColor, c(w).paddingTop + ' ' + c(w).paddingLeft, c(w).fontSize, c(w).fontWeight, c(w).borderTopLeftRadius],   // the 16ks numbers
+      /inset/.test(c(w).boxShadow) && /inset/.test(c(h).boxShadow),
+      [Math.round(R(w).width), Math.round(R(w).height), Math.round(R(h).width), Math.round(R(h).height)],
+      [x.textContent.trim(), c(x).fontSize, c(x).color === t3],
+      [Math.round(R(x).left - R(w).right), Math.round(R(h).left - R(x).right)],
+      [c(w).pointerEvents, c(w).cursor, c(h).pointerEvents, c(h).cursor, w.readOnly && h.readOnly, w.tabIndex, h.tabIndex],
+    ];
+    return is(out, [[], [], ['rgb(10, 13, 18)', 'rgba(255, 255, 255, 0.06)', '4px 12px', '12px', '400', '4px'], true, [62, 32, 56, 32], ['×', '11px', true], [4, 4], ['none', 'default', 'none', 'default', true, -1, -1]],
+      'W look vs the Show name box / H look vs the Show name box / [background, border, padding, size, weight, radius] / inset shadow on both / [W w, h, H w, h] / [the ×, its size, var(--text3)] / [gap W-×, gap ×-H] / [not a field: pointer, cursor, pointer, cursor, read-only, Tab W, Tab H]');
+  });
+  // 16ku-topbar-fix J: NEW
+  await check('toolbar: a canvas 10000 px or taller reads in full in the Canvas height box (10800, not "1080"): the box keeps its 56 x 32 and its 12 px numbers and gives up only its right padding; a 5-digit width fits the width box as it is, and a 4-digit canvas keeps the 16ks boxes exactly', async () => {
+    await restore(); const w = $('#cv-w'), h = $('#cv-h'); if (!w || !h) return 'no Canvas boxes';
+    const shows = el => { const cs = getComputedStyle(el); const c = document.createElement('canvas').getContext('2d'); c.font = cs.fontStyle + ' ' + cs.fontWeight + ' ' + cs.fontSize + ' ' + cs.fontFamily;
+      return c.measureText(String(el.value)).width <= el.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight) + 0.5; };   // the whole number is inside the box's text area
+    const look = el => { const cs = getComputedStyle(el), r = el.getBoundingClientRect(); return [Math.round(r.width), Math.round(r.height), cs.paddingLeft + ' ' + cs.paddingRight, cs.fontSize, cs.fontFamily === getComputedStyle($('#cv-w')).fontFamily]; };
+    const p = presets[0], s = screens[0]; if (!p.positions || !p.positions[s.id]) return 'no position for destination 1';
+    const plain = [look(w), look(h), shows(w), shows(h)];
+    let tall, wide;
+    try {
+      p.positions[s.id].y = 9720; render(); await wait(450);           /* destination 1 moved 9720 px down: the canvas is 10800 tall */
+      tall = [h.value, shows(h), look(h), ($('#cv-lbl').textContent || '').trim() === w.value + ' × 10800 px', look(w)];
+      p.positions[s.id].y = 0; p.positions[s.id].x = 9000; render(); await wait(450);   /* 9000 px right: a 5-digit width */
+      wide = [w.value.length, shows(w), look(w)];
+    } finally { await restore(); await wait(400); }
+    const back = [h.value, look(w), look(h), shows(w), shows(h)];
+    const W = [62, 32, '12px 12px', '12px', true], H = [56, 32, '12px 12px', '12px', true];
+    return is([plain, tall, wide, back], [[W, H, true, true], ['10800', true, [56, 32, '12px 4px', '12px', true], true, W], [5, true, W], ['1080', W, H, true, true]],
+      'as the show opens [W look, H look, W shows all, H shows all] / canvas 10800 tall [value, shows all, H look, status bar pill, W look] / a 5-digit width [digits, shows all, W look] / after restore [value, W look, H look, W shows all, H shows all]');
   });
 
 
@@ -2722,6 +2833,91 @@
       return is([order, leftToRight, io, wi, vp], [['vp', 'iop', 'wire'], true, [true, 'topbar-nav-iop', true], [true, 'topbar-nav-wire', true], [true, 'topbar-nav-vp', true, true]],
         'order in the bar / they really sit left to right / I/O Patch [open, lit button, highlight on it] / Wire / Video Presets [back home, lit, highlight, Exit greyed out]');
     } finally { try { closeWireMode(); closeSystem(); } catch (e) {} await wait(300); if (was) { openFullscreen(was); await wait(600); mute(); } }
+  });
+  // 16ku-topbar F: NEW
+  await check('Tool bar: the white moves WITH the sliding highlight: at every switch (Video Presets, I/O Patch and Wire in both directions, and from the Advanced page) the new tool turns white as the highlight lands and the old one turns grey as it leaves, frame by frame in step with the slide, the tool it passes never lights, and at rest only the tool under the highlight is white', async () => {
+    const ids = ['topbar-nav-vp', 'topbar-nav-iop', 'topbar-nav-wire']; const B = i => document.getElementById(i);
+    const tok = v => { const s = document.createElement('span'); s.style.color = v; document.body.appendChild(s); const r = getComputedStyle(s).color; s.remove(); return r; };
+    const GREY = tok('var(--ss-t3)'), WHITE = 'rgb(255, 255, 255)';
+    const red = c => +((c.match(/[\d.]+/g) || [0])[0]);
+    const g = $('.wire-nav-pillgroup'), th = $('.wire-nav-thumb');
+    const frame = () => ({ x: th.getBoundingClientRect().left - g.getBoundingClientRect().left, c: ids.map(i => getComputedStyle(B(i)).color), s: ids.map(i => getComputedStyle(B(i).querySelector('svg')).stroke) });
+    const restPattern = () => { const f = frame(); return ids.map((i, k) => (B(i).classList.contains('wire-nav-active') ? f.c[k] === WHITE : f.c[k] === GREY) && f.s[k] === f.c[k]); };
+    const page = () => vis($('#wire-overlay')) ? 'wire' : ($('#sys-overlay').classList.contains('open') ? 'iop' : (fsPresetId ? 'adv' : 'vp'));
+    /* one switch: a frame read before the press, then one every animation frame until the slide has long landed */
+    const move = async (to, label) => {
+      const from = ids.findIndex(i => B(i).classList.contains('wire-nav-active')), t = ids.indexOf(to);
+      const S = [frame()]; let on = true; const tick = () => { S.push(frame()); if (on) requestAnimationFrame(tick); };
+      requestAnimationFrame(tick); B(to).click(); await wait(900); on = false; await wait(40);
+      if (from === t) return [label, page(), restPattern().every(Boolean), S.every(f => f.c[t] === WHITE)];
+      const x0 = S[0].x, x1 = S[S.length - 1].x, third = [0, 1, 2].find(k => k !== t && k !== from);
+      const n0 = red(S[0].c[t]), n1 = red(S[S.length - 1].c[t]), o0 = red(S[0].c[from]), o1 = red(S[S.length - 1].c[from]);
+      let lag = 0, mids = 0;
+      for (const f of S) {
+        const pt = (f.x - x0) / ((x1 - x0) || 1), pn = (red(f.c[t]) - n0) / ((n1 - n0) || 1e-9), po = (o0 - red(f.c[from])) / ((o0 - o1) || 1e-9);
+        lag = Math.max(lag, Math.abs(pn - pt), Math.abs(po - pt)); if (pt > 0.2 && pt < 0.8) mids++;
+      }
+      return [label, page(), restPattern().every(Boolean), n1 === 255 && o1 === red(GREY), mids > 0, lag <= 0.1 ? 'in step' : 'lag ' + lag.toFixed(2), S.every(f => red(f.c[third]) <= red(GREY) + 2)];
+    };
+    const was = fsPresetId; if (fsPresetId) { closeFullscreen(); await wait(400); }
+    const out = [];
+    try {
+      out.push([page(), restPattern().every(Boolean)]);
+      out.push(await move('topbar-nav-iop', 'VP > I/O'), await move('topbar-nav-vp', 'I/O > VP'), await move('topbar-nav-wire', 'VP > Wire'),
+        await move('topbar-nav-iop', 'Wire > I/O'), await move('topbar-nav-wire', 'I/O > Wire'), await move('topbar-nav-vp', 'Wire > VP'));
+      openFullscreen(presets[0].id); await wait(700); $$('video').forEach(v => { v.muted = true; });
+      out.push(await move('topbar-nav-vp', 'Advanced > VP (already lit)'));
+      out.push(await move('topbar-nav-iop', 'Advanced > I/O'), await move('topbar-nav-vp', 'I/O > VP'));
+      openFullscreen(presets[0].id); await wait(700); $$('video').forEach(v => { v.muted = true; });
+      out.push(await move('topbar-nav-wire', 'Advanced > Wire'), await move('topbar-nav-vp', 'Wire > VP'));
+    } finally { try { closeWireMode(); closeSystem(); if (fsPresetId) closeFullscreen(); } catch (e) {} await wait(400); await restore(); if (was) { openFullscreen(was); await wait(600); $$('video').forEach(v => { v.muted = true; }); } }
+    const ok = (l, p) => [l, p, true, true, true, 'in step', true];
+    return is(out, [['vp', true], ok('VP > I/O', 'iop'), ok('I/O > VP', 'vp'), ok('VP > Wire', 'wire'), ok('Wire > I/O', 'iop'), ok('I/O > Wire', 'wire'), ok('Wire > VP', 'vp'),
+      ['Advanced > VP (already lit)', 'adv', true, true], ok('Advanced > I/O', 'iop'), ok('I/O > VP', 'vp'), ok('Advanced > Wire', 'wire'), ok('Wire > VP', 'vp')],
+      'at rest [page, only the highlighted tool white] / each switch [label, page after, at rest only the highlighted tool white (word + icon), new one white and old one grey at the end, a mid-slide frame was read, colour in step with the slide (<= 0.1), the third tool never lit]');
+  });
+  // 16ku-topbar-fix I: NEW
+  await check('Tool bar: a second tool picked while the highlight is still sliding (Wire, Video Presets, then I/O Patch 120 ms later; Video Presets, Wire, then I/O Patch; I/O Patch, Video Presets, then Wire): the highlight\'s width and the colour fades start on the highlight\'s own clock, the new tool turns white frame by frame in step with the highlight, a fade still running from the switch before keeps its own clock, and at rest only the tool under the highlight is white', async () => {
+    const ids = ['topbar-nav-vp', 'topbar-nav-iop', 'topbar-nav-wire']; const B = i => document.getElementById(i);
+    const g = $('.wire-nav-pillgroup'), th = $('.wire-nav-thumb'); if (!g || !th || typeof th.getAnimations !== 'function') return 'no tool bar / no Web Animations';
+    const tok = v => { const s = document.createElement('span'); s.style.color = v; document.body.appendChild(s); const r = getComputedStyle(s).color; s.remove(); return r; };
+    const GREY = tok('var(--ss-t3)'), WHITE = 'rgb(255, 255, 255)';
+    const red = c => +((c.match(/[\d.]+/g) || [0])[0]);
+    const page = () => vis($('#wire-overlay')) ? 'wire' : ($('#sys-overlay').classList.contains('open') ? 'iop' : (fsPresetId ? 'adv' : 'vp'));
+    const one = async (start, first, second) => {
+      if (!B(start).classList.contains('wire-nav-active')) { B(start).click(); await wait(1000); }
+      const k = ids.indexOf(second), s0 = ids.indexOf(start);
+      const S = []; let on = true;
+      const tick = () => { S.push({ t: document.timeline.currentTime, x: th.getBoundingClientRect().left - g.getBoundingClientRect().left, c: ids.map(i => red(getComputedStyle(B(i)).color)) }); if (on) requestAnimationFrame(tick); };
+      requestAnimationFrame(tick);
+      B(first).click(); await wait(120); const tSecond = document.timeline.currentTime; B(second).click();
+      await wait(150);   /* the second slide is under way: read its clocks and where its move runs from and to */
+      const clk = {}; let fromX = null, toX = null;
+      const tx = v => { const m = /matrix\(([^)]+)\)/.exec(v || ''); if (m) return +m[1].split(',')[4]; const t = /translate\(\s*(-?[\d.]+)px/.exec(v || ''); return t ? +t[1] : null; };
+      th.getAnimations().forEach(a => { clk[a.transitionProperty] = a.startTime; if (a.transitionProperty === 'transform') { const kf = a.effect.getKeyframes(); fromX = tx(kf[0].transform); toX = tx(kf[kf.length - 1].transform); } });
+      const fade = B(second).getAnimations().filter(a => a.transitionProperty === 'color').map(a => a.startTime)[0];
+      await wait(900); on = false; await wait(40);
+      /* frame by frame on the second leg: how far the highlight has come (from its keyframes) against how white the new tool is */
+      const off = S[S.length - 1].x - toX; let lag = 0, mids = 0;
+      for (const f of S) { if (clk.transform == null || f.t < clk.transform || fromX == null || toX === fromX) continue;
+        const pt = (f.x - off - fromX) / (toX - fromX), pn = (f.c[k] - 126) / 129;
+        if (pt > 0.1 && pt < 0.9) { mids++; lag = Math.max(lag, Math.abs(pn - pt)); } }
+      const after = S.filter(f => f.t >= tSecond);
+      const startFade = after.every((f, i) => i === 0 || f.c[s0] <= after[i - 1].c[s0] + 0.5);   // the tool left first keeps greying, never re-lit
+      const rest = ids.map(i => B(i).classList.contains('wire-nav-active') ? getComputedStyle(B(i)).color === WHITE : getComputedStyle(B(i)).color === GREY);
+      const same = (a, b) => a != null && b != null && Math.abs(a - b) <= 1;
+      return [start + '>' + first + '>' + second, page(), same(clk.transform, clk.width), same(clk.transform, fade), mids >= 3 && lag <= 0.1 ? 'in step' : 'lag ' + lag.toFixed(2) + ' over ' + mids + ' frames', startFade, rest.every(Boolean)];
+    };
+    const was = fsPresetId; if (fsPresetId) { closeFullscreen(); await wait(400); }
+    const out = [];
+    try {
+      out.push(await one('topbar-nav-wire', 'topbar-nav-vp', 'topbar-nav-iop'));
+      out.push(await one('topbar-nav-vp', 'topbar-nav-wire', 'topbar-nav-iop'));
+      out.push(await one('topbar-nav-iop', 'topbar-nav-vp', 'topbar-nav-wire'));
+    } finally { try { closeWireMode(); closeSystem(); if (fsPresetId) closeFullscreen(); } catch (e) {} await wait(500); await restore(); if (was) { openFullscreen(was); await wait(600); $$('video').forEach(v => { v.muted = true; }); } }
+    const ok = (l, p) => [l, p, true, true, 'in step', true, true];
+    return is(out, [ok('topbar-nav-wire>topbar-nav-vp>topbar-nav-iop', 'iop'), ok('topbar-nav-vp>topbar-nav-wire>topbar-nav-iop', 'iop'), ok('topbar-nav-iop>topbar-nav-vp>topbar-nav-wire', 'wire')],
+      'each [switches, page after, highlight width on the move\'s clock, new tool\'s fade on the move\'s clock, frame by frame the new tool\'s white in step with the highlight (<= 0.1), the tool left first keeps greying, at rest only the highlighted tool white]');
   });
   await check('the "P06 added" note belongs to the page it was raised on: it goes when you leave Wire or I/O Patch, and it never sits over a window of the app', async () => {
     await restore(); const was = fsPresetId; if (fsPresetId) { closeFullscreen(); await wait(400); } const n0 = presets.length;
@@ -3181,65 +3377,48 @@
   const _lfLevel = () => Math.round($('#cv-grp-hdr').getBoundingClientRect().top)
     === Math.round($('#show-name').closest('.tb-grp').querySelector('.tb-grp-hdr').getBoundingClientRect().top);
 
-  await check('Top bar: the CANVAS read-out gives up ONE number when the bar runs out of room — the width and the × at max-width:968px, never the height — and that step is what keeps the top row of groups on ONE line at 940 px, where the bar folds to two lines without it', async () => {
+  // 16ku-topbar G: REPLACES 'Top bar: the CANVAS read-out gives up ONE number when the bar runs out of room — the width and the × at max-wi…'
+  await check('Top bar: the CANVAS read-out gives up ONE number exactly when the bar runs out of room — the width and the × at max-width:968px, never the height: the whole row fits at 969, folds at 968 without the step and not with it, stays on ONE line at 940 and down to 922, folds at 921 whatever the read-out shows, and giving up the height too would free 0 px', async () => {
+    /* self-contained: pins #toolbar to the width under test and applies, verbatim from the CSSOM, every shipped (max-width:Npx)
+       block a window that wide would fire (the method of the check it replaces, proven equal to real window widths there; this
+       round re-measured the same widths with Emulation.setDeviceMetricsOverride at 800, 1000 and 1200 px tall, drive/fold.mjs) */
+    const styleEl = () => { let s = document.getElementById('ku-sim'); if (!s) { s = document.createElement('style'); s.id = 'ku-sim'; document.head.appendChild(s); } return s; };
+    const blocks = () => { const o = []; for (const ss of [...document.styleSheets]) { let rs; try { rs = ss.cssRules; } catch (e) { continue; } for (const r of rs || []) { const m = r.conditionText && /^\(max-width:(\d+)px\)$/.exec(r.conditionText.replace(/\s+/g, '')); if (m) o.push({ px: +m[1], rule: r }); } } return o; };
+    const media = px => { const b = blocks().find(x => x.px === px); return b ? b.rule : null; };
+    const hides = (m, id) => !!(m && [...m.cssRules].some(r => r.selectorText && r.selectorText.split(',').some(s => s.trim() === '#' + id) && r.style.display === 'none'));
+    const sim = async (w, skip) => { const bs = blocks().filter(b => b.px >= w && b.px !== skip).sort((a, b) => b.px - a.px); styleEl().textContent = bs.map(b => [...b.rule.cssRules].map(r => r.cssText).join('\n')).join('\n') + '\n#toolbar{width:' + w + 'px}'; await wait(450); };
+    const off = async () => { const s = document.getElementById('ku-sim'); if (s) s.remove(); await wait(450); };
+    const lines = () => [...new Set($$('#toolbar > .tb-grp').filter(e => e.getBoundingClientRect().width > 0).map(e => Math.round(e.getBoundingClientRect().bottom)))].length;
+    const barH = () => Math.round($('#toolbar').getBoundingClientRect().height);
+    const read = () => { const V = el => !!el && getComputedStyle(el).display !== 'none' && el.getBoundingClientRect().width > 0; const t = el => el.tagName === 'INPUT' ? el.value : (el.textContent || '').trim();
+      return [($('#cv-grp-hdr').textContent || '').trim().toUpperCase()].concat(['#cv-w', '#cv-x', '#cv-h'].map(s => $(s)).filter(V).map(t)).join(' '); };
+    const grpW = () => Math.round($('#cv-grp-hdr').closest('.tb-grp').getBoundingClientRect().width);
+    const tip = () => { const h = $('#cv-grp-hdr'); return h.getAttribute('title') || h.dataset.tip || ''; };
+    const level = () => Math.round($('#cv-grp-hdr').getBoundingClientRect().top) === Math.round($('#show-name').closest('.tb-grp').querySelector('.tb-grp-hdr').getBoundingClientRect().top);
     const out = [];
     try {
-      const W = $('#cv-w').value, H = $('#cv-h').value;
-      const TIP = 'Canvas ' + W + ' × ' + H + ', calculated from the destinations';
-      const sn = $('#show-name'), snBox = _lfBox(sn);
-      const same = () => JSON.stringify(_lfBox(sn)) === JSON.stringify(snBox);
-
-      /* the ladder has exactly one step, and it takes the width and the × and leaves the height */
-      const step = _lfMedia(968);
-      out.push(!!step, _lfHides(step, 'cv-w'), _lfHides(step, 'cv-x'), _lfHides(step, 'cv-h'));
-      out.push(!_lfMedia(921));
-
-      /* 1000 px — above the step. Nothing is given up while there is room, and the row is on one line */
-      await _lfSim(1000);
-      const g0 = _lfGrpW();
-      out.push(_lfLines(), _lfRead(), _lfTip() === TIP, _lfLevel(), same());
-
-      /* 940 px WITHOUT the step — what this bar did before this round: the top row folds to two lines */
-      await _lfSim(940, 968);
-      out.push(_lfLines());
-
-      /* 940 px WITH it — one line again, and the number it gave up is the WIDTH */
-      await _lfSim(940);
-      const g1 = _lfGrpW();
-      out.push(_lfLines(), _lfRead(), g0 - g1 >= 40, _lfTip() === TIP, _lfLevel(), same());
-
-      /* 900 px — the honest limit: below 922 px the row needs a second line whatever the read-out shows, and the
-         HEIGHT is still on screen */
-      await _lfSim(900);
-      out.push(_lfLines(), _lfRead(), _lfTip() === TIP, _lfLevel());
-
-      /* and giving the height up would not buy that line back: the Canvas group is already at its floor, so
-         hiding #cv-h frees 0 px and the row is still on two lines. This is the measurement that removed step 2 */
-      const gBefore = _lfGrpW(), hBefore = _lfBarH();
-      _lfStyleEl().textContent += '\n#cv-h{display:none !important}';
-      await wait(450);
-      out.push(_lfGrpW() === gBefore, _lfLines(), _lfBarH() === hBefore);
-
-      /* nothing an export reads ever moved */
-      out.push($('#cv-w').value === W, $('#cv-h').value === H,
-        ($('#cv-lbl').textContent || '').trim() === W + ' × ' + H + ' px');
-      let rows = null; const orig = _buildXlsx;
-      window._buildXlsx = function (r) { rows = r; return orig.apply(this, arguments); };
+      const W = $('#cv-w').value, H = $('#cv-h').value, TIP = 'Canvas ' + W + ' × ' + H + ', calculated from the destinations';
+      const sn = $('#show-name'), box = el => { const r = el.getBoundingClientRect(); return [Math.round(r.width), Math.round(r.height)].join('x'); }, sn0 = box(sn);
+      const step = media(968);
+      out.push([!!step, hides(step, 'cv-w'), hides(step, 'cv-x'), hides(step, 'cv-h'), !media(921)]);
+      await sim(1000); const g0 = grpW(); out.push(['1000', lines(), read(), tip() === TIP, level(), box(sn) === sn0]);
+      await sim(969); out.push(['969', lines(), read()]);                       // the whole read-out still fits: no step yet
+      await sim(968, 968); out.push(['968 without the step', lines()]);       // one px less and the row would fold ...
+      await sim(968); out.push(['968', lines(), read()]);                      // ... so the step fires exactly here
+      await sim(940, 968); out.push(['940 without the step', lines()]);
+      await sim(940); const g1 = grpW(); out.push(['940', lines(), read(), g0 - g1 >= 40, tip() === TIP, level(), box(sn) === sn0]);
+      await sim(922); out.push(['922', lines(), read()]);
+      await sim(921); const gb = grpW(), hb = barH(); out.push(['921', lines(), read(), tip() === TIP, level()]);
+      styleEl().textContent += '\n#cv-h{display:none !important}'; await wait(450);
+      out.push(['921 without the height too', grpW() === gb, lines(), barH() === hb]);
+      out.push([$('#cv-w').value === W, $('#cv-h').value === H, ($('#cv-lbl').textContent || '').trim() === W + ' × ' + H + ' px']);
+      let rows = null; const orig = _buildXlsx; window._buildXlsx = function (r) { rows = r; return orig.apply(this, arguments); };
       try { _doExportExcel(true); } finally { window._buildXlsx = orig; }
       out.push(!!(rows || []).some(r => Array.isArray(r) && r.some(c => c === 'Canvas: ' + W + 'x' + H)));
-
-      return is(out, [
-        true, true, true, false,
-        true,
-        1, 'CANVAS ' + W + ' × ' + H, true, true, true,
-        2,
-        2, 'CANVAS ' + H, true, true, true, true,   /* 16kt merge: with Edit Show Info's pencil beside the show name the bar needs more room, so 940 px now takes a second line WITH the step too. The step still does its job: it narrows the group by 40+ px (asserted next) and the fold happens later than it would without it. */
-        2, 'CANVAS ' + H, true, true,
-        true, 2, true,
-        true, true, true,
-        true,
-      ], 'one step at 968, it hides width + × and not the height / no second step at 921 / at 1000: one line, whole read-out, tooltip, CANVAS level with SHOW, SHOW box put / at 940 without the step: two lines / at 940 with it: still two lines since the Edit Show Info pencil widened the bar, but the group is 40+ px narrower, height only, group at least 40 px narrower, tooltip, level, SHOW box put / at 900: two lines whatever it shows, height still there, tooltip, level / hiding the height frees 0 px: same group width, same two lines, same bar height / #cv-w, #cv-h and the status bar keep the real size / Excel carries the real canvas');
-    } finally { await _lfOff(); }
+      return is(out, [[true, true, true, false, true], ['1000', 1, 'CANVAS ' + W + ' × ' + H, true, true, true], ['969', 1, 'CANVAS ' + W + ' × ' + H], ['968 without the step', 2], ['968', 1, 'CANVAS ' + H],
+        ['940 without the step', 2], ['940', 1, 'CANVAS ' + H, true, true, true, true], ['922', 1, 'CANVAS ' + H], ['921', 2, 'CANVAS ' + H, true, true], ['921 without the height too', true, 2, true], [true, true, true], true],
+        '[the 968 step, hides width, hides ×, hides height, no 921 step] / at 1000 [lines, read-out, tooltip, CANVAS level with SHOW, SHOW box put] / at 969 / at 968 without the step / at 968 / at 940 without / at 940 [lines, read-out, group 40+ px narrower, tooltip, level, SHOW box] / at 922 / at 921 / hiding the height too [same group width, lines, same bar height] / #cv-w, #cv-h and the status bar keep the real size / Excel carries the real canvas');
+    } finally { await off(); }
   });
 
   // ── Video Presets, Advanced ─────────────────────────────────────────────────────────────────────────────────────
