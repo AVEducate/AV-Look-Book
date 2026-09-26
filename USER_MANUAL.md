@@ -36,7 +36,7 @@ Rename a source in any tool and it is renamed in all three. Add a destination an
 ## 2. Quick start
 
 1. Press **New** (or Cmd / Ctrl + N). Quick Show Setup opens.
-2. Type the **Show name** (required). Set date and venue if you have them.
+2. Type the **Show name** (required). Set the Date Created and the venue if you have them.
 3. Set **Destinations** with − / +. Click a destination row to name it and press its resolution button to pick its size.
 4. Set **DSM / AUX** and **Presets** with − / +.
 5. Press **Build My Show** (or Enter). P01 is the base look; the other presets start as copies of its layout.
@@ -88,8 +88,10 @@ Opens by itself on a new show, from **New**, from Cmd / Ctrl + N, and from the "
 |---|---|
 | **Start from an example** | General Session, Awards Night, Town Hall. Asks first if the open show has unsaved changes or is a restored draft that has not been saved. |
 | **Show name** | Required. Without it the build will not run; the box is outlined in amber and you are told why. |
-| **Date, Venue** | Date defaults to today, venue to N/A. |
-| **Client, Job No, Designer, Drawn By, Project Ver, Show dates, Show format, Venue address** | Title-block and cover information. All optional; all can be changed later in Wire › Project Info. |
+| **Date Created, Venue** | Date Created defaults to today, venue to N/A. Type the date, or pick it on the calendar (below). |
+| **Client, Job No, Designer, Drawn By, Project Ver, Show Dates, Show Type, Venue address** | Title-block and cover information. All optional; all can be changed later in Wire › Project Info. |
+| **Show Dates** | The days of the show, for the Excel cover. Typed, or picked on the calendar as a first and a last day (below). |
+| **Show Type** | Corporate, Touring, Installation… typed by hand; the Excel cover prints it as SHOW TYPE. A show saved before build 16kv keeps what it had in Show Format here, exactly as it was typed. |
 | **Destinations − / +** | 1 to 24. Each destination gets a row below. |
 | **Destination rows** | Click a row to open it: type a name (blank = Destination 01, 02 …) and press the resolution button for the full list, with **+ Custom resolution…** at the top. |
 | **Set default for all** | On: the first row's resolution is copied to every destination. Off: each keeps its own. |
@@ -99,11 +101,18 @@ Opens by itself on a new show, from **New**, from Cmd / Ctrl + N, and from the "
 | **Build My Show** (or Enter) | Creates the destinations, presets, AUX outputs and canvas. |
 | **Start blank** (or Escape) | Closes the wizard and leaves an empty show. |
 
-With a resolution list open, Escape closes the list only; the next Escape closes the wizard.
+**The calendar (Date Created and Show Dates, build 16kv).** Both boxes have the same calendar button at their right end; a click on it, or Alt/Option + ↓ (or F4) with the cursor in the box, opens ONE calendar (in Date Created, Space opens it too), the same in Quick Setup, Edit Show Info and Wire › Project Info: the month and year with ▾ to pick another month or year, ↑ ↓ for the month before / after, S M T W T F S, six weeks of square days (the days of the months either side dimmed), Clear and Today. The picked day is a solid blue square; today has a thin blue outline.
+- **Date Created** picks ONE day: a click picks it and closes. The box still shows MM/DD/YYYY and can still be typed. Today picks today; Clear empties the box.
+- **Show Dates** picks a first and a last day: the first click is the start, the second the end, and the days between light up as one band (while you choose the end, the day under the mouse shows the band it would make). A click before the start makes that day the new start; the same day twice is a one-day show. The box then reads APRIL 8-10, 2026 (MARCH 30 - APRIL 2, 2026 across two months, DECEMBER 30, 2026 - JANUARY 2, 2027 across two years, APRIL 8, 2026 for one day). The box is still a free text box: whatever you type is kept exactly as typed. When the calendar opens it reads the box: dates it wrote itself are shown picked on their month; anything else (April 8th - 10th) opens this month with nothing picked and is never changed unless you pick. Today moves the calendar to this month; Clear empties the box.
+- Keys, while the calendar is open: ← → a day, ↑ ↓ a week, Page Up / Page Down a month, Enter or Space picks, Tab moves between the calendar's own buttons, Escape closes ONLY the calendar and puts the cursor back in its box. A click outside closes it; a click on a blank part of it keeps it. While it is open the keys stay with it: Delete, Backspace and Cmd / Ctrl + Z never change the show behind it. Opening and closing it without picking changes nothing and does not light Save.
+- On a phone the calendar has 44 px days. Date Created cannot be typed there (the phone's own date wheel was the only way in before): a tap anywhere on the box opens the calendar (on a touch screen; a narrow desktop window with a mouse keeps the typed box and the button at its right end). Show Dates keeps its keyboard; its calendar button opens the calendar. With the phone held sideways the calendar fits under the top bar and scrolls inside, so Clear and Today can always be reached.
+- A pick is written the way typing is: in Quick Setup / Edit Show Info when you press Build My Show / Update Show, in Wire › Project Info at once (it lights Save; like every Project Info field it is not an Undo step).
+
+With a resolution list open, Escape closes the list only; the next Escape closes the wizard. The same goes for the calendar: Escape closes it, the next one closes the wizard.
 
 Build My Show is one Undo step: the first Undo after it takes you back to an empty canvas (Redo brings the show back).
 
-**Edit Show Info (desktop).** The small pencil at the right end of the SHOW label in the top bar, just above the Show name box (tooltip "Edit show info"; Tab reaches it just before the name box) reopens this window pre-filled from the open show, the way the phone's Show card does: title **Edit Show Info**, the example row hidden, the show name, date, venue and the drawing / Excel cover fields, the destination names and resolutions, and the three counts. Presets and layers are kept. **Update Show** (or Enter) writes it as ONE Undo step: a renamed destination, a new resolution, an added or removed destination, AUX or preset all come back with one Undo. The show name, date and venue are outside Undo (as in Wire › Project Info). **Cancel** or Escape closes with nothing changed and no Undo step; Update Show with nothing changed records no step and does not light Save; it writes only what you changed (a name, venue or cover field that already reads the same, spaces aside, is left as it is). While the window is open the page's keyboard shortcuts stand down, exactly as under a dialog: Backspace, Delete, the arrows, Cmd/Ctrl + D, Cmd/Ctrl + Shift + N, Cmd/Ctrl + S and Cmd/Ctrl + Z do nothing to the show behind it, and the pencil lets go of whatever was picked on the canvas; typing in the window's boxes, Tab / Shift + Tab between its controls, Enter (Update Show) and Escape (Cancel) are the window's own keys. The three counters start at the show's real counts and move one at a time, however many presets, destinations or AUX the show already has (the wizard's 24 / 8 / 12 limits belong to a fresh build): lowering a count removes from the end on Update Show, as one Undo step, with no further question. A blank Show name is refused ("Show name needed"), the window stays open. A changed resolution or count re-lays every preset's strip (as on the phone): hand-placed positions and blend zones in every preset are replaced by a clean strip, and Undo brings them back. On an empty show the pencil opens the plain wizard (Build My Show), like + Destination does. <!-- 16kt-sic -->
+**Edit Show Info (desktop).** The small pencil at the right end of the SHOW label in the top bar, just above the Show name box (tooltip "Edit show info"; Tab reaches it just before the name box) reopens this window pre-filled from the open show, the way the phone's Show card does: title **Edit Show Info**, the example row hidden, the show name, Date Created, venue and the drawing / Excel cover fields, the destination names and resolutions, and the three counts. Presets and layers are kept. **Update Show** (or Enter) writes it as ONE Undo step: a renamed destination, a new resolution, an added or removed destination, AUX or preset all come back with one Undo. The show name, Date Created and venue are outside Undo (as in Wire › Project Info). **Cancel** or Escape closes with nothing changed and no Undo step; Update Show with nothing changed records no step and does not light Save; it writes only what you changed (a name, venue or cover field that already reads the same, spaces aside, is left as it is). While the window is open the page's keyboard shortcuts stand down, exactly as under a dialog: Backspace, Delete, the arrows, Cmd/Ctrl + D, Cmd/Ctrl + Shift + N, Cmd/Ctrl + S and Cmd/Ctrl + Z do nothing to the show behind it, and the pencil lets go of whatever was picked on the canvas; typing in the window's boxes, Tab / Shift + Tab between its controls, Enter (Update Show) and Escape (Cancel) are the window's own keys. The three counters start at the show's real counts and move one at a time, however many presets, destinations or AUX the show already has (the wizard's 24 / 8 / 12 limits belong to a fresh build): lowering a count removes from the end on Update Show, as one Undo step, with no further question. A blank Show name is refused ("Show name needed"), the window stays open. A changed resolution or count re-lays every preset's strip (as on the phone): hand-placed positions and blend zones in every preset are replaced by a clean strip, and Undo brings them back. On an empty show the pencil opens the plain wizard (Build My Show), like + Destination does. <!-- 16kt-sic -->
 
 ### 3.4 The status bar (every page)
 
@@ -586,7 +595,7 @@ Everything you change on a card is one Undo step and lights the unsaved mark.
 
 - **Presets.** Click a preset to filter the drawing to that look: sources it does not use fade and their cables dim. Click it again, or press Esc, to show everything.
 - **Details.** With nothing selected: the lane counts and the **Cable Colour Code**, one row per cable type in use; hover a row to see who uses it. With a node selected: every preset that uses it and where. A background counts. With a source on an IP cable (NDI, ST-2110, Dante) selected, an **IP Address** field appears; the next one you fill starts from the same range.
-- **Project Info** is the title block of the printed sheet: Project, Date, Venue, Client, Job No, Designer, Drawn By, Project Ver, the automatic Drawn date, and your **Logo** (click the tile to upload, × to remove; the × removes it at once and Undo does not bring it back). These are the same fields as Quick Setup, so fill them in either place. **Dates, Address and Format** are for the cover tab of the Excel exports only and do not print on the drawing. Press Enter or click away to commit a field. A blank Venue reads N/A.
+- **Project Info** is the title block of the printed sheet: Project, Date Created, Venue, Client, Job No, Designer, Drawn By, Project Ver, the automatic Drawn date, and your **Logo** (click the tile to upload, × to remove; the × removes it at once and Undo does not bring it back). These are the same fields as Quick Setup, so fill them in either place. **Show Dates, Address and Show Type** are for the cover tab of the Excel exports only and do not print on the drawing. Date Created and Show Dates open the same calendar as Quick Setup (3.3); a pick is written at once, like typing in the box. Press Enter or click away to commit a field. A blank Venue reads N/A.
 - Each header folds its section. On a short window Presets and Details scroll inside themselves so Project Info is never cut off.
 
 ### 6.5 Export
@@ -895,7 +904,7 @@ Good to know
 ### 9.2 Excel (the cue sheet)
 
 **Excel** in the top bar, and the **Export** button at the top-right of the Video Presets tab (Simple and Advanced), both write the whole-show cue sheet, `<show>_look_book.xlsx` (Send names the same sheet `<show>_cue_sheet.xlsx`):
-- **Cover** tab: show name, "CUE SHEET", venue, dates, address, format, designer, version, from the show info.
+- **Cover** tab: show name, "CUE SHEET", venue, the Show Dates, address, the Show Type ("SHOW TYPE: CORPORATE"), designer, version, from the show info. With Show Dates blank the date line prints the Date Created WITH its label ("CREATED SEPTEMBER 25, 2026"); with both blank it is empty. The I/O Patch Excel opens on the same cover.
 - **Cue sheet** tab: one row per preset (P#, name, notes), one column per destination and per AUX / DSM in use. Each destination cell reads top to bottom: `BG: name (detail)`, then `L1: name (visible size) · effects`, then `AOI: size @ position`. An AUX cell shows what feeds it in that preset.
 
 The **Export** button on the I/O Patch page writes `<show>_video-io.xlsx`:
@@ -1008,7 +1017,7 @@ The same history covers all three tools. Undo / Redo are in the top bar (dim whe
 
 **What does NOT use a step:** selecting, opening or closing a window, switching tools, switching presets in Advanced, switching Wire or I/O Patch between Simple and Advanced, zoom, pan, collapsing presets, opening a Wire or I/O page tab, the × on an empty spare page tab, playing a clip. Looking around never destroys your Redo. One exception: the FIRST switch to Advanced in Wire, and in I/O Patch, builds page 1 from the show, and that build is one step (Undo empties page 1 again and leaves you in Advanced; Redo brings it back).
 
-**Not covered by Undo:** the show name, date, venue, the Project Info fields, the company logo, the canvas size and the AUX / DSM label choice. Change them back by hand. A colour given to a built-in content type with the ✎ swatch IS covered: it belongs to the show.
+**Not covered by Undo:** the show name, Date Created, venue, the Project Info fields, the company logo, the canvas size and the AUX / DSM label choice. Change them back by hand. A colour given to a built-in content type with the ✎ swatch IS covered: it belongs to the show.
 
 History holds the last 50 steps. It starts empty when a show is opened (New, Load, Restore draft) and is not stored in the file. A new change after an Undo clears Redo; to compare two versions, Shift-click Save first.
 
@@ -1029,7 +1038,7 @@ Everything that opens over a page (messages, Add Destination, the colour window,
 
 **Escape: one press does one thing.** Three rules, the same everywhere on the desktop (build 16ks-esc):
 1. **In any text or number box**, Escape puts the OLD text back (what the box held when you clicked into it), takes the cursor out of the box, keeps nothing you typed and does nothing else: the panel, the window and the page the box sits in all stay open. The next Escape then closes that panel or window. This is true for every box: Show name, preset code / name / notes, the table cells, Destination Properties, the Layer and AUX panels (the fader number boxes included: the picture goes back too, and no Undo step is made), Add Destination, the dead-space PX / FT and blend px boxes, the AOI boxes, the clip boxes on the Advanced page, the colour window, Wire (Project Info, switcher / router / device names and IDs, port names, IP address, resolution, the custom size window), I/O Patch (names, notes, counts, the custom resolution and Backup windows), Help > Accessibility and the Look Book export window. Rename boxes (Wire page, I/O page, Wire source) close themselves and keep the old name. **The one exception is Quick Setup:** Escape closes the wizard from anywhere in it, as it always has. **Only your typing is taken back** (build 16ks-escfix): what you changed with the mouse while the cursor still sat in the box (a corner handle on the canvas, an AOI handle, the Wire + / - output buttons) stays, and Undo still undoes it. With nothing typed, Escape only leaves the box.
-2. **If a list, a menu, a message or a window is open** and the cursor is not in a box, Escape closes the top-most one and nothing else. A list open over a box or inside a window closes first; the next press goes on from there.
+2. **If a list, a menu, a message or a window is open** and the cursor is not in a box, Escape closes the top-most one and nothing else. The calendar of Date Created / Show Dates is one of these: Escape closes only the calendar and puts the cursor back in its box. A list open over a box or inside a window closes first; the next press goes on from there.
 3. **With nothing open and no box active**, the page steps down:
    - Video Presets Simple: lets go of the picked destination or layer.
    - Video Presets Advanced: the FIRST Escape lets go of the picked layer, destination or AUX box, together with the layer strip's see-through view (the page stays); the SECOND Escape goes back to Simple. A fader you just moved is not a text box: the same press lets go. With nothing picked, one Escape goes back to Simple.
@@ -1086,6 +1095,11 @@ While a message or a question of the app is open (the small window with the dark
 | Shift + click Save | top bar | Save As |
 | Escape | in any text or number box | Puts the old text back and leaves the box. Nothing typed is kept and nothing else closes (Quick Setup is the exception: it closes). Chapter 11 |
 | Escape | a list, menu, message or window open | Closes the top-most one, one per press |
+| Alt/Option + ↓ (or F4) | in Date Created or Show Dates | Opens the calendar (3.3). In Date Created Space opens it too |
+| ← → / ↑ ↓, Page Up / Page Down | the calendar | A day / a week, a month |
+| Enter, Space | the calendar | Pick the day (Show Dates: the first day, then the last) |
+| Tab, Shift + Tab | the calendar | Move between the calendar's own buttons; the cursor stays in it |
+| Escape | the calendar | Closes only the calendar; the cursor goes back to its box |
 | Escape | Video Presets Advanced, nothing open | First press: lets go of the picked layer, destination or AUX box (also right after moving a fader). Next press: back to Simple |
 | Escape | Wire, I/O Patch, nothing open | Wire: picked cable, picked tiles, preset filter, then back to Video Presets. I/O Patch: back to Video Presets |
 | Enter | everywhere | Chapter 11 |
@@ -1140,3 +1154,7 @@ Each item says what you see on build 2026-06-16ko and what to do. "Fixed by" nam
 <!-- 16ku-topbar: the Edit Show Info pencil on the SHOW label row, only the tool under the sliding highlight in white, the Canvas read-out back in its two boxes -->
 
 <!-- 16kt-way: 1 to 9 in Advanced, the + Preset note, the pinned crumb (owner decision 19) -->
+
+<!-- 16kv-dates -->
+
+<!-- 16kv-fix -->

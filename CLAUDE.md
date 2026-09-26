@@ -129,6 +129,15 @@ A rename of a destination / AUX / multiviewer carries its follow-ups in the SAME
 noted on `focusin`) + an `input` event + `_lbEscRestoreShow` (puts the show back IN PLACE from `_lbEscOrig.s0`, the picture taken at the first keystroke (16ks-escfix: only typing is taken back, a mouse edit under a focused box is folded in by `_lbEscRebase`), mirrors the key list of
 `_snapshot()`: keep the two lists in step) + blur, then the key stops. Advanced page: `_fsEscLetGo()` clears the pick (layer, destination, lit AUX, layer strip ghost) before `closeFullscreen`; a focused fader is not a box.
 Not touched: Quick Setup, the rename / count boxes in `_LB_ESC_OWN`, SELECTs, the phone build (`is-mobile` returns first).
+The Date Created / Show Dates calendar (`#lb-cal`, 16kv) keeps its own keys: `_lbCalKeys` is a window capture listener registered
+BEFORE this one and `_dlgKeyGuard`; with the cursor elsewhere it is the first entry of `_lbEscTop`. Cmd / Ctrl keys pressed inside it
+stop there too, and focus cannot fall out of it onto the page (16kv-fix).
+
+**Date Created / Show Type / the calendar (16kv, 2026-09-25)** — Quick Setup "Date" is Date Created (same `#qs-date` / `#show-date`,
+YYYY-MM-DD, `showDate` in the file), "Show format" is Show Type (same `showMeta.format`, placeholder "Corporate, Touring, Installation…").
+Both date boxes open ONE calendar `_lbCalOpen` (one day / a start and an end); the browser picker is replaced, typing is kept. Excel
+cover: blank Show Dates prints "CREATED <date>", D15 prints "SHOW TYPE: …". Examples: date in `showMeta.dates`, `showDate` "". CSS
+for it lives at the end of the main style block and must not start with `:root` / `#wire-overlay` (the export copies those).
 
 **Layer strip + ghost view (round 16ks)** — `_ls*` block in front of `_rcPresetRow`: `_lsStripHTML(p)` fills the header's old flex:1 spacer,
 `_lsTopTag(p,s)` prefixes `.screen-res`, `_lsGhost` is editor-only view state (class `lb-ghost` on the live DOM of `#canvas-area` / `#fs-canvas`,
@@ -255,3 +264,7 @@ Users must never receive a build that has not passed the gate. Two lines:
   directory; the repo (CLAUDE.md + HANDBOOK.md + RELEASE.md + tests/) must be enough on its own.
 
 <!-- Reading receipt for session start: CORE-148-LOCKED (report this code to the owner after reading this file in full) -->
+
+<!-- 16kv-dates -->
+
+<!-- 16kv-fix -->

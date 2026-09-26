@@ -5701,28 +5701,47 @@ await check('Help says what the app does: the layer chip takes two clicks, the s
     const alignOf = (sheetNo, ref) => { const c = cell(sheetNo, ref); const a = c && xfs[c.s].getElementsByTagName('alignment')[0]; return a ? [a.getAttribute('horizontal'), a.getAttribute('vertical'), a.getAttribute('wrapText')] : []; };
     return { parts, sheets, cell, fillOf, fontOf, alignOf, merges: n => [...doc('xl/worksheets/sheet' + n + '.xml').getElementsByTagName('mergeCell')].map(m => m.getAttribute('ref')) };
   };
-  const XL_COVER_MERGES = ['C5:F7', 'D8:E8', 'C9:F10', 'D11:E11', 'C12:F13', 'D15:E15', 'D21:E21', 'D22:E22'];
+  const XL_COVER_MERGES = ['C5:F7', 'D8:E8', 'C9:F10', 'C11:F11', 'C12:F13', 'D15:E15', 'D21:E21', 'D22:E22'];
   const xlText = (wb, refs) => refs.map(r => { const c = wb.cell(1, r); return c ? c.text : null; });
-  await check('Excel cue sheet: the first tab is the Cover (show info in the owner\'s cells, merged, black and white frame), the cue sheet is the second tab', async () => {
+  // 16kv-dates L: REPLACES the check named in its header
+  //    REASON: it expected the D15 line to read "FORMAT: 3840X2160 - 59.94P". Omar renamed Show Format to Show Type
+  //    (answer b: the stored value stays and prints where it printed), so the cover line reads "SHOW TYPE: ...". The
+  //    check is otherwise unchanged (tabs, cells, merges, fills, fonts, alignment, XML order, print setup, tab 2 rows).
+  await check('Excel cue sheet: the first tab is the Cover (show info in the owner\'s cells, the Show Type line reading SHOW TYPE:, merged, black and white frame), the cue sheet is the second tab', async () => {
     document.getElementById('show-venue').value = 'Grand Ballroom'; showMeta.designer = 'Omar'; showMeta.projectVer = 'V3';
     setShowMeta('dates', 'April 8-10, 2026'); setShowMeta('address', '701 Convention Plaza, St. Louis, MO 63101'); setShowMeta('format', '3840x2160 - 59.94p');
     const show = document.getElementById('show-name').value; const wb = await xlRead(_doExportExcel(true)); const x = wb.parts['xl/worksheets/sheet1.xml'] || '';
     const order = ['<sheetPr>', '<sheetFormatPr', '<cols>', '<sheetData>', '<mergeCells', '<printOptions', '<pageMargins', '<pageSetup'].map(t => x.indexOf(t));
     const body = [...new DOMParser().parseFromString(wb.parts['xl/worksheets/sheet2.xml'] || '<x/>', 'application/xml').getElementsByTagName('c')].filter(c => /^A\d+$/.test(c.getAttribute('r')) && presets.some(p => p.code === c.textContent)).length;
-    const out = is({ tabs: wb.sheets, text: xlText(wb, ['C5', 'D8', 'C9', 'D11', 'C12', 'D15', 'D21', 'D22']), merges: wb.merges(1), fills: ['A2', 'H3', 'A4', 'H16', 'A17', 'H18', 'B4', 'G16', 'C4', 'A1', 'A19'].map(r => wb.fillOf(1, r)),
-      fonts: [wb.fontOf(1, 'C5'), wb.fontOf(1, 'D8'), wb.fontOf(1, 'C9'), wb.fontOf(1, 'D11'), wb.fontOf(1, 'C12'), wb.fontOf(1, 'D15'), wb.fontOf(1, 'D21'), wb.fontOf(1, 'D22')], align: wb.alignOf(1, 'C5'),
+    const out = is({ tabs: wb.sheets, text: xlText(wb, ['C5', 'D8', 'C9', 'C11', 'C12', 'D15', 'D21', 'D22']), merges: wb.merges(1), fills: ['A2', 'H3', 'A4', 'H16', 'A17', 'H18', 'B4', 'G16', 'C4', 'A1', 'A19'].map(r => wb.fillOf(1, r)),
+      fonts: [wb.fontOf(1, 'C5'), wb.fontOf(1, 'D8'), wb.fontOf(1, 'C9'), wb.fontOf(1, 'C11'), wb.fontOf(1, 'C12'), wb.fontOf(1, 'D15'), wb.fontOf(1, 'D21'), wb.fontOf(1, 'D22')], align: wb.alignOf(1, 'C5'),
       xmlOrder: order.every(p => p >= 0) && order.every((p, i) => !i || p > order[i - 1]), print: [/<pageSetup orientation="portrait" fitToWidth="1"/.test(x), /horizontalCentered="1"/.test(x), /left="0.7" right="0.7" top="0.75" bottom="0.75"/.test(x)], presetRowsOnTab2: body },
-    { tabs: ['Cover', show.slice(0, 31)], text: [show.toUpperCase(), 'CUE SHEET', 'GRAND BALLROOM', 'APRIL 8-10, 2026', '701 CONVENTION PLAZA, ST. LOUIS, MO 63101', 'FORMAT: 3840X2160 - 59.94P', 'OMAR', 'VERSION 3'], merges: XL_COVER_MERGES,
+    { tabs: ['Cover', show.slice(0, 31)], text: [show.toUpperCase(), 'CUE SHEET', 'GRAND BALLROOM', 'APRIL 8-10, 2026', '701 CONVENTION PLAZA, ST. LOUIS, MO 63101', 'SHOW TYPE: 3840X2160 - 59.94P', 'OMAR', 'VERSION 3'], merges: XL_COVER_MERGES,
       fills: ['FF000000', 'FF000000', 'FF000000', 'FF000000', 'FF000000', 'FF000000', 'FFFFFFFF', 'FFFFFFFF', 'none', 'none', 'none'],
       fonts: ['Arial 30 bold', 'Arial 12 bold', 'Arial 18 bold', 'Arial 10', 'Arial 9', 'Arial 11 bold', 'Arial 10 bold', 'Arial 10'], align: ['center', 'center', null],
       xmlOrder: true, print: [true, true, true], presetRowsOnTab2: presets.length }, 'cover workbook');
     await restore(); return out;
   });
-  await check('Excel cover: blank show info falls back (the single show date written out, N/A venue / address / format / designer lines empty, VERSION 1) and the merges stay', async () => {
+  // 16kv-dates M: REPLACES the check named in its header
+  //    REASON: it expected a blank Show Dates to print the Date as if it were the show's date ("APRIL 8, 2026"). Omar's
+  //    answer (c): the cover prints the Date Created WITH its label, "CREATED APRIL 8, 2026". Everything else unchanged.
+  await check('Excel cover: blank show info falls back (a blank Show Dates prints the Date Created as CREATED APRIL 8, 2026, N/A venue / address / Show Type / designer lines empty, VERSION 1) and the merges stay', async () => {
     document.getElementById('show-venue').value = 'N/A'; document.getElementById('show-date').value = '2026-04-08'; showMeta = _showMetaFrom(null);
     const wb = await xlRead(_doExportExcel(true));
-    const out = is({ tab: wb.sheets[0], text: xlText(wb, ['D8', 'C9', 'D11', 'C12', 'D15', 'D21', 'D22']), merges: wb.merges(1) }, { tab: 'Cover', text: ['CUE SHEET', '', 'APRIL 8, 2026', '', '', '', 'VERSION 1'], merges: XL_COVER_MERGES }, 'blank cover');
+    const out = is({ tab: wb.sheets[0], text: xlText(wb, ['D8', 'C9', 'C11', 'C12', 'D15', 'D21', 'D22']), merges: wb.merges(1) }, { tab: 'Cover', text: ['CUE SHEET', '', 'CREATED APRIL 8, 2026', '', '', '', 'VERSION 1'], merges: XL_COVER_MERGES }, 'blank cover');
     await restore(); return out;
+  });
+  // 16kv-cover: NEW (Omar, 2026-09-25, "Widen it"). The date line spans C11:F11 like the venue and address lines.
+  await check('Excel cover: the date line (Show Dates, or CREATED + the Date Created) spans C11:F11, as wide as the venue and address lines, so a range across months and the CREATED line print in one cell at the cover\'s size (cue sheet and I/O Patch Excel)', async () => {
+    const book = async io => { if (!io) return xlRead(_doExportExcel(true)); const real = window.dl; let got = null; window.dl = function (b) { got = b; }; try { _sysExportIOExcel(); await wait(400); } finally { window.dl = real; } okDialogs(); return got ? xlRead(got) : null; };
+    const line = async io => { const wb = await book(io); if (!wb) return 'no workbook'; const m = wb.merges(1); const t = xlText(wb, ['C11', 'D11']); return [m.includes('C11:F11'), m.includes('D11:E11'), [t[0] || '', t[1] || ''], wb.fontOf(1, 'C11')]; };
+    const sd = $('#show-date'); const out = {};
+    setShowMeta('dates', 'September 28 - October 2, 2026'); out.range = [await line(false), await line(true)];
+    sd.value = '2026-09-25'; setShowMeta('dates', ''); out.created = [await line(false), await line(true)];
+    await restore();
+    const want = t => [true, false, [t, ''], 'Arial 10'];
+    return is(out, { range: [want('SEPTEMBER 28 - OCTOBER 2, 2026'), want('SEPTEMBER 28 - OCTOBER 2, 2026')], created: [want('CREATED SEPTEMBER 25, 2026'), want('CREATED SEPTEMBER 25, 2026')] },
+      '[C11:F11 merged, the old D11:E11 merge gone, [C11, D11] text, C11 font]: [cue sheet, I/O Patch]');
   });
   await check('I/O Patch Excel: opens on the Cover titled I/O PATCH, Video I-O is the second tab', async () => {
     const real = window.dl; let got = null; window.dl = function (b) { got = b; }; try { _sysExportIOExcel(); await wait(400); } finally { window.dl = real; } okDialogs();
@@ -5907,6 +5926,338 @@ await check('Help says what the app does: the layer chip takes two clicks, the s
     const out = is({ afterWire, dirty, inQS, backInWire, reloaded, fromOld, wireSheetPrintsClient: /ZZCLIENT/.test(wireSheet), onWireSheet: /ZZTOP|ZZFMT|April 8-10/.test(wireSheet), onLookBook: /ZZTOP|ZZFMT|April 8-10/.test(lb) },
       { afterWire: ['April 8-10, 2026', 120, 'ZZFMT 3840x2160'], dirty: true, inQS: ['April 8-10, 2026', 'ZZFMT 3840x2160'], backInWire: 'ZZFMT 1080p59.94', reloaded: ['April 8-10, 2026', 'ZZFMT 1080p59.94'], fromOld: ['', '', ''], wireSheetPrintsClient: true, onWireSheet: false, onLookBook: false }, 'show info');
     await restore(); return out;
+  });
+  // 16kv-dates A: NEW
+  const _dvCal = () => document.getElementById('lb-cal');
+  const _dvBtn = id => $('.lb-calbtn[data-cal-for="' + id + '"]');
+  const _dvKey = (key, o) => { const t = document.activeElement || document.body; const e = new KeyboardEvent('keydown', Object.assign({ key, code: key === ' ' ? 'Space' : (key.length === 1 ? 'Key' + key.toUpperCase() : key), bubbles: true, cancelable: true }, o || {})); t.dispatchEvent(e); return e; };
+  const _dvShut = async () => { for (let i = 0; i < 3 && _dvCal(); i++) { _dvKey('Escape'); await wait(80); } };
+  const _dvOpen = async id => { const b = _dvBtn(id); if (!b) return false; await _dvShut(); b.click(); await wait(200); return !!_dvCal(); };
+  const _dvDay = async iso => { const c = _dvCal(), d = c && c.querySelector('.lb-cal-day[data-d="' + iso + '"]'); if (!d) return false; d.click(); await wait(120); return true; };
+  const _dvOver = async iso => { const c = _dvCal(), d = c && c.querySelector('.lb-cal-day[data-d="' + iso + '"]'); if (d) d.dispatchEvent(new MouseEvent('mouseover', { bubbles: true })); await wait(60); };
+  const _dvIn = async sel => { const c = _dvCal(), b = c && c.querySelector(sel); if (!b) return false; b.click(); await wait(150); return true; };
+  const _dvSeen = () => { const c = _dvCal(); if (!c) return null; const q = s => [...c.querySelectorAll(s)].map(b => b.getAttribute('data-d')); return { head: c.querySelector('.lb-cal-my').textContent, pick: q('.lb-cal-pick'), band: q('.lb-cal-in').length, prev: q('.lb-cal-prev') }; };
+  const _dvQS = async () => { await _dvShut(); if (vis($('#qs-modal'))) closeQS(); openQSEdit(); await wait(350); };
+  const _dvIso = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  /* the written Show Dates, spelled out here from Omar's own placeholder (NOT the page's formatter): the check compares the two */
+  const _dvText = (a, b) => { const M = d => d.toLocaleDateString('en-US', { month: 'long' }).toUpperCase(); if (_dvIso(a) === _dvIso(b)) return M(a) + ' ' + a.getDate() + ', ' + a.getFullYear();
+    if (a.getFullYear() !== b.getFullYear()) return M(a) + ' ' + a.getDate() + ', ' + a.getFullYear() + ' - ' + M(b) + ' ' + b.getDate() + ', ' + b.getFullYear();
+    if (a.getMonth() !== b.getMonth()) return M(a) + ' ' + a.getDate() + ' - ' + M(b) + ' ' + b.getDate() + ', ' + b.getFullYear(); return M(a) + ' ' + a.getDate() + '-' + b.getDate() + ', ' + a.getFullYear(); };
+  await check('dates 16kv: the SHOW card reads DATE CREATED and SHOW TYPE (a typed box with "Corporate, Touring, Installation…" greyed inside it) next to SHOW DATES; Wire › Project Info reads Date Created / Show Dates / Show Type with every label in full; the phone Show card reads Date Created and the printed Wire sheet "Date Created:"', async () => {
+    await _dvQS();
+    const lab = id => { const l = $('label[for="' + id + '"]'); return l ? [l.textContent, l.innerText] : null; };
+    const fm = $('#qs-format'), fd = $('#qs-dates');
+    const qs = { date: lab('qs-date'), dates: lab('qs-dates'), type: lab('qs-format'), typeBox: fm ? [fm.tagName, fm.type, fm.placeholder, fm.value] : null,
+      greyed: !!(fm && fd) && getComputedStyle(fm, '::placeholder').color === getComputedStyle(fd, '::placeholder').color && getComputedStyle(fm, '::placeholder').color !== getComputedStyle(fm).color };
+    closeQS(); await wait(200);
+    openWireMode(); await wait(600);
+    const wl = id => { const l = $('#wire-title-block label[for="' + id + '"]'); return l ? l.textContent : null; };
+    const wf = $('#wtb-format'), wd = $('#wtb-date');
+    const wire = { date: wl('wtb-date'), dates: wl('wtb-dates'), type: wl('wtb-format'), typeBox: wf ? [wf.placeholder, wf.getAttribute('aria-label')] : null, dateName: wd ? wd.getAttribute('aria-label') : null,
+      cut: $$('#wire-title-block .wire-tb-lbl').filter(l => l.scrollWidth > l.clientWidth + 0.5).map(l => l.textContent) };
+    const sheet = String(_wireSheetSvg('<g/>', { theme: 'light', pageLabel: 'Page 1', title: 'x' }) || '');
+    closeWireMode(); await wait(300);
+    /* the phone's Show card, rendered by the phone's own renderer (one synchronous pass: nothing is laid out or painted in between) */
+    const cls = document.body.className, hadMain = $('#mobile-main'), keep = hadMain ? hadMain.innerHTML : null; let phone = null;
+    try { document.body.classList.add('is-mobile'); if (typeof window.renderMobileMain === 'function') window.renderMobileMain(); const c = $('#mobile-main .mb-guide-card'); phone = c ? $$('label.qs-lbl', c).map(l => l.textContent) : 'no Show card'; }
+    finally { document.body.className = cls; const m = $('#mobile-main'); if (m && !hadMain) m.remove(); else if (m) m.innerHTML = keep; }
+    return is({ qs, wire, phone, sheet: [/>Date Created:</.test(sheet), />Date:</.test(sheet)] },
+      { qs: { date: ['Date Created', 'DATE CREATED'], dates: ['Show Dates', 'SHOW DATES'], type: ['Show Type', 'SHOW TYPE'], typeBox: ['INPUT', 'text', 'Corporate, Touring, Installation…', ''], greyed: true },
+        wire: { date: 'Date Created', dates: 'Show Dates', type: 'Show Type', typeBox: ['Corporate, Touring, Installation…', 'Show Type (Excel cover)'], dateName: 'Date Created', cut: [] },
+        phone: ['Show Name', 'Date Created', 'Venue'], sheet: [true, false] }, 'SHOW card labels [text, as shown] / Show Type box / Wire labels / phone Show card labels / Wire sheet [Date Created:, Date:]');
+  });
+  // 16kv-dates B: NEW
+  await check('dates 16kv: Date Created and Show Dates open ONE calendar that looks the same from both boxes in Quick Setup and in Wire › Project Info (card #14181f, #252a33 hairline, 4 px corners, one size, square days with rounded corners, the picked day solid #a3c7fa with dark text at 4.5 : 1 or more, S M T W T F S, the ▾ triangle, ↑ ↓, Clear and Today), under or over its box and never off the sides', async () => {
+    const look = () => { const c = _dvCal(); if (!c) return null; const cs = getComputedStyle(c), r = c.getBoundingClientRect(); const d = c.querySelector('.lb-cal-day'), dr = d.getBoundingClientRect(), p = c.querySelector('.lb-cal-pick'), pa = p ? getComputedStyle(p, '::after') : null;
+      return { bg: cs.backgroundColor, border: cs.borderTopWidth + ' ' + cs.borderTopStyle + ' ' + cs.borderTopColor, radius: cs.borderTopLeftRadius, w: Math.round(r.width), h: Math.round(r.height), font: cs.fontFamily,
+        cell: [Math.round(dr.width), Math.round(dr.height)], cellRadius: getComputedStyle(d, '::after').borderTopLeftRadius, pick: pa ? [pa.backgroundColor, getComputedStyle(p).color] : null,
+        dow: [...c.querySelectorAll('.lb-cal-dow span')].map(s => s.textContent).join(''), foot: [...c.querySelectorAll('.lb-cal-ft button')].map(b => b.textContent), tri: !!c.querySelector('.lb-cal-my svg path[d="M2 4l3 3 3-3z"]'), arrows: c.querySelectorAll('.lb-cal-nav').length }; };
+    const where = id => { const c = _dvCal(), f = $('#' + id); if (!c || !f) return null; const r = c.getBoundingClientRect(), b = f.getBoundingClientRect(); return (r.top >= b.bottom - 1.5 || r.bottom <= b.top + 1.5) && r.left >= 0 && r.right <= innerWidth; };
+    const lum = c => { const v = c.match(/\d+(\.\d+)?/g).slice(0, 3).map(x => { x = +x / 255; return x <= 0.03928 ? x / 12.92 : Math.pow((x + 0.055) / 1.055, 2.4); }); return 0.2126 * v[0] + 0.7152 * v[1] + 0.0722 * v[2]; };
+    const out = {};
+    await _dvQS(); $('#qs-date').value = '2026-09-25'; $('#qs-dates').value = 'SEPTEMBER 25, 2026';
+    if (!await _dvOpen('qs-date')) { closeQS(); return 'no calendar opens from Date Created in Quick Setup'; }
+    out.qsDate = look(); out.qsDateAt = where('qs-date'); await _dvShut();
+    if (!await _dvOpen('qs-dates')) { closeQS(); return 'no calendar opens from Show Dates in Quick Setup'; }
+    out.qsDates = look(); out.qsDatesAt = where('qs-dates'); await _dvShut();
+    closeQS(); await wait(200);
+    openWireMode(); await wait(600); const d0 = $('#wtb-date').value, s0 = $('#wtb-dates').value; $('#wtb-date').value = '2026-09-25'; $('#wtb-dates').value = 'SEPTEMBER 25, 2026';
+    const back = async () => { $('#wtb-date').value = d0; $('#wtb-dates').value = s0; closeWireMode(); await wait(300); await restore(); };
+    if (!await _dvOpen('wtb-date')) { await back(); return 'no calendar opens from Date Created in Wire'; }
+    out.wDate = look(); out.wDateAt = where('wtb-date'); await _dvShut();
+    if (!await _dvOpen('wtb-dates')) { await back(); return 'no calendar opens from Show Dates in Wire'; }
+    out.wDates = look(); out.wDatesAt = where('wtb-dates'); await _dvShut();
+    await back();
+    const a = out.qsDate; const differ = ['qsDates', 'wDate', 'wDates'].filter(k => JSON.stringify(out[k]) !== JSON.stringify(a));
+    const ratio = a && a.pick ? (lum(a.pick[0]) + 0.05) / (lum(a.pick[1]) + 0.05) : 0;
+    return is({ first: a, differ, placed: [out.qsDateAt, out.qsDatesAt, out.wDateAt, out.wDatesAt], contrast: ratio >= 4.5 },
+      { first: Object.assign({}, a, { bg: 'rgb(20, 24, 31)', border: '1px solid rgb(37, 42, 51)', radius: '4px', cell: [30, 30], cellRadius: '4px', pick: ['rgb(163, 199, 250)', 'rgb(11, 13, 17)'], dow: 'SMTWTFS', foot: ['Clear', 'Today'], tri: true, arrows: 2 }),
+        differ: [], placed: [true, true, true, true], contrast: true }, 'the calendar from Date Created in Quick Setup (the other three must equal it) / which differ / placed / picked-day contrast');
+  });
+  // 16kv-dates C: NEW
+  await check('dates 16kv: Date Created picks ONE day: a click stores it as YYYY-MM-DD (the box stays a typed date box), the calendar closes and the cursor is back in the box; Today picks today, Clear empties it; the show changes only on Update Show', async () => {
+    await _dvQS(); const f = $('#qs-date'); f.value = '2026-04-20';
+    if (!await _dvOpen('qs-date')) { closeQS(); return 'no calendar opens from Date Created'; }
+    const seen = _dvSeen(); await _dvDay('2026-04-12');
+    const picked = [f.value, !!_dvCal(), document.activeElement === f, f.type, f.readOnly, $('#show-date').value !== '2026-04-12'];
+    await _dvOpen('qs-date'); await _dvIn('.lb-cal-today'); const today = [f.value === _dvIso(new Date()), !!_dvCal()];
+    await _dvOpen('qs-date'); await _dvIn('.lb-cal-clear'); const cleared = [f.value, !!_dvCal()];
+    f.value = '2026-04-20'; await _dvOpen('qs-date'); await _dvDay('2026-04-12'); confirmQS(); await wait(700); okDialogs(); await wait(200);
+    const written = [$('#show-date').value, getProjectState().showDate]; await restore();
+    return is({ seen, picked, today, cleared, written }, { seen: { head: 'April 2026', pick: ['2026-04-20'], band: 0, prev: [] }, picked: ['2026-04-12', false, true, 'date', false, true], today: [true, false], cleared: ['', false], written: ['2026-04-12', '2026-04-12'] },
+      'opened on / after a pick [value, calendar open, cursor in the box, type, read-only, show not yet written] / Today / Clear / after Update Show');
+  });
+  // 16kv-dates D: NEW
+  await check('dates 16kv: Show Dates picks a START and an END: both are solid squares, the days between one band (the day under the mouse previews it), a pick before the start becomes the start, the same day twice is one day, stepping months keeps the range, and the box reads APRIL 8-10, 2026 / MARCH 30 - APRIL 2, 2026 / DECEMBER 30, 2026 - JANUARY 2, 2027 / APRIL 8, 2026', async () => {
+    await _dvQS(); const f = $('#qs-dates'); const out = {};
+    f.value = 'APRIL 20, 2026'; if (!await _dvOpen('qs-dates')) { closeQS(); return 'no calendar opens from Show Dates'; }
+    out.opened = _dvSeen(); await _dvDay('2026-04-08'); out.start = [_dvSeen(), f.value];
+    await _dvOver('2026-04-10'); out.preview = _dvSeen(); await _dvOver('2026-04-15'); out.preview2 = _dvSeen().band;
+    await _dvDay('2026-04-10'); out.range = [f.value, !!_dvCal()];
+    await _dvOpen('qs-dates'); out.reopen = _dvSeen();
+    await _dvDay('2026-04-10'); await _dvDay('2026-04-08'); out.before = _dvSeen(); await _dvDay('2026-04-12'); out.beforeEnd = f.value;
+    await _dvOpen('qs-dates'); await _dvDay('2026-04-08'); await _dvDay('2026-04-08'); out.oneDay = f.value;
+    f.value = 'MARCH 30, 2026'; await _dvOpen('qs-dates'); await _dvDay('2026-03-30'); await _dvIn('.lb-cal-nav[data-step="1"]'); await _dvOver('2026-04-02'); out.crossPreview = _dvSeen(); await _dvDay('2026-04-02'); out.cross = f.value;
+    await _dvOpen('qs-dates'); out.crossReopen = _dvSeen(); await _dvIn('.lb-cal-nav[data-step="1"]'); out.crossNext = _dvSeen(); await _dvShut();
+    f.value = 'DECEMBER 30, 2026'; await _dvOpen('qs-dates'); await _dvDay('2026-12-30'); await _dvIn('.lb-cal-nav[data-step="1"]'); await _dvDay('2027-01-02'); out.years = f.value;
+    await _dvOpen('qs-dates'); out.yearsReopen = _dvSeen(); await _dvShut();
+    closeQS(); await wait(200); await restore();
+    return is(out, {
+      opened: { head: 'April 2026', pick: ['2026-04-20'], band: 0, prev: [] },
+      start: [{ head: 'April 2026', pick: ['2026-04-08'], band: 0, prev: [] }, 'APRIL 20, 2026'],
+      preview: { head: 'April 2026', pick: ['2026-04-08'], band: 1, prev: ['2026-04-10'] }, preview2: 6,
+      range: ['APRIL 8-10, 2026', false], reopen: { head: 'April 2026', pick: ['2026-04-08', '2026-04-10'], band: 1, prev: [] },
+      before: { head: 'April 2026', pick: ['2026-04-08'], band: 0, prev: [] }, beforeEnd: 'APRIL 8-12, 2026', oneDay: 'APRIL 8, 2026',
+      crossPreview: { head: 'April 2026', pick: ['2026-03-30'], band: 2, prev: ['2026-04-02'] }, cross: 'MARCH 30 - APRIL 2, 2026',
+      crossReopen: { head: 'March 2026', pick: ['2026-03-30', '2026-04-02'], band: 2, prev: [] }, crossNext: { head: 'April 2026', pick: ['2026-03-30', '2026-04-02'], band: 2, prev: [] },
+      years: 'DECEMBER 30, 2026 - JANUARY 2, 2027', yearsReopen: { head: 'December 2026', pick: ['2026-12-30', '2027-01-02'], band: 2, prev: [] } }, 'Show Dates calendar');
+  });
+  // 16kv-dates E: NEW
+  await check('dates 16kv: Show Dates stays a typed box: "April 8th - 10th" typed by hand opens the calendar on this month with nothing picked and is never changed by Escape, a click outside or Today (Today only moves the view to this month); Clear empties the box', async () => {
+    await _dvQS(); const f = $('#qs-dates'); const out = {}; const head = new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+    f.value = 'April 8th - 10th'; fire(f, 'input');
+    if (!await _dvOpen('qs-dates')) { closeQS(); return 'no calendar opens from Show Dates'; }
+    const s = _dvSeen(); out.opened = [s.head === head, s.pick]; _dvKey('Escape'); await wait(120); out.esc = [f.value, !!_dvCal(), vis($('#qs-modal'))];
+    await _dvOpen('qs-dates'); $('#qs-show').dispatchEvent(new PointerEvent('pointerdown', { bubbles: true })); await wait(120); out.outside = [f.value, !!_dvCal()];
+    await _dvOpen('qs-dates'); await _dvIn('.lb-cal-nav[data-step="-1"]'); await _dvIn('.lb-cal-nav[data-step="-1"]'); await _dvIn('.lb-cal-today'); const s2 = _dvSeen() || {}; out.today = [s2.head === head, f.value, !!_dvCal()];
+    await _dvIn('.lb-cal-clear'); out.clear = [f.value, !!_dvCal()];
+    closeQS(); await wait(200); await restore();
+    return is(out, { opened: [true, []], esc: ['April 8th - 10th', false, true], outside: ['April 8th - 10th', false], today: [true, 'April 8th - 10th', true], clear: ['', false] }, 'typed Show Dates [text, calendar open(, Quick Setup open)]');
+  });
+  // 16kv-dates F: NEW
+  await check('dates 16kv: the keyboard alone: Alt + ArrowDown (or F4) in the box opens the calendar on its day, arrows move a day / a week, Page Down / Page Up a month, Enter and Space pick, Tab stays inside, Escape closes ONLY the calendar (Quick Setup stays, the cursor is back in the box), and keys pressed inside it never reach the show behind', async () => {
+    await _dvQS(); const f = $('#qs-date'), g = $('#qs-dates'); const out = {};
+    if (!_dvBtn('qs-date')) { closeQS(); return 'no calendar on Date Created'; }
+    const on = () => { const a = document.activeElement; return a && a.getAttribute ? a.getAttribute('data-d') : null; };
+    f.value = '2026-04-20'; f.focus(); const e0 = _dvKey('ArrowDown', { altKey: true }); await wait(150);
+    out.open = [!!_dvCal(), e0.defaultPrevented, on()];
+    _dvKey('ArrowRight'); _dvKey('ArrowDown'); out.moved = on(); _dvKey('PageDown'); out.pgdn = [on(), (_dvSeen() || {}).head]; _dvKey('PageUp'); _dvKey('PageUp'); out.pgup = [on(), (_dvSeen() || {}).head]; _dvKey('ArrowLeft'); _dvKey('ArrowUp');
+    const sig = () => JSON.stringify([screens.length, presets.length, dsms.length, _undoStack.length, $('#qs-show').value, $('#qs-screens-val').textContent]); const s0 = sig();
+    ['Backspace', 'Delete', 'd', 'z', '+'].forEach(k => _dvKey(k)); out.inside = [sig() === s0, !!_dvCal(), vis($('#qs-modal')), on()];
+    const tabs = []; for (let i = 0; i < 6; i++) { _dvKey('Tab'); const a = document.activeElement; tabs.push(a.closest && a.closest('#lb-cal') ? (a.getAttribute('data-d') ? 'day' : a.className.split(' ')[0]) : 'OUT:' + a.id); } out.tabs = tabs;
+    _dvKey('Enter'); await wait(150); out.enter = [f.value, !!_dvCal(), document.activeElement === f];
+    g.value = ''; g.focus(); _dvKey('F4'); await wait(150); const d0 = on(); _dvKey(' '); _dvKey('ArrowRight'); _dvKey('ArrowRight'); out.spacePreview = (_dvSeen() || {}).band; _dvKey(' '); await wait(150);
+    const t = new Date(), a0 = new Date(t.getFullYear(), t.getMonth(), t.getDate()), b0 = new Date(t.getFullYear(), t.getMonth(), t.getDate() + 2);
+    out.space = [d0 === _dvIso(a0), g.value === _dvText(a0, b0), !!_dvCal(), document.activeElement === g];
+    g.focus(); _dvKey('ArrowDown', { altKey: true }); await wait(150); const esc = _dvKey('Escape'); await wait(150);
+    out.escape = [esc.defaultPrevented, !!_dvCal(), vis($('#qs-modal')), document.activeElement === g];
+    closeQS(); await wait(200); await restore();
+    return is(out, { open: [true, true, '2026-04-20'], moved: '2026-04-28', pgdn: ['2026-05-28', 'May 2026'], pgup: ['2026-03-28', 'March 2026'], inside: [true, true, true, '2026-03-20'],
+      tabs: ['lb-cal-clear', 'lb-cal-today', 'lb-cal-my', 'lb-cal-nav', 'lb-cal-nav', 'day'], enter: ['2026-03-20', false, true], spacePreview: 1, space: [true, true, false, true], escape: [true, false, true, true] }, 'keyboard');
+  });
+  // 16kv-dates G: NEW
+  await check('dates 16kv: opening and closing the calendar without a pick writes nothing and leaves Save off (Escape, a click outside, its button again; Wire and Quick Setup); in Wire › Project Info a pick is ONE edit exactly like typing in that box: it writes the show, lights Save and, like typing there, records no Undo step', async () => {
+    const clean = async () => { _captureCleanBaseline(); _isDirty = false; _updateDirtyIndicator(); await wait(100); };
+    const lit = () => !!$('button.save-dirty');
+    openWireMode(); await wait(600); setShowMeta('dates', 'OCTOBER 14, 2026'); $('#show-date').value = ''; _wireSyncTitleBlock(); await clean(); const d0 = _dirtyStateString(), u0 = _undoStack.length, out = {};
+    if (!await _dvOpen('wtb-date')) { closeWireMode(); await wait(300); await restore(); return 'no calendar opens from Date Created in Wire'; }
+    _dvKey('Escape'); await wait(100);
+    await _dvOpen('wtb-dates'); document.body.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true })); await wait(100);
+    await _dvOpen('wtb-dates'); _dvBtn('wtb-dates').click(); await wait(100);
+    _recomputeDirty(); await wait(450); out.wireLook = [_dirtyStateString() === d0, !!_isDirty, lit(), _undoStack.length - u0, !!_dvCal()];
+    await _dvOpen('wtb-date'); const day = (_dvCal().querySelector('.lb-cal-day:not(.lb-cal-out)') || {}).getAttribute('data-d'); await _dvDay(day); await wait(450);
+    out.datePick = [$('#show-date').value === day, getProjectState().showDate === day, lit(), _undoStack.length - u0];
+    await clean(); const u1 = _undoStack.length;
+    await _dvOpen('wtb-dates'); await _dvDay('2026-10-14'); await _dvDay('2026-10-16'); await wait(450);
+    out.datesPick = [showMeta.dates, lit(), _undoStack.length - u1];
+    await clean(); const u2 = _undoStack.length, w = $('#wtb-dates'); w.focus(); w.value = 'APRIL 1, 2026'; fire(w, 'input'); w.blur(); await wait(450);
+    out.typed = [showMeta.dates, lit(), _undoStack.length - u2];
+    closeWireMode(); await wait(300);
+    await clean(); const d1 = _dirtyStateString(); await _dvQS(); await _dvOpen('qs-date'); _dvKey('Escape'); await wait(80); await _dvOpen('qs-dates'); $('#qs-show').dispatchEvent(new PointerEvent('pointerdown', { bubbles: true })); await wait(80);
+    const shown = $('#qs-dates').value; closeQS(); await wait(200); _recomputeDirty(); await wait(450);
+    out.qsLook = [_dirtyStateString() === d1, lit(), shown === showMeta.dates];
+    await restore();
+    return is(out, { wireLook: [true, false, false, 0, false], datePick: [true, true, true, 0], datesPick: ['OCTOBER 14-16, 2026', true, 0], typed: ['APRIL 1, 2026', true, 0], qsLook: [true, false, true] },
+      'Wire, looked only [same show, dirty, Save lit, undo steps, calendar open] / Date Created pick [show-date, saved as, Save lit, undo steps] / Show Dates pick / typed in the box (the same three) / Quick Setup, looked only');
+  });
+  // 16kv-dates H: NEW
+  await check('dates 16kv: the Excel cover (cue sheet and I/O Patch Excel): Show Dates print as they are; a blank Show Dates prints the Date Created WITH its label ("CREATED APRIL 8, 2026"); both blank = an empty line; the Show Type prints as "SHOW TYPE: CORPORATE"', async () => {
+    const book = async io => { if (!io) return xlRead(_doExportExcel(true)); const real = window.dl; let got = null; window.dl = function (b) { got = b; }; try { _sysExportIOExcel(); await wait(400); } finally { window.dl = real; } okDialogs(); return got ? xlRead(got) : null; };
+    const row = async io => { const wb = await book(io); return wb ? xlText(wb, ['C11', 'D15']) : 'no workbook'; };
+    const sd = $('#show-date'); const out = {};
+    sd.value = '2026-04-08'; setShowMeta('dates', 'April 8-10, 2026'); setShowMeta('format', 'Corporate'); out.both = [await row(false), await row(true)];
+    setShowMeta('dates', ''); out.created = [await row(false), await row(true)];
+    sd.value = ''; setShowMeta('format', ''); out.none = [await row(false), await row(true)];
+    await restore();
+    return is(out, { both: [['APRIL 8-10, 2026', 'SHOW TYPE: CORPORATE'], ['APRIL 8-10, 2026', 'SHOW TYPE: CORPORATE']], created: [['CREATED APRIL 8, 2026', 'SHOW TYPE: CORPORATE'], ['CREATED APRIL 8, 2026', 'SHOW TYPE: CORPORATE']], none: [['', ''], ['', '']] },
+      'cover C11 (dates) and D15 (Show Type): [cue sheet, I/O Patch]');
+  });
+  // 16kv-dates I: NEW
+  await check('dates 16kv: the three example shows carry their date as Show Dates (OCTOBER 14, 2026 / NOVEMBER 6, 2026 / OCTOBER 2, 2026) with Date Created empty, and each Excel cover prints that date where it did before', async () => {
+    const out = {};
+    for (const id of ['general-session', 'awards-night', 'town-hall']) {
+      const ex = (typeof _LB_EXAMPLES !== 'undefined' ? _LB_EXAMPLES : []).find(x => x.id === id); if (!ex) { out[id] = 'missing'; continue; }
+      _applyProjectText(JSON.stringify(ex.state)); await wait(700); okDialogs();
+      const wb = await xlRead(_doExportExcel(true));
+      out[id] = [$('#show-date').value, showMeta.dates, xlText(wb, ['C11'])[0]];
+    }
+    await restore();
+    return is(out, { 'general-session': ['', 'OCTOBER 14, 2026', 'OCTOBER 14, 2026'], 'awards-night': ['', 'NOVEMBER 6, 2026', 'NOVEMBER 6, 2026'], 'town-hall': ['', 'OCTOBER 2, 2026', 'OCTOBER 2, 2026'] }, '[Date Created, Show Dates, the cover date line]');
+  });
+  // 16kv-dates J: NEW
+  // 16kv-fix J: REPLACES the builder's check J (named in its header)
+  await check('dates 16kv: an older show FILE (Alice Test: Date 2026-09-24, Show dates typed "April 8th - 10th", Show format "3840x1920 59.94"), opened through the app\'s own Open (the file box, FileReader), comes in with all three intact: Date Created 2026-09-24, the typed Show Dates left alone by the calendar, "3840x1920 59.94" in the Show Type box (Quick Setup and Wire), and the cover prints APRIL 8TH - 10TH and SHOW TYPE: 3840X1920 59.94', async () => {
+    const st = JSON.parse(BASE); st.version = 3; st.showName = 'Alice Test'; st.showDate = '2026-09-24'; st.showVenue = 'Casa Alice';
+    st.showMeta = { client: 'AVE', jobNo: '001', designer: 'Colom', drawnBy: 'OC', projectVer: '', logo: '', dates: 'April 8th - 10th', address: 'xxx, xxxx, xxxx , xxxx', format: '3840x1920 59.94' };
+    const inp = $('#load-file-input'); if (!inp) return 'no file box';
+    const dt = new DataTransfer(); dt.items.add(new File([JSON.stringify(st, null, 2)], 'Alice Test.avlb', { type: 'application/octet-stream' })); inp.files = dt.files;
+    fire(inp, 'change'); await wait(400); okDialogs(); await wait(900); okDialogs(); await wait(200); const out = {};
+    out.opened = [$('#show-name').value, inp.value];
+    await _dvQS(); out.qs = [$('#qs-date').value, $('#qs-dates').value, $('#qs-format').value, ($('label[for="qs-format"]') || {}).textContent];
+    if (!await _dvOpen('qs-dates')) { closeQS(); await restore(); return 'no calendar opens from Show Dates'; }
+    out.cal = _dvSeen().pick; _dvKey('Escape'); await wait(100); out.after = $('#qs-dates').value; closeQS(); await wait(200);
+    openWireMode(); await wait(600); out.wire = [$('#wtb-date').value, $('#wtb-dates').value, $('#wtb-format').value, ($('label[for="wtb-format"]') || {}).textContent];
+    await _dvOpen('wtb-dates'); document.body.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true })); await wait(150); out.wireAfter = [$('#wtb-dates').value, showMeta.dates]; closeWireMode(); await wait(300);
+    const wb = await xlRead(_doExportExcel(true)); out.cover = xlText(wb, ['C11', 'D15']);
+    await restore();
+    return is(out, { opened: ['Alice Test', ''], qs: ['2026-09-24', 'April 8th - 10th', '3840x1920 59.94', 'Show Type'], cal: [], after: 'April 8th - 10th', wire: ['2026-09-24', 'April 8th - 10th', '3840x1920 59.94', 'Show Type'], wireAfter: ['April 8th - 10th', 'April 8th - 10th'], cover: ['APRIL 8TH - 10TH', 'SHOW TYPE: 3840X1920 59.94'] },
+      'opened [show name, file box emptied] / Quick Setup boxes + Show Type label / picked on the calendar / after Escape / Wire boxes + label / after a click outside / cover');
+  });
+  // 16kv-dates K: NEW
+  await check('dates 16kv: save + reload: a Date Created and Show Dates picked on the calendar are written by Update Show, come back identical after the show is saved and read again, and the calendar opens on them', async () => {
+    await _dvQS(); $('#qs-date').value = '2026-04-20'; $('#qs-dates').value = 'MARCH 30, 2026';
+    if (!await _dvOpen('qs-date')) { closeQS(); return 'no calendar opens from Date Created'; }
+    await _dvDay('2026-04-12'); await _dvOpen('qs-dates'); await _dvDay('2026-03-30'); await _dvIn('.lb-cal-nav[data-step="1"]'); await _dvDay('2026-04-02');
+    confirmQS(); await wait(700); okDialogs(); await wait(200);
+    const saved = JSON.stringify(getProjectState()); const s = JSON.parse(saved);
+    _applyProjectText(BASE); await wait(700); okDialogs(); _applyProjectText(saved); await wait(700); okDialogs();
+    const back = getProjectState(); await _dvQS(); await _dvOpen('qs-dates'); const cal = _dvSeen(); await _dvShut(); await _dvOpen('qs-date'); const cal1 = _dvSeen(); await _dvShut(); closeQS(); await wait(200);
+    await restore();
+    return is({ written: [s.showDate, s.showMeta.dates], back: [back.showDate, back.showMeta.dates, JSON.stringify(back.showMeta) === JSON.stringify(s.showMeta)], cal, cal1 },
+      { written: ['2026-04-12', 'MARCH 30 - APRIL 2, 2026'], back: ['2026-04-12', 'MARCH 30 - APRIL 2, 2026', true], cal: { head: 'March 2026', pick: ['2026-03-30', '2026-04-02'], band: 2, prev: [] }, cal1: { head: 'April 2026', pick: ['2026-04-12'], band: 0, prev: [] } },
+      'written / after the reload / the calendar on the reloaded Show Dates / on the reloaded Date Created');
+  });
+  // 16kv-fix N: NEW
+  const _fxLum = c => { const v = String(c).match(/\d+(\.\d+)?/g).slice(0, 3).map(x => { x = +x / 255; return x <= 0.03928 ? x / 12.92 : Math.pow((x + 0.055) / 1.055, 2.4); }); return 0.2126 * v[0] + 0.7152 * v[1] + 0.0722 * v[2]; };
+  const _fxCon = (a, b) => { const x = _fxLum(a), y = _fxLum(b); return Math.round((Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05) * 100) / 100; };
+  const _fxOver = (top, under) => { const t = String(top).match(/\d+(\.\d+)?/g).map(Number), u = String(under).match(/\d+(\.\d+)?/g).map(Number), a = t.length > 3 ? t[3] : 1; return 'rgb(' + [0, 1, 2].map(i => Math.round(t[i] * a + u[i] * (1 - a))).join(',') + ')'; };
+  await check('dates 16kv-fix: Space in a Date Created box opens the app calendar and takes the key, so the browser\'s own grey date picker never opens (Quick Setup and Wire › Project Info); Show Dates keeps Space for typing', async () => {
+    const out = {};
+    await _dvQS(); await _dvShut(); const f = $('#qs-date'); const v0 = f.value; f.focus(); const e1 = _dvKey(' '); await wait(150);
+    out.qs = [e1.defaultPrevented, !!_dvCal(), !!(_dvCal() && _dvCal().classList.contains('lb-cal-one')), f.value === v0]; await _dvShut();
+    const g = $('#qs-dates'); g.focus(); const e2 = _dvKey(' '); await wait(120); out.dates = [e2.defaultPrevented, !!_dvCal()]; await _dvShut();
+    closeQS(); await wait(200);
+    openWireMode(); await wait(600); const w = $('#wtb-date'); w.focus(); const e3 = _dvKey(' '); await wait(150);
+    out.wire = [e3.defaultPrevented, !!_dvCal(), !!(_dvCal() && _dvCal().classList.contains('lb-cal-one'))]; await _dvShut(); closeWireMode(); await wait(300);
+    await restore();
+    return is(out, { qs: [true, true, true, true], dates: [false, false], wire: [true, true, true] }, 'Space [key taken, calendar open, the one-day calendar, the date unchanged] in Quick Setup / in Show Dates [taken, open] / in Wire');
+  });
+  // 16kv-fix O: NEW
+  await check('dates 16kv-fix: a press on a blank part of the open calendar (the S M T W T F S row, its edge, the header gap) keeps the cursor in it, and while it is open the page behind never gets the keys: with the cursor on the page, Tab goes back into the calendar and Enter does not reach Quick Setup', async () => {
+    await _dvQS(); if (!await _dvOpen('qs-dates')) { closeQS(); await restore(); return 'no calendar opens from Show Dates'; }
+    const c = _dvCal(); const md = el => { if (!el) return 'missing'; const e = new MouseEvent('mousedown', { bubbles: true, cancelable: true, button: 0 }); el.dispatchEvent(e); return e.defaultPrevented; };
+    const out = { blank: [md(c.querySelector('.lb-cal-dow')), md(c), md(c.querySelector('.lb-cal-sp'))], day: md(c.querySelector('.lb-cal-day')) };
+    const name0 = $('#show-name').value, qs0 = $('#qs-show').value, n0 = screens.length;
+    if (document.activeElement) document.activeElement.blur();
+    const t1 = _dvKey('Tab'); await wait(80); const a1 = document.activeElement; out.tab = [t1.defaultPrevented, !!(a1 && a1.closest && a1.closest('#lb-cal'))];
+    if (document.activeElement) document.activeElement.blur(); const t2 = _dvKey('Enter'); await wait(400); okDialogs();
+    out.enter = [t2.defaultPrevented, !!_dvCal(), vis($('#qs-modal')), $('#show-name').value === name0, $('#qs-show').value === qs0, screens.length === n0];
+    await _dvShut(); if (vis($('#qs-modal'))) closeQS(); await wait(200); await restore();
+    return is(out, { blank: [true, true, true], day: false, tab: [true, true], enter: [true, true, true, true, true, true] },
+      'a press on [the S M T W T F S row, the card, the header gap] kept the cursor / a press on a day did not / Tab from the page [taken, cursor back in the calendar] / Enter from the page [taken, calendar still open, Quick Setup still open, show name, Quick Setup name, screens unchanged]');
+  });
+  // 16kv-fix P: NEW
+  await check('dates 16kv-fix: Wire Advanced: Delete / Backspace on the Project Info calendar buttons (a Tab stop between the boxes) never remove the picked tile from the drawing', async () => {
+    openWireMode(); await wait(600);
+    if (wireSettings.wireView !== 'advanced') { _wireSwitchToAdvanced(); await wait(400); okDialogs(); await wait(700); okDialogs(); }
+    if (!wireSettings || wireSettings.wireView !== 'advanced') { closeWireMode(); await wait(300); await restore(); return 'Wire did not go to Advanced'; }
+    wireAdvanced.dests.push({ id: 'fxKeyD', refId: screens[0].id, x: 600, y: 100 }); _wireState.selectedNodes = new Set(['adst:fxKeyD']); _wireRender(); await wait(250);
+    const n0 = wireAdvanced.dests.length, u0 = _undoStack.length, out = {};
+    for (const id of ['wtb-date', 'wtb-dates']) {
+      const b = _dvBtn(id); if (!b) { out[id] = 'no calendar button'; continue; }
+      b.focus(); _dvKey('Backspace'); _dvKey('Delete'); await wait(250);
+      out[id] = [document.activeElement === b, wireAdvanced.dests.length - n0, _wireState.selectedNodes.size, _undoStack.length - u0, !!_dvCal()];
+    }
+    _wireState.selectedNodes = new Set(); closeWireMode(); await wait(300); await restore();
+    return is(out, { 'wtb-date': [true, 0, 1, 0, false], 'wtb-dates': [true, 0, 1, 0, false] }, 'on the calendar button of [Date Created, Show Dates]: [cursor on it, tiles removed, still picked, undo steps, calendar open]');
+  });
+  // 16kv-fix Q: NEW
+  await check('dates 16kv-fix: with the calendar open in Wire › Project Info, Cmd / Ctrl shortcuts stay with the calendar (Cmd+Z, Ctrl+Z, Cmd+Shift+Z, Ctrl+Y undo and redo nothing behind it, the key is taken); closed, Cmd+Z undoes again', async () => {
+    openWireMode(); await wait(600); const nm0 = screens[0].name; pushUndo(); screens[0].name = nm0 + ' FX'; await wait(50); pushUndo(); screens[0].name = nm0 + ' FX2'; await wait(50); const u0 = _undoStack.length, r0 = _redoStack.length, out = {};
+    if (!await _dvOpen('wtb-date')) { closeWireMode(); await wait(300); await restore(); return 'no calendar opens from Date Created in Wire'; }
+    const k = [_dvKey('z', { metaKey: true }), _dvKey('z', { ctrlKey: true })]; await wait(300);   /* the two undo keys first: a redo key after them would put back what they took */
+    out.open = [k.map(e => e.defaultPrevented), _undoStack.length - u0, _redoStack.length - r0, screens[0].name === nm0 + ' FX2', !!_dvCal()];
+    const k2 = [_dvKey('z', { metaKey: true, shiftKey: true }), _dvKey('y', { ctrlKey: true })]; await wait(300); out.redoKeys = [k2.map(e => e.defaultPrevented), _undoStack.length - u0, _redoStack.length - r0, !!_dvCal()];
+    await _dvShut(); if (document.activeElement) document.activeElement.blur(); _dvKey('z', { metaKey: true }); await wait(300);
+    out.closed = [_undoStack.length - u0, screens[0].name === nm0 + ' FX', !!_dvCal()];
+    closeWireMode(); await wait(300); await restore();
+    return is(out, { open: [[true, true], 0, 0, true, true], redoKeys: [[true, true], 0, 0, true], closed: [-1, true, false] }, 'calendar open, Cmd+Z and Ctrl+Z [keys taken, undo steps, redo steps, the edits behind it kept, still open] / then Cmd+Shift+Z and Ctrl+Y [taken, undo, redo, open] / calendar closed, Cmd+Z [undo steps, the last edit undone, open]');
+  });
+  // 16kv-fix R: NEW
+  await check('dates 16kv-fix: a window too short for the calendar under the top bar (a phone held sideways) gives it the room there is: it ends above the bottom edge, scrolls inside, and Clear and Today can be scrolled to in full', async () => {
+    await _dvQS(); await _dvShut(); const f = $('#qs-dates'), safe = Math.max(8, _topbarSafeTop());
+    const sc = (() => { for (let p = f.parentElement; p; p = p.parentElement) { const cs = getComputedStyle(p); if (/(auto|scroll)/.test(cs.overflowY) && p.scrollHeight > p.clientHeight) return p; } return null; })();
+    f.scrollIntoView({ block: 'start' }); if (sc) sc.scrollTop -= safe + 20; await wait(200);   /* the box just under the top bar, as on a phone held sideways */
+    const fr = f.getBoundingClientRect(), H = Math.ceil(fr.bottom) + 60;
+    const d = Object.getOwnPropertyDescriptor(window, 'innerHeight'); let out = null;
+    try {
+      Object.defineProperty(window, 'innerHeight', { configurable: true, enumerable: true, get: () => H });
+      if (!await _dvOpen('qs-dates')) { out = 'no calendar opens from Show Dates'; }
+      else {
+        await wait(400); const c = _dvCal(), nat = c.scrollHeight + (c.offsetHeight - c.clientHeight);
+        if (!(H - safe - 8 < nat)) out = 'set-up: the short window (' + H + ' px, top bar ' + safe + ') still holds the calendar (' + nat + ' px)';
+        else {
+          const r = c.getBoundingClientRect(); c.scrollTop = c.scrollHeight; await wait(100);
+          const r2 = c.getBoundingClientRect(), td = c.querySelector('.lb-cal-today').getBoundingClientRect(), cl = c.querySelector('.lb-cal-clear').getBoundingClientRect();
+          out = [r.bottom <= H - 8 + 0.5, r.top >= safe - 0.5, c.scrollHeight > c.clientHeight, td.top >= r2.top - 0.5 && td.bottom <= r2.bottom + 0.5, cl.top >= r2.top - 0.5 && cl.bottom <= r2.bottom + 0.5];
+        }
+      }
+    } finally { await _dvShut(); if (d) Object.defineProperty(window, 'innerHeight', d); }
+    closeQS(); await wait(200); await restore();
+    if (typeof out === 'string') return out;
+    return is(out, [true, true, true, true, true], '[ends above the bottom edge, below the top bar, scrolls inside, Today in full once scrolled, Clear in full once scrolled]');
+  });
+  // 16kv-fix S: NEW
+  await check('dates 16kv-fix: a narrow desktop window (the phone build without a touch screen) keeps Date Created a typed box: the box, not the calendar button, is under the pointer at its left, and the button sits at its right end', async () => {
+    await _dvQS(); await _dvShut(); const cls = document.body.className; let out = null;
+    try {
+      document.body.classList.add('is-mobile'); const f = $('#qs-date'); f.scrollIntoView({ block: 'center' });
+      const r = f.getBoundingClientRect(), top = document.elementFromPoint(r.left + r.width * 0.12, r.top + r.height / 2), b = _dvBtn('qs-date'), br = b ? b.getBoundingClientRect() : null;
+      out = { touchOnly: matchMedia('(pointer: coarse) and (hover: none)').matches, atLeft: top === f, button: br ? [Math.abs(r.right - br.right) <= 1.5, br.width >= 44 && br.width <= r.width / 2, br.height >= 44] : 'no button' };
+    } finally { document.body.className = cls; }
+    closeQS(); await wait(200); await restore();
+    return is(out, { touchOnly: false, atLeft: true, button: [true, true, true] }, 'this gate window [touch-only screen] / the box under the pointer at its left / the button [at the right end, 44 px up to half the box, 44 px tall]');
+  });
+  // 16kv-fix T: NEW
+  await check('dates 16kv-fix: the dimmed days of the month before / after that sit INSIDE a Show Dates band read on the band (3 : 1 or more, at least as well as a dimmed day on the plain card, still quieter than a day of the month)', async () => {
+    await _dvQS(); $('#qs-dates').value = 'SEPTEMBER 28 - OCTOBER 2, 2026'; if (!await _dvOpen('qs-dates')) { closeQS(); await restore(); return 'no calendar opens from Show Dates'; }
+    await _dvIn('.lb-cal-nav[data-step="1"]'); const c = _dvCal(), card = getComputedStyle(c).backgroundColor;
+    const dim = [...c.querySelectorAll('.lb-cal-day.lb-cal-out.lb-cal-in')], day = c.querySelector('.lb-cal-day.lb-cal-in:not(.lb-cal-out)'), plain = c.querySelector('.lb-cal-day.lb-cal-out:not(.lb-cal-in)');
+    if (dim.length !== 2 || !day || !plain) { await _dvShut(); closeQS(); await restore(); return 'expected Sept 29 and 30 dimmed inside the October band, got ' + dim.map(b => b.getAttribute('data-d')); }
+    const band = _fxOver(getComputedStyle(dim[0], '::before').backgroundColor, card);
+    const onBand = _fxCon(getComputedStyle(dim[0]).color, band), onCard = _fxCon(getComputedStyle(plain).color, card), dayOnBand = _fxCon(getComputedStyle(day).color, band);
+    await _dvShut(); closeQS(); await wait(200); await restore();
+    return is([onBand >= 3, onBand >= onCard, dayOnBand > onBand], [true, true, true], 'dimmed day on the band ' + onBand + ' : 1 [3 : 1 or more, at least the plain card\'s ' + onCard + ' : 1, below a day of the month on the band ' + dayOnBand + ' : 1]');
+  });
+  // 16kv-fix U: NEW
+  await check('dates 16kv-fix: the calendar buttons and the Help name the key the way a Mac keyboard does too: Alt/Option + ↓', async () => {
+    const tips = $$('.lb-calbtn').map(b => b.title), help = (($('#help-overlay') || {}).textContent || '').replace(/\s+/g, ' ');
+    return is([tips.length, tips.every(t => /\(Alt\/Option \+ ↓\)/.test(t)), /Alt \/ Option \+ ↓/.test(help), /Alt \+ ↓/.test(help)], [4, true, true, false], '[calendar buttons, all say Alt/Option + ↓, the Help says Alt / Option + ↓, the Help still says Alt + ↓]');
+  });
+  // 16kv-fix V: NEW
+  await check('docs 16kv-fix: the public guided tour (deploy/tour.html) names the Quick Setup field Date Created', async () => {
+    let t = ''; try { const r = await fetch('tour.html', { cache: 'no-store' }); t = r.ok ? await r.text() : ('HTTP ' + r.status); } catch (e) { t = 'fetch failed: ' + e.message; }
+    return is([/Show Name, Date Created, and Venue/.test(t), /Show Name, Date, and Venue/.test(t)], [true, false], 'tour.html [says Date Created, still says Date]');
   });
   await check('Quick Start: opens with the three example shows and closes', async () => { openQS(); await wait(400); const m = $('#qs-modal'); const open = vis(m); const ex = (m ? m.innerHTML.match(/lbOpenExample\('/g) : null) || []; closeQS(); await wait(250); return is([open, ex.length, vis($('#qs-modal'))], [true, 3, false], 'Quick Start'); });
   await check('Help: opens and closes', async () => { actions.help(); await wait(400); const t = document.body.textContent; const open = /Quick Setup|Getting Started|Help/i.test(t); closeHelp(); await wait(200); return open ? true : 'Help did not open'; });

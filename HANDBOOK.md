@@ -134,6 +134,23 @@ anchor on the function name and replace the first occurrence after it, never all
   step-down order unchanged. One window-capture listener owns (i) and (ii) (search `16ks-esc`); a list / menu / window floating ABOVE
   the box still closes first (`_lbEscTop`, 16kp). A new text box needs nothing; a new live box is covered as long as it writes the
   show from its `input` event (16ks-escfix: the show is put back in place from the picture taken at the FIRST keystroke, `_lbEscOrig.s0`; nothing typed = nothing put back; a mouse edit made while the box kept focus is folded into that picture by `_lbEscRebase`, so it survives).
+- **Date Created / Show Dates: ONE calendar** (owner, 2026-09-25, build 16kv; search `16kv-dates`). `_lbCalOpen(field)` serves every box
+  with `class="lb-cal-field"` (`#qs-date` / `#wtb-date`: `data-cal="one"`; `#qs-dates` / `#wtb-dates`: `data-cal="range"`). Date Created
+  stays `<input type="date">` and keeps its YYYY-MM-DD value: every reader of `#show-date` is unchanged; only the browser's picker is
+  hidden (`::-webkit-calendar-picker-indicator`) and Alt + ↓ / F4 / Space (Space in Date Created only) are taken. Show Dates stays free text in `showMeta.dates`; the
+  calendar writes `_lbCalText(a,b)` and reads back only that form (`_lbCalParse`); anything else typed is never touched. A pick writes
+  the box and fires `input` + `change`, exactly like typing: Quick Setup applies it on Build / Update, Wire commits it through the
+  `data-tb` listener (lights Save; no Undo step, like every Project Info field). Keys: `_lbCalKeys` is a window capture listener
+  registered BEFORE the 16ks Escape listener and `_dlgKeyGuard`, so the calendar keeps its own keys over Quick Setup; `#lb-cal` is
+  the FIRST entry of `_lbEscTop`. The Show Type box is `showMeta.format` under a new label (no migration). Excel cover:
+  `_xlsxCoverInfo` prints a blank Show Dates as "CREATED <date>" and D15 as "SHOW TYPE: <format>". The three examples carry their
+  date in `showMeta.dates`, `showDate` empty (the `site/packets` files still have the old form).
+  16kv-fix: Cmd / Ctrl keys pressed in the calendar stop there too (no page shortcut runs behind it; s z y d n are also
+  default-prevented, as in `_dlgKeyGuard`). Delete / Backspace on a `.lb-calbtn` stop (it is a Tab stop between Wire's Project
+  Info boxes, which stop every key). A mousedown on a blank part of `#lb-cal` is default-prevented, so focus stays in it, and a
+  key with focus on `<body>` while it is open puts focus back (`_lbCalFocusActive`). `_lbCalFitHeight` caps its height to the
+  room under `_topbarSafeTop()` (a phone held sideways) and it scrolls inside. The whole-box Date Created button
+  (`.lb-cal-whole`) applies only under `(pointer: coarse) and (hover: none)`: a narrow mouse window is `is-mobile` too and keeps typing.
 - **The Modifiers menu** (AOI Overlays, Blend Zones, Dead Space, Free Position, Fit Canvas) opens from the MODIFIERS button
   on each preset tile only. The status-bar button that also opened it is now a greyed-out **Educator** placeholder
   (`#tb-educator`, disabled) for a future build. The switches are one session-wide view state: not per preset, not in the
@@ -329,3 +346,7 @@ browser page must have window focus (`Emulation.setFocusEmulationEnabled`, re-ap
 Phone / tablet build: read `PHONE.md` before touching anything under `initMobileShell` or the `body.is-mobile` CSS.
 
 Reading receipt: **HANDBOOK-12G-SDI**. Report this code to the owner after reading this handbook in full.
+
+<!-- 16kv-dates -->
+
+<!-- 16kv-fix -->

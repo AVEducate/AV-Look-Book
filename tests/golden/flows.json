@@ -1433,11 +1433,15 @@
    "ok": true
   },
   {
-   "name": "Excel cue sheet: the first tab is the Cover (show info in the owner's cells, merged, black and white frame), the cue sheet is the second tab",
+   "name": "Excel cue sheet: the first tab is the Cover (show info in the owner's cells, the Show Type line reading SHOW TYPE:, merged, black and white frame), the cue sheet is the second tab",
    "ok": true
   },
   {
-   "name": "Excel cover: blank show info falls back (the single show date written out, N/A venue / address / format / designer lines empty, VERSION 1) and the merges stay",
+   "name": "Excel cover: blank show info falls back (a blank Show Dates prints the Date Created as CREATED APRIL 8, 2026, N/A venue / address / Show Type / designer lines empty, VERSION 1) and the merges stay",
+   "ok": true
+  },
+  {
+   "name": "Excel cover: the date line (Show Dates, or CREATED + the Date Created) spans C11:F11, as wide as the venue and address lines, so a range across months and the CREATED line print in one cell at the cover's size (cue sheet and I/O Patch Excel)",
    "ok": true
   },
   {
@@ -1478,6 +1482,86 @@
   },
   {
    "name": "show info: Show dates / Venue address / Show format edit in Wire Project Info and Quick Setup in step, save with the show, load blank from an old show, and stay off the Wire sheet and the Look Book",
+   "ok": true
+  },
+  {
+   "name": "dates 16kv: the SHOW card reads DATE CREATED and SHOW TYPE (a typed box with \"Corporate, Touring, Installation…\" greyed inside it) next to SHOW DATES; Wire › Project Info reads Date Created / Show Dates / Show Type with every label in full; the phone Show card reads Date Created and the printed Wire sheet \"Date Created:\"",
+   "ok": true
+  },
+  {
+   "name": "dates 16kv: Date Created and Show Dates open ONE calendar that looks the same from both boxes in Quick Setup and in Wire › Project Info (card #14181f, #252a33 hairline, 4 px corners, one size, square days with rounded corners, the picked day solid #a3c7fa with dark text at 4.5 : 1 or more, S M T W T F S, the ▾ triangle, ↑ ↓, Clear and Today), under or over its box and never off the sides",
+   "ok": true
+  },
+  {
+   "name": "dates 16kv: Date Created picks ONE day: a click stores it as YYYY-MM-DD (the box stays a typed date box), the calendar closes and the cursor is back in the box; Today picks today, Clear empties it; the show changes only on Update Show",
+   "ok": true
+  },
+  {
+   "name": "dates 16kv: Show Dates picks a START and an END: both are solid squares, the days between one band (the day under the mouse previews it), a pick before the start becomes the start, the same day twice is one day, stepping months keeps the range, and the box reads APRIL 8-10, 2026 / MARCH 30 - APRIL 2, 2026 / DECEMBER 30, 2026 - JANUARY 2, 2027 / APRIL 8, 2026",
+   "ok": true
+  },
+  {
+   "name": "dates 16kv: Show Dates stays a typed box: \"April 8th - 10th\" typed by hand opens the calendar on this month with nothing picked and is never changed by Escape, a click outside or Today (Today only moves the view to this month); Clear empties the box",
+   "ok": true
+  },
+  {
+   "name": "dates 16kv: the keyboard alone: Alt + ArrowDown (or F4) in the box opens the calendar on its day, arrows move a day / a week, Page Down / Page Up a month, Enter and Space pick, Tab stays inside, Escape closes ONLY the calendar (Quick Setup stays, the cursor is back in the box), and keys pressed inside it never reach the show behind",
+   "ok": true
+  },
+  {
+   "name": "dates 16kv: opening and closing the calendar without a pick writes nothing and leaves Save off (Escape, a click outside, its button again; Wire and Quick Setup); in Wire › Project Info a pick is ONE edit exactly like typing in that box: it writes the show, lights Save and, like typing there, records no Undo step",
+   "ok": true
+  },
+  {
+   "name": "dates 16kv: the Excel cover (cue sheet and I/O Patch Excel): Show Dates print as they are; a blank Show Dates prints the Date Created WITH its label (\"CREATED APRIL 8, 2026\"); both blank = an empty line; the Show Type prints as \"SHOW TYPE: CORPORATE\"",
+   "ok": true
+  },
+  {
+   "name": "dates 16kv: the three example shows carry their date as Show Dates (OCTOBER 14, 2026 / NOVEMBER 6, 2026 / OCTOBER 2, 2026) with Date Created empty, and each Excel cover prints that date where it did before",
+   "ok": true
+  },
+  {
+   "name": "dates 16kv: an older show FILE (Alice Test: Date 2026-09-24, Show dates typed \"April 8th - 10th\", Show format \"3840x1920 59.94\"), opened through the app's own Open (the file box, FileReader), comes in with all three intact: Date Created 2026-09-24, the typed Show Dates left alone by the calendar, \"3840x1920 59.94\" in the Show Type box (Quick Setup and Wire), and the cover prints APRIL 8TH - 10TH and SHOW TYPE: 3840X1920 59.94",
+   "ok": true
+  },
+  {
+   "name": "dates 16kv: save + reload: a Date Created and Show Dates picked on the calendar are written by Update Show, come back identical after the show is saved and read again, and the calendar opens on them",
+   "ok": true
+  },
+  {
+   "name": "dates 16kv-fix: Space in a Date Created box opens the app calendar and takes the key, so the browser's own grey date picker never opens (Quick Setup and Wire › Project Info); Show Dates keeps Space for typing",
+   "ok": true
+  },
+  {
+   "name": "dates 16kv-fix: a press on a blank part of the open calendar (the S M T W T F S row, its edge, the header gap) keeps the cursor in it, and while it is open the page behind never gets the keys: with the cursor on the page, Tab goes back into the calendar and Enter does not reach Quick Setup",
+   "ok": true
+  },
+  {
+   "name": "dates 16kv-fix: Wire Advanced: Delete / Backspace on the Project Info calendar buttons (a Tab stop between the boxes) never remove the picked tile from the drawing",
+   "ok": true
+  },
+  {
+   "name": "dates 16kv-fix: with the calendar open in Wire › Project Info, Cmd / Ctrl shortcuts stay with the calendar (Cmd+Z, Ctrl+Z, Cmd+Shift+Z, Ctrl+Y undo and redo nothing behind it, the key is taken); closed, Cmd+Z undoes again",
+   "ok": true
+  },
+  {
+   "name": "dates 16kv-fix: a window too short for the calendar under the top bar (a phone held sideways) gives it the room there is: it ends above the bottom edge, scrolls inside, and Clear and Today can be scrolled to in full",
+   "ok": true
+  },
+  {
+   "name": "dates 16kv-fix: a narrow desktop window (the phone build without a touch screen) keeps Date Created a typed box: the box, not the calendar button, is under the pointer at its left, and the button sits at its right end",
+   "ok": true
+  },
+  {
+   "name": "dates 16kv-fix: the dimmed days of the month before / after that sit INSIDE a Show Dates band read on the band (3 : 1 or more, at least as well as a dimmed day on the plain card, still quieter than a day of the month)",
+   "ok": true
+  },
+  {
+   "name": "dates 16kv-fix: the calendar buttons and the Help name the key the way a Mac keyboard does too: Alt/Option + ↓",
+   "ok": true
+  },
+  {
+   "name": "docs 16kv-fix: the public guided tour (deploy/tour.html) names the Quick Setup field Date Created",
    "ok": true
   },
   {

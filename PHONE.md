@@ -95,9 +95,9 @@ Notes / Actions columns run off the right edge. Landscape is fine.
 |---|---|---|
 | Empty state, "No Preset Yet" | No destinations and no presets. One button opens Quick Setup. **(build 16ki)** a second control, "Open a show file", sits here. | `emptyStateHTML`, `openQS` |
 | Restore Draft dialog | Launch, when a browser draft exists. | `restoreAutoSave` |
-| Quick Setup (new show) | From the empty state. Same desktop modal; the three example shows are here. | `openQS`, `lbOpenExample` |
+| Quick Setup (new show) | From the empty state. Same desktop modal; the three example shows are here. **(build 16kv)** Date Created and Show Dates open the app's calendar (44 x 44 px days), not the phone's date wheel: a tap anywhere on Date Created opens it (touch screens: a narrow desktop window keeps the typed box); Show Dates keeps its keyboard and opens it from its calendar button. Held sideways the calendar fits under the top bar and scrolls inside (16kv-fix). | `openQS`, `lbOpenExample` |
 | Preset list (home) | Default Video Presets view: the Show card, one card per preset (code, name, notes, pencil, four count chips: Dest / AUX / Outs / Layers), then "+ New Preset". | `renderMobileMain`, `quickGuideCardHTML`, `presetCardHTML`, `mbPresetStats` |
-| Show card | Top of the list. Read-only show name, date, venue. Tap = Quick Setup in edit mode (no examples). Paper-plane = Send. **(build 16ki)** also carries "Open a show file". | `quickGuideCardHTML`, `openQSEdit`, `confirmQSEdit`, `shareProject` |
+| Show card | Top of the list. Read-only show name, Date Created, venue. Tap = Quick Setup in edit mode (no examples). Paper-plane = Send. **(build 16ki)** also carries "Open a show file". | `quickGuideCardHTML`, `openQSEdit`, `confirmQSEdit`, `shareProject` |
 | Preset edit | Pencil on a preset card. Full screen, tool pill hidden (`body.mb-layers`). Header: back arrow, code + name, "Edit Preset" badge. | `mobileOpenPreset` → `mobileOpenLayers` → `layersViewHTML` |
 | Visualiser | Sticky under the header. All destinations plus the AUX / DSM strip, drawn by the desktop helpers and scaled to the width. Display only; a tap opens the matching row. | `mbPresetVisual`, `mbVisTap`, `mbScrollToRow` |
 | Destination row | Tap a wall or its row. Move Left / Right, then the real desktop Destination panel docked inline. | `mbDestRow`, `mbOpenDestInline`, `mbMoveDest` |
@@ -282,7 +282,7 @@ decision on record; nobody wrote down whether it was left out on purpose.
 
 **What shows:** every destination, every AUX / DSM, every preset with its name and notes, every layer's content,
 name and size, the BG still on each wall, I/O connector / type / resolution / notes for sources, destinations, AUX
-and multiviewers, the Simple wire diagram, and show name / date / venue plus Project Info (through the Show card).
+and multiviewers, the Simple wire diagram, and show name / Date Created / venue plus Project Info (through the Show card).
 
 **What is hidden but still in the file:** Video Presets Advanced work (clips, timeline, speed, source crops, the BG
 as layer 0), AOI / blend / dead-space / free-position overlays, Wire Advanced pages, tiles and routers, the Wire
@@ -420,6 +420,8 @@ changes `tests/golden/*.lookbook.html`; regenerate the goldens on purpose in the
 | 2026-09-07 | 16dy | Rounded rectangles, not pills (reverses the 16dw pill move). |
 | 2026-09-11 to 09-15 | 16ef, 16ei, 16ht | Quick Setup wraps at phone width; Wire thumbnail column rule; Video Presets Advanced hidden and blocked on the phone. |
 | 2026-09-20 | 16kf to 16kh | Phone audit: `private/study-2026-09-20/mobile_code.md`, `mobile_gui.md`, `mobile_docs.md`. Owner's decisions in section 1. This document drafted. |
+| 2026-09-25 | 16kv | Show card "Date" reads "Date Created". Quick Setup: Date Created and Show Dates open the app's own calendar with 44 px days (Show Dates: a first and a last day); Show format is Show Type. Budgets unchanged. |
+| 2026-09-25 | 16kv-fix | The calendar never hangs below a phone held sideways (844 x 390, 812 x 375): it gets the room under the top bar and scrolls, Clear and Today stay reachable. The whole-box Date Created button is for touch screens only. Budgets unchanged. |
 | 2026-09-20 | 16ki | Visualiser fits its box and re-fits on rotation; the picture follows every edit made in a docked panel; docked panel headers can never cover the visualiser (sticky under it in portrait, not sticky in landscape); Help tab bar scrolls by touch; wording ("Tap here to start", example message built from the show, DSM badge, I/O empty text, stat chip colours and per-preset AUX maths); Wire on the phone no longer writes `wireView` into the show; touch targets to 44 px and inputs to 16 px (phone-only CSS); "Open a show file" on the empty state and the Show card; tablets get the desktop layout; `tests/mobile_probe.js` added to the gate. |
 
 Git history starts 2026-09-11, so the June work is not in it; the dated snapshots are in `backups/` (not in git).
@@ -427,3 +429,7 @@ Commits whose messages mention the phone: 959f23a (16ht), 7eb949a (16is), 94f3bd
 
 ---
 Reading receipt: **PHONE-44PX-REVIEW**. Report this code to the owner after reading this document in full.
+
+<!-- 16kv-dates -->
+
+<!-- 16kv-fix -->
