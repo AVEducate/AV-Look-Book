@@ -54,6 +54,7 @@ await new Promise((resolve, reject) => { server.once('error', reject); server.li
 mkdirSync(OUT, { recursive: true });
 const profile = join(OUT, 'chrome-profile-' + process.pid);   // a clean profile every run (no autosave draft, so the app boots to the empty state); tests/out/ is git-ignored
 const chrome = spawn(CHROME, ['--headless=new', '--disable-gpu', '--no-first-run', '--no-default-browser-check', '--mute-audio', '--hide-scrollbars',
+  '--disable-background-timer-throttling', '--disable-backgrounding-occluded-windows', '--disable-renderer-backgrounding',   /* keep a hidden / covered page running (see run_smoke.mjs) */
   '--remote-debugging-port=' + CDP, '--user-data-dir=' + profile, '--window-size=' + PORTRAIT.join(','), 'about:blank'], { stdio: 'ignore' });
 let cleaned = false;
 const chromeGone = new Promise(r => chrome.once('exit', r));

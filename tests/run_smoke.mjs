@@ -35,6 +35,10 @@ const flowsSrc = readFileSync(join(ROOT, 'tests', 'flows_probe.js'), 'utf8');
 const server = spawn('python3', ['-m', 'http.server', String(PORT), '--bind', '127.0.0.1', '--directory', DEPLOY], { stdio: 'ignore' });
 const profile = join(tmpdir(), 'lb-smoke-profile-' + process.pid);
 const chrome = spawn(CHROME, ['--headless=new', '--disable-gpu', '--no-first-run', '--no-default-browser-check', '--mute-audio',
+  /* keep a page that Chrome thinks is hidden or covered RUNNING: without these a paused page stops its timers and frames,
+     so the probe (and its own per-check watchdog) waits forever. A 16kv run sat 8 h 44 min at check 88 with the page
+     'hidden' and requestAnimationFrame dead (2026-09-25). */
+  '--disable-background-timer-throttling', '--disable-backgrounding-occluded-windows', '--disable-renderer-backgrounding', 
   '--autoplay-policy=no-user-gesture-required', '--remote-debugging-port=' + CDP, '--user-data-dir=' + profile, '--window-size=1440,900', 'about:blank'], { stdio: 'ignore' });
 const cleanup = () => { try { chrome.kill(); } catch {} try { server.kill(); } catch {} try { rmSync(profile, { recursive: true, force: true }); } catch {} };
 process.on('exit', cleanup);
@@ -148,7 +152,27 @@ try {
   await loadApp(send);
   // the snapshot stage opens export windows; make sure THIS page is the focused one again before the flows type into fields
   try { await send('Page.bringToFront'); await send('Emulation.setFocusEmulationEnabled', { enabled: true }); } catch (e) {}
-  const flows = await evalJs(send, '(' + flowsSrc + ')()');
+  /* A watchdog OUTSIDE the page. The probe's own per-check watchdog lives in the page and cannot fire if the page is paused,
+     so the runner watches window.__lbCheckDone once a minute: no check finished in STALL_MIN minutes (longer than the
+     in-page limit of 10 min + 2 min settle) = the run is stuck. It then FAILS with the name of the stuck check instead of
+     hanging all night. */
+  const STALL_MIN = +(process.env.LB_STALL_MIN || 15); let lastDone = -1, lastMove = Date.now(), stalled = null;
+  const guard = setInterval(async () => {
+    try {
+      const r = await send('Runtime.evaluate', { expression: 'JSON.stringify([window.__lbCheckDone||0, String(window.__lbCheckNow||""), document.visibilityState])', returnByValue: true });
+      const [done, now, vis] = JSON.parse(r.result.value);
+      if (done !== lastDone) { lastDone = done; lastMove = Date.now(); return; }
+      if (Date.now() - lastMove > STALL_MIN * 60000) { stalled = { done, now, vis }; clearInterval(guard); }
+    } catch (e) {}
+  }, 60000);
+  const flows = await Promise.race([
+    evalJs(send, '(' + flowsSrc + ')()'),
+    new Promise(res => { const t = setInterval(() => { if (stalled) { clearInterval(t); res(null); } }, 5000); }),
+  ]).finally(() => clearInterval(guard));
+  if (!flows) {
+    console.log('✗ flows: STALLED — no check finished in ' + STALL_MIN + ' minutes. ' + stalled.done + ' checks done; stuck on: ' + stalled.now + ' (page ' + stalled.vis + ')');
+    console.log('SMOKE: FAIL'); process.exit(1);
+  }
   const result = { checks: flows.checks, pageErrors };
   writeFileSync(join(OUT, 'flows.json'), JSON.stringify(result, null, 1));
   const bad = flows.checks.filter(c => !c.ok);
