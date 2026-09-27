@@ -58,7 +58,8 @@ const chrome = spawn(CHROME, ['--headless=new', '--disable-gpu', '--no-first-run
   '--remote-debugging-port=' + CDP, '--user-data-dir=' + profile, '--window-size=' + PORTRAIT.join(','), 'about:blank'], { stdio: 'ignore' });
 let cleaned = false;
 const chromeGone = new Promise(r => chrome.once('exit', r));
-const cleanup = () => { if (cleaned) return; cleaned = true; try { chrome.kill(); } catch {} try { server.close(); server.closeAllConnections(); } catch {} try { rmSync(profile, { recursive: true, force: true, maxRetries: 10, retryDelay: 200 }); } catch {} };
+const cleanup = () => { if (cleaned) return; cleaned = true; try { chrome.kill('SIGKILL'); } catch {}   /* SIGKILL: a frozen Chrome ignores a polite stop */
+  try { server.close(); server.closeAllConnections(); } catch {} try { rmSync(profile, { recursive: true, force: true, maxRetries: 10, retryDelay: 200 }); } catch {} };
 // the tidy way out: Chrome is still writing to its profile for a moment after the kill, so wait for it to be gone before the folder is removed
 const shutdown = async () => { try { chrome.kill(); } catch {} await Promise.race([chromeGone, sleep(4000)]); await sleep(300); cleanup(); };
 process.on('exit', cleanup); process.on('SIGINT', () => { cleanup(); process.exit(130); }); process.on('SIGTERM', () => { cleanup(); process.exit(143); });
@@ -91,7 +92,11 @@ function connect(url) {
     else if (d.method === 'Page.javascriptDialogOpening') { pageErrors.push({ where, text: 'native dialog: ' + d.params.type + ' ' + String(d.params.message).slice(0, 120) }); send('Page.handleJavaScriptDialog', { accept: true }).catch(() => {}); }
     for (const l of listeners) l(d);
   };
+  /* a DevTools socket that closes fails every waiting request (see run_smoke.mjs) */
+  let closed = false;
+  ws.onclose = () => { closed = true; for (const cb of pending.values()) cb({ error: { message: 'the DevTools socket closed' } }); pending.clear(); };
   const send = (method, params = {}) => new Promise((resolve, reject) => {
+    if (closed) return reject(new Error(method + ': the DevTools socket closed'));
     const n = ++id; pending.set(n, d => d.error ? reject(new Error(method + ': ' + d.error.message)) : resolve(d.result));
     ws.send(JSON.stringify({ id: n, method, params }));
   });

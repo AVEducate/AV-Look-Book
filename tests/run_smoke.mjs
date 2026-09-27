@@ -40,8 +40,11 @@ const chrome = spawn(CHROME, ['--headless=new', '--disable-gpu', '--no-first-run
      'hidden' and requestAnimationFrame dead (2026-09-25). */
   '--disable-background-timer-throttling', '--disable-backgrounding-occluded-windows', '--disable-renderer-backgrounding', 
   '--autoplay-policy=no-user-gesture-required', '--remote-debugging-port=' + CDP, '--user-data-dir=' + profile, '--window-size=1440,900', 'about:blank'], { stdio: 'ignore' });
-const cleanup = () => { try { chrome.kill(); } catch {} try { server.kill(); } catch {} try { rmSync(profile, { recursive: true, force: true }); } catch {} };
+const cleanup = () => { try { chrome.kill('SIGKILL'); } catch {}   /* SIGKILL: a frozen Chrome ignores a polite stop and would be left running */
+  try { server.kill(); } catch {} try { rmSync(profile, { recursive: true, force: true }); } catch {} };
 process.on('exit', cleanup);
+/* a stopped run closes its Chrome and server too (before, only a normal exit did, and a killed run left both running) */
+process.on('SIGINT', () => { cleanup(); process.exit(130); }); process.on('SIGTERM', () => { cleanup(); process.exit(143); });
 
 async function target() {
   for (let i = 0; i < 60; i++) {
@@ -67,7 +70,13 @@ function connect(url) {
     // not app errors: the missing favicon, and Chrome noting the "leave without saving?" prompt when the runner navigates away
     else if (d.method === 'Log.entryAdded' && d.params.entry.level === 'error' && !/favicon\.ico/.test(d.params.entry.url || '') && !/beforeunload/.test(d.params.entry.text || '')) pageErrors.push({ where, text: 'log: ' + String(d.params.entry.text).slice(0, 200) + ' ' + (d.params.entry.url || '').replace(/^https?:\/\/[^/]+/, '') });
   };
+  /* a DevTools socket that closes (the Mac slept, Chrome died) must FAIL every waiting request, not leave it pending:
+     2026-09-26 a gate sat 22 h after all 475 flows checks had finished, because the result never came back over a
+     socket that had gone quiet, and the outside watchdog below was waiting on the same socket. */
+  let closed = false;
+  ws.onclose = () => { closed = true; for (const cb of pending.values()) cb({ error: { message: 'the DevTools socket closed' } }); pending.clear(); };
   const send = (method, params = {}) => new Promise((resolve, reject) => {
+    if (closed) return reject(new Error('the DevTools socket closed'));
     const n = ++id; pending.set(n, d => d.error ? reject(new Error(d.error.message)) : resolve(d.result));
     ws.send(JSON.stringify({ id: n, method, params }));
   });
@@ -156,21 +165,30 @@ try {
      so the runner watches window.__lbCheckDone once a minute: no check finished in STALL_MIN minutes (longer than the
      in-page limit of 10 min + 2 min settle) = the run is stuck. It then FAILS with the name of the stuck check instead of
      hanging all night. */
-  const STALL_MIN = +(process.env.LB_STALL_MIN || 15); let lastDone = -1, lastMove = Date.now(), stalled = null;
+  /* The watchdog's own question gets 30 s: a page or a socket that does not answer counts as NO progress (2026-09-27:
+     the first version only ever counted answers, so a silent socket kept it silent too). And the whole flows stage has
+     a ceiling kept by this process's clock alone, LB_FLOWS_MAX_MIN (default 120; a healthy run is ~30 min). */
+  const STALL_MIN = +(process.env.LB_STALL_MIN || 15), FLOWS_MAX_MIN = +(process.env.LB_FLOWS_MAX_MIN || 120);
+  const flowsT0 = Date.now(); let lastDone = -1, lastNow = '', lastMove = Date.now(), stalled = null;
   const guard = setInterval(async () => {
+    let done = lastDone, now = lastNow, vis;
     try {
-      const r = await send('Runtime.evaluate', { expression: 'JSON.stringify([window.__lbCheckDone||0, String(window.__lbCheckNow||""), document.visibilityState])', returnByValue: true });
-      const [done, now, vis] = JSON.parse(r.result.value);
-      if (done !== lastDone) { lastDone = done; lastMove = Date.now(); return; }
-      if (Date.now() - lastMove > STALL_MIN * 60000) { stalled = { done, now, vis }; clearInterval(guard); }
-    } catch (e) {}
+      const r = await Promise.race([send('Runtime.evaluate', { expression: 'JSON.stringify([window.__lbCheckDone||0, String(window.__lbCheckNow||""), document.visibilityState])', returnByValue: true }), sleep(30000).then(() => null)]);
+      if (r && r.result) [done, now, vis] = JSON.parse(r.result.value); else vis = 'no answer from the page in 30 s';
+    } catch (e) { vis = 'DevTools: ' + ((e && e.message) || e); }
+    if (done !== lastDone) { lastDone = done; lastNow = now; lastMove = Date.now(); return; }
+    if (Date.now() - lastMove > STALL_MIN * 60000) { stalled = { why: 'STALLED — no check finished in ' + STALL_MIN + ' minutes', done, now, vis }; clearInterval(guard); }
   }, 60000);
   const flows = await Promise.race([
     evalJs(send, '(' + flowsSrc + ')()'),
-    new Promise(res => { const t = setInterval(() => { if (stalled) { clearInterval(t); res(null); } }, 5000); }),
-  ]).finally(() => clearInterval(guard));
+    new Promise(res => { const t = setInterval(() => {
+      if (!stalled && Date.now() - flowsT0 > FLOWS_MAX_MIN * 60000) stalled = { why: 'RAN OVER ' + FLOWS_MAX_MIN + ' minutes', done: lastDone, now: lastNow, vis: 'still running' };
+      if (stalled) { clearInterval(t); res(null); }
+    }, 5000); }),
+  ]).catch(e => { stalled = { why: 'FAILED — ' + ((e && e.message) || e), done: lastDone, now: lastNow, vis: '' }; return null; })
+    .finally(() => clearInterval(guard));
   if (!flows) {
-    console.log('✗ flows: STALLED — no check finished in ' + STALL_MIN + ' minutes. ' + stalled.done + ' checks done; stuck on: ' + stalled.now + ' (page ' + stalled.vis + ')');
+    console.log('✗ flows: ' + stalled.why + '. ' + stalled.done + ' checks done; last check: ' + stalled.now + (stalled.vis ? ' (' + stalled.vis + ')' : ''));
     console.log('SMOKE: FAIL'); process.exit(1);
   }
   const result = { checks: flows.checks, pageErrors };
@@ -213,7 +231,10 @@ try {
 } finally { cleanup(); }
 // the phone build: its own page load under phone emulation, real touch taps, its own golden (tests/golden/mobile.json)
 if (!noMobile) {
-  const m = spawnSync(process.execPath, [join(ROOT, 'tests', 'run_mobile_stage.mjs'), '--quiet'].concat(golden ? ['--golden'] : []), { stdio: 'inherit' });
+  /* spawnSync freezes this process (no timers run) until the phone stage ends, so the phone stage gets its own limit:
+     LB_MOBILE_MAX_MIN (default 20; a healthy phone run is ~70 s). On a timeout m.error is set and the stage fails. */
+  const m = spawnSync(process.execPath, [join(ROOT, 'tests', 'run_mobile_stage.mjs'), '--quiet'].concat(golden ? ['--golden'] : []), { stdio: 'inherit', timeout: +(process.env.LB_MOBILE_MAX_MIN || 20) * 60000, killSignal: 'SIGTERM' });   /* SIGTERM: the phone stage then closes its own Chrome and server */
+  if (m.error) console.log('✗ mobile: the phone stage did not finish within ' + (+(process.env.LB_MOBILE_MAX_MIN || 20)) + ' minutes (' + m.error.message + ')');
   if (m.status !== 0) failed = true;
 }
 console.log(golden ? 'goldens in tests/golden/' : (failed ? 'SMOKE: FAIL' : 'SMOKE: PASS'));
