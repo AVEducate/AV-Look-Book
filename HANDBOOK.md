@@ -320,6 +320,64 @@ anchor on the function name and replace the first occurrence after it, never all
   (3) The Custom Resolution window (`_sysOpenCustomResModal`, every caller) gates Save
   with `_sysCfGate(w,h)` from `recalc()`: Save disabled + `#sys-cf-hint` while Width or Height is blank or 0. No `alert()` in
   I/O Patch windows; the one left in the page is the Excel export failure.
+- **I/O Patch menus: Custom first, Clear second** (owner, 2026-09-25, build 16kw; search `16kw-menus`). Every menu with a Custom
+  entry AND a Clear entry reads Custom… first, — Clear — second, then its helper rows (Paste, Used in this show, the typed names)
+  and the built-in list in its order. This REPLACES the 2026-09-14 "destructive items last" menu rule for Clear. Covered:
+  Connector (`_sysConnOptions`, gained Custom…), Type (`_sysTypeOptions`, gained — Clear —: value '' through the ordinary
+  pick path, so type / deviceType and customType are emptied in one undo step and the page-1 / Simple twin follows),
+  Resolution (`_sysBuildResOptions`), on every row, the Set-for-all rows, the Advanced pages and the phone cards (all open
+  through `_sysOpenDropdown`); `openSharedResPicker` puts its optional includeClear row second (the phone's I/O cards ask
+  for it through `mbIoOpenRes`, 16kw-fix, which also marks a source card's own size). Left as they were, a question for the owner: menus with only one of the two (the name pickers' "Type your own
+  name…", the shared picker where it has no Clear (Quick Setup, the Wire cards, the phone's Video Presets sheets), the Advanced layer Source "— none —",
+  Wire's Custom router / switcher menu). A typed connector is stored as typed in `connectorType` (v0.4.0 reads it as plain
+  text: a grey "empty"-looking pill, printed in the Excel, "Cable Type" on its Wire card), remembered in
+  `customTypes.connectors` (created only when a name is remembered, never on read: a look must not light Save) and offered
+  from that list plus every row's typed connector (`_sysInUseConns`). `_sysConnBuiltIn` maps a built-in's value or label
+  in any spelling (case, spaces, - _ . / ( )) to the built-in value. `_sysConnAsk` swaps the pill for a `.sys-conn-ask`
+  box (`data-sys-field="custom-conn"`; the delegated type-box blur handler skips it); `_sysConnCommit` writes through
+  `_sysConnWrite` (the pick path's setters without its redraw) inside `_sysWithUndo`, then `_sysRenderAfterPress`, so the
+  click that left the box still lands. `_sysClassifyConnector` returns 'custom' for any text that is not a built-in connector in
+  some spelling (`_sysConnKnown`, 16kw-fix: a typed "Cat6 tactical" or "opticalCON fibre" is grey too): `.sys-pill.custom` is white; `_wireCableSpec` returns
+  `_WIRE_CABLE_CUSTOM` (#9ca3af, solid, "Custom · no colour code"); the grey arrowhead `wire-arrow-custom` joins the SVG
+  defs only while a typed connector is in the show (`_wireCustomConnInUse`), so every other drawing and Look Book is byte for
+  byte as before; the drawing sheet's key prints "no colour code" on such a row; typed connectors sort after the built-in
+  ones in the key. Wire's Cable Type menus (`data-wire-origin="1"`) kept `_SYS_CONNECTORS` until 16kw-r2 (below).
+  **16kw-fix** (search `16kw-fix`): these I/O Patch menus open, when neither side of the header has room, on the larger side
+  shortened to fit (`_sysMenuFitRoom`) instead of the `_menuPlace` fallback that covered the header. The connector box gives the focus
+  back to the box it went to once its redraw is done (`_sysRefocusTwin`, through `_sysRenderAfterPress(after)`). A long typed
+  name fits its key row: `_wireKeyFitLabel` on the printed sheet (smaller, then "…"), the Wire export key's words moved right
+  of it, an ellipsis in the in-app key. On the phone a Type menu's grey note wraps beside its label (`:has(+ .item-meta)`).
+  **16kw-r2** (owner, 2026-09-26; search `16kw-r2`). (1) Every menu opens at its TOP: `_sysMenuShowCurrent` and its call in
+  `_sysOpenDropdown` are gone (the current value stays marked; a low one is a scroll down). `_sysMenuFitRoom` is placement,
+  not scrolling, and stays. (2) Wire's Cable Type menus (cards `src` / `dest` / `aux`, custom cards `wcustom` / `wcustomd` /
+  `wcustomm`, output points `wsp`, converter and switch ports `wdev`) open `_sysConnOptions()`: Custom…, — Clear —, the typed
+  names, the list. Custom… there calls `_wireConnAsk`: a `.wire-conn-ask` box in the button's place, sized from it (no type
+  attribute, so `_wireAdvTabKeep` leaves its Tab alone). `_wireConnCommit` applies the I/O rules (`_sysConnBuiltIn`,
+  `_sysRememberConn`, one `_sysWithUndo` step) and `_wireConnWrite` stores it where each object keeps its cable type: the
+  show's source / destination / AUX `connectorType` through `_sysConnWrite` (it IS the I/O Patch field; a source's
+  `wireColor` follows), a custom card's `connectorType` (a custom source's `wireColor` follows), `portConns[k]` of a source
+  tile, `conn` of a device port. The data is written at once; the redraw runs on the next tick through
+  `_sysRenderAfterPress(after, redraw)` (scope `#wire-overlay`), which also re-glues an open Cable Type menu and reopens a
+  Wire resolution ▼ that the leaving click opened; `_wireFocusSpot` / `_wireRefocusSpot` keep a Tab. In the 90-px
+  `wire-fit` menu the CUSTOM… row drops its dot and tightens its caps so it reads whole. (3) An OUTPUT's Resolution ›
+  — Clear — (`_sysResClearOff(kind)`: dest, aux, mv, iodest, dst-all, adv-dst, adv-mv, advdst-all, advmv-all) stays second
+  with `.sys-dd-item.disabled` (opacity .45 and cursor default, the app's disabled look: 3.7:1 on the menu),
+  `aria-disabled`, the title `_SYS_OUT_RES_CLEAR_TIP` ("An output's resolution is its size"), never `.selected`, and a
+  click that does nothing (the menu stays open). The menu rows have no keyboard stops, so no key reaches it. The phone's
+  sheet gets the same through `openSharedResPicker({clearOff})` from `mbIoOpenRes`. Sources keep a live Clear. Before
+  16kw-r2 the multiviewer's Clear and the Advanced page rows' Clear DID empty their resolution; the owner's rule greys
+  them too.
+  **16kw-r3fix** (2026-09-27; search `16kw-r3fix`). Round-3 fixes, each reproduced first with real input. (a) Answer 4
+  in the Details key: `_wireCableKeyHTML` (the on-screen key only) shows a typed connector's name in capitals (an inline
+  text-transform; the tooltip keeps the typed spelling, as the Wire card's tooltip does) and merges typed rows without
+  regard to capitals (`toLowerCase`, as the menus compare), their sources added up. `_wireCableTypesInUse` and the
+  printed / exported key (`_wireLegendSVG`, the sheets) are unchanged: as typed, one row per spelling (a question for
+  the owner). (b) Answer 4 on the phone: `.sys-pill.custom .pill-label{text-transform:uppercase}` (the desktop header
+  style already uppercases every pill). (c) Answer 1 for a typed Type: a row is not redrawn when its `.sys-type-input`
+  commits (the delegated blur handler), so the ▼ beside it kept the previous name in `data-sys-custom`, which
+  `_sysOpenDropdown` reads to mark the row; the handler now writes the committed name there. The phone cards' ▼
+  (`renderMobileMain`) had no `data-sys-custom` at all (Custom… was always marked) and now carries it. (d) Comments
+  only: the greyed Clear's contrast note reads 3.7:1.
 - Declined by the owner, do not resurface: mask shapes, anchor points, hardware profiles, canvas/WebGL renderer,
   interpolation filter toggles, upscale-factor notes, per-layer "sharp pixels", any licence mention.
 
@@ -350,3 +408,5 @@ Reading receipt: **HANDBOOK-12G-SDI**. Report this code to the owner after readi
 <!-- 16kv-dates -->
 
 <!-- 16kv-fix -->
+
+<!-- 16kw-menus --><!-- 16kw-fix --><!-- 16kw-r2 --><!-- 16kw-r3fix -->

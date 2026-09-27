@@ -161,6 +161,10 @@
    "ok": true
   },
   {
+   "name": "Wire 16kw-r2 landscape: a source card's Cable Type menu reads Custom… first, — Clear — second, then the list; Custom… turns the button into a box on the card (the keyboard in it); LEMO 3B typed and a tap on the drawing stores it (the show's connectorType), the card shows it and its cable turns grey; Undo takes it back",
+   "ok": true
+  },
+  {
    "name": "Wire: a show saved in Advanced is shown in Simple on the phone (no Advanced tiles or tabs on screen)",
    "ok": true
   },
@@ -182,6 +186,22 @@
   },
   {
    "name": "I/O: a source renamed on its card (typed, then a tap away) is renamed in every preset",
+   "ok": true
+  },
+  {
+   "name": "I/O 16kw: on a source card the Connector menu reads Custom… first, — Clear — second, then the list (25 rows) and the Type menu Custom…, — Clear —, then the list (10 rows); Connector › Custom… turns the pill into a box on the card, LEMO typed and a tap away stores it and the card shows it; the next card's Connector menu offers LEMO right after Clear; Type › — Clear — empties the type; the Resolution sheet reads + Custom resolution… first and — Clear — second, like the other two",
+   "ok": true
+  },
+  {
+   "name": "I/O 16kw-fix: on the phone cards the Resolution sheet reads + Custom resolution…, — Clear —, then Used in this show; the source card's sheet marks the source's own size; — Clear — empties the source's resolution (the card reads — Set resolution —); a destination card's sheet reads the same, its — Clear — greyed out (16kw-r2: a tap on it does nothing, the size stays, the sheet stays open); the Type menu's first row reads cleanly (CUSTOM… beside its note, not over it); a card whose Type is Media Server opens its Type menu at the TOP (16kw-r2: Custom… in view, Media Server still marked)",
+   "ok": true
+  },
+  {
+   "name": "I/O 16kw-r2: on the phone the Resolution sheet of an AUX, a DSM and the multiviewer card greys out — Clear — (second, disabled, the tooltip \"An output's resolution is its size\"): a tap on it does nothing (the size stays, the sheet stays open); a card whose Connector is LTC opens its Connector menu at the TOP (Custom… and — Clear — in view, LTC still marked)",
+   "ok": true
+  },
+  {
+   "name": "I/O 16kw-r3fix: on the phone cards a typed connector reads in CAPITALS on its Connector pill (\"lemo 2b\" typed and a tap away, stored as typed, the pill reads LEMO 2B, like the desktop pill and the menu row), and a Type typed on a source or a destination card (Custom…, a tap in the box, the name typed, a tap on the card's Connector label) is the marked row of that card's Type menu, which still opens at its top",
    "ok": true
   },
   {

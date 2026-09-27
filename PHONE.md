@@ -104,7 +104,7 @@ Notes / Actions columns run off the right edge. Landscape is fine.
 | Layer row | Tap a chip or a "D1·L2" row. The real desktop Layer panel, docked, with its Simple / Advanced toggle. | `mbOpenLayerInline` |
 | AUX / DSM row | Tap an AUX box or row. The real desktop AUX panel, docked. | `mbDsmRow`, `mbOpenAuxInline` |
 | ± buttons | Bottom of each section: − DEST / + DEST, − LAYER / + LAYER, − AUX / + AUX. | `mbAddDest`, `mbRemoveDest`, `mbAddLayerInline`, `mbRemoveLayerInline`, `mbAddAux`, `mbRemoveAux` |
-| I/O Patch | Nav pill. Source cards then Destination / AUX / MV cards: name, connector, type, resolution, notes, bandwidth warning. Resolution opens a sheet from the right. | `ioViewHTML`, `ioSourceCard`, `ioDestCard`, `ioGatherDests`, `mbIoSet`, `mbIoOpenRes` |
+| I/O Patch | Nav pill. Source cards then Destination / AUX / MV cards: name, connector, type, resolution, notes, bandwidth warning. Resolution opens a sheet from the right. Connector and Type open the desktop menus: Custom… first, — Clear — second (16kw), and the Resolution sheet reads + Custom resolution…, — Clear —, then the sizes in use (16kw-fix; a source card marks its own size); Connector › Custom… turns the pill into a box on the card; a typed connector reads in capitals on the pill (16kw-r3fix). On a destination, AUX / DSM or multiviewer card the sheet's — Clear — is greyed out (an output's resolution is its size), and every menu opens at its top (16kw-r2). | `ioViewHTML`, `ioSourceCard`, `ioDestCard`, `ioGatherDests`, `mbIoSet`, `mbIoOpenRes` |
 | Wire, portrait | Nav pill while upright: "Rotate your phone". | `injectWireRotate`, `body.mb-wire-active` |
 | Wire, landscape | The real desktop Wire overlay in Simple view: source / destination cards on the left (collapsible), the diagram, zoom and Fit, one-finger pan, pinch zoom. | `wrapNav`, `mbWireSetupOverlay`, `mbWireTouchStart/Move/End` |
 | Cable colour editor | Tap the swatch on a Wire source card. Full screen. | `_mbOpenCableColor` |
@@ -140,7 +140,7 @@ decision on record; nobody wrote down whether it was left out on purpose.
 | I/O-only destinations (`ioDests`) | Not listed on the cards (`ioGatherDests` reads destinations, AUX and multiviewers only). | NOT BUILT YET |
 | I/O housekeeping (auto B-pairs, library sync) | The card view does not run it. It only happens as a side effect when a menu pick calls `_sysRender`. | NOT BUILT YET |
 | I/O Advanced pages, backup pairs | Hidden. The source card hard-codes `backupOf=''`, so the link icon never shows. | TO DECIDE |
-| Wire Simple | Landscape only. View, zoom, pan, pinch; on a source card: rename, resolution, cable type, cable colour, thumbnail. | BY DESIGN |
+| Wire Simple | Landscape only. View, zoom, pan, pinch; on a source card: rename, resolution, cable type (Custom… types your own on the card, 16kw-r2), cable colour, thumbnail. | BY DESIGN |
 | Wire right panel (preset filter, Details, Project Info, logo), tool palette, align panel, Export, Reset Layout | Hidden "per the mockup". Project Info is edited through the Show card instead. | BY DESIGN |
 | Move a node, draw a cable | Not possible: the desktop handlers are mouse-only. | TO DECIDE |
 | Wire Advanced | Never shown; the phone always draws Simple. **(build 16ki)** this no longer changes the show's own setting. | BY DESIGN |
@@ -421,6 +421,9 @@ changes `tests/golden/*.lookbook.html`; regenerate the goldens on purpose in the
 | 2026-09-11 to 09-15 | 16ef, 16ei, 16ht | Quick Setup wraps at phone width; Wire thumbnail column rule; Video Presets Advanced hidden and blocked on the phone. |
 | 2026-09-20 | 16kf to 16kh | Phone audit: `private/study-2026-09-20/mobile_code.md`, `mobile_gui.md`, `mobile_docs.md`. Owner's decisions in section 1. This document drafted. |
 | 2026-09-25 | 16kv | Show card "Date" reads "Date Created". Quick Setup: Date Created and Show Dates open the app's own calendar with 44 px days (Show Dates: a first and a last day); Show format is Show Type. Budgets unchanged. |
+| 2026-09-25 | 16kw | I/O cards: the Connector and Type menus read Custom… first, — Clear — second, then the list (they are the desktop menus). Connector › Custom… types your own connector in a box on the card (a tap away keeps it); Type › — Clear — empties the type. 16kw-fix: the Resolution sheet reads + Custom resolution…, — Clear — too (Clear empties a source's or a multiviewer's resolution; a destination or AUX keeps its size, as on the desktop), and a source card's sheet now marks the source's own size. The Type menu's grey notes wrap beside their names instead of running into them (older than 16kw: Workstation, Camera, Switcher, Teleprompter; CUSTOM… / YOUR OWN came to the top). Not tried on a real phone. |
+| 2026-09-27 | 16kw-r3fix | I/O cards: a typed connector reads in capitals on its Connector pill (it read as typed), and a Type typed on a card is the marked row when its ▼ opens the Type menu again (Custom… was marked). Budgets unchanged. Not tried on a real phone. |
+| 2026-09-26 | 16kw-r2 | Every menu opens at its top again: Custom… and — Clear — first, the current value still marked, a low one a scroll down. On a destination, AUX / DSM and multiviewer card the Resolution sheet's — Clear — is greyed out (a tap does nothing; "An output's resolution is its size"). Wire (landscape): a card's Cable Type menu reads Custom…, — Clear —, then the list, and Custom… types your own connector on the card (a tap away keeps it). Budgets unchanged. Not tried on a real phone. |
 | 2026-09-25 | 16kv-fix | The calendar never hangs below a phone held sideways (844 x 390, 812 x 375): it gets the room under the top bar and scrolls, Clear and Today stay reachable. The whole-box Date Created button is for touch screens only. Budgets unchanged. |
 | 2026-09-20 | 16ki | Visualiser fits its box and re-fits on rotation; the picture follows every edit made in a docked panel; docked panel headers can never cover the visualiser (sticky under it in portrait, not sticky in landscape); Help tab bar scrolls by touch; wording ("Tap here to start", example message built from the show, DSM badge, I/O empty text, stat chip colours and per-preset AUX maths); Wire on the phone no longer writes `wireView` into the show; touch targets to 44 px and inputs to 16 px (phone-only CSS); "Open a show file" on the empty state and the Show card; tablets get the desktop layout; `tests/mobile_probe.js` added to the gate. |
 
@@ -433,3 +436,5 @@ Reading receipt: **PHONE-44PX-REVIEW**. Report this code to the owner after read
 <!-- 16kv-dates -->
 
 <!-- 16kv-fix -->
+
+<!-- 16kw-menus --><!-- 16kw-fix --><!-- 16kw-r2 --><!-- 16kw-r3fix -->

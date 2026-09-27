@@ -1819,6 +1819,94 @@
   {
    "name": "Send: attaches the Look Book the window builds (wire sheet included) plus the cue sheet, and the mail draft goes through the mail seam",
    "ok": true
+  },
+  {
+   "name": "menus 16kw: I/O Patch Simple: on a source, a destination, an AUX and the multiviewer row the Connector, Type and Resolution menus read Custom… first, — Clear — second, then the list in its order with its headings; nothing is missing (Connector 24 -> 25 rows: Custom… added; Type 9 -> 10 for a source and 5 -> 6 for an output: — Clear — added; Resolution 38 = 38, Clear moved up) and the row's current value is still the marked row",
+   "ok": true
+  },
+  {
+   "name": "menus 16kw: the Set-for-all rows (S0 sources, D0 destinations): Connector, Type and Resolution read Custom… first, — Clear — second (the marked row, the Set-for-all row holds nothing; 16kw-r2: D0's Resolution Clear is greyed out, so it is not marked), then the list; Custom… and Clear are there exactly once, at the top",
+   "ok": true
+  },
+  {
+   "name": "menus 16kw: an I/O Patch Advanced page (page 1, the copy of the show): a source row's and a destination row's Connector, Type and Resolution menus and the page's Set-for-all menus read Custom… first, — Clear — second, then the list",
+   "ok": true
+  },
+  {
+   "name": "menus 16kw: the shared resolution picker puts its optional — Clear — SECOND, right under Custom, and marks it when the value is empty; the phone's I/O cards ask for it (mbIoOpenRes: + Custom resolution…, — Clear —, Used in this show; the source card marks its own size; Clear empties a source's resolution, a destination keeps its size as on the desktop); where it is used without one it reads as before, Custom first and no Clear (Quick Setup and the Wire card, 37 rows); the Destination Combinations table opens no resolution menu (Destination Properties keeps its Width / Height boxes)",
+   "ok": true
+  },
+  {
+   "name": "Type 16kw: Type › — Clear — empties the type like Clear empties a connector: a source (type and customType, a typed type too), a destination (deviceType and customType), each ONE undo step that Undo takes back, Save lit; the chip reads — Set machine — / — Set device —; the Excel Type cell is empty; save + reload keeps it empty",
+   "ok": true
+  },
+  {
+   "name": "Type 16kw: — Clear — in the Set-for-all rows empties every row in ONE undo step (sources; destinations, AUX and I/O-only outputs, the multiviewer left alone as Set for all always does), and on an Advanced page-1 row it empties the row and its Simple twin in the same edit",
+   "ok": true
+  },
+  {
+   "name": "Connector 16kw: Connector › Custom… turns the pill into a box in place (focused, the row's own typed connector in it, \"Type name…\"), nothing written yet; LEMO typed + Enter is stored exactly as typed, reads white in the pill, is ONE undo step, lights Save, is remembered and offered in every Connector menu right after — Clear — (marked on its row); Escape and an empty box write nothing; a built-in's name in any spelling picks the built-in (\"hdmi 2.0\", \"12g sdi\", \"DisplayPort\")",
+   "ok": true
+  },
+  {
+   "name": "Connector 16kw: Set for all › Connector › Custom… asks once in the Set-for-all row and gives the typed connector to every row in ONE undo step (sources; destinations and AUX, the multiviewer left alone), remembered for the menu",
+   "ok": true
+  },
+  {
+   "name": "Connector 16kw: a typed connector prints exactly as typed in the I/O Excel (Video I-O and the page-1 tab) and the Look Book; in Wire the card reads it, its cable draws in a neutral grey (#9ca3af) with the grey arrowhead, the Cable Colour Code lists it as \"Custom · no colour code\", the printed sheet's key prints it with \"no colour code\"; a show without one prints its sheet exactly as before",
+   "ok": true
+  },
+  {
+   "name": "Connector 16kw: save + reload: typed connectors come back from the show file opened through the app's own Open (the file box, FileReader), remembered (customTypes.connectors) and offered in the menu; on Advanced page 1 a typed connector on a destination reaches its Simple twin in the same edit, and one typed on the Simple IO row reaches page 1",
+   "ok": true
+  },
+  {
+   "name": "Connector 16kw-fix: every connector typed through Custom… has no family, whatever words it holds: \"Cat6 tactical\", \"opticalCON fibre\" and \"HDMI fibre extender\" read white in the I/O Patch, give the source tile the grey, draw a grey cable with the grey arrowhead in Wire and have their own \"Custom · no colour code\" row in the Cable Colour Code; \"fiber\" typed still picks the built-in Fiber (its fibre colour, not remembered as your own)",
+   "ok": true
+  },
+  {
+   "name": "Connector 16kw-fix: a long typed connector name stays inside its Cable Colour Code row: on the printed sheet's key it fits its colour block (set smaller, cut with … when even 8 px is too long), in the Wire export's key its words start after the name, in the in-app key the name keeps its line (cut with … only when longer than the panel) and \"Custom · no colour code · 1\" goes under it, inside the panel; a short typed name (\"LEMO\") prints as before (11 px, centred in the block) (16kw-r3fix: the in-app key reads a typed name in CAPITALS, which are wider, so \"NEUTRIK OPTICALCON QUAD\" is longer than the panel too and is cut with …, whole in its tooltip; \"LEMO\" keeps its line whole)",
+   "ok": true
+  },
+  {
+   "name": "Connector 16kw-fix: leaving the Connector › Custom… box for the next box (what Tab does: the focus moves on) stores the typed name AND keeps the keyboard in the row: the same Notes box of the redrawn row has the focus, with its text selected as a Tab leaves it; one undo step",
+   "ok": true
+  },
+  {
+   "name": "menus 16kw-r2: every I/O Patch menu opens at its TOP with Custom… and — Clear — in view, the current value still marked (a low value is a scroll down): a Connector of USB-C / Thunderbolt, 3G-SDI or LTC, a Type of Teleprompter after two machine names were typed, a Type of PC, a Resolution of 800×600, an Advanced page-1 Connector of LTC and the Set-for-all Connector",
+   "ok": true
+  },
+  {
+   "name": "menus 16kw-fix: an I/O Patch menu with no room below or above its header opens on the side with more room, shortened to fit, instead of covering its header: the Set-for-all Type menu (10 rows since — Clear — came) in a short window (the placement reads the window height; the real 1280x720 case is proven with real clicks); with room it opens below at its full height as before",
+   "ok": true
+  },
+  {
+   "name": "I/O 16kw-r2: on an OUTPUT's Resolution menu — Clear — stays second but is greyed out: disabled (not marked, no pick, the menu stays open, no undo step), the tooltip reads exactly \"An output's resolution is its size\", contrast at least 3:1: a destination, an AUX, a DSM, the multiviewer, an I/O-only destination, the D0 row, an Advanced page-1 destination and the page's output Set-for-all rows, and the phone opener of a destination card; a source's Clear (a row, S0, the page's source Set-for-all row) stays live and empties the resolution",
+   "ok": true
+  },
+  {
+   "name": "Wire 16kw-r2: every Cable Type menu reads like the I/O Patch Connector menu: Custom… first, — Clear — second, then the connector list in its order with its headings, the current value marked: the source, destination, AUX and DSM cards in Simple, a source card in Advanced, the custom source, destination and AUX cards, a source tile's output point (Details) and a converter's port",
+   "ok": true
+  },
+  {
+   "name": "Wire 16kw-r2: Cable Type › Custom… on a source, destination or AUX card types the connector RIGHT ON THE CARD, the way Connector › Custom… does in the I/O Patch: the button becomes a box in its place (focused, \"Type name…\", the typed connector it holds already); LEMO + Enter is stored as typed (the show's connectorType), ONE undo step, Save lit, remembered and offered after — Clear — in every Cable Type and Connector menu, the card reads it, its cable draws grey with the grey arrowhead, the tile turns grey, the key has its \"Custom · no colour code\" row; it FOLLOWS to the I/O Patch (white pill) and a connector typed in the I/O Patch shows on the Wire card; Undo takes it back; Escape and an empty box write nothing; a built-in's name in any spelling picks the built-in",
+   "ok": true
+  },
+  {
+   "name": "Wire 16kw-r2: Custom… on the Wire-only objects stores the typed connector where each already keeps its cable type, one undo step each: a custom source card (its connectorType; its tile colour turns grey, as a pick does), a custom destination and a custom AUX card (connectorType), a source tile's output point (portConns of the tile), a converter's port (its conn); the output point's cable draws grey with the grey arrowhead",
+   "ok": true
+  },
+  {
+   "name": "Help 16kw-r2: the in-app Help says it: I/O Patch › Edit a row: an output's Resolution Clear is greyed out (an output's resolution is its size) and every menu opens at its top; Wire has a Cable Type row: Custom… first, — Clear — second, typed right on the card, no colour code, the same connector as the I/O Patch row",
+   "ok": true
+  },
+  {
+   "name": "Wire 16kw-r3fix: the Cable Colour Code (Details) reads a typed connector in CAPITALS, like its card, its menu row and its I/O Patch pill (Omar's answer 4): \"lemo\" typed on the PPT A card and \"smpte fiber\" on a destination card read LEMO and SMPTE FIBER (stored as typed; the tooltip keeps the typed spelling, like the card's); the same name typed \"LEMO\" on CAM 1 is the SAME key row (LEMO, 2 sources), as it is one name in the menus; the printed sheet's key is left as typed",
+   "ok": true
+  },
+  {
+   "name": "I/O 16kw-r3fix: a Type typed on a row (Type › Custom…, the name typed, Enter) is the MARKED row the next time its Type menu opens at its top, and so is a second name typed over it (Omar's answer 1: the current value stays marked): a destination (BARCO, then CHRISTIE), a source (ALPHA RIG, then ZETA RIG), the source's box retyped without the menu (UNIFORM RIG), Undo (ZETA RIG back), an Advanced page-1 source (ALPHA ADV, then BRAVO ADV)",
+   "ok": true
   }
  ],
  "pageErrors": []

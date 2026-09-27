@@ -6890,6 +6890,460 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
   return is([!!xl, /id="pdf-wire"/.test(html), /id="pdf-cover"/.test(html), window._pdfOpts === had, mailed], [true, true, true, true, true], 'cue sheet attached / wire sheet in the sent Look Book / cover / window options left alone / mail fallback');
 });
 
+  // 16kw-menus A: NEW
+  const _kwRows = () => { const m = $$('.sys-dd').filter(e => e.getBoundingClientRect().width > 0).pop(); return m ? [...m.children].map(c => (c.classList.contains('sys-dd-group') ? '## ' : '') + (($('.item-text', c) || c).textContent || '').trim() + (c.classList.contains('selected') ? ' *' : '')) : null; };
+  const _kwMenu = async trig => { if (!trig) return 'no trigger'; _sysOpenDropdown(trig); await wait(150); const r = _kwRows(); _sysCloseMenu(); await wait(60); return r; };
+  const _kwN = rows => Array.isArray(rows) ? rows.filter(r => !/^## /.test(r)).length : -1;
+  const _KW_CONN = ['## HDMI', 'HDMI', 'HDMI 1.4', 'HDMI 2.0', 'HDMI 2.1', 'HDBaseT', '## DP / DVI', 'DisplayPort', 'DVI', 'USB-C / Thunderbolt', '## SDI', '3G-SDI', '6G-SDI', '12G-SDI', '## IP / Specialty', 'NDI', 'ST-2110', 'SRT', 'RTMP', 'RTSP', 'Fiber', 'SFP / QSFP', 'Dante', 'MV (Multiviewer)', '## Network / Sync', 'Ethernet', 'Genlock', 'LTC'];
+  const _KW_SRC = ['PC', 'Workstation', 'Mac', 'Camera', 'PTZ', 'Media Server', 'Switcher', 'Teleprompter'];
+  const _KW_DST = ['LED', 'Projection', 'Monitor', 'Stream'];
+  const _kwMark = (list, cur) => list.map(x => x === cur ? x + ' *' : x);
+  const _kwConn = (cur, clearMarked, own) => ['Custom…', clearMarked ? '— Clear — *' : '— Clear —'].concat(own || [], _kwMark(_KW_CONN, cur));
+  const _kwType = (list, cur, clearMarked) => ['Custom…', clearMarked ? '— Clear — *' : '— Clear —'].concat(_kwMark(list, cur));
+  const _kwLib = cur => _SYS_RES.map(o => o.group ? '## ' + o.group : (o.value === cur ? o.label + ' *' : o.label));
+  const _kwRes = (cur, clearMarked) => ['Custom resolution…', clearMarked ? '— Clear — *' : '— Clear —', '## Used in this show', cur ? '1920×1080 *' : '1920×1080'].concat(_kwLib(cur));
+  const _kwSrcRow = n => ioRow(n), _kwCell = (row, f) => row ? $('[data-sys-field="' + f + '"]', row) : null;
+  await check('menus 16kw: I/O Patch Simple: on a source, a destination, an AUX and the multiviewer row the Connector, Type and Resolution menus read Custom… first, — Clear — second, then the list in its order with its headings; nothing is missing (Connector 24 -> 25 rows: Custom… added; Type 9 -> 10 for a source and 5 -> 6 for an output: — Clear — added; Resolution 38 = 38, Clear moved up) and the row\'s current value is still the marked row', async () => {
+    await restore(); await ioOpenSimple(); const out = {};
+    const s = _kwSrcRow('PPT A'), d = ioDestRowF('LEFT LED'), a = ioDestRowF('AUX 1'), m = $('#sys-mv-zone .sys-row');
+    out.src = [await _kwMenu(_kwCell(s, 'connector')), await _kwMenu(_kwCell(s, 'src-type')), await _kwMenu(_kwCell(s, 'resolution'))];
+    out.dst = [await _kwMenu(_kwCell(d, 'connector')), await _kwMenu(_kwCell(d, 'dst-type')), await _kwMenu(_kwCell(d, 'resolution'))];
+    out.aux = [await _kwMenu(_kwCell(a, 'connector')), await _kwMenu(_kwCell(a, 'dst-type'))];
+    out.mv = [await _kwMenu(_kwCell(m, 'connector')), await _kwMenu(_kwCell(m, 'dst-type'))];
+    out.counts = [_kwN(out.src[0]), _kwN(out.src[1]), _kwN(out.src[2]), _kwN(out.dst[1])];
+    closeSystem(); await restore();
+    return is(out, { src: [_kwConn('HDMI 2.0'), _kwType(_KW_SRC, 'PC'), _kwRes('1920x1080')], dst: [_kwConn('12G-SDI'), _kwType(_KW_DST, 'LED'), _kwRes('1920x1080')],
+      aux: [_kwConn('12G-SDI'), _kwType(_KW_DST, 'Stream')], mv: [_kwConn('MV (Multiviewer)'), _kwType(_KW_DST, 'Monitor')], counts: [25, 10, 38, 6] },
+      'menus in order (## = a heading, * = the marked row): source PPT A [Connector, Type, Resolution] / destination LEFT LED / AUX 1 [Connector, Type] / MV 1 / rows [Connector, source Type, Resolution, output Type]');
+  });
+  // 16kw-menus B: NEW
+  // 16kw-r2 B: REPLACES the check named in its header (reason in the block)
+  // 16kw-r2: REVISES block B. Why: Omar's answer 3 (2026-09-26) greys the Clear row of an OUTPUT's Resolution menu, and a greyed
+  //   row is never the marked one, so D0's Resolution menu no longer marks — Clear — (it still reads Custom resolution… first,
+  //   — Clear — second). Every other expectation of B is unchanged; the greyed row itself is checked by block U.
+  await check('menus 16kw: the Set-for-all rows (S0 sources, D0 destinations): Connector, Type and Resolution read Custom… first, — Clear — second (the marked row, the Set-for-all row holds nothing; 16kw-r2: D0\'s Resolution Clear is greyed out, so it is not marked), then the list; Custom… and Clear are there exactly once, at the top', async () => {
+    await restore(); await ioOpenSimple(); const g = (sec, f) => $('#' + sec + ' .sys-row-global [data-sys-field="' + f + '"]'); const out = {};
+    out.src = [await _kwMenu(g('sys-src-rows', 'connector')), await _kwMenu(g('sys-src-rows', 'src-type')), await _kwMenu(g('sys-src-rows', 'resolution'))];
+    out.dst = [await _kwMenu(g('sys-dst-rows', 'connector')), await _kwMenu(g('sys-dst-rows', 'dst-type')), await _kwMenu(g('sys-dst-rows', 'resolution'))];
+    out.once = [].concat(out.src, out.dst).map(r => Array.isArray(r) ? [r.filter(x => /^Custom/.test(x)).length, r.filter(x => /Clear/.test(x)).length] : r);
+    closeSystem(); await restore();
+    return is(out, { src: [_kwConn('', true), _kwType(_KW_SRC, '', true), _kwRes('', true)], dst: [_kwConn('', true), _kwType(_KW_DST, '', true), _kwRes('', false)], once: [[1, 1], [1, 1], [1, 1], [1, 1], [1, 1], [1, 1]] },
+      'S0 [Connector, Type, Resolution] / D0 [Connector, Type, Resolution] / [Custom rows, Clear rows] in each');
+  });
+  // 16kw-menus C: NEW
+  await check('menus 16kw: an I/O Patch Advanced page (page 1, the copy of the show): a source row\'s and a destination row\'s Connector, Type and Resolution menus and the page\'s Set-for-all menus read Custom… first, — Clear — second, then the list', async () => {
+    await restore(); await ioOpenSimple(); await toAdvancedF(); const out = {};
+    const s = advRowF('PPT A'), d = advRowF('LEFT LED'); const g = (kind, f) => $('#io-adv .sys-row-global [data-sys-kind="' + kind + '"][data-sys-field="' + f + '"]');
+    out.src = [await _kwMenu(_kwCell(s, 'connector')), await _kwMenu(_kwCell(s, 'src-type')), await _kwMenu(_kwCell(s, 'resolution'))];
+    out.dst = [await _kwMenu(_kwCell(d, 'connector')), await _kwMenu(_kwCell(d, 'dst-type'))];
+    out.all = [await _kwMenu(g('advsrc-all', 'connector')), await _kwMenu(g('advsrc-all', 'src-type')), await _kwMenu(g('advdst-all', 'dst-type'))].map(r => Array.isArray(r) ? r.slice(0, 3) : r);
+    out.allRes = (r => Array.isArray(r) ? r.slice(0, 2) : r)(await _kwMenu(g('advsrc-all', 'resolution')));
+    _ioSetView('simple'); await wait(300); closeSystem(); await restore();
+    return is(out, { src: [_kwConn('HDMI 2.0'), _kwType(_KW_SRC, 'PC'), _kwRes('1920x1080')], dst: [_kwConn('12G-SDI'), _kwType(_KW_DST, 'LED')],
+      all: [['Custom…', '— Clear — *', '## HDMI'], ['Custom…', '— Clear — *', 'PC'], ['Custom…', '— Clear — *', 'LED']], allRes: ['Custom resolution…', '— Clear — *'] },
+      'page-1 PPT A [Connector, Type, Resolution] / page-1 LEFT LED [Connector, Type] / Set for all [Connector, source Type, output Type] first rows / Set for all Resolution first rows');
+  });
+  // 16kw-menus D: NEW
+  // 16kw-fix: REVISES the builder's block D ("menus 16kw: the shared resolution picker puts an optional — Clear — SECOND ...
+  //   as it is used today (Quick Setup, the Wire cards, the phone sheets) it has no Clear ..."). Why: the phone's I/O cards now
+  //   ask the shared picker for its Clear (mbIoOpenRes, the 16kw-fix of the phone Resolution sheet), so "the phone sheets have no
+  //   Clear" is no longer true, and the attacker was right that the old block failed on 16kv only through a call no user could
+  //   reach. The revised block opens the picker through the phone's own opener and clicks its Clear (the phone check Q taps the
+  //   same rows on a phone); the rest (Quick Setup, the Wire card, Destination Properties) is the builder's, unchanged.
+  await check('menus 16kw: the shared resolution picker puts its optional — Clear — SECOND, right under Custom, and marks it when the value is empty; the phone\'s I/O cards ask for it (mbIoOpenRes: + Custom resolution…, — Clear —, Used in this show; the source card marks its own size; Clear empties a source\'s resolution, a destination keeps its size as on the desktop); where it is used without one it reads as before, Custom first and no Clear (Quick Setup and the Wire card, 37 rows); the Destination Combinations table opens no resolution menu (Destination Properties keeps its Width / Height boxes)', async () => {
+    const rowsOf = () => $$('.shared-res-dd > *').map(c => (c.classList.contains('sys-dd-group') ? '## ' : '') + (($('.item-text', c) || c).textContent || '').trim() + (c.classList.contains('selected') ? ' *' : ''));
+    const out = {};
+    await restore(); await ioOpenSimple();
+    const sp = _kwCell(_kwSrcRow('PPT A'), 'resolution'); if (!sp || typeof mbIoOpenRes !== 'function') { closeSystem(); return 'no PPT A resolution pill / no phone opener'; }
+    mbIoOpenRes('src', 'PPT A', sp); await wait(150); const sr = rowsOf();
+    const clr = $$('.shared-res-dd .sys-dd-item').find(i => /^— Clear —$/.test((($('.item-text', i) || i).textContent || '').trim())); if (clr) { clr.click(); await wait(300); }
+    out.src = [sr.slice(0, 4), sr.filter(x => /Clear/.test(x)).length, (_sysGetSourceMeta('PPT A') || {}).resolution || ''];
+    closeSharedResPicker(); const dp = _kwCell(ioDestRowF('LEFT LED'), 'resolution'); const w0 = screens[0].w + 'x' + screens[0].h;
+    mbIoOpenRes('dest', screens[0].id, dp); await wait(150); const dr = rowsOf();
+    const clr2 = $$('.shared-res-dd .sys-dd-item').find(i => /^— Clear —$/.test((($('.item-text', i) || i).textContent || '').trim())); if (clr2) { clr2.click(); await wait(300); }
+    out.dst = [dr.slice(0, 4), screens[0].w + 'x' + screens[0].h === w0];
+    closeSharedResPicker(); openSharedResPicker({ anchor: sp, currentValue: '', includeClear: true, onPick: function () {} }); await wait(150); out.empty = rowsOf().slice(0, 2); closeSharedResPicker(); await wait(80);
+    closeSystem(); await restore();
+    openQSEdit(); await wait(500);
+    const btn = $('#qs-modal .qs-res-btn'); if (!btn) { closeQS(); return 'no resolution button in Quick Setup'; }
+    btn.click(); await wait(200); const q = rowsOf().map(x => x.replace(/ \*$/, '')); closeSharedResPicker(); closeQS(); await wait(300);
+    out.qs = [q.slice(0, 3), q.filter(x => !/^## /.test(x)).length, q.some(x => /Clear/.test(x))];
+    openWireMode(); await wait(700); okDialogs();
+    const wb = $('#wire-sources-panel .wire-res-dropdown-btn'); if (wb) { wb.click(); await wait(200); } const w = rowsOf().map(x => x.replace(/ \*$/, '')); closeSharedResPicker(); closeWireMode(); await wait(300);
+    out.wire = [w.slice(0, 3), w.filter(x => !/^## /.test(x)).length, w.some(x => /Clear/.test(x))];
+    const p = presets[0], s0 = screens[0]; openScreenPanel(fakeEv, p.id, s0.id); await wait(400); const pop = $('#screen-panel');
+    out.table = [!!(pop && $('#sp-w', pop) && $('#sp-h', pop)), !!$('.shared-res-dd')]; try { closeScreenPanel(); } catch (e) {} await wait(200);
+    await restore();
+    return is(out, { src: [['+ Custom resolution…', '— Clear —', '## Used in this show', '1920×1080 *'], 1, ''], dst: [['+ Custom resolution…', '— Clear —', '## Used in this show', '1920×1080 *'], true], empty: ['+ Custom resolution…', '— Clear — *'],
+      qs: [['+ Custom resolution…', '## Used in this show', '1920×1080'], 37, false], wire: [['Custom', '## Used in this show', '1920×1080'], 37, false], table: [true, false] },
+      'the phone opener on PPT A [first rows (* = marked), Clear rows, resolution after Clear] / on LEFT LED [first rows, size kept after Clear] / an empty value [first rows] / Quick Setup [first rows, rows, a Clear] / a Wire card / Destination Properties [Width + Height boxes, a resolution menu open]');
+  });
+  // 16kw-menus E: NEW
+  await check('Type 16kw: Type › — Clear — empties the type like Clear empties a connector: a source (type and customType, a typed type too), a destination (deviceType and customType), each ONE undo step that Undo takes back, Save lit; the chip reads — Set machine — / — Set device —; the Excel Type cell is empty; save + reload keeps it empty', async () => {
+    await restore(); await ioOpenSimple(); const out = {}; const u0 = _undoStack.length; const d0 = _isDirty;
+    const okA = await ioPick(_kwCell(_kwSrcRow('PPT A'), 'src-type'), /^— Clear —$/);
+    const mA = _sysGetSourceMeta('PPT A') || {}; out.src = [okA, mA.type || '', mA.customType || '', ((_kwCell(_kwSrcRow('PPT A'), 'src-type') || {}).textContent || '').trim(), _undoStack.length - u0, _isDirty && !d0];
+    doUndo(); await wait(400); out.undo = [(_sysGetSourceMeta('PPT A') || {}).type]; doRedo(); await wait(400);
+    await ioPick(_kwCell(_kwSrcRow('CAM 1'), 'src-type'), /^Custom…/); await wait(150); const box = $('.sys-type-input', _kwSrcRow('CAM 1')); if (box) { tfType(box, 'KW RIG'); await wait(300); }
+    const typed = [(_sysGetSourceMeta('CAM 1') || {}).type, (_sysGetSourceMeta('CAM 1') || {}).customType]; const u1 = _undoStack.length;
+    const chev = $('.sys-type-cell .sys-name-chev', _kwSrcRow('CAM 1')); const okB = chev ? await ioPick(chev, /^— Clear —$/) : false;
+    out.typed = [typed, okB, (_sysGetSourceMeta('CAM 1') || {}).type || '', (_sysGetSourceMeta('CAM 1') || {}).customType || '', !!$('.sys-chip[data-sys-field="src-type"]', _kwSrcRow('CAM 1')), _undoStack.length - u1];
+    const u2 = _undoStack.length; const okD = await ioPick(_kwCell(ioDestRowF('LEFT LED'), 'dst-type'), /^— Clear —$/);
+    out.dst = [okD, screens[0].deviceType || '', screens[0].customType || '', ((_kwCell(ioDestRowF('LEFT LED'), 'dst-type') || {}).textContent || '').trim(), _undoStack.length - u2];
+    const wb = await ioBookF(); const vio = wb ? xlRowsF(wb, wb.sheets.indexOf('Video I-O') + 1) : []; const xr = n => (vio.find(r => r[2] === n) || []).slice(0, 4);
+    out.excel = [xr('PPT A'), xr('LEFT LED')];
+    closeSystem(); await wait(200); _applyProjectText(JSON.stringify(getProjectState())); await wait(700); okDialogs();
+    out.reload = [(_sysGetSourceMeta('PPT A') || {}).type || '', screens[0].deviceType || ''];
+    await restore();
+    return is(out, { src: [true, '', '', '— Set machine —', 1, true], undo: ['PC'], typed: [['Custom', 'KW RIG'], true, '', '', true, 1], dst: [true, '', '', '— Set device —', 1],
+      excel: [['Source 1', 'HDMI 2.0', 'PPT A', ''], ['Destination 1', '12G-SDI', 'LEFT LED', '']], reload: ['', ''] },
+      'PPT A [picked, type, customType, chip, undo steps, Save lit] / after Undo / CAM 1 typed KW RIG then Clear from its box [before, picked, type, customType, a chip again, undo steps] / LEFT LED [picked, deviceType, customType, chip, undo steps] / Video I-O rows / after save + reload');
+  });
+  // 16kw-menus F: NEW
+  await check('Type 16kw: — Clear — in the Set-for-all rows empties every row in ONE undo step (sources; destinations, AUX and I/O-only outputs, the multiviewer left alone as Set for all always does), and on an Advanced page-1 row it empties the row and its Simple twin in the same edit', async () => {
+    await restore(); await ioOpenSimple(); const out = {};
+    const u0 = _undoStack.length; await ioPick($('#sys-src-rows .sys-row-global [data-sys-field="src-type"]'), /^— Clear —$/);
+    out.src = [_sysDiscoverSources().map(n => (_sysGetSourceMeta(n) || {}).type || '').every(t => t === ''), _undoStack.length - u0];
+    doUndo(); await wait(400); out.srcUndo = (_sysGetSourceMeta('PPT A') || {}).type;
+    const mv0 = JSON.stringify(multiviewers.map(m => [m.deviceType, m.customType || ''])); const u1 = _undoStack.length;
+    await ioPick($('#sys-dst-rows .sys-row-global [data-sys-field="dst-type"]'), /^— Clear —$/);
+    out.dst = [screens.concat(dsms).map(o => o.deviceType || '').every(t => t === ''), JSON.stringify(multiviewers.map(m => [m.deviceType, m.customType || ''])) === mv0, _undoStack.length - u1];
+    doUndo(); await wait(400);
+    await toAdvancedF(); if (!await addDestF('KW TYPE')) { closeSystem(); await restore(); return 'no new destination row on page 1'; }
+    await ioPick(_kwCell(advRowF('KW TYPE'), 'dst-type'), /^Monitor/); const set = [page1F('KW TYPE')[1], (twinF('KW TYPE') || [])[1]]; const u2 = _undoStack.length;
+    await ioPick(_kwCell(advRowF('KW TYPE'), 'dst-type'), /^— Clear —$/);
+    out.adv = [set, page1F('KW TYPE').slice(1, 3), twinF('KW TYPE').slice(1, 3), _undoStack.length - u2];
+    _ioSetView('simple'); await wait(300); closeSystem(); await restore();
+    return is(out, { src: [true, 1], srcUndo: 'PC', dst: [true, true, 1], adv: [['Monitor', 'Monitor'], ['', ''], ['', ''], 1] },
+      'S0 Clear [every source empty, undo steps] / after Undo / D0 Clear [every output empty, the multiviewer untouched, undo steps] / page 1 [Monitor on the row and its twin, the row, the twin, undo steps]');
+  });
+  // 16kw-menus G: NEW
+  const _kwAsk = async (trig, text) => { if (!await ioPick(trig, /^Custom…$/)) return 'no Custom… in the Connector menu'; await wait(120); const box = $('.sys-conn-ask .sys-type-input'); if (!box) return 'no box'; const seen = [document.activeElement === box, box.value, box.placeholder]; if (text !== undefined) { tfType(box, text); await wait(350); } return seen; };
+  await check('Connector 16kw: Connector › Custom… turns the pill into a box in place (focused, the row\'s own typed connector in it, "Type name…"), nothing written yet; LEMO typed + Enter is stored exactly as typed, reads white in the pill, is ONE undo step, lights Save, is remembered and offered in every Connector menu right after — Clear — (marked on its row); Escape and an empty box write nothing; a built-in\'s name in any spelling picks the built-in ("hdmi 2.0", "12g sdi", "DisplayPort")', async () => {
+    await restore(); await ioOpenSimple(); const out = {}; const u0 = _undoStack.length;
+    out.ask = await _kwAsk(_kwCell(_kwSrcRow('PPT A'), 'connector')); out.nothingYet = [(_sysGetSourceMeta('PPT A') || {}).connectorType, _undoStack.length - u0];
+    const box = $('.sys-conn-ask .sys-type-input'); if (box) { tfType(box, 'LEMO'); await wait(400); }
+    const pill = _kwCell(_kwSrcRow('PPT A'), 'connector');
+    out.stored = [(_sysGetSourceMeta('PPT A') || {}).connectorType, pill ? [pill.textContent.trim(), pill.classList.contains('custom'), getComputedStyle(pill).color] : null, _undoStack.length - u0, !!_isDirty, (customTypes.connectors || []).slice(), !$('.sys-conn-ask')];
+    out.offered = (await _kwMenu(_kwCell(_kwSrcRow('PPT B'), 'connector')) || []).slice(0, 4); out.marked = (await _kwMenu(_kwCell(_kwSrcRow('PPT A'), 'connector')) || []).slice(0, 4);
+    await ioPick(_kwCell(_kwSrcRow('PPT B'), 'connector'), /^LEMO$/); out.picked = (_sysGetSourceMeta('PPT B') || {}).connectorType;
+    const u1 = _undoStack.length; out.prefill = await _kwAsk(_kwCell(_kwSrcRow('PPT B'), 'connector')); const b2 = $('.sys-conn-ask .sys-type-input'); if (b2) { b2.value = 'junk'; fire(b2, 'input'); ioEsc(b2); await wait(350); }
+    out.escape = [(_sysGetSourceMeta('PPT B') || {}).connectorType, _undoStack.length - u1, !$('.sys-conn-ask'), ((_kwCell(_kwSrcRow('PPT B'), 'connector') || {}).textContent || '').trim()];
+    await _kwAsk(_kwCell(_kwSrcRow('CAM 1'), 'connector')); const b3 = $('.sys-conn-ask .sys-type-input'); if (b3) { b3.blur(); await wait(300); }
+    out.empty = [(_sysGetSourceMeta('CAM 1') || {}).connectorType, _undoStack.length - u1, !$('.sys-conn-ask')];
+    await _kwAsk(_kwCell(_kwSrcRow('CAM 2'), 'connector'), 'hdmi 2.0'); await _kwAsk(_kwCell(_kwSrcRow('LOGO'), 'connector'), '12g sdi'); await _kwAsk(_kwCell(_kwSrcRow('PROMPTER'), 'connector'), 'DisplayPort');
+    out.builtin = [(_sysGetSourceMeta('CAM 2') || {}).connectorType, (_sysGetSourceMeta('LOGO') || {}).connectorType, (_sysGetSourceMeta('PROMPTER') || {}).connectorType, (customTypes.connectors || []).slice(), ((_kwCell(_kwSrcRow('LOGO'), 'connector') || {}).className || '').includes('sdi')];
+    closeSystem(); await restore();
+    return is(out, { ask: [true, '', 'Type name…'], nothingYet: ['HDMI 2.0', 0], stored: ['LEMO', ['LEMO', true, 'rgb(255, 255, 255)'], 1, true, ['LEMO'], true],
+      offered: ['Custom…', '— Clear —', 'LEMO', '## HDMI'], marked: ['Custom…', '— Clear —', 'LEMO *', '## HDMI'], picked: 'LEMO', prefill: [true, 'LEMO', 'Type name…'],
+      escape: ['LEMO', 0, true, 'LEMO'], empty: ['12G-SDI', 0, true], builtin: ['HDMI 2.0', '12G-SDI', 'DP', ['LEMO'], true] },
+      'the box [focused, text, placeholder] / before typing [PPT A connector, undo steps] / after LEMO + Enter [stored, pill (text, white class, colour), undo steps, Save lit, remembered, box gone] / PPT B menu / PPT A menu / picked on PPT B / the box on a LEMO row / Escape [stored, undo steps, box gone, pill] / an empty box / typed built-in names [CAM 2, LOGO, PROMPTER, remembered list, LOGO pill family]');
+  });
+  // 16kw-menus H: NEW
+  await check('Connector 16kw: Set for all › Connector › Custom… asks once in the Set-for-all row and gives the typed connector to every row in ONE undo step (sources; destinations and AUX, the multiviewer left alone), remembered for the menu', async () => {
+    await restore(); await ioOpenSimple(); const out = {}; const u0 = _undoStack.length;
+    const seen = await _kwAsk($('#sys-src-rows .sys-row-global [data-sys-field="connector"]'), 'LEMO 2B');
+    out.src = [Array.isArray(seen) ? seen[0] : seen, _sysDiscoverSources().map(n => (_sysGetSourceMeta(n) || {}).connectorType).every(c => c === 'LEMO 2B'), _undoStack.length - u0];
+    doUndo(); await wait(400); out.undo = [(_sysGetSourceMeta('PPT A') || {}).connectorType, (_sysGetSourceMeta('CAM 1') || {}).connectorType, (customTypes.connectors || []).includes('LEMO 2B')];
+    const mv0 = JSON.stringify(multiviewers.map(m => m.connectorType)); const u1 = _undoStack.length;
+    await _kwAsk($('#sys-dst-rows .sys-row-global [data-sys-field="connector"]'), 'opticalCON');
+    out.dst = [screens.concat(dsms).every(o => o.connectorType === 'opticalCON'), JSON.stringify(multiviewers.map(m => m.connectorType)) === mv0, _undoStack.length - u1, (customTypes.connectors || []).slice()];
+    closeSystem(); await restore();
+    return is(out, { src: [true, true, 1], undo: ['HDMI 2.0', '12G-SDI', false], dst: [true, true, 1, ['opticalCON']] },
+      'S0 [the box focused, every source LEMO 2B, undo steps] / after Undo / D0 [every destination and AUX, the multiviewer untouched, undo steps, remembered (the Undo took LEMO 2B back with its edit)]');
+  });
+  // 16kw-menus I: NEW
+  await check('Connector 16kw: a typed connector prints exactly as typed in the I/O Excel (Video I-O and the page-1 tab) and the Look Book; in Wire the card reads it, its cable draws in a neutral grey (#9ca3af) with the grey arrowhead, the Cable Colour Code lists it as "Custom · no colour code", the printed sheet\'s key prints it with "no colour code"; a show without one prints its sheet exactly as before', async () => {
+    await restore(); openWireMode(); await wait(700); okDialogs(); const plain = _wireExportSheetsSvg('light'); closeWireMode(); await wait(300); await ioOpenSimple(); const out = {};
+    await _kwAsk(_kwCell(_kwSrcRow('PPT A'), 'connector'), 'LEMO'); await _kwAsk(_kwCell(ioDestRowF('LEFT LED'), 'connector'), 'opticalCON');
+    await toAdvancedF(); _ioSetView('simple'); await wait(300);
+    const wb = await ioBookF(); const vio = wb ? xlRowsF(wb, wb.sheets.indexOf('Video I-O') + 1) : []; const xr = n => (vio.find(r => r[2] === n) || []).slice(0, 3);
+    const p1 = wb && wb.sheets.length > 2 ? xlRowsF(wb, 3) : []; const pr = n => (p1.find(r => r[3] === n) || []).slice(1, 2);
+    out.excel = [xr('PPT A'), xr('LEFT LED'), pr('PPT A'), pr('LEFT LED')];
+    closeSystem(); await wait(200);
+    const lb = await userLookBook(); out.lookbook = [/<td>LEMO<\/td>/.test(lb), /<td>opticalCON<\/td>/.test(lb)];
+    openWireMode(); await wait(800); okDialogs();
+    const card = $$('#wire-sources-panel .wire-source-card').find(c => /PPT A/.test(($('.wire-source-name', c) || {}).textContent || '')); const cb = card && $('.wire-cable-btn', card);
+    const svg = $('#wire-diagram svg'); const e = svg ? $$('path.wire-edge', svg).find(p => p.dataset.from === 'src:PPT A') : null;
+    out.wire = [cb ? [cb.textContent.trim(), cb.classList.contains('custom')] : null, e ? [/156,\s*163,\s*175|#9ca3af/i.test(e.getAttribute('stroke') || ''), e.getAttribute('marker-end')] : null, !!(svg && $('marker#wire-arrow-custom', svg)),
+      $$('.wire-cable-key-row').map(r => r.textContent.replace(/\s+/g, ' ').trim()).filter(t => /LEMO|opticalCON/.test(t))];
+    const sheet = _wireExportSheetsSvg('light'); const i0 = sheet.indexOf('CABLE COLOUR CODE'), i1 = sheet.indexOf('>PROJECT<', i0);
+    const key = [...sheet.slice(i0, i1 > 0 ? i1 : i0 + 8000).matchAll(/<text[^>]*>([^<]*)<\/text>/g)].map(m => m[1]);
+    out.sheet = [key.slice(key.indexOf('LEMO'), key.indexOf('LEMO') + 3), /id="wire-arrow-custom"/.test(sheet), (sheet.match(/stroke="#9ca3af"/g) || []).length > 0];
+    out.plain = [/wire-arrow-custom|no colour code|9ca3af/.test(plain)];
+    closeWireMode(); await wait(300); await restore();
+    return is(out, { excel: [['Source 1', 'LEMO', 'PPT A'], ['Destination 1', 'opticalCON', 'LEFT LED'], ['LEMO'], ['opticalCON']], lookbook: [true, true],
+      wire: [['LEMO', true], [true, 'url(#wire-arrow-custom)'], true, ['LEMOCustom · no colour code · 1', 'opticalCONCustom · no colour code · 1']], sheet: [['LEMO', 'no colour code', '1'], true, true], plain: [false] },
+      'Excel [Video I-O PPT A, Video I-O LEFT LED, page-1 tab PPT A connector, page-1 tab LEFT LED connector] / Look Book I/O pages / Wire [card, PPT A cable grey + arrowhead, the grey arrowhead defined, Cable Colour Code rows] / printed sheet [the LEMO key row, arrowhead, grey lines] / a show without one [custom marks in its sheet]');
+  });
+  // 16kw-menus J: NEW
+  await check('Connector 16kw: save + reload: typed connectors come back from the show file opened through the app\'s own Open (the file box, FileReader), remembered (customTypes.connectors) and offered in the menu; on Advanced page 1 a typed connector on a destination reaches its Simple twin in the same edit, and one typed on the Simple IO row reaches page 1', async () => {
+    await restore(); await ioOpenSimple(); const out = {};
+    await _kwAsk(_kwCell(_kwSrcRow('PPT A'), 'connector'), 'LEMO'); await _kwAsk(_kwCell(ioDestRowF('LEFT LED'), 'connector'), 'opticalCON');
+    closeSystem(); await wait(200); const text = JSON.stringify(getProjectState(), null, 2); await restore();
+    const inp = $('#load-file-input'); if (!inp) return 'no file box';
+    const dt = new DataTransfer(); dt.items.add(new File([text], 'KW Test.avlb', { type: 'application/octet-stream' })); inp.files = dt.files;
+    fire(inp, 'change'); await wait(400); okDialogs(); await wait(900); okDialogs(); await wait(200);
+    out.loaded = [(_sysGetSourceMeta('PPT A') || {}).connectorType, screens[0].connectorType, (customTypes.connectors || []).slice()];
+    await ioOpenSimple(); out.menu = (await _kwMenu(_kwCell(_kwSrcRow('PPT B'), 'connector')) || []).slice(0, 5); out.pill = ((_kwCell(_kwSrcRow('PPT A'), 'connector') || {}).textContent || '').trim();
+    await toAdvancedF(); if (!await addDestF('KW REC')) { closeSystem(); await restore(); return 'no new destination row on page 1'; }
+    const u0 = _undoStack.length; await _kwAsk(_kwCell(advRowF('KW REC'), 'connector'), 'AJA Ki Pro');
+    out.p1 = [page1F('KW REC')[0], (twinF('KW REC') || [])[0], _undoStack.length - u0];
+    _ioSetView('simple'); await wait(400); okDialogs(); out.ioRow = ((_kwCell(ioDestRowF('KW REC'), 'connector') || {}).textContent || '').trim();
+    await _kwAsk(_kwCell(ioDestRowF('KW REC'), 'connector'), 'LEMO 4K'); out.back = [twinF('KW REC')[0], page1F('KW REC')[0]];
+    closeSystem(); await restore();
+    return is(out, { loaded: ['LEMO', 'opticalCON', ['LEMO', 'opticalCON']], menu: ['Custom…', '— Clear —', 'LEMO', 'opticalCON', '## HDMI'], pill: 'LEMO', p1: ['AJA Ki Pro', 'AJA Ki Pro', 1], ioRow: 'AJA Ki Pro', back: ['LEMO 4K', 'LEMO 4K'] },
+      'opened [PPT A, LEFT LED, remembered] / PPT B Connector menu / PPT A pill / page 1 [row, twin, undo steps] / the IO row in Simple / typed on the IO row [twin, page-1 row]');
+  });
+  // 16kw-menus K: NEW
+  await check('Connector 16kw-fix: every connector typed through Custom… has no family, whatever words it holds: "Cat6 tactical", "opticalCON fibre" and "HDMI fibre extender" read white in the I/O Patch, give the source tile the grey, draw a grey cable with the grey arrowhead in Wire and have their own "Custom · no colour code" row in the Cable Colour Code; "fiber" typed still picks the built-in Fiber (its fibre colour, not remembered as your own)', async () => {
+    await restore(); await ioOpenSimple(); const out = {}; const N = ['PPT A', 'CAM 1', 'LOGO'];
+    await _kwAsk(_kwCell(_kwSrcRow('PPT A'), 'connector'), 'Cat6 tactical'); await _kwAsk(_kwCell(_kwSrcRow('CAM 1'), 'connector'), 'opticalCON fibre');
+    await _kwAsk(_kwCell(_kwSrcRow('LOGO'), 'connector'), 'HDMI fibre extender'); await _kwAsk(_kwCell(_kwSrcRow('CAM 2'), 'connector'), 'fiber');
+    const pill = n => { const p = _kwCell(_kwSrcRow(n), 'connector'); return p ? [p.classList.contains('custom'), getComputedStyle(p).color] : null; };
+    out.stored = N.concat('CAM 2').map(n => (_sysGetSourceMeta(n) || {}).connectorType); out.pills = N.map(pill); out.tiles = N.map(n => (_sysGetSourceMeta(n) || {}).wireColor);
+    out.fiber = [((_kwCell(_kwSrcRow('CAM 2'), 'connector') || {}).className || '').includes('fiber'), (_sysGetSourceMeta('CAM 2') || {}).wireColor === _wireCableSpec('Fiber').color, (customTypes.connectors || []).some(c => /^fiber$/i.test(c))];
+    closeSystem(); await wait(200); openWireMode(); await wait(800); okDialogs();
+    const svg = $('#wire-diagram svg'); const edge = n => { const p = svg ? $$('path.wire-edge', svg).find(x => x.dataset.from === 'src:' + n) : null; return p ? [/156,\s*163,\s*175/.test(p.getAttribute('stroke') || ''), p.getAttribute('marker-end')] : null; };
+    out.wire = N.map(edge); out.key = $$('.wire-cable-key-row').map(r => r.textContent.replace(/\s+/g, ' ').trim()).filter(t => /Cat6 tactical|opticalCON fibre|HDMI fibre extender/.test(t)).sort();
+    closeWireMode(); await wait(300); await restore();
+    const G = [true, 'url(#wire-arrow-custom)'], W = [true, 'rgb(255, 255, 255)'];
+    return is(out, { stored: ['Cat6 tactical', 'opticalCON fibre', 'HDMI fibre extender', 'Fiber'], pills: [W, W, W], tiles: ['#9ca3af', '#9ca3af', '#9ca3af'], fiber: [true, true, false], wire: [G, G, G],
+      key: ['Cat6 tacticalCustom · no colour code · 1', 'HDMI fibre extenderCustom · no colour code · 1', 'opticalCON fibreCustom · no colour code · 1'] },
+      'stored [PPT A, CAM 1, LOGO, CAM 2] / pills [white class, colour] / tile colours / "fiber" [Fiber pill, Fiber tile colour, remembered as your own] / Wire cables [grey, arrowhead] / Cable Colour Code rows');
+  });
+  // 16kw-menus L: NEW
+  const _kwBox = () => { let b = $('#kw-fix-measure'); if (!b) { b = document.createElement('div'); b.id = 'kw-fix-measure'; b.style.cssText = 'position:fixed;left:0;top:0;width:10px;height:10px;overflow:hidden;opacity:0;pointer-events:none'; document.body.appendChild(b); } return b; };
+  // 16kw-r3fix L: REPLACES the check named in its header (reason in the block)
+  // 16kw-r3fix: REVISES the 16kw-fix check L. Why: Omar's answer 4 (typed connectors stay in capitals on screen) now holds in
+  //   the in-app key too, and capitals are wider: "NEUTRIK OPTICALCON QUAD" is longer than the panel, so the unchanged rule
+  //   (the name keeps its line, cut with … only when longer than the panel, whole in its tooltip) cuts it now. The short
+  //   "LEMO" row is added to show a name that fits keeps its line whole, and every in-app name is checked to read in capitals.
+  //   The printed sheet and the Wire export parts are unchanged. FAILS on the 16kw-r2 page (the long name not cut, not in
+  //   capitals), PASSES on 16kw-r3fix.
+  await check('Connector 16kw-fix: a long typed connector name stays inside its Cable Colour Code row: on the printed sheet\'s key it fits its colour block (set smaller, cut with … when even 8 px is too long), in the Wire export\'s key its words start after the name, in the in-app key the name keeps its line (cut with … only when longer than the panel) and "Custom · no colour code · 1" goes under it, inside the panel; a short typed name ("LEMO") prints as before (11 px, centred in the block) (16kw-r3fix: the in-app key reads a typed name in CAPITALS, which are wider, so "NEUTRIK OPTICALCON QUAD" is longer than the panel too and is cut with …, whole in its tooltip; "LEMO" keeps its line whole)', async () => {
+    await restore(); await ioOpenSimple(); const out = {};
+    const LONG = 'Neutrik opticalCON QUAD', LONGER = 'LEMO 3K.93C.Y 12-pin with a spare pair for talkback';
+    await _kwAsk(_kwCell(_kwSrcRow('PPT A'), 'connector'), LONG); await _kwAsk(_kwCell(_kwSrcRow('CAM 1'), 'connector'), LONGER); await _kwAsk(_kwCell(_kwSrcRow('CAM 2'), 'connector'), 'LEMO');
+    closeSystem(); await wait(200); openWireMode(); await wait(800); okDialogs();
+    const box = _kwBox();
+    box.innerHTML = _wireExportSheetsSvg('light'); const sheet = {};
+    const kind = s => s === 'LEMO' ? 'LEMO' : s === LONG || (/…$/.test(s) && LONG.startsWith(s.slice(0, -1).trim())) ? 'long' : (/…$/.test(s) && LONGER.startsWith(s.slice(0, -1).trim())) || s === LONGER ? 'longer' : null;
+    $$('svg', box).forEach(sv => { const all = $$('text', sv); const i0 = all.findIndex(t => t.textContent === 'CABLE COLOUR CODE'); if (i0 < 0) return;
+      all.slice(i0 + 1).forEach(t => { const k = kind(t.textContent); if (!k || sheet[k]) return;
+        let r = t.previousElementSibling; while (r && !(r.tagName.toLowerCase() === 'rect' && r.getAttribute('width') === '112')) r = r.previousElementSibling; if (!r) return;
+        const b = t.getBBox(), x0 = +r.getAttribute('x'); sheet[k] = [b.x >= x0 - 0.5 && b.x + b.width <= x0 + 112.5, t.getAttribute('font-size'), /…$/.test(t.textContent)]; }); });
+    out.sheet = [sheet.long ? sheet.long.slice(0, 2).concat(+sheet.long[1] < 11) : null, sheet.longer ? [sheet.longer[0], sheet.longer[2]] : null, sheet.LEMO ? sheet.LEMO.slice(0, 2) : null];
+    box.innerHTML = _wireBuildExportSvg('light', {}); const ts = $$('svg text', box); const ti = ts.findIndex((t, i) => t.textContent === LONG && ts[i + 1] && /no colour code/.test(ts[i + 1].textContent));
+    out.export = ti >= 0 && ts[ti + 1] ? [ts[ti].getBBox().x + ts[ti].getBBox().width < ts[ti + 1].getBBox().x, /no colour code/.test(ts[ti + 1].textContent)] : 'the long name is not in the export key';
+    box.innerHTML = '';
+    const key = $('.wire-cable-key'); const kr = key ? key.getBoundingClientRect() : null;
+    const app = nm => { const row = $$('.wire-cable-key-row').find(r => ($('.wire-cable-key-type', r) || {}).title === nm) || $$('.wire-cable-key-row').find(r => r.textContent.includes(nm)); const typ = row && $('.wire-cable-key-type', row), meta = row && $('.wire-cable-key-meta', row); if (!row || !kr) return 'no key row';
+      const tr = typ.getBoundingClientRect(), mr = meta.getBoundingClientRect(); return [mr.right <= kr.right + 0.5, mr.top >= tr.bottom - 1, typ.scrollWidth > typ.clientWidth + 1, typ.title, typ.innerText.trim() === nm.toUpperCase()]; };
+    out.app = [app(LONG), app(LONGER), app('LEMO')];
+    closeWireMode(); await wait(300); await restore();
+    return is(out, { sheet: [[true, out.sheet[0] ? out.sheet[0][1] : null, true], [true, true], [true, '11']], export: [true, true], app: [[true, true, true, LONG, true], [true, true, true, LONGER, true], [true, true, false, 'LEMO', true]] },
+      'sheet key [long name: inside its block, size, smaller than 11 px] [longer name: inside, cut with …] [LEMO: inside, size] / Wire export key [the words start after the name, they say no colour code] / in-app key, the long name, the longer name and LEMO [the words inside the panel, the words under the name, the name cut with …, the whole name in its tooltip, the name reads in capitals]');
+  });
+  // 16kw-menus M: NEW
+  await check('Connector 16kw-fix: leaving the Connector › Custom… box for the next box (what Tab does: the focus moves on) stores the typed name AND keeps the keyboard in the row: the same Notes box of the redrawn row has the focus, with its text selected as a Tab leaves it; one undo step', async () => {
+    await restore(); await ioOpenSimple(); const out = {}; const u0 = _undoStack.length;
+    const seen = await _kwAsk(_kwCell(_kwSrcRow('CAM 1'), 'connector')); const b = $('.sys-conn-ask .sys-type-input'); if (!b) { closeSystem(); await restore(); return 'no box: ' + seen; }
+    b.value = 'TABBED'; fire(b, 'input');
+    const notes = $('.sys-notes-input', _kwSrcRow('CAM 1')); notes.focus(); await wait(400);
+    const a = document.activeElement;
+    out.tab = [(_sysGetSourceMeta('CAM 1') || {}).connectorType, !!(a && a.isConnected && a.classList.contains('sys-notes-input') && a.dataset.sysId === 'CAM 1'), !!a && a.selectionStart === 0 && a.selectionEnd === String(a.value || '').length, _undoStack.length - u0];
+    if (a && a.blur) a.blur(); closeSystem(); await restore();
+    return is(out, { tab: ['TABBED', true, true, 1] }, 'after leaving the box for CAM 1\'s Notes box [stored, the Notes box of the new row has the focus, its text selected, undo steps]');
+  });
+  // 16kw-menus N: NEW
+  // 16kw-r2 N: REPLACES the check named in its header (reason in the block)
+  // 16kw-r2: REPLACES the 16kw-fix check N, which asserted the scroll to the current value that Omar's answer 1 (2026-09-26)
+  //   removed: "MENUS ALWAYS OPEN AT THE TOP. Custom… and — Clear — must be the first thing seen every time a menu opens."
+  //   The same rows and values, now: the menu opens at its top (scrollTop 0) with Custom… and — Clear — in view, and the
+  //   current value is still the marked row (below the edge for a low value: a scroll down). Also an Advanced page-1 row and
+  //   a Set-for-all menu. FAILS on the 16kw-fix page (it opens scrolled), PASSES on 16kw-r2.
+  await check('menus 16kw-r2: every I/O Patch menu opens at its TOP with Custom… and — Clear — in view, the current value still marked (a low value is a scroll down): a Connector of USB-C / Thunderbolt, 3G-SDI or LTC, a Type of Teleprompter after two machine names were typed, a Type of PC, a Resolution of 800×600, an Advanced page-1 Connector of LTC and the Set-for-all Connector', async () => {
+    await restore(); await ioOpenSimple(); const out = {};
+    const view = async trig => { if (!trig) return 'no trigger'; _sysOpenDropdown(trig); await wait(150); const m = $$('.sys-dd').filter(e => e.getBoundingClientRect().width > 0).pop(); if (!m) return 'no menu';
+      const mr = m.getBoundingClientRect(), s = $('.sys-dd-item.selected', m);
+      const inView = [...m.children].filter(c => { const r = c.getBoundingClientRect(); return r.top >= mr.top - 1 && r.bottom <= mr.bottom + 1; }).slice(0, 2).map(c => (($('.item-text', c) || c).textContent || '').trim());
+      const res = [s ? (($('.item-text', s) || s).textContent || '').trim() : null, m.scrollTop, inView]; _sysCloseMenu(); await wait(60); return res; };
+    for (const v of ['USB-C', '3G-SDI', 'LTC']) { await ioPick(_kwCell(_kwSrcRow('PPT A'), 'connector'), new RegExp('^' + v)); out[v] = await view(_kwCell(_kwSrcRow('PPT A'), 'connector')); }
+    for (const [n, t] of [['CLOCK', 'Robocam'], ['PPT B', 'Ross Carbonite']]) { await ioPick(_kwCell(_kwSrcRow(n), 'src-type'), /^Custom…/); await wait(150); const bx = $('.sys-type-input', _kwSrcRow(n)); if (bx) { tfType(bx, t); await wait(300); } }
+    out.teleprompter = await view(_kwCell(_kwSrcRow('PROMPTER'), 'src-type')); out.pc = await view(_kwCell(_kwSrcRow('PPT A'), 'src-type'));
+    await ioPick(_kwCell(_kwSrcRow('PPT A'), 'resolution'), /^800×600/); out.res = await view(_kwCell(_kwSrcRow('PPT A'), 'resolution'));
+    out.all = await view($('#sys-src-rows .sys-row-global [data-sys-field="connector"]'));
+    await toAdvancedF(); out.adv = await view(_kwCell(advRowF('PPT A'), 'connector')); _ioSetView('simple'); await wait(300);
+    closeSystem(); await restore();
+    const T = ['Custom…', '— Clear —'], RS = ['Custom resolution…', '— Clear —'];
+    return is(out, { 'USB-C': ['USB-C / Thunderbolt', 0, T], '3G-SDI': ['3G-SDI', 0, T], LTC: ['LTC', 0, T], teleprompter: ['Teleprompter', 0, T], pc: ['PC', 0, T], res: ['800×600', 0, RS], all: ['— Clear —', 0, T], adv: ['LTC', 0, T] },
+      'the menu as it opens [the marked row, its scroll, the first two rows in view]: PPT A Connector USB-C / 3G-SDI / LTC, PROMPTER Type after two typed names, PPT A Type, PPT A Resolution 800×600, S0 Connector, page-1 PPT A Connector');
+  });
+  // 16kw-menus O: NEW
+  await check('menus 16kw-fix: an I/O Patch menu with no room below or above its header opens on the side with more room, shortened to fit, instead of covering its header: the Set-for-all Type menu (10 rows since — Clear — came) in a short window (the placement reads the window height; the real 1280x720 case is proven with real clicks); with room it opens below at its full height as before', async () => {
+    await restore(); await ioOpenSimple(); const out = {};
+    const trig = $('#sys-src-rows .sys-row-global [data-sys-field="src-type"]'); if (!trig) { closeSystem(); return 'no Set-for-all Type pill'; }
+    let sc = trig.parentElement; while (sc && sc !== document.body && !(sc.scrollHeight > sc.clientHeight + 2 && /(auto|scroll)/.test(getComputedStyle(sc).overflowY))) sc = sc.parentElement;
+    const st0 = sc ? sc.scrollTop : 0; if (sc && sc !== document.body) { sc.scrollTop += Math.round(trig.getBoundingClientRect().top - (_topbarSafeTop() + 150)); await wait(150); }
+    const hd = _menuRectEl(trig).getBoundingClientRect(); const d = Object.getOwnPropertyDescriptor(window, 'innerHeight');
+    const probe = async () => { _sysOpenDropdown(trig); await wait(150); const m = $$('.sys-dd').filter(e => e.getBoundingClientRect().width > 0).pop(); if (!m) return 'no menu';
+      const mr = m.getBoundingClientRect(); const r = [mr.top >= hd.bottom - 2 || mr.bottom <= hd.top + 2, mr.bottom <= innerHeight - 7, mr.top >= _topbarSafeTop() - 1, m.scrollHeight > m.clientHeight + 1, m.querySelectorAll('.sys-dd-item').length]; _sysCloseMenu(); await wait(60); return r; };
+    out.above = Math.round(hd.top - _topbarSafeTop()) < 290;   /* the header sits too low under the top bar for the 10-row menu to fit above it */
+    try { Object.defineProperty(window, 'innerHeight', { configurable: true, get: () => Math.round(hd.bottom + 250) }); out.tight = await probe(); }
+    finally { Object.defineProperty(window, 'innerHeight', d); }
+    out.roomy = await probe(); if (sc && sc !== document.body) sc.scrollTop = st0;
+    closeSystem(); await restore();
+    return is(out, { above: true, tight: [true, true, true, true, 10], roomy: [true, true, true, false, 10] },
+      'the header too close to the top bar for the menu above it / the Set-for-all Type menu [clear of its header, inside the window, under the top bar, it scrolls, rows] in a window 250 px taller than the header\'s bottom / in the full window');
+  });
+  // 16kw-r2 U: NEW
+  await check('I/O 16kw-r2: on an OUTPUT\'s Resolution menu — Clear — stays second but is greyed out: disabled (not marked, no pick, the menu stays open, no undo step), the tooltip reads exactly "An output\'s resolution is its size", contrast at least 3:1: a destination, an AUX, a DSM, the multiviewer, an I/O-only destination, the D0 row, an Advanced page-1 destination and the page\'s output Set-for-all rows, and the phone opener of a destination card; a source\'s Clear (a row, S0, the page\'s source Set-for-all row) stays live and empties the resolution', async () => {
+    await restore(); await ioOpenSimple(); const out = {}; const TIP = 'An output\'s resolution is its size';
+    const lum = c => { const [r, g, b] = (String(c).match(/[\d.]+/g) || [0, 0, 0]).map(Number).map(v => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }); return 0.2126 * r + 0.7152 * g + 0.0722 * b; };
+    const ratio = (fg, bg, op) => { const f = String(fg).match(/[\d.]+/g).map(Number), b = String(bg).match(/[\d.]+/g).map(Number); const mix = f.slice(0, 3).map((v, i) => v * op + b[i] * (1 - op)); const a = lum('rgb(' + mix.join(',') + ')'), c = lum(bg); return (Math.max(a, c) + 0.05) / (Math.min(a, c) + 0.05); };
+    const clearOf = (menu) => $$('.sys-dd-item', menu).find(i => /^— Clear —$/.test((($('.item-text', i) || i).textContent || '').trim()));
+    const probe = async (trig, value) => { if (!trig) return 'no trigger'; _sysOpenDropdown(trig); await wait(150); const m = $$('.sys-dd').filter(e => e.getBoundingClientRect().width > 0).pop(); if (!m) return 'no menu';
+      const it = clearOf(m); if (!it) { _sysCloseMenu(); return 'no Clear'; } const cs = getComputedStyle(it);
+      const r = [$$('.sys-dd-item', m).indexOf(it), it.classList.contains('disabled'), it.classList.contains('selected'), it.getAttribute('aria-disabled'), it.title, ratio(getComputedStyle($('.item-text', it) || it).color, getComputedStyle(m).backgroundColor, +cs.opacity) >= 3];
+      const u = _undoStack.length, v0 = value(); it.click(); await wait(250); r.push(value() === v0, _undoStack.length - u, !!_sysActiveMenu); _sysCloseMenu(); await wait(60); return r; };
+    const row = (sec, n) => $$('#' + sec + ' .sys-row').find(x => ($('.sys-name-input', x) || {}).value === n), res = el => el ? $('[data-sys-field="resolution"]', el) : null;
+    const scr = n => () => { const s = screens.find(x => x.name === n) || dsms.find(x => x.name === n); return s ? s.w + 'x' + s.h : '?'; };
+    out.led = await probe(res(row('sys-dst-rows', 'LEFT LED')), scr('LEFT LED'));
+    out.aux = await probe(res(row('sys-dst-rows', 'AUX 1')), scr('AUX 1'));
+    out.dsm = await probe(res(row('sys-dst-rows', 'DSM 1')), scr('DSM 1'));
+    out.mv = await probe(res($('#sys-mv-zone .sys-row')), () => (multiviewers[0] || {}).resolution || '');
+    out.d0 = await probe($('#sys-dst-rows .sys-row-global [data-sys-field="resolution"]'), () => JSON.stringify(screens.map(s => s.w + 'x' + s.h)));
+    const live = async (trig, value) => { if (!trig) return 'no trigger'; _sysOpenDropdown(trig); await wait(150); const m = $$('.sys-dd').filter(e => e.getBoundingClientRect().width > 0).pop(); const it = m && clearOf(m); if (!it) { _sysCloseMenu(); return 'no Clear'; }
+      const r = [$$('.sys-dd-item', m).indexOf(it), it.classList.contains('disabled'), it.title]; it.click(); await wait(300); r.push(value()); _sysCloseMenu(); return r; };
+    out.s0 = await (async () => { const t = $('#sys-src-rows .sys-row-global [data-sys-field="resolution"]'); _sysOpenDropdown(t); await wait(150); const m = $$('.sys-dd').filter(e => e.getBoundingClientRect().width > 0).pop(); const it = m && clearOf(m); const r = it ? [it.classList.contains('disabled'), it.title] : 'no Clear'; _sysCloseMenu(); await wait(60); return r; })();
+    out.src = await live(res(row('sys-src-rows', 'PPT A')), () => (_sysGetSourceMeta('PPT A') || {}).resolution || '');
+    // the phone opener, called on the desktop page: the destination card's sheet
+    const dp = res(row('sys-dst-rows', 'LEFT LED')); mbIoOpenRes('dest', screens[0].id, dp); await wait(150);
+    const sh = $('.shared-res-dd'), si = sh && clearOf(sh); out.sheet = si ? [$$('.sys-dd-item', sh).indexOf(si), si.classList.contains('disabled'), si.title] : 'no sheet Clear';
+    if (si) { const w0 = screens[0].w + 'x' + screens[0].h; si.click(); await wait(250); out.sheet.push(screens[0].w + 'x' + screens[0].h === w0, !!$('.shared-res-dd')); }
+    closeSharedResPicker(); await wait(100);
+    // Advanced page 1: a destination row, the output Set-for-all rows, the source Set-for-all row; an I/O-only destination in Simple
+    await toAdvancedF(); const g = (kind) => $('#io-adv .sys-row-global [data-sys-kind="' + kind + '"][data-sys-field="resolution"]');
+    const p1 = () => { const r = (ioAdvanced.pages[0].dests || []).find(x => x && x.name === 'LEFT LED'); return r ? String(r.resolution || '') : 'no row'; };
+    out.adv = await probe(res(advRowF('LEFT LED')), p1);
+    out.advAll = [(await probe(g('advdst-all'), () => 'x')).slice(0, 5), (await probe(g('advmv-all'), () => 'x')).slice(0, 5)];
+    out.advSrc = await (async () => { const t = g('advsrc-all'); if (!t) return 'no trigger'; _sysOpenDropdown(t); await wait(150); const m = $$('.sys-dd').filter(e => e.getBoundingClientRect().width > 0).pop(); const it = m && clearOf(m); const r = it ? [it.classList.contains('disabled'), it.title] : 'no Clear'; _sysCloseMenu(); await wait(60); return r; })();
+    if (!await addDestF('KW R2 OUT')) { closeSystem(); await restore(); return 'no new destination row on page 1'; }
+    _ioSetView('simple'); await wait(400); okDialogs();
+    const io = row('sys-dst-rows', 'KW R2 OUT'); out.iodest = [io ? res(io).dataset.sysKind : 'no row', await probe(res(io), () => { const d = ioDests.find(x => x.name === 'KW R2 OUT'); return d ? d.w + 'x' + d.h : '?'; })];
+    closeSystem(); await restore();
+    const OFF = [1, true, false, 'true', TIP, true, true, 0, true];
+    return is(out, { led: OFF, aux: OFF, dsm: OFF, mv: OFF, d0: OFF, s0: [false, ''], src: [1, false, '', ''], sheet: [1, true, TIP, true, true], adv: OFF, advAll: [OFF.slice(0, 5), OFF.slice(0, 5)], advSrc: [false, ''], iodest: ['iodest', OFF] },
+      'Resolution › — Clear — [its row, greyed, marked, aria-disabled, tooltip, contrast ≥ 3:1, value kept after a click, undo steps, the menu still open]: LEFT LED / AUX 1 / DSM 1 / MV / D0 / S0 [greyed, tooltip] / PPT A [row, greyed, tooltip, resolution after a click] / the phone opener on LEFT LED [row, greyed, tooltip, size kept, the sheet still open] / page-1 LEFT LED / page Set-for-all outputs, multiviewers / page Set-for-all sources / an I/O-only destination [its kind, the Clear]');
+  });
+  // 16kw-r2 V: NEW
+  const _r2Btn = (kind, id) => $$('#wire-overlay .wire-cable-btn[data-sys-kind="' + kind + '"]').find(b => b.dataset.sysId === String(id) && b.getBoundingClientRect().width > 0) || null;
+  const _r2Rows = async b => { if (!b) return 'no button'; _sysOpenDropdown(b); await wait(150); const r = _kwRows(); _sysCloseMenu(); await wait(60); return r; };
+  const _r2Ask = async (b, text) => { if (!b) return 'no button'; _sysOpenDropdown(b); await wait(150); const it = $$('.sys-dd .sys-dd-item').find(i => /^Custom…$/.test((($('.item-text', i) || i).textContent || '').trim())); if (!it) { _sysCloseMenu(); return 'no Custom… in the Cable Type menu'; }
+    it.click(); await wait(150); const box = $('.wire-conn-ask .sys-type-input'); if (!box) return 'no box on the card'; const seen = [document.activeElement === box, box.value, box.placeholder]; if (text !== undefined) { tfType(box, text); await wait(450); } return seen; };
+  const _r2WireAdv = async () => { openWireMode(); await wait(500); okDialogs(); _wireSwitchToAdvanced(); await wait(400); okDialogs(); await wait(600); okDialogs(); };   /* what the Advanced tab does: page 1 = the show */
+  await check('Wire 16kw-r2: every Cable Type menu reads like the I/O Patch Connector menu: Custom… first, — Clear — second, then the connector list in its order with its headings, the current value marked: the source, destination, AUX and DSM cards in Simple, a source card in Advanced, the custom source, destination and AUX cards, a source tile\'s output point (Details) and a converter\'s port', async () => {
+    await restore(); openWireMode(); await wait(700); okDialogs(); const out = {};
+    out.simple = [await _r2Rows(_r2Btn('src', 'PPT A')), await _r2Rows(_r2Btn('dest', screens[0].id)), await _r2Rows(_r2Btn('aux', (dsms.find(d => d.name === 'AUX 1') || {}).id)), await _r2Rows(_r2Btn('aux', (dsms.find(d => d.name === 'DSM 1') || {}).id))];
+    await _r2WireAdv(); out.advSrc = await _r2Rows(_r2Btn('src', 'CAM 1'));
+    _wireAdvAddCustomSource(); _wireAdvAddCustomDest(); _wireAdvAddCustomDsm(); _wireAdvAddDevice('converter', 1, 1); await wait(400);
+    const last = a => (wireAdvanced[a] || [])[(wireAdvanced[a] || []).length - 1] || {};
+    out.custom = [await _r2Rows(_r2Btn('wcustom', last('customSources').id)), await _r2Rows(_r2Btn('wcustomd', last('customDests').id)), await _r2Rows(_r2Btn('wcustomm', last('customDsms').id))];
+    const dv = last('devices'); out.port = await _r2Rows(_r2Btn('wdev', dv.id + ':in:0'));
+    const inst = (wireAdvanced.sources || [])[0]; if (inst) { _wireState.selectedNodes = new Set(['asrc:' + inst.id]); _wireRender(); await wait(400); }
+    out.point = inst ? await _r2Rows(_r2Btn('wsp', inst.id + ':0')) : 'no source tile on page 1';
+    closeWireMode(); await wait(300); await restore();
+    const E = _kwConn('', true);
+    return is(out, { simple: [_kwConn('HDMI 2.0'), _kwConn('12G-SDI'), _kwConn('12G-SDI'), _kwConn('HDMI 2.0')], advSrc: _kwConn('12G-SDI'), custom: [E, E, E], port: E, point: E },
+      'Cable Type menus in order (## = a heading, * = the marked row): Simple cards PPT A / LEFT LED / AUX 1 / DSM 1, Advanced source card CAM 1, custom source / destination / AUX cards, converter port, output point (it inherits: — Clear — marked)');
+  });
+  // 16kw-r2 W: NEW
+  await check('Wire 16kw-r2: Cable Type › Custom… on a source, destination or AUX card types the connector RIGHT ON THE CARD, the way Connector › Custom… does in the I/O Patch: the button becomes a box in its place (focused, "Type name…", the typed connector it holds already); LEMO + Enter is stored as typed (the show\'s connectorType), ONE undo step, Save lit, remembered and offered after — Clear — in every Cable Type and Connector menu, the card reads it, its cable draws grey with the grey arrowhead, the tile turns grey, the key has its "Custom · no colour code" row; it FOLLOWS to the I/O Patch (white pill) and a connector typed in the I/O Patch shows on the Wire card; Undo takes it back; Escape and an empty box write nothing; a built-in\'s name in any spelling picks the built-in', async () => {
+    await restore(); openWireMode(); await wait(700); okDialogs(); const out = {}; const u0 = _undoStack.length; const d0 = !!_isDirty;
+    out.ask = await _r2Ask(_r2Btn('src', 'PPT A')); out.nothingYet = [(_sysGetSourceMeta('PPT A') || {}).connectorType, _undoStack.length - u0];
+    const box = $('.wire-conn-ask .sys-type-input'); if (box) { tfType(box, 'LEMO'); await wait(450); }
+    const b = _r2Btn('src', 'PPT A'), e = $$('#wire-diagram path.wire-edge').find(p => p.dataset.from === 'src:PPT A');
+    out.stored = [(_sysGetSourceMeta('PPT A') || {}).connectorType, (_sysGetSourceMeta('PPT A') || {}).wireColor, _undoStack.length - u0, !!_isDirty && !d0, (customTypes.connectors || []).slice(), !$('.wire-conn-ask'), b ? [b.textContent.trim(), b.classList.contains('custom')] : null,
+      e ? [/156,\s*163,\s*175/.test(e.getAttribute('stroke') || ''), e.getAttribute('marker-end')] : null, $$('.wire-cable-key-row').map(r => r.textContent.replace(/\s+/g, ' ').trim()).filter(t => /^LEMO/.test(t))];
+    out.offered = (await _r2Rows(_r2Btn('dest', screens[1].id)) || []).slice(0, 4); out.marked = (await _r2Rows(_r2Btn('src', 'PPT A')) || []).slice(0, 4);
+    out.prefill = await _r2Ask(_r2Btn('src', 'PPT A')); const b2 = $('.wire-conn-ask .sys-type-input'); if (b2) { b2.value = 'junk'; fire(b2, 'input'); ioEsc(b2); await wait(450); }
+    out.escape = [(_sysGetSourceMeta('PPT A') || {}).connectorType, _undoStack.length - u0, !$('.wire-conn-ask'), ((_r2Btn('src', 'PPT A') || {}).textContent || '').trim()];
+    await _r2Ask(_r2Btn('src', 'CAM 1')); const b3 = $('.wire-conn-ask .sys-type-input'); if (b3) { b3.blur(); await wait(450); }
+    out.empty = [(_sysGetSourceMeta('CAM 1') || {}).connectorType, _undoStack.length - u0, !$('.wire-conn-ask')];
+    await _r2Ask(_r2Btn('dest', screens[0].id), 'opticalCON'); await _r2Ask(_r2Btn('aux', (dsms.find(d => d.name === 'AUX 1') || {}).id), 'hdmi 2.1');
+    out.cards = [screens[0].connectorType, (dsms.find(d => d.name === 'AUX 1') || {}).connectorType, (customTypes.connectors || []).slice(), ((_r2Btn('dest', screens[0].id) || {}).textContent || '').trim()];
+    closeWireMode(); await wait(300); await ioOpenSimple();
+    const pill = _kwCell(_kwSrcRow('PPT A'), 'connector'), dpl = _kwCell(ioDestRowF('LEFT LED'), 'connector');
+    out.io = [pill ? [pill.textContent.trim(), pill.classList.contains('custom'), getComputedStyle(pill).color] : null, dpl ? dpl.textContent.trim() : null];
+    await _kwAsk(_kwCell(_kwSrcRow('CAM 2'), 'connector'), 'SMPTE 311'); closeSystem(); await wait(200); openWireMode(); await wait(700); okDialogs();
+    out.back = [((_r2Btn('src', 'CAM 2') || {}).textContent || '').trim(), ((_r2Btn('src', 'CAM 2') || {}).className || '').includes('custom')];
+    const u1 = _undoStack.length; doUndo(); await wait(500); out.undo = [(_sysGetSourceMeta('CAM 2') || {}).connectorType, ((_r2Btn('src', 'CAM 2') || {}).textContent || '').trim(), u1 - _undoStack.length];
+    closeWireMode(); await wait(300); await restore();
+    return is(out, { ask: [true, '', 'Type name…'], nothingYet: ['HDMI 2.0', 0], stored: ['LEMO', '#9ca3af', 1, true, ['LEMO'], true, ['LEMO', true], [true, 'url(#wire-arrow-custom)'], ['LEMOCustom · no colour code · 1']],
+      offered: ['Custom…', '— Clear —', 'LEMO', '## HDMI'], marked: ['Custom…', '— Clear —', 'LEMO *', '## HDMI'], prefill: [true, 'LEMO', 'Type name…'], escape: ['LEMO', 1, true, 'LEMO'], empty: ['12G-SDI', 1, true],
+      cards: ['opticalCON', 'HDMI 2.1', ['LEMO', 'opticalCON'], 'opticalCON'], io: [['LEMO', true, 'rgb(255, 255, 255)'], 'opticalCON'], back: ['SMPTE 311', true], undo: ['12G-SDI', '12G-SDI', 1] },
+      'the box on PPT A [focused, text, placeholder] / before typing [connector, undo steps] / after LEMO + Enter [stored, tile colour, undo steps, Save lit, remembered, box gone, card (text, custom), cable (grey, arrowhead), key row] / LEFT LED card menu / PPT A card menu / the box on a LEMO card / Escape [stored, undo steps, box gone, card] / an empty box / typed on LEFT LED and AUX 1 ("hdmi 2.1") [LEFT LED, AUX 1, remembered, LEFT LED card] / in the I/O Patch [PPT A pill (text, white class, colour), LEFT LED pill] / typed in the I/O Patch on CAM 2, its Wire card [text, custom] / Undo [CAM 2, its card, steps]');
+  });
+  // 16kw-r2 X: NEW
+  await check('Wire 16kw-r2: Custom… on the Wire-only objects stores the typed connector where each already keeps its cable type, one undo step each: a custom source card (its connectorType; its tile colour turns grey, as a pick does), a custom destination and a custom AUX card (connectorType), a source tile\'s output point (portConns of the tile), a converter\'s port (its conn); the output point\'s cable draws grey with the grey arrowhead', async () => {
+    await restore(); await _r2WireAdv(); const out = {};
+    _wireAdvAddCustomSource(); _wireAdvAddCustomDest(); _wireAdvAddCustomDsm(); _wireAdvAddDevice('converter', 1, 1); await wait(400);
+    const last = a => (wireAdvanced[a] || [])[(wireAdvanced[a] || []).length - 1] || {};
+    const step = async (kind, id, text, read) => { const u = _undoStack.length; const seen = await _r2Ask(_r2Btn(kind, id), text); return [Array.isArray(seen) ? seen[0] : seen, read(), _undoStack.length - u]; };
+    const cs = last('customSources'), cd = last('customDests'), cm = last('customDsms'), dv = last('devices');
+    out.src = await step('wcustom', cs.id, 'LEMO', () => { const x = wireAdvanced.customSources.find(o => o.id === cs.id) || {}; return [x.connectorType, x.wireColor]; });
+    out.dst = await step('wcustomd', cd.id, 'AJA Ki Pro', () => (wireAdvanced.customDests.find(o => o.id === cd.id) || {}).connectorType);
+    out.dsm = await step('wcustomm', cm.id, 'XLR', () => (wireAdvanced.customDsms.find(o => o.id === cm.id) || {}).connectorType);
+    out.port = await step('wdev', dv.id + ':in:0', 'HD-BNC', () => { const d = (wireAdvanced.devices || []).find(o => o.id === dv.id); return d && d.ins[0] ? d.ins[0].conn : null; });
+    const inst = (wireAdvanced.sources || [])[0]; if (inst) { _wireState.selectedNodes = new Set(['asrc:' + inst.id]); _wireRender(); await wait(400); }
+    out.point = inst ? await step('wsp', inst.id + ':0', 'Neutrik', () => { const s = (wireAdvanced.sources || []).find(o => o.id === inst.id) || {}; return (s.portConns || [])[0]; }) : 'no source tile on page 1';
+    const pe = inst ? $$('#wire-diagram path.wire-adv-edge').find(p => (p.dataset.from || '').indexOf('asp:' + inst.id + ':') === 0 || p.dataset.from === 'asrc:' + inst.id) : null;
+    out.cable = pe ? [/156,\s*163,\s*175/.test(pe.getAttribute('stroke') || ''), pe.getAttribute('marker-end')] : 'no cable from the tile';
+    out.remembered = (customTypes.connectors || []).slice().sort();
+    closeWireMode(); await wait(300); await restore();
+    return is(out, { src: [true, ['LEMO', '#9ca3af'], 1], dst: [true, 'AJA Ki Pro', 1], dsm: [true, 'XLR', 1], port: [true, 'HD-BNC', 1], point: [true, 'Neutrik', 1], cable: [true, 'url(#wire-arrow-custom)'], remembered: ['AJA Ki Pro', 'HD-BNC', 'LEMO', 'Neutrik', 'XLR'] },
+      '[the box focused, stored, undo steps]: custom source card [connectorType, tile colour] / custom destination card / custom AUX card / converter port / output point / the output point\'s cable [grey, arrowhead] / remembered');
+  });
+  // 16kw-r2 Y: NEW
+  await check('Help 16kw-r2: the in-app Help says it: I/O Patch › Edit a row: an output\'s Resolution Clear is greyed out (an output\'s resolution is its size) and every menu opens at its top; Wire has a Cable Type row: Custom… first, — Clear — second, typed right on the card, no colour code, the same connector as the I/O Patch row', async () => {
+    const h = ($('#help-overlay') || {}).textContent || ''; const i = h.indexOf('Edit a row'), w = h.indexOf('Cable Type', h.indexOf('Source thumbnails'));
+    const edit = i >= 0 ? h.slice(i, i + 900) : '', wire = w >= 0 ? h.slice(w, w + 900) : '';
+    return is([/greyed out, because an output.s resolution is its size/.test(edit), /opens at its top/.test(edit), w >= 0, /Custom… first, — Clear — second/.test(wire), /right on the card/.test(wire), /no colour code/.test(wire), /I\/O Patch/.test(wire)],
+      [true, true, true, true, true, true, true], 'Edit a row [output Clear greyed, menus open at the top] / Wire [a Cable Type row, Custom… then Clear, typed on the card, no colour code, the I/O Patch row]');
+  });
+  // 16kw-r3fix K: NEW
+  await check('Wire 16kw-r3fix: the Cable Colour Code (Details) reads a typed connector in CAPITALS, like its card, its menu row and its I/O Patch pill (Omar\'s answer 4): "lemo" typed on the PPT A card and "smpte fiber" on a destination card read LEMO and SMPTE FIBER (stored as typed; the tooltip keeps the typed spelling, like the card\'s); the same name typed "LEMO" on CAM 1 is the SAME key row (LEMO, 2 sources), as it is one name in the menus; the printed sheet\'s key is left as typed', async () => {
+    await restore(); openWireMode(); await wait(700); okDialogs(); const out = {};
+    await _r2Ask(_r2Btn('src', 'PPT A'), 'lemo'); await _r2Ask(_r2Btn('src', 'CAM 1'), 'LEMO'); await _r2Ask(_r2Btn('dest', screens[0].id), 'smpte fiber');
+    out.stored = [(_sysGetSourceMeta('PPT A') || {}).connectorType, (_sysGetSourceMeta('CAM 1') || {}).connectorType, screens[0].connectorType];
+    out.cards = [((_r2Btn('src', 'PPT A') || {}).innerText || '').trim(), ((_r2Btn('src', 'CAM 1') || {}).innerText || '').trim()];
+    out.key = $$('.wire-cable-key-row').filter(r => r.getBoundingClientRect().width > 0 && /no colour code/.test(r.textContent)).map(r => { const t = $('.wire-cable-key-type', r);
+      return [t ? t.innerText.trim() : null, t ? t.title : null, (($('.wire-cable-key-meta', r) || {}).textContent || '').replace(/\s+/g, ' ').trim()]; });
+    const sheet = _wireLegendSVG(0, 0, 'light').svg || ''; out.print = [/>lemo</.test(sheet), />LEMO</.test(sheet), />smpte fiber</.test(sheet)];
+    closeWireMode(); await wait(300); await restore();
+    return is(out, { stored: ['lemo', 'LEMO', 'smpte fiber'], cards: ['LEMO', 'LEMO'], key: [['LEMO', 'lemo', 'Custom · no colour code · 2'], ['SMPTE FIBER', 'smpte fiber', 'Custom · no colour code · 1']], print: [true, true, true] },
+      'stored [PPT A, CAM 1, LEFT LED] / cards as seen [PPT A, CAM 1] / the typed rows of the key as seen [name, tooltip, words] / the printed key [lemo, LEMO, smpte fiber as typed]');
+  });
+  // 16kw-r3fix T: NEW
+  await check('I/O 16kw-r3fix: a Type typed on a row (Type › Custom…, the name typed, Enter) is the MARKED row the next time its Type menu opens at its top, and so is a second name typed over it (Omar\'s answer 1: the current value stays marked): a destination (BARCO, then CHRISTIE), a source (ALPHA RIG, then ZETA RIG), the source\'s box retyped without the menu (UNIFORM RIG), Undo (ZETA RIG back), an Advanced page-1 source (ALPHA ADV, then BRAVO ADV)', async () => {
+    await restore(); await ioOpenSimple(); const out = {};
+    const marked = async trig => { if (!trig) return 'no trigger'; _sysOpenDropdown(trig); await wait(150); const m = $$('.sys-dd').filter(e => e.getBoundingClientRect().width > 0).pop(); if (!m) return 'no menu';
+      const s = $('.sys-dd-item.selected', m); const r = [s ? (($('.item-text', s) || s).textContent || '').trim() : null, m.scrollTop]; _sysCloseMenu(); await wait(60); return r; };
+    const typeOn = async (row, f, t) => { if (!await ioPick(_kwCell(row(), f), /^Custom…/)) return 'no Custom… in the Type menu'; await wait(150); const bx = $('.sys-type-input', row()); if (!bx) return 'no box';
+      tfType(bx, t); await wait(300); return marked(_kwCell(row(), f)); };
+    const dst = () => ioDestRowF('CENTER LED'), src = () => _kwSrcRow('PGM');
+    out.dst = [await typeOn(dst, 'dst-type', 'BARCO'), await typeOn(dst, 'dst-type', 'CHRISTIE')];
+    out.src = [await typeOn(src, 'src-type', 'ALPHA RIG'), await typeOn(src, 'src-type', 'ZETA RIG')];
+    { const bx = $('.sys-type-input', src()); if (bx) { tfType(bx, 'UNIFORM RIG'); await wait(300); } out.box = bx ? await marked(_kwCell(src(), 'src-type')) : 'no box'; }
+    doUndo(); await wait(500); out.undo = await marked(_kwCell(src(), 'src-type'));
+    out.model = [(screens.find(s => s.name === 'CENTER LED') || {}).customType, (_sysGetSourceMeta('PGM') || {}).customType];
+    await toAdvancedF(); const adv = () => advRowF('PGM');
+    out.adv = [await typeOn(adv, 'src-type', 'ALPHA ADV'), await typeOn(adv, 'src-type', 'BRAVO ADV')];
+    _ioSetView('simple'); await wait(300); closeSystem(); await restore();
+    return is(out, { dst: [['BARCO', 0], ['CHRISTIE', 0]], src: [['ALPHA RIG', 0], ['ZETA RIG', 0]], box: ['UNIFORM RIG', 0], undo: ['ZETA RIG', 0], model: ['CHRISTIE', 'ZETA RIG'], adv: [['ALPHA ADV', 0], ['BRAVO ADV', 0]] },
+      'the Type menu as it opens after each name [the marked row, its scroll]: CENTER LED / PGM / PGM box retyped / after Undo / the stored names [CENTER LED, PGM] / page-1 PGM');
+  });
   try { _fsPauseAll(); } catch (e) {} $$('video').forEach(v => { try { v.muted = true; v.pause(); } catch (e) {} });
   return { checks };
 })

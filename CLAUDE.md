@@ -139,6 +139,15 @@ Both date boxes open ONE calendar `_lbCalOpen` (one day / a start and an end); t
 cover: blank Show Dates prints "CREATED <date>", D15 prints "SHOW TYPE: …". Examples: date in `showMeta.dates`, `showDate` "". CSS
 for it lives at the end of the main style block and must not start with `:root` / `#wire-overlay` (the export copies those).
 
+**I/O Patch menus (16kw-menus, 2026-09-25)** — the Connector, Type and Resolution menus read Custom… first, — Clear — second,
+then the list, everywhere they open (rows, Set for all, Advanced pages, phone cards); this replaces "destructive last" for Clear.
+Connector gained Custom… (the text stored as typed in `connectorType`, remembered in `customTypes.connectors`, a grey cable in
+Wire), Type gained — Clear —. 16kw-fix: the phone's Resolution sheet reads the same way, every typed connector is grey whatever
+its words, and a menu never opens over its box. 16kw-r2 (2026-09-26): every menu opens at its TOP (no scroll to the current
+value); Wire's Cable Type menus read the same, Custom… typing on the card (`_wireConnAsk`); an output's Resolution Clear is
+greyed out ("An output's resolution is its size"). 16kw-r3fix (2026-09-27): a typed connector reads in capitals in the Wire Details key (one row per name, whatever its
+capitals; the printed key is as typed) and on the phone card's pill; a Type just typed is the marked row of its menu. Details and the menus left alone: HANDBOOK section 5.
+
 **Layer strip + ghost view (round 16ks)** — `_ls*` block in front of `_rcPresetRow`: `_lsStripHTML(p)` fills the header's old flex:1 spacer,
 `_lsTopTag(p,s)` prefixes `.screen-res`, `_lsGhost` is editor-only view state (class `lb-ghost` on the live DOM of `#canvas-area` / `#fs-canvas`,
 re-applied after redraws by a MutationObserver; never in `_rcChip`, the show file, undo, exports or Display). Selection changes reach it through
@@ -268,3 +277,5 @@ Users must never receive a build that has not passed the gate. Two lines:
 <!-- 16kv-dates -->
 
 <!-- 16kv-fix -->
+
+<!-- 16kw-menus --><!-- 16kw-fix --><!-- 16kw-r2 --><!-- 16kw-r3fix -->

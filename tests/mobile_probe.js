@@ -308,6 +308,29 @@
     return is([innerWidth, vis($('#mb-wire-rotate')), !!$('#wire-diagram svg'), wireSettings.wireView, advTiles(), $$('#wire-tabs, #wire-page-tabs').filter(shown).length, _wireGetZoom() > 0 && _wireGetZoom() <= 1, r.width > innerWidth * 0.6 && r.height > 120, $$('#wire-sources-panel .wire-source-card').length > 0],
       [LANDSCAPE[0], false, true, 'simple', 0, 0, true, true, true], 'width / rotate card / svg / view / Advanced tiles / Advanced tabs / zoom fitted / diagram area / source cards');
   });
+  // 16kw-r2 W: NEW
+  // 16kw-r2: Omar's answer 2 on the phone (Wire is landscape only there), with REAL taps and typing. FAILS on the 16kw-fix page
+  //   (the Cable Type menu has no Custom…), PASSES on 16kw-r2. Undo puts the show back for the checks after it.
+  await check('Wire 16kw-r2 landscape: a source card\'s Cable Type menu reads Custom… first, — Clear — second, then the list; Custom… turns the button into a box on the card (the keyboard in it); LEMO 3B typed and a tap on the drawing stores it (the show\'s connectorType), the card shows it and its cable turns grey; Undo takes it back', async () => {
+    const tidy = () => { try { _sysCloseMenu(); } catch (e) {} };
+    try {
+    const out = {}; const btn = () => $$('#wire-sources-panel .wire-cable-btn[data-sys-kind="src"]').find(b => b.dataset.sysId === 'PPT B');
+    const rows = () => { const m = $$('.sys-dd').filter(e => e.getBoundingClientRect().width > 0).pop(); return m ? [...m.children].map(c => (c.classList.contains('sys-dd-group') ? '## ' : '') + txt($('.item-text', c) || c)) : []; };
+    if (!$('#wire-diagram svg')) return 'Wire is not open in landscape';
+    const c0 = (_sysGetSourceMeta('PPT B') || {}).connectorType;
+    let t = await tap(btn()); if (t !== true) return t; await until(() => $('.sys-dd .sys-dd-item'), 1500); await wait(250);
+    out.menu = rows().slice(0, 3);
+    t = await tap($$('.sys-dd .sys-dd-item').find(i => /^Custom…$/.test(txt($('.item-text', i) || i)))); if (t !== true) return t; await until(() => $('.wire-conn-ask input'), 1500); await wait(200);
+    const box = $('.wire-conn-ask input'); out.box = [!!box, document.activeElement === box, box ? box.placeholder : null];
+    const ty = await runner('type', { text: 'LEMO 3B' }); if (ty && ty.error) return 'typing failed: ' + ty.error; await wait(200);
+    t = await tap($('#wire-diagram-scroll')); if (t !== true) return t; await until(() => (_sysGetSourceMeta('PPT B') || {}).connectorType === 'LEMO 3B', 2500); await wait(700);
+    const e = $$('#wire-diagram path.wire-edge').find(p => p.dataset.from === 'src:PPT B');
+    out.stored = [(_sysGetSourceMeta('PPT B') || {}).connectorType, txt(btn()), !$('.wire-conn-ask'), e ? /156,\s*163,\s*175/.test(e.getAttribute('stroke') || '') : null];
+    doUndo(); await wait(600); out.undo = [(_sysGetSourceMeta('PPT B') || {}).connectorType === c0, txt(btn())];
+    return is(out, { menu: ['Custom…', '— Clear —', '## HDMI'], box: [true, true, 'Type name…'], stored: ['LEMO 3B', 'LEMO 3B', true, true], undo: [true, c0] },
+      'the Cable Type menu [first rows] / the box [there, the keyboard in it, placeholder] / after LEMO 3B + a tap on the drawing [stored, card, box gone, grey cable] / Undo [back, card]');
+    } finally { tidy(); await wait(200); }
+  });
   openVideoPresets(); await wait(400);
   // a show that was SAVED in Wire Advanced on the desktop, with tiles on its page
   let ADV = null;
@@ -359,6 +382,144 @@
     inp.select(); const ty = await runner('type', { text: 'PHONE RENAMED' }); if (ty && ty.error) return 'typing failed: ' + ty.error; await wait(150);
     t = await tap($('#mobile-main .mb-io-section')); if (t !== true) return t; await until(() => srcNames().includes('PHONE RENAMED'), 1500); await wait(300); okDialogs();
     return is([srcNames().includes('PHONE RENAMED'), srcNames().includes(old), uses(old), uses('PHONE RENAMED'), $$('#mobile-main .mb-io-src .mb-io-syname').some(i => i.value === 'PHONE RENAMED')], [true, false, 0, before, true], 'new name listed / old name gone / old uses / new uses / card');
+  });
+  // 16kw-menus P: NEW
+  // 16kw-fix: REVISES the builder's block P. Its last part said "the Resolution sheet reads as before (Custom first, no Clear)";
+  //   the phone's I/O Resolution sheet now reads + Custom resolution…, — Clear — like the Connector and Type menus (attacker
+  //   finding: Omar's "always Custom then clear" covers the phone cards, and the in-app Help says the three menus match). Only
+  //   the name and that last expectation changed (and a tidy-up when it ends, so a failing run leaves no menu open); every tap is
+  //   the builder's.
+  await check('I/O 16kw: on a source card the Connector menu reads Custom… first, — Clear — second, then the list (25 rows) and the Type menu Custom…, — Clear —, then the list (10 rows); Connector › Custom… turns the pill into a box on the card, LEMO typed and a tap away stores it and the card shows it; the next card\'s Connector menu offers LEMO right after Clear; Type › — Clear — empties the type; the Resolution sheet reads + Custom resolution… first and — Clear — second, like the other two', async () => {
+    const tidy = () => { try { closeSharedResPicker(); } catch (e) {} try { _sysCloseMenu(); } catch (e) {} };   /* 16kw-fix: a failing run must not leave a sheet or a menu over the next checks */
+    try {
+    const rows = () => { const m = $$('.sys-dd').filter(e => e.getBoundingClientRect().width > 0).pop(); return m ? [...m.children].map(c => (c.classList.contains('sys-dd-group') ? '## ' : '') + txt($('.item-text', c) || c)) : []; };
+    const item = re => $$('.sys-dd .sys-dd-item').find(i => re.test(txt($('.item-text', i) || i)));
+    const cards = () => $$('#mobile-main .mb-io-src'); const out = {};
+    if (!$('#mobile-main .mb-io')) { const t0 = await tap($('#topbar-nav-iop')); if (t0 !== true) return t0; await until(() => $('#mobile-main .mb-io'), 1500); await wait(300); }
+    const name0 = $('.mb-io-syname', cards()[0]).value, name1 = $('.mb-io-syname', cards()[1]).value;
+    let t = await tap($('[data-sys-field="connector"]', cards()[0])); if (t !== true) return t; await until(() => $('.sys-dd .sys-dd-item'), 1500); await wait(200);
+    const conn = rows(); out.conn = [conn.slice(0, 3), conn.filter(r => !/^## /.test(r)).length];
+    t = await tap(item(/^Custom…$/)); if (t !== true) return t; await until(() => $('#mobile-main .sys-conn-ask input'), 1500); await wait(150);
+    const box = $('#mobile-main .sys-conn-ask input'); out.box = [!!box, document.activeElement === box, box ? box.placeholder : null];
+    const ty = await runner('type', { text: 'LEMO' }); if (ty && ty.error) return 'typing failed: ' + ty.error; await wait(150);
+    t = await tap($('#mobile-main .mb-io-section')); if (t !== true) return t; await until(() => (_sysGetSourceMeta(name0) || {}).connectorType === 'LEMO', 2500); await wait(500);
+    out.stored = [(_sysGetSourceMeta(name0) || {}).connectorType, pillText(cards()[0], 'connector'), !$('#mobile-main .sys-conn-ask')];
+    t = await tap($('[data-sys-field="connector"]', cards()[1])); if (t !== true) return t; await until(() => $('.sys-dd .sys-dd-item'), 1500); await wait(200);
+    out.offered = rows().slice(0, 4); t = await tap(item(/^LEMO$/)); if (t !== true) return t; await until(() => (_sysGetSourceMeta(name1) || {}).connectorType === 'LEMO', 1500); await wait(300);
+    out.picked = (_sysGetSourceMeta(name1) || {}).connectorType;
+    t = await tap($('[data-sys-field="src-type"]', cards()[0])); if (t !== true) return t; await until(() => $('.sys-dd .sys-dd-item'), 1500); await wait(200);
+    const type = rows(); out.type = [type.slice(0, 3), type.filter(r => !/^## /.test(r)).length];
+    t = await tap(item(/^— Clear —$/)); if (t !== true) return t; await until(() => !(_sysGetSourceMeta(name0) || {}).type, 1500); await wait(300);
+    out.cleared = [(_sysGetSourceMeta(name0) || {}).type || '', txt($('[data-sys-field="src-type"]', cards()[0]))];
+    t = await tap($('[data-sys-field="resolution"]', cards()[0])); if (t !== true) return t; await until(() => $('.shared-res-dd .sys-dd-item'), 1500); await wait(350);
+    const res = $$('.shared-res-dd > *').map(c => (c.classList.contains('sys-dd-group') ? '## ' : '') + txt($('.item-text', c) || c)); out.res = [res.slice(0, 2), res.some(r => /Clear/.test(r))];
+    try { closeSharedResPicker(); } catch (e) {} await wait(200);
+    return is(out, { conn: [['Custom…', '— Clear —', '## HDMI'], 25], box: [true, true, 'Type name…'], stored: ['LEMO', 'LEMO', true], offered: ['Custom…', '— Clear —', 'LEMO', '## HDMI'], picked: 'LEMO',
+      type: [['Custom…', '— Clear —', 'PC'], 10], cleared: ['', '— Set machine —'], res: [['+ Custom resolution…', '— Clear —'], true] },
+      'Connector menu [first rows, rows] / the box [there, cursor in it, placeholder] / after LEMO + a tap away [stored, card, box gone] / the next card\'s menu / picked there / Type menu [first rows, rows] / after Clear [type, chip] / Resolution sheet [first rows, a Clear]');
+    } finally { tidy(); await wait(200); }
+  });
+  // 16kw-menus Q: NEW
+  // 16kw-fix: the phone findings, with REAL taps. FAILS on the 16kw-menus page (no Clear in the Resolution sheet; the source
+  //   card's sheet marks nothing; CUSTOM… runs into YOUR OWN; Media Server opens below the edge), PASSES on the 16kw-fix page.
+  // 16kw-r2 Q: REPLACES the check named in its header (reason in the block)
+  // 16kw-r2: REVISES the 16kw-fix phone check Q. Two of its expectations are what Omar's answers of 2026-09-26 change: a card
+  //   whose Type is Media Server opened its Type menu scrolled to Media Server (answer 1: every menu opens at its TOP, the value
+  //   still marked, a scroll down), and a tap on the destination sheet's — Clear — closed the sheet (answer 3: an output's Clear
+  //   is greyed out, so the tap does nothing and the sheet stays). Every tap is the fixer's; the rest of Q is unchanged.
+  await check('I/O 16kw-fix: on the phone cards the Resolution sheet reads + Custom resolution…, — Clear —, then Used in this show; the source card\'s sheet marks the source\'s own size; — Clear — empties the source\'s resolution (the card reads — Set resolution —); a destination card\'s sheet reads the same, its — Clear — greyed out (16kw-r2: a tap on it does nothing, the size stays, the sheet stays open); the Type menu\'s first row reads cleanly (CUSTOM… beside its note, not over it); a card whose Type is Media Server opens its Type menu at the TOP (16kw-r2: Custom… in view, Media Server still marked)', async () => {
+    const tidy = () => { try { closeSharedResPicker(); } catch (e) {} try { _sysCloseMenu(); } catch (e) {} };   /* a failing run must not leave a sheet or a menu over the next checks */
+    try {
+    const shRows = () => $$('.shared-res-dd > *').map(c => (c.classList.contains('sys-dd-group') ? '## ' : '') + txt($('.item-text', c) || c) + (c.classList.contains('selected') ? ' *' : ''));
+    const item = (sel, re) => $$(sel).find(i => re.test(txt($('.item-text', i) || i)));
+    const cards = () => $$('#mobile-main .mb-io-card'), srcCards = () => $$('#mobile-main .mb-io-src'), dstCard = () => $('#mobile-main .mb-io-card.mb-io-dest'); const out = {};
+    if (!$('#mobile-main .mb-io')) { const t0 = await tap($('#topbar-nav-iop')); if (t0 !== true) return t0; await until(() => $('#mobile-main .mb-io'), 1500); await wait(300); }
+    const c2 = srcCards()[2], name2 = $('.mb-io-syname', c2).value, res2 = (_sysGetSourceMeta(name2) || {}).resolution || '';
+    let t = await tap($('[data-sys-field="resolution"]', c2)); if (t !== true) return t; await until(() => $('.shared-res-dd .sys-dd-item'), 1500); await wait(350);
+    const sr = shRows(); out.srcSheet = [sr.slice(0, 3), sr.includes(res2.replace('x', '×') + ' *')];
+    t = await tap(item('.shared-res-dd .sys-dd-item', /^— Clear —$/)); if (t !== true) return t; await until(() => !(_sysGetSourceMeta(name2) || {}).resolution, 1500); await wait(400);
+    out.cleared = [(_sysGetSourceMeta(name2) || {}).resolution || '', pillText(srcCards()[2], 'resolution')];
+    const d = dstCard(); const did = (screens[0] || {}).id, w0 = screens[0].w + 'x' + screens[0].h;
+    t = await tap($('[data-sys-field="resolution"]', d)); if (t !== true) return t; await until(() => $('.shared-res-dd .sys-dd-item'), 1500); await wait(350);
+    out.dstSheet = shRows().slice(0, 2); const dc = item('.shared-res-dd .sys-dd-item', /^— Clear —$/); out.dstClear = dc ? [dc.classList.contains('disabled'), dc.title] : 'no Clear';
+    t = await tap(dc); if (t !== true) return t; await wait(600);
+    out.dstKept = [screens[0].w + 'x' + screens[0].h === w0, !!$('.shared-res-dd')];
+    tidy(); await wait(300);
+    t = await tap($('[data-sys-field="src-type"]', srcCards()[3])); if (t !== true) return t; await until(() => $('.sys-dd .sys-dd-item'), 1500); await wait(250);
+    const first = $$('.sys-dd .sys-dd-item')[0]; const ft = first && $('.item-text', first), fm = first && $('.item-meta', first);
+    const rg = document.createRange(); if (ft) rg.selectNodeContents(ft);
+    out.firstRow = ft && fm ? [txt(ft), txt(fm), rg.getBoundingClientRect().right <= fm.getBoundingClientRect().left + 0.5] : 'no first row with a note';
+    t = await tap(item('.sys-dd .sys-dd-item', /^Media Server$/)); if (t !== true) return t; await wait(500);
+    const name3 = $('.mb-io-syname', srcCards()[3]).value; out.picked = (_sysGetSourceMeta(name3) || {}).type;
+    t = await tap($('[data-sys-field="src-type"]', srcCards()[3])); if (t !== true) return t; await until(() => $('.sys-dd .sys-dd-item'), 1500); await wait(250);
+    const m = $$('.sys-dd').filter(e => e.getBoundingClientRect().width > 0).pop(), s = m && $('.sys-dd-item.selected', m);
+    const f0 = m && $('.sys-dd-item', m), mr = m && m.getBoundingClientRect();
+    out.atTop = m && s && f0 ? [txt($('.item-text', s) || s), m.scrollTop, txt($('.item-text', f0) || f0), f0.getBoundingClientRect().top >= mr.top - 1] : 'no marked row';
+    try { _sysCloseMenu(); } catch (e) {} await wait(200);
+    return is(out, { srcSheet: [['+ Custom resolution…', '— Clear —', '## Used in this show'], true], cleared: ['', '— Set resolution —'], dstSheet: ['+ Custom resolution…', '— Clear —'], dstClear: [true, 'An output\'s resolution is its size'], dstKept: [true, true],
+      firstRow: ['Custom…', 'your own', true], picked: 'Media Server', atTop: ['Media Server', 0, 'Custom…', true] },
+      'source card sheet [first rows, its own size marked] / after Clear [resolution, card] / destination card sheet [first rows] / its Clear [greyed, tooltip] / after a tap on it [size kept, sheet still open] / Type menu first row [label, note, the label ends before the note] / picked / reopened [marked row, scroll, first row, first row in view]');
+    } finally { tidy(); await wait(200); }
+  });
+  // 16kw-r2 Z: NEW
+  // 16kw-r2: Omar's answers 1 and 3 on the phone cards, with REAL taps. FAILS on the 16kw-fix page (the Connector menu opens
+  //   scrolled to LTC; the AUX / DSM / multiviewer sheets' Clear is live and a tap on the multiviewer's empties it), PASSES on 16kw-r2.
+  await check('I/O 16kw-r2: on the phone the Resolution sheet of an AUX, a DSM and the multiviewer card greys out — Clear — (second, disabled, the tooltip "An output\'s resolution is its size"): a tap on it does nothing (the size stays, the sheet stays open); a card whose Connector is LTC opens its Connector menu at the TOP (Custom… and — Clear — in view, LTC still marked)', async () => {
+    const tidy = () => { try { closeSharedResPicker(); } catch (e) {} try { _sysCloseMenu(); } catch (e) {} };
+    try {
+    const item = (sel, re) => $$(sel).find(i => re.test(txt($('.item-text', i) || i)));
+    const out = {}; if (!$('#mobile-main .mb-io')) { const t0 = await tap($('#topbar-nav-iop')); if (t0 !== true) return t0; await until(() => $('#mobile-main .mb-io'), 1500); await wait(300); }
+    const size = kind => { const c = $$('#mobile-main .mb-io-card').find(x => x.classList.contains('mb-io-' + kind)); const p = c && $('[data-sys-field="resolution"]', c); return p ? p.dataset.sysValue : null; };
+    const model = () => JSON.stringify([dsms.map(x => x.w + 'x' + x.h), multiviewers.map(x => x.resolution || '')]);
+    for (const kind of ['aux', 'dsm', 'mv']) {
+      const c = $$('#mobile-main .mb-io-card').find(x => x.classList.contains('mb-io-' + kind)); if (!c) { out[kind] = 'no ' + kind + ' card'; continue; }
+      let t = await tap($('[data-sys-field="resolution"]', c)); if (t !== true) { out[kind] = t; continue; } await until(() => $('.shared-res-dd .sys-dd-item'), 1500); await wait(350);
+      const it = item('.shared-res-dd .sys-dd-item', /^— Clear —$/); const m0 = model();
+      const r = it ? [$$('.shared-res-dd .sys-dd-item').indexOf(it), it.classList.contains('disabled'), it.classList.contains('selected'), it.title] : ['no Clear'];
+      t = await tap(it); await wait(500); r.push(t === true, model() === m0, !!$('.shared-res-dd')); out[kind] = r; tidy(); await wait(300);
+    }
+    const c1 = $$('#mobile-main .mb-io-src')[1]; let t = await tap($('[data-sys-field="connector"]', c1)); if (t !== true) return t; await until(() => $('.sys-dd .sys-dd-item'), 1500); await wait(250);
+    t = await tap(item('.sys-dd .sys-dd-item', /^LTC$/)); if (t !== true) return t; await wait(500);
+    t = await tap($('[data-sys-field="connector"]', $$('#mobile-main .mb-io-src')[1])); if (t !== true) return t; await until(() => $('.sys-dd .sys-dd-item'), 1500); await wait(250);
+    const m = $$('.sys-dd').filter(e => e.getBoundingClientRect().width > 0).pop(), s = m && $('.sys-dd-item.selected', m), mr = m && m.getBoundingClientRect();
+    const inView = m ? $$('.sys-dd-item', m).filter(i => { const r = i.getBoundingClientRect(); return r.top >= mr.top - 1 && r.bottom <= mr.bottom + 1; }).slice(0, 2).map(i => txt($('.item-text', i) || i)) : [];
+    out.ltc = m && s ? [txt($('.item-text', s) || s), m.scrollTop, inView] : 'no marked row'; tidy(); await wait(200);
+    const OFF = [1, true, false, 'An output\'s resolution is its size', true, true, true];
+    return is(out, { aux: OFF, dsm: OFF, mv: OFF, ltc: ['LTC', 0, ['Custom…', '— Clear —']] },
+      'the sheet\'s Clear on AUX / DSM / MV [its row, greyed, marked, tooltip, the tap reached it, sizes kept, the sheet still open] / the Connector menu after LTC [marked, scroll, the first rows in view]');
+    } finally { tidy(); await wait(200); }
+  });
+  // 16kw-r3fix P: NEW
+  // 16kw-r3fix: Omar's answers 4 and 1 on the phone cards, with REAL taps and typing. FAILS on the 16kw-r2 page (the pill reads
+  //   "lemo 2b" as typed; a typed Type's menu marks Custom…), PASSES on 16kw-r3fix.
+  await check('I/O 16kw-r3fix: on the phone cards a typed connector reads in CAPITALS on its Connector pill ("lemo 2b" typed and a tap away, stored as typed, the pill reads LEMO 2B, like the desktop pill and the menu row), and a Type typed on a source or a destination card (Custom…, a tap in the box, the name typed, a tap on the card\'s Connector label) is the marked row of that card\'s Type menu, which still opens at its top', async () => {
+    const tidy = () => { try { _sysCloseMenu(); } catch (e) {} };
+    try {
+    const item = re => $$('.sys-dd .sys-dd-item').find(i => re.test(txt($('.item-text', i) || i)));
+    const out = {}; if (!$('#mobile-main .mb-io')) { const t0 = await tap($('#topbar-nav-iop')); if (t0 !== true) return t0; await until(() => $('#mobile-main .mb-io'), 1500); await wait(300); }
+    const srcCard = () => $$('#mobile-main .mb-io-src')[4], dstCard = () => $$('#mobile-main .mb-io-card.mb-io-dest')[1];
+    const sName = $('.mb-io-syname', srcCard()).value, dId = (screens[1] || {}).id;
+    // the Connector pill
+    let t = await tap($('[data-sys-field="connector"]', srcCard())); if (t !== true) return t; await until(() => $('.sys-dd .sys-dd-item'), 1500); await wait(200);
+    t = await tap(item(/^Custom…$/)); if (t !== true) return t; await until(() => $('#mobile-main .sys-conn-ask input'), 1500); await wait(150);
+    let ty = await runner('type', { text: 'lemo 2b' }); if (ty && ty.error) return 'typing failed: ' + ty.error; await wait(150);
+    t = await tap($('.mb-io-flabel', srcCard())); if (t !== true) return t; await until(() => (_sysGetSourceMeta(sName) || {}).connectorType === 'lemo 2b', 2500); await wait(500);
+    const pl = $('[data-sys-field="connector"] .pill-label', srcCard());
+    out.pill = [(_sysGetSourceMeta(sName) || {}).connectorType, pl ? pl.innerText.replace(/\s+/g, ' ').trim() : null];
+    // a Type typed on a card, then its Type menu
+    const typed = async (card, f, name, stored) => { let t = await tap($('[data-sys-field="' + f + '"]', card())); if (t !== true) return t; await until(() => $('.sys-dd .sys-dd-item'), 1500); await wait(200);
+      t = await tap(item(/^Custom…$/)); if (t !== true) return t; await until(() => $('.sys-type-input', card()), 1500); await wait(250);
+      t = await tap($('.sys-type-input', card())); if (t !== true) return t; await wait(150);
+      const ty = await runner('type', { text: name }); if (ty && ty.error) return 'typing failed: ' + ty.error; await wait(150);
+      t = await tap($('.mb-io-flabel', card())); if (t !== true) return t; await until(() => stored() === name, 2500); await wait(500);
+      t = await tap($('.sys-name-chev[data-sys-field="' + f + '"]', card())); if (t !== true) return t; await until(() => $('.sys-dd .sys-dd-item'), 1500); await wait(250);
+      const m = $$('.sys-dd').filter(e => e.getBoundingClientRect().width > 0).pop(), s = m && $('.sys-dd-item.selected', m), f0 = m && $('.sys-dd-item', m);
+      const r = [stored(), s ? txt($('.item-text', s) || s) : null, m ? m.scrollTop : null, f0 ? txt($('.item-text', f0) || f0) : null]; tidy(); await wait(250); return r; };
+    out.src = await typed(srcCard, 'src-type', 'ALPHA PH', () => (_sysGetSourceMeta(sName) || {}).customType);
+    out.dst = await typed(dstCard, 'dst-type', 'DELTA PH', () => ((screens.find(s => s.id === dId) || {}).customType));
+    return is(out, { pill: ['lemo 2b', 'LEMO 2B'], src: ['ALPHA PH', 'ALPHA PH', 0, 'Custom…'], dst: ['DELTA PH', 'DELTA PH', 0, 'Custom…'] },
+      'the Connector pill after "lemo 2b" [stored, the pill as seen] / a source card\'s typed Type, then its Type menu [stored, the marked row, its scroll, the first row] / the same on a destination card');
+    } finally { tidy(); await wait(200); }
   });
   await restore();
 
