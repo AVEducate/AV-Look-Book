@@ -148,6 +148,17 @@ value); Wire's Cable Type menus read the same, Custom… typing on the card (`_w
 greyed out ("An output's resolution is its size"). 16kw-r3fix (2026-09-27): a typed connector reads in capitals in the Wire Details key (one row per name, whatever its
 capitals; the printed key is as typed) and on the phone card's pill; a Type just typed is the marked row of its menu. Details and the menus left alone: HANDBOOK section 5.
 
+**Backdrop (16kx-backdrop + 16kx-r2, 2026-09-27)** — a fifth destination Type (`deviceType` 'Backdrop') for a scenic piece between
+the screens that takes no video. Made in Quick Setup / Edit Show Info (the switch beside a row's resolution) or the I/O Patch Type
+menu of a destination row (after Stream); it is named BACKDROP (BACKDROP 2 …, never a taken name) and becoming one removes its BG and
+layers from every preset AND its Wire Advanced tiles, cables and the show switcher's row that fed it (a router or switcher added by
+hand keeps its ports: the port is emptied), and its own I/O Patch Advanced rows, in one
+Undo step (asked first when it carries content). Size in whole INCHES (`bdLin` / `bdHin`, read 12' 6" × 8'; a screen starts at its
+pixels to the nearest half foot; `w` / `h` follow the px per foot on every draw), one picture (`bdImg`, JPEG <= 1600 px). Drawn inline
+by `_bdBox`; left out of the Canvas size, the I/O Patch (the others keep their canvas numbers), the I/O Excel and Wire (`_bdNoBd`);
+Quick Setup's switch pressed on and off again gives the row back (16kx-r2fix); the cue sheet keeps
+its column greyed (xf 19 / 20). Details: HANDBOOK section 5.
+
 **Layer strip + ghost view (round 16ks)** — `_ls*` block in front of `_rcPresetRow`: `_lsStripHTML(p)` fills the header's old flex:1 spacer,
 `_lsTopTag(p,s)` prefixes `.screen-res`, `_lsGhost` is editor-only view state (class `lb-ghost` on the live DOM of `#canvas-area` / `#fs-canvas`,
 re-applied after redraws by a MutationObserver; never in `_rcChip`, the show file, undo, exports or Display). Selection changes reach it through
@@ -278,4 +289,4 @@ Users must never receive a build that has not passed the gate. Two lines:
 
 <!-- 16kv-fix -->
 
-<!-- 16kw-menus --><!-- 16kw-fix --><!-- 16kw-r2 --><!-- 16kw-r3fix -->
+<!-- 16kw-menus --><!-- 16kw-fix --><!-- 16kw-r2 --><!-- 16kw-r3fix --><!-- 16kx-backdrop --><!-- 16kx-r2 --><!-- 16kx-r2fix -->

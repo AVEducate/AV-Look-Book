@@ -378,6 +378,43 @@ anchor on the function name and replace the first occurrence after it, never all
   `_sysOpenDropdown` reads to mark the row; the handler now writes the committed name there. The phone cards' ▼
   (`renderMobileMain`) had no `data-sys-custom` at all (Custom… was always marked) and now carries it. (d) Comments
   only: the greyed Clear's contrast note reads 3.7:1.
+- **16kx-backdrop** (owner, 2026-09-27; search `16kx-backdrop`) and **16kx-r2** (his four answers, same day; search `16kx-r2`). A fifth
+  destination Type, `deviceType` 'Backdrop' on a `screens[]` entry (in `_SYS_DEVICE_TYPES`), for a scenic piece between the screens that
+  takes no video. Stored on the destination: `bdLin` / `bdHin` = Length / Height in whole INCHES (the truth; `_bdIn` rounds to the
+  nearest inch, 3" to 500'; `_bdLi` / `_bdHi` also read a round-1 show's `bdL` / `bdH` decimal feet, which the first draw turns into
+  inches as a not-an-edit), `bdImg` = ONE picture (a JPEG data URL, longest side 1600 px, quality .85, `_bdImgFromFile`), `bdWas` = the
+  Type it had. Shown by `_bdFtIn` as 12' 6" (inches left off at zero) through `_bdSizeTxt` / `_bdLongTxt`; typed through `_bdParse`
+  (12' 6", 12'6", 12' 6, 12 6, 12'-6", 12-6, 12', 12, 12.5, 150", 6 1/2", ft / in words, curly marks) in text boxes (`_bdFmtBox`).
+  `w` / `h` = inches x `_pxPerFoot()` / 12, kept in step on every draw by `_bdSyncPx` (first line of `syncCanvasSize`,
+  `_lbNotAChange` + `_ioAdvNetRebase`). A screen's first size is `_bdHalf(px)`: its pixels to the nearest half foot. Made only by
+  Quick Setup's row switch (`_qsBd`, `_bdQsCtl`, `_bdQsToggle` writes BACKDROP into the name box via `_bdQsAutoName` and keeps what the row read in `_bdQsPrev`, so on-then-off before Build / Update gives the name and resolution back, `_bdQsUndoOn`, `_bdQsApply`, the
+  question `_bdQsGate` in `confirmQSEdit`; `_bdQsWas` keeps the names the window opened with) and the I/O Patch Type menu of a `dest`
+  row (`_bdTypeOpts`, `_bdAskMake` -> `_bdConvert`: `_bdAutoName` over `_bdTaken`, one undo step). `_bdMake` strips `_BD_KEYS` (BG,
+  layers and what they carry, AOI, EDID note, turn) from every preset, resizes (`_sysReflowAfterResize`) and opens the row if it
+  overlapped (`_bdUnblend`); `_bdConverted` drops the presets' own names for it and calls `_bdDropAdv`: on every Wire Advanced page
+  (`_wireAdvEachPage`) its `adst:` / `adp:` tiles and cables go, the `rop:` output rows that fed them are spliced out
+  (`_bdReleaseOut`: later rows move up, wires remapped, `outC` - 1, `_wireAdvRouterRelabel`) only on the show's own switcher (`_bdShowHub`:
+  kind switcher, no patch link, titled SWITCHER I/O or with the switcher's name from Wire, its first output rows cabled one each to
+  show destination / AUX tiles in the show's order) and on a patch tile; any other router or switcher keeps its rows and the port is emptied in place (`_bdFreeOut`); a patch
+  tile's row named after it goes, at its own place among rows of that name; its OWN `fromShow` rows go from the I/O Patch Advanced
+  pages (page 1 also unflagged ones; rows match by name, so `_bdIoMine` keeps as many rows of the name as the show still has items
+  of it and drops the one at its own place in page 1's build order, `_bdOwnRank`; Edit Show Info does not pass the new name of a
+  destination turning into a backdrop to the rows, `_lbRenamedDest` is skipped for it); the open Wire page's parked copy follows
+  the page (`_bdParkedFollows`); page 1's `seed` / `seedAsked` of both
+  lose its entry (the I/O one at its own place, `_bdSeedAt`) and take the conversion's own source-order change (`_bdSeedDropWire` / `_bdSeedDropIo` with `_bdSrcParts`), so
+  neither Advanced asks "Simple changed". `_bdUnmake` gives the Type back and keeps the name (a new destination for I/O and Wire).
+  Drawn by `_bdBox` from `_rcScreenBox` (every canvas: Simple, Advanced tile, preset cards, phone, Look Book) with INLINE styles only,
+  so the Look Book prints it and no stylesheet rule reaches `_pdfExtractCanvasCss` (its CSS classes are `lbbd-*`, app-only). The
+  Canvas size leaves it out (`_bdCanvasReport`); `_bdDrawn` keeps the drawn extent for the canvases (`_bdDrawW` / `_bdDrawH`).
+  Refused by the setters (`setL`, `setBgName`, `setPColor`, `setAOI`, `setRotationSmart`, `updateScreenSize`, `fsPanelScreenSize`,
+  the layer panel, the colour window, `_fsDropTarget`), no layer strip (`_lsState`), never a blend (`_ovlEnd`, `_bdDragBlocked`).
+  Left out with `_bdNoBd(list)` (the SAME array when there is no backdrop): every Wire `screens` read, the I/O Patch rows /
+  counts / Excel / Remove list / check / Set for all / phone cards / Look Book I/O page, Outputs and pixels; the I/O Patch numbers are
+  the canvas index (D1, D3: one number per destination in the whole show). `_bdParse` refuses (null) 12 inches or more after the feet,
+  a minus and a size under 3" or over 500'; `_bdAutoName` returns capitals. **16kx-r2fix** (2026-09-27, search `16kx-r2fix`): these
+  last points, after three reviews of 16kx-r2.
+  Excel: xf 19 (grey text on FFE3E6EA) and 20 (header, white on FF9AA1AB). Destination Properties of a backdrop is `_bdProps`.
+  Help: Quick Reference and Glossary rows.
 - Declined by the owner, do not resurface: mask shapes, anchor points, hardware profiles, canvas/WebGL renderer,
   interpolation filter toggles, upscale-factor notes, per-layer "sharp pixels", any licence mention.
 
@@ -409,4 +446,4 @@ Reading receipt: **HANDBOOK-12G-SDI**. Report this code to the owner after readi
 
 <!-- 16kv-fix -->
 
-<!-- 16kw-menus --><!-- 16kw-fix --><!-- 16kw-r2 --><!-- 16kw-r3fix -->
+<!-- 16kw-menus --><!-- 16kw-fix --><!-- 16kw-r2 --><!-- 16kw-r3fix --><!-- 16kx-backdrop --><!-- 16kx-r2 --><!-- 16kx-r2fix -->

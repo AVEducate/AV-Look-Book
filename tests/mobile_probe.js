@@ -521,6 +521,84 @@
       'the Connector pill after "lemo 2b" [stored, the pill as seen] / a source card\'s typed Type, then its Type menu [stored, the marked row, its scroll, the first row] / the same on a destination card');
     } finally { tidy(); await wait(200); }
   });
+  // 16kx-backdrop P: NEW
+  // 16kx-backdrop (Omar 2026-09-27): a backdrop on the phone, with REAL taps. FAILS on the 16kw round-2 page (the Type menu has no
+  //   Backdrop), PASSES on 16kx-backdrop.
+  // 16kx-r2 P: REPLACES round-1 check P (reason in the block)
+  // 16kx-r2: REPLACES round-1 phone check P. Why: answers 1, 2 and 4. The destination is named BACKDROP, the cards number the
+  //   destinations without it (D1 LEFT LED, D2 RIGHT LED), and its size reads in feet and inches (10' × 5' 6", Length 10').
+  // 16kx-r2fix P: REPLACES 16kx-r2 check P (reason in the block)
+  // 16kx-r2fix: REPLACES 16kx-r2's phone check P. Why: one number per destination in the whole show. 16kx-r2 numbered the I/O
+  //   cards without the backdrop (D1 LEFT LED, D2 RIGHT LED) while the phone's layer rows (D3·L1) and the Look Book kept the
+  //   canvas numbers; the cards keep the canvas numbers again (D1 LEFT LED, D3 RIGHT LED). Nothing else changes.
+  await check('I/O 16kx-backdrop: on the phone a destination card\'s Type menu ends with Stream, Backdrop; a tap on Backdrop asks first ("CENTER LED" becomes a backdrop …) and a tap on yes makes it one named BACKDROP (16kx-r2): its card leaves the I/O cards, which keep the canvas numbers, D1 LEFT LED, D3 RIGHT LED (2 destination, 16kx-r2fix); the preset\'s visualiser draws it between LEFT LED and RIGHT LED with BACKDROP and its size in feet and inches (10\' × 5\' 6"), inside the box, and a tap on it opens Destination Properties with Length 10\', never the layer panel', async () => {
+    const tidy = () => { try { _sysCloseMenu(); } catch (e) {} };
+    try {
+    const out = {}; if (!$('#mobile-main .mb-io')) { const t0 = await tap($('#topbar-nav-iop')); if (t0 !== true) return t0; await until(() => $('#mobile-main .mb-io'), 1500); await wait(300); }
+    const card = n => $$('#mobile-main .mb-io-card').find(c => (($('.mb-io-syname', c) || {}).value || '') === n);
+    let t = await tap($('[data-sys-field="dst-type"]', card('CENTER LED'))); if (t !== true) return t; await until(() => $('.sys-dd .sys-dd-item'), 1500); await wait(300);
+    const rows = $$('.sys-dd .sys-dd-item').map(i => txt($('.item-text', i) || i)); out.menu = rows.slice(-2);
+    const it = $$('.sys-dd .sys-dd-item').find(i => /^Backdrop$/.test(txt($('.item-text', i) || i)));
+    if (!it) { tidy(); return is(out, { menu: ['Stream', 'Backdrop'] }, 'the Type menu\'s last rows'); }
+    t = await tap(it); if (t !== true) return t; await until(() => dlgOpen(), 1500); await wait(200);
+    out.asked = /"CENTER LED" becomes a backdrop/.test(dialogText());
+    t = await tap($('#dlg-confirm')); if (t !== true) return t; await wait(700);
+    const s1 = screens[1] || {};
+    out.cards = [!!card('CENTER LED'), !!card('BACKDROP'), !!card('LEFT LED'), !!card('RIGHT LED'), s1.deviceType, s1.name, $$('#mobile-main .mb-io-sec-count').map(txt).filter(x => /destination/.test(x)).join(''),
+      $$('#mobile-main .mb-io-card').map(c => (txt($('.mb-io-badge', c)) + ' ' + (($('.mb-io-syname', c) || {}).value || '')).trim()).filter(x => /^D\d/.test(x))];
+    t = await tap($('#topbar-nav-vp')); if (t !== true) return t; await wait(600);
+    t = await tap($$('#mobile-main .mb-preset-card .mb-action-edit')[0]); if (t !== true) return t; await until(() => $('#mobile-main .mb-vis'), 1500); await wait(400);
+    const v = $('#mobile-main .mb-vis'), vr = v.getBoundingClientRect(); const boxes = $$('.screen-box', v).map(b => ({ b, r: b.getBoundingClientRect() })).sort((a, b) => a.r.left - b.r.left);
+    out.vis = [boxes.map(x => x.b.hasAttribute('data-backdrop') ? 'BD' : 'S').join(''), txt($('.screen-res', $('.screen-box[data-backdrop]', v))), boxes.every(x => x.r.left >= vr.left - 1 && x.r.right <= vr.right + 1)];
+    t = await tap($('.screen-box[data-backdrop]', v)); if (t !== true) return t; await wait(800);
+    out.tapped = [!!$('#screen-panel.lbbd-props'), ($('#lbbd-l') || {}).value, !!$('#layer-panel')];
+    return is(out, { menu: ['Stream', 'Backdrop'], asked: true, cards: [false, false, true, true, 'Backdrop', 'BACKDROP', '5 total · 2 destination · 1 AUX · 1 DSM · 1 MV', ['D1 LEFT LED', 'D3 RIGHT LED']], vis: ['SBDS', 'BACKDROP · 10\' × 5\' 6"', true], tapped: [true, '10\'', false] },
+      'the Type menu\'s last rows / the question / the I/O cards [CENTER LED, BACKDROP, LEFT LED, RIGHT LED, its Type, its name, the count, the destination cards] / the visualiser [left to right, its label, inside the box] / a tap on it [its size panel, Length, the layer panel]');
+    } finally { tidy(); try { if (typeof closeScreenPanel === 'function') closeScreenPanel(); } catch (e) {} if (typeof mbCloseInlinePanel === 'function') { try { mbCloseInlinePanel(); } catch (e) {} } await wait(200); }
+  });
+  // 16kx-r2 PQ: NEW
+  // 16kx-r2 (Omar's answer 2 on the phone), REAL taps and typing. FAILS on the round-1 page (its Length box is a number box that
+  //   takes no ' or "), PASSES on 16kx-r2.
+  await check('I/O 16kx-r2: on the phone the backdrop\'s Destination Properties takes its size in feet and inches typed with the phone\'s own curly marks (12’ 6” typed into Length, 8’ into Height, a tap on Apply): it is 12\' 6" × 8\' (150 × 96 inches, 2400 × 1536 px), the visualiser reads BACKDROP · 12\' 6" × 8\' and its destination row under it reads 12\' 6" × 8\'', async () => {
+    const tidy = () => { try { if (typeof closeScreenPanel === 'function') closeScreenPanel(); } catch (e) {} if (typeof mbCloseInlinePanel === 'function') { try { mbCloseInlinePanel(); } catch (e) {} } };
+    try {
+    if (!$('#mobile-main .mb-vis .screen-box[data-backdrop]')) { let t0 = await tap($('#topbar-nav-vp')); if (t0 !== true) return t0; await wait(600); t0 = await tap($$('#mobile-main .mb-preset-card .mb-action-edit')[0]); if (t0 !== true) return t0; await until(() => $('#mobile-main .mb-vis'), 1500); await wait(400); }
+    const bd = $('#mobile-main .mb-vis .screen-box[data-backdrop]'); if (!bd) return 'no backdrop on the visualiser';
+    let t = await tap(bd); if (t !== true) return t; await until(() => $('#screen-panel.lbbd-props'), 1500); await wait(300);
+    const L = $('#lbbd-l'), H = $('#lbbd-h'); if (!L || !H) return 'no Length / Height box';
+    if (L.type !== 'text') return 'the Length box is a ' + L.type + ' box';
+    t = await tap(L); if (t !== true) return t; L.select(); let ty = await runner('type', { text: '12’ 6”' }); if (ty && ty.error) return 'typing failed: ' + ty.error; await wait(150);
+    t = await tap(H); if (t !== true) return t; H.select(); ty = await runner('type', { text: '8’' }); if (ty && ty.error) return 'typing failed: ' + ty.error; await wait(150);
+    const typed = [L.value, H.value];
+    t = await tap($('#sp-apply')); if (t !== true) return t; await wait(700);
+    const s = screens.find(x => x.deviceType === 'Backdrop') || {}; const v = $('#mobile-main .mb-vis');
+    const row = $$('#mobile-main .mb-le-head').find(h => txt($('.mb-le-name', h)) === s.name);
+    const out = { typed, stored: [s.bdLin, s.bdHin, s.w, s.h], label: v ? txt($('.screen-res', $('.screen-box[data-backdrop]', v))) : 'no visualiser', row: row ? txt($('.mb-le-res', row)) : 'no destination row' };
+    return is(out, { typed: ['12\' 6"', '8’'], stored: [150, 96, 2400, 1536], label: 'BACKDROP · 12\' 6" × 8\'', row: '12\' 6" × 8\'' }, 'the boxes as typed [Length after the tap away, Height] / stored [Length in, Height in, px, px] / the visualiser label / its destination row under the visualiser');
+    } finally { tidy(); await wait(200); }
+  });
+  // 16kx-r2fix PR: NEW
+  // 16kx-r2fix (a mis-tap on the phone), REAL taps. FAILS on 16kx-r2 (the row came back named BACKDROP 2 at 1920×1056 and Update
+  //   Show wrote that), PASSES on 16kx-r2fix. "Changes nothing" is read from the show itself: on the phone the gesture tidy can keep
+  //   an empty undo step (equal to the show) a moment longer, which the next Undo drops on the way; that is not a change.
+  await check('I/O 16kx-r2fix: on the phone, a mis-tap on the Backdrop switch changes nothing: the Show card opens Edit Show Info, RIGHT LED\'s switch tapped on (the name box reads BACKDROP 2, the header its size in feet and inches) and off again gives the row back RIGHT LED and 1920×1080, and Update Show changes nothing in the show (an Undo right after would change nothing)', async () => {
+    const tidy = () => { try { if (typeof _qsUp === 'function' && _qsUp()) closeQS(); } catch (e) {} };
+    try {
+    let t = true; try { if (typeof closeScreenPanel === 'function') closeScreenPanel(); } catch (e) {} await wait(200);
+    if ($('#mobile-main .mb-back-btn')) { t = await tap($('#mobile-main .mb-back-btn')); if (t !== true) return t; await wait(500); }   /* back to the preset list, as a finger does */
+    if (!$('#mobile-main .mb-guide-card')) { t = await tap($('#topbar-nav-vp')); if (t !== true) return t; await wait(600); }
+    const card = $('#mobile-main .mb-guide-card'); if (!card) return 'no Show card';
+    const S0 = _snapshot(), u0 = _undoStack.length; t = await tap(card); if (t !== true) return t; await until(() => _qsUp(), 1500); await wait(300);
+    const hd = $('#qs-sr-2 .qs-screen-hdr'); if (!hd) return 'no RIGHT LED row';
+    if (!$('#qs-sr-body-2').classList.contains('open')) { t = await tap(hd); if (t !== true) return t; await wait(300); }
+    t = await tap($('#qs-bd-2')); if (t !== true) return t; await wait(300); const on = [($('#qs-sn-2') || {}).value, txt($('#qs-sr-lbl-2'))];
+    t = await tap($('#qs-bd-2')); if (t !== true) return t; await wait(300); const off = [($('#qs-sn-2') || {}).value, txt($('#qs-sr-lbl-2'))];
+    t = await tap($('#qs-confirm-btn')); if (t !== true) return t; await wait(700); okDialogs(); await wait(200);
+    const s = screens[2] || {}, now = _snapshot(); const noUndo = _undoStack.length === u0 || _lbSameShow(_undoStack[_undoStack.length - 1], now);   /* the phone's gesture tidy may keep an EMPTY step a moment longer; an Undo drops it on the way (_lbDropEmptySteps) */
+    return is({ on, off, after: [s.name, s.deviceType || '', s.w, s.h, _lbSameShow(S0, now), noUndo, _qsUp()] }, { on: ['BACKDROP 2', 'BACKDROP · 10\' × 5\' 6"'], off: ['RIGHT LED', '1920×1080'], after: ['RIGHT LED', 'LED', 1920, 1080, true, true, false] },
+      'switch tapped on [name box, header] / off again [name box, header] / after Update Show [name, Type, px, px, the show unchanged, an Undo would change nothing, window open]');
+    } finally { tidy(); await wait(200); }
+  });
   await restore();
 
   // ── exports called directly (the phone has no Export button today), and the windows a phone user can meet ─────────

@@ -1821,7 +1821,7 @@
    "ok": true
   },
   {
-   "name": "menus 16kw: I/O Patch Simple: on a source, a destination, an AUX and the multiviewer row the Connector, Type and Resolution menus read Custom… first, — Clear — second, then the list in its order with its headings; nothing is missing (Connector 24 -> 25 rows: Custom… added; Type 9 -> 10 for a source and 5 -> 6 for an output: — Clear — added; Resolution 38 = 38, Clear moved up) and the row's current value is still the marked row",
+   "name": "menus 16kw: I/O Patch Simple: on a source, a destination, an AUX and the multiviewer row the Connector, Type and Resolution menus read Custom… first, — Clear — second, then the list in its order with its headings; nothing is missing (Connector 24 -> 25 rows: Custom… added; Type 9 -> 10 for a source and 5 -> 6 for an output: — Clear — added; 16kx-backdrop: a destination row's Type ends with Backdrop after Stream, 7 rows, the AUX and the multiviewer keep 6; Resolution 38 = 38, Clear moved up) and the row's current value is still the marked row",
    "ok": true
   },
   {
@@ -1906,6 +1906,118 @@
   },
   {
    "name": "I/O 16kw-r3fix: a Type typed on a row (Type › Custom…, the name typed, Enter) is the MARKED row the next time its Type menu opens at its top, and so is a second name typed over it (Omar's answer 1: the current value stays marked): a destination (BARCO, then CHRISTIE), a source (ALPHA RIG, then ZETA RIG), the source's box retyped without the menu (UNIFORM RIG), Undo (ZETA RIG back), an Advanced page-1 source (ALPHA ADV, then BRAVO ADV)",
+   "ok": true
+  },
+  {
+   "name": "Backdrop 16kx-backdrop: the I/O Patch Type menu of a destination row reads Custom…, — Clear —, LED, Projection, Monitor, Stream, then Backdrop (after Stream); an AUX, a DSM, the multiviewer and the Set-for-all row D0 offer no Backdrop",
+   "ok": true
+  },
+  {
+   "name": "Backdrop 16kx-backdrop: Backdrop picked for CENTER LED asks first (\"CENTER LED\" becomes a backdrop, its 3 layers and 5 backgrounds in 5 presets will be removed, Undo brings it back); Cancel changes nothing and records nothing; yes makes it a backdrop named BACKDROP, sized from its pixels to the nearest half foot at 192 px per foot (10' × 5' 6\" = 120 × 66 inches, 16kx-r2), removes its BG, layers and everything a layer carries from every preset as ONE undo step, and one Undo brings every layer, BG and its name back",
+   "ok": true
+  },
+  {
+   "name": "Backdrop 16kx-backdrop: in a NEW show, Quick Setup's Backdrop switch beside Destination 2's resolution names the row BACKDROP and swaps the resolution for Length and Height in feet and inches (10' × 5' 6\" from 1920×1080 at 192 px per foot, the nearest half foot, 16kx-r2); 20' 6\" and \"12 6\" typed build a 3936 × 2400 px backdrop named BACKDROP between two 1920×1080 screens; the preview, the top-bar canvas and the Pre-Export Check leave it out (3840 × 1080, no canvas or resolution warning)",
+   "ok": true
+  },
+  {
+   "name": "Backdrop 16kx-backdrop: Edit Show Info turns CENTER LED into a backdrop (the Backdrop switch writes BACKDROP into its name box, the question, Update Show, ONE undo step, its content gone, 10' × 5' 6\", 16kx-r2) and later back into a screen (switch off, Update Show, no question): its Type LED comes back, it keeps the name BACKDROP, its pixel size is its inches at 192 px per foot (1920 × 1056), it is back in the I/O Patch, with no layers",
+   "ok": true
+  },
+  {
+   "name": "Backdrop 16kx-backdrop: its size is in FEET AND INCHES and stored in inches (16kx-r2): Destination Properties (a double-click on its box) shows Length 10' and Height 5' 6\" in text boxes and no layer, BG or rotation; 30' applied is ONE undo step, 5760 px at 192 px per foot, and RIGHT LED moves along; PPI 20 redraws it 7200 × 1320 px with the size still 30' × 5' 6\" and no undo step; PPI 16 gives 5760 × 1056 again",
+   "ok": true
+  },
+  {
+   "name": "Backdrop 16kx-backdrop: ONE picture per backdrop: with none it is a plain shaded box labelled BACKDROP; a 3200 × 1600 picture picked in Destination Properties is kept as a 1600 × 800 JPEG inside the show (one undo step) and fills its box on the Simple canvas, the Advanced canvas and in the Look Book, the same in every preset; the picture's × removes it (one undo step)",
+   "ok": true
+  },
+  {
+   "name": "Backdrop 16kx-backdrop: no other option: no layer or BG can be put on it (setters refuse it), its table row reads BACKDROP greyed with no field or ▾ to pick, the layer strip stays inert when it is picked, its double-click opens its feet (never the layer panel), the Advanced canvas and list take no drop on it, and a Free Position drag that would put LEFT LED on it is put back with a warning (no blend)",
+   "ok": true
+  },
+  {
+   "name": "Backdrop 16kx-backdrop: the Canvas size leaves it out while it is drawn to scale between the screens: top bar 3840 × 1080 (was 5760), the bottom-bar pill, Outputs 4, the cue sheet's \"Canvas: 3840x1080\", the Look Book's Canvas Visual, no canvas or resolution warning in the Pre-Export Check, even when it is taller (14 ft)",
+   "ok": true
+  },
+  {
+   "name": "Backdrop 16kx-backdrop: out of the I/O Patch (16kx-r2: removed, not hidden): Simple (no row, D1 LEFT LED and D3 RIGHT LED as on the canvas, 16kx-r2fix; the count reads 2 destination), Advanced page 1 (its copied row removed from the page), the I/O Excel (no row, LEFT LED and RIGHT LED are Destination 1 and 3), the Look Book's I/O Destinations page and the Pre-Export I/O check; back as a screen it is a NEW destination: in Simple, the I/O Excel and the Look Book at once, not on Advanced page 1",
+   "ok": true
+  },
+  {
+   "name": "Backdrop 16kx-backdrop: out of Wire (16kx-r2: removed, not hidden): Simple has no card and no node for it; Advanced asks NOTHING, its tile and cables are deleted (not kept) and the switcher output that fed it is released (11 IN · 4 OUT); the printed Wire sheet does not name it; back as a screen it is a new destination: Advanced asks the usual \"Simple changed since Page 1 was built\" and, kept, the page has no tile for it",
+   "ok": true
+  },
+  {
+   "name": "Backdrop 16kx-backdrop: the cue-sheet Excel keeps its column in stage order (LEFT LED, BACKDROP, RIGHT LED), GREYED with real cell styles: the header (white on grey FF9AA1AB), its size in feet and inches \"10' × 5' 6\"\" in the resolution row (16kx-r2), BACKDROP in every preset row (grey text FF7A828E on grey FFE3E6EA); the other columns keep their styles",
+   "ok": true
+  },
+  {
+   "name": "Backdrop 16kx-backdrop: the Look Book draws it in its place on every preset page (between LEFT LED and RIGHT LED, 10 ft = LEFT LED's width) named BACKDROP with \"BACKDROP · 10' × 5' 6\"\" and the shaded box; its Destination Breakdown column lists it as a backdrop with no content, Length 10' × Height 5' 6\" (16kx-r2); Show Combinations reads BACKDROP; its styles are inline, the Look Book gains no stylesheet rule",
+   "ok": true
+  },
+  {
+   "name": "Backdrop 16kx-backdrop: save + reload: the .avlb carries deviceType Backdrop, its name BACKDROP, its size in inches (bdLin / bdHin, 16kx-r2), the picture and the Type it was; opened again (also at PPI 20) the show is clean, the size is exact, the picture draws, and it is still out of the I/O Patch and the canvas size",
+   "ok": true
+  },
+  {
+   "name": "Help 16kx-backdrop: the in-app Help says it: Quick Reference has a Backdrop row (a destination Type for a scenic piece with no video, made in Quick Setup / Edit Show Info or the I/O Patch Type menu, Length × Height in feet, one picture, no layers, removed content comes back with Undo, left out of the canvas size, the I/O Patch and Wire, greyed in the Excel) and the Glossary a BACKDROP entry",
+   "ok": true
+  },
+  {
+   "name": "Backdrop 16kx-r2: AUTO-NAME (Omar's answer 1): a destination that becomes a backdrop is named BACKDROP, the next one BACKDROP 2, then BACKDROP 3 …, never a name the show already uses (DSM 1 renamed BACKDROP 2 makes RIGHT LED BACKDROP 3); a preset's own name for it goes (P03 reads BACKDROP too); the rename is inside the conversion's ONE undo step (one Undo gives RIGHT LED its name and Type back); made a screen again it keeps the name BACKDROP; Quick Setup's Backdrop switch writes the next free name into the row's Destination Name box",
+   "ok": true
+  },
+  {
+   "name": "Backdrop 16kx-r2: FEET AND INCHES (Omar's answer 2): Destination Properties' Length box is a text box that reads 12' 6\", 12'6\", 12' 6, 12 6, 12'-6\", 12-6, 12.5, 150\", 12’ 6” (curly marks), 12 ft 6 in back as 12' 6\", 12' and 12 as 12', 6 1/2\" as 0' 7\" (nearest inch), and anything else (abc, 0) goes back to the last good value; 12' 6\" × 8' applied is stored as 150 × 96 inches (one undo step, 2400 × 1536 px) and reads 12' 6\" × 8' on the canvas box and its tooltip, the table row, the Advanced list, the bottom bar, Edit Show Info's row, the Look Book's canvas label, breakdown and Show Combinations, the cue-sheet Excel and the CSV; a round-1 show (bdL 12.5 / bdH 6.25 in decimal feet) opens as 12' 6\" × 6' 3\" and not unsaved",
+   "ok": true
+  },
+  {
+   "name": "Backdrop 16kx-r2: START SIZE (Omar's answer 3): a screen that becomes a backdrop starts at its pixels in feet rounded to the NEAREST HALF FOOT: 1920×1080 at 192 px per foot is 10' × 5' 6\", 3840×2160 is 20' × 11' 6\", at PPI 20 (240 px per foot) 1920×1080 is 8' × 4' 6\"; Quick Setup's switch on a 1280×720 row reads 6' 6\" × 4'",
+   "ok": true
+  },
+  {
+   "name": "Backdrop 16kx-r2: REMOVED from Wire (Omar's answer 4): with Wire Advanced built from the show and page 1 copied, turning CENTER LED into a backdrop in the I/O Patch Type menu deletes its tile and every cable to or from it on BOTH pages and releases the switcher output that fed it (SWITCHER I/O reads 11 IN · 4 OUT: LEFT LED, RIGHT LED, DSM 1, AUX 1, no row reading —), Advanced opens with no \"Simple changed since Page 1 was built\", the printed Wire sheet does not name it, all in ONE undo step; one Undo brings the tiles, cables and the switcher row back exactly; made a screen again it is a new destination: Advanced asks the usual \"Simple changed\" question",
+   "ok": true
+  },
+  {
+   "name": "Backdrop 16kx-r2: REMOVED from the I/O Patch (Omar's answer 4): with I/O Patch Advanced page 1 built from the show and copied to another page, turning CENTER LED into a backdrop removes its row from BOTH pages (not kept unseen), the Simple rows, the I/O Excel and the Look Book's I/O page leave it out and keep the canvas numbers (D1 LEFT LED, D3 RIGHT LED; Destination 1 and 3, 16kx-r2fix), Advanced opens with no \"Simple changed since Page 1 was built\", all in ONE undo step; one Undo brings both pages' rows back exactly; made a screen again it is a new destination: listed in Simple as D2, and Advanced asks the usual question",
+   "ok": true
+  },
+  {
+   "name": "Help 16kx-r2: the in-app Help says Omar's four answers: Quick Reference's Backdrop row says it is named BACKDROP (BACKDROP 2, BACKDROP 3 …) and keeps that name as a screen again, that its size is in feet and inches like 12' 6\" × 8' (what to type, the nearest inch, a screen starts at its pixels to the nearest half foot), that its Wire Advanced tiles and cables are deleted, the switcher output that fed it is freed and its I/O Patch Advanced rows go in the same Undo step (a screen again, a new destination there); the Glossary says it is named BACKDROP and sized in feet and inches",
+   "ok": true
+  },
+  {
+   "name": "Backdrop 16kx-r2fix: a MIS-CLICK on the Backdrop switch changes nothing: in Edit Show Info CENTER LED's switch pressed on (the name box reads BACKDROP, 10' × 5' 6\") and off again gives the row back CENTER LED and 1920×1080; Update Show then writes nothing (no undo step, Wire and the I/O Patch untouched) and neither Advanced asks \"Simple changed\"; in a new show Destination 2, and the All Destinations row with Set default for all on, switched on and off build Destination 01-04 at 1920×1080; Destination 2 and 3 switched on (BACKDROP, BACKDROP 2) and Destination 2 off again leave Destination 3 the only backdrop, named BACKDROP",
+   "ok": true
+  },
+  {
+   "name": "Backdrop 16kx-r2fix: ONLY ITS OWN I/O Patch rows go (the rows are matched by name): with LEFT LED and RIGHT LED both renamed IMAG and I/O Patch Advanced page 1 built and copied, the FIRST IMAG made a backdrop in the I/O Patch Type menu takes only its own row off both pages (the other IMAG keeps its row, \"stage right\" note and all), in one step, no \"Simple changed\", one Undo gives both pages back exactly; with AUX 1 renamed CENTER LED, CENTER LED made a backdrop in the Type menu, and again in Edit Show Info, leaves the AUX its row on page 1 and nothing asks",
+   "ok": true
+  },
+  {
+   "name": "Backdrop 16kx-r2fix: a ROUTER OR SWITCHER ADDED BY HAND keeps its size, its name and its port numbers: on Wire Advanced page 2 a 10×10 router feeds CENTER LED from OUT 3, LEFT LED from OUT 5 and RIGHT LED from OUT 7, and an 8×2 switcher feeds CENTER LED's backup input from OUT 1 and LEFT LED from OUT 2; CENTER LED made a backdrop leaves UNTITLED 10X10 ENGINEERING RACK with 10 outputs (OUT 3 empty, LEFT LED still on OUT 5, RIGHT LED on OUT 7) and 8×2 SWITCHER at 8 IN · 2 OUT (OUT 1 empty, LEFT LED still on OUT 2), while the show's own switcher on page 1 loses its row (11 IN · 4 OUT), in one step; one Undo gives Wire back exactly",
+   "ok": true
+  },
+  {
+   "name": "Backdrop 16kx-r2fix: the SAVED show holds nothing of it in Wire: with Wire Advanced built, a page copied, the show saved and opened again, CENTER LED made a backdrop leaves no tile, cable or switcher row for it in the file, the open page's parked copy included (16kx-r2 left the tile, its cable and 11 IN · 5 OUT there)",
+   "ok": true
+  },
+  {
+   "name": "Backdrop 16kx-r2fix: the name is BACKDROP IN CAPITALS, and Quick Setup never gives a taken one either: CENTER LED renamed \"Backdrop\" and made a backdrop in the I/O Patch Type menu reads BACKDROP; with P03 naming LEFT LED \"BACKDROP\" on its own table row, Edit Show Info's switch on CENTER LED writes BACKDROP 2 (as the Type menu does) and Update Show makes it BACKDROP 2",
+   "ok": true
+  },
+  {
+   "name": "Backdrop 16kx-r2fix: a typed size is REFUSED, not rewritten: in Destination Properties 12' 13\", 12' 12\", 12 -3, 0.1, 1/2\", 2\", 501' and 600 each put the Length box back to its last good size (10'), 3\" and 500' are taken, and 600 after 500' goes back to 500'; the same in Edit Show Info's row; the hint under the boxes says 3\" to 500'",
+   "ok": true
+  },
+  {
+   "name": "Backdrop 16kx-r2fix: ONE NUMBER per destination in the whole show, the canvas's (round 1's): with CENTER LED a backdrop, RIGHT LED is D3 in the I/O Patch Simple rows, Destination 3 in Remove Destination, the I/O Excel and the Look Book's I/O page, and DESTINATION 03 / D03 in the Look Book's breakdown and layer strip; the I/O Patch still counts 2 destination",
+   "ok": true
+  },
+  {
+   "name": "Help 16kx-r2fix: the Help's Backdrop row sends you to the px per foot where it is (Quick Reference › Pixel ↔ Feet Conversion, the heading over the PPI box, not Accessibility), says a typed size is kept from 3\" to 500', that a router or switcher you added in Wire keeps its size and port numbers (the port is left empty), and that the switch pressed on and off again leaves the row's name and resolution as they were",
    "ok": true
   }
  ],

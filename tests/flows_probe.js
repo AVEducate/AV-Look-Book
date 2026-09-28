@@ -6903,18 +6903,22 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
   const _kwLib = cur => _SYS_RES.map(o => o.group ? '## ' + o.group : (o.value === cur ? o.label + ' *' : o.label));
   const _kwRes = (cur, clearMarked) => ['Custom resolution…', clearMarked ? '— Clear — *' : '— Clear —', '## Used in this show', cur ? '1920×1080 *' : '1920×1080'].concat(_kwLib(cur));
   const _kwSrcRow = n => ioRow(n), _kwCell = (row, f) => row ? $('[data-sys-field="' + f + '"]', row) : null;
-  await check('menus 16kw: I/O Patch Simple: on a source, a destination, an AUX and the multiviewer row the Connector, Type and Resolution menus read Custom… first, — Clear — second, then the list in its order with its headings; nothing is missing (Connector 24 -> 25 rows: Custom… added; Type 9 -> 10 for a source and 5 -> 6 for an output: — Clear — added; Resolution 38 = 38, Clear moved up) and the row\'s current value is still the marked row', async () => {
+  // 16kx-backdrop O: REPLACES the check named in its header (reason in the block)
+  // 16kx-backdrop: REVISES the 16kw-menus check above. Why: Omar (2026-09-27) put Backdrop in the Type menu of a destination row,
+  //   in the built-in list after Stream, keeping 16kw's Custom… / — Clear — order; the AUX and multiviewer rows do not offer it
+  //   (a backdrop is a canvas destination). Only the destination row's Type (and its count) changes; everything else is the same.
+  await check('menus 16kw: I/O Patch Simple: on a source, a destination, an AUX and the multiviewer row the Connector, Type and Resolution menus read Custom… first, — Clear — second, then the list in its order with its headings; nothing is missing (Connector 24 -> 25 rows: Custom… added; Type 9 -> 10 for a source and 5 -> 6 for an output: — Clear — added; 16kx-backdrop: a destination row\'s Type ends with Backdrop after Stream, 7 rows, the AUX and the multiviewer keep 6; Resolution 38 = 38, Clear moved up) and the row\'s current value is still the marked row', async () => {
     await restore(); await ioOpenSimple(); const out = {};
     const s = _kwSrcRow('PPT A'), d = ioDestRowF('LEFT LED'), a = ioDestRowF('AUX 1'), m = $('#sys-mv-zone .sys-row');
     out.src = [await _kwMenu(_kwCell(s, 'connector')), await _kwMenu(_kwCell(s, 'src-type')), await _kwMenu(_kwCell(s, 'resolution'))];
     out.dst = [await _kwMenu(_kwCell(d, 'connector')), await _kwMenu(_kwCell(d, 'dst-type')), await _kwMenu(_kwCell(d, 'resolution'))];
     out.aux = [await _kwMenu(_kwCell(a, 'connector')), await _kwMenu(_kwCell(a, 'dst-type'))];
     out.mv = [await _kwMenu(_kwCell(m, 'connector')), await _kwMenu(_kwCell(m, 'dst-type'))];
-    out.counts = [_kwN(out.src[0]), _kwN(out.src[1]), _kwN(out.src[2]), _kwN(out.dst[1])];
+    out.counts = [_kwN(out.src[0]), _kwN(out.src[1]), _kwN(out.src[2]), _kwN(out.dst[1]), _kwN(out.aux[1])];
     closeSystem(); await restore();
-    return is(out, { src: [_kwConn('HDMI 2.0'), _kwType(_KW_SRC, 'PC'), _kwRes('1920x1080')], dst: [_kwConn('12G-SDI'), _kwType(_KW_DST, 'LED'), _kwRes('1920x1080')],
-      aux: [_kwConn('12G-SDI'), _kwType(_KW_DST, 'Stream')], mv: [_kwConn('MV (Multiviewer)'), _kwType(_KW_DST, 'Monitor')], counts: [25, 10, 38, 6] },
-      'menus in order (## = a heading, * = the marked row): source PPT A [Connector, Type, Resolution] / destination LEFT LED / AUX 1 [Connector, Type] / MV 1 / rows [Connector, source Type, Resolution, output Type]');
+    return is(out, { src: [_kwConn('HDMI 2.0'), _kwType(_KW_SRC, 'PC'), _kwRes('1920x1080')], dst: [_kwConn('12G-SDI'), _kwType(_KW_DST, 'LED').concat(['Backdrop']), _kwRes('1920x1080')],
+      aux: [_kwConn('12G-SDI'), _kwType(_KW_DST, 'Stream')], mv: [_kwConn('MV (Multiviewer)'), _kwType(_KW_DST, 'Monitor')], counts: [25, 10, 38, 7, 6] },
+      'menus in order (## = a heading, * = the marked row): source PPT A [Connector, Type, Resolution] / destination LEFT LED / AUX 1 [Connector, Type] / MV 1 / rows [Connector, source Type, Resolution, destination Type, AUX Type]');
   });
   // 16kw-menus B: NEW
   // 16kw-r2 B: REPLACES the check named in its header (reason in the block)
@@ -7343,6 +7347,511 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
     _ioSetView('simple'); await wait(300); closeSystem(); await restore();
     return is(out, { dst: [['BARCO', 0], ['CHRISTIE', 0]], src: [['ALPHA RIG', 0], ['ZETA RIG', 0]], box: ['UNIFORM RIG', 0], undo: ['ZETA RIG', 0], model: ['CHRISTIE', 'ZETA RIG'], adv: [['ALPHA ADV', 0], ['BRAVO ADV', 0]] },
       'the Type menu as it opens after each name [the marked row, its scroll]: CENTER LED / PGM / PGM box retyped / after Undo / the stored names [CENTER LED, PGM] / page-1 PGM');
+  });
+  // 16kx-backdrop A: NEW
+  // ── 16kx-backdrop (Omar 2026-09-27): BACKDROP, a fifth destination Type. Each check FAILS on the 16kw round-2 page
+  //    (base3, sha1 ba233a62: there is no Backdrop) and PASSES on the 16kx-backdrop page (run_blocks.mjs, out/blocks_*.json).
+  //    A backdrop is made the way a user makes one: the I/O Patch Type menu of its row (Backdrop, the question answered) or
+  //    Quick Setup's Backdrop switch. PPI (Help › Pixel-Feet Conversion) is put back to 16 by every check that moves it.
+  const _bxS = n => screens.find(s => s.name === n);
+  const _bxRow = n => $$('#sys-dst-rows .sys-row').find(r => ($('.sys-name-input', r) || {}).value === n);
+  const _bxTypeMenu = async n => { const r = _bxRow(n); return _kwMenu(r ? $('[data-sys-field="dst-type"]', r) : null); };
+  const _bxQ = t => typeof t === 'string' ? [/"CENTER LED" becomes a backdrop/.test(t), /Its 3 layers and 5 backgrounds in 5 presets will be removed/.test(t), /Undo brings it back/.test(t)] : t;
+  const _bxMk = async (n, answer = true) => {   /* the I/O Patch Type menu of the row: Backdrop, then the question answered */
+    await ioOpenSimple(); const r = _bxRow(n); const trig = r ? $('[data-sys-field="dst-type"]', r) : null; if (!trig) { closeSystem(); return 'no ' + n + ' row'; }
+    _sysOpenDropdown(trig); await wait(150); const it = $$('.sys-dd .sys-dd-item').find(i => /^Backdrop$/.test((($('.item-text', i) || i).textContent || '').trim()));
+    if (!it) { _sysCloseMenu(); closeSystem(); await wait(200); return 'no Backdrop in the Type menu'; }
+    it.click(); await wait(300); const q = dlgOpen() ? dialogText() : true; if (dlgOpen()) { $(answer ? '#dlg-confirm' : '#dlg-cancel').click(); await wait(400); }
+    closeSystem(); await wait(300); return q; };
+  const _bxPpi = v => { const i = $('#a11y-ppi-input'); if (!i) return; i.value = String(v); setA11yPPI(i); };
+  const _bxBox = (sid, root) => $((root || '#canvas-area') + ' .screen-box[data-sid="' + sid + '"]');
+  const _bxDbl = el => { if (el) el.dispatchEvent(new MouseEvent('dblclick', { bubbles: true, cancelable: true, clientX: el.getBoundingClientRect().left + 10, clientY: el.getBoundingClientRect().top + 10 })); };
+  const _bxPic = async (w, h) => { const c = document.createElement('canvas'); c.width = w; c.height = h; const g = c.getContext('2d'); g.fillStyle = '#7fd0b8'; g.fillRect(0, 0, w, h); g.fillStyle = '#1f8a66'; g.beginPath(); g.arc(w * 0.3, h * 0.45, h * 0.3, 0, 7); g.fill(); return new File([await new Promise(r => c.toBlob(r, 'image/png'))], 'scenic.png', { type: 'image/png' }); };
+  const _bxPickFile = async (btn, file) => {   /* the app's own file picker, answered with this file (the way the chooser hands one over) */
+    if (!btn) return false; const real = HTMLInputElement.prototype.click; let hit = false;
+    HTMLInputElement.prototype.click = function () { if (this.type === 'file') { hit = true; const dt = new DataTransfer(); dt.items.add(file); this.files = dt.files; this.dispatchEvent(new Event('change', { bubbles: true })); return; } return real.call(this); };
+    try { btn.click(); } finally { HTMLInputElement.prototype.click = real; } await wait(1500); return hit; };
+  const _bxDims = url => new Promise(r => { if (!url) return r(null); const i = new Image(); i.onload = () => r([i.naturalWidth, i.naturalHeight]); i.onerror = () => r('unreadable'); i.src = url; });
+  await check('Backdrop 16kx-backdrop: the I/O Patch Type menu of a destination row reads Custom…, — Clear —, LED, Projection, Monitor, Stream, then Backdrop (after Stream); an AUX, a DSM, the multiviewer and the Set-for-all row D0 offer no Backdrop', async () => {
+    await restore(); await ioOpenSimple(); const bd = a => Array.isArray(a) ? a.filter(x => /Backdrop/i.test(x)).length : a;
+    const out = { dest: await _bxTypeMenu('LEFT LED'), aux: bd(await _bxTypeMenu('AUX 1')), dsm: bd(await _bxTypeMenu('DSM 1')), mv: bd(await _kwMenu($('#sys-mv-zone .sys-row [data-sys-field="dst-type"]'))), d0: bd(await _kwMenu($('#sys-dst-rows .sys-row-global [data-sys-field="dst-type"]'))) };
+    closeSystem(); await restore();
+    return is(out, { dest: ['Custom…', '— Clear —', 'LED *', 'Projection', 'Monitor', 'Stream', 'Backdrop'], aux: 0, dsm: 0, mv: 0, d0: 0 }, 'LEFT LED Type menu / Backdrop rows on AUX 1, DSM 1, MV 1, D0');
+  });
+  // 16kx-r2 H0: HELPERS
+  // ── 16kx-r2 (Omar 2026-09-27): his four answers to the round-1 questions: 1 the auto-name BACKDROP, 2 feet and inches,
+  //    3 the start size to the nearest half foot, 4 REMOVED from Wire and the I/O Patch (not hidden). A conversion now names
+  //    the destination BACKDROP, so the replaced round-1 checks find it by its Type (_r2Bd). The NEW checks (Q1..Q6) each
+  //    FAIL on the round-1 page (r16kx/base2/on16kw.html) and PASS on 16kx-r2 (run_blocks_r2.mjs, out/blocks_*.json).
+  const _r2Bd = () => screens.find(s => s.deviceType === 'Backdrop');
+  const _r2WPage = id => id === wireAdvanced._activePageId ? wireAdvanced : ((wireAdvanced._pageData || {})[id] || null);
+  const _r2Hub = d => { const r = ((d || wireAdvanced).routers || []).find(x => x && x.kind === 'switcher'); return r ? [r.label, r.outC, (r.outputs || []).slice(0, r.outC).map(o => (o && o.name) || '—')] : null; };
+  const _r2Set = (el, v) => { if (!el) return false; el.focus(); el.value = v; fire(el, 'input'); fire(el, 'change'); return true; };
+  const _r2WireTab = async () => {   /* Wire, then its Advanced tab the way a user clicks it (Simple, Advanced): the tab is where
+                                        Advanced asks "Simple changed since Page 1 was built"; the Keep my page answer */
+    openWireMode(); await wait(500); _wireSwitchToSimple(); await wait(400); _wireSwitchToAdvanced(); await wait(1000);
+    const q = dlgOpen() ? dialogText() : null; if (q) { $('#dlg-cancel').click(); await wait(400); } return q ? /Simple changed since/.test(q) : false; };
+  const _r2Edit = async (row, on) => {   /* Edit Show Info: the row's Backdrop switch on / off, Update Show, the question answered yes */
+    actions.editShowInfo(); await wait(500); const h = $('#qs-sr-' + row + ' .qs-screen-hdr'); if (h && !$('#qs-sr-body-' + row).classList.contains('open')) h.click(); await wait(200);
+    const t = $('#qs-bd-' + row); if (!t) { closeQS(); await wait(200); return { q: 'no Backdrop switch', nm: null }; }
+    if ((t.getAttribute('aria-pressed') === 'true') !== on) t.click(); await wait(200); const nm = ($('#qs-sn-' + row) || {}).value;
+    $('#qs-confirm-btn').click(); await wait(500); const q = dlgOpen() ? dialogText() : null; if (q) { $('#dlg-confirm').click(); await wait(600); } okDialogs(); await wait(200); return { q, nm }; };
+  // 16kx-backdrop B: NEW
+  // 16kx-r2 B: REPLACES round-1 check B (reason in the block)
+  // 16kx-r2: REPLACES round-1 check B. Why: answers 1 and 3. The destination is now named BACKDROP and starts at its pixels to the
+  //   nearest half foot, stored in inches (10' × 5' 6" = 120 × 66 in, not 10 × 5.63 ft); one Undo brings its name back too.
+  await check('Backdrop 16kx-backdrop: Backdrop picked for CENTER LED asks first ("CENTER LED" becomes a backdrop, its 3 layers and 5 backgrounds in 5 presets will be removed, Undo brings it back); Cancel changes nothing and records nothing; yes makes it a backdrop named BACKDROP, sized from its pixels to the nearest half foot at 192 px per foot (10\' × 5\' 6" = 120 × 66 inches, 16kx-r2), removes its BG, layers and everything a layer carries from every preset as ONE undo step, and one Undo brings every layer, BG and its name back', async () => {
+    await restore(); const sid = _bxS('CENTER LED').id, ppi = _PPI;
+    const snap = () => JSON.stringify(presets.map(p => [getBgName(p.id, sid), p.layers[sid] || null, (p.layerSizes || {})[sid] || null, (p.crops || {})[sid] || null]));
+    const before = snap(), u0 = _undoStack.length;
+    const q1 = _bxQ(await _bxMk('CENTER LED', false)); const cancel = [_bxS('CENTER LED').deviceType, _undoStack.length - u0];
+    const q2 = _bxQ(await _bxMk('CENTER LED', true)); const s = screens.find(x => x.id === sid);
+    const left = presets.map(p => ['layers', 'active', 'layerSizes', 'crops', 'layerFx', 'layerMedia', 'bgNames', 'bgs', 'colors', 'aoi', 'edidNotes', 'rotations'].filter(k => p[k] && p[k][sid] !== undefined).length + (getBgName(p.id, sid) ? 1 : 0));
+    const made = [s.deviceType, s.name, s.bdLin, s.bdHin, _bdSizeTxt(s), _undoStack.length - u0];
+    actions.undo(); await wait(500); const b = screens.find(x => x.id === sid) || {}; const back = [snap() === before, b.deviceType, b.name];
+    await restore();
+    return is({ ppi, q1, cancel, q2, made, left, back }, { ppi: 16, q1: [true, true, true], cancel: ['LED', 0], q2: [true, true, true], made: ['Backdrop', 'BACKDROP', 120, 66, '10\' × 5\' 6"', 1], left: [0, 0, 0, 0, 0], back: [true, 'LED', 'CENTER LED'] },
+      'PPI / the question [names it, what goes, Undo] / after Cancel [Type, undo steps] / the question again / made [Type, name, Length in, Height in, size, undo steps] / what is left per preset / after one Undo [every layer and BG back, Type, name]');
+  });
+  // 16kx-backdrop C: NEW
+  // 16kx-r2 C: REPLACES round-1 check C (reason in the block)
+  // 16kx-r2: REPLACES round-1 check C. Why: answers 1, 2 and 3. The switch writes BACKDROP into the row's name box, the boxes are
+  //   text boxes in feet and inches (10' × 5' 6" from 1920×1080, the nearest half foot), typed 20' 6" and "12 6".
+  await check('Backdrop 16kx-backdrop: in a NEW show, Quick Setup\'s Backdrop switch beside Destination 2\'s resolution names the row BACKDROP and swaps the resolution for Length and Height in feet and inches (10\' × 5\' 6" from 1920×1080 at 192 px per foot, the nearest half foot, 16kx-r2); 20\' 6" and "12 6" typed build a 3936 × 2400 px backdrop named BACKDROP between two 1920×1080 screens; the preview, the top-bar canvas and the Pre-Export Check leave it out (3840 × 1080, no canvas or resolution warning)', async () => {
+    await restore(); newShow(); await wait(400); okDialogs(); await wait(500); if (!_qsUp()) openQS(); await wait(300);
+    $('#qs-show').value = 'Backdrop gate'; qsAdjust('screens', -1); await wait(200);
+    const hdr = $('#qs-sr-1 .qs-screen-hdr'); if (hdr) hdr.click(); await wait(200);
+    const tog = $('#qs-bd-1'); if (!tog) { closeQS(); await restore(); return 'no Backdrop switch on Quick Setup\'s Destination 2 row'; }
+    const beside = !!(tog.closest('#qs-sr-1') && $('#qs-res-1') && tog.closest('.lbbd-qsline') === $('#qs-res-1').closest('.lbbd-qsline'));
+    const name0 = ($('#qs-sn-1') || {}).value; tog.click(); await wait(250);
+    const row = () => ({ name: ($('#qs-sn-1') || {}).value, pressed: ($('#qs-bd-1') || {}).getAttribute ? $('#qs-bd-1').getAttribute('aria-pressed') : null, resHidden: $('#qs-res-1').hidden && getComputedStyle($('#qs-res-1')).display === 'none', type: ($('#qs-bdl-1') || {}).type, L: ($('#qs-bdl-1') || {}).value, H: ($('#qs-bdh-1') || {}).value, lbl: $('#qs-sr-lbl-1').textContent, preview: $('#qs-canvas-preview').textContent });
+    const r1 = row(); _r2Set($('#qs-bdl-1'), '20\' 6"'); _r2Set($('#qs-bdh-1'), '12 6'); await wait(150); const r2 = row();
+    $('#qs-confirm-btn').click(); await wait(900); okDialogs();
+    const built = screens.map(s => [s.name, s.deviceType || '', s.w, s.h, s.bdLin, s.bdHin]); const cv = [$('#cv-w').value, $('#cv-h').value, $('#cv-lbl').textContent]; const v = validateProject();
+    const drawn = (() => { const b = $('#canvas-area .screen-box[data-backdrop]'); return b ? [!!b, ($('.screen-res', b) || {}).textContent] : null; })();
+    await restore();
+    return is({ beside, name0, r1, r2, built, cv, warn: v.warnings.filter(w => /Canvas size|Destination "/.test(w)), drawn },
+      { beside: true, name0: '', r1: { name: 'BACKDROP', pressed: 'true', resHidden: true, type: 'text', L: '10\'', H: '5\' 6"', lbl: 'BACKDROP · 10\' × 5\' 6"', preview: '3840 × 1080 px' }, r2: { name: 'BACKDROP', pressed: 'true', resHidden: true, type: 'text', L: '20\' 6"', H: '12\' 6"', lbl: 'BACKDROP · 20\' 6" × 12\' 6"', preview: '3840 × 1080 px' },
+        built: [['Destination 01', '', 1920, 1080, undefined, undefined], ['BACKDROP', 'Backdrop', 3936, 2400, 246, 150], ['Destination 03', '', 1920, 1080, undefined, undefined]], cv: ['3840', '1080', '3840 × 1080 px'], warn: [], drawn: [true, 'BACKDROP · 20\' 6" × 12\' 6"'] },
+      'the switch beside the resolution / the name box before / the row after the switch [name, switch, resolution hidden, box type, Length, Height, header, preview] / after 20\' 6" and 12 6 / the built show [name, Type, px, inches] / canvas [W, H, the bottom-bar pill] / Pre-Export canvas and resolution warnings / the canvas box');
+  });
+  // 16kx-backdrop D: NEW
+  // 16kx-r2 D: REPLACES round-1 check D (reason in the block)
+  // 16kx-r2: REPLACES round-1 check D. Why: answers 1 and 3. Edit Show Info's switch names it BACKDROP (the name box), it is
+  //   10' × 5' 6" (120 × 66 in); back as a screen it keeps the name BACKDROP and is 1920 × 1056 (its inches at 192 px per foot).
+  await check('Backdrop 16kx-backdrop: Edit Show Info turns CENTER LED into a backdrop (the Backdrop switch writes BACKDROP into its name box, the question, Update Show, ONE undo step, its content gone, 10\' × 5\' 6", 16kx-r2) and later back into a screen (switch off, Update Show, no question): its Type LED comes back, it keeps the name BACKDROP, its pixel size is its inches at 192 px per foot (1920 × 1056), it is back in the I/O Patch, with no layers', async () => {
+    await restore(); const sid = _bxS('CENTER LED').id, u0 = _undoStack.length;
+    const e1 = await _r2Edit(1, true); const s1 = screens.find(x => x.id === sid); const made = [s1.deviceType, s1.name, s1.bdLin, s1.bdHin, _undoStack.length - u0, presets.every(p => !(p.layers || {})[sid] && !getBgName(p.id, sid)), _qsUp()];
+    const e2 = await _r2Edit(1, false); const s2 = screens.find(x => x.id === sid);
+    await ioOpenSimple(); const inIO = !!_bxRow(s2.name); closeSystem();
+    const back = [s2.deviceType, s2.name, s2.w, s2.h, s2.bdLin, presets.every(p => !Object.keys((p.layers || {})[sid] || {}).length), inIO, _undoStack.length - u0];
+    await restore();
+    return is({ q1: _bxQ(e1.q), nm1: e1.nm, made, q2: e2.q, back }, { q1: [true, true, true], nm1: 'BACKDROP', made: ['Backdrop', 'BACKDROP', 120, 66, 1, true, false], q2: null, back: ['LED', 'BACKDROP', 1920, 1056, undefined, true, true, 2] },
+      'the question on Update Show / the name box after the switch / made [Type, name, Length in, Height in, undo steps, no content, Quick Setup closed] / the question on the way back (none) / back [Type, name, px from 120 × 66 in, inches gone, no layers, in the I/O Patch, undo steps]');
+  });
+  // 16kx-backdrop E: NEW
+  // 16kx-r2 E: REPLACES round-1 check E (reason in the block)
+  // 16kx-r2: REPLACES round-1 check E. Why: answer 2. Destination Properties' boxes are text boxes in feet and inches and the size
+  //   is stored in inches; 30' applied is 360 × 66 in (5760 × 1056 px); PPI 20 draws 7200 × 1320 px, the inches unchanged.
+  await check('Backdrop 16kx-backdrop: its size is in FEET AND INCHES and stored in inches (16kx-r2): Destination Properties (a double-click on its box) shows Length 10\' and Height 5\' 6" in text boxes and no layer, BG or rotation; 30\' applied is ONE undo step, 5760 px at 192 px per foot, and RIGHT LED moves along; PPI 20 redraws it 7200 × 1320 px with the size still 30\' × 5\' 6" and no undo step; PPI 16 gives 5760 × 1056 again', async () => {
+    await restore(); await _bxMk('CENTER LED'); const sid = (_r2Bd() || {}).id, rid = _bxS('RIGHT LED').id, p0 = presets[0];
+    _bxDbl(_bxBox(sid)); await wait(500); const pop = $('#screen-panel');
+    const panel = pop ? [pop.classList.contains('lbbd-props'), ($('#lbbd-l', pop) || {}).value, ($('#lbbd-h', pop) || {}).value, ($('#lbbd-l', pop) || {}).type, $$('.sp-layer-btn', pop).length, !!$('#sp-bg-btn', pop), !!$('#sp-rot', pop), !!$('#sp-w', pop)] : 'no Destination Properties';
+    const want = { panel: [true, '10\'', '5\' 6"', 'text', 0, false, false, false], applied: [360, 66, 5760, 1056, 1, 7680, '3840'], at20: [360, 66, 7200, 1320, 9120, 0, '3840', 'BACKDROP · 30\' × 5\' 6"'], at16: [360, 66, 5760, 1056, 7680] };
+    if (!pop || !$('#lbbd-l', pop)) { try { closeScreenPanel(); } catch (e) {} await restore(); return is({ panel }, { panel: want.panel }, 'Destination Properties'); }
+    _r2Set($('#lbbd-l', pop), '30\''); const u0 = _undoStack.length; $('#sp-apply', pop).click(); await wait(600);
+    const s = screens.find(x => x.id === sid); const applied = [s.bdLin, s.bdHin, s.w, s.h, _undoStack.length - u0, p0.positions[rid].x, $('#cv-w').value];
+    const u1 = _undoStack.length; _bxPpi(20); render(); await wait(400); const at20 = [s.bdLin, s.bdHin, s.w, s.h, p0.positions[rid].x, _undoStack.length - u1, $('#cv-w').value, ($('.screen-res', _bxBox(sid)) || {}).textContent];
+    _bxPpi(16); render(); await wait(400); const at16 = [s.bdLin, s.bdHin, s.w, s.h, p0.positions[rid].x];
+    await restore();
+    return is({ panel, applied, at20, at16 }, want,
+      'Destination Properties [the backdrop panel, Length, Height, box type, layer buttons, BG button, rotation, px width] / 30\' applied [in, in, px, px, undo steps, RIGHT LED x, canvas W] / at PPI 20 [.., undo steps, canvas W, its label] / at PPI 16');
+  });
+  // 16kx-backdrop F: NEW
+  // 16kx-r2 F: REPLACES round-1 check F (reason in the block)
+  // 16kx-r2: REPLACES round-1 check F (same name, same expectations). Why: answer 1. The backdrop is named BACKDROP, so the check
+  //   finds it by its Type instead of the name CENTER LED.
+  await check('Backdrop 16kx-backdrop: ONE picture per backdrop: with none it is a plain shaded box labelled BACKDROP; a 3200 × 1600 picture picked in Destination Properties is kept as a 1600 × 800 JPEG inside the show (one undo step) and fills its box on the Simple canvas, the Advanced canvas and in the Look Book, the same in every preset; the picture\'s × removes it (one undo step)', async () => {
+    await restore(); await _bxMk('CENTER LED'); const sid = (_r2Bd() || {}).id; const out = {};
+    const bgOf = el => el ? getComputedStyle(el).backgroundImage : 'no box';
+    const b0 = _bxBox(sid); out.none = b0 ? [bgOf(b0), /BACKDROP/.test(($('.lbbd-mark', b0) || {}).textContent || ''), getComputedStyle(b0).backgroundColor] : 'no box';
+    _bxDbl(b0); await wait(500); const u0 = _undoStack.length;
+    out.picked = await _bxPickFile($('#screen-panel .lbbd-imgbtn'), await _bxPic(3200, 1600));
+    const s = _r2Bd() || {}; out.stored = [String(s.bdImg || '').slice(0, 23), await _bxDims(s.bdImg), _undoStack.length - u0];
+    try { closeScreenPanel(); } catch (e) {} render(); await wait(300);
+    out.simple = presets.map(p => { const b = $('#canvas-area .screen-box[data-pid="' + p.id + '"][data-sid="' + sid + '"]'); return b ? bgOf(b).indexOf(s.bdImg ? s.bdImg.slice(0, 60) : '§') >= 0 : 'no box'; });
+    openFullscreen(presets[1].id); await wait(700); out.adv = bgOf($('#fs-canvas .screen-box[data-sid="' + sid + '"]')).indexOf(String(s.bdImg).slice(0, 60)) >= 0; closeFullscreen(); await wait(400);
+    const html = await userLookBook(); const doc = new DOMParser().parseFromString(html, 'text/html');
+    out.lookbook = $$('.screen-box[data-backdrop]', doc).map(b => (b.getAttribute('style') || '').indexOf(String(s.bdImg).slice(0, 60)) >= 0);
+    _bxDbl(_bxBox(sid)); await wait(500); const u1 = _undoStack.length; const x = $('#screen-panel .lbbd-imgx'); if (x) x.click(); await wait(400);
+    out.removed = [!!(_r2Bd() || {}).bdImg, _undoStack.length - u1]; try { closeScreenPanel(); } catch (e) {} render(); await wait(200); out.after = bgOf(_bxBox(sid));
+    await restore();
+    return is(out, { none: ['none', true, 'rgb(74, 82, 92)'], picked: true, stored: ['data:image/jpeg;base64,', [1600, 800], 1], simple: [true, true, true, true, true], adv: true, lookbook: [true, true, true, true, true], removed: [false, 1], after: 'none' },
+      'no picture [box background image, BACKDROP mark, shade] / picked through the file picker / stored [JPEG data URL, size, undo steps] / Simple boxes P01-P05 / Advanced / Look Book P01-P05 / × [kept, undo steps] / after');
+  });
+  // 16kx-backdrop G: NEW
+  // 16kx-r2 G: REPLACES round-1 check G (reason in the block)
+  // 16kx-r2: REPLACES round-1 check G (same name). Why: answers 1 and 2. The backdrop is found by its Type (named BACKDROP) and its
+  //   table row reads its size in feet and inches (BACKDROP · 10' × 5' 6" · no video).
+  await check('Backdrop 16kx-backdrop: no other option: no layer or BG can be put on it (setters refuse it), its table row reads BACKDROP greyed with no field or ▾ to pick, the layer strip stays inert when it is picked, its double-click opens its feet (never the layer panel), the Advanced canvas and list take no drop on it, and a Free Position drag that would put LEFT LED on it is put back with a warning (no blend)', async () => {
+    await restore(); await _bxMk('CENTER LED'); const sid = (_r2Bd() || {}).id, lid = _bxS('LEFT LED').id, p0 = presets[0]; const out = {};
+    setL(p0.id, sid, 1, 'CAM 1'); setBgName(p0.id, sid, 'LOGO'); setPColor(p0.id, sid, '#ff0000', null); out.set = [getL(p0.id, sid, 1), getBgName(p0.id, sid), getPColor(p0.id, sid) || null];
+    render(); await wait(300); const tr = $('#tbody tr[data-pid="' + p0.id + '"][data-sid="' + sid + '"]');
+    out.row = tr ? [$$('.home-field-layer', tr).length, $$('[data-home-field="layer"],[data-home-field="bg"]', tr).length, $$('.lbbd-cell', tr).map(e => e.textContent)] : 'no row';
+    doSelect(p0.id, sid); await wait(250); const strip = $('#canvas-area .lb-lstrip[data-pid="' + p0.id + '"]'); out.strip = strip ? strip.classList.contains('inert') : 'no strip'; doSelect(null, null);
+    _bxDbl(_bxBox(sid)); await wait(500); out.dbl = [!!$('#screen-panel.lbbd-props'), !!$('#layer-panel')]; try { closeScreenPanel(); } catch (e) {}
+    openLayerPanel(fakeEv, p0.id, sid, 1); await wait(200); out.layerPanel = !!$('#layer-panel'); try { closeLayerPanel(); } catch (e) {}
+    openFullscreen(p0.id); await wait(700); const box = $('#fs-canvas .screen-box[data-sid="' + sid + '"]'), lbox = $('#fs-canvas .screen-box[data-sid="' + lid + '"]');
+    out.drop = [box ? _fsDropTarget({ target: box }) : 'no box', lbox ? (_fsDropTarget({ target: lbox }) || {}).kind : 'no box'];
+    const list = $$('#fs-right-panel .fs-drow').find(d => /Backdrop, no video/.test(d.textContent)); out.list = list ? [$$('.fs-lrow[data-n]', list).length, /Backdrop, no video/.test(list.textContent)] : 'no list row';
+    closeFullscreen(); await wait(400);
+    const cls = document.body.classList, was = [cls.contains('adv-free-position'), !cls.contains('adv-hide-blend')]; if (!was[0]) actions.toggleAdvFeature('freePos'); if (!was[1]) actions.toggleAdvFeature('blend'); closeAdvancedMenu(); render(); await wait(300);
+    const lb = _bxBox(lid); const x0 = p0.positions[lid].x;
+    if (lb) { const r = lb.getBoundingClientRect(), x = r.left + r.width / 2, y = r.top + r.height / 2, dx = r.width * 0.6; lb.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true, clientX: x, clientY: y, button: 0, buttons: 1 })); for (let i = 1; i <= 6; i++) { window.dispatchEvent(new MouseEvent('mousemove', { bubbles: true, clientX: x + dx * i / 6, clientY: y, buttons: 1 })); await wait(20); } window.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, clientX: x + dx, clientY: y })); await wait(500); }
+    out.blend = [dlgOpen() ? /can.t overlap/i.test(dialogText()) : 'no warning', p0.positions[lid].x === x0]; okDialogs();
+    if (!was[0]) actions.toggleAdvFeature('freePos'); if (!was[1]) actions.toggleAdvFeature('blend'); closeAdvancedMenu();
+    await restore();
+    return is(out, { set: [null, '', null], row: [0, 0, ['BACKDROP', 'BACKDROP · 10\' × 5\' 6" · no video']], strip: true, dbl: [true, false], layerPanel: false, drop: [null, 'bg'], list: [0, true], blend: [true, true] },
+      'setters [L1, BG, colour] / its table row [layer fields, ▾ openers, what it reads] / layer strip inert / double-click [feet panel, layer panel] / openLayerPanel / Advanced drop [on it, on LEFT LED] / Advanced list [layer rows, the line] / Free Position drag onto it [the warning, LEFT LED put back]');
+  });
+  // 16kx-backdrop H: NEW
+  // 16kx-r2 H: REPLACES round-1 check H (reason in the block)
+  // 16kx-r2: REPLACES round-1 check H (same name, same expectations). Why: answers 1 and 2. The backdrop is found by its Type and
+  //   made 14 ft tall in inches (bdHin 168), the size's new unit.
+  await check('Backdrop 16kx-backdrop: the Canvas size leaves it out while it is drawn to scale between the screens: top bar 3840 × 1080 (was 5760), the bottom-bar pill, Outputs 4, the cue sheet\'s "Canvas: 3840x1080", the Look Book\'s Canvas Visual, no canvas or resolution warning in the Pre-Export Check, even when it is taller (14 ft)', async () => {
+    await restore(); const cv0 = [$('#cv-w').value, $('#cv-h').value]; await _bxMk('CENTER LED'); render(); await wait(300); const out = { before: cv0 };
+    const read = async () => { const orig = _buildXlsx; let rows = null; window._buildXlsx = function (r) { rows = r; return orig.apply(this, arguments); }; try { _doExportExcel(true); } finally { window._buildXlsx = orig; }
+      const lb = await userLookBook(); const m = /Canvas Visual<\/span><span>([^<]*)</.exec(lb); const v = validateProject();
+      return [$('#cv-w').value, $('#cv-h').value, $('#cv-lbl').textContent, $('#bb-outputs').textContent, rows ? rows[4][3] : null, m ? m[1] : null, v.errors.concat(v.warnings)]; };
+    out.backdrop = await read();
+    const s = _r2Bd(); if (s) { s.bdHin = 168; render(); await wait(300); }
+    out.tall = await read(); const b = _bxBox((s || {}).id); out.drawn = b ? [Math.round(b.getBoundingClientRect().width), Math.round(_bxBox(_bxS('LEFT LED').id).getBoundingClientRect().width)] : 'no box';
+    out.tallPx = s ? s.h : null;
+    await restore();
+    return is(out, { before: ['5760', '1080'], backdrop: ['3840', '1080', '3840 × 1080 px', '4', 'Canvas: 3840x1080', '3840 × 1080', []], tall: ['3840', '1080', '3840 × 1080 px', '4', 'Canvas: 3840x1080', '3840 × 1080', []], drawn: out.drawn && out.drawn[0] === out.drawn[1] ? out.drawn : 'the backdrop (10 ft = 1920 px) is not drawn as wide as LEFT LED (1920 px)', tallPx: 2688 },
+      'before / with the backdrop [top-bar W, H, pill, Outputs, cue sheet Canvas:, Look Book Canvas Visual, Pre-Export errors + warnings] / 14 ft tall / drawn [its width, LEFT LED\'s width] / 14 ft drawn');
+  });
+  // 16kx-backdrop I: NEW
+  // 16kx-r2 I: REPLACES round-1 check I (reason in the block)
+  // 16kx-r2: REPLACES round-1 check I. Why: answer 4. Its I/O Patch Advanced page-1 row is now REMOVED (round 1 kept it unseen)
+  //   and the destinations are numbered without it (D1 LEFT LED, D2 RIGHT LED; round 1 kept Destination 1 and 3); back as a
+  //   screen it is a NEW destination: Simple, the I/O Excel and the Look Book list it at once, Advanced page 1 does not
+  //   (round 1 brought the kept row back) until it is rebuilt from Simple.
+  // 16kx-r2fix I: REPLACES 16kx-r2 check I (reason in the block)
+  // 16kx-r2fix: REPLACES 16kx-r2's check I. Why: one number per destination in the whole show. 16kx-r2 numbered the I/O Patch
+  //   without the backdrop (D1 LEFT LED, D2 RIGHT LED) while the Look Book's breakdown, the layer strip and the phone's layer
+  //   rows kept the canvas numbers (RIGHT LED = DESTINATION 03), so one book said "Destination 2" for two different things.
+  //   The I/O Patch keeps the canvas numbers again (round 1): D1 LEFT LED, D3 RIGHT LED, Destination 1 and 3. Nothing else changes.
+  await check('Backdrop 16kx-backdrop: out of the I/O Patch (16kx-r2: removed, not hidden): Simple (no row, D1 LEFT LED and D3 RIGHT LED as on the canvas, 16kx-r2fix; the count reads 2 destination), Advanced page 1 (its copied row removed from the page), the I/O Excel (no row, LEFT LED and RIGHT LED are Destination 1 and 3), the Look Book\'s I/O Destinations page and the Pre-Export I/O check; back as a screen it is a NEW destination: in Simple, the I/O Excel and the Look Book at once, not on Advanced page 1', async () => {
+    await restore(); await ioOpenSimple(); await toAdvancedF(); _ioSetView('simple'); await wait(300); closeSystem();   /* page 1 built from the show while CENTER LED is a screen */
+    await _bxMk('CENTER LED'); const out = {};
+    const io = async (names) => { await ioOpenSimple(); const simple = [$$('#sys-dst-rows .sys-row').map(r => ((($('.sys-row-icon', r) || {}).textContent || '').trim() + ' ' + (($('.sys-name-input', r) || {}).value || '')).trim()).filter(x => /^D[1-9]/.test(x)), ($('#sys-dst-count') || {}).textContent];
+      const page1 = (ioAdvanced.pages[0].dests || []).map(r => r.name); await toAdvancedF(); const adv = names.some(n => !!advRowF(n)); _ioSetView('simple'); await wait(300); closeSystem(); await wait(200);
+      const real = window.dl; let blob = null; window.dl = b => { blob = b; }; try { _sysExportIOExcel(); } finally { window.dl = real; }
+      let xl = 'no workbook'; if (blob) { const wb = await xlRead(blob); xl = Object.keys(wb.parts).filter(n => /worksheets\/sheet/.test(n)).map(n => (wb.parts[n].match(/Destination \d+<\/t><\/is><\/c><c[^>]*><is><t[^>]*>[^<]*<\/t><\/is><\/c><c[^>]*><is><t[^>]*>[^<]*/g) || []).map(x => x.replace(/<[^>]+>/g, '|').replace(/\|+/g, '|'))).join(' ; '); }
+      const lb = await userLookBook(); const doc = new DOMParser().parseFromString(lb, 'text/html'); const dest = $$('.io-doc[data-title="Destinations"] tr', doc).map(tr => [...tr.children].slice(0, 3).map(t => t.textContent.trim())).filter(r => /^Destination \d/.test(r[0])).map(r => r[0] + ' ' + r[2]);
+      const v = _sysValidateIO(); return { simple, page1, adv, xl, lookbook: dest, check: names.some(n => JSON.stringify(v).indexOf(n) >= 0) }; };
+    const bd = await io(['CENTER LED', 'BACKDROP']);
+    out.simple = bd.simple; out.page1 = bd.page1; out.adv = bd.adv; out.xl = /Destination 1\|12G-SDI\|LEFT LED.*Destination 3\|12G-SDI\|RIGHT LED/.test(bd.xl) && !/CENTER LED|BACKDROP|Destination 2\|/.test(bd.xl); out.lookbook = bd.lookbook; out.check = bd.check;
+    const e = await _r2Edit(1, false);
+    const back = await io(['BACKDROP']); out.back = [back.simple[0], back.adv, /Destination 2\|12G-SDI\|BACKDROP/.test(back.xl), back.lookbook.indexOf('Destination 2 BACKDROP') >= 0, back.page1.indexOf('BACKDROP') >= 0];
+    await restore();
+    return is(out, { simple: [['D1 LEFT LED', 'D3 RIGHT LED'], '5 total · 2 destination · 1 AUX · 1 DSM · 1 MV'], page1: ['LEFT LED', 'RIGHT LED', 'DSM 1', 'AUX 1'], adv: false, xl: true, lookbook: ['Destination 1 LEFT LED', 'Destination 3 RIGHT LED'], check: false, back: [['D1 LEFT LED', 'D2 BACKDROP', 'D3 RIGHT LED'], false, true, true, false] },
+      'Simple [rows D#, count] / Advanced page 1 rows (data) / its row on Advanced page 1 / the I/O Excel: LEFT LED and RIGHT LED are Destination 1 and 3, no row for it, no Destination 2 / Look Book I/O page / Pre-Export I/O check / back as a screen [Simple rows, Advanced page 1 row, I/O Excel Destination 2, Look Book Destination 2, page 1 data]');
+  });
+  // 16kx-backdrop J: NEW
+  // 16kx-r2 J: REPLACES round-1 check J (reason in the block)
+  // 16kx-r2: REPLACES round-1 check J. Why: answer 4. The tile and its cables are now DELETED with the switcher row that fed it
+  //   (round 1 kept them hidden and asked "Simple changed since Page 1 was built"); no question; back as a screen it is a NEW
+  //   destination, so Advanced asks the usual question (round 1 brought the hidden tile back with no question).
+  await check('Backdrop 16kx-backdrop: out of Wire (16kx-r2: removed, not hidden): Simple has no card and no node for it; Advanced asks NOTHING, its tile and cables are deleted (not kept) and the switcher output that fed it is released (11 IN · 4 OUT); the printed Wire sheet does not name it; back as a screen it is a new destination: Advanced asks the usual "Simple changed since Page 1 was built" and, kept, the page has no tile for it', async () => {
+    await restore(); await _r2WireAdv(); const before = [(wireAdvanced.dests || []).length, $$('#wire-diagram [data-node-id^="adst:"]').length, (_r2Hub() || [])[0]]; closeWireMode(); await wait(300);
+    await _bxMk('CENTER LED'); const sid = (_r2Bd() || {}).id; const out = { before };
+    openWireMode(); await wait(500); _wireSwitchToSimple(); await wait(500);
+    out.simple = [!!$('#wire-diagram [data-node-id="dst:' + sid + '"]'), /CENTER LED|BACKDROP/.test(($('#wire-overlay') || {}).textContent || '')];
+    closeWireMode(); await wait(300); out.asked = await _r2WireTab();
+    const txt = ($('#wire-diagram') || {}).textContent || ''; out.adv = [$$('#wire-diagram [data-node-id^="adst:"]').length, /CENTER LED|BACKDROP/.test(txt), /deleted destination/.test(txt), (wireAdvanced.dests || []).length, (wireAdvanced.dests || []).filter(d => d.refId === sid).length, (_r2Hub() || [])[0]];
+    let svg = ''; try { svg = _wireExportSheetsSvg('light') || ''; } catch (e) { svg = 'threw ' + e.message; } out.sheet = [/CENTER LED|BACKDROP/.test(svg), /deleted destination/.test(svg), svg.length > 1000];
+    closeWireMode(); await wait(300);
+    await _r2Edit(1, false);
+    const asked2 = await _r2WireTab(); out.back = [asked2, $$('#wire-diagram [data-node-id^="adst:"]').length, (wireAdvanced.dests || []).filter(d => d.refId === sid).length]; closeWireMode(); await wait(300);
+    await restore();
+    return is(out, { before: [3, 3, '11 IN · 5 OUT'], simple: [false, false], asked: false, adv: [2, false, false, 2, 0, '11 IN · 4 OUT'], sheet: [false, false, true], back: [true, 2, 0] },
+      'before [Advanced instances, tiles, switcher] / Simple [its node, its name] / Advanced asked to rebuild / Advanced [tiles, its name, deleted, instances, its instances, switcher] / the Wire sheet [its name, deleted, drawn] / back as a screen [asked, tiles, its instances]');
+  });
+  // 16kx-backdrop K: NEW
+  // 16kx-r2 K: REPLACES round-1 check K (reason in the block)
+  // 16kx-r2: REPLACES round-1 check K. Why: answer 2. Its size cell reads 10' × 5' 6" (feet and inches) instead of 10 × 5.63 ft.
+  await check('Backdrop 16kx-backdrop: the cue-sheet Excel keeps its column in stage order (LEFT LED, BACKDROP, RIGHT LED), GREYED with real cell styles: the header (white on grey FF9AA1AB), its size in feet and inches "10\' × 5\' 6"" in the resolution row (16kx-r2), BACKDROP in every preset row (grey text FF7A828E on grey FFE3E6EA); the other columns keep their styles', async () => {
+    await restore(); await _bxMk('CENTER LED'); const wb = await xlRead(_doExportExcel(true)); const x = wb.parts['xl/worksheets/sheet2.xml'] || '';
+    const fontColor = (ref) => { const c = wb.cell(2, ref); if (!c) return null; const st = new DOMParser().parseFromString(wb.parts['xl/styles.xml'], 'application/xml'); const xf = st.getElementsByTagName('cellXfs')[0].getElementsByTagName('xf')[c.s]; const f = st.getElementsByTagName('fonts')[0].getElementsByTagName('font')[+xf.getAttribute('fontId')]; const col = f.getElementsByTagName('color')[0]; return col ? col.getAttribute('rgb') : null; };
+    const out = { heads: ['E4', 'F4', 'G4'].map(r => (wb.cell(2, r) || {}).text), sub: ['E5', 'F5', 'G5'].map(r => (wb.cell(2, r) || {}).text), body: ['F7', 'F8', 'F9', 'F10', 'F11'].map(r => (wb.cell(2, r) || {}).text),
+      fills: ['E4', 'F4', 'F5', 'F7', 'F11', 'E7', 'G7'].map(r => wb.fillOf(2, r)), fonts: [fontColor('F4'), fontColor('F7'), fontColor('E7')], inline: /<c r="F7" s="\d+" t="inlineStr"><is><t[^>]*>BACKDROP<\/t>/.test(x) };
+    await restore();
+    return is(out, { heads: ['LEFT LED', 'BACKDROP', 'RIGHT LED'], sub: ['1920x1080', '10\' × 5\' 6"', '1920x1080'], body: ['BACKDROP', 'BACKDROP', 'BACKDROP', 'BACKDROP', 'BACKDROP'],
+      fills: ['FFFF8A3D', 'FF9AA1AB', 'FF9AA1AB', 'FFE3E6EA', 'FFE3E6EA', 'none', 'none'], fonts: ['FFFFFFFF', 'FF7A828E', null], inline: true },
+      'headers E4:G4 / resolution row / its column, P01-P05 / fills [LEFT LED head, its head, its size, P01, P05, LEFT LED P01, RIGHT LED P01] / font colours [its head, its P01, LEFT LED P01] / an inline string cell');
+  });
+  // 16kx-backdrop L: NEW
+  // 16kx-r2 L: REPLACES round-1 check L (reason in the block)
+  // 16kx-r2: REPLACES round-1 check L. Why: answers 1 and 2. Its name reads BACKDROP and its size 10' × 5' 6" in the canvas label
+  //   and "Length 10' × Height 5' 6"" in the breakdown (was CENTER LED, 10 × 5.63 ft).
+  await check('Backdrop 16kx-backdrop: the Look Book draws it in its place on every preset page (between LEFT LED and RIGHT LED, 10 ft = LEFT LED\'s width) named BACKDROP with "BACKDROP · 10\' × 5\' 6"" and the shaded box; its Destination Breakdown column lists it as a backdrop with no content, Length 10\' × Height 5\' 6" (16kx-r2); Show Combinations reads BACKDROP; its styles are inline, the Look Book gains no stylesheet rule', async () => {
+    await restore(); const lb0 = await userLookBook(); await _bxMk('CENTER LED'); const lb = await userLookBook(); const doc = new DOMParser().parseFromString(lb, 'text/html');
+    const pages = $$('.preset-doc', doc).map(pd => { const boxes = $$('.screen-box', pd).map(b => ({ sid: b.getAttribute('data-sid'), x: parseInt(b.style.left, 10), w: parseInt(b.style.width, 10), bd: b.hasAttribute('data-backdrop') })).sort((a, b) => a.x - b.x);
+      const me = $$('.screen-box[data-backdrop]', pd)[0]; return [boxes.map(b => b.bd ? 'BD' : 'S').join(''), boxes.length === 3 && boxes[1].w === boxes[0].w, me ? [($('.screen-lbl', me) || {}).textContent, ($('.screen-res', me) || {}).textContent, /background:#4a525c;/.test(me.getAttribute('style') || '')] : null]; });
+    const col = $$('.bd-col', doc).filter(c => /Backdrop/.test(c.textContent)).slice(0, 1).map(c => [...c.children].map(x => x.textContent.replace(/\s+/g, ' ').trim()).join(' | '));
+    const sum = $$('.summary-table td.cell', doc).filter(td => td.textContent.trim() === 'BACKDROP').length; const hres = $$('.summary-table th.screen-col .hres', doc).map(e => e.textContent.trim()).filter(t => /BACKDROP/.test(t)).slice(0, 1);
+    const style = s => (s.match(/<style[\s\S]*?<\/style>/g) || []).join('');
+    const out = { pages, col, sum, hres, sameStyles: style(lb0) === style(lb) };
+    await restore();
+    const pg = ['SBDS', true, ['BACKDROP', 'BACKDROP · 10\' × 5\' 6"', true]];
+    return is(out, { pages: [pg, pg, pg, pg, pg], col: ['BACKDROP | Destination 02 · Backdrop | BACKDROP Length 10\' × Height 5\' 6" | No content (a backdrop takes no video)'], sum: 5, hres: ['BACKDROP · 10\' × 5\' 6"'], sameStyles: true },
+      'preset pages P01-P05 [left to right, as wide as LEFT LED, its name / label / shade] / its breakdown column / Show Combinations cells / Show Combinations header / the Look Book\'s style blocks unchanged');
+  });
+  // 16kx-backdrop M: NEW
+  // 16kx-r2 M: REPLACES round-1 check M (reason in the block)
+  // 16kx-r2: REPLACES round-1 check M. Why: answers 1 and 2. The .avlb carries the size in inches (bdLin / bdHin, no bdL / bdH)
+  //   and the name BACKDROP; the check finds it by its Type.
+  await check('Backdrop 16kx-backdrop: save + reload: the .avlb carries deviceType Backdrop, its name BACKDROP, its size in inches (bdLin / bdHin, 16kx-r2), the picture and the Type it was; opened again (also at PPI 20) the show is clean, the size is exact, the picture draws, and it is still out of the I/O Patch and the canvas size', async () => {
+    await restore(); await _bxMk('CENTER LED'); const s = _r2Bd(); if (s) { s.bdLin = 144; s.bdHin = 72; s.bdImg = 'data:image/jpeg;base64,' + btoa('scenic'); } render(); await wait(300);
+    const txt = JSON.stringify(getProjectState()); const f = JSON.parse(txt).screens.find(x => x.deviceType === 'Backdrop') || {};
+    const out = { file: [f.deviceType, f.name, f.bdLin, f.bdHin, f.bdL, f.bdH, String(f.bdImg || '').slice(0, 23), f.bdWas, JSON.parse(txt).canvasW] };
+    const open = async () => { _applyProjectText(txt); await wait(900); okDialogs(); render(); await wait(300); _recomputeDirty(); const t = _r2Bd() || {}; await ioOpenSimple(); const io = !!_bxRow(t.name); closeSystem(); await wait(200);
+      return [t.deviceType, t.name, t.bdLin, t.bdHin, t.w, t.h, !!_isDirty, $('#cv-w').value, io, getComputedStyle(_bxBox(t.id)).backgroundImage.indexOf('data:image/jpeg') >= 0]; };
+    out.reopen = await open(); _bxPpi(20); out.at20 = await open(); _bxPpi(16);
+    await restore();
+    return is(out, { file: ['Backdrop', 'BACKDROP', 144, 72, undefined, undefined, 'data:image/jpeg;base64,', 'LED', '3840'], reopen: ['Backdrop', 'BACKDROP', 144, 72, 2304, 1152, false, '3840', false, true], at20: ['Backdrop', 'BACKDROP', 144, 72, 2880, 1440, false, '3840', false, true] },
+      'the file [Type, name, Length in, Height in, old bdL, old bdH, picture, the Type it was, canvasW] / reopened [Type, name, in, in, px, px, unsaved, canvas W, in I/O Patch, picture drawn] / reopened at PPI 20');
+  });
+  // 16kx-backdrop N: NEW
+  await check('Help 16kx-backdrop: the in-app Help says it: Quick Reference has a Backdrop row (a destination Type for a scenic piece with no video, made in Quick Setup / Edit Show Info or the I/O Patch Type menu, Length × Height in feet, one picture, no layers, removed content comes back with Undo, left out of the canvas size, the I/O Patch and Wire, greyed in the Excel) and the Glossary a BACKDROP entry', async () => {
+    const h = ($('#help-overlay') || {}).textContent || ''; const i = h.indexOf('Backdrop', h.indexOf('Screen / Destination')); const row = i >= 0 ? h.slice(i, i + 1400) : '';
+    return is([i >= 0, /scenic piece/.test(row), /Quick Setup or Edit Show Info/.test(row), /I\/O Patch Type menu/.test(row), /Length . Height in feet/.test(row), /one picture/.test(row), /no layers/.test(row), /Undo brings it back/.test(row), /left out of the canvas size, the I\/O Patch and Wire/.test(row), /greyed/.test(row), /BACKDROP\s*A scenic piece in the row between the screens/.test(h)],
+      [true, true, true, true, true, true, true, true, true, true, true], 'Quick Reference [a Backdrop row, scenic, where it is made, the Type menu, feet, one picture, no layers, Undo, left out, greyed] / Glossary');
+  });
+  // 16kx-r2 Q1: NEW
+  await check('Backdrop 16kx-r2: AUTO-NAME (Omar\'s answer 1): a destination that becomes a backdrop is named BACKDROP, the next one BACKDROP 2, then BACKDROP 3 …, never a name the show already uses (DSM 1 renamed BACKDROP 2 makes RIGHT LED BACKDROP 3); a preset\'s own name for it goes (P03 reads BACKDROP too); the rename is inside the conversion\'s ONE undo step (one Undo gives RIGHT LED its name and Type back); made a screen again it keeps the name BACKDROP; Quick Setup\'s Backdrop switch writes the next free name into the row\'s Destination Name box', async () => {
+    await restore(); const cid = _bxS('CENTER LED').id, rid = _bxS('RIGHT LED').id, p3 = presets[2]; const dsm = dsms.find(d => d.name === 'DSM 1');
+    homeSetScreenName(p3.id, cid, 'CENTER IMAG'); await wait(200); const own = getScreenName(p3.id, cid);
+    const u0 = _undoStack.length; await _bxMk('CENTER LED'); const c = screens.find(x => x.id === cid); const first = [c.name, c.deviceType, getScreenName(p3.id, cid), _undoStack.length - u0];
+    _sysSetMeta('aux', dsm.id, 'name', 'BACKDROP 2'); await wait(200);
+    const u1 = _undoStack.length; await _bxMk('RIGHT LED'); const r = screens.find(x => x.id === rid); const second = [r.name, r.deviceType, _undoStack.length - u1];
+    actions.undo(); await wait(500); const r2 = screens.find(x => x.id === rid); const undone = [r2.name, r2.deviceType, screens.find(x => x.id === cid).name, screens.find(x => x.id === cid).deviceType];
+    const e = await _r2Edit(1, false); const c3 = screens.find(x => x.id === cid); const back = [c3.name, c3.deviceType, e.nm];
+    actions.editShowInfo(); await wait(500); const h = $('#qs-sr-2 .qs-screen-hdr'); if (h && !$('#qs-sr-body-2').classList.contains('open')) h.click(); await wait(200); const was = ($('#qs-sn-2') || {}).value; const t = $('#qs-bd-2'); if (t) t.click(); await wait(200); const qs = [was, ($('#qs-sn-2') || {}).value]; closeQS(); await wait(200);
+    await restore();
+    return is({ own, first, second, undone, back, qs }, { own: 'CENTER IMAG', first: ['BACKDROP', 'Backdrop', 'BACKDROP', 1], second: ['BACKDROP 3', 'Backdrop', 1], undone: ['RIGHT LED', 'LED', 'BACKDROP', 'Backdrop'], back: ['BACKDROP', 'LED', 'BACKDROP'], qs: ['RIGHT LED', 'BACKDROP 3'] },
+      'P03\'s own name before / CENTER LED made [name, Type, P03\'s name, undo steps] / RIGHT LED made after DSM 1 took BACKDROP 2 [name, Type, undo steps] / one Undo [RIGHT LED name, Type, the first backdrop\'s name, Type] / back as a screen through Edit Show Info [name, Type, the name box] / Quick Setup\'s switch on RIGHT LED\'s row [name box before, after]');
+  });
+  // 16kx-r2 Q2: NEW
+  await check('Backdrop 16kx-r2: FEET AND INCHES (Omar\'s answer 2): Destination Properties\' Length box is a text box that reads 12\' 6", 12\'6", 12\' 6, 12 6, 12\'-6", 12-6, 12.5, 150", 12’ 6” (curly marks), 12 ft 6 in back as 12\' 6", 12\' and 12 as 12\', 6 1/2" as 0\' 7" (nearest inch), and anything else (abc, 0) goes back to the last good value; 12\' 6" × 8\' applied is stored as 150 × 96 inches (one undo step, 2400 × 1536 px) and reads 12\' 6" × 8\' on the canvas box and its tooltip, the table row, the Advanced list, the bottom bar, Edit Show Info\'s row, the Look Book\'s canvas label, breakdown and Show Combinations, the cue-sheet Excel and the CSV; a round-1 show (bdL 12.5 / bdH 6.25 in decimal feet) opens as 12\' 6" × 6\' 3" and not unsaved', async () => {
+    await restore(); await _bxMk('CENTER LED'); const sid = (_r2Bd() || {}).id, p0 = presets[0]; const out = {};
+    _bxDbl(_bxBox(sid)); await wait(500); const L = $('#screen-panel #lbbd-l'), H = $('#screen-panel #lbbd-h');
+    const forms = ['12\' 6"', '12\'6"', '12\' 6', '12 6', '12\'-6"', '12-6', '12.5', '150"', '12’ 6”', '12 ft 6 in', '12\'', '12', '6 1/2"', 'abc', '0'];
+    out.typed = []; if (L) for (const f of forms) { _r2Set(L, f); out.typed.push(L.value); }
+    const u0 = _undoStack.length; _r2Set(L, '12\' 6"'); _r2Set(H, '8\''); const ap = $('#screen-panel #sp-apply'); if (ap) ap.click(); await wait(600); try { closeScreenPanel(); } catch (e) {}
+    const s = _r2Bd() || {}; out.stored = [s.bdLin, s.bdHin, s.w, s.h, _undoStack.length - u0]; render(); await wait(300);
+    const box = _bxBox(sid); out.box = box ? [($('.screen-res', box) || {}).textContent, /Length 12' 6" × Height 8'/.test(box.getAttribute('title') || '')] : 'no box';
+    const tr = $('#tbody tr[data-pid="' + p0.id + '"][data-sid="' + sid + '"]'); out.table = tr ? $$('.lbbd-cell', tr).map(e => e.textContent)[1] : 'no row';
+    doSelect(p0.id, sid); await wait(200); out.bottom = ($('#bb-sel') || {}).textContent; doSelect(null, null);
+    openFullscreen(p0.id); await wait(700); const lr = $$('#fs-right-panel .fs-drow').find(d => /Backdrop, no video/.test(d.textContent)); out.advList = lr ? ($('.fs-drow-res', lr) || {}).textContent : 'no list row'; closeFullscreen(); await wait(400);
+    actions.editShowInfo(); await wait(500); const hd = $('#qs-sr-1 .qs-screen-hdr'); if (hd && !$('#qs-sr-body-1').classList.contains('open')) hd.click(); await wait(200); out.qs = [($('#qs-bdl-1') || {}).value, ($('#qs-bdh-1') || {}).value, ($('#qs-sr-lbl-1') || {}).textContent]; closeQS(); await wait(200);
+    const doc = new DOMParser().parseFromString(await userLookBook(), 'text/html'); const bb = $('.screen-box[data-backdrop]', doc);
+    out.lookbook = [bb ? ($('.screen-res', bb) || {}).textContent : null, ($$('.bd-col', doc).map(c => c.textContent.replace(/\s+/g, ' ')).find(t => /Backdrop/.test(t)) || '').indexOf('Length 12\' 6" × Height 8\'') >= 0, $$('.summary-table th.screen-col .hres', doc).map(e => e.textContent.trim()).filter(t => /BACKDROP/.test(t))[0]];
+    const wb = await xlRead(_doExportExcel(true)); out.excel = (wb.cell(2, 'F5') || {}).text;
+    const real = window.dl; let blob = null; window.dl = b => { blob = b; }; try { _doExportCSV(); } finally { window.dl = real; } const csv = blob ? await blob.text() : ''; out.csv = csv.indexOf('"12\' 6"" × 8\'"') >= 0;
+    const old = JSON.parse(JSON.stringify(getProjectState())); const ob = old.screens.find(x => x.deviceType === 'Backdrop'); if (ob) { delete ob.bdLin; delete ob.bdHin; ob.bdL = 12.5; ob.bdH = 6.25; }
+    _applyProjectText(JSON.stringify(old)); await wait(900); okDialogs(); render(); await wait(300); _recomputeDirty(); const ls = _r2Bd() || {};
+    out.legacy = [ls.bdLin, ls.bdHin, ls.bdL, (($('.screen-res', _bxBox(ls.id) || document.body)) || {}).textContent, !!_isDirty];
+    await restore();
+    return is(out, { typed: ['12\' 6"', '12\' 6"', '12\' 6"', '12\' 6"', '12\' 6"', '12\' 6"', '12\' 6"', '12\' 6"', '12\' 6"', '12\' 6"', '12\'', '12\'', '0\' 7"', '0\' 7"', '0\' 7"'], stored: [150, 96, 2400, 1536, 1], box: ['BACKDROP · 12\' 6" × 8\'', true], table: 'BACKDROP · 12\' 6" × 8\' · no video', bottom: 'P01 · BACKDROP · BACKDROP 12\' 6" × 8\'', advList: '12\' 6" × 8\'', qs: ['12\' 6"', '8\'', 'BACKDROP · 12\' 6" × 8\''], lookbook: ['BACKDROP · 12\' 6" × 8\'', true, 'BACKDROP · 12\' 6" × 8\''], excel: '12\' 6" × 8\'', csv: true, legacy: [150, 75, undefined, 'BACKDROP · 12\' 6" × 6\' 3"', false] },
+      'the Length box after each typed form / applied 12\' 6" × 8\' [Length in, Height in, px, px, undo steps] / canvas box [label, tooltip] / table row / bottom bar / Advanced list / Edit Show Info row [Length, Height, header] / Look Book [canvas label, breakdown, Show Combinations] / cue-sheet Excel F5 / CSV / a round-1 show [Length in, Height in, bdL left, label, unsaved]');
+  });
+  // 16kx-r2 Q3: NEW
+  await check('Backdrop 16kx-r2: START SIZE (Omar\'s answer 3): a screen that becomes a backdrop starts at its pixels in feet rounded to the NEAREST HALF FOOT: 1920×1080 at 192 px per foot is 10\' × 5\' 6", 3840×2160 is 20\' × 11\' 6", at PPI 20 (240 px per foot) 1920×1080 is 8\' × 4\' 6"; Quick Setup\'s switch on a 1280×720 row reads 6\' 6" × 4\'', async () => {
+    await restore(); const rid = _bxS('RIGHT LED').id; updateScreenSize(rid, 'w', 3840); updateScreenSize(rid, 'h', 2160); render(); await wait(300);
+    const sz = sid => { const s = screens.find(x => x.id === sid) || {}; return [s.bdLin, s.bdHin, typeof _bdSizeTxt === 'function' ? _bdSizeTxt(s) : null]; };
+    const cid = _bxS('CENTER LED').id; await _bxMk('CENTER LED'); const center = sz(cid); await _bxMk('RIGHT LED'); const right = sz(rid);
+    await restore(); _bxPpi(20); render(); await wait(300); const lid = _bxS('LEFT LED').id; await _bxMk('LEFT LED'); const ppi20 = sz(lid); _bxPpi(16);
+    await restore(); newShow(); await wait(400); okDialogs(); await wait(500); if (!_qsUp()) openQS(); await wait(300); $('#qs-show').value = 'Half foot'; qsApplyRes(1, 1280, 720, ''); await wait(150);
+    const hdr = $('#qs-sr-1 .qs-screen-hdr'); if (hdr && !$('#qs-sr-body-1').classList.contains('open')) hdr.click(); await wait(200); const t = $('#qs-bd-1'); if (t) t.click(); await wait(200);
+    const qs = [($('#qs-bdl-1') || {}).value, ($('#qs-bdh-1') || {}).value]; closeQS(); await wait(200);
+    await restore();
+    return is({ center, right, ppi20, qs }, { center: [120, 66, '10\' × 5\' 6"'], right: [240, 138, '20\' × 11\' 6"'], ppi20: [96, 54, '8\' × 4\' 6"'], qs: ['6\' 6"', '4\''] },
+      'CENTER LED 1920×1080 [Length in, Height in, size] / RIGHT LED 3840×2160 / LEFT LED at PPI 20 / Quick Setup 1280×720 [Length, Height]');
+  });
+  // 16kx-r2 Q4: NEW
+  await check('Backdrop 16kx-r2: REMOVED from Wire (Omar\'s answer 4): with Wire Advanced built from the show and page 1 copied, turning CENTER LED into a backdrop in the I/O Patch Type menu deletes its tile and every cable to or from it on BOTH pages and releases the switcher output that fed it (SWITCHER I/O reads 11 IN · 4 OUT: LEFT LED, RIGHT LED, DSM 1, AUX 1, no row reading —), Advanced opens with no "Simple changed since Page 1 was built", the printed Wire sheet does not name it, all in ONE undo step; one Undo brings the tiles, cables and the switcher row back exactly; made a screen again it is a new destination: Advanced asks the usual "Simple changed" question', async () => {
+    await restore(); await _r2WireAdv(); const p1 = wireAdvanced._activePageId; _wireCopyPage(p1); await wait(400); okDialogs(); _wireSwitchPage(p1); await wait(300); closeWireMode(); await wait(300);
+    const pages = () => wireAdvanced._pages.filter(p => _wireAdvPageUsed(p.id)).map(p => { const d = _r2WPage(p.id) || {}; return [(d.dests || []).length, (d.wires || []).length, _r2Hub(d)]; });
+    const cid = _bxS('CENTER LED').id; const mine = () => wireAdvanced._pages.reduce((n, p) => { const d = _r2WPage(p.id) || {}; return n + (d.dests || []).filter(x => x.refId === cid).length; }, 0);
+    const out = { before: pages(), mineBefore: mine() }; const snapW = JSON.stringify(wireAdvanced), u0 = _undoStack.length;
+    out.q = _bxQ(await _bxMk('CENTER LED')); out.after = pages(); out.mine = mine(); out.undo = _undoStack.length - u0;
+    out.asked = await _r2WireTab();
+    const rows = $$('#wire-diagram .wire-router-tile input').map(i => i.value); out.drawn = [$$('#wire-diagram [data-node-id^="adst:"]').length, rows.indexOf('CENTER LED') >= 0 || rows.indexOf('BACKDROP') >= 0];
+    let svg = ''; try { svg = _wireExportSheetsSvg('light') || ''; } catch (e) { svg = 'threw ' + e.message; } out.sheet = [/CENTER LED|BACKDROP/.test(svg), svg.length > 1000];
+    closeWireMode(); await wait(300);
+    actions.undo(); await wait(600); out.undone = [JSON.stringify(wireAdvanced) === snapW, (screens.find(x => x.id === cid) || {}).name, mine()];
+    actions.redo(); await wait(600); await _r2Edit(1, false);
+    out.back = await _r2WireTab(); closeWireMode(); await wait(300);
+    await restore();
+    const hub5 = ['11 IN · 5 OUT', 5, ['LEFT LED', 'CENTER LED', 'RIGHT LED', 'DSM 1', 'AUX 1']], hub4 = ['11 IN · 4 OUT', 4, ['LEFT LED', 'RIGHT LED', 'DSM 1', 'AUX 1']];
+    return is(out, { before: [[3, 16, hub5], [3, 16, hub5]], mineBefore: 2, q: [true, true, true], after: [[2, 15, hub4], [2, 15, hub4]], mine: 0, undo: 1, asked: false, drawn: [2, false], sheet: [false, true], undone: [true, 'CENTER LED', 2], back: true },
+      'before, per page [tiles, cables, switcher label / outputs / rows] / its tiles before / the question / after, per page / its tiles after / undo steps / Advanced asked "Simple changed" / drawn [tiles, a switcher row naming it] / Wire sheet [names it, drawn] / one Undo [Wire Advanced exactly as before, its name, its tiles] / made a screen again: Advanced asks');
+  });
+  // 16kx-r2 Q5: NEW
+  // 16kx-r2fix Q5: REPLACES 16kx-r2 check Q5 (reason in the block)
+  // 16kx-r2fix: REPLACES 16kx-r2's check Q5. Why: one number per destination in the whole show (see the replaced I above): the
+  //   Simple rows, the I/O Excel and the Look Book's I/O page keep the canvas numbers, D1 LEFT LED and D3 RIGHT LED (Destination
+  //   1 and 3; 16kx-r2 read D2 / Destination 2). Everything else (rows removed from both pages, no question, one step, Undo
+  //   exact, a new destination as a screen again) is unchanged.
+  await check('Backdrop 16kx-r2: REMOVED from the I/O Patch (Omar\'s answer 4): with I/O Patch Advanced page 1 built from the show and copied to another page, turning CENTER LED into a backdrop removes its row from BOTH pages (not kept unseen), the Simple rows, the I/O Excel and the Look Book\'s I/O page leave it out and keep the canvas numbers (D1 LEFT LED, D3 RIGHT LED; Destination 1 and 3, 16kx-r2fix), Advanced opens with no "Simple changed since Page 1 was built", all in ONE undo step; one Undo brings both pages\' rows back exactly; made a screen again it is a new destination: listed in Simple as D2, and Advanced asks the usual question', async () => {
+    await restore(); await ioOpenSimple(); await toAdvancedF(); _ioCopyPage(0); await wait(300); _ioSetView('simple'); await wait(300); closeSystem(); await wait(200);
+    const pg = () => ioAdvanced.pages.filter(p => _ioAdvPageUsed(p)).map(p => p.dests.map(r => r.name).join('/'));
+    const out = { before: pg() }; const snapI = JSON.stringify(ioAdvanced.pages), u0 = _undoStack.length;
+    out.q = _bxQ(await _bxMk('CENTER LED')); out.after = pg(); out.undo = _undoStack.length - u0;
+    await ioOpenSimple(); out.simple = $$('#sys-dst-rows .sys-row').map(r => ((($('.sys-row-icon', r) || {}).textContent || '').trim() + ' ' + (($('.sys-name-input', r) || {}).value || '')).trim()).filter(x => /^D[1-9]/.test(x));
+    out.asked = await toAdvancedF(); _ioSetView('simple'); await wait(300); closeSystem(); await wait(200);
+    const real = window.dl; let blob = null; window.dl = b => { blob = b; }; try { _sysExportIOExcel(); } finally { window.dl = real; }
+    let xl = 'no workbook'; if (blob) { const wb = await xlRead(blob); xl = Object.keys(wb.parts).filter(n => /worksheets\/sheet/.test(n)).map(n => (wb.parts[n].match(/Destination \d+<\/t><\/is><\/c><c[^>]*><is><t[^>]*>[^<]*<\/t><\/is><\/c><c[^>]*><is><t[^>]*>[^<]*/g) || []).map(x => x.replace(/<[^>]+>/g, '|').replace(/\|+/g, '|'))).join(' ; '); }
+    out.xl = /Destination 1\|12G-SDI\|LEFT LED.*Destination 3\|12G-SDI\|RIGHT LED/.test(xl) && !/CENTER LED|BACKDROP|Destination 2\|/.test(xl);
+    const doc = new DOMParser().parseFromString(await userLookBook(), 'text/html'); out.lookbook = $$('.io-doc[data-title="Destinations"] tr', doc).map(tr => [...tr.children].slice(0, 3).map(t => t.textContent.trim())).filter(r => /^Destination \d/.test(r[0])).map(r => r[0] + ' ' + r[2]);
+    actions.undo(); await wait(600); out.undone = [JSON.stringify(ioAdvanced.pages) === snapI, (screens.find(x => x.name === 'CENTER LED') || {}).deviceType];
+    actions.redo(); await wait(600); await _r2Edit(1, false);
+    await ioOpenSimple(); const back = $$('#sys-dst-rows .sys-row').map(r => ((($('.sys-row-icon', r) || {}).textContent || '').trim() + ' ' + (($('.sys-name-input', r) || {}).value || '')).trim()).filter(x => /^D[1-9]/.test(x)); const asked2 = await toAdvancedF(); _ioSetView('simple'); await wait(300); closeSystem(); await wait(200);
+    out.back = [back, asked2];
+    await restore();
+    const five = 'LEFT LED/CENTER LED/RIGHT LED/DSM 1/AUX 1', four = 'LEFT LED/RIGHT LED/DSM 1/AUX 1';
+    return is(out, { before: [five, five], q: [true, true, true], after: [four, four], undo: 1, simple: ['D1 LEFT LED', 'D3 RIGHT LED'], asked: false, xl: true, lookbook: ['Destination 1 LEFT LED', 'Destination 3 RIGHT LED'], undone: [true, 'LED'], back: [['D1 LEFT LED', 'D2 BACKDROP', 'D3 RIGHT LED'], true] },
+      'Advanced pages with rows, before [page 1, its copy] / the question / after / undo steps / Simple rows / Advanced asked "Simple changed" / I/O Excel: LEFT LED and RIGHT LED are Destination 1 and 3, nothing for it / Look Book I/O page / one Undo [both pages exactly as before, Type] / made a screen again [Simple rows, Advanced asks]');
+  });
+  // 16kx-r2 Q6: NEW
+  await check('Help 16kx-r2: the in-app Help says Omar\'s four answers: Quick Reference\'s Backdrop row says it is named BACKDROP (BACKDROP 2, BACKDROP 3 …) and keeps that name as a screen again, that its size is in feet and inches like 12\' 6" × 8\' (what to type, the nearest inch, a screen starts at its pixels to the nearest half foot), that its Wire Advanced tiles and cables are deleted, the switcher output that fed it is freed and its I/O Patch Advanced rows go in the same Undo step (a screen again, a new destination there); the Glossary says it is named BACKDROP and sized in feet and inches', async () => {
+    const h = ($('#help-overlay') || {}).textContent || ''; const i = h.indexOf('Backdrop', h.indexOf('Screen / Destination')); const row = i >= 0 ? h.slice(i, i + 1700) : '';
+    return is([/named BACKDROP \(BACKDROP 2, BACKDROP 3/.test(row), /keeps that name as a screen again/.test(row), /in feet and inches, like 12' 6" × 8'/.test(row), /type 12' 6", 12 6, 150" or 12\.5, kept to the nearest inch/.test(row), /a screen starts at its pixels to the nearest half foot/.test(row), /its Wire Advanced tiles and cables are deleted, the switcher output that fed it is freed and its I\/O Patch Advanced rows go, in the same Undo step/.test(row), /it is a new destination there/.test(row), /BACKDROP\s*A scenic piece in the row between the screens\. It takes no video, is named BACKDROP, is sized in feet and inches/.test(h)],
+      [true, true, true, true, true, true, true, true], 'Quick Reference [named BACKDROP, keeps the name, feet and inches, what to type, half foot, removed from Wire and the I/O Patch, a new destination] / Glossary');
+  });
+  // 16kx-r2fix R0: HELPERS
+  // ── 16kx-r2fix (2026-09-27): fixes for what the three reviews of 16kx-r2 found, each reproduced with real input first on the
+  //    16kx-r2 page. Each NEW check (R1..R8) FAILS on the 16kx-r2 page (r16kx/r2build, sha1 c24464ef) and PASSES on 16kx-r2fix
+  //    (run_blocks.mjs, out/blocks_*.json).
+  const _fxOpenRow = async i => { const h = $('#qs-sr-' + i + ' .qs-screen-hdr'); if (h && !$('#qs-sr-body-' + i).classList.contains('open')) h.click(); await wait(150); };
+  const _fxNew = async () => { await restore(); newShow(); await wait(400); okDialogs(); await wait(500); if (!_qsUp()) openQS(); await wait(300); $('#qs-show').value = 'Flip'; };
+  const _fxPages = () => ioAdvanced.pages.filter(p => _ioAdvPageUsed(p)).map(p => p.dests.map(r => r.name + (r.notes ? ' [' + r.notes + ']' : '')).join(' / '));
+  const _fxIoAsks = async () => { await ioOpenSimple(); const a = await toAdvancedF(); _ioSetView('simple'); await wait(300); closeSystem(); await wait(200); return a; };
+  // 16kx-r2fix R1: NEW
+  await check('Backdrop 16kx-r2fix: a MIS-CLICK on the Backdrop switch changes nothing: in Edit Show Info CENTER LED\'s switch pressed on (the name box reads BACKDROP, 10\' × 5\' 6") and off again gives the row back CENTER LED and 1920×1080; Update Show then writes nothing (no undo step, Wire and the I/O Patch untouched) and neither Advanced asks "Simple changed"; in a new show Destination 2, and the All Destinations row with Set default for all on, switched on and off build Destination 01-04 at 1920×1080; Destination 2 and 3 switched on (BACKDROP, BACKDROP 2) and Destination 2 off again leave Destination 3 the only backdrop, named BACKDROP', async () => {
+    await restore(); await _r2WireAdv(); closeWireMode(); await wait(300); await _fxIoAsks();
+    const snapW = JSON.stringify(wireAdvanced), snapI = JSON.stringify(ioAdvanced.pages), u0 = _undoStack.length;
+    actions.editShowInfo(); await wait(500); await _fxOpenRow(1);
+    if (!$('#qs-bd-1')) { closeQS(); await restore(); return 'no Backdrop switch'; }
+    $('#qs-bd-1').click(); await wait(200); const on = [$('#qs-sn-1').value, $('#qs-sr-lbl-1').textContent];
+    $('#qs-bd-1').click(); await wait(200); const off = [$('#qs-sn-1').value, $('#qs-sr-lbl-1').textContent, $('#qs-bd-1').getAttribute('aria-pressed')];
+    $('#qs-confirm-btn').click(); await wait(600); const q = dlgOpen() ? dialogText() : null; okDialogs(); await wait(200);
+    const esi = [screens.map(s => [s.name, s.deviceType || '', s.w, s.h]), _undoStack.length - u0, JSON.stringify(wireAdvanced) === snapW, JSON.stringify(ioAdvanced.pages) === snapI, q];
+    const ioAsk = await _fxIoAsks(); const wireAsk = await _r2WireTab(); closeWireMode(); await wait(300);
+    const built = async rows => { await _fxNew(); for (const [i, n] of rows) { await _fxOpenRow(i); for (let c = 0; c < n; c++) { $('#qs-bd-' + i).click(); await wait(150); } }
+      const nm = [0, 1, 2, 3].map(i => ($('#qs-sn-' + i) || {}).value); $('#qs-confirm-btn').click(); await wait(900); okDialogs(); return [nm, screens.map(s => [s.name, s.deviceType || '', s.w, s.h])]; };
+    const d2 = await built([[1, 2]]), d0 = await built([[0, 2]]), two = await built([[1, 1], [2, 1], [1, 1]]);
+    await restore();
+    const four = [['Destination 01', '', 1920, 1080], ['Destination 02', '', 1920, 1080], ['Destination 03', '', 1920, 1080], ['Destination 04', '', 1920, 1080]];
+    return is({ on, off, esi, ioAsk, wireAsk, d2, d0, two }, { on: ['BACKDROP', 'BACKDROP · 10\' × 5\' 6"'], off: ['CENTER LED', '1920×1080', 'false'], esi: [[['LEFT LED', 'LED', 1920, 1080], ['CENTER LED', 'LED', 1920, 1080], ['RIGHT LED', 'LED', 1920, 1080]], 0, true, true, null], ioAsk: false, wireAsk: false,
+      d2: [['', '', '', ''], four], d0: [['', '', '', ''], four], two: [['', '', 'BACKDROP', ''], [['Destination 01', '', 1920, 1080], ['Destination 02', '', 1920, 1080], ['BACKDROP', 'Backdrop', 1920, 1056], ['Destination 04', '', 1920, 1080]]] },
+      'Edit Show Info, switch on [name box, header] / off again [name box, header, switch] / Update Show [destinations, undo steps, Wire unchanged, I/O Patch unchanged, question] / I/O Advanced asks / Wire Advanced asks / new show, Destination 2 on-off [name boxes, built] / All Destinations on-off (Set default for all) / Destination 2 and 3 on, 2 off');
+  });
+  // 16kx-r2fix R2: NEW
+  await check('Backdrop 16kx-r2fix: ONLY ITS OWN I/O Patch rows go (the rows are matched by name): with LEFT LED and RIGHT LED both renamed IMAG and I/O Patch Advanced page 1 built and copied, the FIRST IMAG made a backdrop in the I/O Patch Type menu takes only its own row off both pages (the other IMAG keeps its row, "stage right" note and all), in one step, no "Simple changed", one Undo gives both pages back exactly; with AUX 1 renamed CENTER LED, CENTER LED made a backdrop in the Type menu, and again in Edit Show Info, leaves the AUX its row on page 1 and nothing asks', async () => {
+    await restore(); const p0 = presets[0].id; homeSetScreenName(p0, _bxS('LEFT LED').id, 'IMAG'); homeSetScreenName(p0, _bxS('RIGHT LED').id, 'IMAG'); await wait(200);
+    await ioOpenSimple(); await toAdvancedF(); _ioCopyPage(0); await wait(300); _ioSetView('simple'); await wait(300); closeSystem(); await wait(200);
+    const out = { before: _fxPages() }; const snapI = JSON.stringify(ioAdvanced.pages), u0 = _undoStack.length;
+    const q = await _bxMk('IMAG'); out.q = typeof q === 'string' && /"IMAG" becomes a backdrop/.test(q);
+    out.after = _fxPages(); out.undo = _undoStack.length - u0; out.names = screens.map(s => s.name + ' ' + (s.deviceType || ''));
+    out.asked = await _fxIoAsks(); actions.undo(); await wait(600); out.undone = JSON.stringify(ioAdvanced.pages) === snapI;
+    await restore(); const aux = dsms.find(d => d.name === 'AUX 1'); _sysSetMeta('aux', aux.id, 'name', 'CENTER LED'); await wait(200);
+    await ioOpenSimple(); await toAdvancedF(); _ioSetView('simple'); await wait(300); closeSystem(); await wait(200);
+    out.auxBefore = _fxPages()[0]; await _bxMk('CENTER LED'); out.auxType = [_fxPages()[0], await _fxIoAsks()];
+    actions.undo(); await wait(600); const e = await _r2Edit(1, true); out.auxEsi = [_fxPages()[0], e.nm, (_r2Bd() || {}).name, await _fxIoAsks()];
+    await restore();
+    const L = 'IMAG [2.6 mm, stage left]', C = 'CENTER LED [2.6 mm, center]', R = 'IMAG [2.6 mm, stage right]', D = 'DSM 1 [Downstage confidence monitor]', A = 'AUX 1 [Program feed to record / stream]', X = 'CENTER LED [Program feed to record / stream]';
+    return is(out, { before: [[L, C, R, D, A].join(' / '), [L, C, R, D, A].join(' / ')], q: true, after: [[C, R, D, A].join(' / '), [C, R, D, A].join(' / ')], undo: 1, names: ['BACKDROP Backdrop', 'CENTER LED LED', 'IMAG LED'], asked: false, undone: true,
+      auxBefore: ['LEFT LED [2.6 mm, stage left]', C, 'RIGHT LED [2.6 mm, stage right]', D, X].join(' / '), auxType: [['LEFT LED [2.6 mm, stage left]', 'RIGHT LED [2.6 mm, stage right]', D, X].join(' / '), false], auxEsi: [['LEFT LED [2.6 mm, stage left]', 'RIGHT LED [2.6 mm, stage right]', D, X].join(' / '), 'BACKDROP', 'BACKDROP', false] },
+      'two IMAG: pages before [page 1, its copy] / the question names IMAG / after / undo steps / destinations / I/O Advanced asks / one Undo exact / AUX 1 named CENTER LED: page 1 before / after the Type menu [page 1, asks] / after Edit Show Info [page 1, name box, its name, asks]');
+  });
+  // 16kx-r2fix R3: NEW
+  await check('Backdrop 16kx-r2fix: a ROUTER OR SWITCHER ADDED BY HAND keeps its size, its name and its port numbers: on Wire Advanced page 2 a 10×10 router feeds CENTER LED from OUT 3, LEFT LED from OUT 5 and RIGHT LED from OUT 7, and an 8×2 switcher feeds CENTER LED\'s backup input from OUT 1 and LEFT LED from OUT 2; CENTER LED made a backdrop leaves UNTITLED 10X10 ENGINEERING RACK with 10 outputs (OUT 3 empty, LEFT LED still on OUT 5, RIGHT LED on OUT 7) and 8×2 SWITCHER at 8 IN · 2 OUT (OUT 1 empty, LEFT LED still on OUT 2), while the show\'s own switcher on page 1 loses its row (11 IN · 4 OUT), in one step; one Undo gives Wire back exactly', async () => {
+    await restore(); await _r2WireAdv(); const pA = wireAdvanced._activePageId, pB = (wireAdvanced._pages[1] || {}).id; if (!pB) { await restore(); return 'no page 2'; }
+    _wireSwitchPage(pB); await wait(400); _wireAdvAddRouter(10); await wait(300); _wireAdvAddSwitcher('8×2 Switcher', 8, 2); await wait(300);
+    const rt = wireAdvanced.routers.find(r => r.kind !== 'switcher'), sw = wireAdvanced.routers.find(r => r.kind === 'switcher'); if (!rt || !sw) { await restore(); return 'no router / switcher'; }
+    const mk = (refId, inC) => { const d = { id: _wireAdvNewId('ad'), refId, x: 1500, y: 80 + wireAdvanced.dests.length * 160 }; if (inC) d.inC = inC; wireAdvanced.dests.push(d); return d.id; };
+    const cl = mk('x9s9nr', 2), ll = mk('x9j0fy'), rl = mk('xpqn9w');
+    const w = (f, t) => wireAdvanced.wires.push({ id: 'w' + Math.random().toString(36).slice(2, 9), fromId: f, toId: t });
+    w('rop:' + rt.id + ':2', 'adst:' + cl); w('rop:' + rt.id + ':4', 'adst:' + ll); w('rop:' + rt.id + ':6', 'adst:' + rl); w('rop:' + sw.id + ':0', 'adp:' + cl); w('rop:' + sw.id + ':1', 'adst:' + ll);
+    _wireAdvSyncRouterCells(); _wireRender(); await wait(300); _wireSwitchPage(pA); await wait(300); closeWireMode(); await wait(300);
+    const outs = (d, id) => { const r = ((d || {}).routers || []).find(x => x.id === id); if (!r) return null; const n = r.outC || r.size; return [r.label, n, r.outputs.slice(0, n).map((o, k) => { const c = (d.wires || []).find(z => z.fromId === 'rop:' + r.id + ':' + k); const t = c ? (d.dests || []).find(q => c.toId === 'adst:' + q.id || c.toId === 'adp:' + q.id) : null; return (k + 1) + ':' + (t ? ((screens.find(s => s.id === t.refId) || {}).name || '?') : '—'); })]; };
+    const out = { before: [outs(_r2WPage(pB), rt.id), outs(_r2WPage(pB), sw.id)] }; const snapW = JSON.stringify(wireAdvanced), u0 = _undoStack.length;
+    await _bxMk('CENTER LED'); out.router = outs(_r2WPage(pB), rt.id); out.sw = outs(_r2WPage(pB), sw.id); out.hub = _r2Hub(_r2WPage(pA)); out.undo = _undoStack.length - u0;
+    actions.undo(); await wait(600); out.undone = JSON.stringify(wireAdvanced) === snapW;
+    await restore();
+    const d = n => (n + 1) + ':—';
+    return is(out, { before: [['UNTITLED 10X10 ENGINEERING RACK', 10, [d(0), d(1), '3:CENTER LED', d(3), '5:LEFT LED', d(5), '7:RIGHT LED', d(7), d(8), d(9)]], ['8 IN · 2 OUT', 2, ['1:CENTER LED', '2:LEFT LED']]],
+      router: ['UNTITLED 10X10 ENGINEERING RACK', 10, [d(0), d(1), d(2), d(3), '5:LEFT LED', d(5), '7:RIGHT LED', d(7), d(8), d(9)]], sw: ['8 IN · 2 OUT', 2, ['1:—', '2:LEFT LED']], hub: ['11 IN · 4 OUT', 4, ['LEFT LED', 'RIGHT LED', 'DSM 1', 'AUX 1']], undo: 1, undone: true },
+      'page 2 before [10×10 router label / outputs / what each feeds, 8×2 switcher] / after: the router / the switcher / the show\'s switcher on page 1 / undo steps / one Undo exact');
+  });
+  // 16kx-r2fix R4: NEW
+  await check('Backdrop 16kx-r2fix: the SAVED show holds nothing of it in Wire: with Wire Advanced built, a page copied, the show saved and opened again, CENTER LED made a backdrop leaves no tile, cable or switcher row for it in the file, the open page\'s parked copy included (16kx-r2 left the tile, its cable and 11 IN · 5 OUT there)', async () => {
+    await restore(); await _r2WireAdv(); const p1 = wireAdvanced._activePageId; _wireCopyPage(p1); await wait(400); okDialogs(); _wireSwitchPage(p1); await wait(300); closeWireMode(); await wait(300);
+    _applyProjectText(JSON.stringify(getProjectState())); await wait(900); okDialogs(); await wait(300);
+    await _bxMk('CENTER LED');
+    const f = JSON.parse(JSON.stringify(getProjectState())).wireAdvanced || {}, act = f._activePageId, pd = (f._pageData || {})[act];
+    const look = d => d ? [(d.dests || []).filter(x => x.refId === 'x9s9nr').length, (d.wires || []).length, ((d.routers || []).find(r => r.kind === 'switcher') || {}).label] : null;
+    const out = { open: act === p1, live: look(f), parked: look(pd) };
+    await restore();
+    return is(out, { open: true, live: [0, 15, '11 IN · 4 OUT'], parked: [0, 15, '11 IN · 4 OUT'] }, 'page 1 is the open page / the file\'s open page [its tiles, cables, switcher] / the file\'s parked copy of the open page');
+  });
+  // 16kx-r2fix R5: NEW
+  await check('Backdrop 16kx-r2fix: the name is BACKDROP IN CAPITALS, and Quick Setup never gives a taken one either: CENTER LED renamed "Backdrop" and made a backdrop in the I/O Patch Type menu reads BACKDROP; with P03 naming LEFT LED "BACKDROP" on its own table row, Edit Show Info\'s switch on CENTER LED writes BACKDROP 2 (as the Type menu does) and Update Show makes it BACKDROP 2', async () => {
+    await restore(); homeSetScreenName(presets[0].id, _bxS('CENTER LED').id, 'Backdrop'); await wait(200); await _bxMk('Backdrop'); const caps = (_r2Bd() || {}).name;
+    await restore(); const lid = _bxS('LEFT LED').id; homeSetScreenName(presets[2].id, lid, 'BACKDROP'); await wait(200);
+    const e = await _r2Edit(1, true); const made = [(_r2Bd() || {}).name, getScreenName(presets[2].id, lid)];
+    await restore();
+    return is({ caps, nm: e.nm, made }, { caps: 'BACKDROP', nm: 'BACKDROP 2', made: ['BACKDROP 2', 'BACKDROP'] }, '"Backdrop" made a backdrop / Edit Show Info\'s name box with P03 naming LEFT LED BACKDROP / made [its name, P03\'s LEFT LED]');
+  });
+  // 16kx-r2fix R6: NEW
+  await check('Backdrop 16kx-r2fix: a typed size is REFUSED, not rewritten: in Destination Properties 12\' 13", 12\' 12", 12 -3, 0.1, 1/2", 2", 501\' and 600 each put the Length box back to its last good size (10\'), 3" and 500\' are taken, and 600 after 500\' goes back to 500\'; the same in Edit Show Info\'s row; the hint under the boxes says 3" to 500\'', async () => {
+    await restore(); await _bxMk('CENTER LED'); const sid = (_r2Bd() || {}).id;
+    _bxDbl(_bxBox(sid)); await wait(500); const L = $('#screen-panel #lbbd-l'); if (!L) { await restore(); return 'no Length box'; }
+    const bad = ['12\' 13"', '12\' 12"', '12 -3', '0.1', '1/2"', '2"', '501\'', '600'];
+    const props = bad.map(f => { _r2Set(L, f); return L.value; }); _r2Set(L, '3"'); const lo = L.value; _r2Set(L, '500\''); const hi = L.value; _r2Set(L, '600'); const after = L.value;
+    const hint = (($('#screen-panel .lbbd-hint') || {}).textContent || ''); try { closeScreenPanel(); } catch (e) {}
+    actions.editShowInfo(); await wait(500); await _fxOpenRow(1); const Q = $('#qs-bdl-1'); const qs = Q ? bad.map(f => { _r2Set(Q, f); return Q.value; }) : 'no Length box'; closeQS(); await wait(200);
+    await restore();
+    const ten = bad.map(() => '10\'');
+    return is({ props, lo, hi, after, hint: /3" to 500'/.test(hint), qs }, { props: ten, lo: '0\' 3"', hi: '500\'', after: '500\'', hint: true, qs: ten }, 'Destination Properties\' Length box after each / 3" / 500\' / 600 after 500\' / the hint / Edit Show Info\'s Length box after each');
+  });
+  // 16kx-r2fix R7: NEW
+  await check('Backdrop 16kx-r2fix: ONE NUMBER per destination in the whole show, the canvas\'s (round 1\'s): with CENTER LED a backdrop, RIGHT LED is D3 in the I/O Patch Simple rows, Destination 3 in Remove Destination, the I/O Excel and the Look Book\'s I/O page, and DESTINATION 03 / D03 in the Look Book\'s breakdown and layer strip; the I/O Patch still counts 2 destination', async () => {
+    await restore(); await _bxMk('CENTER LED'); const out = {};
+    await ioOpenSimple(); out.simple = [$$('#sys-dst-rows .sys-row').map(r => ((($('.sys-row-icon', r) || {}).textContent || '').trim() + ' ' + (($('.sys-name-input', r) || {}).value || '')).trim()).filter(x => /^D[1-9]/.test(x)), ($('#sys-dst-count') || {}).textContent];
+    _sysOpenRemoveDestModal(); await wait(250); out.remove = $$('#sys-rmdest-overlay .sys-src-picker-item[data-rm-kind="dest"]').map(it => (($('.picker-meta', it) || {}).textContent || '').split(' · ')[0] + ' ' + (($('.picker-name', it) || {}).textContent || '')); try { _sysCloseRemoveDestModal(); } catch (e) {} await wait(200); closeSystem(); await wait(200);
+    const real = window.dl; let blob = null; window.dl = b => { blob = b; }; try { _sysExportIOExcel(); } finally { window.dl = real; }
+    let xl = 'no workbook'; if (blob) { const wb = await xlRead(blob); xl = Object.keys(wb.parts).filter(n => /worksheets\/sheet/.test(n)).map(n => (wb.parts[n].match(/Destination \d+<\/t><\/is><\/c><c[^>]*><is><t[^>]*>[^<]*<\/t><\/is><\/c><c[^>]*><is><t[^>]*>[^<]*/g) || []).map(x => x.replace(/<[^>]+>/g, '|').replace(/\|+/g, '|'))).join(' ; '); }
+    out.xl = (xl.match(/Destination \d\|12G-SDI\|[A-Z ]+LED/g) || []).filter((x, i, a) => a.indexOf(x) === i);
+    const doc = new DOMParser().parseFromString(await userLookBook(), 'text/html');
+    out.lbIo = $$('.io-doc[data-title="Destinations"] tr', doc).map(tr => [...tr.children].slice(0, 3).map(t => t.textContent.trim())).filter(r => /^Destination \d/.test(r[0])).map(r => r[0] + ' ' + r[2]);
+    out.breakdown = $$('.bd-col', doc).slice(0, 3).map(c => [($('.bd-dest', c) || {}).textContent, (($('.bd-slot', c) || {}).textContent || '').replace(/ · .*/, '')]);
+    out.strip = $$('.dsm-strip', doc).filter(s => /LAYER RESOLUTIONS/.test(s.textContent)).slice(0, 1).map(s => $$('.item', s).map(i => i.textContent.trim().slice(0, 3)))[0];
+    await restore();
+    return is(out, { simple: [['D1 LEFT LED', 'D3 RIGHT LED'], '5 total · 2 destination · 1 AUX · 1 DSM · 1 MV'], remove: ['Destination 1 LEFT LED', 'Destination 3 RIGHT LED'], xl: ['Destination 1|12G-SDI|LEFT LED', 'Destination 3|12G-SDI|RIGHT LED'], lbIo: ['Destination 1 LEFT LED', 'Destination 3 RIGHT LED'],
+      breakdown: [['LEFT LED', 'Destination 01'], ['BACKDROP', 'Destination 02'], ['RIGHT LED', 'Destination 03']], strip: ['D01', 'D03'] },
+      'I/O Patch Simple [rows, count] / Remove Destination / I/O Excel / Look Book I/O page / Look Book breakdown, first preset [name, slot] / Look Book layer strip, first preset');
+  });
+  // 16kx-r2fix R8: NEW
+  await check('Help 16kx-r2fix: the Help\'s Backdrop row sends you to the px per foot where it is (Quick Reference › Pixel ↔ Feet Conversion, the heading over the PPI box, not Accessibility), says a typed size is kept from 3" to 500\', that a router or switcher you added in Wire keeps its size and port numbers (the port is left empty), and that the switch pressed on and off again leaves the row\'s name and resolution as they were', async () => {
+    const h = ($('#help-overlay') || {}).textContent || ''; const i = h.indexOf('Backdrop', h.indexOf('Screen / Destination')); const row = i >= 0 ? h.slice(i, i + 2000) : '';
+    const ppi = $('#a11y-ppi-input');
+    return is([/px per foot of Quick Reference › Pixel ↔ Feet Conversion/.test(row), /Accessibility › Pixel-Feet/.test(row), /kept to the nearest inch, from 3" to 500'/.test(row), /A router or switcher you added yourself in Wire keeps its size and its port numbers: the port that fed it is left empty/.test(row), /pressed on and off again before Build My Show \/ Update Show leaves the row's name and resolution as they were/.test(row), /Pixel ↔ Feet Conversion/.test(h) && !!ppi],
+      [true, false, true, true, true, true], 'Quick Reference › Pixel ↔ Feet Conversion / the old Accessibility wording / 3" to 500\' / a router you added keeps its ports / the switch on and off / the heading and the PPI box exist');
   });
   try { _fsPauseAll(); } catch (e) {} $$('video').forEach(v => { try { v.muted = true; v.pause(); } catch (e) {} });
   return { checks };

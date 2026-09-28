@@ -205,6 +205,18 @@
    "ok": true
   },
   {
+   "name": "I/O 16kx-backdrop: on the phone a destination card's Type menu ends with Stream, Backdrop; a tap on Backdrop asks first (\"CENTER LED\" becomes a backdrop …) and a tap on yes makes it one named BACKDROP (16kx-r2): its card leaves the I/O cards, which keep the canvas numbers, D1 LEFT LED, D3 RIGHT LED (2 destination, 16kx-r2fix); the preset's visualiser draws it between LEFT LED and RIGHT LED with BACKDROP and its size in feet and inches (10' × 5' 6\"), inside the box, and a tap on it opens Destination Properties with Length 10', never the layer panel",
+   "ok": true
+  },
+  {
+   "name": "I/O 16kx-r2: on the phone the backdrop's Destination Properties takes its size in feet and inches typed with the phone's own curly marks (12’ 6” typed into Length, 8’ into Height, a tap on Apply): it is 12' 6\" × 8' (150 × 96 inches, 2400 × 1536 px), the visualiser reads BACKDROP · 12' 6\" × 8' and its destination row under it reads 12' 6\" × 8'",
+   "ok": true
+  },
+  {
+   "name": "I/O 16kx-r2fix: on the phone, a mis-tap on the Backdrop switch changes nothing: the Show card opens Edit Show Info, RIGHT LED's switch tapped on (the name box reads BACKDROP 2, the header its size in feet and inches) and off again gives the row back RIGHT LED and 1920×1080, and Update Show changes nothing in the show (an Undo right after would change nothing)",
+   "ok": true
+  },
+  {
    "name": "exports: the Excel cue sheet runs at phone size (the Pre-Export Check fits and Export Anyway delivers the .xlsx)",
    "ok": true
   },
