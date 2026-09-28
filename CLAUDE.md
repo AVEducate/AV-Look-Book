@@ -150,14 +150,22 @@ capitals; the printed key is as typed) and on the phone card's pill; a Type just
 
 **Backdrop (16kx-backdrop + 16kx-r2, 2026-09-27)** — a fifth destination Type (`deviceType` 'Backdrop') for a scenic piece between
 the screens that takes no video. Made in Quick Setup / Edit Show Info (the switch beside a row's resolution) or the I/O Patch Type
-menu of a destination row (after Stream); it is named BACKDROP (BACKDROP 2 …, never a taken name) and becoming one removes its BG and
+menu of a real screen's row on Advanced PAGE 1 (after Stream; 16ky-r3, a Simple card has no Type) or the phone's destination card; it is named BACKDROP (BACKDROP 2 …, never a taken name) and becoming one removes its BG and
 layers from every preset AND its Wire Advanced tiles, cables and the show switcher's row that fed it (a router or switcher added by
 hand keeps its ports: the port is emptied), and its own I/O Patch Advanced rows, in one
-Undo step (asked first when it carries content). Size in whole INCHES (`bdLin` / `bdHin`, read 12' 6" × 8'; a screen starts at its
+Undo step (16kx-r3: the Type menu always asks, in plain words; a converter that fed only it goes too, freeing what fed it). Size in whole INCHES (`bdLin` / `bdHin`, read 12' 6" × 8'; a screen starts at its
 pixels to the nearest half foot; `w` / `h` follow the px per foot on every draw), one picture (`bdImg`, JPEG <= 1600 px). Drawn inline
-by `_bdBox`; left out of the Canvas size, the I/O Patch (the others keep their canvas numbers), the I/O Excel and Wire (`_bdNoBd`);
+by `_bdBox`; left out of the Canvas size, the I/O Patch, the I/O Excel, Wire and every destination / port / output count (`_bdNoBd`); it
+exists only in the Video Presets and has NO number: every destination number is `_bdNo(s)` (16kx-r3, D1 / D2 around it); a new or unnamed destination takes its number or the next
+free one, never a name the show has (16ky-r4fix, `_r4fNewDest` / `_bdQsDef`); back as a
+screen it gets its old resolution (`bdWasW` / `bdWasH`); ⌘D names its copy BACKDROP 2;
 Quick Setup's switch pressed on and off again gives the row back (16kx-r2fix); the cue sheet keeps
 its column greyed (xf 19 / 20). Details: HANDBOOK section 5.
+
+**I/O Patch (16ky … 16ky-r3, 2026-09-27)** — Simple is a card grid (Wire's cards, four sections, name / resolution / cable
+type only; a section title holds its own Set for all and Remove). Advanced PAGE 1's Type and note of a show item ARE the
+item's own, both ways, in the edit's undo step (`_ioP1ToShow`, `_ioP1Follow`: the show's value wins); pages 2+ are their own.
+Reset on a Simple card clears only the cable type (and a source's resolution). Details: HANDBOOK section 5 (`16ky-r3`).
 
 **Layer strip + ghost view (round 16ks)** — `_ls*` block in front of `_rcPresetRow`: `_lsStripHTML(p)` fills the header's old flex:1 spacer,
 `_lsTopTag(p,s)` prefixes `.screen-res`, `_lsGhost` is editor-only view state (class `lb-ghost` on the live DOM of `#canvas-area` / `#fs-canvas`,

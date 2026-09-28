@@ -531,7 +531,10 @@
   // 16kx-r2fix: REPLACES 16kx-r2's phone check P. Why: one number per destination in the whole show. 16kx-r2 numbered the I/O
   //   cards without the backdrop (D1 LEFT LED, D2 RIGHT LED) while the phone's layer rows (D3·L1) and the Look Book kept the
   //   canvas numbers; the cards keep the canvas numbers again (D1 LEFT LED, D3 RIGHT LED). Nothing else changes.
-  await check('I/O 16kx-backdrop: on the phone a destination card\'s Type menu ends with Stream, Backdrop; a tap on Backdrop asks first ("CENTER LED" becomes a backdrop …) and a tap on yes makes it one named BACKDROP (16kx-r2): its card leaves the I/O cards, which keep the canvas numbers, D1 LEFT LED, D3 RIGHT LED (2 destination, 16kx-r2fix); the preset\'s visualiser draws it between LEFT LED and RIGHT LED with BACKDROP and its size in feet and inches (10\' × 5\' 6"), inside the box, and a tap on it opens Destination Properties with Length 10\', never the layer panel', async () => {
+  // 16kx-r3 XP: REPLACES the check named in its header (reason in the block)
+  // 16kx-r3: RENAMED in place. Why: Omar's answer 1 ("no number count drops by one"): the phone's I/O cards number the destinations without the backdrop,
+  //   D1 LEFT LED, D2 RIGHT LED (was the canvas numbers, D3). Everything else is unchanged.
+  await check('I/O 16kx-backdrop: on the phone a destination card\'s Type menu ends with Stream, Backdrop; a tap on Backdrop asks first ("CENTER LED" becomes a backdrop …) and a tap on yes makes it one named BACKDROP (16kx-r2): its card leaves the I/O cards, which are numbered without it, D1 LEFT LED, D2 RIGHT LED (2 destination; 16kx-r3, Omar "no number count drops by one"); the preset\'s visualiser draws it between LEFT LED and RIGHT LED with BACKDROP and its size in feet and inches (10\' × 5\' 6"), inside the box, and a tap on it opens Destination Properties with Length 10\', never the layer panel', async () => {
     const tidy = () => { try { _sysCloseMenu(); } catch (e) {} };
     try {
     const out = {}; if (!$('#mobile-main .mb-io')) { const t0 = await tap($('#topbar-nav-iop')); if (t0 !== true) return t0; await until(() => $('#mobile-main .mb-io'), 1500); await wait(300); }
@@ -552,7 +555,7 @@
     out.vis = [boxes.map(x => x.b.hasAttribute('data-backdrop') ? 'BD' : 'S').join(''), txt($('.screen-res', $('.screen-box[data-backdrop]', v))), boxes.every(x => x.r.left >= vr.left - 1 && x.r.right <= vr.right + 1)];
     t = await tap($('.screen-box[data-backdrop]', v)); if (t !== true) return t; await wait(800);
     out.tapped = [!!$('#screen-panel.lbbd-props'), ($('#lbbd-l') || {}).value, !!$('#layer-panel')];
-    return is(out, { menu: ['Stream', 'Backdrop'], asked: true, cards: [false, false, true, true, 'Backdrop', 'BACKDROP', '5 total · 2 destination · 1 AUX · 1 DSM · 1 MV', ['D1 LEFT LED', 'D3 RIGHT LED']], vis: ['SBDS', 'BACKDROP · 10\' × 5\' 6"', true], tapped: [true, '10\'', false] },
+    return is(out, { menu: ['Stream', 'Backdrop'], asked: true, cards: [false, false, true, true, 'Backdrop', 'BACKDROP', '5 total · 2 destination · 1 AUX · 1 DSM · 1 MV', ['D1 LEFT LED', 'D2 RIGHT LED']], vis: ['SBDS', 'BACKDROP · 10\' × 5\' 6"', true], tapped: [true, '10\'', false] },
       'the Type menu\'s last rows / the question / the I/O cards [CENTER LED, BACKDROP, LEFT LED, RIGHT LED, its Type, its name, the count, the destination cards] / the visualiser [left to right, its label, inside the box] / a tap on it [its size panel, Length, the layer panel]');
     } finally { tidy(); try { if (typeof closeScreenPanel === 'function') closeScreenPanel(); } catch (e) {} if (typeof mbCloseInlinePanel === 'function') { try { mbCloseInlinePanel(); } catch (e) {} } await wait(200); }
   });
@@ -598,6 +601,114 @@
     return is({ on, off, after: [s.name, s.deviceType || '', s.w, s.h, _lbSameShow(S0, now), noUndo, _qsUp()] }, { on: ['BACKDROP 2', 'BACKDROP · 10\' × 5\' 6"'], off: ['RIGHT LED', '1920×1080'], after: ['RIGHT LED', 'LED', 1920, 1080, true, true, false] },
       'switch tapped on [name box, header] / off again [name box, header] / after Update Show [name, Type, px, px, the show unchanged, an Undo would change nothing, window open]');
     } finally { tidy(); await wait(200); }
+  });
+  // 16ky-iogrid P: NEW
+  // 16ky-iogrid: the desktop I/O Patch Simple is a card grid now (Omar 2026-09-27); the phone keeps its own I/O cards. FAILS
+  //   on 16kw (no grid is drawn at all), PASSES on 16ky.
+  await check('I/O 16ky: the phone keeps its own I/O cards: the desktop card grid (the Simple I/O Patch of the desktop, Wire\'s cards in four sections) is drawn with the show but never shown on the phone; the phone\'s I/O view still shows one card per source, destination, AUX and multiviewer, reached by a tap, and none of them is a desktop grid card', async () => {
+    if (!$('#mobile-main .mb-io')) { const t0 = await tap($('#topbar-nav-iop')); if (t0 !== true) return t0; await until(() => $('#mobile-main .mb-io'), 1500); await wait(300); }
+    const g = $('#io-grid'); if (!g) return 'no desktop card grid in the page (the Simple I/O Patch is not a grid)';
+    if (typeof _sysRender === 'function') { _sysRender(); await wait(200); }
+    const shown = !!g.getClientRects().length && g.getBoundingClientRect().width > 0 && getComputedStyle($('#sys-overlay')).display !== 'none';
+    const _r3Scr = (typeof _bdNoBd === 'function') ? _bdNoBd(screens).length : screens.length;   /* 16ky-r3: ADAPTED, a 16kx backdrop is in neither */
+    const gridCards = $$('#io-grid .iog-card').length, want = srcNames().length + _r3Scr + dsms.length + multiviewers.length + ((typeof ioDests !== 'undefined' && Array.isArray(ioDests)) ? ioDests.length : 0);
+    const phoneCards = $$('#mobile-main .mb-io-card').length, phoneWant = srcNames().length + _r3Scr + dsms.length + multiviewers.length;
+    return is([gridCards === want, shown, phoneCards, $$('#mobile-main .iog-card').length], [true, false, phoneWant, 0], 'the grid holds every item / the grid is on screen / phone I/O cards / desktop grid cards inside the phone view');
+  });
+  // 16ky-r2 Q: NEW
+  // 16ky-r2: the desktop Simple cards dropped Type and notes (Omar 2026-09-27: "leave it only for the advance page"); the phone
+  //   keeps its own I/O cards WITH them, unchanged. Real taps and typing. FAILS on 16ky (the desktop grid the page draws still
+  //   has Type and notes boxes), PASSES on 16ky-r2.
+  await check('I/O 16ky-r2: the phone\'s I/O cards keep their Type and Notes (only the desktop Simple cards dropped them): every source and destination card still has its Type and its Notes box; a note typed on a source card (a tap in the box, the text typed, a tap away) is stored as that source\'s note and read back on its card; the desktop grid the page draws (never shown on the phone) has no Type and no notes box', async () => {
+    const tidy = () => { try { _sysCloseMenu(); } catch (e) {} };
+    try {
+    if (!$('#mobile-main .mb-io')) { const t0 = await tap($('#topbar-nav-iop')); if (t0 !== true) return t0; await until(() => $('#mobile-main .mb-io'), 1500); await wait(300); }
+    const notesOf = c => c ? $$('.mb-io-field', c).map(f => /^Notes$/i.test(txt($('.mb-io-flabel', f))) ? $('input.mb-io-input', f) : null).find(Boolean) || null : null;
+    const cards = $$('#mobile-main .mb-io-card.mb-io-src, #mobile-main .mb-io-card.mb-io-dest');
+    const has = [cards.length > 3, cards.filter(c => !$('[data-sys-field="src-type"], [data-sys-field="dst-type"]', c)).length, cards.filter(c => !notesOf(c)).length];
+    const idx = $$('#mobile-main .mb-io-src').findIndex(c => notesOf(c) && !notesOf(c).value); if (idx < 0) return 'no source card with an empty note';
+    const card = () => $$('#mobile-main .mb-io-src')[idx]; const sName = ($('.mb-io-syname', card()) || {}).value;
+    let t = await tap(notesOf(card())); if (t !== true) return t; await wait(150);
+    const ty = await runner('type', { text: 'KZ PHONE NOTE' }); if (ty && ty.error) return 'typing failed: ' + ty.error; await wait(150);
+    t = await tap($('.mb-io-flabel', card())); if (t !== true) return t; await until(() => (_sysGetSourceMeta(sName) || {}).notes === 'KZ PHONE NOTE', 2500); await wait(400);
+    const stored = [(_sysGetSourceMeta(sName) || {}).notes || '', (notesOf(card()) || {}).value || ''];
+    if (typeof _sysRender === 'function') { _sysRender(); await wait(200); }
+    const grid = $('#io-grid') ? $$('#io-grid [data-sys-field="src-type"], #io-grid [data-sys-field="dst-type"], #io-grid .sys-type-input, #io-grid .sys-notes-input, #io-grid [data-sys-field="notes"]').length : 'no desktop grid';
+    return is({ has, stored, grid }, { has: [true, 0, 0], stored: ['KZ PHONE NOTE', 'KZ PHONE NOTE'], grid: 0 },
+      'phone cards [more than three, cards without a Type, cards without a Notes box] / the typed note [stored on the source, on its card] / Type or notes controls in the desktop grid the page draws');
+    } finally { tidy(); await wait(200); }
+  });
+  // 16ky-r3 R: NEW
+  // 16ky-r3 (Omar 2026-09-27 ~21:40, "Yes, page 1 sets it"), REAL taps and typing: a Type or note is ONE value per item, the phone's
+  // I/O card and I/O Patch Advanced page 1 alike. FAILS on the rebased page (page 1 keeps its copy), PASSES on 16ky-r3.
+  await check('I/O 16ky-r3: the phone\'s I/O cards and I/O Patch Advanced page 1 hold ONE Type and note per item (Omar 2026-09-27: "Yes, page 1 sets it"): with page 1 built from the show, a note typed on the phone\'s LEFT LED card (a tap in its Notes box, the text typed, a tap away) and Monitor tapped in its Type menu are LEFT LED\'s own and show on its page-1 row at the next I/O Patch draw; a Type set on page 1\'s CAM 1 row shows on the phone\'s CAM 1 card', async () => {
+    const tidy = () => { try { _sysCloseMenu(); } catch (e) {} };
+    try {
+    const L = screens.find(s => s.name === 'LEFT LED'); if (!L) return 'no LEFT LED';
+    L.notes = ''; if (typeof _ioAdvSeedFromSimple === 'function') _ioAdvSeedFromSimple(true);   /* setup: an empty note to type into, page 1 built from the show (its first look on the desktop) */
+    const p1 = () => (ioAdvanced.pages[0] || {}); if (!(p1().dests || []).some(r => r && r.name === 'LEFT LED')) return 'page 1 was not built';
+    if (!$('#mobile-main .mb-io')) { const t0 = await tap($('#topbar-nav-iop')); if (t0 !== true) return t0; await until(() => $('#mobile-main .mb-io'), 1500); await wait(300); } else { window.renderMobileMain(); await wait(300); }
+    const card = n => $$('#mobile-main .mb-io-card').find(c => (($('.mb-io-syname', c) || {}).value || '') === n);
+    const notesOf = c => c ? $$('.mb-io-field', c).map(f => /^Notes$/i.test(txt($('.mb-io-flabel', f))) ? $('input.mb-io-input', f) : null).find(Boolean) || null : null;
+    let t = await tap(notesOf(card('LEFT LED'))); if (t !== true) return t; await wait(150);
+    const ty = await runner('type', { text: 'PHONE R3 NOTE' }); if (ty && ty.error) return 'typing failed: ' + ty.error; await wait(150);
+    t = await tap($('.mb-io-flabel', card('LEFT LED'))); if (t !== true) return t; await until(() => L.notes === 'PHONE R3 NOTE', 2500); await wait(300);
+    t = await tap($('[data-sys-field="dst-type"]', card('LEFT LED'))); if (t !== true) return t; await until(() => $('.sys-dd .sys-dd-item'), 1500); await wait(300);
+    const it = $$('.sys-dd .sys-dd-item').find(i => /^Monitor$/.test(txt($('.item-text', i) || i))); if (!it) { tidy(); return 'no Monitor in the Type menu'; }
+    t = await tap(it); if (t !== true) return t; await until(() => L.deviceType === 'Monitor', 1500); await wait(300);
+    const own = [L.notes, L.deviceType];
+    if (typeof _sysRender === 'function') { _sysRender(); await wait(200); }   /* the next I/O Patch draw */
+    const r = (p1().dests || []).find(x => x && x.name === 'LEFT LED') || {};
+    const pr = (p1().sources || []).find(x => x && x.name === 'CAM 1'); if (!pr) return 'no CAM 1 row on page 1';
+    ioAdvanced.page = 0; _sysSetMeta('adv-src', pr.id, 'type', 'Mac'); window.renderMobileMain(); await wait(400);
+    const chip = txt($('[data-sys-field="src-type"]', card('CAM 1')) || $('.sys-type-input', card('CAM 1')));
+    return is({ own, page1: [r.notes, r.deviceType], cam: [(_sysGetSourceMeta('CAM 1') || {}).type, chip] }, { own: ['PHONE R3 NOTE', 'Monitor'], page1: ['PHONE R3 NOTE', 'Monitor'], cam: ['Mac', 'Mac'] },
+      'LEFT LED after the taps [its note, its Type] / its page-1 row after the next I/O Patch draw [note, Type] / CAM 1 after page 1\'s Type [its own Type, its phone card\'s Type chip]');
+    } finally { tidy(); await wait(200); }
+  });
+  // 16kx-r3 S: NEW
+  // 16kx-r3 (Omar 2026-09-27: "no number count drops by one"), REAL taps. The phone checks before it leave CENTER LED a backdrop
+  //   (16kx P). FAILS on the round-3 page (the cards and the layer rows keep the canvas numbers, D3; the Dest cell counts 3),
+  //   PASSES on 16kx-r3.
+  await check('I/O 16kx-r3: on the phone the backdrop has no number and the others are numbered without it: with CENTER LED a backdrop, the I/O cards read D1 LEFT LED and D2 RIGHT LED, the preset list\'s Dest cell counts 2, and P02\'s layer rows read D1·L… for LEFT LED and D2·L… for RIGHT LED (one number per destination on the phone, the same as the desktop\'s)', async () => {
+    try {
+    const bd = screens.find(s => s.deviceType === 'Backdrop'); if (!bd) return 'no backdrop left by the phone checks before';
+    const nm = sid => (screens.find(s => s.id === sid) || {}).name || '?';
+    if (!$('#mobile-main .mb-io')) { const t0 = await tap($('#topbar-nav-iop')); if (t0 !== true) return t0; await until(() => $('#mobile-main .mb-io'), 1500); await wait(300); } else { window.renderMobileMain(); await wait(300); }
+    const cards = $$('#mobile-main .mb-io-card').map(c => (txt($('.mb-io-badge', c)) + ' ' + (($('.mb-io-syname', c) || {}).value || '')).trim()).filter(x => /^D\d/.test(x));
+    let t = await tap($('#topbar-nav-vp')); if (t !== true) return t; await wait(600);
+    if ($('#mobile-main .mb-back-btn')) { t = await tap($('#mobile-main .mb-back-btn')); if (t !== true) return t; await wait(500); }
+    const cell = $$('#mobile-main .mb-preset-card')[0] ? $$('.mb-bb-cell', $$('#mobile-main .mb-preset-card')[0]).find(c => /Dest/.test(txt($('.mb-bb-label', c)))) : null;
+    const dest = cell ? txt($('strong', cell)) : 'no Dest cell';
+    t = await tap($$('#mobile-main .mb-preset-card .mb-action-edit')[1]); if (t !== true) return t; await until(() => $('#mobile-main .mb-vis'), 1500); await wait(400);   /* P02: layers on LEFT LED and RIGHT LED */
+    const rows = $$('#mobile-main .mb-le-layerrow').map(r => { const k = (r.dataset.key || '').split(':'); return nm(k[1]) + ' ' + txt($('.mb-le-icon.layer', r)).split('·')[0]; }).filter((x, i, a) => a.indexOf(x) === i);
+    return is({ cards, dest, rows: rows.filter(x => /^(LEFT|RIGHT) LED /.test(x)) }, { cards: ['D1 LEFT LED', 'D2 RIGHT LED'], dest: '2', rows: ['LEFT LED D1', 'RIGHT LED D2'] },
+      'the I/O cards [number, name] / the first preset card\'s Dest cell / P02\'s layer rows [destination, the D number on the row]');
+    } finally { if (typeof mbCloseInlinePanel === 'function') { try { mbCloseInlinePanel(); } catch (e) {} } await wait(200); }
+  });
+  // 16ky-r4fix T: NEW
+  // 16ky-r4fix (the round-4 attack: the phone's + DEST gave a second "Destination 03"), REAL taps. The phone checks before it leave
+  //   CENTER LED a backdrop (LEFT LED | BACKDROP | RIGHT LED); RIGHT LED is given the name "Destination 03" for this check (a show
+  //   whose screens kept Quick Setup's names) and gets its name back after it. FAILS on the round-4 page (the new one is a second
+  //   "Destination 03"), PASSES on 16ky-r4fix.
+  await check('I/O 16ky-r4fix: the phone\'s + DEST never gives a name the show already has: with LEFT LED | BACKDROP | Destination 03, a tap on + DEST adds Destination 04 (its number without the backdrop, 03, is taken)', async () => {
+    const r = screens.find(s => s.name === 'RIGHT LED'); if (!r || !screens.some(s => s.deviceType === 'Backdrop')) return 'no RIGHT LED or no backdrop left by the phone checks before';
+    const ids0 = screens.map(s => s.id); r.name = 'Destination 03';
+    try {
+      let t = true; const seen = el => !!el && el.getBoundingClientRect().width > 0;
+      if (!seen($('#mobile-main .mb-le-addbtn.dest:not(.rem)'))) {   /* S leaves P02's Edit Preset open; otherwise the preset list, then a preset's pencil */
+        if (seen($('#mobile-main .mb-back-btn'))) { t = await tap($('#mobile-main .mb-back-btn')); if (t !== true) return t; await wait(500); }
+        if (!seen($$('#mobile-main .mb-preset-card .mb-action-edit')[0])) { t = await tap($('#topbar-nav-vp')); if (t !== true) return t; await wait(600); }
+        t = await tap($$('#mobile-main .mb-preset-card .mb-action-edit')[0]); if (t !== true) return t; await until(() => $('#mobile-main .mb-le-addbtn.dest:not(.rem)'), 1500); await wait(300);
+      }
+      window.renderMobileMain(); await wait(300);   /* the rows read the name given above */
+      t = await tap($('#mobile-main .mb-le-addbtn.dest:not(.rem)')); if (t !== true) return t; await wait(500);
+      const added = screens.filter(s => !ids0.includes(s.id)).map(s => s.name);
+      return is({ added, names: screens.map(s => s.name) }, { added: ['Destination 04'], names: ['LEFT LED', 'BACKDROP', 'Destination 03', 'Destination 04'] }, 'the new destination\'s name / the show\'s destinations');
+    } finally {
+      const x = screens.filter(s => !ids0.includes(s.id)); x.forEach(s => { try { deleteScreen(s.id); } catch (e) {} }); r.name = 'RIGHT LED';
+      if (typeof mbCloseInlinePanel === 'function') { try { mbCloseInlinePanel(); } catch (e) {} } try { window.renderMobileMain(); } catch (e) {} await wait(300);
+    }
   });
   await restore();
 

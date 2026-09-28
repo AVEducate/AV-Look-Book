@@ -205,7 +205,7 @@
    "ok": true
   },
   {
-   "name": "I/O 16kx-backdrop: on the phone a destination card's Type menu ends with Stream, Backdrop; a tap on Backdrop asks first (\"CENTER LED\" becomes a backdrop …) and a tap on yes makes it one named BACKDROP (16kx-r2): its card leaves the I/O cards, which keep the canvas numbers, D1 LEFT LED, D3 RIGHT LED (2 destination, 16kx-r2fix); the preset's visualiser draws it between LEFT LED and RIGHT LED with BACKDROP and its size in feet and inches (10' × 5' 6\"), inside the box, and a tap on it opens Destination Properties with Length 10', never the layer panel",
+   "name": "I/O 16kx-backdrop: on the phone a destination card's Type menu ends with Stream, Backdrop; a tap on Backdrop asks first (\"CENTER LED\" becomes a backdrop …) and a tap on yes makes it one named BACKDROP (16kx-r2): its card leaves the I/O cards, which are numbered without it, D1 LEFT LED, D2 RIGHT LED (2 destination; 16kx-r3, Omar \"no number count drops by one\"); the preset's visualiser draws it between LEFT LED and RIGHT LED with BACKDROP and its size in feet and inches (10' × 5' 6\"), inside the box, and a tap on it opens Destination Properties with Length 10', never the layer panel",
    "ok": true
   },
   {
@@ -214,6 +214,26 @@
   },
   {
    "name": "I/O 16kx-r2fix: on the phone, a mis-tap on the Backdrop switch changes nothing: the Show card opens Edit Show Info, RIGHT LED's switch tapped on (the name box reads BACKDROP 2, the header its size in feet and inches) and off again gives the row back RIGHT LED and 1920×1080, and Update Show changes nothing in the show (an Undo right after would change nothing)",
+   "ok": true
+  },
+  {
+   "name": "I/O 16ky: the phone keeps its own I/O cards: the desktop card grid (the Simple I/O Patch of the desktop, Wire's cards in four sections) is drawn with the show but never shown on the phone; the phone's I/O view still shows one card per source, destination, AUX and multiviewer, reached by a tap, and none of them is a desktop grid card",
+   "ok": true
+  },
+  {
+   "name": "I/O 16ky-r2: the phone's I/O cards keep their Type and Notes (only the desktop Simple cards dropped them): every source and destination card still has its Type and its Notes box; a note typed on a source card (a tap in the box, the text typed, a tap away) is stored as that source's note and read back on its card; the desktop grid the page draws (never shown on the phone) has no Type and no notes box",
+   "ok": true
+  },
+  {
+   "name": "I/O 16ky-r3: the phone's I/O cards and I/O Patch Advanced page 1 hold ONE Type and note per item (Omar 2026-09-27: \"Yes, page 1 sets it\"): with page 1 built from the show, a note typed on the phone's LEFT LED card (a tap in its Notes box, the text typed, a tap away) and Monitor tapped in its Type menu are LEFT LED's own and show on its page-1 row at the next I/O Patch draw; a Type set on page 1's CAM 1 row shows on the phone's CAM 1 card",
+   "ok": true
+  },
+  {
+   "name": "I/O 16kx-r3: on the phone the backdrop has no number and the others are numbered without it: with CENTER LED a backdrop, the I/O cards read D1 LEFT LED and D2 RIGHT LED, the preset list's Dest cell counts 2, and P02's layer rows read D1·L… for LEFT LED and D2·L… for RIGHT LED (one number per destination on the phone, the same as the desktop's)",
+   "ok": true
+  },
+  {
+   "name": "I/O 16ky-r4fix: the phone's + DEST never gives a name the show already has: with LEFT LED | BACKDROP | Destination 03, a tap on + DEST adds Destination 04 (its number without the backdrop, 03, is taken)",
    "ok": true
   },
   {

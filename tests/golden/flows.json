@@ -1301,7 +1301,7 @@
    "ok": true
   },
   {
-   "name": "I/O Patch: Reset on a background source clears its own note only; the destination it is the BG of keeps its note",
+   "name": "I/O Patch: Reset on a background source's card clears its cable type and resolution, never a note (16ky-r3, Omar: \"Only what the card shows\"): its own note stays, and the destination it is the BG of keeps its note",
    "ok": true
   },
   {
@@ -1333,7 +1333,7 @@
    "ok": true
   },
   {
-   "name": "I/O Patch ghost rows: a source that leaves the presets for a moment keeps its page-1 row and note: while it is out the row is drawn dimmed as not in the show, never twinned, left out of the page-1 sheet and the Look Book, and the mark survives a save and reload; when the item is back the mark clears by itself; Undo and Redo carry the mark with the show",
+   "name": "I/O Patch ghost rows (16ky-r3: a note typed on page 1 for a show item is that item's own, Omar \"Yes, page 1 sets it\"): a source that leaves the presets for a moment keeps its page-1 row: while it is out the row is drawn dimmed as not in the show, a note typed on it then stays on that row (the row's own), it is never twinned, left out of the page-1 sheet and the Look Book, and the mark and that note survive a save and reload; when the item is back the mark clears by itself and the row shows the item's own note (none); Undo and Redo carry the mark with the show; a note typed on its page-1 row while it IS in the show is the source's own and keeps it in the show when it leaves the presets, as a note typed on its Simple row always did",
    "ok": true
   },
   {
@@ -1373,7 +1373,7 @@
    "ok": true
   },
   {
-   "name": "I/O Patch: Reset on a row whose connector / resolution / note are already empty changes nothing: no unsaved mark, no undo step, no sources[] entry (Simple source row, a row without an entry, an Advanced row); a row with a note still resets in one step",
+   "name": "I/O Patch: Reset on a row whose connector / resolution / note are already empty changes nothing: no unsaved mark, no undo step, no sources[] entry (Simple source card, a card without an entry, an Advanced row); 16ky-r3 (Omar: \"Only what the card shows\"): a card whose only value is a note changes nothing either and keeps the note, and an Advanced page-1 row of a show item is empty only when the item's own note is (page 1's note is the item's)",
    "ok": true
   },
   {
@@ -1449,7 +1449,7 @@
    "ok": true
   },
   {
-   "name": "I/O Patch Excel: the Video I-O tab lists an I/O-only destination after the AUX rows and before the multiviewer, as the screen does; the page-1 tab is unchanged",
+   "name": "I/O Patch Excel: the Video I-O tab lists an I/O-only destination after the AUX rows and before the multiviewer (unchanged, decision 32); on the Simple card grid (16ky) its card is the last of the Destinations section (IO), before the AUX / DSM section; the page-1 tab is unchanged",
    "ok": true
   },
   {
@@ -1473,11 +1473,11 @@
    "ok": true
   },
   {
-   "name": "I/O Patch Simple -> page 1: Reset on the IO row clears the page-1 row too, Set for all (connector) on the outputs reaches the page-1 row too; the next Advanced look puts nothing back",
+   "name": "I/O Patch Simple -> page 1 (16ky-r3, Omar: \"Only what the card shows\"): Reset on the IO card clears the cable type of its page-1 row too and leaves the note (Lobby feed) on both, Set for all (connector) on the outputs reaches the page-1 row too; the next Advanced look puts nothing back",
    "ok": true
   },
   {
-   "name": "I/O Patch page 1 -> Simple: Reset on the page-1 row clears its IO row too (one undo step), Set for all (type) on page 1 reaches the IO row and nothing else in Simple; after \"Keep my page\" a page-1 edit does not raise \"Simple changed\" again, a Simple edit still does",
+   "name": "I/O Patch page 1 -> Simple: Reset on the page-1 row clears its IO row too (one undo step), Set for all (type) on page 1 reaches the IO row and, page 1's Type of a show item being that item's own (16ky-r3, Omar: \"Yes, page 1 sets it\"), the show's destinations too (LEFT LED reads Projection); after \"Keep my page\" a page-1 edit does not raise \"Simple changed\" again, a Simple edit still does",
    "ok": true
   },
   {
@@ -1829,7 +1829,7 @@
    "ok": true
   },
   {
-   "name": "menus 16kw: an I/O Patch Advanced page (page 1, the copy of the show): a source row's and a destination row's Connector, Type and Resolution menus and the page's Set-for-all menus read Custom… first, — Clear — second, then the list",
+   "name": "menus 16kw (16ky-r3: the Type menu of page 1's row of a screen ends with Backdrop, Omar \"Correct\"): an I/O Patch Advanced page (page 1, the copy of the show): a source row's and a destination row's Connector, Type and Resolution menus and the page's Set-for-all menus read Custom… first, — Clear — second, then the list",
    "ok": true
   },
   {
@@ -1849,7 +1849,7 @@
    "ok": true
   },
   {
-   "name": "Connector 16kw: Set for all › Connector › Custom… asks once in the Set-for-all row and gives the typed connector to every row in ONE undo step (sources; destinations and AUX, the multiviewer left alone), remembered for the menu",
+   "name": "Connector 16kw (16ky-r2b: each section has its own Set for all row; D0 no longer reaches the AUX / DSM outputs): Set for all › Connector › Custom… asks once in its Set-for-all row and gives the typed connector to every row of its own section in ONE undo step (S0: the sources; D0: the destinations, the AUX / DSM outputs and the multiviewer left alone; A0: the AUX / DSM outputs, the destinations and the multiviewer left alone), remembered for the menu",
    "ok": true
   },
   {
@@ -1917,11 +1917,11 @@
    "ok": true
   },
   {
-   "name": "Backdrop 16kx-backdrop: in a NEW show, Quick Setup's Backdrop switch beside Destination 2's resolution names the row BACKDROP and swaps the resolution for Length and Height in feet and inches (10' × 5' 6\" from 1920×1080 at 192 px per foot, the nearest half foot, 16kx-r2); 20' 6\" and \"12 6\" typed build a 3936 × 2400 px backdrop named BACKDROP between two 1920×1080 screens; the preview, the top-bar canvas and the Pre-Export Check leave it out (3840 × 1080, no canvas or resolution warning)",
+   "name": "Backdrop 16kx-backdrop (16kx-r3: the screen after the backdrop is destination 2, so its default name is Destination 02, Omar \"no number count drops by one\"): in a NEW show, Quick Setup's Backdrop switch beside Destination 2's resolution names the row BACKDROP and swaps the resolution for Length and Height in feet and inches (10' × 5' 6\" from 1920×1080 at 192 px per foot, the nearest half foot, 16kx-r2); 20' 6\" and \"12 6\" typed build a 3936 × 2400 px backdrop named BACKDROP between two 1920×1080 screens; the preview, the top-bar canvas and the Pre-Export Check leave it out (3840 × 1080, no canvas or resolution warning)",
    "ok": true
   },
   {
-   "name": "Backdrop 16kx-backdrop: Edit Show Info turns CENTER LED into a backdrop (the Backdrop switch writes BACKDROP into its name box, the question, Update Show, ONE undo step, its content gone, 10' × 5' 6\", 16kx-r2) and later back into a screen (switch off, Update Show, no question): its Type LED comes back, it keeps the name BACKDROP, its pixel size is its inches at 192 px per foot (1920 × 1056), it is back in the I/O Patch, with no layers",
+   "name": "Backdrop 16kx-backdrop: Edit Show Info turns CENTER LED into a backdrop (the Backdrop switch writes BACKDROP into its name box, the question, Update Show, ONE undo step, its content gone, 10' × 5' 6\", 16kx-r2) and later back into a screen (switch off, Update Show, no question): its Type LED comes back, it keeps the name BACKDROP, it gets back the resolution it had before (1920 × 1080; 16kx-r3, Omar \"old resolution back\"), it is back in the I/O Patch, with no layers",
    "ok": true
   },
   {
@@ -1941,7 +1941,7 @@
    "ok": true
   },
   {
-   "name": "Backdrop 16kx-backdrop: out of the I/O Patch (16kx-r2: removed, not hidden): Simple (no row, D1 LEFT LED and D3 RIGHT LED as on the canvas, 16kx-r2fix; the count reads 2 destination), Advanced page 1 (its copied row removed from the page), the I/O Excel (no row, LEFT LED and RIGHT LED are Destination 1 and 3), the Look Book's I/O Destinations page and the Pre-Export I/O check; back as a screen it is a NEW destination: in Simple, the I/O Excel and the Look Book at once, not on Advanced page 1",
+   "name": "Backdrop 16kx-backdrop (16ky-r3: the Simple patch is the card grid and its summary bar is gone since 16ky, so Simple is read from the destination cards and the Destinations title): out of the I/O Patch (16kx-r2: removed, not hidden): Simple (no card, D1 LEFT LED and D2 RIGHT LED (16kx-r3: numbered without the backdrop, Omar \"no number count drops by one\") ; the Destinations title counts 2), Advanced page 1 (its copied row removed from the page), the I/O Excel (no row, LEFT LED and RIGHT LED are Destination 1 and 2), the Look Book's I/O Destinations page and the Pre-Export I/O check; back as a screen it is a NEW destination: in Simple, the I/O Excel and the Look Book at once, not on Advanced page 1",
    "ok": true
   },
   {
@@ -1953,7 +1953,7 @@
    "ok": true
   },
   {
-   "name": "Backdrop 16kx-backdrop: the Look Book draws it in its place on every preset page (between LEFT LED and RIGHT LED, 10 ft = LEFT LED's width) named BACKDROP with \"BACKDROP · 10' × 5' 6\"\" and the shaded box; its Destination Breakdown column lists it as a backdrop with no content, Length 10' × Height 5' 6\" (16kx-r2); Show Combinations reads BACKDROP; its styles are inline, the Look Book gains no stylesheet rule",
+   "name": "Backdrop 16kx-backdrop: the Look Book draws it in its place on every preset page (between LEFT LED and RIGHT LED, 10 ft = LEFT LED's width) named BACKDROP with \"BACKDROP · 10' × 5' 6\"\" and the shaded box; its Destination Breakdown column lists it as a backdrop with no number (16kx-r3, Omar \"no number count drops by one\") and no content, Length 10' × Height 5' 6\" (16kx-r2); Show Combinations reads BACKDROP; its styles are inline, the Look Book gains no stylesheet rule",
    "ok": true
   },
   {
@@ -1981,7 +1981,7 @@
    "ok": true
   },
   {
-   "name": "Backdrop 16kx-r2: REMOVED from the I/O Patch (Omar's answer 4): with I/O Patch Advanced page 1 built from the show and copied to another page, turning CENTER LED into a backdrop removes its row from BOTH pages (not kept unseen), the Simple rows, the I/O Excel and the Look Book's I/O page leave it out and keep the canvas numbers (D1 LEFT LED, D3 RIGHT LED; Destination 1 and 3, 16kx-r2fix), Advanced opens with no \"Simple changed since Page 1 was built\", all in ONE undo step; one Undo brings both pages' rows back exactly; made a screen again it is a new destination: listed in Simple as D2, and Advanced asks the usual question",
+   "name": "Backdrop 16kx-r2: REMOVED from the I/O Patch (Omar's answer 4): with I/O Patch Advanced page 1 built from the show and copied to another page, turning CENTER LED into a backdrop removes its row from BOTH pages (not kept unseen), the Simple rows, the I/O Excel and the Look Book's I/O page leave it out and are numbered without it (D1 LEFT LED, D2 RIGHT LED; Destination 1 and 2, 16kx-r3, Omar \"no number count drops by one\"), Advanced opens with no \"Simple changed since Page 1 was built\", all in ONE undo step; one Undo brings both pages' rows back exactly; made a screen again it is a new destination: listed in Simple as D2, and Advanced asks the usual question",
    "ok": true
   },
   {
@@ -1989,7 +1989,7 @@
    "ok": true
   },
   {
-   "name": "Backdrop 16kx-r2fix: a MIS-CLICK on the Backdrop switch changes nothing: in Edit Show Info CENTER LED's switch pressed on (the name box reads BACKDROP, 10' × 5' 6\") and off again gives the row back CENTER LED and 1920×1080; Update Show then writes nothing (no undo step, Wire and the I/O Patch untouched) and neither Advanced asks \"Simple changed\"; in a new show Destination 2, and the All Destinations row with Set default for all on, switched on and off build Destination 01-04 at 1920×1080; Destination 2 and 3 switched on (BACKDROP, BACKDROP 2) and Destination 2 off again leave Destination 3 the only backdrop, named BACKDROP",
+   "name": "Backdrop 16kx-r2fix: a MIS-CLICK on the Backdrop switch changes nothing: in Edit Show Info CENTER LED's switch pressed on (the name box reads BACKDROP, 10' × 5' 6\") and off again gives the row back CENTER LED and 1920×1080; Update Show then writes nothing (no undo step, Wire and the I/O Patch untouched) and neither Advanced asks \"Simple changed\"; in a new show Destination 2, and the All Destinations row with Set default for all on, switched on and off build Destination 01-04 at 1920×1080; Destination 2 and 3 switched on (BACKDROP, BACKDROP 2) and Destination 2 off again leave Destination 3 the only backdrop, named BACKDROP, and the screen after it is built as Destination 03, its number without the backdrop (16kx-r3, Omar \"no number count drops by one\")",
    "ok": true
   },
   {
@@ -2013,11 +2013,131 @@
    "ok": true
   },
   {
-   "name": "Backdrop 16kx-r2fix: ONE NUMBER per destination in the whole show, the canvas's (round 1's): with CENTER LED a backdrop, RIGHT LED is D3 in the I/O Patch Simple rows, Destination 3 in Remove Destination, the I/O Excel and the Look Book's I/O page, and DESTINATION 03 / D03 in the Look Book's breakdown and layer strip; the I/O Patch still counts 2 destination",
+   "name": "Backdrop 16kx-r2fix (16ky-r3: the Simple patch is the card grid and its summary bar is gone since 16ky, so its numbers are the destination cards' and its count the Destinations title's): ONE NUMBER per destination in the whole show, WITHOUT the backdrop (16kx-r3, Omar \"no number count drops by one\"): with CENTER LED a backdrop, RIGHT LED is D2 on the I/O Patch Simple cards, Destination 2 in Remove Destination, the I/O Excel and the Look Book's I/O page, and DESTINATION 02 / D02 in the Look Book's breakdown and layer strip, where the backdrop's column reads Backdrop with no number; the I/O Patch still counts 2 destination",
    "ok": true
   },
   {
    "name": "Help 16kx-r2fix: the Help's Backdrop row sends you to the px per foot where it is (Quick Reference › Pixel ↔ Feet Conversion, the heading over the PPI box, not Accessibility), says a typed size is kept from 3\" to 500', that a router or switcher you added in Wire keeps its size and port numbers (the port is left empty), and that the switch pressed on and off again leaves the row's name and resolution as they were",
+   "ok": true
+  },
+  {
+   "name": "I/O 16ky: Simple is a card grid (Omar 2026-09-27, 10.png): four titled sections in this order, Sources, Destinations, AUX / DSM, Multiviewers, each with its icon and title and opening with its \"+ Add …\" card, then one card per source (S1 …), per destination (D1 …, then each I/O-only destination, IO), per AUX / DSM output (A1 …) and per multiviewer (MV1 …), in the model's order; the Simple table is gone (Advanced keeps its table)",
+   "ok": true
+  },
+  {
+   "name": "I/O 16ky: a card is Wire's side-panel card, drawn by Wire's own card rules: its picture box (110 × 62), name tile, CABLE chip, upload mark, colour swatch and shuffle measure and paint exactly as the same source's card in Wire; the Simple controls sit on it (name box + library ▼, the rename pencil, resolution box + ▼, Cable Type ▼, Type, notes, Reset, Delete, the S number) and the red bandwidth pill with its reason when the cable cannot carry the size (3840×2160 on 3G-SDI); none of the grid's CSS reaches the Look Book (its wire sheet or its canvas CSS)",
+   "ok": true
+  },
+  {
+   "name": "I/O 16ky-r2b (was 16ky C; the Globally / Only Here switch is gone, Omar 2026-09-27: \"simple adds it everywhere\"): the first card of each section adds one: + Add source (an I/O-only source: Wire sees it, the presets do not), + Add destination (ALWAYS a real 1920×1080 destination at the end of the canvas: in every preset and in the I/O Excel, also with the old scope left at Only Here; its caption says so, and the Destinations title has no Add switch), + Add AUX, + Add multiviewer; each is ONE undo step that lights Save, its card appears last in its section, and Undo takes it away; an I/O-only destination an older save made still has its card (IO)",
+   "ok": true
+  },
+  {
+   "name": "I/O 16ky: an edit made on a card is the edit the Simple row made, and page 1 follows it both ways (16kt): on the card of an I/O-only destination that page 1 made, a Connector pick, a Type pick, a typed resolution and a note each reach its page-1 row in the SAME undo step; an edit on the page-1 row shows on the card; a source card's typed resolution (\"3840 x 2160\") is stored as 3840x2160 in one undo step and Save lights; an output card refuses a typed resolution that is not a size",
+   "ok": true
+  },
+  {
+   "name": "I/O 16ky: Advanced (11.png): every row of page 1 shows its item's small card picture in place of the S1 / D1 / M1 badge, in the item's own colour (a source's cable colour, a destination's or AUX's colour) or its uploaded picture, with the name on it; the number stays, under the picture and in the tooltip; the I/O Excel still numbers the rows (Source 1 …)",
+   "ok": true
+  },
+  {
+   "name": "I/O 16ky-r2 (was 16ky F; a card has no Type now): keyboard: every control on a card and in a section title is reached with Tab (a real button or box, or tabindex 0 with a role); on a card Tab goes from the Cable Type menu straight to Reset and Delete (no Type, no notes between); the Cable Type menu opened from the keys (Enter on the button is its click) walks with ↓ from the marked row, Enter picks the lit row (ONE undo step) and the focus is back on the same card's Cable Type after the redraw; Alt+↓ on the S0 Connector opens its menu and Escape closes it; Enter on the picture opens the file picker path (the upload); leaving the Cable Type › Custom… box for the card's resolution box keeps the keyboard there, its text selected (one undo step)",
+   "ok": true
+  },
+  {
+   "name": "I/O 16ky: the Wire card functions used on an I/O card redraw the I/O card: the colour swatch writes the source's Wire cable colour (the card's tile and CABLE chip show it at once), the shuffle picks another palette colour, a destination card's swatch writes its Wire node colour; each is ONE undo step that lights Save, and Undo takes it back",
+   "ok": true
+  },
+  {
+   "name": "I/O 16ky-r2: a Simple card is the name, the resolution and the cable type (Omar 2026-09-27: \"this should stay simple just name resolution and cable type\"): with a Type and a note stored on every kind of item, no card has a Type (chip, box or menu) or a notes box and none shows those words; a card's keys run picture, colour swatch and shuffle (sources, destinations, AUX / DSM), the name (and a source's pencil), the name library, the resolution box and its menu, the Cable Type menu, then Reset and Delete on the grey line, which keeps the red pill when the cable cannot carry the size and the number (S1, D1, IO, MV1) at its right end; the S0 / D0 bars set the Connector and the Resolution only",
+   "ok": true
+  },
+  {
+   "name": "I/O 16ky-r3 (was 16ky-r2 B; Omar 2026-09-27: \"Yes, page 1 sets it\", page 1's Type and note of a show item are the item's own, so the show takes the page-1 edits and every export prints them): Type and Notes live on the Advanced page and nothing is lost: a Type and a note stored on a source, a destination, an AUX, an I/O-only destination and the multiviewer (copied onto Advanced page 1) are not on their Simple cards, and using Simple (a card's Cable Type and resolution picked, S0 Connector and Resolution, D0 Connector, a card renamed and named back, Undo and Redo) leaves every one of them as it was, on the show and on page 1; page 1 shows them and still edits them (a Type picked, a note typed: one undo step each); the I/O Excel (Video I-O and the page-1 tab) and the Look Book Sources and Destinations pages still print them",
+   "ok": true
+  },
+  {
+   "name": "I/O 16ky-r2: the grid stays tidy without the Type row and the notes: in every row of the grid the cards are one height; on every card the grey line sits at its foot (the same space under it on every card) and holds no box; the card's right-hand column ends with its Cable Type menu, with nothing under it; the grey line starts one row gap (8 px) under the taller of the picture column and that column on the card that sets its row's height, so no gap is left where the Type was",
+   "ok": true
+  },
+  {
+   "name": "Help 16ky-r2: I/O Patch › What it is says a Simple card keeps it simple, the name, the resolution and the cable type, with the machine / device type and the notes set on an Advanced page (no longer \"the notes are the grey line\"); Set for all says S0 / D0 in Simple set the connector and resolution and the Advanced rows connector / type / resolution; Edit a row says the machine type and notes are set on an Advanced page",
+   "ok": true
+  },
+  {
+   "name": "I/O 16ky-r2b: every section has its own Set for all row in its title (Omar 2026-09-27: \"each section should get its own each should have its own set for all row\"): S0 Sources, D0 Destinations, A0 AUX / DSM, M0 Multiviewers, each with Connector ▾ and Resolution ▾ only, reached with Tab, shown when its section has a card; each pick changes ONLY its own section's cards (D0: the destinations and I/O-only destinations, no longer the AUX / DSM outputs; A0: the AUX / DSM outputs; M0: the multiviewers) in ONE undo step that lights Save, and Undo takes it back; its menus open with Custom… first and — Clear — second (greyed on D0, A0 and M0: an output's resolution is its size); A0 › Custom resolution… sets every AUX / DSM output in one step; A0 and M0 give Advanced page 1, the I/O Excel and the Look Book exactly what the same picks made card by card give; the Advanced pages keep their own S0 / D0 / M0 rows",
+   "ok": true
+  },
+  {
+   "name": "I/O 16ky-r2b: − Remove sits at the right end of the Destinations and the AUX / DSM titles, the same button and look as in the Sources and Multiviewers titles (Omar: \"Yes\"); Destinations' Remove lists that section's items only (the destinations the grid shows and the I/O-only destinations, in card order; never an AUX, never a screen the grid leaves out) and AUX / DSM's lists the AUX / DSM outputs only; a pick asks exactly what that card's trash asks, and Delete removes it everywhere in ONE undo step that lights Save (Undo brings it back); an I/O-only destination goes at once, as its trash does; the Remove Destination window opened as before still lists destinations, AUX and I/O-only destinations",
+   "ok": true
+  },
+  {
+   "name": "I/O 16ky-r2b: Omar's multiviewer picture (12_mv.png: a 2 + 8 multiview, preview green, program red) is the picture of every Multiviewer card on the Simple page and of every multiviewer row's small picture on the Advanced pages (page 1 and a page of its own), embedded in the page (a 224 × 126 PNG, 16:9) and fitted whole (not cut, not stretched); only multiviewers get it (no source, destination, AUX or I/O-only card or row), it takes no upload and no colour swatch, the name stays on the card's name line, the Set-for-all rows keep their badges; the Look Book and the Wire sheets do not carry it",
+   "ok": true
+  },
+  {
+   "name": "Help 16ky-r2b: I/O Patch › Set for all says every section has its own Set-for-all controls in its title (S0 sources, D0 destinations and I/O-only destinations, A0 AUX / DSM, M0 multiviewers), each setting only its own section's cards; Add & remove says + Add destination always adds a real destination (an I/O-only one is made on Advanced page 1; no Globally / Only Here any more) and that Remove sits at the right end of each section's title, doing what the card's trash does; Multiviewer says its card and its Advanced row show the multiviewer picture",
+   "ok": true
+  },
+  {
+   "name": "I/O 16ky-r3: on I/O Patch Advanced PAGE 1 a Type or a note of a show item IS that item's own (Omar 2026-09-27: \"Yes, page 1 sets it\"): on the page-1 rows of a source (PPT A), a destination (LEFT LED), an AUX (AUX 1) and the multiviewer (MV 1) a Type picked and a note typed each write the item's own Type / note in ONE undo step with Save lit, so the I/O Excel's Video I-O tab AND page-1 tab, the Look Book's Sources and Destinations pages and the Video Presets Notes column print them; Type › — Clear —, the row's Reset (its note) and page 1's S0 › Type do the same; one Undo takes the item and page 1 back together; a page-1 edit never makes a \"Simple changed\" question due",
+   "ok": true
+  },
+  {
+   "name": "I/O 16ky-r3: page 1 SHOWS the item's own Type and note whatever changed it, and in an older file where page 1 and the show disagree the show wins without anything printed changing (Omar's answer 1, the other way): a note typed on the phone's I/O card of LEFT LED (its setter), one typed in the Video Presets Notes column for RIGHT LED and a Type picked on CAM 1's phone card show on their page-1 rows at the next I/O Patch draw; a show whose page 1 says Monitor / \"OLD PAGE ONE NOTE\" for LEFT LED and \"OLD CAM NOTE\" for CAM 1 opens and prints the show's own LED / \"2.6 mm, stage left\" / \"Center camera, IMAG\" in the Video I-O tab, the page-1 tab and the Look Book, page 1 then reads them, and the show stays clean; a copied page (page 2) and a row typed by hand on page 1 keep their own",
+   "ok": true
+  },
+  {
+   "name": "I/O 16ky-r3: Reset ↺ on a Simple card clears ONLY what the card shows (Omar 2026-09-27: \"Only what the card shows\"): on a source card the Cable Type and the resolution, on a destination, AUX / DSM and multiviewer card the Cable Type (an output's resolution is its size); the Type and the note stay on every kind, the I/O-only destination card included (its page-1 twin row too); its window says exactly that (\"Clear the Cable Type and the Resolution of …\" / \"Clear the Cable Type of …\", \"the type and the notes are kept\"); one undo step each",
+   "ok": true
+  },
+  {
+   "name": "I/O 16ky-r3: the multiviewer card's trash asks \"Delete the Multiviewer MV 1? … You can re-add via + Add multiviewer.\" (the Destinations footer it named is gone since 16ky); Cancel keeps it",
+   "ok": true
+  },
+  {
+   "name": "I/O 16ky-r3: a screen becomes a BACKDROP from I/O Patch Advanced PAGE 1 (Omar: \"Correct\", the Type column): the Type menu of page 1's LEFT LED row reads Custom…, — Clear —, LED, Projection, Monitor, Stream, Backdrop; no Backdrop on the AUX 1, DSM 1, MV 1 rows, the D0 Set-for-all row, a row typed by hand, an I/O-only destination's row or a copied page's LEFT LED row; picking it on CENTER LED asks 16kx's question (Cancel: nothing, no step), yes makes it BACKDROP (10' × 5' 6\") in ONE undo step with Save lit, its page-1 row and its copied row go, the grid then shows D1 LEFT LED and D2 RIGHT LED (numbered without it, 16kx-r3, Omar \"no number count drops by one\"; the title counts 4 cards: the two screens and the two I/O-only destinations), the Destinations Remove window and D0 leave it out; one Undo brings CENTER LED back with its row",
+   "ok": true
+  },
+  {
+   "name": "Help 16ky-r3: I/O Patch › Rename, delete, undo says Reset on a Simple card clears only the cable type and a source's resolution (the type and notes stay, cleared on an Advanced page); Advanced pages says a Type or note set on page 1 for a show item is that item's own (the Look Book, both Excel tabs, the phone), one changed elsewhere shows on page 1, a screen's page-1 row offers Backdrop, pages 2+ keep their own; Quick Reference's Backdrop row says the Type menu is on Advanced page 1; page 1's banner says its Type and notes are the item's own",
+   "ok": true
+  },
+  {
+   "name": "Backdrop 16kx-r3: NO NUMBER (Omar: \"no number count drops by one\"): with CENTER LED a backdrop (LEFT LED | BACKDROP | RIGHT LED), RIGHT LED is destination 2 EVERYWHERE and the backdrop has no number: the I/O Patch cards (D1 LEFT LED, D2 RIGHT LED), Remove Destination, the I/O Excel (the Video I-O tab and the page-1 tab: Destination 1, 2), the Look Book (its I/O page Destination 1, 2; the breakdown Destination 01, Backdrop, Destination 02 under \"2 screens\"; the layer strip D01, D02; the cover's Destinations 2), the Advanced page (its list D01, BD (the backdrop, no number), D02; RIGHT LED's crumb D02; \"2 screens\"), the bottom bar's DESTINATIONS 2, Edit Show Info's rows (All Destinations, Backdrop, Destination 2) and the next destination's name, Destination 03",
+   "ok": true
+  },
+  {
+   "name": "Backdrop 16kx-r3: ONLY IN THE VIDEO PRESETS (Omar: \"backdrops should not show up anywhere else besides video preset\"): CENTER LED with a connector of its own (LEMO BD) made a backdrop is drawn on the canvas of all 5 presets, its 5 table rows, the Advanced canvas and the Look Book's 5 preset pages, and is in NO I/O or Wire list or count: no grid card, no Advanced page-1 row, no I/O Excel row, no Look Book I/O row, no Wire Simple card, no Wire Advanced tile; the bottom bar reads DESTINATIONS 2 and OUTPUTS 4, the Look Book cover Destinations 2 and its breakdown \"2 screens\", the Advanced header \"2 screens\"; its connector LEMO BD is no longer a connector in use",
+   "ok": true
+  },
+  {
+   "name": "Backdrop 16kx-r3: NO OUTPUT (Omar: \"no output backdrop is just for video presets visual\"): on Wire Advanced the show's switcher feeds CENTER LED through two converters in a chain; CENTER LED made a backdrop removes both converters with every cable and frees the switcher's row (11 IN · 4 OUT: LEFT LED, RIGHT LED, DSM 1, AUX 1) in ONE undo step, and one Undo gives Wire back exactly; a converter that also feeds LEFT LED's backup input stays with its other cables (only its cable to the backdrop goes) and the switcher keeps its row; a 10×10 router added by hand that feeds the backdrop through a converter keeps its 10 outputs (the port reads \"—\") while that converter goes",
+   "ok": true
+  },
+  {
+   "name": "Backdrop 16kx-r3: OLD RESOLUTION BACK (Omar: \"old resolution back\"): CENTER LED at 1920×1200 made a backdrop (10' × 6' 6\", 1920×1248 px drawn) remembers 1920×1200; Edit Show Info's switch off shows 1920×1200 on its row before Update Show, and Update Show gives it back as a screen at 1920×1200 in ONE undo step; Undo makes it the backdrop again (still remembering 1920×1200); saved and opened again the file keeps it and switched off it comes back at 1920×1200; a backdrop made in a new show's Quick Setup (it never had a resolution) comes back at its feet at the px per foot (1920×1056), as before",
+   "ok": true
+  },
+  {
+   "name": "Backdrop 16kx-r3: ⌘D on a backdrop names the copy with the next free BACKDROP name (Omar: \"backdrop 2\"), never \"BACKDROP Copy\": BACKDROP copied is BACKDROP 2, copied again BACKDROP 3, each a backdrop of the same size in ONE undo step; a screen copied is still \"LEFT LED Copy\"",
+   "ok": true
+  },
+  {
+   "name": "Backdrop 16kx-r3: \"Turn into a backdrop?\" ALWAYS ASKS and says plainly what happens: for a destination with NO content (Destination 04, just added) it asks (Cancel: nothing, no undo step) with \"…becomes a backdrop: a set piece shown only in the Video Presets. It is renamed BACKDROP and sized in feet (10' × 5' 6\"). It leaves the I/O Patch and Wire, with what fed it there (its cables, a converter that fed only it, its switcher output). Undo brings it back.\" and no content line; yes is ONE undo step; for CENTER LED it adds \"Its 3 layers and 5 backgrounds in 5 presets will be removed.\"; Edit Show Info's Update Show asks in the same words",
+   "ok": true
+  },
+  {
+   "name": "Help 16kx-r3: Quick Reference's Backdrop row says it exists only in the Video Presets, has no destination number (the others are numbered without it, LEFT LED | BACKDROP | RIGHT LED reads D1 and D2) and is in no destination, port or output count, that a converter that fed only it goes with its cables and frees what fed it, that a Type menu always asks first, that a screen again gets its old resolution back and that ⌘D names the copy BACKDROP 2; the Glossary says it has no destination number and shows only in the Video Presets; Help › I/O Patch › Advanced pages says page 1's Backdrop asks first",
+   "ok": true
+  },
+  {
+   "name": "Names 16ky-r4fix: a new or unnamed destination NEVER takes a name the show already has (the round-4 attack: Destination 01 | BACKDROP | Destination 03 plus a new screen made a second \"Destination 03\"): its name is its number counted without the backdrop, or the next free one, so ADD > Destination offers Destination 04, the I/O Patch + Add destination card adds Destination 04 (one undo step) and Edit Show Info's new row reads and is built Destination 04; a Quick Setup backdrop row whose name box is emptied is built BACKDROP (not Destination 01 beside a Destination 01); a show with no taken name reads as before (General Session: + Destination offers Destination 04)",
+   "ok": true
+  },
+  {
+   "name": "Quick Setup 16ky-r4fix: what a screen reader reads follows the row's own label (the round-4 attack: the row labelled Destination 2 said \"Pick resolution for destination 3\"): with 3 destinations and Destination 2's Backdrop switch on, the rows read All Destinations / Backdrop / Destination 2, their resolution buttons say destination 1 / backdrop / destination 2, the backdrop row's Length, Height and picture say backdrop, and the name boxes' defaults are Destination 01 / BACKDROP / Destination 02; with the first row switched on too, the last row reads and says destination 1 (Destination 01)",
    "ok": true
   }
  ],

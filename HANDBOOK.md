@@ -320,6 +320,73 @@ anchor on the function name and replace the first occurrence after it, never all
   (3) The Custom Resolution window (`_sysOpenCustomResModal`, every caller) gates Save
   with `_sysCfGate(w,h)` from `recalc()`: Save disabled + `#sys-cf-hint` while Width or Height is blank or 0. No `alert()` in
   I/O Patch windows; the one left in the page is the Excel export failure.
+- **I/O Patch Simple is a CARD GRID** (owner, 2026-09-27, build 16ky; search `16ky-iogrid`; his pictures: Blackmagic Videohub
+  next to his mock-ups). `_sysRender` draws it last (`_iogRender()` into `#io-grid`, before the phone hook); the old table code above it
+  in `_sysRender` still runs and draws nothing (its containers `#sys-src-rows` / `#sys-dst-rows` / `#sys-mv-zone` are gone). Four
+  sections (src, dst = screens + ioDests, aux = dsms, mv), each opening with an add card (`.fs-src.fs-src-add.iog-add`, the Video
+  Presets Advanced add card) -> `_iogAdd` = the old Add buttons (`_sysAddSource`, `_sysAddDestination` (since 16ky-r2b ALWAYS
+  the Globally path: `_iogAdd('dst')` sets `_sysScope.dst` to global around it and puts it back; no `#sys-scope-dst` in the grid), `_sysAddAUX`, `_sysAddMV`; the two without an undo step are wrapped in `_sysWithUndo`). A card is Wire's
+  side-panel card: the same classes and Wire's own functions for the picture (`_wireUploadThumbnail`, keys src: / dst: / dsm: only:
+  the loader rewrites any other prefix, so a multiviewer or I/O-only card takes no picture), the colour row and the Cable Type button
+  (`_wireCableBtnHTML` WITHOUT data-wire-origin, so a pick is the I/O Patch's own: `_sysWithUndo`, `_sysConnAsk`). Wire's card CSS
+  reaches the grid through `_iogCloneWireCss` (a run-time copy of every `#wire-overlay .wire-<card part>` rule for `#io-grid`, into
+  `<style id="iog-wire-css">`): NEVER add `#io-grid` parts to `#wire-overlay` rules or `:root` rules by hand, and keep
+  blend / overlap / dead- / aoi / screen- / chip- names out of the grid's selectors (the Wire export and the Look Book copy those).
+  The Simple table's controls sit on the card with their old classes and data-sys-* (`.sys-name-input` + `.sys-name-chev`,
+  `.sys-icon-btn` reset / delete, `.sys-warn-pill`; since 16ky-r2 NO Type chip and NO `.sys-notes-input` on a card, see below), so every delegated handler and setter is
+  the one the table used and page 1 follows as before. The S0 / D0 bar is `.iog-all.sys-row-global` (`_sysAllCustomAsk` looks for
+  that class). A Wire card function ends in `_wireRender()`: its first line calls `_iogAfterWire()`, which redraws the grid on the
+  next tick when Wire is closed and the I/O Patch is open. `_iogRender` keeps the focus (the same control of the same card, the text
+  being typed; the box the focus was moving INTO gets its text selected, as a Tab leaves it, like the table's `_sysRefocusTwin`)
+  and waits for a press that started inside the grid (`_sysRenderAfterPress`). The grid's Help sentences sit in I/O Patch › What it
+  is: keep I/O Patch › Edit a row short (a flows check reads its first 900 characters). Menus opened from the grid take the
+  Wire card's compact look (`wire-fit`) and walk with the keys (the capture keydown listener beside `_iogRender`). Advanced rows:
+  `_sysRowHtml({mini})` draws `_iogMiniFor(kind,row,num)` (the item's colour or picture by NAME, the number under it) in place of
+  the badge. REBASE NOTE (16kx backdrop): a kind of destination that must stay out of the grid is filtered in `_iogDests()` only.
+  The flows probe reads a Simple "row" as the card (`ioSimRows` / `ioSimAll` / `ioSimIn` / `ioSimCell`, marked `16ky-iogrid:
+  ADAPTED`): the checks keep their names and pass on the table too.
+- **I/O Patch Simple cards: name, resolution, cable type only** (owner, 2026-09-27, build 16ky-r2; search `16ky-r2`). "this should
+  stay simple just name resolution and cable type": `_iogCardHTML` draws no Type and no notes (`_iogTypeHTML` is gone) and the
+  S0 / D0 bars (`_iogAllHTML`) hold Connector and Resolution only. Type and Notes are edited on the Advanced pages only (their table,
+  Set-for-all rows, data, undo and the exports are untouched). NEVER clear or rewrite a stored Type or note because Simple does not
+  show it. A screen becomes a Backdrop (16kx) from the Advanced Type column or Quick Setup, never from a Simple card. The flows
+  checks that set or read a Type or a note on a Simple row do it on the item's Advanced page-1 row (`r2Adv` / `r2Row` / `r2P1` /
+  `r2Drawn`, marked `16ky-r2: ADAPTED`); names and expectations kept.
+- **I/O Patch Simple titles: own Set for all, Remove, the multiviewer picture** (owner, 2026-09-27, build 16ky-r2b; search
+  `16ky-r2b`). + Add destination always adds a real destination (no Globally / Only Here switch; `_iogScopeHTML` is gone; `_sysSetScope`,
+  `_sysUpdateScopePill` and the Only Here branches of `_sysAddDestination` and of the source rename / remove are kept on purpose
+  although nothing sets `_sysScope` to 'local' any more, 16ky-r4fix: remove them together if the switch never comes back); + Add
+  source stays I/O-only (16jh). Every section title ends with − Remove (`_iogRmHTML`): Destinations' is `_iogRmDest()` =
+  `_sysOpenRemoveDestModal('dst')` (the same window, filtered: `_iogDests()` destinations + I/O-only, never AUX; called without
+  an argument it lists what it always listed), AUX / DSM's is `_sysOpenRemoveAUXModal`. Every section has its own Set for all
+  bar (`_IOG_ALL`: S0 src-all, D0 dst-all, A0 aux-all, M0 mv-all), Connector + Resolution only; D0 NO LONGER reaches the
+  AUX / DSM outputs (the dsms line of `_sysApplyToAll`'s apply is gone); A0 / M0 go through `_iogApplyOut`, which writes each
+  card with `_sysSetMeta` (the setter of a card's own pick), inside `_sysApplyToAll`'s one undo step. The multiviewer picture is
+  `_IOG_MV_PIC` (Omar's 12_mv.png, area-averaged to 224 x 126, a PNG data URI): the Simple multiviewer card (`c.fixedPic`, no
+  MV tag, no upload) and every Advanced multiviewer row's mini (`_iogMiniFor`), fitted with object-fit:contain on black. NEVER
+  give it to another kind, and keep it out of the Look Book, the Wire sheets and the phone. Any list of destinations the grid
+  builds goes through `_iogDests()` (16kx: a backdrop never shows). Flows checks: 16ky C and "Connector 16kw: Set for all ›
+  Connector › Custom…" are RENAMED in place (their old expectations were the switch and D0 reaching AUX); two checks are
+  `16ky-r2b: ADAPTED` (names and expectations kept).
+- **I/O Patch Advanced page 1: a Type or note of a show item IS the item's own** (owner, 2026-09-27 ~21:40, build 16ky-r3;
+  search `16ky-r3`). "Yes, page 1 sets it". `_ioP1Map(pg)` maps each page-1 row page 1 COPIED from the show (`fromShow`, not
+  `gone`) to its item, by its own place among the rows of its name (screens without backdrops, `dsms`, non-`fromAdv` `ioDests`:
+  the order page 1 is built in, 16kx-r2fix's rule; sources by name, a `fromAdv` source excluded; a row with a 16kt twin excluded).
+  Page 1 -> item: `_ioP1ToShow(row, fields)` writes `type` / `deviceType` / `customType` / `notes` inside `_ioAdvTwinWrite` (page
+  1's `seedAsked` moves along, so no "Simple changed" question), called by the Advanced row setter (`_sysSetMetaNow`, adv
+  kinds), the Advanced Reset (the note) and `_ioAdvApplyToAll` (Type), in the edit's own undo step; a destination's note
+  redraws the Video Presets table. Item -> page 1: `_ioP1Follow(pg)` at the end of `_ioAdvFollowShow` (every I/O Patch draw
+  and the I/O Excel export), `_lbNotAChange` + `_ioAdvNetRebase` like the ghost rows: the SHOW'S value wins (an older file
+  prints nothing new in the Look Book or the Video I-O tab; measured: 0 disagreeing rows in ORGILL and the three examples).
+  Hand-typed page-1 rows keep the 16kt / 16ji twin rules; pages 2+ are untouched (`_ioP1Map` holds page-1 rows only; a copied
+  page's rows are other objects with the same ids). (I) `_bdTypeOpts` also offers Backdrop when the trigger is `adv-dst` and
+  `_ioP1Screen(id)` finds a real screen (page 1 open, the row maps to a non-backdrop screen); `_sysHandlePickCore`'s adv branch
+  sends that pick to `_bdAskMake(screen.id)` and NEVER writes 'Backdrop' as a row's Type. (G) Reset on a Simple card
+  (`_sysRowReset` src / dest / aux / mv, `_sysRowResetNeeded`, the iodest branch) clears the connector and a source's
+  resolution only; its window says exactly that. (H) the MV delete window names + Add multiviewer. The grid numbers a
+  destination card by `_bdNo(s)` (16kx-r3: without the backdrops), as the Video I-O tab and the phone do. Flows
+  checks: the 16kx checks that made a backdrop from a Simple row's Type menu (`_bxMk`, `_bxRow`, `_bxTypeMenu`) go through
+  page 1 (marked `16ky-r3: ADAPTED`); the checks whose expectation Omar's answers changed are renamed in place.
 - **I/O Patch menus: Custom first, Clear second** (owner, 2026-09-25, build 16kw; search `16kw-menus`). Every menu with a Custom
   entry AND a Clear entry reads Custom… first, — Clear — second, then its helper rows (Paste, Used in this show, the typed names)
   and the built-in list in its order. This REPLACES the 2026-09-14 "destructive items last" menu rule for Clear. Covered:
@@ -388,8 +455,8 @@ anchor on the function name and replace the first occurrence after it, never all
   `w` / `h` = inches x `_pxPerFoot()` / 12, kept in step on every draw by `_bdSyncPx` (first line of `syncCanvasSize`,
   `_lbNotAChange` + `_ioAdvNetRebase`). A screen's first size is `_bdHalf(px)`: its pixels to the nearest half foot. Made only by
   Quick Setup's row switch (`_qsBd`, `_bdQsCtl`, `_bdQsToggle` writes BACKDROP into the name box via `_bdQsAutoName` and keeps what the row read in `_bdQsPrev`, so on-then-off before Build / Update gives the name and resolution back, `_bdQsUndoOn`, `_bdQsApply`, the
-  question `_bdQsGate` in `confirmQSEdit`; `_bdQsWas` keeps the names the window opened with) and the I/O Patch Type menu of a `dest`
-  row (`_bdTypeOpts`, `_bdAskMake` -> `_bdConvert`: `_bdAutoName` over `_bdTaken`, one undo step). `_bdMake` strips `_BD_KEYS` (BG,
+  question `_bdQsGate` in `confirmQSEdit`; `_bdQsWas` keeps the names the window opened with) and the I/O Patch Type menu of a real
+  screen's row on Advanced PAGE 1 (`adv-dst`, `_ioP1Screen`, since 16ky-r3; the phone's `dest` card keeps it) (`_bdTypeOpts`, `_bdAskMake` -> `_bdConvert`: `_bdAutoName` over `_bdTaken`, one undo step). `_bdMake` strips `_BD_KEYS` (BG,
   layers and what they carry, AOI, EDID note, turn) from every preset, resizes (`_sysReflowAfterResize`) and opens the row if it
   overlapped (`_bdUnblend`); `_bdConverted` drops the presets' own names for it and calls `_bdDropAdv`: on every Wire Advanced page
   (`_wireAdvEachPage`) its `adst:` / `adp:` tiles and cables go, the `rop:` output rows that fed them are spliced out
@@ -409,12 +476,38 @@ anchor on the function name and replace the first occurrence after it, never all
   Refused by the setters (`setL`, `setBgName`, `setPColor`, `setAOI`, `setRotationSmart`, `updateScreenSize`, `fsPanelScreenSize`,
   the layer panel, the colour window, `_fsDropTarget`), no layer strip (`_lsState`), never a blend (`_ovlEnd`, `_bdDragBlocked`).
   Left out with `_bdNoBd(list)` (the SAME array when there is no backdrop): every Wire `screens` read, the I/O Patch rows /
-  counts / Excel / Remove list / check / Set for all / phone cards / Look Book I/O page, Outputs and pixels; the I/O Patch numbers are
-  the canvas index (D1, D3: one number per destination in the whole show). `_bdParse` refuses (null) 12 inches or more after the feet,
+  counts / Excel / Remove list / check / Set for all / phone cards / Look Book I/O page, Outputs and pixels; the I/O Patch numbers were
+  the canvas index (D1, D3; 16kx-r2fix), and are `_bdNo` since 16kx-r3 (below). `_bdParse` refuses (null) 12 inches or more after the feet,
   a minus and a size under 3" or over 500'; `_bdAutoName` returns capitals. **16kx-r2fix** (2026-09-27, search `16kx-r2fix`): these
   last points, after three reviews of 16kx-r2.
   Excel: xf 19 (grey text on FFE3E6EA) and 20 (header, white on FF9AA1AB). Destination Properties of a backdrop is `_bdProps`.
   Help: Quick Reference and Glossary rows.
+- **16kx-r3** (owner, 2026-09-27 ~23:05, his answers to the backdrop questions; search `16kx-r3`). (J) A backdrop exists ONLY in
+  the Video Presets: every destination / port / output count uses `_bdNoBd(screens)` (bottom bar DESTINATIONS, the Look Book cover
+  and breakdown header, the Advanced header `fs-subtitle`, the phone's Dest cell, Quick Setup's summary via `_bdQsBdN`, the connectors
+  in use `_sysInUseConns`, the I/O pre-export check). (K) NO NUMBER: `_bdNo(s)` = its place among the screens that are not
+  backdrops (0 for a backdrop) is THE destination number everywhere: the grid cards, the hidden Simple rows, the Video I-O tab, Remove
+  Destination, the Look Book's I/O page, breakdown slot and layer strip, the Advanced list and crumb (a backdrop reads BD), the phone's
+  layer rows and I/O cards. Quick Setup's rows use `_bdQsNo(i)` / `_bdQsDef(i)` (labels `#qs-sr-no-i`, default names, refreshed by
+  `_bdQsRenum` from `_bdQsRefresh`); a new screen's default name counts `_bdNoBd(screens)` (openModal, `_sysAddDestination`, the
+  phone's + DEST). Names already given never change. (L) `_bdDropWirePage` collects the devices that sent the backdrop a cable
+  (`_bdDevOf`: `dvi:` / `dvo:` / `device:`) and `_bdDropDevs` removes each one that then sends no cable anywhere, with all its cables,
+  pushing the `rop:` outputs that fed it into the same feed list as a direct feed (a device before it is looked at the same way);
+  `_bdShowHub` reads a row through converters (`_bdHubEnd`) and a backup input (`_bdHubTile`: `adp:<tile>:<n>` is its tile).
+  (M) `_bdMake` keeps `bdWasW` / `bdWasH` (the screen's resolution) unless `o.fresh` (Quick Setup's new rows); `_bdUnmake` and Edit
+  Show Info's switch off (`_bdQsToggle`, `qsRefreshAllResBtns`) give it back. (N) `duplicateScreen` names a backdrop's copy
+  `_bdAutoName('', _bdTaken(null))`. (O) `_bdAskMake` always asks; `_bdAskText(list)` says it plainly (items carry `nm`, `L`, `H`),
+  also in Edit Show Info's `_bdQsGate` (which still asks only when there is content). Flows checks K1 J1 L1 M1 N1 O1 H4, phone S; the
+  16kx / 16ky checks whose expectation these answers changed are renamed in place (C, D, I, L, Q5, R1, R7, I1; phone P).
+- **16ky-r4fix** (2026-09-28, the fixes after the round-4 attacks; search `16ky-r4fix`). A new or unnamed destination's default
+  name is its number or the next free one, NEVER a name the show has: `_r4fDestName(n, taken)`; `_r4fNewDest()` = the count of
+  `_bdNoBd(screens)` + 1 against `_bdTaken(null)` (openModal, `_sysAddDestination`, the phone's `mbAddDest`); `_bdQsDef(i)` walks
+  Quick Setup's rows in order (the other rows' typed names and an earlier unnamed row's default are taken; a backdrop row defaults
+  to the next free BACKDROP; in Edit Show Info the AUX / DSM, I/O-only, multiviewer and preset names are taken too), and
+  `qsScreenNameChange` calls `_bdQsRenum` so the placeholders follow a typed name; `_bdQsToggle` switching a row off deletes
+  `_qsBd[i]` BEFORE `_bdQsUndoOn`, so the other rows' auto names count it as a screen (the only backdrop left is BACKDROP again,
+  16kx-r2fix R1). Quick Setup's screen-reader labels use
+  `_r4fQsAria(i)` (destination N by `_bdQsNo`, or backdrop), refreshed by `_bdQsRenum`. Flows checks A1, A2; phone T.
 - Declined by the owner, do not resurface: mask shapes, anchor points, hardware profiles, canvas/WebGL renderer,
   interpolation filter toggles, upscale-factor notes, per-layer "sharp pixels", any licence mention.
 
