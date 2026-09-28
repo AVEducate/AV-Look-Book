@@ -276,13 +276,13 @@ python3 -c "import re; src=open('deploy/lookbook_builder.html').read(); m=re.sea
 
 ## Release channels + regression gate (established 2026-09-19, v0.2.148)
 Users must never receive a build that has not passed the gate. Two lines:
-- **Stable = `release/0.5`** (v0.5.0 = build 16kv, 2026-09-27), tags without a suffix (`v0.5.1`). These reach every user (Windows self-update,
+- **Stable = `release/0.6`** (v0.6.0 = build 16ky, 2026-09-28), tags without a suffix (`v0.6.1`). These reach every user (Windows self-update,
   Mac content update). Only cherry-picked bug fixes land here.
-- **Development = `main`**, tags WITH a `-` (`v0.6.0-beta.1`). The workflow publishes those as pre-releases;
+- **Development = `main`**, tags WITH a `-` (`v0.7.0-beta.1`). The workflow publishes those as pre-releases;
   both updaters ignore pre-releases, so users stay on the last full release. Bump `electron/package.json` to
-  the matching `0.6.0-beta.N` before tagging.
+  the matching `0.7.0-beta.N` before tagging.
 - **Before any full release** run `node tests/run_smoke.mjs` (must print `SMOKE: PASS`), `python3 tools/check_js.py`, and
-  open the three example shows by hand. `tests/golden/` is the behaviour of v0.5.0: a difference is a
+  open the three example shows by hand. `tests/golden/` is the behaviour of v0.6.0: a difference is a
   regression unless the change was intended, in which case regenerate with `--golden` in the same commit and say so.
 - Full checklist: `RELEASE.md`. The smoke probe (`tests/smoke_probe.js`) is where new core behaviour gets a check
   added when it ships.
