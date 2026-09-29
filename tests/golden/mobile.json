@@ -237,6 +237,30 @@
    "ok": true
   },
   {
+   "name": "I/O 16kz-answers: on the phone an output card renamed into a name another output has is refused like a source: RIGHT LED typed \"LEFT LED\" and AUX 1 typed \"dsm 1\" (a tap away each) say Name in use, a tap on OK, and the cards and the show keep RIGHT LED and AUX 1; a free name (\"RIGHT WALL\") is taken",
+   "ok": true
+  },
+  {
+   "name": "I/O 16kz-answers: the phone's + AUX gives the next free AUX name, never one in use: with AUX3 and AUX 1, a tap on + AUX adds AUX4 (its number, 3, is taken)",
+   "ok": true
+  },
+  {
+   "name": "I/O 16kz-answers: on the phone the only screen left never becomes a backdrop: with LEFT LED the only screen, its card's Type menu ends with Backdrop greyed (\"A show needs at least one screen\"), and a tap on it asks nothing, the menu stays and LEFT LED keeps its Type",
+   "ok": true
+  },
+  {
+   "name": "I/O 16kz-refresh: on the phone an I/O card has a Refresh box next to its Resolution (a full-size touch target, the same row): a tap opens the same menu (Custom…, — Clear —, 23.98 … 120), a tap on 59.94 stores LEFT LED's own rate (one undo step) and the box reads 59.94 Hz; on a source card Custom… types in place (47.952 typed, a tap away) and it is the source's own rate",
+   "ok": true
+  },
+  {
+   "name": "I/O 16kz-refresh: on the phone − DEST never deletes the only screen: with LEFT LED and CENTER LED backdrops (RIGHT LED, the last destination, the only screen) a tap on − DEST says \"A show needs at least one screen\", asks nothing and deletes nothing; after + DEST (a second screen) − DEST asks \"Remove destination?\" as before (Cancel keeps it)",
+   "ok": true
+  },
+  {
+   "name": "I/O 16kz-fix: on the phone an I/O card's Resolution box keeps its whole text next to the Refresh box: at 390, 360 and 320 px wide every card's resolution reads whole, the Refresh box is a full-size touch target inside its card, beside the resolution when both fit (LEFT LED at 390 px) and on the line under it when they do not",
+   "ok": true
+  },
+  {
    "name": "exports: the Excel cue sheet runs at phone size (the Pre-Export Check fits and Export Anyway delivers the .xlsx)",
    "ok": true
   },

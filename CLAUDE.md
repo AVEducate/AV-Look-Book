@@ -158,14 +158,24 @@ pixels to the nearest half foot; `w` / `h` follow the px per foot on every draw)
 by `_bdBox`; left out of the Canvas size, the I/O Patch, the I/O Excel, Wire and every destination / port / output count (`_bdNoBd`); it
 exists only in the Video Presets and has NO number: every destination number is `_bdNo(s)` (16kx-r3, D1 / D2 around it); a new or unnamed destination takes its number or the next
 free one, never a name the show has (16ky-r4fix, `_r4fNewDest` / `_bdQsDef`); back as a
-screen it gets its old resolution (`bdWasW` / `bdWasH`); ⌘D names its copy BACKDROP 2;
+screen it gets its old resolution (`bdWasW` / `bdWasH`); ⌘D names its copy BACKDROP 2; the only screen left never
+becomes one (16kz-answers: greyed "A show needs at least one screen"; Quick Setup's first screen row reads All Destinations);
 Quick Setup's switch pressed on and off again gives the row back (16kx-r2fix); the cue sheet keeps
 its column greyed (xf 19 / 20). Details: HANDBOOK section 5.
 
 **I/O Patch (16ky … 16ky-r3, 2026-09-27)** — Simple is a card grid (Wire's cards, four sections, name / resolution / cable
 type only; a section title holds its own Set for all and Remove). Advanced PAGE 1's Type and note of a show item ARE the
 item's own, both ways, in the edit's undo step (`_ioP1ToShow`, `_ioP1Follow`: the show's value wins); pages 2+ are their own.
-Reset on a Simple card clears only the cable type (and a source's resolution). Details: HANDBOOK section 5 (`16ky-r3`).
+Reset on a Simple card clears only the cable type (and a source's resolution). 16kz-answers (2026-09-28): page 1's AUX / DSM rows have
+their own Set for all (A0; D0 the destination rows); no "Simple changed" question for a Type page 1 follows; an output renamed into
+a name another output has is refused ("Name in use") everywhere it can be renamed; + AUX takes the next free AUX number; Remove Source
+shows the cards' numbers. 16kz-refresh (2026-09-28): a Refresh column on every Advanced page (the item's own rate on page 1, like
+Type and notes; the I/O Excel, the Look Book and the phone show it; the red pill counts it, `_RF_CAP`), the Notes cell opens a box,
+the Advanced rows take Tab; the output cards (grid and Wire) have their picture on the right (the + Add cards keep the + on the left, 16kz-fix); a name on
+a picture breaks only between words; the only screen is never deleted (every delete path, Undo / Redo too); ADD › Destination and
+Wire's hand-made cards refuse a used output name. 16kz-fix (2026-09-29): the + Add cards as before, the Advanced columns shrink (1024 px fits), a source made on page 1 carries its
+rate, whole words on a picture, the phone's resolution never cut, the Notes box shows the whole note. Details: HANDBOOK section 5
+(`16ky-r3`, `16kz-answers`, `16kz-refresh`, `16kz-fix`).
 
 **Layer strip + ghost view (round 16ks)** — `_ls*` block in front of `_rcPresetRow`: `_lsStripHTML(p)` fills the header's old flex:1 spacer,
 `_lsTopTag(p,s)` prefixes `.screen-res`, `_lsGhost` is editor-only view state (class `lb-ghost` on the live DOM of `#canvas-area` / `#fs-canvas`,

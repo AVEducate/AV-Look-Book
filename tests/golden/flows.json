@@ -1357,7 +1357,7 @@
    "ok": true
   },
   {
-   "name": "I/O Patch: \"Set for all\" > Type > \"Custom…\" asks for the name ONCE (one focused box in the Set-for-all row, not one per row) and applies it to every source in one undo step, remembered for the menu; Escape or an empty box puts the chip back and writes nothing; the same on the destinations row and on an Advanced page",
+   "name": "I/O Patch: \"Set for all\" > Type > \"Custom…\" asks for the name ONCE (one focused box in the Set-for-all row, not one per row) and applies it to every source in one undo step, remembered for the menu; Escape or an empty box puts the chip back and writes nothing; the same on the destinations row (16kz-answers: on Advanced page 1 D0 names every destination row, the AUX / DSM rows keep theirs: they have A0, Omar's answer 2) and on an Advanced page",
    "ok": true
   },
   {
@@ -1369,7 +1369,7 @@
    "ok": true
   },
   {
-   "name": "I/O Patch: a multiviewer renamed from Simple to a destination's name and then to another name leaves the page-1 destination rows alone (the rename follows its own kind, both ways), and the name menus keep destination and multiviewer names apart",
+   "name": "I/O Patch (16kz-answers, Omar's answer 8: a multiviewer and a destination never take each other's name): a multiviewer renamed from Simple to a destination's name is refused (Name in use, it keeps its name, page 1 unchanged), renamed to another name it leaves the page-1 destination rows alone (the rename follows its own kind, both ways: a destination refused the multiviewer's name and renamed again leaves the page-1 multiviewer rows alone), and the name menus keep destination and multiviewer names apart",
    "ok": true
   },
   {
@@ -1449,7 +1449,7 @@
    "ok": true
   },
   {
-   "name": "I/O Patch Excel: the Video I-O tab lists an I/O-only destination after the AUX rows and before the multiviewer (unchanged, decision 32); on the Simple card grid (16ky) its card is the last of the Destinations section (IO), before the AUX / DSM section; the page-1 tab is unchanged",
+   "name": "I/O Patch Excel: the Video I-O tab lists an I/O-only destination after the AUX rows and before the multiviewer (unchanged, decision 32); on the Simple card grid (16ky) its card is the last of the Destinations section (IO), before the AUX / DSM section; the page-1 tab is unchanged; 16kz-refresh: the Video I-O row carries the Refresh column after Resolution (empty, no rate set)",
    "ok": true
   },
   {
@@ -1457,19 +1457,19 @@
    "ok": true
   },
   {
-   "name": "I/O Patch page 1 -> Simple: connector, type, resolution and note set on a page-1 destination follow to its IO row (screen, twin), the Video I-O tab prints them like the page-1 tab, save + reload keeps them, one undo step per edit",
+   "name": "I/O Patch page 1 -> Simple: connector, type, resolution and note set on a page-1 destination follow to its IO row (screen, twin), the Video I-O tab prints them like the page-1 tab, save + reload keeps them, one undo step per edit (16kz-refresh: both tabs' rows carry the Refresh column after Resolution, empty)",
    "ok": true
   },
   {
-   "name": "I/O Patch page 1 -> Simple: a show saved by an older build (page-1 fields set, IO row blank) catches up the moment the I/O Patch opens, before any Advanced look, without lighting Save; the IO row on screen and both Excel tabs agree",
+   "name": "I/O Patch page 1 -> Simple: a show saved by an older build (page-1 fields set, IO row blank) catches up the moment the I/O Patch opens, before any Advanced look, without lighting Save; the IO row on screen and both Excel tabs agree (16kz-refresh: their rows carry the Refresh column after Resolution, empty)",
    "ok": true
   },
   {
-   "name": "I/O Patch page 1 -> Simple: a show saved by an older build where the IO row was edited in Simple (page-1 row blank) is not blanked by the look: the page-1 row takes the values instead, nothing lit; both Excel tabs agree",
+   "name": "I/O Patch page 1 -> Simple: a show saved by an older build where the IO row was edited in Simple (page-1 row blank) is not blanked by the look: the page-1 row takes the values instead, nothing lit; both Excel tabs agree (16kz-refresh: their rows carry the Refresh column after Resolution, empty)",
    "ok": true
   },
   {
-   "name": "I/O Patch Simple -> page 1: a connector, a Custom type and a note set on the IO row in Simple reach the page-1 row with the same edit; the next Advanced look (Keep my page) puts nothing back; both Excel tabs agree",
+   "name": "I/O Patch Simple -> page 1: a connector, a Custom type and a note set on the IO row in Simple reach the page-1 row with the same edit; the next Advanced look (Keep my page) puts nothing back; both Excel tabs agree (16kz-refresh: their rows carry the Refresh column after Resolution, empty)",
    "ok": true
   },
   {
@@ -1841,7 +1841,7 @@
    "ok": true
   },
   {
-   "name": "Type 16kw: — Clear — in the Set-for-all rows empties every row in ONE undo step (sources; destinations, AUX and I/O-only outputs, the multiviewer left alone as Set for all always does), and on an Advanced page-1 row it empties the row and its Simple twin in the same edit",
+   "name": "Type 16kw: — Clear — in the Set-for-all rows empties every row in ONE undo step (sources; destinations, AUX and I/O-only outputs, the multiviewer left alone as Set for all always does; 16kz-answers, Omar's answer 2: on Advanced page 1 D0 empties the destination rows and A0 the AUX / DSM rows, one step each), and on an Advanced page-1 row it empties the row and its Simple twin in the same edit",
    "ok": true
   },
   {
@@ -1993,7 +1993,7 @@
    "ok": true
   },
   {
-   "name": "Backdrop 16kx-r2fix: ONLY ITS OWN I/O Patch rows go (the rows are matched by name): with LEFT LED and RIGHT LED both renamed IMAG and I/O Patch Advanced page 1 built and copied, the FIRST IMAG made a backdrop in the I/O Patch Type menu takes only its own row off both pages (the other IMAG keeps its row, \"stage right\" note and all), in one step, no \"Simple changed\", one Undo gives both pages back exactly; with AUX 1 renamed CENTER LED, CENTER LED made a backdrop in the Type menu, and again in Edit Show Info, leaves the AUX its row on page 1 and nothing asks",
+   "name": "Backdrop 16kx-r2fix: ONLY ITS OWN I/O Patch rows go (the rows are matched by name; 16kz-answers: a show that already has two of a name, since a rename into a used name is refused, Omar's answer 8): with LEFT LED and RIGHT LED both named IMAG and I/O Patch Advanced page 1 built and copied, the FIRST IMAG made a backdrop in the I/O Patch Type menu takes only its own row off both pages (the other IMAG keeps its row, \"stage right\" note and all), in one step, no \"Simple changed\", one Undo gives both pages back exactly; with AUX 1 named CENTER LED, CENTER LED made a backdrop in the Type menu, and again in Edit Show Info, leaves the AUX its row on page 1 and nothing asks",
    "ok": true
   },
   {
@@ -2049,7 +2049,7 @@
    "ok": true
   },
   {
-   "name": "I/O 16ky-r2: a Simple card is the name, the resolution and the cable type (Omar 2026-09-27: \"this should stay simple just name resolution and cable type\"): with a Type and a note stored on every kind of item, no card has a Type (chip, box or menu) or a notes box and none shows those words; a card's keys run picture, colour swatch and shuffle (sources, destinations, AUX / DSM), the name (and a source's pencil), the name library, the resolution box and its menu, the Cable Type menu, then Reset and Delete on the grey line, which keeps the red pill when the cable cannot carry the size and the number (S1, D1, IO, MV1) at its right end; the S0 / D0 bars set the Connector and the Resolution only",
+   "name": "I/O 16ky-r2: a Simple card is the name, the resolution and the cable type (Omar 2026-09-27: \"this should stay simple just name resolution and cable type\"): with a Type and a note stored on every kind of item, no card has a Type (chip, box or menu) or a notes box and none shows those words; a card's keys run left to right: on a source card the picture, colour swatch and shuffle, the name and its pencil, the name library, the resolution box and its menu, the Cable Type menu; on a destination or AUX / DSM card (mirrored, 16kz-refresh: its picture on the right) the name, the name library, the resolution box and its menu, the Cable Type menu, then the picture, the shuffle and the colour swatch; then Reset and Delete on the grey line, which keeps the red pill when the cable cannot carry the size and the number (S1, D1, IO, MV1) at its right end; the S0 / D0 bars set the Connector and the Resolution only",
    "ok": true
   },
   {
@@ -2065,7 +2065,7 @@
    "ok": true
   },
   {
-   "name": "I/O 16ky-r2b: every section has its own Set for all row in its title (Omar 2026-09-27: \"each section should get its own each should have its own set for all row\"): S0 Sources, D0 Destinations, A0 AUX / DSM, M0 Multiviewers, each with Connector ▾ and Resolution ▾ only, reached with Tab, shown when its section has a card; each pick changes ONLY its own section's cards (D0: the destinations and I/O-only destinations, no longer the AUX / DSM outputs; A0: the AUX / DSM outputs; M0: the multiviewers) in ONE undo step that lights Save, and Undo takes it back; its menus open with Custom… first and — Clear — second (greyed on D0, A0 and M0: an output's resolution is its size); A0 › Custom resolution… sets every AUX / DSM output in one step; A0 and M0 give Advanced page 1, the I/O Excel and the Look Book exactly what the same picks made card by card give; the Advanced pages keep their own S0 / D0 / M0 rows",
+   "name": "I/O 16ky-r2b: every section has its own Set for all row in its title (Omar 2026-09-27: \"each section should get its own each should have its own set for all row\"): S0 Sources, D0 Destinations, A0 AUX / DSM, M0 Multiviewers, each with Connector ▾ and Resolution ▾ only, reached with Tab, shown when its section has a card; each pick changes ONLY its own section's cards (D0: the destinations and I/O-only destinations, no longer the AUX / DSM outputs; A0: the AUX / DSM outputs; M0: the multiviewers) in ONE undo step that lights Save, and Undo takes it back; its menus open with Custom… first and — Clear — second (greyed on D0, A0 and M0: an output's resolution is its size); A0 › Custom resolution… sets every AUX / DSM output in one step; A0 and M0 give Advanced page 1, the I/O Excel and the Look Book exactly what the same picks made card by card give; the Advanced pages keep their own S0 / D0 / M0 rows, and page 1 adds A0 above its AUX / DSM rows (16kz-answers, Omar's answer 2), each with Connector, Type, Resolution and Refresh (16kz-refresh, Omar's R1)",
    "ok": true
   },
   {
@@ -2137,7 +2137,131 @@
    "ok": true
   },
   {
-   "name": "Quick Setup 16ky-r4fix: what a screen reader reads follows the row's own label (the round-4 attack: the row labelled Destination 2 said \"Pick resolution for destination 3\"): with 3 destinations and Destination 2's Backdrop switch on, the rows read All Destinations / Backdrop / Destination 2, their resolution buttons say destination 1 / backdrop / destination 2, the backdrop row's Length, Height and picture say backdrop, and the name boxes' defaults are Destination 01 / BACKDROP / Destination 02; with the first row switched on too, the last row reads and says destination 1 (Destination 01)",
+   "name": "Quick Setup 16ky-r4fix: what a screen reader reads follows the row's own label (the round-4 attack: the row labelled Destination 2 said \"Pick resolution for destination 3\"): with 3 destinations and Destination 2's Backdrop switch on, the rows read All Destinations / Backdrop / Destination 2, their resolution buttons say destination 1 / backdrop / destination 2, the backdrop row's Length, Height and picture say backdrop, and the name boxes' defaults are Destination 01 / BACKDROP / Destination 02; with the first row switched on too, it reads Backdrop and the last row reads All Destinations and says destination 1 (Destination 01) (16kz-answers, Omar's answer 14)",
+   "ok": true
+  },
+  {
+   "name": "I/O 16kz-answers (A): on I/O Patch ADVANCED page 1 Set for all is split like Simple (Omar's answer 2, \"do the recommended\"): the Destinations table reads D0, the three screens, then A0 \"Set for all AUX / DSM\" just above DSM 1 and AUX 1; D0 › Connector DisplayPort (stored DP) sets the three screens only (DSM 1 keeps HDMI 2.0, AUX 1 12G-SDI) (one undo step, Save lit); A0 › Resolution 1280×720 and A0 › Type Projection set DSM 1 and AUX 1 only (their Type is the show's own, 16ky-r3), one undo step each, and Undo takes the Type back; page 2 (a hand-made list, nothing on it says AUX) keeps one D0, no A0",
+   "ok": true
+  },
+  {
+   "name": "I/O 16kz-answers (B): Advanced does not ask \"Simple changed since page 1 was built\" when the only change is a Type that page 1 already follows (Omar's answer 5, \"agreed dont ask\"): after LEFT LED, AUX 1 and CAM 1 get a new Type the way the phone's cards set one, opening Advanced asks nothing and page 1 shows the new Types; a connector change still asks; a note alone asks nothing (as before); a Type changed for RIGHT LED after its page-1 row was removed by hand (page 1 no longer follows it) still asks",
+   "ok": true
+  },
+  {
+   "name": "I/O 16kz-answers (C): an output renamed in the I/O Patch into a name another output has is REFUSED like a source (Omar's answer 8, \"refuse outputs too\"): on the Simple cards CENTER LED typed \"left led\", DSM 1 typed \"AUX 1\", MV 1 typed \"RIGHT LED\" and RIGHT LED typed \"dsm 1\" each say Name in use, the box reads its old name and nothing is written (no undo step); CENTER LED picked \"LEFT LED\" from its name menu is refused too; an I/O-only destination typed \"LEFT LED\" is refused; CENTER LED typed \"center led\" (its own name) and \"STAGE CENTER\" (free) are renamed (one step each); on Advanced page 1 the row that mirrors CENTER LED typed \"RIGHT LED\" is refused and still mirrors it; Escape in a box puts the old name back",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16kz-answers (C): a destination or AUX renamed in the Video Presets into a name another output has is refused (Omar's answer 8): the table's name box of CENTER LED on P01 typed \"Left LED\" and on P02 typed \"RIGHT LED\" say Name in use and keep CENTER LED (no step); P02 \"STAGE\" (free) is its name in P02; then LEFT LED on P01 typed \"stage\" is refused (the name of a destination in P02); AUX Properties of AUX 1 named \"LEFT LED\" keeps AUX 1; a backdrop's name counts (LEFT LED typed \"backdrop\" on its card is refused); a show that already has two LEFT LED opens with both and renames one to a free name",
+   "ok": true
+  },
+  {
+   "name": "Quick Setup 16kz-answers (C): Edit Show Info and Quick Setup refuse a name another output has (Omar's answer 8): in Edit Show Info CENTER LED's row typed \"LEFT LED\" and RIGHT LED's typed \"aux 1\" say Name in use and go back to their names; \"STAGE R\" is taken; a row given \"STAGE R\" without leaving its box is refused by Update Show (the window stays open, nothing changes); a show that already has two LEFT LED still updates; in a new show two rows typed \"CAM WALL\" are refused by Build My Show until one is changed",
+   "ok": true
+  },
+  {
+   "name": "I/O 16kz-answers (D): a new AUX takes the next free AUX name, never one in use (Omar's answer 9): with AUX1, AUX3 and AUX4 the I/O Patch + Add AUX card, the Video Presets + AUX and Edit Show Info's AUX count + 1 each add AUX5 (its number, 4, is taken), one undo step each; with a destination named AUX5 the next one is AUX6",
+   "ok": true
+  },
+  {
+   "name": "I/O 16kz-answers (E): the Remove Source window numbers the I/O-only sources the way their cards do (Omar's answer 10): with two sources added on the patch (Source 9 and Source 10, cards S12 and S13 after the eleven preset sources) the window lists S12 Source 9 and S13 Source 10, the numbers on their cards (not S1, S2)",
+   "ok": true
+  },
+  {
+   "name": "Backdrop 16kz-answers (F): the only screen left never becomes a backdrop (Omar's answer 11, \"agreed dont allow\"): with CENTER LED and RIGHT LED backdrops, the Type menu of LEFT LED's row on Advanced page 1 ends with Backdrop greyed (\"A show needs at least one screen\", aria-disabled) and a click on it does nothing; the question's own door refuses too; in Edit Show Info LEFT LED's Backdrop switch is greyed with the reason and a click says it and changes nothing; a new show with one destination has its switch greyed; two rows with the first a backdrop and the count taken down to one: refused at the − itself (16kz-refresh, Omar's L1: the rows left would all be backdrops), the list keeps its two rows and nothing is built",
+   "ok": true
+  },
+  {
+   "name": "Quick Setup 16kz-answers (G): the first row switched to Backdrop reads Backdrop and the first SCREEN row reads All Destinations (Omar's answer 14): with 3 rows and row 1's switch on, the rows read Backdrop / All Destinations (sets default for all) / Destination 2; 1280×720 picked for the All Destinations row becomes the next row's too and the summary's base; switched back, row 1 reads All Destinations again with the note; built with the switch on, the two screens are 1280×720",
+   "ok": true
+  },
+  {
+   "name": "I/O 16kz-refresh (H): on I/O Patch ADVANCED every control of a row takes Tab, in reading order (Omar's 12, \"do the recommended\"): CAM 1 reads name, its ▼, backup, connector, Type, resolution, refresh, notes, reset, delete; LEFT LED the same without the backup column; PPT B (a backup: its button is off) without it; the Set for all rows S0 / D0 / A0 / M0 read connector, Type, resolution, refresh; every menu pill is a button with a popup; page 2 reads the same",
+   "ok": true
+  },
+  {
+   "name": "I/O 16kz-refresh (H): on I/O Patch ADVANCED the keys work as on the Simple grid: CAM 1's Connector pill takes the focus, Enter opens its menu, ↓ lights the row after the marked 12G-SDI (NDI), Enter picks it (one undo step), the menu closes and the focus is on the same pill of the redrawn row; Space opens it again and Escape closes it, the focus stays and the page stays; Alt+↓ opens it too; a menu opened from a Set for all pill walks the same way (D0's Refresh: ↓ lights 23.98, the row after the marked — Clear —)",
+   "ok": true
+  },
+  {
+   "name": "I/O 16kz-refresh (H): a redraw of the Advanced page keeps the keyboard where it was going: leaving the Sources Rows box for the next control (what Tab does; the box redraws the page as it is left) leaves the focus on that control of the redrawn page, not on the page body (Tab used to drop off the page there); a menu pick gives the focus back to its pill",
+   "ok": true
+  },
+  {
+   "name": "Cards 16kz-refresh (I): the name on a card's picture breaks only between words (Omar's 13, \"do the recommended\"): CENTER LED renamed DESTINATION 01 reads \"DESTINATION\" / \"01\" on its I/O Patch card, on its Wire side-panel card and on its Advanced row's small picture (never DESTINATIO / N 01); RIGHT LED renamed PROJECTIONS (a word too long for the line) shrinks to one line inside the picture; the upload mark does not sit on the first letter; the text is the name",
+   "ok": true
+  },
+  {
+   "name": "I/O 16kz-refresh (J) R1: every I/O Patch ADVANCED page has a REFRESH column between Resolution and Notes (Omar: \"all recommended\"): the Sources, Destinations and Multiviewers tables read … Resolution | Refresh | | Notes …; every row (a source, a screen, an AUX / DSM, a multiviewer) has its Refresh pill in the cell right after Resolution (\"— Set Hz —\" when none), the Set for all rows S0 / D0 / A0 / M0 have one (\"— Set all —\"), page 2 too; the Simple grid has none",
+   "ok": true
+  },
+  {
+   "name": "I/O 16kz-refresh (J) R2: the Refresh menu reads Custom…, — Clear —, 23.98, 24, 25, 29.97, 30, 50, 59.94, 60, 120 and is one undo step a pick; Custom… types a number in place (the pill becomes a box with the cursor): 47.952 is stored and shown as 47.952, \"59,94\" as 59.94, \"60 Hz\" as 60; \"abc\", \"0\", \"-5\" and \"59.9444\" are refused (\"Not a refresh rate\", nothing written, no undo step); Escape in the box puts the pill back; — Clear — empties it",
+   "ok": true
+  },
+  {
+   "name": "I/O 16kz-refresh (J) R4: a refresh rate set on an Advanced page-1 row that mirrors a show item is that item's OWN value (PPT A, LEFT LED, AUX 1, MV 1: one undo step each, Save lit); one set on the item (as the phone sets it) shows on page 1; a page-2 row keeps its own; D0 sets the screens only and A0 the AUX / DSM rows; the rates are saved in the file and come back; Undo takes them back; a show without rates (an older file) has none anywhere, even after Advanced is opened",
+   "ok": true
+  },
+  {
+   "name": "I/O 16kz-refresh (J) R3: the I/O Excel has a Refresh column right after Resolution on every tab: the Video I-O tab reads Slot | Connector | Name | Type | Resolution | Refresh | Notes with PPT A's 59.94 and LEFT LED's 59.94 as numbers (empty where none), each Advanced page tab reads Slot | Connector | P/B | Name | Type | Resolution | Refresh | Notes (page 1 LEFT LED 59.94, page 2 its own 50) with a width for each of its eight columns",
+   "ok": true
+  },
+  {
+   "name": "I/O 16kz-refresh (J) R3: the Look Book's I/O pages print a refresh rate next to the resolution only when one is set: with PPT A and LEFT LED at 59.94 the Sources page reads \"1920x1080 · 59.94\" for PPT A and the Destinations page \"1920×1080 · 59.94\" for LEFT LED, every other row's Resolution cell as before; a show without rates prints no \" · \" there",
+   "ok": true
+  },
+  {
+   "name": "I/O 16kz-refresh (J) R5: the Advanced Notes cell is narrow and shows the start of the note (… when cut); a click, Enter or Space opens a box right below it (not over it) with the whole note and the cursor; Enter saves it (the item's own note on page 1, one undo step) and the focus is back on the cell; Escape puts back what was there (nothing written); leaving the box (a click outside) saves; the cell itself takes no typing",
+   "ok": true
+  },
+  {
+   "name": "I/O 16kz-refresh (J) R7: the red bandwidth pill counts a refresh rate when one is set (width × height × refresh against the refresh each connector's cap assumes): 3840x2160 · 60 on 6G-SDI is red, 3840x2160 · 30 on 6G-SDI is not, 1920x1080 · 120 on 3G-SDI is red, 1920x1080 · 60 on 3G-SDI is not, 3840x2160 · 59.94 on 12G-SDI is not; with no rate every connector and size is judged exactly as before; an Advanced row and a Simple card show it",
+   "ok": true
+  },
+  {
+   "name": "Cards 16kz-refresh (K): a destination, AUX / DSM, I/O-only destination and multiviewer card is MIRRORED (Omar's mockup: \"Source should have images on the Left and Destination images on the right\"): on the I/O Patch Simple grid its picture is on the RIGHT and the name / resolution / cable type column on the LEFT, the random-colour button before the colour bar, the markup in that order (Tab reads it left to right), the grey line unchanged at the foot, the picture itself not flipped; a source card keeps its picture on the LEFT; Wire's side-panel cards (Simple, and Advanced with a hand-made destination) the same (the + Add cards: Y13)",
+   "ok": true
+  },
+  {
+   "name": "Cards 16kz-fix (K): the + Add cards are NOT mirrored (Omar's correction 2026-09-28 22:00: \"should keep the plus box on the left still\"): + Add source, + Add destination, + Add AUX and + Add multiviewer all have their + box on the LEFT and the text on the right (the markup in that order, the two apart), with no iog-add-mirror class or rule, as before 16kz-refresh; only the output cards themselves are mirrored; a click on + Add destination and Enter on + Add AUX still add one each (one undo step)",
+   "ok": true
+  },
+  {
+   "name": "Backdrop 16kz-refresh (L1): the only screen left is never deleted (Omar 2026-09-28 ~18:50, \"all recommended\"): with CENTER LED and RIGHT LED backdrops (Edit Show Info), the trash on LEFT LED's I/O Patch card, Remove (Destinations) > LEFT LED, the Video Presets table's ✕ (P01's first row) and Destination Properties' Remove Globally each say \"A show needs at least one screen\", ask nothing and delete nothing (no undo step); Undo and Redo never restore a step with no screen (one an older build could have left: refused, the show keeps LEFT LED) and a normal Undo still works; with LEFT LED and CENTER LED backdrops Edit Show Info's − (it would take RIGHT LED) is refused and the list keeps its 3 rows",
+   "ok": true
+  },
+  {
+   "name": "Destinations 16kz-refresh (L2): ADD › Destination refuses a name another output already has (Omar 2026-09-28 ~18:50, \"all recommended\"; the 16kz-answers rule: trimmed, any capitals): \"left led\" (a destination), \" dsm 1 \" (a DSM), \"mv 1\" (a multiviewer), \"backdrop\" (a backdrop) and \"stage\" (P02's own name for CENTER LED) each say Name in use (by Enter or the Add button), the window stays open with its own name back in the box, nothing is added and no undo step is recorded; a free name (STAGE LEFT) is added in one undo step",
+   "ok": true
+  },
+  {
+   "name": "Wire 16kz-refresh (L4): Wire Advanced's hand-made destination / AUX cards refuse a SHOW output's name (Omar 2026-09-28 ~18:50, \"all recommended\"): a hand-made destination card renamed \"left led\" or \"AUX 1\" and a hand-made AUX card renamed \"mv 1\" say Name in use and keep their names (no undo step); two hand-made destination cards both named STAGE are numbered apart as before (STAGE, STAGE 2); a new hand-made card is never given a show output's name (with CENTER LED named New Destination, + gives New Destination 2)",
+   "ok": true
+  },
+  {
+   "name": "I/O 16kz-fix (J) R4: a refresh rate set on Advanced page 1 for a source page 1 made (a row typed there: its I/O-only source in Simple) is that source's OWN rate: the page-1 pick (one undo step) is the source's rate, S0 › 25 gives every source its own 25 in one step, the Video I-O tab of the I/O Excel prints it, 3G-SDI + 1920x1080 + 120 on its row turns its Simple card red, and a rate set on the source itself (the phone card's pick) is written on its page-1 row too, so the next Advanced draw keeps it",
+   "ok": true
+  },
+  {
+   "name": "I/O 16kz-fix (J) R1: the Advanced table fits the window at every width Electron allows (1024 px up): with the page's own column rules applied to the table at 1024, 1100 (the narrow rule), 1101, 1152, 1200 and 1248 px, every row and heading of pages 1 and 2 keeps all its columns inside itself, Reset and the trash included (they were pushed past the window from 1101 to about 1250 px and at 1024 px); at this 1440 px window the columns are the 16kz-refresh widths",
+   "ok": true
+  },
+  {
+   "name": "Cards 16kz-fix (I): a name on a card picture never loses part of a word (Omar's 13): CENTER LED renamed NEW DESTINATION 2 reads the whole name on two lines (it read NEW / DESTINATI…) on its I/O Patch card, its Wire side-panel card and its Advanced row's small picture; RIGHT LED renamed DOWNSTAGE CONFIDENCE MONITOR shows only whole words (a second line cut after a whole word ends in …); every line inside its picture",
+   "ok": true
+  },
+  {
+   "name": "I/O 16kz-fix (J) R5: the Advanced Notes box shows the WHOLE note: CAM 1 with a note of about 300 characters opens a box as tall as the note (nothing hidden, nothing to scroll; it showed three lines and hid the first), under or over its cell but never over it, inside the window; typing more makes it grow; Escape keeps the note",
+   "ok": true
+  },
+  {
+   "name": "I/O 16kz-fix (H): after a refused Custom… refresh rate (\"Not a refresh rate\") the keyboard is back on the row's Refresh pill, whether the alert is answered with OK or with Escape (it was left on the page body, so the next Tab started at the top of the page); nothing is written",
+   "ok": true
+  },
+  {
+   "name": "I/O 16kz-fix (J) R5: a note stays one line: Shift+Enter in the Notes box saves it and closes the box like Enter (it stored a line break the cell could not show, and the next edit glued the words), and a line break that arrives in the box (a paste) becomes a space",
    "ok": true
   }
  ],

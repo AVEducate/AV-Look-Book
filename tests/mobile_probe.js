@@ -710,6 +710,142 @@
       if (typeof mbCloseInlinePanel === 'function') { try { mbCloseInlinePanel(); } catch (e) {} } try { window.renderMobileMain(); } catch (e) {} await wait(300);
     }
   });
+  // 16kz-answers U: NEW
+  // 16kz-answers (C) on the phone (Omar's answer 8, "refuse outputs too"), REAL taps and typing. The phone checks before it leave
+  //   LEFT LED | BACKDROP | RIGHT LED with DSM 1 and AUX 1. FAILS on the committed 16ky page (the phone card takes the name),
+  //   PASSES on 16kz-answers.
+  const _kzToIo = async () => {   /* the I/O cards the way a finger gets there: Back from a preset's editor (it hides the top bar), then I/O Patch */
+    if ($('#mobile-main .mb-io')) return true; let t = true;
+    if ($('#mobile-main .mb-back-btn')) { t = await tap($('#mobile-main .mb-back-btn')); if (t !== true) return t; await wait(500); }
+    t = await tap($('#topbar-nav-iop')); if (t !== true) return t; await until(() => $('#mobile-main .mb-io'), 1500); await wait(400); return true; };
+  await check('I/O 16kz-answers: on the phone an output card renamed into a name another output has is refused like a source: RIGHT LED typed "LEFT LED" and AUX 1 typed "dsm 1" (a tap away each) say Name in use, a tap on OK, and the cards and the show keep RIGHT LED and AUX 1; a free name ("RIGHT WALL") is taken', async () => {
+    const out = {}; const card = n => $$('#mobile-main .mb-io-card').find(c => (($('.mb-io-syname', c) || {}).value || '') === n) || null;
+    const names = () => screens.map(s => s.name).concat(dsms.map(d => d.name)); const was = screens.map(s => [s, s.name]).concat(dsms.map(d => [d, d.name]));
+    try {
+      let t = await _kzToIo(); if (t !== true) return t;
+      const typeOn = async (n, v) => {
+        const inp = $('.mb-io-syname', card(n) || document.body); if (!inp || !card(n)) return 'no ' + n + ' card';
+        let r = await tap(inp); if (r !== true) return r; if (document.activeElement !== inp) return 'the tap did not put the cursor in the name field';
+        inp.select(); const ty = await runner('type', { text: v }); if (ty && ty.error) return 'typing failed: ' + ty.error; await wait(150);
+        r = await tap($('#mobile-main .mb-io-section')); if (r !== true) return r; await until(() => dlgOpen(), 1200); await wait(200);
+        const q = dlgOpen() ? dialogText() : null; if (q) { r = await tap($('#dlg-confirm')); if (r !== true) return r; await wait(400); }
+        return [!!q && /Name in use/.test(q) && q.indexOf('"' + v + '"') >= 0, !!card(n), names().includes(n)];
+      };
+      out.dest = await typeOn('RIGHT LED', 'LEFT LED'); out.aux = await typeOn('AUX 1', 'dsm 1'); out.free = await typeOn('RIGHT LED', 'RIGHT WALL');
+      out.names = names();
+      return is(out, { dest: [true, true, true], aux: [true, true, true], free: [false, false, false], names: ['LEFT LED', 'BACKDROP', 'RIGHT WALL', 'DSM 1', 'AUX 1'] },
+        'RIGHT LED typed "LEFT LED" [Name in use said, its card, its name] / AUX 1 typed "dsm 1" / RIGHT LED typed "RIGHT WALL" [said, the old card, the old name] / the names after');
+    } finally { was.forEach(x => { x[0].name = x[1]; }); okDialogs(); try { window.renderMobileMain(); } catch (e) {} await wait(300); }   /* every name back, whatever happened */
+  });
+  // 16kz-answers V: NEW
+  // 16kz-answers (D) on the phone (Omar's answer 9), REAL taps: DSM 1 is given the name AUX3 for this check (a show whose AUX
+  //   was renamed), so the count + 1 (3) is taken. FAILS on the committed 16ky page (a second AUX3), PASSES on 16kz-answers.
+  await check('I/O 16kz-answers: the phone\'s + AUX gives the next free AUX name, never one in use: with AUX3 and AUX 1, a tap on + AUX adds AUX4 (its number, 3, is taken)', async () => {
+    const d0 = dsms.find(d => d.name === 'DSM 1'); if (!d0) return 'no DSM 1'; const ids0 = dsms.map(d => d.id); d0.name = 'AUX3';
+    try {
+      let t = true; const seen = el => !!el && el.getBoundingClientRect().width > 0;
+      if (!seen($('#mobile-main .mb-le-addbtn.aux:not(.rem)'))) {
+        t = await tap($('#topbar-nav-vp')); if (t !== true) return t; await wait(600);
+        if (seen($('#mobile-main .mb-back-btn'))) { t = await tap($('#mobile-main .mb-back-btn')); if (t !== true) return t; await wait(500); }
+        t = await tap($$('#mobile-main .mb-preset-card .mb-action-edit')[0]); if (t !== true) return t; await until(() => $('#mobile-main .mb-le-addbtn.aux:not(.rem)'), 1500); await wait(300);
+      }
+      window.renderMobileMain(); await wait(300);
+      t = await tap($('#mobile-main .mb-le-addbtn.aux:not(.rem)')); if (t !== true) return t; await wait(500);
+      const added = dsms.filter(d => !ids0.includes(d.id)).map(d => d.name);
+      return is({ added, names: dsms.map(d => d.name) }, { added: ['AUX4'], names: ['AUX3', 'AUX 1', 'AUX4'] }, 'the new AUX\'s name / the show\'s AUX / DSM outputs');
+    } finally {
+      dsms.filter(d => !ids0.includes(d.id)).forEach(d => { const i = dsms.indexOf(d); if (i >= 0) dsms.splice(i, 1); presets.forEach(p => { if (p.dsmOn) delete p.dsmOn[d.id]; }); }); d0.name = 'DSM 1';
+      if (typeof mbCloseInlinePanel === 'function') { try { mbCloseInlinePanel(); } catch (e) {} } try { window.renderMobileMain(); } catch (e) {} await wait(300);
+    }
+  });
+  // 16kz-answers W: NEW
+  // 16kz-answers (F) on the phone (Omar's answer 11, "agreed dont allow"), REAL taps: RIGHT LED is made a backdrop for this check
+  //   (the app's own conversion; every other screen, so LEFT LED is the only screen left). FAILS on the committed 16ky page (Backdrop is offered and asks),
+  //   PASSES on 16kz-answers. The I/O section's restore after it puts the show back.
+  await check('I/O 16kz-answers: on the phone the only screen left never becomes a backdrop: with LEFT LED the only screen, its card\'s Type menu ends with Backdrop greyed ("A show needs at least one screen"), and a tap on it asks nothing, the menu stays and LEFT LED keeps its Type', async () => {
+    const keep = screens.find(s => s.deviceType !== 'Backdrop'); if (!keep || keep.name !== 'LEFT LED') return 'LEFT LED is not the first screen'; pushUndo(); screens.filter(s => s !== keep && s.deviceType !== 'Backdrop').forEach(s => _bdConvert(s));
+    if (screens.filter(s => s.deviceType !== 'Backdrop').length !== 1) return 'LEFT LED is not the only screen';
+    const tidy = () => { try { _sysCloseMenu(); } catch (e) {} };
+    try {
+      let t = await _kzToIo(); if (t !== true) return t; window.renderMobileMain(); await wait(300);
+      const card = $$('#mobile-main .mb-io-card').find(c => (($('.mb-io-syname', c) || {}).value || '') === 'LEFT LED'); if (!card) return 'no LEFT LED card';
+      const type0 = (screens.find(s => s.name === 'LEFT LED') || {}).deviceType;   /* whatever the checks before left it */
+      t = await tap($('[data-sys-field="dst-type"]', card)); if (t !== true) return t; await until(() => $('.sys-dd .sys-dd-item'), 1500); await wait(300);
+      const it = $$('.sys-dd .sys-dd-item').pop(); const last = it ? [(($('.item-text', it) || it).textContent || '').trim(), it.classList.contains('disabled'), it.getAttribute('aria-disabled'), it.title, (($('.item-meta', it) || {}).textContent || '')] : null;
+      if (it) { t = await tap(it); if (t !== true) return t; await wait(500); }
+      const lt = (screens.find(s => s.name === 'LEFT LED') || {}).deviceType; const after = [dlgOpen(), !!$('.sys-dd'), lt === type0 && lt !== 'Backdrop'];
+      return is({ last, after }, { last: ['Backdrop', true, 'true', 'A show needs at least one screen', 'A show needs at least one screen'], after: [false, true, true] }, 'the Type menu\'s last row [label, greyed, aria-disabled, its reason, the reason under it] / after a tap on it [a question, the menu still open, LEFT LED\'s Type unchanged]');
+    } finally { tidy(); okDialogs(); await wait(200); }
+  });
+  // 16kz-refresh X1: NEW
+  // 16kz-refresh (J) R6 on the phone (Omar: "all recommended"), REAL taps and typing: the phone's I/O cards get a Refresh box next to
+  //   Resolution, the same menu and the same storage (the item's own rate). FAILS on the first builder's 16kz-answers page (no
+  //   Refresh box), PASSES on 16kz-refresh. The I/O section's restore after it puts the show back.
+  await check('I/O 16kz-refresh: on the phone an I/O card has a Refresh box next to its Resolution (a full-size touch target, the same row): a tap opens the same menu (Custom…, — Clear —, 23.98 … 120), a tap on 59.94 stores LEFT LED\'s own rate (one undo step) and the box reads 59.94 Hz; on a source card Custom… types in place (47.952 typed, a tap away) and it is the source\'s own rate', async () => {
+    await restore(); const out = {}; const card = n => $$('#mobile-main .mb-io-card').find(c => (($('.mb-io-syname', c) || {}).value || '') === n) || null;
+    const item = re => $$('.sys-dd .sys-dd-item').find(i => re.test(txt($('.item-text', i) || i)));
+    try {
+      let t = await _kzToIo(); if (t !== true) return t; window.renderMobileMain(); await wait(300);
+      const c = card('LEFT LED'); if (!c) return 'no LEFT LED card'; const box = $('[data-sys-field="refresh"]', c);
+      if (!box) return 'LEFT LED\'s card has no Refresh box';
+      const b = box.getBoundingClientRect(), s = $('[data-sys-field="resolution"]', c).getBoundingClientRect();
+      out.box = [txt(box), b.width >= 44 && b.height >= 44, Math.abs((b.top + b.height / 2) - (s.top + s.height / 2)) < 4 && b.left >= s.right - 1];
+      const u0 = _undoStack.length; t = await tap(box); if (t !== true) return t; await until(() => $('.sys-dd .sys-dd-item'), 1500); await wait(250);
+      out.menu = $$('.sys-dd .sys-dd-item').map(i => txt($('.item-text', i) || i));
+      t = await tap(item(/^59\.94$/)); if (t !== true) return t; await until(() => !$('.sys-dd'), 1500); await wait(400);
+      out.pick = [(screens.find(x => x.name === 'LEFT LED') || {}).refresh, _undoStack.length - u0, txt($('[data-sys-field="refresh"]', card('LEFT LED')))];
+      const sn = (($('.mb-io-syname', $$('#mobile-main .mb-io-src')[0]) || {}).value) || '';
+      t = await tap($('[data-sys-field="refresh"]', $$('#mobile-main .mb-io-src')[0])); if (t !== true) return t; await until(() => $('.sys-dd .sys-dd-item'), 1500); await wait(250);
+      t = await tap(item(/^Custom/)); if (t !== true) return t; await wait(400);
+      const inp = document.activeElement; out.typeBox = !!inp && !!inp.dataset && inp.dataset.sysField === 'custom-rf';
+      const ty = await runner('type', { text: '47.952' }); if (ty && ty.error) return 'typing failed: ' + ty.error; await wait(150);
+      t = await tap($('#mobile-main .mb-io-section')); if (t !== true) return t; await wait(600);
+      out.custom = [(_sysGetSourceMeta(sn) || {}).refresh, txt($('[data-sys-field="refresh"]', $$('#mobile-main .mb-io-src')[0]))];
+      return is(out, { box: ['— Hz —', true, true], menu: ['Custom…', '— Clear —', '23.98', '24', '25', '29.97', '30', '50', '59.94', '60', '120'], pick: ['59.94', 1, '59.94 Hz'], typeBox: true, custom: ['47.952', '47.952 Hz'] },
+        'LEFT LED\'s Refresh box [its words, 44 px or more, beside Resolution on the same row] / its menu / 59.94 tapped [LEFT LED\'s own rate, undo steps, the box] / Custom… on a source card [the typing box has the cursor] / 47.952 typed, a tap away [the source\'s own rate, the box]');
+    } finally { try { _sysCloseMenu(); } catch (e) {} okDialogs(); await wait(200); }
+  });
+  // 16kz-refresh X2: NEW
+  // 16kz-refresh (L1) on the phone (Omar 2026-09-28 ~18:50, "all recommended"), REAL taps: LEFT LED and CENTER LED are made backdrops
+  //   for this check (the app's own conversion), so RIGHT LED, the last destination, is the only screen: − DEST never deletes it.
+  //   FAILS on the first builder's 16kz-answers page (it asks "Remove destination?"), PASSES on 16kz-refresh.
+  await check('I/O 16kz-refresh: on the phone − DEST never deletes the only screen: with LEFT LED and CENTER LED backdrops (RIGHT LED, the last destination, the only screen) a tap on − DEST says "A show needs at least one screen", asks nothing and deletes nothing; after + DEST (a second screen) − DEST asks "Remove destination?" as before (Cancel keeps it)', async () => {
+    await restore(); const out = {}; const nm = s => s.name + (s.deviceType === 'Backdrop' ? ' [bd]' : '');
+    try {
+      pushUndo(); screens.filter(s => s.name === 'LEFT LED' || s.name === 'CENTER LED').forEach(s => _bdConvert(s)); out.show = screens.map(nm);
+      await openEdit(presets[0].id); await wait(300);
+      const u0 = _undoStack.length; let t = await tap($('#mobile-main .mb-le-addbtn.dest.rem')); if (t !== true) return t; await until(dlgOpen, 1500);
+      const d1 = dialogText(); out.minus = [/A show needs at least one screen/.test(d1), /Remove destination\?/.test(d1)];
+      t = await tap($(/Remove destination\?/.test(d1) ? '#dlg-cancel' : '#dlg-confirm')); if (t !== true) return t; await wait(400);
+      out.after = [screens.map(nm), _undoStack.length - u0];
+      t = await tap($('#mobile-main .mb-le-addbtn.dest:not(.rem)')); if (t !== true) return t; await until(() => screens.length === 4, 1500); await wait(300);
+      t = await tap($('#mobile-main .mb-le-addbtn.dest.rem')); if (t !== true) return t; await until(dlgOpen, 1500); out.ask = /Remove destination\?/.test(dialogText());
+      t = await tap($('#dlg-cancel')); if (t !== true) return t; await wait(350); out.kept = screens.length;
+    } finally { okDialogs(); await wait(200); await restore(); }
+    return is(out, { show: ['BACKDROP [bd]', 'BACKDROP 2 [bd]', 'RIGHT LED'], minus: [true, false], after: [['BACKDROP [bd]', 'BACKDROP 2 [bd]', 'RIGHT LED'], 0], ask: true, kept: 4 },
+      'the show / − DEST [said, asked Remove destination?] / after it [the show, undo steps] / after + DEST, − DEST asks / Cancel keeps it');
+  });
+  // 16kz-fix M1: NEW
+  // 16kz-fix (J R6) on the phone, REAL taps to the I/O cards and the runner's own phone sizes: the Refresh box squeezed the Resolution
+  //   box ("1920×1080" read "1920×108" at 360 px wide, "— Set resolution —" was cut at 390). FAILS on the second builder's
+  //   16kz-refresh page (r16kz/build2, f715089b), PASSES on 16kz-fix. The phone is put back to its portrait size after it.
+  await check('I/O 16kz-fix: on the phone an I/O card\'s Resolution box keeps its whole text next to the Refresh box: at 390, 360 and 320 px wide every card\'s resolution reads whole, the Refresh box is a full-size touch target inside its card, beside the resolution when both fit (LEFT LED at 390 px) and on the line under it when they do not', async () => {
+    await restore(); const out = {}; const card = n => $$('#mobile-main .mb-io-card').find(c => (($('.mb-io-syname', c) || {}).value || '') === n) || null;
+    const scan = () => { const cut = [], small = [], outside = []; let n = 0;
+      $$('#mobile-main .mb-io-card').forEach(c => { const rp = $('[data-sys-field="resolution"]', c), rf = $('[data-sys-field="refresh"]', c), nm = (($('.mb-io-syname', c) || {}).value) || '?'; if (!rp) return; n++;
+        const lab = $('.pill-label', rp) || rp; if (lab.scrollWidth > lab.clientWidth + 1) cut.push(nm + ' "' + txt(lab) + '"');
+        if (rf) { const b = rf.getBoundingClientRect(), cr = c.getBoundingClientRect(); if (b.height < 44 || b.width < 44) small.push(nm); if (b.right > cr.right + 0.5 || b.left < cr.left - 0.5) outside.push(nm); } });
+      return [n > 5, cut, small, outside]; };
+    const beside = () => { const c = card('LEFT LED'); if (!c) return 'no LEFT LED card'; const b = $('[data-sys-field="refresh"]', c).getBoundingClientRect(), s = $('[data-sys-field="resolution"]', c).getBoundingClientRect(); return Math.abs((b.top + b.height / 2) - (s.top + s.height / 2)) < 4 && b.left >= s.right - 1; };
+    try {
+      let t = await _kzToIo(); if (t !== true) return t; window.renderMobileMain(); await wait(300);
+      out.p390 = scan().concat([beside()]);
+      await rotate([360, 740]); window.renderMobileMain(); await wait(300); out.p360 = scan();
+      await rotate([320, 568]); window.renderMobileMain(); await wait(300); out.p320 = scan();
+    } finally { await rotate(PORTRAIT); try { window.renderMobileMain(); } catch (e) {} await wait(300); okDialogs(); }
+    return is(out, { p390: [true, [], [], [], true], p360: [true, [], [], []], p320: [true, [], [], []] },
+      'at 390 px [cards, resolutions cut, Refresh boxes under 44 px, Refresh boxes outside their card, LEFT LED\'s Refresh beside its resolution] / at 360 px [the same] / at 320 px [the same]');
+  });
   await restore();
 
   // ── exports called directly (the phone has no Export button today), and the windows a phone user can meet ─────────

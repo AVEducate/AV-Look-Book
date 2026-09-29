@@ -508,6 +508,74 @@ anchor on the function name and replace the first occurrence after it, never all
   `_qsBd[i]` BEFORE `_bdQsUndoOn`, so the other rows' auto names count it as a screen (the only backdrop left is BACKDROP again,
   16kx-r2fix R1). Quick Setup's screen-reader labels use
   `_r4fQsAria(i)` (destination N by `_bdQsNo`, or backdrop), refreshed by `_bdQsRenum`. Flows checks A1, A2; phone T.
+- **16kz-answers** (owner, 2026-09-28 ~10:15, his answers to the questions left after 16ky; search `16kz-answers`). (A) Advanced
+  PAGE 1's Destinations table: D0 sets the destination rows only, A0 (`advaux-all`, drawn by `_ioAdvGlobalRowHtml('aux')` just
+  above the first AUX / DSM row in `_ioAdvTable`) the AUX / DSM rows; a row is AUX / DSM when `_ioP1Map` maps it to a show `dsms`
+  entry (`_kzAdvAuxRows`, page 1 only); `_ioAdvApplyToAll` filters through `_kzAdvRowsFor`; pages 2+ have no A0 (one D0 for every
+  row). (B) `_ioAdvOfferResync` also returns when `_kzTypeOnly(seed|seedAsked, now)`: the fingerprints differ ONLY in a Type
+  (fields 2 / 3) of items page 1 follows (`_ioP1Map`); anything else, or an item page 1 does not follow, asks as before. (C) an
+  output's name: `_kzOutTaken(self)` (every other screen incl. backdrops, AUX / DSM, I/O-only, multiviewer, and the other
+  outputs' per-preset `screenName` / `dsmName`; lower case) and `_kzOutRenameBlocked` ("Name in use", the box back) guard the
+  I/O name boxes (blur handler, the name ▼ picks, `_sysIoDestRename`, `_kzOutOf` finds the output or the page-1 row's mirrored
+  item), the phone's `mbIoSet` / `mbSetDestName` / `mbSetDsmName`, `homeSetScreenName` (the table's Enter now preventDefaults so
+  the Enter that commits does not also answer the alert), AUX Properties, and Quick Setup / Edit Show Info (`_kzQsNameCommit` on
+  the box's change, `_kzQsGate` in `confirmQS` / `confirmQSEdit`; a row keeping its live name is not a rename). Internal writes
+  (`_sysSetMeta`, a file) are NOT guarded: a show with two of a name opens as it is. (D) `_kzAuxName()` = the label + (count + 1)
+  or the next free number (addDSM, `_sysAddAUX`, the phone's `mbAddAux`, Quick Setup / Edit Show Info). (E) the Remove Source
+  window's number is the card's (`_sysDiscoverSources` index). (F) `_kzLastScreen`: `_bdTypeOpts` gives Backdrop `disabled` +
+  `tip` (`_sysOpenDropdown` greys it like the outputs' Resolution Clear; the grid's key walk skips it), `_bdAskMake` refuses,
+  `_bdQsToggle` refuses and `_bdQsCtl` / `_bdQsRenum` grey the only screen row's switch; `_kzQsGate` refuses an all-backdrop list
+  (Edit Show Info of a show that already has no screen still updates). Deleting the last screen is NOT changed (a question).
+  (G) `_kzQsLead()` = the first non-backdrop row: its label is All Destinations (+ the note, `#qs-sr-sd-i`), `qsGetRes`'s default,
+  `qsApplyRes`'s cascade and the summary's base follow it; `_bdQsRenum` relabels row 0 too. Flows checks Z1..Z9, phone U V W;
+  renamed in place (their expectation changed): R1 Set for all › Custom… (D0 on page 1), R2 the multiviewer rename, R3 Type 16kw
+  Clear, R4 16kx-r2fix ONLY ITS OWN rows (opens a show that has two IMAG), R5 16ky-r2b Set for all rows, R6 16ky-r4fix A2.
+- **16kz-refresh** (owner, 2026-09-28 ~10:35, his 12 / 13 / R1-R7 and the mirrored-card mockup; search `16kz-refresh`). (H) the
+  Advanced page's pills are keyboard buttons (`tabindex=0 role=button aria-haspopup`, `_sysRowHtml` for `adv-*` kinds and
+  `_ioAdvGlobalRowHtml`); the grid's capture keydown handler (open / walk / pick) now also serves `#io-adv`; `_ioRenderAdvanced`
+  keeps the focus across its innerHTML (`_kfSpot` / `_kfRefocus`, plus a capture blur listener `_kfBlurTo` for a redraw made
+  inside a blur, the Rows box). The backup button carries `data-sys-kind/id` so it finds its twin. (I) `_wireAutoThumbHTML(name,
+  colour, nf)` with `nf` (the card's upload mark / badge) lays the name out with `_nfFit` (canvas `measureText` in the page's
+  own font): lines break at spaces only (one inline nowrap span a line, `<br>` between), a word too long for its line shrinks
+  (13 px down to 8 px), a word too long even then breaks after its hyphens or ends in …, more than two lines end in …; the
+  first line moves below the upload mark (2 px of air) and the size drops when that would reach the badge. Inline styles only
+  (the picture's CSS styles every inner span: each line span repeats display:inline and the size). Not on the phone (a wider
+  picture there); the Advanced mini picture uses `_nfMini`. (J) `refresh` (the number's text) on sources / screens / dsms /
+  ioDests / multiviewers and on Advanced rows: `_rfOptions` (Custom…, — Clear —, `_RF_LIST`), `_rfAsk` / `_rfCommit` (the box
+  in place, `_rfParse`: a positive number, up to 3 decimals, else "Not a refresh rate"), `_rfWrite`; `_ioP1Fields` has
+  `refresh` (page 1's rate of a show item is the item's own, both ways, like Type and notes); `_ioAdvApplyToAll`, the twin
+  functions, `_ioAdvRowUsed`, `_ioAdvRowFrom` and the Advanced Reset know it; the rate is NOT in `_ioSimpleFingerprint`. The
+  Advanced grid is 10 columns (`#sys-overlay.io-advanced #io-adv .sys-row`), Refresh between Resolution and the warn pill. The
+  I/O Excel: a Refresh column after Resolution on the Video I-O tab and every page tab (`_rfNum`: a number), the page tabs
+  get their own column widths. The Look Book's I/O pages: `_rfLb` (only when set, so the snapshots are unchanged). The phone's
+  cards: `_rfPillHTML(...,mb)` beside Resolution (44 px). R5: the Advanced Notes cell is the same `.sys-notes-input`, now
+  `readonly` + `.io-note-cell` (so the checks that set its value still work); a click / Enter / Space opens `.io-note-pop`
+  (`_nwOpen`, a textarea placed under the cell, `_nwCommit` one undo step when changed, `_nwCancel`, in `_lbEscTop`). R7:
+  `_sysOverCable(conn,res,hz)`: with a rate `_rfOver` compares w × h × Hz with `_RF_CAP` (the refresh each cap assumes), with
+  none the old pixel rule, unchanged. (K) `_iogCardHTML` and Wire's `_wireDestCardHTML_panel` / `_wireDsmCardHTML_panel` /
+  custom destination and AUX cards write the info column BEFORE the thumb column for outputs (`_kmSwap`, class `iog-mirror` /
+  `lbm-mirror`), `_wireNodeColorRowHTML(...,mirror)` puts the shuffle first; `_kmOn()` is false on the phone; the + Add cards of the
+  output sections are NOT (16kz-fix, the owner's correction of 2026-09-28 22:00: `_iogAddHTML` as before, no `iog-add-mirror`). (L) (owner ~18:50, "all
+  recommended"): `_kzDelRefused` (the only screen, `_kzLastScreen`) in `deleteScreen`, `_sysRowDelete('dest')` and `mbRemoveDest`;
+  `_kzQsCountRefused` in `qsAdjust` (the rows left all backdrops); `_kzStepNoScreen` in `doUndo` / `doRedo` (a step with no screen
+  while the show has one: refused, the stacks untouched); `_kzAddNameRefused` in `confirmScreen` (ADD › Destination, `_kzOutTaken`);
+  `_kzWireNameRefused` in `_wireAdvSetCustomField` (a hand-made destination / AUX card renamed into a show output's name) and
+  `_kzWireNewName` for a new hand-made card (today's numbering, then past show output names). Flows checks Y1..Y16, phone X1 / X2;
+  renamed in place Q1..Q8 (Q8: 16kz-answers' (F) check, the count is refused at the −).
+- **16kz-fix** (the fixer's round after the two attacks on 16kz-refresh, 2026-09-29; search `16kz-fix`). (K) the owner's
+  correction of 22:00: `_iogAddHTML` is the pre-16kz-refresh markup again (+ box first) and the `iog-add-mirror` rule is gone;
+  only the output cards are mirrored. (J R4) `_ioAdvSyncPage1ToSimple` copies `refresh` to a page-1-made source (`fromAdv`
+  twin) with the other four fields; `_rfWrite('src',…)` writes a `fromAdv` source's page-1 row too (`_kxSrcRowRf`), so the
+  phone's rate survives the next Advanced draw (the other fields keep the 16ji rule: page 1 wins). (J R1) the Advanced
+  grid's variable columns are `minmax()` (>1100 px: 130-180 / 124-170 ×3 / 90-120, Notes `minmax(70px,1fr)`; ≤1100 px:
+  112-150 / 108-150 ×3 / 84-110, Notes 64): the free space fills them first (grid "maximize tracks"), so from ~1250 px the
+  widths equal 16kz-refresh's and at 1024 px every column fits. (I) `_nfFit`: the largest size at which the whole name fits
+  two lines; else the largest at which line 2 ends in … after a whole word (`cut2`); `_nfMini`'s smallest size is 3 px.
+  (R6) the phone's Resolution field wraps its two boxes in `.mb-io-rescol` (flex-wrap; the resolution box `flex:1 0 auto`,
+  never below its text; Refresh `flex:1 0 104px`). (R5) `_nwFit` sizes the note box to the note (room above / below its
+  cell) on open and on input; Enter with Shift saves; a line break in the box becomes a space. (H) `_rfCommit`'s refusal
+  alert gives the focus back to the Refresh pill on OK / Escape (`onConfirm` / `onCancel`). Flows checks N1..N6, phone M1;
+  renamed in place P1 (the + Add cards: Y13 turned around).
 - Declined by the owner, do not resurface: mask shapes, anchor points, hardware profiles, canvas/WebGL renderer,
   interpolation filter toggles, upscale-factor notes, per-layer "sharp pixels", any licence mention.
 

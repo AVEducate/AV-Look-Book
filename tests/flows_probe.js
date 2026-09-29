@@ -5243,7 +5243,11 @@
     return is([was, after, picker, undone, redone, esc, kept], ['MV 1', ['OPS MV', ['OPS MV'], 1, true, 'OPS MV'], 'lists OPS MV', ['MV 1', ['MV 1']], ['OPS MV', ['OPS MV']], ['OPS MV', 'OPS MV', false, true, 1], 'OPS MV'],
       'name before / [name, page-1 MV rows, undo steps, Save lit, the box] after typing / Remove MV window / after Undo / after Redo / [box, name, cursor in a box, page open, undo steps] after typing + Escape / after save + reload');
   });
-  await check('I/O Patch: "Set for all" > Type > "Custom…" asks for the name ONCE (one focused box in the Set-for-all row, not one per row) and applies it to every source in one undo step, remembered for the menu; Escape or an empty box puts the chip back and writes nothing; the same on the destinations row and on an Advanced page', async () => {
+  // 16kz-answers R1: REPLACES the check named in its header (reason in the block)
+  // 16kz-answers: RENAMED in place. Why: Omar's answer 2 ("do the recommended"): on Advanced page 1 D0 reaches the destination rows only;
+  //   the AUX / DSM rows have their own A0. The destinations part now reads the destination rows (E2 Output on every one) and that the AUX /
+  //   DSM rows kept their Type. Everything else is unchanged.
+  await check('I/O Patch: "Set for all" > Type > "Custom…" asks for the name ONCE (one focused box in the Set-for-all row, not one per row) and applies it to every source in one undo step, remembered for the menu; Escape or an empty box puts the chip back and writes nothing; the same on the destinations row (16kz-answers: on Advanced page 1 D0 names every destination row, the AUX / DSM rows keep theirs: they have A0, Omar\'s answer 2) and on an Advanced page', async () => {
     await restore(); await ioOpenSimple(); const out = {}; const rem0 = JSON.stringify(customTypes);
     await r2Adv();   /* 16ky-r2: ADAPTED, the Set-for-all Type is the S0 / D0 row of the Advanced page (page 1); the types are read from its rows */
     const types = () => r2P1Types('src');
@@ -5260,16 +5264,17 @@
     out.escaped = [!!tfAllChip('advsrc-all', $('#io-adv')), !tfAllBox('advsrc-all'), types().every(t => t === 'Custom:Resolume Rig'), _undoStack.length - u1, $('#sys-overlay').classList.contains('open')];
     await ioPick(tfAllChip('advsrc-all', $('#io-adv')), /^Custom…/); await wait(100); const a3 = tfAllBox('advsrc-all'); a3.focus(); a3.blur(); await wait(300);
     out.leftEmpty = [!!tfAllChip('advsrc-all', $('#io-adv')), types().every(t => t === 'Custom:Resolume Rig'), _undoStack.length - u1];
-    const dt = () => r2P1Types('dst');
+    const _kzAx = dsms.map(d => d.name), _kzDt = aux => ((ioAdvanced.pages[0] || {}).dests || []).filter(r => r && r.name && _kzAx.includes(r.name) === aux).map(r => (r.deviceType || '') + ':' + (r.customType || ''));   /* 16kz-answers: destination rows / AUX / DSM rows */
+    const dt = () => _kzDt(false), ax0 = JSON.stringify(_kzDt(true));
     const mv0 = JSON.stringify(r2P1Types('mv')); const u2 = _undoStack.length;
     await ioPick(tfAllChip('advdst-all', $('#io-adv')), /^Custom…/); await wait(100); const d = tfAllBox('advdst-all'); out.destAsked = [$$('.sys-type-input', r2Sec('dst')).length, !!d, document.activeElement === d];
-    if (d) { tfType(d, 'E2 Output'); await wait(400); } out.destApplied = [dt().every(t => t === 'Custom:E2 Output'), JSON.stringify(r2P1Types('mv')) === mv0, _undoStack.length - u2, (customTypes.devices || []).includes('E2 Output')];
+    if (d) { tfType(d, 'E2 Output'); await wait(400); } out.destApplied = [dt().every(t => t === 'Custom:E2 Output'), JSON.stringify(_kzDt(true)) === ax0, JSON.stringify(r2P1Types('mv')) === mv0, _undoStack.length - u2, (customTypes.devices || []).includes('E2 Output')];
     _ioSetView('advanced'); await wait(700); okDialogs(); await wait(200); const u3 = _undoStack.length; const pg = ioAdvanced.pages[ioAdvanced.page || 0];
     await ioPick(tfAllChip('advsrc-all', $('#io-adv')), /^Custom…/); await wait(100); const a = tfAllBox('advsrc-all'); out.advAsked = [!!a, document.activeElement === a];
     if (a) { tfType(a, 'Adv Rig'); await wait(400); } out.advApplied = [pg.sources.filter(r => r.name).every(r => r.type === 'Custom' && r.customType === 'Adv Rig'), _undoStack.length - u3];
     _ioSetView('simple'); await wait(300); closeSystem(); customTypes = JSON.parse(rem0); await restore();
-    return is(out, { asked: [1, true, true, 0, true], applied: [true, 1, true, true, true], undone: [true, false], redone: true, escaped: [true, true, true, 0, true], leftEmpty: [true, true, 0], destAsked: [1, true, true], destApplied: [true, true, 1, true], advAsked: [true, true], advApplied: [true, 1] },
-      'asked [type boxes in the table, ask-once box, focused, undo steps, types untouched] / applied [every source Custom:Resolume Rig, undo steps, chip back, row boxes read the name, remembered] / after Undo [types back, still remembered] / Redo / Escape [chip back, box gone, types kept, undo steps, page open] / left empty [chip back, types kept, undo steps] / destinations asked / destinations applied [every output, MV untouched, undo steps, remembered] / Advanced asked / Advanced applied');
+    return is(out, { asked: [1, true, true, 0, true], applied: [true, 1, true, true, true], undone: [true, false], redone: true, escaped: [true, true, true, 0, true], leftEmpty: [true, true, 0], destAsked: [1, true, true], destApplied: [true, true, true, 1, true], advAsked: [true, true], advApplied: [true, 1] },
+      'asked [type boxes in the table, ask-once box, focused, undo steps, types untouched] / applied [every source Custom:Resolume Rig, undo steps, chip back, row boxes read the name, remembered] / after Undo [types back, still remembered] / Redo / Escape [chip back, box gone, types kept, undo steps, page open] / left empty [chip back, types kept, undo steps] / destinations asked / destinations applied [every destination row, the AUX / DSM rows kept, MV untouched, undo steps, remembered] / Advanced asked / Advanced applied');
   });
   await check('I/O Patch: Custom Resolution blocks Save while Width or Height is blank or 0, says why inside the window and never raises the browser alert; a good size saves as one undo step, Undo / Redo, save + reload', async () => {
     await restore(); await ioOpenSimple(); const n = srcNames()[0]; const res0 = _sysGetSourceMeta(n).resolution || ''; const u0 = _undoStack.length;
@@ -5346,21 +5351,25 @@
     return is(out, { advanced: [true, 'advanced', true], rowChip: [true, true, true], nameBox: [true, true], typedThenChip: [true, true, 1, true, true, true, true], undone: true, enter: [true, true, true, 1] },
       '[click landed, view, types untouched] after one press on Advanced / [click landed, menu open, chip back] after one press on a row\'s Type chip / [cursor in the box, chip back] after one press into a name box / [click landed, every source Custom:Barco E2, undo steps, D0 menu open, menu glued to the redrawn D0 chip, chip back, rows read the name] with a name typed and one press on D0 / types back after Undo / [committed, rows read the name, chip back, undo steps] after Enter');
   });
-  await check('I/O Patch: a multiviewer renamed from Simple to a destination\'s name and then to another name leaves the page-1 destination rows alone (the rename follows its own kind, both ways), and the name menus keep destination and multiviewer names apart', async () => {
+  // 16kz-answers R2: REPLACES the check named in its header (reason in the block)
+  // 16kz-answers: RENAMED in place. Why: Omar's answer 8 ("refuse outputs too"): a multiviewer renamed into a destination's name,
+  //   or a destination into the multiviewer's, is refused with Name in use. The old first step (the MV takes LEFT LED) is now a refusal (the
+  //   MV keeps MV 1, nothing on page 1 moves); the rest (each rename follows its own kind) is unchanged.
+  await check('I/O Patch (16kz-answers, Omar\'s answer 8: a multiviewer and a destination never take each other\'s name): a multiviewer renamed from Simple to a destination\'s name is refused (Name in use, it keeps its name, page 1 unchanged), renamed to another name it leaves the page-1 destination rows alone (the rename follows its own kind, both ways: a destination refused the multiviewer\'s name and renamed again leaves the page-1 multiviewer rows alone), and the name menus keep destination and multiviewer names apart', async () => {
     await restore(); await ioOpenSimple(); _ioSetView('advanced'); await wait(700); okDialogs(); _ioSetView('simple'); await wait(400); const out = {};
     const p1 = () => ({ d: (ioAdvanced.pages[0].dests || []).map(r => r.name), m: (ioAdvanced.pages[0].mvs || []).map(r => r.name) });
     const start = p1(); const dName = screens[0].name; const mvName = multiviewers[0].name;
     const menuOf = chev => { _sysOpenDropdown(chev); const rows = $$('.sys-dd > *'); const from = rows.findIndex(r => r.classList.contains('sys-dd-group') && /Used in this show/.test(r.textContent)); const used = []; for (let i = from + 1; from >= 0 && i < rows.length && !rows[i].classList.contains('sys-dd-group'); i++) used.push(($('.item-text', rows[i]) || rows[i]).textContent.trim()); _sysCloseMenu(); return used; };
     out.menus = [menuOf($('.sys-name-chev', ioSimRows('mv')[0])).includes(dName), menuOf($('.sys-name-chev', ioSimRows('mv')[0])).includes(mvName), menuOf($('.sys-name-chev', ioSimRows('dst')[0])).includes(mvName), menuOf($('.sys-name-chev', ioSimRows('dst')[0])).includes(dName)];
-    const rename = async (box, txt) => { box.focus(); box.value = txt; fire(box, 'input'); box.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', code: 'Enter', keyCode: 13, bubbles: true, cancelable: true })); if (document.activeElement === box) box.blur(); await wait(400); };
+    const rename = async (box, txt) => { box.focus(); box.value = txt; fire(box, 'input'); box.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', code: 'Enter', keyCode: 13, bubbles: true, cancelable: true })); if (document.activeElement === box) box.blur(); await wait(400); const t = dlgOpen() ? dialogText() : ''; okDialogs(); await wait(150); return /Name in use/.test(t); };   /* 16kz-answers: the refusal answered OK */
     const mvBox = () => $('.sys-name-input', ioSimRows('mv')[0]); if (!mvBox()) { closeSystem(); await restore(); return 'the multiviewer row has no name box'; }
-    await rename(mvBox(), dName); out.mvToDest = [multiviewers[0].name, p1().d, p1().m];
+    const said = await rename(mvBox(), dName); out.mvToDest = [multiviewers[0].name, p1().d, p1().m, said];
     await rename(mvBox(), 'OPS MV'); out.mvAgain = [multiviewers[0].name, screens[0].name, p1().d, p1().m];
     const dBox = () => ioSimRows('dst').map(r => $('.sys-name-input[data-sys-kind="dest"]', r)).find(Boolean);
-    await rename(dBox(), 'OPS MV'); await rename(dBox(), 'X WALL'); out.destSide = [screens[0].name, multiviewers[0].name, p1().d[0], p1().m];
+    out.destToMv = [await rename(dBox(), 'OPS MV'), screens[0].name]; await rename(dBox(), 'X WALL'); out.destSide = [screens[0].name, multiviewers[0].name, p1().d[0], p1().m];
     closeSystem(); await restore();
-    return is(out, { menus: [false, true, false, true], mvToDest: [dName, start.d, [dName]], mvAgain: ['OPS MV', dName, start.d, ['OPS MV']], destSide: ['X WALL', 'OPS MV', 'X WALL', ['OPS MV']] },
-      '[MV menu lists a destination, MV menu lists the MV, destination menu lists the MV, destination menu lists a destination] under "Used in this show" / [MV, page-1 dests, page-1 mvs] after the MV takes a destination\'s name / [MV, first destination, page-1 dests, page-1 mvs] after the MV is renamed again / [first destination, MV, first page-1 dest, page-1 mvs] after a destination takes the MV\'s name and is renamed again');
+    return is(out, { menus: [false, true, false, true], mvToDest: [mvName, start.d, [mvName], true], mvAgain: ['OPS MV', dName, start.d, ['OPS MV']], destToMv: [true, dName], destSide: ['X WALL', 'OPS MV', 'X WALL', ['OPS MV']] },
+      '[MV menu lists a destination, MV menu lists the MV, destination menu lists the MV, destination menu lists a destination] under "Used in this show" / [MV, page-1 dests, page-1 mvs, Name in use said] after the MV is given a destination\'s name / [MV, first destination, page-1 dests, page-1 mvs] after the MV is renamed again / [Name in use said, first destination] after the destination is given the MV\'s name / [first destination, MV, first page-1 dest, page-1 mvs] after a destination takes the MV\'s name and is renamed again');
   });
   // 16ky-r3 XR2: REPLACES the check named in its header (reason in the block)
   // 16ky-r3: RENAMED in place. Why: Omar's answers 1 and 2. A Simple card's Reset never clears a note, so a card whose only value is a note now changes nothing
@@ -5828,7 +5837,10 @@ await check('Help says what the app does: the layer chip takes two clicks, the s
   //   Excel is unchanged (decision 32 stands, the owner's decision 8 of 16ky: the I/O Patch Excel stays): the Video I-O tab
   //   still lists it after the AUX rows and before the multiviewer. Only the screen part reads the grid now. FAILS on 16kw
   //   (no grid), PASSES on 16ky.
-  await check('I/O Patch Excel: the Video I-O tab lists an I/O-only destination after the AUX rows and before the multiviewer (unchanged, decision 32); on the Simple card grid (16ky) its card is the last of the Destinations section (IO), before the AUX / DSM section; the page-1 tab is unchanged', async () => {
+  // 16kz-refresh Q1: REPLACES the check named in its header (reason in the block)
+  // 16kz-refresh: RENAMED in place. Why: Omar's R3 ("all recommended"): every I/O Excel tab has a Refresh column right after
+  //   Resolution. The rows this check reads carry it (empty: no refresh rate is set); everything else is unchanged.
+  await check('I/O Patch Excel: the Video I-O tab lists an I/O-only destination after the AUX rows and before the multiviewer (unchanged, decision 32); on the Simple card grid (16ky) its card is the last of the Destinations section (IO), before the AUX / DSM section; the page-1 tab is unchanged; 16kz-refresh: the Video I-O row carries the Refresh column after Resolution (empty, no rate set)', async () => {
     await restore(); await ioOpenSimple(); _ioSetView('advanced'); await wait(700); okDialogs();
     _ioAdvAdd('dst'); await wait(300); const nm = $$('#io-adv .sys-name-input[data-sys-kind="adv-dst"]').pop(); if (!nm) { closeSystem(); await restore(); return 'no new destination row on page 1'; }
     nm.focus(); nm.value = 'IO EXCEL TEST'; nm.blur(); await wait(400); _ioSetView('simple'); await wait(500); okDialogs();
@@ -5842,7 +5854,7 @@ await check('Help says what the app does: the layer chip takes two clicks, the s
     return is({ screen, slots, io: ioRow ? ioRow.map(c => c.text) : 'missing', slotStyle: ioRow && d1 ? ioRow[0].s === d1[0].s : 'n/a', page1: p1Dests, fromAdv: !!(io && io.fromAdv) },
       { screen: [[['D1', 'LEFT LED'], ['D2', 'CENTER LED'], ['D3', 'RIGHT LED'], ['IO', 'IO EXCEL TEST']], [['A1', 'DSM 1'], ['A2', 'AUX 1']], [['MV1', 'MV 1']]],
         slots: ['Destination 1', 'Destination 2', 'Destination 3', 'AUX 1', 'AUX 2', 'I/O Dest 1', 'Multiviewer 1'],
-        io: ['I/O Dest 1', '', 'IO EXCEL TEST', '', '1920x1080', ''], slotStyle: true,
+        io: ['I/O Dest 1', '', 'IO EXCEL TEST', '', '1920x1080', '', ''], slotStyle: true,
         page1: [['Destination 1', 'LEFT LED'], ['Destination 2', 'CENTER LED'], ['Destination 3', 'RIGHT LED'], ['Destination 4', 'DSM 1'], ['Destination 5', 'AUX 1'], ['Destination 6', 'IO EXCEL TEST']], fromAdv: true },
       'the grid [Destinations, AUX / DSM, Multiviewers] as [number, name] / Video I-O slot order / the I/O-only row / its slot cell styled like a destination / page-1 tab destinations / the row came from page 1');
   });
@@ -5877,7 +5889,10 @@ await check('Help says what the app does: the layer chip takes two clicks, the s
   const addDestF = async name => { _ioAdvAdd('dst'); await wait(300); const nm = $$('#io-adv .sys-name-input[data-sys-kind="adv-dst"]').pop(); if (!nm) return false; nm.focus(); nm.value = name; nm.blur(); await wait(400); return true; };
   const toAdvancedF = async () => { _ioSetView('advanced'); await wait(700); const asked = dlgOpen() && /changed since/i.test(dialogText()); if (asked) { $('#dlg-cancel').click(); await wait(300); } okDialogs(); return asked; };   /* "Keep my page" */
   const saveReloadF = async () => { closeSystem(); await wait(200); _applyProjectText(JSON.stringify(getProjectState())); await wait(700); okDialogs(); };
-  await check('I/O Patch page 1 -> Simple: connector, type, resolution and note set on a page-1 destination follow to its IO row (screen, twin), the Video I-O tab prints them like the page-1 tab, save + reload keeps them, one undo step per edit', async () => {
+  // 16kz-refresh Q2: REPLACES the check named in its header (reason in the block)
+  // 16kz-refresh: RENAMED in place. Why: Omar's R3 ("all recommended"): every I/O Excel tab has a Refresh column right after
+  //   Resolution. The rows this check reads carry it (empty: no refresh rate is set); everything else is unchanged.
+  await check('I/O Patch page 1 -> Simple: connector, type, resolution and note set on a page-1 destination follow to its IO row (screen, twin), the Video I-O tab prints them like the page-1 tab, save + reload keeps them, one undo step per edit (16kz-refresh: both tabs\' rows carry the Refresh column after Resolution, empty)', async () => {
     await restore(); await ioOpenSimple(); await toAdvancedF();
     if (!await addDestF('IO FIX TEST')) { closeSystem(); await restore(); return 'no new destination row on page 1'; }
     const u0 = _undoStack.length; const row = () => advRowF('IO FIX TEST');
@@ -5892,10 +5907,13 @@ await check('Help says what the app does: the layer chip takes two clicks, the s
     await saveReloadF(); const reloaded = twinF('IO FIX TEST'); await restore();
     return is({ steps, dirty, p1, twinAdv, screen, tab, reloaded },
       { steps: 4, dirty: true, p1: ['HDMI 2.0', 'Monitor', '', '3840x2160', 'Lobby feed'], twinAdv: ['HDMI 2.0', 'Monitor', '', 3840, 2160, 'Lobby feed', true], screen: ['HDMI 2.0', 'Monitor', '3840×2160', 'Lobby feed'],
-        tab: { io: ['I/O Dest 1', 'HDMI 2.0', 'IO FIX TEST', 'Monitor', '3840x2160', 'Lobby feed'], p1: ['HDMI 2.0', '', 'IO FIX TEST', 'Monitor', '3840x2160', 'Lobby feed'] }, reloaded: ['HDMI 2.0', 'Monitor', '', 3840, 2160, 'Lobby feed', true] },
+        tab: { io: ['I/O Dest 1', 'HDMI 2.0', 'IO FIX TEST', 'Monitor', '3840x2160', '', 'Lobby feed'], p1: ['HDMI 2.0', '', 'IO FIX TEST', 'Monitor', '3840x2160', '', 'Lobby feed'] }, reloaded: ['HDMI 2.0', 'Monitor', '', 3840, 2160, 'Lobby feed', true] },
       'undo steps for the four edits / Save lit / page-1 row / twin after the edits / the IO row on the Simple screen / Video I-O row + page-1 tab row / twin after save + reload');
   });
-  await check('I/O Patch page 1 -> Simple: a show saved by an older build (page-1 fields set, IO row blank) catches up the moment the I/O Patch opens, before any Advanced look, without lighting Save; the IO row on screen and both Excel tabs agree', async () => {
+  // 16kz-refresh Q3: REPLACES the check named in its header (reason in the block)
+  // 16kz-refresh: RENAMED in place. Why: Omar's R3 ("all recommended"): every I/O Excel tab has a Refresh column right after
+  //   Resolution. The rows this check reads carry it (empty: no refresh rate is set); everything else is unchanged.
+  await check('I/O Patch page 1 -> Simple: a show saved by an older build (page-1 fields set, IO row blank) catches up the moment the I/O Patch opens, before any Advanced look, without lighting Save; the IO row on screen and both Excel tabs agree (16kz-refresh: their rows carry the Refresh column after Resolution, empty)', async () => {
     await restore(); await ioOpenSimple(); await toAdvancedF();
     if (!await addDestF('IO FIX LOOK')) { closeSystem(); await restore(); return 'no new destination row on page 1'; }
     closeSystem(); await wait(200); const st = JSON.parse(JSON.stringify(getProjectState())); const r = (st.ioAdvanced.pages[0].dests || []).find(x => x && x.name === 'IO FIX LOOK'); if (!r) { await restore(); return 'no IO FIX LOOK row in the saved text'; }
@@ -5909,10 +5927,13 @@ await check('Help says what the app does: the layer chip takes two clicks, the s
     return is({ opened, look, tab, dirtyAfterExport },
       { opened: { twin: ['', '', '', 1920, 1080, '', true], dirty: false, undo: 0 },
         look: { screen: ['HDMI 2.0', 'Monitor', '3840×2160', 'Lobby feed'], twin: ['HDMI 2.0', 'Monitor', '', 3840, 2160, 'Lobby feed', true], p1: ['HDMI 2.0', 'Monitor', '', '3840x2160', 'Lobby feed'], dirty: false, saveLit: false, undo: 0 },
-        tab: { io: ['I/O Dest 1', 'HDMI 2.0', 'IO FIX LOOK', 'Monitor', '3840x2160', 'Lobby feed'], p1: ['HDMI 2.0', '', 'IO FIX LOOK', 'Monitor', '3840x2160', 'Lobby feed'] }, dirtyAfterExport: false },
+        tab: { io: ['I/O Dest 1', 'HDMI 2.0', 'IO FIX LOOK', 'Monitor', '3840x2160', '', 'Lobby feed'], p1: ['HDMI 2.0', '', 'IO FIX LOOK', 'Monitor', '3840x2160', '', 'Lobby feed'] }, dirtyAfterExport: false },
       'the saved show as opened (twin blank, clean) / the Simple look (IO row on screen, twin, page-1 row, Save, undo) / both tabs / clean after the export');
   });
-  await check('I/O Patch page 1 -> Simple: a show saved by an older build where the IO row was edited in Simple (page-1 row blank) is not blanked by the look: the page-1 row takes the values instead, nothing lit; both Excel tabs agree', async () => {
+  // 16kz-refresh Q4: REPLACES the check named in its header (reason in the block)
+  // 16kz-refresh: RENAMED in place. Why: Omar's R3 ("all recommended"): every I/O Excel tab has a Refresh column right after
+  //   Resolution. The rows this check reads carry it (empty: no refresh rate is set); everything else is unchanged.
+  await check('I/O Patch page 1 -> Simple: a show saved by an older build where the IO row was edited in Simple (page-1 row blank) is not blanked by the look: the page-1 row takes the values instead, nothing lit; both Excel tabs agree (16kz-refresh: their rows carry the Refresh column after Resolution, empty)', async () => {
     await restore(); await ioOpenSimple(); await toAdvancedF();
     if (!await addDestF('IO FIX KEEP')) { closeSystem(); await restore(); return 'no new destination row on page 1'; }
     closeSystem(); await wait(200); const st = JSON.parse(JSON.stringify(getProjectState())); const d = (st.ioDests || []).find(x => x && x.name === 'IO FIX KEEP'); if (!d) { await restore(); return 'no IO FIX KEEP twin in the saved text'; }
@@ -5927,10 +5948,13 @@ await check('Help says what the app does: the layer chip takes two clicks, the s
       { opened: { p1: ['', '', '', '', ''], dirty: false },
         simple: { screen: ['HDMI 2.1', 'Blu-ray', '3840×2160', 'Lobby'], twin: ['HDMI 2.1', 'Custom', 'Blu-ray', 3840, 2160, 'Lobby', true], p1: ['HDMI 2.1', 'Custom', 'Blu-ray', '3840x2160', 'Lobby'], dirty: false, undo: 0 },
         adv: { twin: ['HDMI 2.1', 'Custom', 'Blu-ray', 3840, 2160, 'Lobby', true], p1: ['HDMI 2.1', 'Custom', 'Blu-ray', '3840x2160', 'Lobby'], advScreen: ['HDMI 2.1', 'Blu-ray', '3840×2160', 'Lobby'], dirty: false, undo: 0 },
-        tab: { io: ['I/O Dest 1', 'HDMI 2.1', 'IO FIX KEEP', 'Blu-ray', '3840x2160', 'Lobby'], p1: ['HDMI 2.1', '', 'IO FIX KEEP', 'Blu-ray', '3840x2160', 'Lobby'] } },
+        tab: { io: ['I/O Dest 1', 'HDMI 2.1', 'IO FIX KEEP', 'Blu-ray', '3840x2160', '', 'Lobby'], p1: ['HDMI 2.1', '', 'IO FIX KEEP', 'Blu-ray', '3840x2160', '', 'Lobby'] } },
       'the saved show as opened (page-1 row blank, clean) / the Simple look (IO row kept, page-1 row filled, clean, no undo step) / the Advanced look / both tabs');
   });
-  await check('I/O Patch Simple -> page 1: a connector, a Custom type and a note set on the IO row in Simple reach the page-1 row with the same edit; the next Advanced look (Keep my page) puts nothing back; both Excel tabs agree', async () => {
+  // 16kz-refresh Q5: REPLACES the check named in its header (reason in the block)
+  // 16kz-refresh: RENAMED in place. Why: Omar's R3 ("all recommended"): every I/O Excel tab has a Refresh column right after
+  //   Resolution. The rows this check reads carry it (empty: no refresh rate is set); everything else is unchanged.
+  await check('I/O Patch Simple -> page 1: a connector, a Custom type and a note set on the IO row in Simple reach the page-1 row with the same edit; the next Advanced look (Keep my page) puts nothing back; both Excel tabs agree (16kz-refresh: their rows carry the Refresh column after Resolution, empty)', async () => {
     await restore(); await ioOpenSimple(); await toAdvancedF();
     if (!await addDestF('IO FIX BACK')) { closeSystem(); await restore(); return 'no new destination row on page 1'; }
     _ioSetView('simple'); await wait(500); okDialogs(); const row = () => ioDestRowF('IO FIX BACK'); const u0 = _undoStack.length;
@@ -5946,7 +5970,7 @@ await check('Help says what the app does: the layer chip takes two clicks, the s
     const tab = ioTabRowsF(wb, 'IO FIX BACK'); closeSystem(); await restore();
     return is({ edited, look, screen, tab },
       { edited: { steps: 4, twin: ['HDMI 2.1', 'Custom', 'Blu-ray', 1920, 1080, 'Lobby', true], p1: ['HDMI 2.1', 'Custom', 'Blu-ray', '', 'Lobby'] }, look: { twin: ['HDMI 2.1', 'Custom', 'Blu-ray', 1920, 1080, 'Lobby', true], p1: ['HDMI 2.1', 'Custom', 'Blu-ray', '', 'Lobby'], advScreen: ['HDMI 2.1', 'Blu-ray', '— Set resolution —', 'Lobby'] },
-        screen: ['HDMI 2.1', 'Blu-ray', '1920×1080', 'Lobby'], tab: { io: ['I/O Dest 1', 'HDMI 2.1', 'IO FIX BACK', 'Blu-ray', '1920x1080', 'Lobby'], p1: ['HDMI 2.1', '', 'IO FIX BACK', 'Blu-ray', '', 'Lobby'] } },
+        screen: ['HDMI 2.1', 'Blu-ray', '1920×1080', 'Lobby'], tab: { io: ['I/O Dest 1', 'HDMI 2.1', 'IO FIX BACK', 'Blu-ray', '1920x1080', '', 'Lobby'], p1: ['HDMI 2.1', '', 'IO FIX BACK', 'Blu-ray', '', '', 'Lobby'] } },
       'after the Simple edits (undo steps, twin, page-1 row) / after the Advanced look (twin, page-1 row, page-1 row on screen) / the IO row on screen / both tabs');
   });
   // 16ky-r3 XR3: REPLACES the check named in its header (reason in the block)
@@ -7091,7 +7115,10 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
       'PPT A [picked, type, customType, chip, undo steps, Save lit] / after Undo / CAM 1 typed KW RIG then Clear from its box [before, picked, type, customType, a chip again, undo steps] / LEFT LED [picked, deviceType, customType, chip, undo steps] / Video I-O rows / after save + reload');
   });
   // 16kw-menus F: NEW
-  await check('Type 16kw: — Clear — in the Set-for-all rows empties every row in ONE undo step (sources; destinations, AUX and I/O-only outputs, the multiviewer left alone as Set for all always does), and on an Advanced page-1 row it empties the row and its Simple twin in the same edit', async () => {
+  // 16kz-answers R3: REPLACES the check named in its header (reason in the block)
+  // 16kz-answers: RENAMED in place. Why: Omar's answer 2: on Advanced page 1 D0's Clear empties the destination rows only and A0's the AUX / DSM
+  //   rows; the check now clears with both (one undo step each), so every output is still emptied. The rest is unchanged.
+  await check('Type 16kw: — Clear — in the Set-for-all rows empties every row in ONE undo step (sources; destinations, AUX and I/O-only outputs, the multiviewer left alone as Set for all always does; 16kz-answers, Omar\'s answer 2: on Advanced page 1 D0 empties the destination rows and A0 the AUX / DSM rows, one step each), and on an Advanced page-1 row it empties the row and its Simple twin in the same edit', async () => {
     await restore(); await ioOpenSimple(); const out = {};
     await r2Adv();   /* 16ky-r2: ADAPTED, the Set-for-all Type is the Advanced page's S0 / D0 row; the types are read from the page-1 rows */
     const u0 = _undoStack.length; await ioPick(r2AllCell('src', 'src-type'), /^— Clear —$/);
@@ -7099,15 +7126,17 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
     doUndo(); await wait(400); out.srcUndo = (r2P1('src', 'PPT A') || {}).type;
     const mv0 = JSON.stringify(r2P1Types('mv')); const u1 = _undoStack.length;
     await ioPick(r2AllCell('dst', 'dst-type'), /^— Clear —$/);
-    out.dst = [r2P1Types('dst').every(t => t === ':'), JSON.stringify(r2P1Types('mv')) === mv0, _undoStack.length - u1];
-    doUndo(); await wait(400);
+    const _kzAx = dsms.map(d => d.name), _kzDt = aux => ((ioAdvanced.pages[0] || {}).dests || []).filter(r => r && r.name && _kzAx.includes(r.name) === aux).map(r => (r.deviceType || '') + ':' + (r.customType || ''));   /* 16kz-answers */
+    out.dst = [_kzDt(false).every(t => t === ':'), _kzDt(true).every(t => t !== ':'), JSON.stringify(r2P1Types('mv')) === mv0, _undoStack.length - u1];
+    const u1b = _undoStack.length; await ioPick(r2AllCell('aux', 'dst-type'), /^— Clear —$/); out.aux = [r2P1Types('dst').every(t => t === ':'), JSON.stringify(r2P1Types('mv')) === mv0, _undoStack.length - u1b];
+    doUndo(); await wait(400); doUndo(); await wait(400);
     await toAdvancedF(); if (!await addDestF('KW TYPE')) { closeSystem(); await restore(); return 'no new destination row on page 1'; }
     await ioPick(_kwCell(advRowF('KW TYPE'), 'dst-type'), /^Monitor/); const set = [page1F('KW TYPE')[1], (twinF('KW TYPE') || [])[1]]; const u2 = _undoStack.length;
     await ioPick(_kwCell(advRowF('KW TYPE'), 'dst-type'), /^— Clear —$/);
     out.adv = [set, page1F('KW TYPE').slice(1, 3), twinF('KW TYPE').slice(1, 3), _undoStack.length - u2];
     _ioSetView('simple'); await wait(300); closeSystem(); await restore();
-    return is(out, { src: [true, 1], srcUndo: 'PC', dst: [true, true, 1], adv: [['Monitor', 'Monitor'], ['', ''], ['', ''], 1] },
-      'S0 Clear [every source empty, undo steps] / after Undo / D0 Clear [every output empty, the multiviewer untouched, undo steps] / page 1 [Monitor on the row and its twin, the row, the twin, undo steps]');
+    return is(out, { src: [true, 1], srcUndo: 'PC', dst: [true, true, true, 1], aux: [true, true, 1], adv: [['Monitor', 'Monitor'], ['', ''], ['', ''], 1] },
+      'S0 Clear [every source empty, undo steps] / after Undo / D0 Clear [every destination row empty, the AUX / DSM rows kept, the multiviewer untouched, undo steps] / A0 Clear [every output empty, the multiviewer untouched, undo steps] / page 1 [Monitor on the row and its twin, the row, the twin, undo steps]');
   });
   // 16kw-menus G: NEW
   const _kwAsk = async (trig, text) => { if (!await ioPick(trig, /^Custom…$/)) return 'no Custom… in the Connector menu'; await wait(120); const box = $('.sys-conn-ask .sys-type-input'); if (!box) return 'no box'; const seen = [document.activeElement === box, box.value, box.placeholder]; if (text !== undefined) { tfType(box, text); await wait(350); } return seen; };
@@ -7881,14 +7910,19 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
       'Edit Show Info, switch on [name box, header] / off again [name box, header, switch] / Update Show [destinations, undo steps, Wire unchanged, I/O Patch unchanged, question] / I/O Advanced asks / Wire Advanced asks / new show, Destination 2 on-off [name boxes, built] / All Destinations on-off (Set default for all) / Destination 2 and 3 on, 2 off');
   });
   // 16kx-r2fix R2: NEW
-  await check('Backdrop 16kx-r2fix: ONLY ITS OWN I/O Patch rows go (the rows are matched by name): with LEFT LED and RIGHT LED both renamed IMAG and I/O Patch Advanced page 1 built and copied, the FIRST IMAG made a backdrop in the I/O Patch Type menu takes only its own row off both pages (the other IMAG keeps its row, "stage right" note and all), in one step, no "Simple changed", one Undo gives both pages back exactly; with AUX 1 renamed CENTER LED, CENTER LED made a backdrop in the Type menu, and again in Edit Show Info, leaves the AUX its row on page 1 and nothing asks', async () => {
-    await restore(); const p0 = presets[0].id; homeSetScreenName(p0, _bxS('LEFT LED').id, 'IMAG'); homeSetScreenName(p0, _bxS('RIGHT LED').id, 'IMAG'); await wait(200);
+  // 16kz-answers R4: REPLACES the check named in its header (reason in the block)
+  // 16kz-answers: RENAMED in place. Why: Omar's answer 8: a rename into a name another output has is refused, so two outputs of one name
+  //   now come only from a show that already has them (it opens as it is). The check opens such a show (LEFT LED and RIGHT LED both IMAG; AUX 1
+  //   named CENTER LED) instead of renaming; everything it then does and expects is unchanged.
+  await check('Backdrop 16kx-r2fix: ONLY ITS OWN I/O Patch rows go (the rows are matched by name; 16kz-answers: a show that already has two of a name, since a rename into a used name is refused, Omar\'s answer 8): with LEFT LED and RIGHT LED both named IMAG and I/O Patch Advanced page 1 built and copied, the FIRST IMAG made a backdrop in the I/O Patch Type menu takes only its own row off both pages (the other IMAG keeps its row, "stage right" note and all), in one step, no "Simple changed", one Undo gives both pages back exactly; with AUX 1 named CENTER LED, CENTER LED made a backdrop in the Type menu, and again in Edit Show Info, leaves the AUX its row on page 1 and nothing asks', async () => {
+    const _kzOpen = async f => { const st = JSON.parse(BASE); f(st); _applyProjectText(JSON.stringify(st)); await wait(700); okDialogs(); await wait(150); okDialogs(); };   /* 16kz-answers: a show that already has two of a name */
+    await _kzOpen(st => st.screens.forEach(s => { if (s.name === 'LEFT LED' || s.name === 'RIGHT LED') s.name = 'IMAG'; })); await wait(200);
     await ioOpenSimple(); await toAdvancedF(); _ioCopyPage(0); await wait(300); _ioSetView('simple'); await wait(300); closeSystem(); await wait(200);
     const out = { before: _fxPages() }; const snapI = JSON.stringify(ioAdvanced.pages), u0 = _undoStack.length;
     const q = await _bxMk('IMAG'); out.q = typeof q === 'string' && /"IMAG" becomes a backdrop/.test(q);
     out.after = _fxPages(); out.undo = _undoStack.length - u0; out.names = screens.map(s => s.name + ' ' + (s.deviceType || ''));
     out.asked = await _fxIoAsks(); actions.undo(); await wait(600); out.undone = JSON.stringify(ioAdvanced.pages) === snapI;
-    await restore(); const aux = dsms.find(d => d.name === 'AUX 1'); _sysSetMeta('aux', aux.id, 'name', 'CENTER LED'); await wait(200);
+    await _kzOpen(st => st.dsms.forEach(d => { if (d.name === 'AUX 1') d.name = 'CENTER LED'; })); await wait(200);
     await ioOpenSimple(); await toAdvancedF(); _ioSetView('simple'); await wait(300); closeSystem(); await wait(200);
     out.auxBefore = _fxPages()[0]; await _bxMk('CENTER LED'); out.auxType = [_fxPages()[0], await _fxIoAsks()];
     actions.undo(); await wait(600); const e = await _r2Edit(1, true); out.auxEsi = [_fxPages()[0], e.nm, (_r2Bd() || {}).name, await _fxIoAsks()];
@@ -8174,7 +8208,13 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
     _sysSetSourceMeta(n, { type: 'Custom', customType: 'KZ RIG', notes: 'KZ SOURCE NOTE', connectorType: '3G-SDI', resolution: '3840x2160' });
     [screens[0], dsms[0], ioDests[0], multiviewers[0]].forEach((o, i) => { if (o) { o.deviceType = 'Custom'; o.customType = 'KZ DEV ' + i; o.notes = 'KZ NOTE ' + i; } }); return n; };
   // 16ky-r2 A: NEW
-  await check('I/O 16ky-r2: a Simple card is the name, the resolution and the cable type (Omar 2026-09-27: "this should stay simple just name resolution and cable type"): with a Type and a note stored on every kind of item, no card has a Type (chip, box or menu) or a notes box and none shows those words; a card\'s keys run picture, colour swatch and shuffle (sources, destinations, AUX / DSM), the name (and a source\'s pencil), the name library, the resolution box and its menu, the Cable Type menu, then Reset and Delete on the grey line, which keeps the red pill when the cable cannot carry the size and the number (S1, D1, IO, MV1) at its right end; the S0 / D0 bars set the Connector and the Resolution only', async () => {
+  // 16kz-refresh Q6: REPLACES the check named in its header (reason in the block)
+  // 16kz-refresh: RENAMED in place. Why: Omar's mockup (omar_14_card_mirror.png, "Source should have images on the Left and Destination
+  //   images on the right"): a destination and an AUX / DSM card are mirrored, their markup written left to right, so their keys run the
+  //   name column first (name, library, resolution and its menu, Cable Type), then the picture, the shuffle and the colour bar, then
+  //   Reset and Delete. A source card's keys, the I/O-only and multiviewer cards' keys (they have no picture control) and everything else
+  //   are unchanged.
+  await check('I/O 16ky-r2: a Simple card is the name, the resolution and the cable type (Omar 2026-09-27: "this should stay simple just name resolution and cable type"): with a Type and a note stored on every kind of item, no card has a Type (chip, box or menu) or a notes box and none shows those words; a card\'s keys run left to right: on a source card the picture, colour swatch and shuffle, the name and its pencil, the name library, the resolution box and its menu, the Cable Type menu; on a destination or AUX / DSM card (mirrored, 16kz-refresh: its picture on the right) the name, the name library, the resolution box and its menu, the Cable Type menu, then the picture, the shuffle and the colour swatch; then Reset and Delete on the grey line, which keeps the red pill when the cable cannot carry the size and the number (S1, D1, IO, MV1) at its right end; the S0 / D0 bars set the Connector and the Resolution only', async () => {
     await restore(); _kzStock(); await ioOpenSimple(); const out = {};
     const g = $('#io-grid'); if (!g) { closeSystem(); await restore(); return 'no card grid'; }
     out.typeOrNotes = $$(_kzTN).length;
@@ -8185,7 +8225,7 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
     out.bars = $$('#io-grid .iog-all').filter(b => $('[data-sys-kind="src-all"], [data-sys-kind="dst-all"]', b)).map(b => $$('[data-sys-field]', b).map(x => x.dataset.sysKind + ' ' + x.dataset.sysField + ': ' + (x.textContent || '').trim()));
     closeSystem(); await restore();
     const K = ['name', 'library', 'resolution', 'resolution menu', 'cable type', 'reset', 'delete'], P = ['picture', 'swatch', 'shuffle'];
-    return is(out, { typeOrNotes: 0, words: false, keys: [P.concat(['name', 'pencil'], K.slice(1)), P.concat(K), P.concat(K), K, K],
+    return is(out, { typeOrNotes: 0, words: false, keys: [P.concat(['name', 'pencil'], K.slice(1)), K.slice(0, 5).concat(['picture', 'shuffle', 'swatch'], K.slice(5)), K.slice(0, 5).concat(['picture', 'shuffle', 'swatch'], K.slice(5)), K, K],
       foot: [[['red pill', 'reset + delete', 'number S1'], 0], [['reset + delete', 'number D1'], 0], [['reset + delete', 'number IO'], 0], [['reset + delete', 'number MV1'], 0]],
       bars: [['src-all connector: Connector', 'src-all resolution: Resolution'], ['dst-all connector: Connector', 'dst-all resolution: Resolution']] },
       'Type / notes controls on the grid / the stored Type or note words on the grid / the keys of a card [source, destination, AUX, I/O-only, multiviewer] / the grey line [its parts, the number\'s distance from its right end] of a source (3840×2160 on 3G-SDI), a destination, an I/O-only destination, the multiviewer / the S0 and D0 bars [kind, field: words]');
@@ -8261,7 +8301,17 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
   const _kbClean = async () => { _applyProjectText(JSON.stringify(getProjectState())); await wait(700); okDialogs(); await wait(150); okDialogs(); };   /* the show as it stands, opened clean (Save dark) */
   const _kbConfirmText = () => { const o = $('#sys-confirm-overlay'); return o ? (o.textContent || '').replace(/\s+/g, ' ').trim() : null; };
   // 16ky-r2b N1: NEW
-  await check('I/O 16ky-r2b: every section has its own Set for all row in its title (Omar 2026-09-27: "each section should get its own each should have its own set for all row"): S0 Sources, D0 Destinations, A0 AUX / DSM, M0 Multiviewers, each with Connector ▾ and Resolution ▾ only, reached with Tab, shown when its section has a card; each pick changes ONLY its own section\'s cards (D0: the destinations and I/O-only destinations, no longer the AUX / DSM outputs; A0: the AUX / DSM outputs; M0: the multiviewers) in ONE undo step that lights Save, and Undo takes it back; its menus open with Custom… first and — Clear — second (greyed on D0, A0 and M0: an output\'s resolution is its size); A0 › Custom resolution… sets every AUX / DSM output in one step; A0 and M0 give Advanced page 1, the I/O Excel and the Look Book exactly what the same picks made card by card give; the Advanced pages keep their own S0 / D0 / M0 rows', async () => {
+  // 16kz-answers R5: REPLACES the check named in its header (reason in the block)
+  // 16kz-answers: RENAMED in place. Why: Omar's answer 2: Advanced page 1 has A0 for its AUX / DSM rows (between D0 and M0). Only the name
+  //   and the Advanced rows' expectation changed.
+  // 16kz-refresh Q7: REPLACES the check named in its header (reason in the block)
+  // 16kz-refresh: RENAMED in place. Why: Omar's R1 ("all recommended"): the Set for all rows of the Advanced pages (S0 / D0 / A0 / M0)
+  //   have a Refresh pill too, after Resolution. The list of the Advanced rows' controls this check reads now ends with it. ALSO (a timing
+  //   fix, no expectation changed): after each Undo the check waits for the Save light to settle (up to 1.2 s more) before the next pick
+  //   reads it: the unsaved check runs 350 ms after the last change and the check read it at 400 ms, so a late redraw left it lit and the
+  //   next pick's "Save lit by it" read false. Run alone the unchanged check failed that way 2 of 2 times on the first builder's page and
+  //   3 of 3 on this one (a different pick each time), and once in this round's gate; everything else is unchanged.
+  await check('I/O 16ky-r2b: every section has its own Set for all row in its title (Omar 2026-09-27: "each section should get its own each should have its own set for all row"): S0 Sources, D0 Destinations, A0 AUX / DSM, M0 Multiviewers, each with Connector ▾ and Resolution ▾ only, reached with Tab, shown when its section has a card; each pick changes ONLY its own section\'s cards (D0: the destinations and I/O-only destinations, no longer the AUX / DSM outputs; A0: the AUX / DSM outputs; M0: the multiviewers) in ONE undo step that lights Save, and Undo takes it back; its menus open with Custom… first and — Clear — second (greyed on D0, A0 and M0: an output\'s resolution is its size); A0 › Custom resolution… sets every AUX / DSM output in one step; A0 and M0 give Advanced page 1, the I/O Excel and the Look Book exactly what the same picks made card by card give; the Advanced pages keep their own S0 / D0 / M0 rows, and page 1 adds A0 above its AUX / DSM rows (16kz-answers, Omar\'s answer 2), each with Connector, Type, Resolution and Refresh (16kz-refresh, Omar\'s R1)', async () => {
     await restore(); _kbIoOnly(); _sysAddMV(); await _kbClean(); await ioOpenSimple(); const out = {};
     out.bars = ['src', 'dst', 'aux', 'mv'].map(sec => { const b = _kbBar(sec); return b ? [($('.sys-row-icon', b) || {}).textContent, $$('[data-sys-field]', b).map(x => x.dataset.sysKind + ' ' + x.dataset.sysField + (x.tabIndex === 0 && x.getAttribute('role') === 'button' ? '' : ' (no Tab)'))] : 'no bar'; });
     const first2 = async t => { if (!t) return 'no control'; _sysOpenDropdown(t); await wait(150); const m = $$('.sys-dd').filter(e => e.getBoundingClientRect().width > 0).pop();
@@ -8272,7 +8322,7 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
     for (const [sec, re] of [['src', /^HDMI 2\.1/], ['dst', /^HDMI 2\.1/], ['aux', /^HDMI 2\.1/], ['mv', /^HDMI 2\.1/], ['dst', /^1280×720/], ['aux', /^1280×720/], ['mv', /^1280×720/]]) {
       const b = _kbBar(sec); const field = /HDMI/.test(re.source) ? 'connector' : 'resolution'; if (!b) { out.reach[sec + ' ' + field] = 'no bar'; continue; }
       const s0 = _kbState(), u0 = _undoStack.length, lit0 = _kySaveLit(); const ok = await ioPick($('[data-sys-field="' + field + '"]', b), re);
-      const s1 = _kbState(), steps = _undoStack.length - u0, lit = _kySaveLit(); doUndo(); await wait(400);
+      const s1 = _kbState(), steps = _undoStack.length - u0, lit = _kySaveLit(); doUndo(); await wait(400); for (let t = 0; t < 12 && _kySaveLit(); t++) await wait(100);   /* 16kz-refresh: the Save light settles before the next pick reads it */
       out.reach[sec + ' ' + field] = [ok, _kbMoved(s0, s1), steps, !lit0 && lit, _kbState() === s0];
     }
     { const b = _kbBar('aux'), u0 = _undoStack.length; let r = 'no Custom resolution…';
@@ -8306,7 +8356,7 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
       reach: { 'src connector': [true, ['src'], 1, true, true], 'dst connector': [true, ['dst', 'io'], 1, true, true], 'aux connector': [true, ['aux'], 1, true, true], 'mv connector': [true, ['mv'], 1, true, true],
         'dst resolution': [true, ['dst', 'io'], 1, true, true], 'aux resolution': [true, ['aux'], 1, true, true], 'mv resolution': [true, ['mv'], 1, true, true] },
       customRes: [true, false, 1],
-      adv: ['S0 advsrc-all:connector,advsrc-all:src-type,advsrc-all:resolution', 'D0 advdst-all:connector,advdst-all:dst-type,advdst-all:resolution', 'M0 advmv-all:connector,advmv-all:dst-type,advmv-all:resolution'],
+      adv: ['S0 advsrc-all:connector,advsrc-all:src-type,advsrc-all:resolution,advsrc-all:refresh', 'D0 advdst-all:connector,advdst-all:dst-type,advdst-all:resolution,advdst-all:refresh', 'A0 advaux-all:connector,advaux-all:dst-type,advaux-all:resolution,advaux-all:refresh', 'M0 advmv-all:connector,advmv-all:dst-type,advmv-all:resolution,advmv-all:refresh'],
       sameAsCards: { aux: [2, 2, true, true, true], mv: [2, 2, true, true, true] }, emptyAux: [true, true] },
       'the title bars [chip, controls (Tab)] of Sources / Destinations / AUX / DSM / Multiviewers / their menus [Connector, Resolution: first two rows] / each pick [picked, what moved (src, dst, io = I/O-only, aux, mv), undo steps, Save lit by it, Undo takes it back] / A0 › Custom resolution… 1024 × 768 [every AUX / DSM, a destination too, undo steps] / the Advanced page\'s own Set-for-all rows / A0, M0 against the same picks made card by card [cards, bulk steps, card steps = 2 per card, show + page 1 + Excel + Look Book the same, all set] / no AUX / DSM output [no A0, Remove still there]');
   });
@@ -8676,7 +8726,10 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
       'the show [after Edit Show Info] / ADD > Destination\'s name / + Add destination [cards, undo steps] / Edit Show Info\'s new row [placeholder, built] / duplicate names / Quick Setup backdrop row emptied [placeholder, built] / General Session + Destination');
   });
   // 16ky-r4fix A2: NEW
-  await check('Quick Setup 16ky-r4fix: what a screen reader reads follows the row\'s own label (the round-4 attack: the row labelled Destination 2 said "Pick resolution for destination 3"): with 3 destinations and Destination 2\'s Backdrop switch on, the rows read All Destinations / Backdrop / Destination 2, their resolution buttons say destination 1 / backdrop / destination 2, the backdrop row\'s Length, Height and picture say backdrop, and the name boxes\' defaults are Destination 01 / BACKDROP / Destination 02; with the first row switched on too, the last row reads and says destination 1 (Destination 01)', async () => {
+  // 16kz-answers R6: REPLACES the check named in its header (reason in the block)
+  // 16kz-answers: RENAMED in place. Why: Omar's answer 14 ("yes"): Quick Setup's first row switched to Backdrop reads Backdrop, and the first
+  //   SCREEN row reads All Destinations. Only the name and the second state's two labels changed (the aria-labels and defaults are the same).
+  await check('Quick Setup 16ky-r4fix: what a screen reader reads follows the row\'s own label (the round-4 attack: the row labelled Destination 2 said "Pick resolution for destination 3"): with 3 destinations and Destination 2\'s Backdrop switch on, the rows read All Destinations / Backdrop / Destination 2, their resolution buttons say destination 1 / backdrop / destination 2, the backdrop row\'s Length, Height and picture say backdrop, and the name boxes\' defaults are Destination 01 / BACKDROP / Destination 02; with the first row switched on too, it reads Backdrop and the last row reads All Destinations and says destination 1 (Destination 01) (16kz-answers, Omar\'s answer 14)', async () => {
     await _r4fQs3(); await _fxOpenRow(1); if (!$('#qs-bd-1')) { closeQS(); await restore(); return 'no Backdrop switch'; }
     const read = () => [0, 1, 2].map(i => [(($('#qs-sr-no-' + i) || {}).textContent || '').trim(), ($('#qs-res-' + i) || { getAttribute: () => null }).getAttribute('aria-label'),
       $$('#qs-bdctl-' + i + ' [aria-label]').map(e => e.getAttribute('aria-label').replace(/^.*, /, '')).join('|'), ($('#qs-sn-' + i) || {}).placeholder]);
@@ -8685,8 +8738,613 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
     try { closeQS(); } catch (e) {} await wait(200); await restore();
     return is({ one, two }, {
       one: [['All Destinations', 'Pick resolution for destination 1', '', 'Destination 01'], ['Backdrop', 'Pick resolution for backdrop', 'backdrop|backdrop|backdrop', 'BACKDROP'], ['Destination 2', 'Pick resolution for destination 2', '', 'Destination 02']],
-      two: [['All Destinations', 'Pick resolution for backdrop', 'backdrop|backdrop|backdrop', 'BACKDROP 2'], ['Backdrop', 'Pick resolution for backdrop', 'backdrop|backdrop|backdrop', 'BACKDROP'], ['Destination 1', 'Pick resolution for destination 1', '', 'Destination 01']] },
+      two: [['Backdrop', 'Pick resolution for backdrop', 'backdrop|backdrop|backdrop', 'BACKDROP 2'], ['Backdrop', 'Pick resolution for backdrop', 'backdrop|backdrop|backdrop', 'BACKDROP'], ['All Destinations', 'Pick resolution for destination 1', '', 'Destination 01']] },
       'Quick Setup rows [label, resolution button\'s aria-label, the backdrop controls\' aria-labels (their end), the name box\'s default]: Destination 2 on / the first row on too');
+  });
+  // ── 16kz-answers (Omar 2026-09-28 ~10:15, his answers to the questions left after 16ky). Appended at the END of the probe (after
+  //    16ky-r4fix's A1 / A2). Each NEW check FAILS on the committed 16ky page (r16kz/base, sha1 473a62e1) and PASSES on 16kz-answers.
+  const _kzAlert = () => { const t = dlgOpen() ? dialogText() : null; okDialogs(); return t; };   /* the alert on screen (its text), answered OK */
+  const _kzInUse = (t, n) => !!t && /Name in use/.test(t) && t.indexOf('"' + n + '"') >= 0;
+  const _kzCard = n => $$('#io-grid .iog-card').find(c => (($('.sys-name-input', c) || {}).value || '') === n) || null;
+  const _kzType = async (inp, v) => { if (!inp) return 'no box'; const u0 = _undoStack.length, id = inp.dataset.sysId; inp.focus(); inp.value = v; fire(inp, 'input'); inp.blur(); await wait(350); const t = _kzAlert(); await wait(150);
+    const now = inp.isConnected ? inp : $$('#sys-overlay .sys-name-input').find(x => x.dataset.sysId === id && x.getBoundingClientRect().width > 0);   /* a rename that was taken redraws the card: its new box */
+    return [_kzInUse(t, String(v).trim()), now ? now.value : '(no box)', _undoStack.length - u0]; };   /* typed and left (blur), like a user */
+  const _kzAllRows = () => $$('.io-adv-rows > .sys-row', r2Sec('dst')).map(r => r.classList.contains('sys-row-global') ? '[' + (($('.sys-row-icon', r) || {}).textContent || '') + '] ' + (($('.sys-global-name', r) || {}).textContent || '') : (($('.sys-name-input', r) || {}).value || ''));
+  const _kzP1 = f => ((ioAdvanced.pages[0] || {}).dests || []).filter(r => r && r.name).map(r => r.name + ':' + (r[f] || ''));
+  const _kzAllCell = (k, f) => $('#io-adv .sys-row-global [data-sys-kind="adv' + k + '-all"][data-sys-field="' + f + '"]');
+  const _kzMenuRows = () => { const m = $$('.sys-dd').filter(e => e.getBoundingClientRect().width > 0).pop(); return m ? $$('.sys-dd-item', m).map(i => (($('.item-text', i) || i).textContent || '').trim() + (i.classList.contains('disabled') ? ' [off' + (i.getAttribute('aria-disabled') === 'true' ? ', aria' : '') + (i.title ? ': ' + i.title : '') + ']' : '')) : null; };
+  const _kzQsLbl = () => $$('#qs-screen-rows .qs-screen-row').map((r, i) => (($('#qs-sr-no-' + i) || {}).textContent || '').trim() + (/sets default for all/.test(($('.qs-screen-hdr', r) || {}).textContent || '') ? ' +default' : ''));
+  const _kzEsi = async () => { actions.editShowInfo(); await wait(500); };
+  // 16kz-answers Z1: NEW
+  await check('I/O 16kz-answers (A): on I/O Patch ADVANCED page 1 Set for all is split like Simple (Omar\'s answer 2, "do the recommended"): the Destinations table reads D0, the three screens, then A0 "Set for all AUX / DSM" just above DSM 1 and AUX 1; D0 › Connector DisplayPort (stored DP) sets the three screens only (DSM 1 keeps HDMI 2.0, AUX 1 12G-SDI) (one undo step, Save lit); A0 › Resolution 1280×720 and A0 › Type Projection set DSM 1 and AUX 1 only (their Type is the show\'s own, 16ky-r3), one undo step each, and Undo takes the Type back; page 2 (a hand-made list, nothing on it says AUX) keeps one D0, no A0', async () => {
+    await restore(); await _r3P1Up();
+    const out = { rows: _kzAllRows() };
+    let u0 = _undoStack.length; const c = await ioPick(_kzAllCell('dst', 'connector'), /^DisplayPort/);
+    out.d0 = [c, _kzP1('connectorType'), _undoStack.length - u0, _isDirty];
+    u0 = _undoStack.length; const a0r = _kzAllCell('aux', 'resolution'); out.a0res = a0r ? [await ioPick(a0r, /^1280×720/), _kzP1('resolution'), _undoStack.length - u0] : 'no A0 row';
+    u0 = _undoStack.length; const a0t = _kzAllCell('aux', 'dst-type'); out.a0type = a0t ? [await ioPick(a0t, /^Projection/), _kzP1('deviceType'), dsms.map(d => d.name + ':' + d.deviceType), screens.map(s => s.deviceType), _undoStack.length - u0] : 'no A0 row';
+    doUndo(); await wait(500); out.undo = [_kzP1('deviceType'), dsms.map(d => d.deviceType)];
+    _ioSetPage(1); await wait(350); out.page2 = $$('#io-adv .sys-row-global .sys-row-icon').map(e => e.textContent);
+    _ioSetPage(0); await wait(250); _ioSetView('simple'); await wait(300); closeSystem(); await restore();
+    return is(out, { rows: ['[D0] Set for all destinations', 'LEFT LED', 'CENTER LED', 'RIGHT LED', '[A0] Set for all AUX / DSM', 'DSM 1', 'AUX 1'],
+      d0: [true, ['LEFT LED:DP', 'CENTER LED:DP', 'RIGHT LED:DP', 'DSM 1:HDMI 2.0', 'AUX 1:12G-SDI'], 1, true],
+      a0res: [true, ['LEFT LED:1920x1080', 'CENTER LED:1920x1080', 'RIGHT LED:1920x1080', 'DSM 1:1280x720', 'AUX 1:1280x720'], 1],
+      a0type: [true, ['LEFT LED:LED', 'CENTER LED:LED', 'RIGHT LED:LED', 'DSM 1:Projection', 'AUX 1:Projection'], ['DSM 1:Projection', 'AUX 1:Projection'], ['LED', 'LED', 'LED'], 1],
+      undo: [['LEFT LED:LED', 'CENTER LED:LED', 'RIGHT LED:LED', 'DSM 1:Monitor', 'AUX 1:Stream'], ['Monitor', 'Stream']], page2: ['S0', 'D0', 'M0'] },
+      'the Destinations table [Set for all rows and names] / D0 › DisplayPort [picked, page-1 connectors, undo steps, Save lit] / A0 › 1280×720 [picked, page-1 resolutions, undo steps] / A0 › Projection [picked, page-1 Types, the show\'s AUX / DSM Types, the screens\' Types, undo steps] / after Undo [page-1 Types, the show\'s] / page 2\'s Set for all rows');
+  });
+  // 16kz-answers Z2: NEW
+  await check('I/O 16kz-answers (B): Advanced does not ask "Simple changed since page 1 was built" when the only change is a Type that page 1 already follows (Omar\'s answer 5, "agreed dont ask"): after LEFT LED, AUX 1 and CAM 1 get a new Type the way the phone\'s cards set one, opening Advanced asks nothing and page 1 shows the new Types; a connector change still asks; a note alone asks nothing (as before); a Type changed for RIGHT LED after its page-1 row was removed by hand (page 1 no longer follows it) still asks', async () => {
+    await restore(); await ioOpenSimple(); const out = { built: await toAdvancedF() };
+    const sid = n => (screens.find(s => s.name === n) || {}).id, aux = dsms.find(d => d.name === 'AUX 1');
+    _ioSetView('simple'); await wait(300); okDialogs();
+    _sysWithUndo(() => { _sysSetMeta('dest', sid('LEFT LED'), 'deviceType', 'Projection'); _sysSetMeta('dest', sid('LEFT LED'), 'customType', ''); _sysSetMeta('aux', aux.id, 'deviceType', 'Monitor'); _sysSetSourceMeta('CAM 1', { type: 'PC', customType: '' }); });
+    out.typeOnly = await toAdvancedF(); out.followed = [(r2P1('dst', 'LEFT LED') || {}).deviceType, (r2P1('dst', 'AUX 1') || {}).deviceType, (r2P1('src', 'CAM 1') || {}).type];
+    _ioSetView('simple'); await wait(300); okDialogs();
+    _sysWithUndo(() => _sysSetMeta('dest', sid('LEFT LED'), 'connectorType', 'HDMI 2.1')); out.connector = await toAdvancedF();
+    _ioSetView('simple'); await wait(300); okDialogs();
+    _sysWithUndo(() => _sysSetMeta('dest', sid('CENTER LED'), 'notes', 'a note')); out.note = await toAdvancedF();
+    const row = _r3P1Row('RIGHT LED'); const del = row && $('[data-sys-action="delete"]', row); if (del) { del.click(); await wait(400); okDialogs(); await wait(200); }
+    out.rowGone = !r2P1('dst', 'RIGHT LED');
+    _ioSetView('simple'); await wait(300); okDialogs();
+    _sysWithUndo(() => _sysSetMeta('dest', sid('RIGHT LED'), 'deviceType', 'Monitor')); out.notFollowed = await toAdvancedF();
+    _ioSetView('simple'); await wait(300); closeSystem(); await restore();
+    return is(out, { built: false, typeOnly: false, followed: ['Projection', 'Monitor', 'PC'], connector: true, note: false, rowGone: true, notFollowed: true },
+      'asked when page 1 is built / asked after only Types changed / page 1 shows them [LEFT LED, AUX 1, CAM 1] / asked after a connector change / asked after a note / RIGHT LED\'s page-1 row removed / asked after its Type changed');
+  });
+  // 16kz-answers Z3: NEW
+  await check('I/O 16kz-answers (C): an output renamed in the I/O Patch into a name another output has is REFUSED like a source (Omar\'s answer 8, "refuse outputs too"): on the Simple cards CENTER LED typed "left led", DSM 1 typed "AUX 1", MV 1 typed "RIGHT LED" and RIGHT LED typed "dsm 1" each say Name in use, the box reads its old name and nothing is written (no undo step); CENTER LED picked "LEFT LED" from its name menu is refused too; an I/O-only destination typed "LEFT LED" is refused; CENTER LED typed "center led" (its own name) and "STAGE CENTER" (free) are renamed (one step each); on Advanced page 1 the row that mirrors CENTER LED typed "RIGHT LED" is refused and still mirrors it; Escape in a box puts the old name back', async () => {
+    await restore(); await ioOpenSimple(); const out = {}; const names = () => [screens.map(s => s.name), dsms.map(d => d.name), multiviewers.map(m => m.name)].join(' | ');
+    const n0 = names(); const box = n => { const c = _kzCard(n); return c ? $('.sys-name-input', c) : null; };
+    out.dest = await _kzType(box('CENTER LED'), 'left led'); out.aux = await _kzType(box('DSM 1'), 'AUX 1'); out.mv = await _kzType(box('MV 1'), 'RIGHT LED'); out.toAux = await _kzType(box('RIGHT LED'), 'dsm 1');
+    out.same = names() === n0;
+    { const c = _kzCard('CENTER LED'), chev = c && $('.sys-name-chev', c); const u0 = _undoStack.length; out.menu = chev ? [await ioPick(chev, /^LEFT LED(in use)?$/), _kzInUse(_kzAlert(), 'LEFT LED'), ($('.sys-name-input', _kzCard('CENTER LED') || document.body) || {}).value, _undoStack.length - u0] : 'no name menu'; await wait(200); }
+    ioDests.push({ id: 'kzio1', name: 'IO SPARE', w: 1920, h: 1080, connectorType: '', deviceType: '', customType: '', notes: '' }); _sysRender(); await wait(300);
+    out.io = await _kzType(box('IO SPARE'), 'LEFT LED');
+    { const b = box('CENTER LED'); if (b) { b.focus(); b.value = 'RIGHT LED'; fire(b, 'input'); b.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true })); await wait(300); } out.esc = [b ? b.value : 'no box', names() === n0 + '', _kzAlert()]; }
+    out.own = await _kzType(box('CENTER LED'), 'center led'); out.free = await _kzType(box('center led'), 'STAGE CENTER');
+    doUndo(); await wait(300); doUndo(); await wait(300); ioDests.splice(ioDests.findIndex(d => d && d.id === 'kzio1'), 1); _sysRender(); await wait(200);
+    await _r3P1Up(); const r = _r3P1Row('CENTER LED'); out.page1 = r ? await _kzType($('.sys-name-input', r), 'RIGHT LED') : 'no page-1 row';
+    const p = r2P1('dst', 'CENTER LED'); out.page1Row = [!!p, !!(p && p.fromShow), !!r2P1('dst', 'RIGHT LED')];
+    _ioSetView('simple'); await wait(300); closeSystem(); await restore();
+    return is(out, { dest: [true, 'CENTER LED', 0], aux: [true, 'DSM 1', 0], mv: [true, 'MV 1', 0], toAux: [true, 'RIGHT LED', 0], same: true, menu: [true, true, 'CENTER LED', 0], io: [true, 'IO SPARE', 0],
+      esc: ['CENTER LED', true, null], own: [false, 'center led', 1], free: [false, 'STAGE CENTER', 1], page1: [true, 'CENTER LED', 0], page1Row: [true, true, true] },
+      'typed and left, each [Name in use said, the box after, undo steps]: CENTER LED "left led" / DSM 1 "AUX 1" / MV 1 "RIGHT LED" / RIGHT LED "dsm 1" / the show unchanged / the name menu\'s LEFT LED on CENTER LED [picked, refused, the box, steps] / an I/O-only destination "LEFT LED" / Escape [the box, the show unchanged, an alert] / its own name in lower case / a free name / page 1\'s CENTER LED row "RIGHT LED" / page 1 after [CENTER LED row, still mirrors it, RIGHT LED row]');
+  });
+  // 16kz-answers Z4: NEW
+  await check('Video Presets 16kz-answers (C): a destination or AUX renamed in the Video Presets into a name another output has is refused (Omar\'s answer 8): the table\'s name box of CENTER LED on P01 typed "Left LED" and on P02 typed "RIGHT LED" say Name in use and keep CENTER LED (no step); P02 "STAGE" (free) is its name in P02; then LEFT LED on P01 typed "stage" is refused (the name of a destination in P02); AUX Properties of AUX 1 named "LEFT LED" keeps AUX 1; a backdrop\'s name counts (LEFT LED typed "backdrop" on its card is refused); a show that already has two LEFT LED opens with both and renames one to a free name', async () => {
+    await restore(); const out = {}; const p1 = presets[0].id, p2 = presets[1].id, sid = n => (screens.find(s => s.name === n) || {}).id;
+    const tsn = async (pid, s, v) => { const u0 = _undoStack.length; const el = $('#tsn-' + s + '-' + pid); if (el) { el.focus(); el.value = v; el.blur(); } else homeSetScreenName(pid, s, v); await wait(350); const t = _kzAlert(); await wait(150); return [_kzInUse(t, v), getScreenName(pid, s), _undoStack.length - u0]; };
+    out.p01 = await tsn(p1, sid('CENTER LED'), 'Left LED'); out.p02 = await tsn(p2, sid('CENTER LED'), 'RIGHT LED'); out.p02free = await tsn(p2, sid('CENTER LED'), 'STAGE');
+    out.global = await tsn(p1, sid('LEFT LED'), 'stage');
+    { const d = dsms.find(x => x.name === 'AUX 1'); openDSMPanel(fakeEv, p1, d.id); await wait(300); const n = $('#dsmp-name'); if (n) { n.value = 'LEFT LED'; $('#dsmp-apply').click(); await wait(350); } out.auxProps = n ? [_kzInUse(_kzAlert(), 'LEFT LED'), getDSMName(p1, d.id), d.name] : 'no AUX Properties'; const dp = $('#dsm-panel'); if (dp) dp.remove(); }
+    await restore(); pushUndo(); _bdConvert(screens.find(s => s.name === 'CENTER LED')); await ioOpenSimple();
+    out.backdrop = await _kzType($('.sys-name-input', _kzCard('LEFT LED') || document.body), 'backdrop');
+    closeSystem(); await restore();
+    { const st = JSON.parse(BASE); st.screens[2].name = 'LEFT LED'; _applyProjectText(JSON.stringify(st)); await wait(700); okDialogs(); await ioOpenSimple();
+      const dup = $$('#io-grid .iog-card').filter(c => (($('.sys-name-input', c) || {}).value || '') === 'LEFT LED'); out.dupOpen = [dup.length, screens.map(s => s.name)];
+      out.dupRename = dup[1] ? await _kzType($('.sys-name-input', dup[1]), 'RIGHT LED') : 'no second LEFT LED card'; out.dupAfter = screens.map(s => s.name); }
+    closeSystem(); await restore();
+    return is(out, { p01: [true, 'CENTER LED', 0], p02: [true, 'CENTER LED', 0], p02free: [false, 'STAGE', 1], global: [true, 'LEFT LED', 0], auxProps: [true, 'AUX 1', 'AUX 1'], backdrop: [true, 'LEFT LED', 0],
+      dupOpen: [2, ['LEFT LED', 'CENTER LED', 'LEFT LED']], dupRename: [false, 'RIGHT LED', 1], dupAfter: ['LEFT LED', 'CENTER LED', 'RIGHT LED'] },
+      'each [Name in use said, the name after, undo steps]: P01 CENTER LED "Left LED" / P02 CENTER LED "RIGHT LED" / P02 CENTER LED "STAGE" / P01 LEFT LED "stage" / AUX Properties [said, P01 name, its name] / LEFT LED "backdrop" with CENTER LED a backdrop / an old show with two LEFT LED [cards, names] / its second one "RIGHT LED" / names after');
+  });
+  // 16kz-answers Z5: NEW
+  await check('Quick Setup 16kz-answers (C): Edit Show Info and Quick Setup refuse a name another output has (Omar\'s answer 8): in Edit Show Info CENTER LED\'s row typed "LEFT LED" and RIGHT LED\'s typed "aux 1" say Name in use and go back to their names; "STAGE R" is taken; a row given "STAGE R" without leaving its box is refused by Update Show (the window stays open, nothing changes); a show that already has two LEFT LED still updates; in a new show two rows typed "CAM WALL" are refused by Build My Show until one is changed', async () => {
+    await restore(); await _kzEsi(); const out = {};
+    const typ = async (i, v) => { await _fxOpenRow(i); const b = $('#qs-sn-' + i); if (!b) return 'no row ' + i; b.focus(); b.value = v; fire(b, 'input'); fire(b, 'change'); await wait(250); const t = _kzAlert(); await wait(100); return [_kzInUse(t, v), b.value, _qsScreenNames[i]]; };
+    out.left = await typ(1, 'LEFT LED'); out.aux = await typ(2, 'aux 1'); out.free = await typ(2, 'STAGE R');
+    { const b = $('#qs-sn-1'); b.value = 'STAGE R'; fire(b, 'input'); await wait(100); $('#qs-confirm-btn').click(); await wait(500); const t = _kzAlert(); out.update = [_kzInUse(t, 'STAGE R'), $('#qs-modal').style.display, screens.map(s => s.name)]; }
+    try { closeQS(); } catch (e) {} await wait(200);
+    { const st = JSON.parse(BASE); st.screens[2].name = 'LEFT LED'; _applyProjectText(JSON.stringify(st)); await wait(700); okDialogs(); await _kzEsi(); const u0 = _undoStack.length; $('#qs-confirm-btn').click(); await wait(600); const t = _kzAlert(); out.oldDup = [t, $('#qs-modal').style.display, screens.map(s => s.name)]; try { closeQS(); } catch (e) {} }
+    await _fxNew(); for (let i = 0; i < 6 && +$('#qs-screens-val').textContent !== 3; i++) { qsAdjust('screens', +$('#qs-screens-val').textContent > 3 ? -1 : 1); await wait(120); }
+    for (const i of [0, 1]) { await _fxOpenRow(i); const b = $('#qs-sn-' + i); b.value = 'CAM WALL'; fire(b, 'input'); }
+    $('#qs-confirm-btn').click(); await wait(600); out.build = [_kzInUse(_kzAlert(), 'CAM WALL'), $('#qs-modal').style.display, screens.length];
+    { const b = $('#qs-sn-1'); b.value = 'CAM WALL 2'; fire(b, 'input'); $('#qs-confirm-btn').click(); await wait(900); okDialogs(); await wait(300); out.built = screens.map(s => s.name); }
+    await restore();
+    return is(out, { left: [true, 'CENTER LED', 'CENTER LED'], aux: [true, 'RIGHT LED', 'RIGHT LED'], free: [false, 'STAGE R', 'STAGE R'], update: [true, 'flex', ['LEFT LED', 'CENTER LED', 'RIGHT LED']],
+      oldDup: [null, 'none', ['LEFT LED', 'CENTER LED', 'LEFT LED']], build: [true, 'flex', 0], built: ['CAM WALL', 'CAM WALL 2', 'Destination 03'] },
+      'Edit Show Info, each [Name in use said, the box, the row\'s name]: CENTER LED "LEFT LED" / RIGHT LED "aux 1" / RIGHT LED "STAGE R" / Update Show with CENTER LED "STAGE R" [refused, the window, the show] / an old show with two LEFT LED, Update Show [alert, the window, the show] / a new show, two rows "CAM WALL" [refused, the window, screens built] / one changed to "CAM WALL 2" [built]');
+  });
+  // 16kz-answers Z6: NEW
+  await check('I/O 16kz-answers (D): a new AUX takes the next free AUX name, never one in use (Omar\'s answer 9): with AUX1, AUX3 and AUX4 the I/O Patch + Add AUX card, the Video Presets + AUX and Edit Show Info\'s AUX count + 1 each add AUX5 (its number, 4, is taken), one undo step each; with a destination named AUX5 the next one is AUX6', async () => {
+    await restore(); const out = {};
+    const setAux = () => { dsms.length = 0; ['AUX1', 'AUX3', 'AUX4'].forEach(n => dsms.push({ id: uid(), name: n, w: 1920, h: 1080 })); };
+    const added = n0 => dsms.slice(n0).map(d => d.name);
+    setAux(); await ioOpenSimple(); let u0 = _undoStack.length; let n0 = dsms.length; const add = $('#io-grid [data-iog-add="aux"]'); if (add) add.click(); await wait(400); okDialogs(); out.card = [added(n0), _undoStack.length - u0];
+    closeSystem(); await restore(); setAux(); u0 = _undoStack.length; n0 = dsms.length; actions.addDSM(); await wait(300); out.presets = [added(n0), _undoStack.length - u0];
+    await restore(); setAux(); await _kzEsi(); n0 = dsms.length; qsAdjust('dsms', 1); await wait(200); $('#qs-confirm-btn').click(); await wait(700); okDialogs(); await wait(200); out.esi = added(n0);
+    await restore(); setAux(); screens[2].name = 'AUX5'; n0 = dsms.length; actions.addDSM(); await wait(300); out.taken = added(n0);
+    await restore();
+    return is(out, { card: [['AUX5'], 1], presets: [['AUX5'], 1], esi: ['AUX5'], taken: ['AUX6'] }, '+ Add AUX card [added, undo steps] / Video Presets + AUX [added, steps] / Edit Show Info AUX + 1 [added] / with a destination named AUX5 [added]');
+  });
+  // 16kz-answers Z7: NEW
+  await check('I/O 16kz-answers (E): the Remove Source window numbers the I/O-only sources the way their cards do (Omar\'s answer 10): with two sources added on the patch (Source 9 and Source 10, cards S12 and S13 after the eleven preset sources) the window lists S12 Source 9 and S13 Source 10, the numbers on their cards (not S1, S2)', async () => {
+    await restore(); await ioOpenSimple(); _sysAddSource(); await wait(200); _sysAddSource(); await wait(300);
+    const cards = $$('#io-grid [data-iog-sec="src"] .iog-card').map(c => ((($('.iog-num', c) || {}).textContent || '') + ' ' + (($('.sys-name-input', c) || {}).value || '')).trim()).filter(x => /^S\d+ Source (9|10)$/.test(x));
+    _sysOpenRemoveSourceModal(); await wait(300); const win = $$('#sys-remove-overlay .sys-src-picker-item').map(i => (($('.picker-icon', i) || {}).textContent || '') + ' ' + (($('.picker-name', i) || {}).textContent || ''));
+    try { _sysCloseRemoveSourceModal(); } catch (e) {} closeSystem(); await restore();
+    return is({ cards, win }, { cards: ['S12 Source 9', 'S13 Source 10'], win: ['S12 Source 9', 'S13 Source 10'] }, 'the two cards [number, name] / the Remove Source window [number, name]');
+  });
+  // 16kz-answers Z8: NEW
+  // 16kz-refresh Q8: REPLACES the check named in its header (reason in the block)
+  // 16kz-refresh: RENAMED in place. Why: Omar's L1 (2026-09-28 ~18:50, "all recommended"): Quick Setup / Edit Show Info taking
+  //   the count down is a delete path too: when the rows left would all be backdrops the − itself is refused (A show needs at least one
+  //   screen) and the list keeps its rows, so Build My Show is no longer reached with a list of backdrops only (its own refusal stays).
+  //   Everything else in the check is unchanged.
+  await check('Backdrop 16kz-answers (F): the only screen left never becomes a backdrop (Omar\'s answer 11, "agreed dont allow"): with CENTER LED and RIGHT LED backdrops, the Type menu of LEFT LED\'s row on Advanced page 1 ends with Backdrop greyed ("A show needs at least one screen", aria-disabled) and a click on it does nothing; the question\'s own door refuses too; in Edit Show Info LEFT LED\'s Backdrop switch is greyed with the reason and a click says it and changes nothing; a new show with one destination has its switch greyed; two rows with the first a backdrop and the count taken down to one: refused at the − itself (16kz-refresh, Omar\'s L1: the rows left would all be backdrops), the list keeps its two rows and nothing is built', async () => {
+    await restore(); const out = {};
+    await _kzEsi(); for (const i of [1, 2]) { await _fxOpenRow(i); const t = $('#qs-bd-' + i); if (t && t.getAttribute('aria-pressed') !== 'true') t.click(); await wait(200); }
+    $('#qs-confirm-btn').click(); await wait(600); okDialogs(); await wait(400); okDialogs(); out.show = screens.map(s => s.name + (s.deviceType === 'Backdrop' ? ' [bd]' : ''));
+    await _r3P1Up(); const r = _r3P1Row('LEFT LED'); const trig = r && $('[data-sys-field="dst-type"]', r);
+    if (trig) { _sysOpenDropdown(trig); await wait(200); const rows = _kzMenuRows(); out.menu = rows ? rows.slice(-1) : null; const it = $$('.sys-dd .sys-dd-item').find(i => /^Backdrop$/.test((($('.item-text', i) || i).textContent || '').trim())); if (it) { it.click(); await wait(300); } out.click = [dlgOpen(), !!$('.sys-dd'), screens[0].deviceType]; _sysCloseMenu(); } else out.menu = 'no LEFT LED row';
+    okDialogs(); _bdAskMake(screens[0].id); await wait(300); const t1 = _kzAlert(); out.door = [/A show needs at least one screen/.test(t1 || ''), screens[0].deviceType];
+    _ioSetView('simple'); await wait(300); closeSystem(); await wait(200);
+    await _kzEsi(); await _fxOpenRow(0); { const t = $('#qs-bd-0'); out.esi = t ? [t.getAttribute('aria-disabled'), /A show needs at least one screen/.test(t.title)] : 'no switch'; if (t) { t.click(); await wait(300); } const t2 = _kzAlert(); out.esiClick = [/A show needs at least one screen/.test(t2 || ''), !!_qsBd[0]]; }
+    try { closeQS(); } catch (e) {} await wait(200);
+    await _fxNew(); for (let i = 0; i < 6 && +$('#qs-screens-val').textContent !== 1; i++) { qsAdjust('screens', -1); await wait(120); } { const t = $('#qs-bd-0'); out.one = t ? t.getAttribute('aria-disabled') : 'no switch'; }
+    qsAdjust('screens', 1); await wait(200); $('#qs-bd-0').click(); await wait(250); out.two = [!!_qsBd[0], ($('#qs-bd-1') || { getAttribute: () => null }).getAttribute('aria-disabled')];
+    qsAdjust('screens', -1); await wait(200); const t3 = _kzAlert(); out.build = [/A show needs at least one screen/.test(t3 || ''), $('#qs-modal').style.display, +$('#qs-screens-val').textContent, screens.length];   /* 16kz-refresh (L1): refused at the − */
+    try { closeQS(); } catch (e) {} await restore();
+    return is(out, { show: ['LEFT LED', 'BACKDROP [bd]', 'BACKDROP 2 [bd]'], menu: ['Backdrop [off, aria: A show needs at least one screen]'], click: [false, true, 'LED'], door: [true, 'LED'], esi: ['true', true], esiClick: [true, false], one: 'true', two: [true, 'true'], build: [true, 'flex', 2, 0] },
+      'the show after Edit Show Info / LEFT LED\'s Type menu, last row / a click on it [a question, the menu still open, its Type] / the question\'s door [said, its Type] / Edit Show Info LEFT LED\'s switch [aria-disabled, the reason] / a click [said, made a backdrop] / a new show with one row [switch aria-disabled] / two rows, the first a backdrop [made, the second\'s switch aria-disabled] / taken down to one row [said at the −, the window, the count, screens built]');
+  });
+  // 16kz-answers Z9: NEW
+  await check('Quick Setup 16kz-answers (G): the first row switched to Backdrop reads Backdrop and the first SCREEN row reads All Destinations (Omar\'s answer 14): with 3 rows and row 1\'s switch on, the rows read Backdrop / All Destinations (sets default for all) / Destination 2; 1280×720 picked for the All Destinations row becomes the next row\'s too and the summary\'s base; switched back, row 1 reads All Destinations again with the note; built with the switch on, the two screens are 1280×720', async () => {
+    await restore(); await _fxNew(); for (let i = 0; i < 6 && +$('#qs-screens-val').textContent !== 3; i++) { qsAdjust('screens', +$('#qs-screens-val').textContent > 3 ? -1 : 1); await wait(120); }
+    const out = { before: _kzQsLbl() };
+    $('#qs-bd-0').click(); await wait(250); out.on = _kzQsLbl(); out.aria = [0, 1, 2].map(i => ($('#qs-res-' + i) || { getAttribute: () => null }).getAttribute('aria-label'));
+    qsApplyRes(1, 1280, 720, ''); await wait(200); out.res = [qsGetRes(1), qsGetRes(2)].map(r => r.w + 'x' + r.h).concat([/^1 screen|^2 screens/.test($('#qs-canvas-sub').textContent) ? $('#qs-canvas-sub').textContent.split(' · ').slice(0, 3).join(' · ') : $('#qs-canvas-sub').textContent]);
+    $('#qs-bd-0').click(); await wait(250); out.off = _kzQsLbl();
+    $('#qs-bd-0').click(); await wait(250); $('#qs-confirm-btn').click(); await wait(900); okDialogs(); await wait(300); out.built = screens.map(s => s.name + ' ' + s.w + 'x' + s.h + (s.deviceType === 'Backdrop' ? ' [bd]' : ''));
+    await restore();
+    return is(out, { before: ['All Destinations +default', 'Destination 2', 'Destination 3'], on: ['Backdrop', 'All Destinations +default', 'Destination 2'], aria: ['Pick resolution for backdrop', 'Pick resolution for destination 1', 'Pick resolution for destination 2'],
+      res: ['1280x720', '1280x720', '2 screens · 1 backdrop · 720p HD base'], off: ['All Destinations +default', 'Destination 2', 'Destination 3'], built: ['BACKDROP 1920x1056 [bd]', 'Destination 01 1280x720', 'Destination 02 1280x720'] },
+      'the rows [label, the default note] before / row 1 a backdrop / the resolution buttons\' aria-labels / after 1280×720 on the All Destinations row [row 2, row 3, the summary] / switched back / built');
+  });
+  // ── 16kz-refresh (Omar 2026-09-28 ~10:35, "12 and 13 do the recommended … refresh, and all recommended", and his card mockup
+  //    omar_14_card_mirror.png). Appended at the END of the probe (after 16kz-answers' Z9). Each NEW check FAILS on the first
+  //    builder's 16kz-answers page (r16kz/build, sha1 cd8efc81) and PASSES on 16kz-refresh.
+  const _rzKd = (el, key, o) => el.dispatchEvent(new KeyboardEvent('keydown', Object.assign({ key, bubbles: true, cancelable: true }, o || {})));
+  const _rzTabs = root => $$('input,button,textarea,select,[tabindex]', root).filter(e => e.tabIndex >= 0 && !e.disabled && e.getClientRects().length > 0);
+  const _rzName = e => e.dataset.sysField || e.dataset.sysAction || (e.classList.contains('sys-bk-btn') ? 'backup' : (e.classList.contains('sys-name-input') ? 'name' : (e.classList.contains('io-adv-count') ? 'rows' : String(e.className).split(' ')[0])));
+  const _rzAct = () => { const a = document.activeElement; if (!a || a === document.body || !a.isConnected) return 'none'; const r = a.closest('.sys-row'); return _rzName(a) + '@' + (r ? (r.classList.contains('sys-row-global') ? (($('.sys-row-icon', r) || {}).textContent || '') : (($('.sys-name-input', r) || {}).value || '')) : ''); };
+  const _rzRf = (n, sec) => { const r = sec ? _r3P1Row(n, sec) : r2Row(n); return r ? $('[data-sys-field="refresh"]', r) : null; };
+  const _rzLit = () => { const i = $('.sys-dd .sys-dd-item.iog-kbd'); return i ? (($('.item-text', i) || i).textContent || '').trim() : null; };
+  const _rzItems = () => { const m = $('.sys-dd'); return m ? $$('.sys-dd-item', m).map(i => (($('.item-text', i) || i).textContent || '').trim()) : null; };
+  const _rzAlert = () => { const t = dlgOpen() ? dialogText() : null; okDialogs(); return t; };
+  const _rzBox = () => $('#io-adv .io-rf-ask .sys-type-input');
+  const _rzCustom = async (pill, text) => { if (!pill) return 'no pill'; if (!await ioPick(pill, /^Custom…$/)) return 'no Custom… in the Refresh menu'; await wait(150); const b = _rzBox(); if (!b) return 'no box'; const seen = [document.activeElement === b, b.value]; tfType(b, text); await wait(400); return seen; };
+  const _rzLines = sp => sp ? $$(':scope > span', sp).map(s => s.textContent) : null;   /* the lines drawn on a picture: one inline span a line */
+  // 16kz-refresh Y1: NEW
+  await check('I/O 16kz-refresh (H): on I/O Patch ADVANCED every control of a row takes Tab, in reading order (Omar\'s 12, "do the recommended"): CAM 1 reads name, its ▼, backup, connector, Type, resolution, refresh, notes, reset, delete; LEFT LED the same without the backup column; PPT B (a backup: its button is off) without it; the Set for all rows S0 / D0 / A0 / M0 read connector, Type, resolution, refresh; every menu pill is a button with a popup; page 2 reads the same', async () => {
+    await restore(); await _r3P1Up();
+    const row = r => r ? _rzTabs(r).map(_rzName) : 'no row';
+    const out = { cam: row(r2Row('CAM 1')), left: row(r2Row('LEFT LED')), pptb: row(r2Row('PPT B')), mv: row(_r3P1Row('MV 1', 'mv')),
+      all: $$('#io-adv .sys-row-global').map(r => (($('.sys-row-icon', r) || {}).textContent || '') + ':' + _rzTabs(r).map(_rzName).join(',')),
+      pills: $$('#io-adv .sys-pill.clickable, #io-adv .sys-chip.clickable').every(p => p.tabIndex === 0 && p.getAttribute('role') === 'button' && p.getAttribute('aria-haspopup') === 'listbox' && /\S/.test(p.getAttribute('aria-label') || '')) };
+    _ioSetPage(1); await wait(350); okDialogs();
+    out.page2 = [row($$('#io-adv .io-adv-rows .sys-row:not(.sys-row-global)')[0]), $$('#io-adv .sys-row-global').map(r => (($('.sys-row-icon', r) || {}).textContent || '') + ':' + _rzTabs(r).map(_rzName).join(','))];
+    _ioSetPage(0); await wait(250); _ioSetView('simple'); await wait(300); closeSystem(); await restore();
+    const S = ['connector', 'src-type', 'resolution', 'refresh'], D = ['connector', 'dst-type', 'resolution', 'refresh'];
+    return is(out, { cam: ['name', 'src-name', 'backup', 'connector', 'src-type', 'resolution', 'refresh', 'notes', 'reset', 'delete'], left: ['name', 'dst-name', 'connector', 'dst-type', 'resolution', 'refresh', 'notes', 'reset', 'delete'],
+      pptb: ['name', 'src-name', 'connector', 'src-type', 'resolution', 'refresh', 'notes', 'reset', 'delete'], mv: ['name', 'dst-name', 'connector', 'dst-type', 'resolution', 'refresh', 'notes', 'reset', 'delete'],
+      all: ['S0:' + S.join(','), 'D0:' + D.join(','), 'A0:' + D.join(','), 'M0:' + D.join(',')], pills: true,
+      page2: [['name', 'src-name', 'backup', 'connector', 'src-type', 'resolution', 'refresh', 'notes', 'reset', 'delete'], ['S0:' + S.join(','), 'D0:' + D.join(','), 'M0:' + D.join(',')]] },
+      'Tab order of CAM 1 / LEFT LED / PPT B / MV 1 / the Set for all rows / every pill a keyboard button with a popup and a name / page 2 [its first row, its Set for all rows]');
+  });
+  // 16kz-refresh Y2: NEW
+  await check('I/O 16kz-refresh (H): on I/O Patch ADVANCED the keys work as on the Simple grid: CAM 1\'s Connector pill takes the focus, Enter opens its menu, ↓ lights the row after the marked 12G-SDI (NDI), Enter picks it (one undo step), the menu closes and the focus is on the same pill of the redrawn row; Space opens it again and Escape closes it, the focus stays and the page stays; Alt+↓ opens it too; a menu opened from a Set for all pill walks the same way (D0\'s Refresh: ↓ lights 23.98, the row after the marked — Clear —)', async () => {
+    await restore(); await _r3P1Up(); const out = {};
+    let p = $('[data-sys-field="connector"]', r2Row('CAM 1')); p.focus(); out.focus = document.activeElement === p;
+    _rzKd(p, 'Enter'); await wait(250); out.open = !!$('.sys-dd'); _rzKd(p, 'ArrowDown'); await wait(120); out.lit = _rzLit();
+    const u0 = _undoStack.length; _rzKd(p, 'Enter'); await wait(500);
+    out.pick = [(r2P1('src', 'CAM 1') || {}).connectorType, _undoStack.length - u0, !!$('.sys-dd'), _rzAct(), !!p.isConnected];
+    p = document.activeElement; _rzKd(p, ' '); await wait(250); out.space = !!$('.sys-dd'); ioEsc(p); await wait(250);
+    out.esc = [!!$('.sys-dd'), _rzAct(), $('#sys-overlay').classList.contains('open')];
+    _rzKd(p, 'ArrowDown', { altKey: true }); await wait(250); out.alt = !!$('.sys-dd'); ioEsc(p); await wait(200);
+    const a = r2AllCell('dst', 'refresh') || r2AllCell('dst', 'connector'); a.focus(); _rzKd(a, 'Enter'); await wait(250); _rzKd(a, 'ArrowDown'); await wait(120); out.allLit = [!!$('.sys-dd'), _rzLit(), document.activeElement === a]; ioEsc(a); await wait(200);
+    _ioSetView('simple'); await wait(300); closeSystem(); await restore();
+    return is(out, { focus: true, open: true, lit: 'NDI', pick: ['NDI', 1, false, 'connector@CAM 1', false], space: true, esc: [false, 'connector@CAM 1', true], alt: true, allLit: [true, '23.98', true] },
+      'the pill takes the focus / Enter opens / ↓ lights / Enter [stored, undo steps, menu open, the focus, the old pill still in the page] / Space opens / Escape [menu open, the focus, the I/O Patch open] / Alt+↓ opens / D0\'s Refresh pill [menu, lit row, focus]');
+  });
+  // 16kz-refresh Y3: NEW
+  await check('I/O 16kz-refresh (H): a redraw of the Advanced page keeps the keyboard where it was going: leaving the Sources Rows box for the next control (what Tab does; the box redraws the page as it is left) leaves the focus on that control of the redrawn page, not on the page body (Tab used to drop off the page there); a menu pick gives the focus back to its pill', async () => {
+    await restore(); await _r3P1Up(); const out = {};
+    const cnt = $('#io-adv .io-adv-count'), all = _rzTabs($('#io-adv')), nx = all[all.indexOf(cnt) + 1];
+    out.next = nx ? _rzName(nx) : 'none'; cnt.focus(); if (nx) nx.focus(); await wait(300);
+    out.after = [_rzAct(), !!nx && !nx.isConnected];
+    const rp = _rzRf('PPT A'); if (rp) { rp.focus(); await ioPick(rp, /^59\.94$/); await wait(300); } out.rf = [_rzAct(), (_sysGetSourceMeta('PPT A') || {}).refresh || ''];
+    _ioSetView('simple'); await wait(300); closeSystem(); await restore();
+    return is(out, { next: 'connector', after: ['connector@S0', true], rf: ['refresh@PPT A', '59.94'] }, 'the control after the Rows box / after leaving the box [the focus, the old control replaced by the redraw] / after a Refresh pick [the focus, PPT A\'s rate]');
+  });
+  // 16kz-refresh Y4: NEW
+  await check('Cards 16kz-refresh (I): the name on a card\'s picture breaks only between words (Omar\'s 13, "do the recommended"): CENTER LED renamed DESTINATION 01 reads "DESTINATION" / "01" on its I/O Patch card, on its Wire side-panel card and on its Advanced row\'s small picture (never DESTINATIO / N 01); RIGHT LED renamed PROJECTIONS (a word too long for the line) shrinks to one line inside the picture; the upload mark does not sit on the first letter; the text is the name', async () => {
+    await restore(); const c = screens.find(s => s.name === 'CENTER LED'), r = screens.find(s => s.name === 'RIGHT LED'); c.name = 'DESTINATION 01'; r.name = 'PROJECTIONS'; const out = {};
+    try {
+      await ioOpenSimple(); _sysRender(); await wait(300);
+      const card = n => $$('#io-grid .iog-card').find(k => (($('.sys-name-input', k) || {}).value || '') === n) || null;
+      const geo = k => { const sp = k && $('.wire-thumb-auto > span', k); if (!sp) return null; const th = $('.wire-thumb', k).getBoundingClientRect(), hint = $('.wire-thumb-upload-hint', k), ls = $$(':scope > span', sp);
+        const fits = ls.every(s => { const b = s.getBoundingClientRect(); return b.left >= th.left - 0.5 && b.right <= th.right + 0.5; });
+        let clear = true; if (hint && ls[0] && ls[0].firstChild) { const rg = document.createRange(); rg.setStart(ls[0].firstChild, 0); rg.setEnd(ls[0].firstChild, 1); const f = rg.getBoundingClientRect(), h = hint.getBoundingClientRect(), fz = parseFloat(getComputedStyle(ls[0]).fontSize); clear = f.right <= h.left || f.left >= h.right || f.top + 0.2 * fz >= h.bottom; }
+        return [_rzLines(sp), sp.textContent, fits, clear, parseFloat(getComputedStyle(ls[0] || sp).fontSize) < 13]; };
+      out.grid = [geo(card('DESTINATION 01')), geo(card('PROJECTIONS'))];
+      await r2Adv(); if (ioAdvanced.page !== 0) { _ioSetPage(0); await wait(300); }
+      _ioAdvRenameTwin('dest', 'CENTER LED', 'DESTINATION 01'); _ioAdvRenameTwin('dest', 'RIGHT LED', 'PROJECTIONS'); _sysRender(); await wait(300);
+      const mini = n => { const rw = r2Row(n); const sp = rw && $('.iog-mini-name', rw); return sp ? _rzLines(sp) : null; };
+      out.mini = mini('DESTINATION 01');
+      _ioSetView('simple'); await wait(300); closeSystem();
+      openWireMode(); await wait(400); wireSettings.wireView = 'simple'; _wireRender(); await wait(400);
+      const wcard = n => $$('#wire-sources-panel .wire-source-card').find(k => (($('.wire-source-name', k) || {}).textContent || '').trim() === n) || null;
+      out.wire = [geo(wcard('DESTINATION 01')), geo(wcard('PROJECTIONS'))];
+      closeWireMode(); await wait(300);
+    } finally { c.name = 'CENTER LED'; r.name = 'RIGHT LED'; await restore(); }
+    return is(out, { grid: [[['DESTINATION', '01'], 'DESTINATION 01', true, true, true], [['PROJECTIONS'], 'PROJECTIONS', true, true, true]], mini: ['DESTINATION', '01'],
+      wire: [[['DESTINATION', '01'], 'DESTINATION 01', true, true, true], [['PROJECTIONS'], 'PROJECTIONS', true, true, true]] },
+      'the I/O Patch cards [lines, text, inside the picture, the first letter clear of the upload mark, smaller than 13 px] for DESTINATION 01 and PROJECTIONS / the Advanced row\'s small picture of DESTINATION 01 [lines] / Wire\'s side-panel cards (the same)');
+  });
+  // 16kz-refresh Y5: NEW
+  await check('I/O 16kz-refresh (J) R1: every I/O Patch ADVANCED page has a REFRESH column between Resolution and Notes (Omar: "all recommended"): the Sources, Destinations and Multiviewers tables read … Resolution | Refresh | | Notes …; every row (a source, a screen, an AUX / DSM, a multiviewer) has its Refresh pill in the cell right after Resolution ("— Set Hz —" when none), the Set for all rows S0 / D0 / A0 / M0 have one ("— Set all —"), page 2 too; the Simple grid has none', async () => {
+    await restore(); await _r3P1Up();
+    const heads = () => $$('#io-adv .sys-section .sys-cols').map(c => [...c.children].map(x => x.textContent.trim()).join('|'));
+    const cells = () => $$('#io-adv .io-adv-rows > .sys-row').map(r => { const k = [...r.children]; const i = k.findIndex(x => x.querySelector && x.querySelector('[data-sys-field="resolution"]')); const p = k[i + 1] && k[i + 1].querySelector('[data-sys-field="refresh"]'); return p ? (p.textContent || '').trim() : 'none'; });
+    const out = { heads: heads(), cells: [...new Set(cells())], kinds: $$('#io-adv .sys-row-global [data-sys-field="refresh"]').map(p => p.dataset.sysKind) };
+    _ioSetPage(1); await wait(350); okDialogs(); out.page2 = [heads(), [...new Set(cells())]]; _ioSetPage(0); await wait(250);
+    _ioSetView('simple'); await wait(300); out.simple = $$('#io-grid [data-sys-field="refresh"]').length; closeSystem(); await restore();
+    const H = t => '|Name||Connector|Type|Resolution|Refresh||Notes|Actions';
+    return is(out, { heads: [H(), H(), H()], cells: ['— Set all —', '— Set Hz —'], kinds: ['advsrc-all', 'advdst-all', 'advaux-all', 'advmv-all'], page2: [[H(), H(), H()], ['— Set all —', '— Set Hz —']], simple: 0 },
+      'the column heads of the three tables / what the cell after Resolution holds, every row / the Set for all rows\' Refresh pills / page 2 [heads, cells] / Refresh pills on the Simple grid');
+  });
+  // 16kz-refresh Y6: NEW
+  await check('I/O 16kz-refresh (J) R2: the Refresh menu reads Custom…, — Clear —, 23.98, 24, 25, 29.97, 30, 50, 59.94, 60, 120 and is one undo step a pick; Custom… types a number in place (the pill becomes a box with the cursor): 47.952 is stored and shown as 47.952, "59,94" as 59.94, "60 Hz" as 60; "abc", "0", "-5" and "59.9444" are refused ("Not a refresh rate", nothing written, no undo step); Escape in the box puts the pill back; — Clear — empties it', async () => {
+    await restore(); await _r3P1Up(); const out = {}; const rf = () => (_sysGetSourceMeta('CAM 1') || {}).refresh || '', shown = () => ((_rzRf('CAM 1') || {}).textContent || '').trim();
+    const p0 = _rzRf('CAM 1'); if (!p0) { _ioSetView('simple'); await wait(300); closeSystem(); await restore(); return 'CAM 1 has no Refresh pill'; }
+    _sysOpenDropdown(p0); await wait(150); out.menu = _rzItems(); _sysCloseMenu();
+    let u0 = _undoStack.length; await ioPick(_rzRf('CAM 1'), /^59\.94$/); out.pick = [rf(), shown(), _undoStack.length - u0, _isDirty];
+    u0 = _undoStack.length; out.box = await _rzCustom(_rzRf('CAM 1'), '47.952'); out.custom = [rf(), shown(), _undoStack.length - u0];
+    out.pre = await (async () => { await ioPick(_rzRf('CAM 1'), /^Custom…$/); await wait(150); const b = _rzBox(); const v = b ? b.value : null; if (b) { ioEsc(b); await wait(250); } return [v, !_rzBox(), !!_rzRf('CAM 1')]; })();
+    out.ok = []; for (const t of ['59,94', '60 Hz']) { await _rzCustom(_rzRf('CAM 1'), t); out.ok.push(rf()); }
+    out.bad = []; for (const t of ['abc', '0', '-5', '59.9444']) { u0 = _undoStack.length; await _rzCustom(_rzRf('CAM 1'), t); const a = _rzAlert(); out.bad.push([!!a && /not a refresh rate/i.test(a), rf(), _undoStack.length - u0]); }
+    u0 = _undoStack.length; await ioPick(_rzRf('CAM 1'), /^— Clear —$/); out.clear = [rf(), shown(), _undoStack.length - u0];
+    _ioSetView('simple'); await wait(300); closeSystem(); await restore();
+    return is(out, { menu: ['Custom…', '— Clear —', '23.98', '24', '25', '29.97', '30', '50', '59.94', '60', '120'], pick: ['59.94', '59.94', 1, true], box: [true, ''], custom: ['47.952', '47.952', 1],
+      pre: ['47.952', true, true], ok: ['59.94', '60'], bad: [[true, '60', 0], [true, '60', 0], [true, '60', 0], [true, '60', 0]], clear: ['', '— Set Hz —', 1] },
+      'the menu / 59.94 [stored, shown, undo steps, Save lit] / Custom… [the box has the cursor, its text] / 47.952 typed [stored, shown, undo steps] / Custom… again [the box holds 47.952, Escape: no box, the pill back] / "59,94" and "60 Hz" stored as / "abc", "0", "-5", "59.9444" [refused, the rate kept, undo steps] / — Clear — [stored, shown, undo steps]');
+  });
+  // 16kz-refresh Y7: NEW
+  await check('I/O 16kz-refresh (J) R4: a refresh rate set on an Advanced page-1 row that mirrors a show item is that item\'s OWN value (PPT A, LEFT LED, AUX 1, MV 1: one undo step each, Save lit); one set on the item (as the phone sets it) shows on page 1; a page-2 row keeps its own; D0 sets the screens only and A0 the AUX / DSM rows; the rates are saved in the file and come back; Undo takes them back; a show without rates (an older file) has none anywhere, even after Advanced is opened', async () => {
+    await restore(); const out = { none: [JSON.stringify(getProjectState()).indexOf('"refresh"') < 0] }; await _r3P1Up(); out.none.push(JSON.stringify(getProjectState()).indexOf('"refresh"') < 0);
+    const u0 = _undoStack.length; _isDirty = false;
+    await ioPick(_rzRf('PPT A'), /^60$/); await ioPick(_rzRf('LEFT LED'), /^29\.97$/); await ioPick(_rzRf('AUX 1'), /^25$/); await ioPick(_rzRf('MV 1', 'mv'), /^50$/);
+    const own = () => [(_sysGetSourceMeta('PPT A') || {}).refresh, (screens.find(s => s.name === 'LEFT LED') || {}).refresh, (dsms.find(d => d.name === 'AUX 1') || {}).refresh, (multiviewers.find(m => m.name === 'MV 1') || {}).refresh];
+    out.own = [own(), _undoStack.length - u0, _isDirty];
+    const cl = screens.find(s => s.name === 'CENTER LED'); _sysWithUndo(() => _sysSetMeta('dest', cl.id, 'refresh', '24')); _sysRender(); await wait(300);
+    out.follow = [(r2P1('dst', 'CENTER LED') || {}).refresh, ((_rzRf('CENTER LED') || {}).textContent || '').trim()];
+    const u1 = _undoStack.length; await ioPick(r2AllCell('dst', 'refresh'), /^50$/); out.d0 = [screens.map(s => s.refresh || ''), dsms.map(d => d.refresh || ''), _undoStack.length - u1];
+    await ioPick(r2AllCell('aux', 'refresh'), /^30$/); out.a0 = [screens.map(s => s.refresh || ''), dsms.map(d => d.refresh || '')];
+    _ioSetPage(1); await wait(350); okDialogs(); const r0 = $$('#io-adv .io-adv-rows .sys-row:not(.sys-row-global)')[0]; await ioPick($('[data-sys-field="refresh"]', r0), /^23\.98$/);
+    out.page2 = [(ioAdvanced.pages[1].sources[0] || {}).refresh, own()[0]]; _ioSetPage(0); await wait(250);
+    const txt = JSON.stringify(getProjectState()); _applyProjectText(txt); await wait(700); okDialogs();
+    out.reload = [own(), screens.map(s => s.refresh || ''), (ioAdvanced.pages[1].sources[0] || {}).refresh, (ioAdvanced.pages[0].dests.find(r => r.name === 'LEFT LED') || {}).refresh];
+    closeSystem(); await restore(); await _r3P1Up();
+    await ioPick(_rzRf('LEFT LED'), /^59\.94$/); doUndo(); await wait(400); out.undo = [(screens.find(s => s.name === 'LEFT LED') || {}).refresh || '', (r2P1('dst', 'LEFT LED') || {}).refresh || ''];
+    _ioSetView('simple'); await wait(300); closeSystem(); await restore();
+    return is(out, { none: [true, true], own: [['60', '29.97', '25', '50'], 4, true], follow: ['24', '24'], d0: [['50', '50', '50'], ['', '25'], 1], a0: [['50', '50', '50'], ['30', '30']], page2: ['23.98', '60'],
+      reload: [['60', '50', '30', '50'], ['50', '50', '50'], '23.98', '50'], undo: ['', ''] },
+      'no rate in the show [opened, after Advanced] / PPT A, LEFT LED, AUX 1, MV 1 [their own rates, undo steps, Save lit] / CENTER LED set on the item [page 1\'s row, its pill] / D0 › 50 [screens, AUX / DSM, undo steps] / A0 › 30 [screens, AUX / DSM] / page 2\'s first row [its rate, PPT A\'s own] / after a save and reload [own rates, screens, page 2, page 1\'s LEFT LED] / 59.94 then Undo [LEFT LED, its page-1 row]');
+  });
+  // 16kz-refresh Y8: NEW
+  await check('I/O 16kz-refresh (J) R3: the I/O Excel has a Refresh column right after Resolution on every tab: the Video I-O tab reads Slot | Connector | Name | Type | Resolution | Refresh | Notes with PPT A\'s 59.94 and LEFT LED\'s 59.94 as numbers (empty where none), each Advanced page tab reads Slot | Connector | P/B | Name | Type | Resolution | Refresh | Notes (page 1 LEFT LED 59.94, page 2 its own 50) with a width for each of its eight columns', async () => {
+    await restore(); await _r3P1Up(); await ioPick(_rzRf('PPT A'), /^59\.94$/); await ioPick(_rzRf('LEFT LED'), /^59\.94$/);
+    _ioSetPage(1); await wait(350); okDialogs(); const r0 = $$('#io-adv .io-adv-rows .sys-row:not(.sys-row-global)')[0]; const nm = $('.sys-name-input', r0); nm.focus(); nm.value = 'EXTRA'; fire(nm, 'input'); nm.blur(); await wait(300);
+    await ioPick($('[data-sys-field="refresh"]', $$('#io-adv .io-adv-rows .sys-row:not(.sys-row-global)')[0]), /^50$/); _ioSetPage(0); await wait(250);
+    const o2 = _buildXlsxMulti; let sheets = null; window._buildXlsxMulti = function (s) { sheets = s; return o2.apply(this, arguments); }; downloads.length = 0; try { _sysExportIOExcel(); await wait(400); } finally { window._buildXlsxMulti = o2; } okDialogs();
+    const out = {}; const sh = n => (sheets || []).find(s => s.name === n);
+    const vio = sh('Video I-O'); out.vio = vio ? [vio.rows.filter(r => r[0] === 'Slot'), vio.rows.filter(r => /^(Source 1|Source 2|Destination 1|Destination 2)$/.test(r[0] || '')).map(r => [r[0], r[4], r[5]]), vio.colWidths.length] : 'no Video I-O tab';
+    const p1 = sh(ioAdvanced.pages[0].name), p2 = sh('Page 2') || (sheets || []).find(s => s !== vio && s !== p1 && s.rows && s.rows.some(r => r[3] === 'EXTRA'));
+    out.p1 = p1 ? [p1.rows.filter(r => r[0] === 'Slot').map(r => r.join('|')), p1.rows.filter(r => r[3] === 'LEFT LED' || r[3] === 'PPT A').map(r => r[3] + ':' + r[6]), p1.colWidths.length] : 'no page-1 tab';
+    out.p2 = p2 ? p2.rows.filter(r => r[3] === 'EXTRA').map(r => r[6]) : 'no page-2 tab';
+    _ioSetView('simple'); await wait(300); closeSystem(); await restore();
+    const HS = 'Slot|Connector|P/B|Source Name|Type|Resolution|Refresh|Notes', HD = 'Slot|Connector||Destination Name|Type|Resolution|Refresh|Notes';
+    return is(out, { vio: [[['Slot', 'Connector', 'Source Name', 'Type', 'Resolution', 'Refresh', 'Notes'], ['Slot', 'Connector', 'Destination Name', 'Type', 'Resolution', 'Refresh', 'Notes']], [['Source 1', '1920x1080', 59.94], ['Source 2', '1920x1080', ''], ['Destination 1', '1920x1080', 59.94], ['Destination 2', '1920x1080', '']], 7],
+      p1: [[HS, HD], ['PPT A:59.94', 'LEFT LED:59.94'], 8], p2: [50] }, 'the Video I-O tab [header rows, Source 1 / 2 and Destination 1 / 2: resolution and refresh, column widths] / page 1\'s tab [headers, PPT A and LEFT LED\'s refresh, column widths] / page 2\'s EXTRA row\'s refresh');
+  });
+  // 16kz-refresh Y9: NEW
+  await check('I/O 16kz-refresh (J) R3: the Look Book\'s I/O pages print a refresh rate next to the resolution only when one is set: with PPT A and LEFT LED at 59.94 the Sources page reads "1920x1080 · 59.94" for PPT A and the Destinations page "1920×1080 · 59.94" for LEFT LED, every other row\'s Resolution cell as before; a show without rates prints no " · " there', async () => {
+    await restore(); const cellsOf = html => { const d = document.createElement('div'); d.innerHTML = html; return $$('.io-table tr', d).map(tr => [...tr.children].map(t => t.textContent.trim())).filter(r => /^(Source|Destination) \d+$/.test(r[0] || '')); };
+    const before = cellsOf(await userLookBook()); closePdfExportModal && closePdfExportModal(); await wait(200);
+    await _r3P1Up(); await ioPick(_rzRf('PPT A'), /^59\.94$/); await ioPick(_rzRf('LEFT LED'), /^59\.94$/); _ioSetView('simple'); await wait(300); closeSystem();
+    const after = cellsOf(await userLookBook()); try { closePdfExportModal(); } catch (e) {} await restore();
+    const out = { none: before.filter(r => / · /.test(r[4] || '')).length, rows: before.length === after.length && before.length > 5,
+      changed: after.map((r, i) => ((r[4] || '') === ((before[i] || [])[4] || '')) ? null : r[0] + ' ' + r[2] + ': ' + r[4]).filter(Boolean) };   /* the Resolution cell of every row */
+    return is(out, { none: 0, rows: true, changed: ['Source 1 PPT A: 1920x1080 · 59.94', 'Destination 1 LEFT LED: 1920×1080 · 59.94'] }, 'rows with " · " in a show without rates / the same rows / the rows whose Resolution cell changed after the two rates');
+  });
+  // 16kz-refresh Y10: NEW
+  await check('I/O 16kz-refresh (J) R5: the Advanced Notes cell is narrow and shows the start of the note (… when cut); a click, Enter or Space opens a box right below it (not over it) with the whole note and the cursor; Enter saves it (the item\'s own note on page 1, one undo step) and the focus is back on the cell; Escape puts back what was there (nothing written); leaving the box (a click outside) saves; the cell itself takes no typing', async () => {
+    await restore(); await _r3P1Up(); const out = {};
+    const cell = () => $('.io-note-cell', r2Row('CAM 1')) || $('.sys-notes-input', r2Row('CAM 1')), pop = () => $('.io-note-pop'), ta = () => $('.io-note-pop textarea');
+    const c0 = cell(); out.cell = [!!c0 && c0.readOnly === true, !!c0 && getComputedStyle(c0).textOverflow, c0 ? c0.value : null];
+    c0.click(); await wait(200);
+    out.open = pop() ? (() => { const b = pop().getBoundingClientRect(), c = cell().getBoundingClientRect(); return [b.top >= c.bottom - 0.5, ta().value, document.activeElement === ta()]; })() : 'no box';
+    let u0 = _undoStack.length;
+    if (ta()) { ta().value = 'Center camera, IMAG, on the long lens, operator Sam, tally from the Ultimatte, check the colour before the doors open'; fire(ta(), 'input'); _rzKd(ta(), 'Enter'); await wait(400); }
+    out.enter = [(_sysGetSourceMeta('CAM 1') || {}).notes, _undoStack.length - u0, !!pop(), _rzAct(), (() => { const c = cell(); return c ? c.scrollWidth > c.clientWidth : null; })()];
+    u0 = _undoStack.length; let c = cell(); c.focus(); _rzKd(c, 'Enter'); await wait(200); out.key = !!pop();
+    if (ta()) { ta().value = 'CHANGED'; fire(ta(), 'input'); ioEsc(ta()); await wait(300); }
+    out.esc = [/^Center camera, IMAG, on the long lens/.test((_sysGetSourceMeta('CAM 1') || {}).notes || ''), _undoStack.length - u0, !!pop(), _rzAct()];
+    c = cell(); _rzKd(c, ' '); await wait(200); out.space = !!pop();
+    if (ta()) { ta().value = 'OUTSIDE'; fire(ta(), 'input'); ta().blur(); await wait(400); }
+    out.blur = [(_sysGetSourceMeta('CAM 1') || {}).notes, !!pop()];
+    _ioSetView('simple'); await wait(300); closeSystem(); await restore();
+    return is(out, { cell: [true, 'ellipsis', 'Center camera, IMAG'], open: [true, 'Center camera, IMAG', true], enter: ['Center camera, IMAG, on the long lens, operator Sam, tally from the Ultimatte, check the colour before the doors open', 1, false, 'notes@CAM 1', true], key: true, esc: [true, 0, false, 'notes@CAM 1'], space: true, blur: ['OUTSIDE', false] },
+      'the cell [takes no typing, cut with …, the note] / a click [the box below the cell, the whole note, the cursor in it] / typed + Enter [CAM 1\'s own note, undo steps, box open, the focus, the cell cut] / Enter on the cell opens / typed + Escape [the note kept, undo steps, box open, the focus] / Space opens / typed + left [the note, box open]');
+  });
+  // 16kz-refresh Y11: NEW
+  await check('I/O 16kz-refresh (J) R7: the red bandwidth pill counts a refresh rate when one is set (width × height × refresh against the refresh each connector\'s cap assumes): 3840x2160 · 60 on 6G-SDI is red, 3840x2160 · 30 on 6G-SDI is not, 1920x1080 · 120 on 3G-SDI is red, 1920x1080 · 60 on 3G-SDI is not, 3840x2160 · 59.94 on 12G-SDI is not; with no rate every connector and size is judged exactly as before; an Advanced row and a Simple card show it', async () => {
+    await restore(); const out = {};
+    out.rules = [['6G-SDI', '3840x2160', '60'], ['6G-SDI', '3840x2160', '30'], ['3G-SDI', '1920x1080', '120'], ['3G-SDI', '1920x1080', '60'], ['12G-SDI', '3840x2160', '59.94'], ['12G-SDI', '3840x2160', '120'], ['HDMI 1.4', '1920x1080', '120'], ['HDMI 2.1', '7680x4320', '60'], ['NDI', '7680x4320', '120']].map(c => c[2] + '@' + c[0] + ':' + _sysOverCable(c[0], c[1], c[2]));
+    const CAP = { 'HDMI 1.4': 1920 * 1080, 'HDMI 2.0': 3840 * 2160, 'HDMI 2.1': 7680 * 4320, 'HDBaseT': 3840 * 2160, 'DP': 3840 * 2160, 'DVI': 1920 * 1200, '3G-SDI': 1920 * 1080, '6G-SDI': 3840 * 2160 - 1, '12G-SDI': 3840 * 2160 };
+    const old = (c, r) => { if (!c || !r) return false; const cap = CAP[c]; if (cap == null) return false; const p = r.split('x').map(n => parseInt(n) || 0); return p[0] * p[1] > cap; };
+    const bad = []; ['HDMI', 'HDMI 1.4', 'HDMI 2.0', 'HDMI 2.1', 'HDBaseT', 'DP', 'DVI', 'USB-C', '3G-SDI', '6G-SDI', '12G-SDI', 'NDI', 'MV', 'LEMO', ''].forEach(c => ['1280x720', '1920x1080', '1920x1200', '2560x1440', '3840x2160', '4096x2160', '7680x4320', '', 'x'].forEach(r => { if (_sysOverCable(c, r) !== old(c, r) || _sysOverCable(c, r, '') !== old(c, r)) bad.push(c + ' ' + r); }));
+    out.asBefore = bad;
+    await _r3P1Up(); _ioSetPage(1); await wait(350); okDialogs(); const row = () => $$('#io-adv .io-adv-rows .sys-row:not(.sys-row-global)')[0], pill = () => $('.sys-warn-pill', row());
+    await ioPick($('[data-sys-field="connector"]', row()), /^6G-SDI$/); await ioPick($('[data-sys-field="resolution"]', row()), /^3840×2160/);
+    out.row = [pill().classList.contains('active')]; await ioPick($('[data-sys-field="refresh"]', row()), /^30$/); out.row.push(pill().classList.contains('active'));
+    await ioPick($('[data-sys-field="refresh"]', row()), /^60$/); out.row.push(pill().classList.contains('active'), /at 60 Hz is over 6G-SDI capacity \(3840×2160 at 30 Hz\)/.test(pill().title || ''));
+    _ioSetPage(0); await wait(250); _ioSetView('simple'); await wait(300);
+    const ll = screens.find(s => s.name === 'LEFT LED'); _sysWithUndo(() => { _sysSetMeta('dest', ll.id, 'connectorType', '3G-SDI'); _sysSetMeta('dest', ll.id, 'refresh', '120'); }); _sysRender(); await wait(300);
+    const card = () => $$('#io-grid .iog-card').find(k => (($('.sys-name-input', k) || {}).value || '') === 'LEFT LED');
+    out.card = [!!$('.iog-warn', card())]; _sysWithUndo(() => _sysSetMeta('dest', ll.id, 'refresh', '60')); _sysRender(); await wait(300); out.card.push(!!$('.iog-warn', card()));
+    closeSystem(); await restore();
+    return is(out, { rules: ['60@6G-SDI:true', '30@6G-SDI:false', '120@3G-SDI:true', '60@3G-SDI:false', '59.94@12G-SDI:false', '120@12G-SDI:true', '120@HDMI 1.4:true', '60@HDMI 2.1:false', '120@NDI:false'], asBefore: [],
+      row: [true, false, true, true], card: [true, false] },
+      'with a rate [each case red?] / with no rate, what differs from the old rule / a page-2 row 3840×2160 on 6G-SDI [no rate: red (as before), 30: red, 60: red, its tooltip] / LEFT LED on 3G-SDI, its Simple card [120: red, 60: red]');
+  });
+  // 16kz-refresh Y12: NEW
+  await check('Cards 16kz-refresh (K): a destination, AUX / DSM, I/O-only destination and multiviewer card is MIRRORED (Omar\'s mockup: "Source should have images on the Left and Destination images on the right"): on the I/O Patch Simple grid its picture is on the RIGHT and the name / resolution / cable type column on the LEFT, the random-colour button before the colour bar, the markup in that order (Tab reads it left to right), the grey line unchanged at the foot, the picture itself not flipped; a source card keeps its picture on the LEFT; Wire\'s side-panel cards (Simple, and Advanced with a hand-made destination) the same (the + Add cards: Y13)', async () => {
+    await restore(); const out = {};
+    try {
+      await ioOpenSimple(); _sysWithUndo(() => { if (!Array.isArray(ioDests)) ioDests = []; ioDests.push({ id: 'rz-io', name: 'IO ONLY', w: 1920, h: 1080, connectorType: '', deviceType: '', notes: '' }); }); _sysRender(); await wait(300);
+      const side = k => { const t = $('.wire-thumb', k).getBoundingClientRect(), i = $('.wire-source-info', k).getBoundingClientRect(); return t.left < i.left ? 'L' : 'R'; };
+      const kids = k => [...k.children].map(x => String(x.className).split(' ')[0]).join(',');
+      out.grid = [...new Set($$('#io-grid .iog-card').map(k => (String(k.className).match(/iog-k-(\w+)/) || [])[1] + ':' + side(k) + ':' + kids(k)))].sort();
+      const dc = $('#io-grid .iog-card.iog-k-dest');
+      out.row = [...$('.wire-color-row', dc).children].map(x => String(x.className).split(' ')[0]);
+      out.tab = _rzTabs(dc).map(e => String(e.className).split(' ')[0]);
+      out.flat = getComputedStyle($('.wire-thumb', dc)).transform === 'none' && getComputedStyle(dc).transform === 'none' && getComputedStyle(dc).flexDirection === 'row';
+      out.foot = [...$('.iog-foot', dc).children].map(x => String(x.className).split(' ')[0]);
+      closeSystem();
+      openWireMode(); await wait(400); wireSettings.wireView = 'simple'; _wireRender(); await wait(400);
+      const pane = i => $$('#wire-sources-panel .wire-pane')[i];
+      out.wire = [0, 1, 2].map(i => [...new Set($$('.wire-source-card', pane(i)).map(k => side(k) + ':' + kids(k) + ':' + ($('.wire-color-row', k) ? [...$('.wire-color-row', k).children].filter(x => getComputedStyle(x).display !== 'none').map(x => String(x.className).split(' ')[0]).join('+') : '')))]);
+      wireSettings.wireView = 'advanced'; _wireAdvAddCustomDest(); _wireRender(); await wait(400);
+      const cd = $$('.wire-source-card.wire-custom-card', pane(1)).pop();
+      out.custom = cd ? [side(cd), kids(cd), getComputedStyle($('.wire-card-delete', cd)).right] : 'no hand-made destination card';
+      closeWireMode(); await wait(300);
+    } finally { await restore(); }
+    return is(out, { grid: ['aux:R:wire-source-info,wire-thumb-col,iog-foot', 'dest:R:wire-source-info,wire-thumb-col,iog-foot', 'iodest:R:wire-source-info,wire-thumb-col,iog-foot', 'mv:R:wire-source-info,wire-thumb-col,iog-foot', 'src:L:wire-thumb-col,wire-source-info,iog-foot'],
+      row: ['wire-color-shuffle', 'wire-color-swatch'], tab: ['sys-name-input', 'sys-name-chev', 'wire-source-res', 'wire-res-dropdown-btn', 'wire-cable-btn', 'wire-thumb', 'wire-color-shuffle', 'wire-color-swatch', 'sys-icon-btn', 'sys-icon-btn'], flat: true, foot: ['iog-acts', 'iog-num'],
+      wire: [['L:wire-thumb-col,wire-source-info:wire-color-swatch+wire-color-shuffle'], ['R:wire-source-info,wire-thumb-col:wire-color-shuffle+wire-color-swatch'], ['R:wire-source-info,wire-thumb-col:wire-color-shuffle+wire-color-swatch']],
+      custom: ['R', 'wire-card-delete,wire-source-info,wire-thumb', '4px'] },   /* its × stays in the top-right corner */
+      'the grid\'s cards [kind:picture side:children] / a destination card\'s colour row / its Tab order / not flipped / its grey line / Wire\'s panes, Simple [sources, destinations, AUX / DSM: picture side, children, colour row] / a hand-made Wire destination card [picture side, children, its × still 4 px from the right]');
+  });
+  // 16kz-refresh Y13: NEW
+  // 16kz-fix P1: REPLACES the check named in its header (reason in the block)
+  // 16kz-fix: RENAMED in place and turned around. Why: Omar's correction of 2026-09-28 22:00 ("The + Add destination / AUX /
+  //   multiviewer cards ... should keep the plus box on the left still") supersedes "yes flip the + Add cards"; 16kz-refresh's Y13
+  //   asserted the mirrored + Add cards, i.e. the defect. Now all four + Add cards read the + box first, on the LEFT (as before
+  //   16kz-refresh), with no iog-add-mirror class or rule; the click and the Enter part is unchanged.
+  await check('Cards 16kz-fix (K): the + Add cards are NOT mirrored (Omar\'s correction 2026-09-28 22:00: "should keep the plus box on the left still"): + Add source, + Add destination, + Add AUX and + Add multiviewer all have their + box on the LEFT and the text on the right (the markup in that order, the two apart), with no iog-add-mirror class or rule, as before 16kz-refresh; only the output cards themselves are mirrored; a click on + Add destination and Enter on + Add AUX still add one each (one undo step)', async () => {
+    await restore(); const out = {};
+    try {
+      await ioOpenSimple(); await wait(300);
+      out.cards = Object.fromEntries($$('#io-grid .iog-add').map(a => { const t = $('.fs-src-thumb', a).getBoundingClientRect(), i = $('.fs-src-info', a).getBoundingClientRect();
+        return [a.dataset.iogAdd, [...a.children].map(x => String(x.className).split(' ')[0]).join(',') + ':' + (t.left < i.left ? 'L' : 'R') + ':' + (t.right <= i.left + 1 || i.right <= t.left + 1)]; }));
+      out.mirror = [$$('#io-grid .iog-add.iog-add-mirror').length, [...document.styleSheets].some(ss => { try { return [...ss.cssRules].some(r => /iog-add-mirror/.test(r.cssText)); } catch (e) { return false; } })];
+      const n0 = screens.length, u0 = _undoStack.length; $('#io-grid .iog-add[data-iog-add="dst"]').click(); await wait(400); out.click = [screens.length - n0, _undoStack.length - u0];
+      const a0 = dsms.length, u1 = _undoStack.length, ac = $('#io-grid .iog-add[data-iog-add="aux"]'); ac.focus(); _rzKd(ac, 'Enter'); await wait(400);
+      out.enter = [dsms.length - a0, _undoStack.length - u1, ac.getAttribute('aria-label')];
+    } finally { closeSystem(); await restore(); }
+    return is(out, { cards: { src: 'fs-src-thumb,fs-src-info:L:true', dst: 'fs-src-thumb,fs-src-info:L:true', aux: 'fs-src-thumb,fs-src-info:L:true', mv: 'fs-src-thumb,fs-src-info:L:true' }, mirror: [0, false], click: [1, 1], enter: [1, 1, '+ Add AUX'] },
+      'the + Add cards [children, the + box\'s side, apart] / [+ Add cards with iog-add-mirror, a CSS rule for it] / a click on + Add destination [added, undo steps] / Enter on + Add AUX [added, undo steps, its name]');
+  });
+  // 16kz-refresh Y14: NEW
+  await check('Backdrop 16kz-refresh (L1): the only screen left is never deleted (Omar 2026-09-28 ~18:50, "all recommended"): with CENTER LED and RIGHT LED backdrops (Edit Show Info), the trash on LEFT LED\'s I/O Patch card, Remove (Destinations) > LEFT LED, the Video Presets table\'s ✕ (P01\'s first row) and Destination Properties\' Remove Globally each say "A show needs at least one screen", ask nothing and delete nothing (no undo step); Undo and Redo never restore a step with no screen (one an older build could have left: refused, the show keeps LEFT LED) and a normal Undo still works; with LEFT LED and CENTER LED backdrops Edit Show Info\'s − (it would take RIGHT LED) is refused and the list keeps its 3 rows', async () => {
+    await restore(); const out = {}; const nm = s => s.name + (s.deviceType === 'Backdrop' ? ' [bd]' : '');
+    try {
+      await _kzEsi(); for (const i of [1, 2]) { await _fxOpenRow(i); const t = $('#qs-bd-' + i); if (t && t.getAttribute('aria-pressed') !== 'true') t.click(); await wait(200); }
+      $('#qs-confirm-btn').click(); await wait(600); okDialogs(); await wait(400); okDialogs();
+      out.show = screens.map(nm); const L = screens.find(s => s.name === 'LEFT LED'); if (!L) return 'no LEFT LED';
+      const same = () => JSON.stringify(screens.map(nm)) === JSON.stringify(out.show);
+      const step = async fn => { const u0 = _undoStack.length; await fn(); await wait(400); const t = dlgOpen() ? dialogText() : ''; const sc = !!$('#sys-confirm-overlay'); okDialogs(); const c = $('#sys-confirm-overlay'); if (c) { const x = $('.sys-modal-btn', c); if (x) x.click(); } await wait(200); return [/A show needs at least one screen/.test(t), sc, same(), _undoStack.length - u0]; };
+      await ioOpenSimple();
+      out.card = await step(async () => { const b = $('#io-grid .iog-card .sys-icon-btn.del[data-sys-id="' + L.id + '"]'); if (b) b.click(); });
+      out.remove = await step(async () => { _iogRmDest(); await wait(300); const it = $('#sys-rmdest-overlay .sys-src-picker-item[data-rm-name="LEFT LED"]'); if (it) it.click(); try { _sysCloseRemoveDestModal(); } catch (e) {} });
+      closeSystem(); await wait(300);
+      out.table = await step(async () => { renderTable(); const b = $('button.t-del[onclick="deleteScreen(\'' + L.id + '\')"]'); if (b) b.click(); });
+      out.props = await step(async () => { const box = $('.screen-box[data-sid="' + L.id + '"]'); openScreenPanel({ target: box, currentTarget: box, stopPropagation() {}, preventDefault() {} }, presets[0].id, L.id); await wait(250); const r = $('#sp-remove'); if (r) r.click(); });
+      try { closeScreenPanel(); } catch (e) {}
+      const fake = JSON.parse(_snapshot()); fake.screens.forEach(s => { s.deviceType = 'Backdrop'; }); const fk = JSON.stringify(fake);
+      _undoStack.push(fk); const n1 = _undoStack.length; doUndo(); await wait(300); const tu = dlgOpen() ? dialogText() : ''; okDialogs();
+      out.undo = [/A show needs at least one screen/.test(tu), same(), _undoStack.length === n1]; if (_undoStack[_undoStack.length - 1] === fk) _undoStack.pop();
+      _redoStack.push(fk); const r1 = _redoStack.length; doRedo(); await wait(300); const tr = dlgOpen() ? dialogText() : ''; okDialogs();
+      out.redo = [/A show needs at least one screen/.test(tr), same(), _redoStack.length === r1]; if (_redoStack[_redoStack.length - 1] === fk) _redoStack.pop();
+      doUndo(); await wait(400); okDialogs(); out.normal = screens.map(nm);
+      await restore(); pushUndo(); screens.filter(s => s.name !== 'RIGHT LED' && s.deviceType !== 'Backdrop').forEach(s => _bdConvert(s)); out.show2 = screens.map(nm);
+      await _kzEsi(); qsAdjust('screens', -1); await wait(300); const tc = dlgOpen() ? dialogText() : ''; okDialogs();
+      out.count = [/A show needs at least one screen/.test(tc), +$('#qs-screens-val').textContent, $$('[id^="qs-sn-"]').length];
+      try { closeQS(); } catch (e) {}
+    } finally { okDialogs(); try { closeScreenPanel(); } catch (e) {} await restore(); }
+    return is(out, { show: ['LEFT LED', 'BACKDROP [bd]', 'BACKDROP 2 [bd]'], card: [true, false, true, 0], remove: [true, false, true, 0], table: [true, false, true, 0], props: [true, false, true, 0],
+      undo: [true, true, true], redo: [true, true, true], normal: ['LEFT LED', 'CENTER LED', 'RIGHT LED'], show2: ['BACKDROP [bd]', 'BACKDROP 2 [bd]', 'RIGHT LED'], count: [true, 3, 3] },
+      'the show after Edit Show Info / each delete of LEFT LED [said, a question asked, the show unchanged, undo steps]: the card\'s trash, Remove, the table\'s ✕, Destination Properties / Undo onto a step with no screen [said, unchanged, the step kept] / Redo the same / a normal Undo / with RIGHT LED the only screen / Edit Show Info\'s − [said, the count, the rows]');
+  });
+  // 16kz-refresh Y15: NEW
+  await check('Destinations 16kz-refresh (L2): ADD › Destination refuses a name another output already has (Omar 2026-09-28 ~18:50, "all recommended"; the 16kz-answers rule: trimmed, any capitals): "left led" (a destination), " dsm 1 " (a DSM), "mv 1" (a multiviewer), "backdrop" (a backdrop) and "stage" (P02\'s own name for CENTER LED) each say Name in use (by Enter or the Add button), the window stays open with its own name back in the box, nothing is added and no undo step is recorded; a free name (STAGE LEFT) is added in one undo step', async () => {
+    await restore(); const out = {};
+    try {
+      pushUndo(); _bdConvert(screens.find(s => s.name === 'RIGHT LED')); const cl = screens.find(s => s.name === 'CENTER LED'); if (!presets[1]) return 'no P02';
+      presets[1].screenName = Object.assign({}, presets[1].screenName || {}, { [cl.id]: 'STAGE' });
+      $('button.tb-btn[onclick="actions.addDestination()"]').click(); await wait(300); out.def = $('#ms-n').value;
+      const tryN = async (n, how) => { const n0 = screens.length, u0 = _undoStack.length; $('#ms-n').value = n;
+        if (how === 'enter') $('#ms-n').dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true })); else $('#modal button[onclick="confirmScreen()"]').click();
+        await wait(300); const t = dlgOpen() ? dialogText() : ''; okDialogs(); await wait(100);
+        return [(t.match(/is already (.*?)\. Pick/) || [])[1] || (t || 'no alert'), $('#modal').classList.contains('show'), $('#ms-n').value === out.def, screens.length - n0, _undoStack.length - u0]; };
+      out.tries = [await tryN('left led', 'enter'), await tryN(' dsm 1 ', 'button'), await tryN('mv 1', 'enter'), await tryN('backdrop', 'button'), await tryN('stage', 'enter')];
+      out.free = await tryN('STAGE LEFT', 'enter'); out.last = screens[screens.length - 1].name;
+    } finally { try { closeModal(); } catch (e) {} okDialogs(); await restore(); }
+    const R = w => [w, true, true, 0, 0];
+    return is(out, { def: 'Destination 03', tries: [R('a destination in this show'), R('a DSM output in this show'), R('a multiviewer in this show'), R('a backdrop in this show'), R('the name of a destination in P02')], free: ['no alert', false, false, 1, 1], last: 'STAGE LEFT' },
+      'the window\'s own name / each used name [what has it, the window open, its own name back, added, undo steps] / STAGE LEFT / the new destination');
+  });
+  // 16kz-refresh Y16: NEW
+  await check('Wire 16kz-refresh (L4): Wire Advanced\'s hand-made destination / AUX cards refuse a SHOW output\'s name (Omar 2026-09-28 ~18:50, "all recommended"): a hand-made destination card renamed "left led" or "AUX 1" and a hand-made AUX card renamed "mv 1" say Name in use and keep their names (no undo step); two hand-made destination cards both named STAGE are numbered apart as before (STAGE, STAGE 2); a new hand-made card is never given a show output\'s name (with CENTER LED named New Destination, + gives New Destination 2)', async () => {
+    await restore(); const out = {};
+    try {
+      openWireMode(); await wait(400); okDialogs(); wireSettings.wireView = 'advanced'; _wireRender(); await wait(300); okDialogs();
+      _wireAdvAddCustomDest(); _wireAdvAddCustomDest(); _wireAdvAddCustomDsm(); _wireRender(); await wait(300);
+      out.made = [wireAdvanced.customDests.map(c => c.name), wireAdvanced.customDsms.map(c => c.name)];
+      const pane = i => $$('#wire-sources-panel .wire-pane')[i];
+      const box = (i, k) => { const c = $$('.wire-source-card.wire-custom-card', pane(i))[k]; return c ? $('.wire-custom-name', c) : null; };
+      const ren = async (i, k, n) => { const b = box(i, k); if (!b) return 'no card ' + i + '/' + k; const was = b.value, u0 = _undoStack.length; b.value = n; b.dispatchEvent(new Event('change', { bubbles: true })); await wait(300);
+        const t = dlgOpen() ? dialogText() : ''; okDialogs(); await wait(100); const b2 = box(i, k); return [/Name in use/.test(t), !!b2 && b2.value === was, _undoStack.length - u0]; };
+      out.ren = [await ren(1, 0, 'left led'), await ren(1, 1, 'AUX 1'), await ren(2, 0, 'mv 1')];
+      out.after = [wireAdvanced.customDests.map(c => c.name), wireAdvanced.customDsms.map(c => c.name)];
+      await ren(1, 0, 'STAGE'); await ren(1, 1, 'STAGE'); out.two = wireAdvanced.customDests.map(c => c.name);
+      screens.find(s => s.name === 'CENTER LED').name = 'New Destination'; _wireAdvAddCustomDest(); out.newName = wireAdvanced.customDests[wireAdvanced.customDests.length - 1].name;
+    } finally { try { closeWireMode(); } catch (e) {} okDialogs(); await wait(200); await restore(); }
+    return is(out, { made: [['New Destination', 'New Destination 2'], ['New AUX/DSM']], ren: [[true, true, 0], [true, true, 0], [true, true, 0]], after: [['New Destination', 'New Destination 2'], ['New AUX/DSM']], two: ['STAGE', 'STAGE 2'], newName: 'New Destination 2' },
+      'the hand-made cards made / each rename into a show output\'s name [Name in use, the card keeps its name, undo steps] / the cards after / two cards typed STAGE / a new card with CENTER LED named New Destination');
+  });
+  // ── 16kz-fix (the fixer's round after the two attacks on 16kz-refresh). Appended at the END of the probe (after 16kz-refresh's
+  //    Y16). Each NEW check FAILS on the second builder's 16kz-refresh page (r16kz/build2, sha1 f715089b) for the defect it names
+  //    and PASSES on 16kz-fix.
+  const _fxRows = () => $$('#io-adv .sys-cols, #io-adv .sys-row').filter(r => r.getClientRects().length > 0);
+  const _fxWhole = (lines, name) => {   /* the lines drawn on a picture show only whole words of the name, in order; a cut ends in … after a whole word */
+    if (!Array.isArray(lines) || !lines.length) return 'no lines';
+    const words = String(name).split(/\s+/), cut = /…$/.test(lines[lines.length - 1]);
+    const shown = lines.map(l => l.replace(/…$/, '')).join(' ').split(/\s+/).filter(Boolean);
+    if (shown.some((w, i) => w !== words[i])) return 'part of a word: ' + lines.join(' / ');
+    return cut ? (shown.length < words.length ? true : 'an … with nothing left out') : (shown.length === words.length ? true : 'words left out without …');
+  };
+  // 16kz-fix N1: NEW
+  await check('I/O 16kz-fix (J) R4: a refresh rate set on Advanced page 1 for a source page 1 made (a row typed there: its I/O-only source in Simple) is that source\'s OWN rate: the page-1 pick (one undo step) is the source\'s rate, S0 › 25 gives every source its own 25 in one step, the Video I-O tab of the I/O Excel prints it, 3G-SDI + 1920x1080 + 120 on its row turns its Simple card red, and a rate set on the source itself (the phone card\'s pick) is written on its page-1 row too, so the next Advanced draw keeps it', async () => {
+    await restore(); await _r3P1Up(); const out = {};
+    try {
+      _ioAdvAdd('src'); await wait(200); const pg = ioAdvanced.pages[0], row = pg.sources[pg.sources.length - 1];
+      const inp = $('#io-adv .sys-name-input[data-sys-id="' + row.id + '"]'); inp.focus(); inp.value = 'FX SRC'; inp.blur(); await wait(400); okDialogs();
+      const own = () => (_sysGetSourceMeta('FX SRC') || {}).refresh || '';
+      out.twin = !!(_sysGetSourceMeta('FX SRC') || {}).fromAdv;
+      let u0 = _undoStack.length; await ioPick(_rzRf('FX SRC'), /^59\.94$/); out.pick = [own(), (r2P1('src', 'FX SRC') || {}).refresh, _undoStack.length - u0];
+      u0 = _undoStack.length; await ioPick(r2AllCell('src', 'refresh'), /^25$/); await wait(300); okDialogs();
+      out.s0 = [_sysDiscoverSources().filter(n => ((_sysGetSourceMeta(n) || {}).refresh || '') !== '25'), _undoStack.length - u0];
+      const o2 = _buildXlsxMulti; let sheets = null; window._buildXlsxMulti = function (s) { sheets = s; return o2.apply(this, arguments); }; downloads.length = 0; try { _sysExportIOExcel(); await wait(400); } finally { window._buildXlsxMulti = o2; } okDialogs();
+      const vio = (sheets || []).find(s => s.name === 'Video I-O'); out.excel = vio ? vio.rows.filter(r => r[2] === 'FX SRC').map(r => r[5]) : 'no Video I-O tab';
+      await ioPick($('[data-sys-field="connector"]', r2Row('FX SRC')), /^3G-SDI$/); await ioPick($('[data-sys-field="resolution"]', r2Row('FX SRC')), /^1920×1080/); await ioPick(_rzRf('FX SRC'), /^120$/);
+      _ioSetView('simple'); await wait(400); okDialogs();
+      const card = $$('#io-grid .iog-card').find(k => (($('.sys-name-input', k) || {}).value || '') === 'FX SRC');
+      out.card = card ? !!$('.iog-warn', card) : 'no FX SRC card';
+      const t = document.createElement('div'); t.dataset.sysKind = 'src'; t.dataset.sysId = 'FX SRC'; t.dataset.sysField = 'refresh';   /* what the phone card's Refresh box is: a src pill of that source */
+      u0 = _undoStack.length; _sysHandlePick(t, { value: '29.97', label: '29.97' }); await wait(300);
+      await r2Adv(); _sysRender(); await wait(400); okDialogs();   /* the next Advanced draw */
+      out.phone = [own(), (r2P1('src', 'FX SRC') || {}).refresh, _undoStack.length - u0];
+    } finally { try { _ioSetView('simple'); } catch (e) {} await wait(300); closeSystem(); await restore(); }
+    return is(out, { twin: true, pick: ['59.94', '59.94', 1], s0: [[], 1], excel: [25], card: true, phone: ['29.97', '29.97', 1] },
+      'FX SRC typed on page 1 is an I/O-only source page 1 made / 59.94 on its row [the source\'s own, the row, undo steps] / S0 › 25 [sources without their own 25, undo steps] / the Video I-O tab\'s Refresh for FX SRC / 3G-SDI 1920×1080 at 120: its Simple card red / 29.97 set on the source itself, then an Advanced draw [the source\'s own, the page-1 row, undo steps]');
+  });
+  // 16kz-fix N2: NEW
+  await check('I/O 16kz-fix (J) R1: the Advanced table fits the window at every width Electron allows (1024 px up): with the page\'s own column rules applied to the table at 1024, 1100 (the narrow rule), 1101, 1152, 1200 and 1248 px, every row and heading of pages 1 and 2 keeps all its columns inside itself, Reset and the trash included (they were pushed past the window from 1101 to about 1250 px and at 1024 px); at this 1440 px window the columns are the 16kz-refresh widths', async () => {
+    await restore(); await _r3P1Up(); const out = {};
+    const rule = inMedia => { let got = null; for (const ss of document.styleSheets) { let rs; try { rs = ss.cssRules; } catch (e) { continue; }
+      for (const r of rs) { if (!inMedia && r.selectorText && r.selectorText.indexOf('#sys-overlay.io-advanced #io-adv .sys-row') >= 0) got = r.style.gridTemplateColumns;
+        if (inMedia && r.media && /max-width:\s*1100px/.test(r.conditionText || r.media.mediaText || '')) for (const q of r.cssRules) if (q.selectorText && q.selectorText.indexOf('#sys-overlay.io-advanced #io-adv .sys-row') >= 0) got = q.style.gridTemplateColumns; } } return got; };
+    const wide = rule(false), narrow = rule(true), adv = $('#io-adv');
+    out.here = (() => { const r = $$('#io-adv .io-adv-rows > .sys-row:not(.sys-row-global)')[0]; const c = getComputedStyle(r).gridTemplateColumns.split(' '); return c.slice(0, 8).concat(c[9]).join(' '); })();
+    const scan = () => { const bad = []; _fxRows().forEach(r => { const rb = r.getBoundingClientRect(), pr = parseFloat(getComputedStyle(r).paddingRight) || 0, last = r.lastElementChild;
+      if (r.scrollWidth > r.clientWidth + 1 || (last && last.getBoundingClientRect().right > rb.right - pr + 1)) bad.push(((($('.sys-name-input', r) || {}).value) || (($('.sys-row-icon', r) || {}).textContent) || 'heading').trim()); }); return bad; };
+    const at = W => { adv.style.width = W + 'px'; adv.style.maxWidth = 'none';
+      _fxRows().forEach(r => { r.style.gridTemplateColumns = W <= 1100 ? narrow : wide; r.style.columnGap = W <= 1100 ? '8px' : '10px'; r.style.fontSize = W <= 1100 ? '11px' : ''; });
+      void adv.offsetWidth; const b = scan(); return b.length ? W + ': ' + b.slice(0, 4).join(', ') + (b.length > 4 ? ' +' + (b.length - 4) : '') : W + ': ok'; };
+    const undo = () => { adv.style.width = ''; adv.style.maxWidth = ''; _fxRows().forEach(r => { r.style.gridTemplateColumns = ''; r.style.columnGap = ''; r.style.fontSize = ''; }); };
+    const W = [1024, 1100, 1101, 1152, 1200, 1248];
+    try {
+      out.rules = [!!wide, !!narrow];
+      out.p1 = W.map(at); undo();
+      _ioSetPage(1); await wait(350); okDialogs(); out.p2 = W.map(at); undo(); _ioSetPage(0); await wait(250);
+    } finally { undo(); try { _ioSetView('simple'); } catch (e) {} await wait(300); closeSystem(); await restore(); }
+    const ok = W.map(w => w + ': ok');
+    return is(out, { here: '36px 180px 44px 170px 170px 170px 120px 24px 70px', rules: [true, true], p1: ok, p2: ok },
+      'the fixed columns at this window / the page\'s wide and narrow column rules found / page 1 at each width [rows with a column outside] / page 2 the same');
+  });
+  // 16kz-fix N3: NEW
+  await check('Cards 16kz-fix (I): a name on a card picture never loses part of a word (Omar\'s 13): CENTER LED renamed NEW DESTINATION 2 reads the whole name on two lines (it read NEW / DESTINATI…) on its I/O Patch card, its Wire side-panel card and its Advanced row\'s small picture; RIGHT LED renamed DOWNSTAGE CONFIDENCE MONITOR shows only whole words (a second line cut after a whole word ends in …); every line inside its picture', async () => {
+    await restore(); const c = screens.find(s => s.name === 'CENTER LED'), r = screens.find(s => s.name === 'RIGHT LED'); const A = 'NEW DESTINATION 2', B = 'DOWNSTAGE CONFIDENCE MONITOR'; c.name = A; r.name = B; const out = {};
+    try {
+      await ioOpenSimple(); _sysRender(); await wait(300);
+      const card = n => $$('#io-grid .iog-card').find(k => (($('.sys-name-input', k) || {}).value || '') === n) || null;
+      const geo = (k, n) => { const sp = k && $('.wire-thumb-auto > span', k); if (!sp) return 'no picture'; const th = $('.wire-thumb', k).getBoundingClientRect(), ls = _rzLines(sp);
+        const inside = $$(':scope > span', sp).every(s => { const b = s.getBoundingClientRect(); return b.left >= th.left - 0.5 && b.right <= th.right + 0.5; });
+        return [_fxWhole(ls, n), ls.length <= 2, inside, n === A ? ls.join(' ') === A : true]; };
+      out.grid = [geo(card(A), A), geo(card(B), B)];
+      await r2Adv(); if (ioAdvanced.page !== 0) { _ioSetPage(0); await wait(300); }
+      _ioAdvRenameTwin('dest', 'CENTER LED', A); _ioAdvRenameTwin('dest', 'RIGHT LED', B); _sysRender(); await wait(300);
+      const mini = n => { const rw = r2Row(n); const sp = rw && $('.iog-mini-name', rw); if (!sp) return 'no small picture'; const ls = _rzLines(sp), m = $('.iog-mini', rw).getBoundingClientRect();
+        return [_fxWhole(ls, n), $$(':scope > span', sp).every(s => { const b = s.getBoundingClientRect(); return b.left >= m.left - 0.5 && b.right <= m.right + 0.5; }), n === A ? ls.join(' ') === A : true]; };
+      out.mini = [mini(A), mini(B)];
+      _ioSetView('simple'); await wait(300); closeSystem();
+      openWireMode(); await wait(400); wireSettings.wireView = 'simple'; _wireRender(); await wait(400);
+      const wcard = n => $$('#wire-sources-panel .wire-source-card').find(k => (($('.wire-source-name', k) || {}).textContent || '').trim() === n) || null;
+      out.wire = [geo(wcard(A), A), geo(wcard(B), B)];
+      closeWireMode(); await wait(300);
+    } finally { c.name = 'CENTER LED'; r.name = 'RIGHT LED'; try { closeWireMode(); } catch (e) {} await restore(); }
+    const G = [true, true, true, true];
+    return is(out, { grid: [G, G], mini: [[true, true, true], [true, true, true]], wire: [G, G] },
+      'the I/O Patch cards [whole words only, at most two lines, inside the picture, NEW DESTINATION 2 shown whole] for NEW DESTINATION 2 and DOWNSTAGE CONFIDENCE MONITOR / the Advanced rows\' small pictures [whole words, inside, shown whole] / Wire\'s side-panel cards (as the I/O Patch cards)');
+  });
+  // 16kz-fix N4: NEW
+  await check('I/O 16kz-fix (J) R5: the Advanced Notes box shows the WHOLE note: CAM 1 with a note of about 300 characters opens a box as tall as the note (nothing hidden, nothing to scroll; it showed three lines and hid the first), under or over its cell but never over it, inside the window; typing more makes it grow; Escape keeps the note', async () => {
+    await restore(); await _r3P1Up(); const out = {};
+    const long = 'Center camera on the long lens for IMAG, operator Sam on the riser, tally from the Ultimatte, check the colour and the iris before the doors open, the spare body is in the case under the riser, the lens cap and the rain cover go back in the same case after the show, and the operator calls clear on the comms.';
+    try {
+      _sysWithUndo(() => _sysSetMeta('src', 'CAM 1', 'notes', long)); _sysRender(); await wait(300);
+      let cell = $('.io-note-cell', r2Row('CAM 1')); cell.scrollIntoView({ block: 'center' }); await wait(200); cell.click(); await wait(250);
+      const ta = $('.io-note-pop textarea'), pop = $('.io-note-pop');
+      const geo = () => { const p = pop.getBoundingClientRect(), k = $('.io-note-cell', r2Row('CAM 1')).getBoundingClientRect(); return [ta.scrollHeight <= ta.clientHeight + 1, p.top >= k.bottom - 0.5 || p.bottom <= k.top + 0.5, p.top >= 0 && p.bottom <= innerHeight]; };
+      out.open = ta ? geo() : 'no box';
+      if (ta) { const h0 = ta.clientHeight; ta.value = ta.value + ' ' + long; fire(ta, 'input'); await wait(150); out.grow = [ta.clientHeight > h0].concat(geo()); ioEsc(ta); await wait(300); }
+      out.kept = [(_sysGetSourceMeta('CAM 1') || {}).notes === long, !!$('.io-note-pop')];
+    } finally { try { const t = $('.io-note-pop textarea'); if (t) ioEsc(t); } catch (e) {} try { _ioSetView('simple'); } catch (e) {} await wait(300); closeSystem(); await restore(); }
+    return is(out, { open: [true, true, true], grow: [true, true, true, true], kept: [true, false] },
+      'the box opened [the whole note shows, not over its cell, inside the window] / more typed [taller, the whole note shows, not over its cell, inside the window] / Escape [the note kept, the box closed]');
+  });
+  // 16kz-fix N5: NEW
+  await check('I/O 16kz-fix (H): after a refused Custom… refresh rate ("Not a refresh rate") the keyboard is back on the row\'s Refresh pill, whether the alert is answered with OK or with Escape (it was left on the page body, so the next Tab started at the top of the page); nothing is written', async () => {
+    await restore(); await _r3P1Up(); const out = {};
+    try {
+      let p = _rzRf('CAM 1'); p.focus(); const u0 = _undoStack.length; await _rzCustom(p, 'abc'); await wait(200);
+      out.ok = [dlgOpen() && /not a refresh rate/i.test(dialogText())]; const b = $('#dlg-confirm'); if (b) b.click(); await wait(300); out.ok.push(dlgOpen(), _rzAct());
+      p = _rzRf('CAM 1'); p.focus(); await _rzCustom(p, '0'); await wait(200); out.esc = [dlgOpen()];
+      (document.activeElement || document.body).dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true })); await wait(300); out.esc.push(dlgOpen(), _rzAct());
+      out.written = [(_sysGetSourceMeta('CAM 1') || {}).refresh || '', _undoStack.length - u0];
+    } finally { okDialogs(); try { _ioSetView('simple'); } catch (e) {} await wait(300); closeSystem(); await restore(); }
+    return is(out, { ok: [true, false, 'refresh@CAM 1'], esc: [true, false, 'refresh@CAM 1'], written: ['', 0] },
+      '"abc" typed [the alert, then after OK: the alert open, the focus] / "0" typed [the alert, then after Escape: the alert open, the focus] / [CAM 1\'s rate, undo steps]');
+  });
+  // 16kz-fix N6: NEW
+  await check('I/O 16kz-fix (J) R5: a note stays one line: Shift+Enter in the Notes box saves it and closes the box like Enter (it stored a line break the cell could not show, and the next edit glued the words), and a line break that arrives in the box (a paste) becomes a space', async () => {
+    await restore(); await _r3P1Up(); const out = {};
+    try {
+      let c = $('.io-note-cell', r2Row('CAM 1')); c.click(); await wait(200); let ta = $('.io-note-pop textarea');
+      if (!ta) return 'no Notes box';
+      ta.value = 'LINE ONE'; fire(ta, 'input'); const u0 = _undoStack.length; _rzKd(ta, 'Enter', { shiftKey: true }); await wait(400);
+      out.shift = [!!$('.io-note-pop'), (_sysGetSourceMeta('CAM 1') || {}).notes || '', _undoStack.length - u0];
+      if ($('.io-note-pop textarea')) { ioEsc($('.io-note-pop textarea')); await wait(250); }
+      c = $('.io-note-cell', r2Row('CAM 1')); c.click(); await wait(200); ta = $('.io-note-pop textarea');
+      if (ta) { ta.value = 'FIRST\nSECOND'; fire(ta, 'input'); out.paste = ta.value; _rzKd(ta, 'Enter'); await wait(400); }
+      out.saved = [(_sysGetSourceMeta('CAM 1') || {}).notes || '', (($('.io-note-cell', r2Row('CAM 1')) || {}).value || '')];
+    } finally { try { const t = $('.io-note-pop textarea'); if (t) ioEsc(t); } catch (e) {} try { _ioSetView('simple'); } catch (e) {} await wait(300); closeSystem(); await restore(); }
+    return is(out, { shift: [false, 'LINE ONE', 1], paste: 'FIRST SECOND', saved: ['FIRST SECOND', 'FIRST SECOND'] },
+      'LINE ONE + Shift+Enter [the box open, CAM 1\'s note, undo steps] / FIRST, a line break, SECOND arriving in the box / after Enter [CAM 1\'s note, the cell]');
   });
   try { _fsPauseAll(); } catch (e) {} $$('video').forEach(v => { try { v.muted = true; v.pause(); } catch (e) {} });
   return { checks };
