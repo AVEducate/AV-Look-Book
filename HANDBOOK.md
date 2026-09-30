@@ -323,7 +323,8 @@ anchor on the function name and replace the first occurrence after it, never all
 - **I/O Patch Simple is a CARD GRID** (owner, 2026-09-27, build 16ky; search `16ky-iogrid`; his pictures: Blackmagic Videohub
   next to his mock-ups). `_sysRender` draws it last (`_iogRender()` into `#io-grid`, before the phone hook); the old table code above it
   in `_sysRender` still runs and draws nothing (its containers `#sys-src-rows` / `#sys-dst-rows` / `#sys-mv-zone` are gone). Four
-  sections (src, dst = screens + ioDests, aux = dsms, mv), each opening with an add card (`.fs-src.fs-src-add.iog-add`, the Video
+  sections (src, dst = screens + ioDests, aux = dsms, mv), each opening with an add card (since 16la-wire-mv the add cards END
+  a section and complete its last row, see that entry; `.fs-src.fs-src-add.iog-add`, the Video
   Presets Advanced add card) -> `_iogAdd` = the old Add buttons (`_sysAddSource`, `_sysAddDestination` (since 16ky-r2b ALWAYS
   the Globally path: `_iogAdd('dst')` sets `_sysScope.dst` to global around it and puts it back; no `#sys-scope-dst` in the grid), `_sysAddAUX`, `_sysAddMV`; the two without an undo step are wrapped in `_sysWithUndo`). A card is Wire's
   side-panel card: the same classes and Wire's own functions for the picture (`_wireUploadThumbnail`, keys src: / dst: / dsm: only:
@@ -364,7 +365,8 @@ anchor on the function name and replace the first occurrence after it, never all
   card with `_sysSetMeta` (the setter of a card's own pick), inside `_sysApplyToAll`'s one undo step. The multiviewer picture is
   `_IOG_MV_PIC` (Omar's 12_mv.png, area-averaged to 224 x 126, a PNG data URI): the Simple multiviewer card (`c.fixedPic`, no
   MV tag, no upload) and every Advanced multiviewer row's mini (`_iogMiniFor`), fitted with object-fit:contain on black. NEVER
-  give it to another kind, and keep it out of the Look Book, the Wire sheets and the phone. Any list of destinations the grid
+  give it to another kind, and keep it out of the Look Book, the Wire sheets and the phone (since 16la-wire-mv it is picture 1
+  of `_IOG_MV_PICS`, see that entry). Any list of destinations the grid
   builds goes through `_iogDests()` (16kx: a backdrop never shows). Flows checks: 16ky C and "Connector 16kw: Set for all ›
   Connector › Custom…" are RENAMED in place (their old expectations were the switch and D0 reaching AUX); two checks are
   `16ky-r2b: ADAPTED` (names and expectations kept).
@@ -576,6 +578,112 @@ anchor on the function name and replace the first occurrence after it, never all
   cell) on open and on input; Enter with Shift saves; a line break in the box becomes a space. (H) `_rfCommit`'s refusal
   alert gives the focus back to the Refresh pill on OK / Escape (`onConfirm` / `onCancel`). Flows checks N1..N6, phone M1;
   renamed in place P1 (the + Add cards: Y13 turned around).
+- **16la-wire-mv** (owner, 2026-09-29, after testing 16kz; search `16la-wire-mv`). (M) "the Wire still show the Destination the
+  older way": in the Wire drawing a destination / AUX tile draws its picture at its RIGHT end and its name on the left. Simple:
+  the node code of `_wireRenderDiagram` AND its copy in `_wireBuildExportSvg` (the Wire sheets and the Look Book's Simple Wire
+  page) put the picture at x + w - 48 for `destination` / `dsm` (`_laOut`), the name stays at x + 12; a node without a picture
+  is unchanged. Advanced: `_wireAdvGenericTileHTML` (only ever an OUTPUT tile: the show's destination / AUX and the hand-made
+  ones) writes the info column first and the 110 x 62 slot after it; `_wireAdvThumbSvg(x,y,thumb,name,colour,w)` draws the
+  native picture at x + w - 123 when w is given (the destination / AUX call passes p.w; the source call does not). The export
+  clones the live drawing, so it follows. No CSS: the export copies only `:root` / `#wire-overlay` rules, the markup order
+  carries the layout. Ports, cable ends, hit areas, drag (`_wireStartNodeDrag` keeps each part's offset), sizes, the phone's
+  Simple drawing (it is the same drawing: a picture uploaded on the phone shows on the right too) follow by themselves. I/O-only
+  destinations have no Wire tile. (N) four multiviewer pictures: `_IOG_MV_PICS` = [`_IOG_MV_PIC`, Omar's mv2 / mv3 / mv4.png,
+  PIL BOX to 224 x 126, PNG, optimize: the recipe that reproduces picture 1 byte for byte]. `mvPic` (1-4) on each multiviewer:
+  `_mvPicNo` reads it (anything else = none), `_mvPicRandom` (Math.random; it reads no const, the launch line runs early),
+  `_mvPicSrc` (none shows picture 1). EVERY place that makes a multiviewer object writes `mvPic:_mvPicRandom()` (`_sysAddMV`,
+  `_sysRender`'s put-back MV 1, the MV 1 of `_applyProjectText` for a file without one, `newShow`, the launch): a new place
+  must too. `_mvPicFill` gives a random one to each multiviewer without one: in `_applyProjectText` AFTER `_captureCleanBaseline`
+  (then `_recomputeDirty`: an older show reads as changed, Save lit, no undo step; the owner: "Give them a random one"), in
+  the draft restore (the same) and in `_lbRestoreData` (a step without one). The three examples in `_LB_EXAMPLES` CARRY
+  `"mvPic"` (drawn at random once for this build: 3 / 1 / 3), so an example opens clean (no "Leave site?") and draws no random
+  number; the example PACKET files in site/packets are older saves and open as changed. The Simple card's picture is a
+  button (`_mvPicThumbOpen`, `.iog-mv-cycle`): `_mvPicCycle(id)` = `_sysWithUndo(_sysSetMeta('mv',id,'mvPic',next))`,
+  1 -> 2 -> 3 -> 4 -> 1, then `_sysRender` (the grid gives the focus back); Enter / Space come through the grid's capture
+  keydown (a `[role=button][tabindex=0]` div is clicked). `_iogMiniFor` maps multiviewer names to their picture (a row naming
+  none: picture 1). The phone, the Look Book, the Excel and Wire show no multiviewer picture (unchanged). SNAPSHOTS unchanged:
+  an example draws no random number as it opens (a draw there moves every later draw of the seeded smoke run, which recoloured
+  the untyped source cables of the Look Book's Wire page in a first try). A new place that draws Math.random while a show opens
+  will move them again. (O) the + Add cards: `_iogSecHTML` writes the cards,
+  then `_iogAddFillHTML(sec,n)`: K = max over C in 4 / 3 / 2 / 1 of need(C) = C - n % C (C when the row is full) add cards;
+  card k carries `iog-add-xC` for every C with k >= need(C); four @media rules next to the `.iog-grid` column rules hide
+  them (`width > 1439px`, `1099px < width <= 1439px`, `719px < width <= 1099px`, `width <= 719px`: EXACTLY the column rules'
+  ranges, keep them in step). No JS on resize. `.iog-empty` spans the row under the add cards. `_iogAdd` puts the focus on the
+  section's first visible add card after an add made from an add card (`_iogFocusAdd`); `_iogRefocus` does the same when the
+  add card the focus was on is gone or hidden after a redraw (`_iogSpot` notes `add`). Flows checks N1..N3; renamed in place
+  P1 (16ky A: the add card now follows the cards), P2 (16ky-r2b C: its name said "the first card"), P3 (16ky-r2b N3: each
+  multiviewer shows its own picture, the picture is a button), P4 (16kz-fix P1: only the add cards that show are measured),
+  P5 (16ky-r2 A: a multiviewer card's keys now include its picture); phone M1 (the Town Hall packet opens as changed, so New
+  asks first: the check waits for Quick Setup). HELP: "Help 16kx-r3" reads a 2500-character window from the first "Advanced
+  pages" after I/O Patch (inside Add & remove), so the Multiviewer row can grow by ~90 characters at most: its details are in
+  What it is.
+- **16la-ip** (owner, 2026-09-29 ~12:40, chosen over a new IP field; search `16la-ip`). (P) "you just put the IP address rules i
+  wrote in the notes, it just auto populates there": a connector SET to NDI / ST-2110 / Dante / Ethernet (`_ipIsIpConn`:
+  `_sysClassifyConnector` ndi / st2110 / dante / ethernet; Fiber and SFP / QSFP classify as fiber; a typed Custom… connector is
+  custom) gives the row's NOTE the show's next free address IN THE SAME EDIT. Where: `_sysSetMetaNow` calls `_ipGive(kind,id)`
+  after every connectorType write (every single-row pick: Simple cards, Advanced rows on any page, the phone's I/O cards, Wire's
+  source / destination / AUX cards, Custom… typed as a built-in's name, A0 / M0 through `_iogApplyOut`); `_sysApplyToAll` (S0 /
+  D0) and `_ioAdvApplyToAll` (an Advanced page's Set for all rows; A0's 'adv-aux' rows are 'adv-dst') call `_ipGiveAll` (each row
+  its own, in card / row order); a Wire custom source (no note) gets its 16el `ip` (`_ipGiveCustom`, from `_wireAdvSetCustomField`
+  and `_wireConnWrite`); a source tile's output point gives the tile's source one (`_ipGiveInst`, from `_wireAdvSetSrcPortConn`
+  and `_wireConnWrite`). The note is written through `_sysSetMetaNow(kind,id,'notes',…)`, so page 1 (`_ioP1ToShow`), an
+  I/O-only twin (`_ioAdvFollowTwinDest`) and the Video Presets Notes column (`renderTable`) follow in the same step. Numbering
+  `_ipSeq`: 192.168.R.1, then .5, .10 … .250 (51 a range), R = 0 … 255. `_ipUsed`: every IPv4 in the notes of sources,
+  screens, dsms, multiviewers, ioDests, presets and every Advanced page's rows, plus sources[].ip / customSources[].ip (16el);
+  the first address of the sequence not in it is given. Empty note = the address; a note with text = "address · text"; a note
+  with an IPv4 (`_ipFind`), or a source with its own 16el ip, gets nothing. NOTHING runs on open / load / draft restore / undo:
+  an older show is not changed and does not light Save. Wire Advanced, DERIVED at draw time, never written: `_ipCell` / `_ipCellVal`
+  (the router matrix and the switcher grid of `_wireAdvRouterTileHTML`): an ID cell that is not typed (`ptAuto`) shows the IP of
+  the item on its cable (`_ipOfEnd`: asrc / asp -> the source; adst / adsm / adp / dst / dsm -> the destination / AUX; 16el's ip
+  wins, else the first IPv4 of the note) IN PLACE OF the auto ID (16jv's OUT n / BKP, kept in the tooltip): "IP · OUT n" was
+  cut after "OUT" in the printed column. `pt` keeps the auto ID, so clearing a typed ID shows the IP again. `_ipPortVal`: a
+  network switch's port without a name shows the IP(s) of the items cabled to it. Both carry `data-ip-auto`; the Advanced export
+  clones the live drawing, so the Wire sheets and the Look Book print them. Wire Simple's hub (`o.hub`), converters and
+  everything else are untouched. 16el's Details box: `_wireIpPrefill` = `_ipNextFree()` (its old rule, the first three
+  numbers of the first IP + a dot, is gone); the box shows the note's address when there is one (`data-prefill`, untouched =
+  nothing stored, as before) else the next free one (`data-suggest`; Enter stores it as the source's 16el ip, one undo step).
+  Flows checks P1..P3, phone check Q1. A new path that writes connectorType must call `_ipGive` (or `_ipGiveAll`), or it
+  silently skips the address. Known gap, not new: a Simple card's connector pick on a source page 1 made (fromAdv: ORGILL's P1,
+  LEFT SIDE, RIGHT SIDE) is put back by page 1 on the next Advanced look (page 1 wins, 16ji), its address with it.
+- **16la-colour-mv** (owner, 2026-09-29 ~13:30 - 15:40; search `16la-colour-mv`, prefix `_cm`). (Q) destination / AUX colours
+  work like a source's: ONE stored colour (screens[] / dsms[] `wireColor`, `_wireNodeColor`, default orange / yellow) shown by
+  the I/O Patch card, the Wire card and the Wire drawing tile. The Advanced tile drew a FIXED #0e7490 / #2d8a5e colour tile and
+  the t-dest / t-dsm lane border and name: positions now take `_cmTileColor` (the show item's colour, a hand-made card's own:
+  its wireColor, else the old #0e7490 / #2d8a5e its card shows), `_wireAdvGenericTileHTML` takes `opts.tint` (inline border and
+  name colour, like the source tile; `_cmShowColor`, show items only). A cable pick sets it: `_cmCable` from `_sysSetMetaNow`
+  (dest / aux / an adv-dst row of page 1 through `_ioP1Map`), `_cmCableAll` in `_sysApplyToAll` D0 (screens, not ioDests),
+  `_cmCableRows` in `_ioAdvApplyToAll` (page 1's rows); `_wireCableSpec(v).color`, nothing for Clear. An upload samples it
+  (`_cmUploadColour` in `_wireUploadThumbnail`, in the upload's undo step). Nothing runs on open. The Simple export
+  (`_wireBuildExportSvg`) keeps the sheet's theme colours for every node, sources too (unchanged). (R) Wire's side panel gets a
+  Multiviewers pane (`_cmMvPaneHTML`, after AUX / DSM, not on the phone; its sticky header top 126 inline, collapse
+  `panes.mv === false`) with `_cmMvCardHTML` (picture right, `_cmMvCycle` = `_mvPicCycle` + redraw + focus; resolution through
+  `_wireSetDestField('mv', …)`; Cable Type kind 'mv', `_wireConnWrite` takes 'mv'). Drag data `wire-adv-mv:<id>`. ADVANCED: a
+  destination tile of the page, `wireAdvanced.dests` entry `{ refId: 'mv:<id>' }` (`_cmIsMvRef`); positions `_cmMvAdvPos`
+  (type destination, `mvRef`), the dest branch draws `_cmMvAdvTileHTML` / `_cmMvAdvThumbSvg`; `_wireAdvGetDestTemplate` returns
+  the multiviewer (router cell names, IP); once per page (`_cmMvAdvDrop` moves an existing one). SIMPLE: `wireSettings.mvSimple`
+  (a data key: saved, undone, compared) lists the ids dragged in, `wireLayout['mv:<id>']` their spot; `_cmMvSimpleNodes` feeds
+  the hub one output each (`hout:` after the AUX, router outputs `dsmNodes.concat(_cmMvs)`), hubGeom0 / column starts stay
+  without them so nothing moves; the export draws the same; Delete (`_cmSimpleMvDelete` in `_wireEscClose`) takes it off.
+  `_cmMvDropTiles` (from `_sysRowDelete` 'mv') drops the tiles on every page (`_wireAdvEachPage` + `_wireAdvSweepPageWires`) and
+  the Simple entry. (S1) `_iogSecHTML` writes no `.iog-empty` note. (T) `_iogAddHTML` draws the outline card (`.iog-wf*`,
+  CSS next to the four @media rules; `.iog-grid>.iog-wf{display:flex}` is kept at two classes so the @media hiding rules win).
+  Flows checks C1..C5 (new), A1..A6 (renamed in place), phone check QM1.
+- **16la-fix** (fixer, 2026-09-30; search `16la-fix`, prefix `_fx`). The owner's answers to the IP builder's questions and the
+  attacks' fixes. (U1) `_ipCell` returns the automatic label AND the IP (`OUT 1 · 192.168.0.1`, `BKP · …`, a source tile's typed port
+  label `PRIMARY · …`; just the IP where the cell had none); `_ipCellVal` sets the tooltip the same and `_fxSlotStyle` a smaller
+  font when the text is longer than the column (matrix 104 px, editable switcher 115, locked 137, 0.61 em a character, 6 px at least),
+  so it is whole on screen and on paper. Typed cells are untouched. (U3) a hand-made destination / AUX card has its own IP
+  (`customDests[].ip` / `customDsms[].ip`): Details' box `_fxIpCustomSelHTML` (16el's markup, shown for an NDI / ST-2110 / Dante cable,
+  commit `_fxIpCommitCustom`, one undo step), the tile's `.wire-adv-ip` line (`opts.ip` of `_wireAdvGenericTileHTML`,
+  `_fxCustomTileIp`), `_ipOfEnd` (adst: / adsm: read `t.ip` before the note), `_ipUsed` counts it, `_ipGiveCustom` runs for every
+  hand-made kind in `_wireConnWrite` and `_wireAdvSetCustomField`. (U2) / (U4) unchanged. (M / R) Wire Simple (live and
+  `_wireBuildExportSvg`): `_fxSimpleName` draws a name that would run into a right-end picture smaller (12 to 9 px), then cuts it after
+  a whole word with …; every other name exactly as before. Removed: the `.iog-empty` rules, the `.fs-src.fs-src-add.iog-add` rules,
+  `_iogSecHTML`'s empty-note argument; stale comments corrected (16el's // block is a /* */ one). Help: I/O Patch › What it is,
+  › Multiviewer (MV), Wire › IP address, › Source thumbnails. Flows checks F1..F5 (new), A1 = 16la-ip's P3 renamed in place.
+  Not changed (owner's questions): + Add destination still lands before the I/O-only destinations; the Simple sheet's theme
+  colours; a switcher fed THROUGH a router shows no IP; the website's packets; the Quick Guide. Found in passing, also on v0.7.0:
+  committing a typed router / switcher ID cell by clicking elsewhere throws a NotFoundError (the redraw runs inside the blur).
 - Declined by the owner, do not resurface: mask shapes, anchor points, hardware profiles, canvas/WebGL renderer,
   interpolation filter toggles, upscale-factor notes, per-layer "sharp pixels", any licence mention.
 

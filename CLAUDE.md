@@ -171,11 +171,23 @@ their own Set for all (A0; D0 the destination rows); no "Simple changed" questio
 a name another output has is refused ("Name in use") everywhere it can be renamed; + AUX takes the next free AUX number; Remove Source
 shows the cards' numbers. 16kz-refresh (2026-09-28): a Refresh column on every Advanced page (the item's own rate on page 1, like
 Type and notes; the I/O Excel, the Look Book and the phone show it; the red pill counts it, `_RF_CAP`), the Notes cell opens a box,
-the Advanced rows take Tab; the output cards (grid and Wire) have their picture on the right (the + Add cards keep the + on the left, 16kz-fix); a name on
+the Advanced rows take Tab; the output cards (grid and Wire) have their picture on the right (the + Add cards kept the + on the left in 16kz-fix; outline cards since 16la-colour-mv); a name on
 a picture breaks only between words; the only screen is never deleted (every delete path, Undo / Redo too); ADD › Destination and
 Wire's hand-made cards refuse a used output name. 16kz-fix (2026-09-29): the + Add cards as before, the Advanced columns shrink (1024 px fits), a source made on page 1 carries its
-rate, whole words on a picture, the phone's resolution never cut, the Notes box shows the whole note. Details: HANDBOOK section 5
-(`16ky-r3`, `16kz-answers`, `16kz-refresh`, `16kz-fix`).
+rate, whole words on a picture, the phone's resolution never cut, the Notes box shows the whole note. 16la-wire-mv (2026-09-29):
+the Wire drawing's destination / AUX tiles have their picture on the right too (Simple, Advanced, the Wire sheets, the Look Book);
+four multiviewer pictures (`mvPic` 1-4: random for a new one and, ONCE, for a show saved without one, which then reads as changed;
+a click on the card's picture shows the next); the + Add cards end each section and complete its last row. 16la-ip (2026-09-29): a
+connector set to NDI / ST-2110 / Dante / Ethernet gives the row's note the show's next free IP (192.168.0.1, .5, .10 …; `_ipGive`
+from `_sysSetMetaNow`, `_ipGiveAll` from the Set for all paths); Wire Advanced shows an item's IP in an untyped router / switcher
+ID cell and an unnamed network-switch port (`_ipCell`, `_ipPortVal`: derived, never written). 16la-colour-mv (2026-09-29): a
+destination's / AUX's colour works like a source's (a cable pick or an uploaded picture sets it; `_cmCable`, `_cmUploadColour`)
+and its Wire Advanced tile shows it (`_cmTileColor`); a Multiviewers pane in Wire, whose cards drag onto Advanced (a destination
+tile, refId `mv:<id>`, once per page) and Simple (`wireSettings.mvSimple`: one more switcher output each); the + Add cards are
+outline cards and an empty section has no note. 16la-fix (2026-09-30): an untyped Advanced ID cell shows its automatic label AND
+the IP ("OUT 1 · 192.168.0.1", `_ipCell` / `_fxSlotStyle`); a hand-made destination / AUX has its own IP (`customDests[].ip`,
+Details' box `_fxIpCustomSelHTML`); a long Simple name never runs into its right-end picture (`_fxSimpleName`). Details: HANDBOOK section 5
+(`16ky-r3`, `16kz-answers`, `16kz-refresh`, `16kz-fix`, `16la-wire-mv`, `16la-ip`, `16la-colour-mv`, `16la-fix`).
 
 **Layer strip + ghost view (round 16ks)** — `_ls*` block in front of `_rcPresetRow`: `_lsStripHTML(p)` fills the header's old flex:1 spacer,
 `_lsTopTag(p,s)` prefixes `.screen-res`, `_lsGhost` is editor-only view state (class `lb-ghost` on the live DOM of `#canvas-area` / `#fs-canvas`,

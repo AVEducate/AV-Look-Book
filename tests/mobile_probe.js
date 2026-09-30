@@ -149,8 +149,14 @@
     const el = findOpen($('#mobile-main .mb-empty')); if (!el) return 'no Open control on the empty state';
     const t = await pickThrough(el); if (t !== true) return t; return is([$('#show-name').value, screens.length, presets.length, dsms.length], ['Town Hall', 2, 5, 2], 'loaded show');
   });
-  await check('open: a show file put into the app\'s own file input loads at phone size (Town Hall: 2 destinations, 5 presets, 2 AUX)', async () => {
-    newShow(); await wait(400); okDialogs(); await wait(300); closeQS(); await wait(300); if (screens.length || presets.length) return 'New Show did not clear the show';
+  // 16la-wire-mv M1: REPLACES the check named in its header (reason in the block)
+  // 16la-wire-mv: RENAMED in place. Why: Omar 2026-09-29 (N): a show saved before 16la-wire-mv gives its multiviewers a random
+  //   picture when it is opened and then reads as changed. The Town Hall packet (site/packets) is such a file, so New on it asks
+  //   "Unsaved changes" first; its confirm runs New after its short text animation, and Quick Setup opened AFTER the check had
+  //   already closed it, covering the Show card for the next check. The check now waits for Quick Setup before closing it; what it
+  //   expects is unchanged.
+  await check('open: a show file put into the app\'s own file input loads at phone size (Town Hall: 2 destinations, 5 presets, 2 AUX; 16la-wire-mv (N): the Town Hall packet file is from an older build, so it opens as changed and New asks first)', async () => {
+    newShow(); await wait(400); okDialogs(); await until(() => vis($('#qs-modal')), 2500); await wait(200); closeQS(); await wait(300); if (screens.length || presets.length) return 'New Show did not clear the show';   /* 16la-wire-mv: New asks first on this older file */
     const r = await runner('setFiles', { selector: '#load-file-input' }); if (!r || r.error || !r.found) return 'no #load-file-input to put the file into' + (r && r.error ? ' (' + r.error + ')' : '');
     await until(townHallLoaded, 2500); okDialogs(); await wait(300);
     return is([$('#show-name').value, screens.length, presets.length, dsms.length, $$('#mobile-main .mb-preset-card').length], ['Town Hall', 2, 5, 2, 5], 'loaded show / cards');
@@ -845,6 +851,48 @@
     } finally { await rotate(PORTRAIT); try { window.renderMobileMain(); } catch (e) {} await wait(300); okDialogs(); }
     return is(out, { p390: [true, [], [], [], true], p360: [true, [], [], []], p320: [true, [], [], []] },
       'at 390 px [cards, resolutions cut, Refresh boxes under 44 px, Refresh boxes outside their card, LEFT LED\'s Refresh beside its resolution] / at 360 px [the same] / at 320 px [the same]');
+  });
+  await restore();
+  // ── 16la-ip (Omar 2026-09-29 ~12:40): (P) on the phone, a connector picked on an I/O card gives its note the show's next
+  //    free IP address, REAL taps. FAILS on the 16la-wire-mv page, PASSES on 16la-ip. The phone is put back after it.
+  // 16la-ip Q1: NEW
+  await check('I/O 16la-ip (P): on the phone a connector picked on an I/O card gives the note the show\'s next free IP address (Omar 2026-09-29: "it just auto populates there"): real taps on the first source card\'s Connector box and on NDI store NDI and write "192.168.0.1 · <its note>" in its note, which the card\'s Notes box shows; taps on the first destination card\'s Connector and on Dante give it 192.168.0.5 the same way; each pick is one undo step', async () => {
+    await restore(); const out = {};
+    const srcCard = n => $$('#mobile-main .mb-io-src').find(c => (($('.mb-io-syname', c) || {}).value || '') === n) || null;
+    const dstCard = n => $$('#mobile-main .mb-io-card:not(.mb-io-src)').find(c => (($('.mb-io-syname', c) || {}).value || txt($('.mb-io-name', c))) === n) || null;
+    const pickOn = async (card, re) => { if (!card) return 'no card'; let t = await tap($('[data-sys-field="connector"]', card)); if (t !== true) return t; await until(() => $('.sys-dd .sys-dd-item'), 1500); await wait(200);
+      const it = $$('.sys-dd .sys-dd-item').find(i => re.test(txt(i))); if (!it) return 'the menu has no ' + re; t = await tap(it); if (t !== true) return t; await wait(600); return true; };
+    try {
+      let t = await _kzToIo(); if (t !== true) return t; window.renderMobileMain(); await wait(300);
+      const n0 = srcNames()[0], note0 = (_sysGetSourceMeta(n0) || {}).notes || '', d0 = screens[0], dn0 = d0.notes || '';
+      let u0 = _undoStack.length; out.src = [await pickOn(srcCard(n0), /^NDI/), (_sysGetSourceMeta(n0) || {}).connectorType, (_sysGetSourceMeta(n0) || {}).notes === '192.168.0.1' + (note0 ? ' · ' + note0 : ''), _undoStack.length - u0];
+      window.renderMobileMain(); await wait(300); out.srcBox = (($('.mb-io-input', srcCard(n0)) || {}).value || '') === '192.168.0.1' + (note0 ? ' · ' + note0 : '');
+      u0 = _undoStack.length; out.dst = [await pickOn(dstCard(d0.name), /^Dante/), d0.connectorType, d0.notes === '192.168.0.5' + (dn0 ? ' · ' + dn0 : ''), _undoStack.length - u0];
+      window.renderMobileMain(); await wait(300); out.dstBox = (($('.mb-io-input', dstCard(d0.name)) || {}).value || '') === '192.168.0.5' + (dn0 ? ' · ' + dn0 : '');
+    } finally { okDialogs(); try { if (typeof _sysCloseMenu === 'function') _sysCloseMenu(); } catch (e) {} await wait(200); }
+    return is(out, { src: [true, 'NDI', true, 1], srcBox: true, dst: [true, 'Dante', true, 1], dstBox: true },
+      'the first source card NDI [picked, stored, its note, undo steps] / its Notes box / the first destination card Dante [picked, stored, its note, undo steps] / its Notes box');
+  });
+  await restore();
+  // ── 16la-colour-mv (Omar 2026-09-29 ~13:30): (Q) on the phone, a cable type picked on a destination's or AUX's I/O card sets
+  //    its colour to the cable's colour, as a source's pick sets a source's, REAL taps; (R) the phone's Wire keeps its side panel
+  //    as it was (no Multiviewers pane). FAILS on the 16la-ip page, PASSES on 16la-colour-mv. The phone is put back after it.
+  // 16la-colour-mv QM1: NEW
+  await check('I/O 16la-colour-mv (Q): on the phone a cable type picked on a destination\'s or an AUX\'s I/O card sets its colour to the cable\'s colour, as on the desktop (Omar 2026-09-29: "the work flow between both should match"): real taps on the first destination card\'s Connector box and on HDMI 2.0, then on AUX 1\'s card and on Fiber, store the connector and the cable\'s colour in ONE undo step each; the phone\'s Wire side panel has no Multiviewers pane (the phone\'s Wire is unchanged)', async () => {
+    await restore(); const out = {};
+    const dstCard = n => $$('#mobile-main .mb-io-card:not(.mb-io-src)').find(c => (($('.mb-io-syname', c) || {}).value || txt($('.mb-io-name', c))) === n) || null;
+    const pickOn = async (card, re) => { if (!card) return 'no card'; let t = await tap($('[data-sys-field="connector"]', card)); if (t !== true) return t; await until(() => $('.sys-dd .sys-dd-item'), 1500); await wait(200);
+      const it = $$('.sys-dd .sys-dd-item').find(i => re.test(txt(i))); if (!it) return 'the menu has no ' + re; t = await tap(it); if (t !== true) return t; await wait(600); return true; };
+    try {
+      let t = await _kzToIo(); if (t !== true) return t; window.renderMobileMain(); await wait(300);
+      const d0 = screens[0], a = dsms.find(x => x.name === 'AUX 1') || dsms[dsms.length - 1];
+      let u0 = _undoStack.length; out.dst = [await pickOn(dstCard(d0.name), /^HDMI 2\.0$/), d0.connectorType, _wireNodeColor('dest', d0.id) === _wireCableSpec('HDMI 2.0').color, _undoStack.length - u0];
+      window.renderMobileMain(); await wait(300);
+      u0 = _undoStack.length; out.aux = [await pickOn(dstCard(a.name), /^Fiber$/), a.connectorType, _wireNodeColor('dsm', a.id) === _wireCableSpec('Fiber').color, _undoStack.length - u0];
+      out.wirePane = (typeof _cmMvPaneHTML === 'function') ? [document.body.classList.contains('is-mobile'), _cmMvPaneHTML()] : 'no Multiviewers pane on this page at all';
+    } finally { okDialogs(); try { if (typeof _sysCloseMenu === 'function') _sysCloseMenu(); } catch (e) {} await wait(200); }
+    return is(out, { dst: [true, 'HDMI 2.0', true, 1], aux: [true, 'Fiber', true, 1], wirePane: [true, ''] },
+      'the first destination card HDMI 2.0 [picked, stored, its colour = the cable\'s, undo steps] / AUX 1\'s card Fiber / the phone\'s Wire side panel [on the phone, the Multiviewers pane it draws]');
   });
   await restore();
 

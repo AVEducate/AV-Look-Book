@@ -598,7 +598,8 @@
     "CENTER LED",
     "RIGHT LED",
     "DSM 1",
-    "AUX 1"
+    "AUX 1",
+    "MV 1"
    ]
   }
  }

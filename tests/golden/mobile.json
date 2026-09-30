@@ -29,7 +29,7 @@
    "ok": true
   },
   {
-   "name": "open: a show file put into the app's own file input loads at phone size (Town Hall: 2 destinations, 5 presets, 2 AUX)",
+   "name": "open: a show file put into the app's own file input loads at phone size (Town Hall: 2 destinations, 5 presets, 2 AUX; 16la-wire-mv (N): the Town Hall packet file is from an older build, so it opens as changed and New asks first)",
    "ok": true
   },
   {
@@ -258,6 +258,14 @@
   },
   {
    "name": "I/O 16kz-fix: on the phone an I/O card's Resolution box keeps its whole text next to the Refresh box: at 390, 360 and 320 px wide every card's resolution reads whole, the Refresh box is a full-size touch target inside its card, beside the resolution when both fit (LEFT LED at 390 px) and on the line under it when they do not",
+   "ok": true
+  },
+  {
+   "name": "I/O 16la-ip (P): on the phone a connector picked on an I/O card gives the note the show's next free IP address (Omar 2026-09-29: \"it just auto populates there\"): real taps on the first source card's Connector box and on NDI store NDI and write \"192.168.0.1 · <its note>\" in its note, which the card's Notes box shows; taps on the first destination card's Connector and on Dante give it 192.168.0.5 the same way; each pick is one undo step",
+   "ok": true
+  },
+  {
+   "name": "I/O 16la-colour-mv (Q): on the phone a cable type picked on a destination's or an AUX's I/O card sets its colour to the cable's colour, as on the desktop (Omar 2026-09-29: \"the work flow between both should match\"): real taps on the first destination card's Connector box and on HDMI 2.0, then on AUX 1's card and on Fiber, store the connector and the cable's colour in ONE undo step each; the phone's Wire side panel has no Multiviewers pane (the phone's Wire is unchanged)",
    "ok": true
   },
   {

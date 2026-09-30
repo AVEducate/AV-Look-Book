@@ -514,7 +514,8 @@
     "MAIN LED",
     "OVERFLOW",
     "DSM 1",
-    "AUX 1"
+    "AUX 1",
+    "MV 1"
    ]
   }
  }

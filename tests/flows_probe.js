@@ -4588,8 +4588,13 @@
 // _waSpare, _waHome, restore.
 
   // 28a — one custom library for the whole show
-  await check('Wire Advanced: a custom card made on one page is offered on every page, and the tile stays on the page it was dropped on', async () => {
-    const named = () => [...document.querySelectorAll('#wire-sources-panel .wire-pane')].map(p => [...p.querySelectorAll('.wire-custom-card .wire-custom-name')].map(i => i.value));
+  // 16la-colour-mv A5: REPLACES the check named in its header (reason in the block)
+  // 16la-colour-mv: RENAMED in place. Why: Omar 2026-09-29 (R): Wire's side panel has a fourth pane, Multiviewers, which takes
+  //   no custom card; the check read the custom cards of EVERY pane and expected three lists. It now reads the three panes that
+  //   take custom cards (Sources, Destinations, AUX / DSM); the same cards are expected. PASSES on both pages; without this
+  //   change it fails on 16la-colour-mv (a fourth, empty list).
+  await check('Wire Advanced: a custom card made on one page is offered on every page, and the tile stays on the page it was dropped on (16la-colour-mv (R): read in the three panes that take custom cards; the Multiviewers pane after them has none)', async () => {
+    const named = () => [...document.querySelectorAll('#wire-sources-panel .wire-pane:not(.wire-pane-mv)')].map(p => [...p.querySelectorAll('.wire-custom-card .wire-custom-name')].map(i => i.value));
     const spare = await _waSpare(); const first = wireAdvanced._pages[0].id;
     _wireAdvAddCustomSource(); const cs = wireAdvanced.customSources[wireAdvanced.customSources.length - 1]; _wireAdvSetCustomField('src', cs.id, 'name', 'WA LIB SRC');
     _wireAdvAddCustomDest();   const cd = wireAdvanced.customDests[wireAdvanced.customDests.length - 1];     _wireAdvSetCustomField('dst', cd.id, 'name', 'WA LIB DEST');
@@ -4696,7 +4701,11 @@
 // The builder's other three checks are NOT repeated here.
 
   // fix-6 (REPLACES the builder's migration check) — a real 16ks file, the open page's own parked entry included
-  await check('Wire Advanced: a show saved with a custom list per page opens as ONE library, its tiles follow, the merge is not an edit and the next save holds the new shape', async () => {
+  // 16la-colour-mv A6: REPLACES the check named in its header (reason in the block)
+  // 16la-colour-mv: RENAMED in place. Why: as A5: the Multiviewers pane (R) takes no custom card, and the check read every pane
+  //   and expected three lists. It now reads the three panes that take custom cards; the same library is expected. PASSES on
+  //   both pages; without this change it fails on 16la-colour-mv (a fourth, empty list).
+  await check('Wire Advanced: a show saved with a custom list per page opens as ONE library, its tiles follow, the merge is not an edit and the next save holds the new shape (16la-colour-mv (R): read in the three panes that take custom cards)', async () => {
     const keep = JSON.stringify(getProjectState());
     const s = JSON.parse(keep);
     const encA = { id: 'csA', name: 'WA OLD ENC', resolution: '1920x1080', wireColor: '#b78fff' };
@@ -4721,7 +4730,7 @@
     _applyProjectText(JSON.stringify(s)); await wait(900); okDialogs();
     const undo0 = eval('_undoStack').length, dirty0 = !!eval('_isDirty');
     openWireMode(); await wait(500); wireSettings.wireView = 'advanced'; _wireRender(); await wait(500); okDialogs();
-    const lib = [...document.querySelectorAll('#wire-sources-panel .wire-pane')].map(p => [...p.querySelectorAll('.wire-custom-card .wire-custom-name')].map(i => i.value));
+    const lib = [...document.querySelectorAll('#wire-sources-panel .wire-pane:not(.wire-pane-mv)')].map(p => [...p.querySelectorAll('.wire-custom-card .wire-custom-name')].map(i => i.value));
     const clean = [dirty0, !!eval('_isDirty'), eval('_undoStack').length - undo0];
     const wa = getProjectState().wireAdvanced, pd = wa._pageData || {};
     const perPage = Object.keys(pd).filter(k => ['customSources', 'customDests', 'customDsms'].some(c => c in (pd[k] || {})));
@@ -8023,11 +8032,21 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
   const _kyKeys = sec => $$('#io-grid [data-iog-sec="' + sec + '"] .iog-card').map(c => c.dataset.iogKey);
   const _kySaveLit = () => !!$('button.save-dirty');
   // 16ky-iogrid A: NEW
-  await check('I/O 16ky: Simple is a card grid (Omar 2026-09-27, 10.png): four titled sections in this order, Sources, Destinations, AUX / DSM, Multiviewers, each with its icon and title and opening with its "+ Add …" card, then one card per source (S1 …), per destination (D1 …, then each I/O-only destination, IO), per AUX / DSM output (A1 …) and per multiviewer (MV1 …), in the model\'s order; the Simple table is gone (Advanced keeps its table)', async () => {
+  // 16la-wire-mv P1: REPLACES the check named in its header (reason in the block)
+  // 16la-wire-mv: RENAMED in place. Why: Omar 2026-09-29 12:05 (O): the "+ Add …" card is no longer the first card of a section;
+  //   the cards come first and the add cards complete the last row. This check asserted that each section OPENS with its add card, so
+  //   that expectation cannot be kept. The same sections, titles, icons, cards and add-card words are read; the add card is now
+  //   expected right after the section's last card. FAILS on the 16kz page (the add card is first), PASSES on 16la-wire-mv.
+  // 16la-colour-mv A1: REPLACES the check named in its header (reason in the block)
+  // 16la-colour-mv: RENAMED in place. Why: Omar 2026-09-29 ~15:40 (T): the + Add card is an outline of its section's card and
+  //   its label "+ Add source" sits on the outline's name line (.iog-wf-label); the old card's .fs-src-name is gone, so the label
+  //   was read as ''. Same sections, cards, order and the same four labels are expected; the label is read on either element.
+  //   PASSES on both pages (16la-ip still has .fs-src-name); without this change it fails on 16la-colour-mv (an empty label).
+  await check('I/O 16ky (16la-wire-mv (O), Omar 2026-09-29: a section\'s "+ Add …" card now comes AFTER its cards; 16la-colour-mv (T): its label is read on the outline card\'s name line): Simple is a card grid (Omar 2026-09-27, 10.png): four titled sections in this order, Sources, Destinations, AUX / DSM, Multiviewers, each with its icon and title, then one card per source (S1 …), per destination (D1 …, then each I/O-only destination, IO), per AUX / DSM output (A1 …) and per multiviewer (MV1 …), in the model\'s order, and right after the last card its "+ Add …" card; the Simple table is gone (Advanced keeps its table)', async () => {
     await restore(); _sysSetScope('dst', 'local'); _sysAddDestination(); _sysSetScope('dst', 'global'); await ioOpenSimple();
     const g = $('#io-grid'); if (!g) { closeSystem(); await restore(); return 'no card grid (#io-grid) on the Simple page'; }
     const out = {};
-    out.titles = $$('[data-iog-sec]', g).map(s => { const f = ($('.iog-grid', s) || {}).firstElementChild; return [s.dataset.iogSec, (($('.iog-hd-title', s) || {}).textContent || '').trim(), !!$('.iog-hd-ico svg', s), !!(f && f.classList.contains('iog-add')), ((f && $('.fs-src-name', f)) || {}).textContent || '']; });
+    out.titles = $$('[data-iog-sec]', g).map(s => { const g2 = $('.iog-grid', s), f = g2 ? $('.iog-add', g2) : null, cs = g2 ? $$('.iog-card', g2) : []; return [s.dataset.iogSec, (($('.iog-hd-title', s) || {}).textContent || '').trim(), !!$('.iog-hd-ico svg', s), !!(f && cs.length && f.previousElementSibling === cs[cs.length - 1]), ((f && ($('.iog-wf-label', f) || $('.fs-src-name', f))) || {}).textContent || '']; });   /* 16la-wire-mv (O): the add card follows the last card */
     const keys = sec => $$('[data-iog-sec="' + sec + '"] .iog-card', g).map(c => c.dataset.iogKey + '=' + (($('.iog-num', c) || {}).textContent || ''));
     out.src = keys('src'); out.dst = keys('dst'); out.aux = keys('aux'); out.mv = keys('mv');
     out.table = $$('#sys-src-rows, #sys-dst-rows, #sys-mv-zone').length + $$('#sys-overlay .sys-wrap:not(#io-adv) .sys-row').length;
@@ -8036,7 +8055,7 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
       aux: dsms.map((d, i) => 'aux:' + d.id + '=A' + (i + 1)), mv: multiviewers.map((m, i) => 'mv:' + m.id + '=MV' + (i + 1)), table: 0 };
     const io = ioDests.length;
     closeSystem(); await restore();
-    return io !== 1 ? 'the I/O-only destination for the test was not made' : is(out, want, 'the section titles [key, title, icon, first card is the add card, its label] / the cards of each section [key=number] / Simple table rows and containers left');
+    return io !== 1 ? 'the I/O-only destination for the test was not made' : is(out, want, 'the section titles [key, title, icon, the add card follows the last card, its label] / the cards of each section [key=number] / Simple table rows and containers left');
   });
   // 16ky-iogrid B: NEW
   await check('I/O 16ky: a card is Wire\'s side-panel card, drawn by Wire\'s own card rules: its picture box (110 × 62), name tile, CABLE chip, upload mark, colour swatch and shuffle measure and paint exactly as the same source\'s card in Wire; the Simple controls sit on it (name box + library ▼, the rename pencil, resolution box + ▼, Cable Type ▼, Type, notes, Reset, Delete, the S number) and the red bandwidth pill with its reason when the cable cannot carry the size (3840×2160 on 3G-SDI); none of the grid\'s CSS reaches the Look Book (its wire sheet or its canvas CSS)', async () => {
@@ -8066,7 +8085,15 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
   //   cannot be kept. The same adds are made; + Add destination now ALWAYS makes a real destination, also with the old scope
   //   left at Only Here, and an I/O-only destination an older save or page 1 made keeps its card.
   //   FAILS on 16ky-r2 (the switch, the "(Globally)" caption, an I/O-only add with the scope left at Only Here), PASSES on 16ky-r2b.
-  await check('I/O 16ky-r2b (was 16ky C; the Globally / Only Here switch is gone, Omar 2026-09-27: "simple adds it everywhere"): the first card of each section adds one: + Add source (an I/O-only source: Wire sees it, the presets do not), + Add destination (ALWAYS a real 1920×1080 destination at the end of the canvas: in every preset and in the I/O Excel, also with the old scope left at Only Here; its caption says so, and the Destinations title has no Add switch), + Add AUX, + Add multiviewer; each is ONE undo step that lights Save, its card appears last in its section, and Undo takes it away; an I/O-only destination an older save made still has its card (IO)', async () => {
+  // 16la-wire-mv P2: REPLACES the check named in its header (reason in the block)
+  // 16la-wire-mv: RENAMED in place (the words only). Why: its name said "the first card of each section adds one"; since Omar
+  //   2026-09-29 12:05 (O) the add cards come AFTER a section's cards. The code never looked at the position (it clicks the
+  //   section's first add card and reads where the new card lands: last, as before), so nothing else changes.
+  // 16la-colour-mv A2: REPLACES the check named in its header (reason in the block)
+  // 16la-colour-mv: RENAMED in place. Why: Omar 2026-09-29 ~15:40 (T): "the big + box and the long description text go away"; the
+  //   add card's description ("a 1920×1080 destination at the end of the canvas") is now its tooltip, which already said it. The
+  //   same caption is expected, read from the tooltip when the card shows none. PASSES on both pages.
+  await check('I/O 16ky-r2b (was 16ky C; the Globally / Only Here switch is gone, Omar 2026-09-27: "simple adds it everywhere"): the + Add card of each section (16la-wire-mv (O): after its cards; 16la-colour-mv (T): its caption is its tooltip) adds one: + Add source (an I/O-only source: Wire sees it, the presets do not), + Add destination (ALWAYS a real 1920×1080 destination at the end of the canvas: in every preset and in the I/O Excel, also with the old scope left at Only Here; its caption says so, and the Destinations title has no Add switch), + Add AUX, + Add multiviewer; each is ONE undo step that lights Save, its card appears last in its section, and Undo takes it away; an I/O-only destination an older save made still has its card (IO)', async () => {
     await restore(); await ioOpenSimple(); const out = {};
     const addOf = sec => $('#io-grid [data-iog-sec="' + sec + '"] .iog-add');
     const run = async (sec, model) => { const b = addOf(sec); if (!b) return 'no add card in ' + sec; const n0 = model().length, u0 = _undoStack.length; b.click(); await wait(350); okDialogs();
@@ -8078,7 +8105,7 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
       out.src = [sources.length - n0, _undoStack.length - u0, _kySaveLit(), !!s && s.ioOnly === true, !!s && !customLibrary.some(c => c && c.l === s.name), !!s && (_kyKeys('src').pop() || '') === 'src:' + s.name]; doUndo(); await wait(400); out.srcUndo = sources.length === n0; }
     const pos = () => presets.map(p => !!(p.positions && screens.length && p.positions[screens[screens.length - 1].id]));
     out.noSwitch = [!$('#io-grid #sys-scope-dst'), !$('#io-grid [data-iog-sec="dst"] .iog-hd .lb-seg'), !/Only Here|Globally/.test(($('#io-grid [data-iog-sec="dst"] .iog-hd') || {}).textContent || '')];
-    out.caption = (($('#io-grid [data-iog-sec="dst"] .iog-add .fs-src-meta') || {}).textContent || '').trim();
+    out.caption = (($('#io-grid [data-iog-sec="dst"] .iog-add .fs-src-meta') || {}).textContent || (($('#io-grid [data-iog-sec="dst"] .iog-add') || {}).title || '').replace(/^Add destination: /, '')).trim();   /* 16la-colour-mv (T): the outline card shows no description; it is the tooltip */
     for (const scope of ['global', 'local']) {
       _sysSetScope('dst', scope); _sysRender(); await wait(200);   /* 'local' = the old Only Here scope, as a session that used it would leave it */
       const b = addOf('dst'); const n0 = screens.length, io0 = ioDests.length, u0 = _undoStack.length; b.click(); await wait(400); okDialogs(); const s = screens[screens.length - 1];
@@ -8214,7 +8241,11 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
   //   name column first (name, library, resolution and its menu, Cable Type), then the picture, the shuffle and the colour bar, then
   //   Reset and Delete. A source card's keys, the I/O-only and multiviewer cards' keys (they have no picture control) and everything else
   //   are unchanged.
-  await check('I/O 16ky-r2: a Simple card is the name, the resolution and the cable type (Omar 2026-09-27: "this should stay simple just name resolution and cable type"): with a Type and a note stored on every kind of item, no card has a Type (chip, box or menu) or a notes box and none shows those words; a card\'s keys run left to right: on a source card the picture, colour swatch and shuffle, the name and its pencil, the name library, the resolution box and its menu, the Cable Type menu; on a destination or AUX / DSM card (mirrored, 16kz-refresh: its picture on the right) the name, the name library, the resolution box and its menu, the Cable Type menu, then the picture, the shuffle and the colour swatch; then Reset and Delete on the grey line, which keeps the red pill when the cable cannot carry the size and the number (S1, D1, IO, MV1) at its right end; the S0 / D0 bars set the Connector and the Resolution only', async () => {
+  // 16la-wire-mv P5: REPLACES the check named in its header (reason in the block)
+  // 16la-wire-mv: RENAMED in place. Why: Omar 2026-09-29 (N): a click (or Enter / Space) on a multiviewer's picture shows the
+  //   next of its four pictures, so the picture is a control Tab reaches, after the Cable Type menu (the card is mirrored, 16kz-refresh).
+  //   The multiviewer card's expected keys gain "picture" there; every other card, the grey lines and the bars are unchanged.
+  await check('I/O 16ky-r2: a Simple card is the name, the resolution and the cable type (Omar 2026-09-27: "this should stay simple just name resolution and cable type"): with a Type and a note stored on every kind of item, no card has a Type (chip, box or menu) or a notes box and none shows those words; a card\'s keys run left to right: on a source card the picture, colour swatch and shuffle, the name and its pencil, the name library, the resolution box and its menu, the Cable Type menu; on a destination or AUX / DSM card (mirrored, 16kz-refresh: its picture on the right) the name, the name library, the resolution box and its menu, the Cable Type menu, then the picture, the shuffle and the colour swatch; on a multiviewer card (16la-wire-mv (N): its picture is a button that shows the next picture) the name, the name library, the resolution box and its menu, the Cable Type menu, then the picture; then Reset and Delete on the grey line, which keeps the red pill when the cable cannot carry the size and the number (S1, D1, IO, MV1) at its right end; the S0 / D0 bars set the Connector and the Resolution only', async () => {
     await restore(); _kzStock(); await ioOpenSimple(); const out = {};
     const g = $('#io-grid'); if (!g) { closeSystem(); await restore(); return 'no card grid'; }
     out.typeOrNotes = $$(_kzTN).length;
@@ -8225,7 +8256,7 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
     out.bars = $$('#io-grid .iog-all').filter(b => $('[data-sys-kind="src-all"], [data-sys-kind="dst-all"]', b)).map(b => $$('[data-sys-field]', b).map(x => x.dataset.sysKind + ' ' + x.dataset.sysField + ': ' + (x.textContent || '').trim()));
     closeSystem(); await restore();
     const K = ['name', 'library', 'resolution', 'resolution menu', 'cable type', 'reset', 'delete'], P = ['picture', 'swatch', 'shuffle'];
-    return is(out, { typeOrNotes: 0, words: false, keys: [P.concat(['name', 'pencil'], K.slice(1)), K.slice(0, 5).concat(['picture', 'shuffle', 'swatch'], K.slice(5)), K.slice(0, 5).concat(['picture', 'shuffle', 'swatch'], K.slice(5)), K, K],
+    return is(out, { typeOrNotes: 0, words: false, keys: [P.concat(['name', 'pencil'], K.slice(1)), K.slice(0, 5).concat(['picture', 'shuffle', 'swatch'], K.slice(5)), K.slice(0, 5).concat(['picture', 'shuffle', 'swatch'], K.slice(5)), K, K.slice(0, 5).concat(['picture'], K.slice(5))],   /* 16la-wire-mv (N): the multiviewer's picture is a button */
       foot: [[['red pill', 'reset + delete', 'number S1'], 0], [['reset + delete', 'number D1'], 0], [['reset + delete', 'number IO'], 0], [['reset + delete', 'number MV1'], 0]],
       bars: [['src-all connector: Connector', 'src-all resolution: Resolution'], ['dst-all connector: Connector', 'dst-all resolution: Resolution']] },
       'Type / notes controls on the grid / the stored Type or note words on the grid / the keys of a card [source, destination, AUX, I/O-only, multiviewer] / the grey line [its parts, the number\'s distance from its right end] of a source (3840×2160 on 3G-SDI), a destination, an I/O-only destination, the multiviewer / the S0 and D0 bars [kind, field: words]');
@@ -8396,7 +8427,13 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
       'Remove in the four titles [each there, distinct looks, the Destinations and AUX / DSM tooltips] / Destinations\' Remove [window, its list] / AUX / DSM\'s [window, its list] / a screen the grid leaves out [its card, offered] / a destination and an AUX removed from the title [the same window as its trash, gone, preset references left, card gone, undo steps, Save lit, back after Undo] / an I/O-only destination [no window, gone, undo steps, back] / the window opened as before');
   });
   // 16ky-r2b N3: NEW
-  await check('I/O 16ky-r2b: Omar\'s multiviewer picture (12_mv.png: a 2 + 8 multiview, preview green, program red) is the picture of every Multiviewer card on the Simple page and of every multiviewer row\'s small picture on the Advanced pages (page 1 and a page of its own), embedded in the page (a 224 × 126 PNG, 16:9) and fitted whole (not cut, not stretched); only multiviewers get it (no source, destination, AUX or I/O-only card or row), it takes no upload and no colour swatch, the name stays on the card\'s name line, the Set-for-all rows keep their badges; the Look Book and the Wire sheets do not carry it', async () => {
+  // 16la-wire-mv P3: REPLACES the check named in its header (reason in the block)
+  // 16la-wire-mv: RENAMED in place. Why: Omar 2026-09-29 (N): a multiviewer shows ONE OF FOUR pictures (its own, chosen at random
+  //   when it is made) and a click on its card's picture shows the next, so "every card shows picture 1" and "the picture is not a
+  //   button" cannot be kept. The same things are read: picture 1 is 16ky-r2b's drawing; each card and each Advanced row shows its
+  //   multiviewer's OWN picture (a row naming no show multiviewer: picture 1), fitted whole; the picture takes no upload (its click
+  //   is not the upload); no other card or row carries any of the four; the exports carry none of the four.
+  await check('I/O 16ky-r2b (16la-wire-mv (N), Omar 2026-09-29: one of FOUR pictures, each multiviewer its own, the next one on a click): Omar\'s multiviewer picture (12_mv.png: a 2 + 8 multiview, preview green, program red) is picture 1 of the four, embedded in the page (a 224 × 126 PNG, 16:9); every Multiviewer card on the Simple page and every multiviewer row\'s small picture on the Advanced pages (page 1 and a page of its own) shows its multiviewer\'s own picture, fitted whole (not cut, not stretched); only multiviewers get one (no source, destination, AUX or I/O-only card or row), it takes no upload and no colour swatch, the name stays on the card\'s name line, the Set-for-all rows keep their badges; the Look Book and the Wire sheets carry none of the four', async () => {
     await restore(); _sysAddMV(); const io = _kbIoOnly(); await ioOpenSimple(); const out = {};
     const P = (typeof _IOG_MV_PIC === 'string') ? _IOG_MV_PIC : null, nMv = multiviewers.length;
     if (!P) { closeSystem(); await restore(); return 'no multiviewer picture in the page'; }
@@ -8404,19 +8441,21 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
       const px = (x, y) => [...g.getImageData(x, y, 1, 1).data].slice(0, 3); let green = 0, red = 0; const d = g.getImageData(0, 0, c.width, c.height).data;
       for (let i = 0; i < d.length; i += 4) { const x = (i / 4) % c.width, y = Math.floor(i / 4 / c.width); if (y < c.height / 2) { if (d[i + 1] > d[i] + 30 && x < c.width / 2) green++; if (d[i] > d[i + 1] + 30 && x >= c.width / 2) red++; } }
       res([P.slice(0, 22), im.naturalWidth + 'x' + im.naturalHeight, green > 20, red > 20, px(56, 30), px(168, 30)]); }; im.onerror = () => res('does not load'); im.src = P; });
-    const own = c => { const i = $('.wire-thumb img', c); return !!i && i.getAttribute('src') === P; };
+    const PICS = (typeof _IOG_MV_PICS !== 'undefined' && Array.isArray(_IOG_MV_PICS)) ? _IOG_MV_PICS : [P];   /* 16la-wire-mv (N): the four pictures */
+    const mvOf = c => multiviewers.find(m => c.dataset.iogKey === 'mv:' + m.id) || null, picOf = m => (typeof _mvPicSrc === 'function') ? _mvPicSrc(m) : P;
+    const own = c => { const i = $('.wire-thumb img', c), m = mvOf(c); return !!i && !!m && i.getAttribute('src') === picOf(m); };   /* its multiviewer's own picture */
     out.mvCards = $$('#io-grid [data-iog-sec="mv"] .iog-card').map((c, n) => { const t = $('.wire-thumb', c), i = $('.wire-thumb img', c);
-      return [own(c), i ? getComputedStyle(i).objectFit : 'no picture', t.tabIndex < 0 && !t.getAttribute('onclick') && t.getAttribute('role') !== 'button', !$('.wire-color-swatch, .wire-thumb-clear, .wire-thumb-upload-hint', c), !$('.wire-thumb-badge', c), (($('.iog-name-text', c) || {}).textContent || '') === multiviewers[n].name]; });
-    out.others = $$('#io-grid .iog-card:not(.iog-k-mv)').filter(own).length + $$('#io-grid .iog-card:not(.iog-k-mv) img').filter(i => i.getAttribute('src') === P).length;
+      return [own(c), i ? getComputedStyle(i).objectFit : 'no picture', !/_wireUploadThumbnail/.test(t.getAttribute('onclick') || '') && !$('input[type="file"]', t), !$('.wire-color-swatch, .wire-thumb-clear, .wire-thumb-upload-hint', c), !$('.wire-thumb-badge', c), (($('.iog-name-text', c) || {}).textContent || '') === multiviewers[n].name]; });
+    out.others = $$('#io-grid .iog-card:not(.iog-k-mv)').filter(own).length + $$('#io-grid .iog-card:not(.iog-k-mv) img').filter(i => PICS.includes(i.getAttribute('src'))).length;
     { const c = _kyCard('iodest:' + io.id); out.ioOnlyCard = c ? [!!$('.wire-thumb-badge', c), !$('.wire-thumb img', c)] : 'no card'; }
     await r2Adv();
-    const minis = kind => $$('.io-adv-rows .sys-row', r2Sec(kind)).map(r => r.classList.contains('sys-row-global') ? 'badge ' + (($('.sys-row-icon', r) || {}).textContent || '') : (($('.iog-mini img', r) || {}).getAttribute ? ($('.iog-mini img', r).getAttribute('src') === P ? 'picture ' + getComputedStyle($('.iog-mini img', r)).objectFit : 'another picture') : 'no picture'));
+    const minis = kind => $$('.io-adv-rows .sys-row', r2Sec(kind)).map(r => r.classList.contains('sys-row-global') ? 'badge ' + (($('.sys-row-icon', r) || {}).textContent || '') : (($('.iog-mini img', r) || {}).getAttribute ? ($('.iog-mini img', r).getAttribute('src') === (() => { const nm = (($('.sys-name-input', r) || {}).value || '').trim().toLowerCase(), m = multiviewers.find(x => String(x.name || '').trim().toLowerCase() === nm); return m ? picOf(m) : P; })() ? 'picture ' + getComputedStyle($('.iog-mini img', r)).objectFit : 'another picture') : 'no picture'));
     { const m = minis('mv'); out.page1 = [m[0], m.length - 1 === ((ioAdvanced.pages[0] || {}).mvs || []).length && m.length > 1, m.slice(1).every(x => x === 'picture contain'), minis('src').filter(x => /^picture/.test(x)).length + minis('dst').filter(x => /^picture/.test(x)).length]; }
     _ioSetPage(1); await wait(300); _ioAdvAdd('mv'); await wait(300); out.page2 = minis('mv'); _ioSetPage(0); await wait(300);
     await r2Sim(); closeSystem(); await wait(200);
-    const lb = await userLookBook(); const chunk = P.slice(40, 120);
-    let sheets = 'no sheets'; try { sheets = String(_wireExportSheetsSvg('light') || '').includes(chunk) || String(_wireExportSheetsSvg('dark') || '').includes(chunk); } catch (e) { sheets = 'threw: ' + e.message; }
-    out.exports = [lb.includes(chunk), sheets];
+    const lb = await userLookBook(); const chunks = PICS.map(p => p.slice(40, 120));
+    let sheets = 'no sheets'; try { const sv = String(_wireExportSheetsSvg('light') || '') + String(_wireExportSheetsSvg('dark') || ''); sheets = chunks.some(c => sv.includes(c)); } catch (e) { sheets = 'threw: ' + e.message; }
+    out.exports = [chunks.some(c => lb.includes(c)), sheets];
     await restore();
     return is(out, { picture: ['data:image/png;base64,', '224x126', true, true, [0, 0, 0], [0, 0, 0]], mvCards: nMv === 2 ? [[true, 'contain', true, true, true, true], [true, 'contain', true, true, true, true]] : 'two multiviewers', others: 0, ioOnlyCard: [true, true],
       page1: ['badge M0', true, true, 0], page2: ['badge M0', 'picture contain'], exports: [false, false] },
@@ -9134,19 +9173,29 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
   //   multiviewer cards ... should keep the plus box on the left still") supersedes "yes flip the + Add cards"; 16kz-refresh's Y13
   //   asserted the mirrored + Add cards, i.e. the defect. Now all four + Add cards read the + box first, on the LEFT (as before
   //   16kz-refresh), with no iog-add-mirror class or rule; the click and the Enter part is unchanged.
-  await check('Cards 16kz-fix (K): the + Add cards are NOT mirrored (Omar\'s correction 2026-09-28 22:00: "should keep the plus box on the left still"): + Add source, + Add destination, + Add AUX and + Add multiviewer all have their + box on the LEFT and the text on the right (the markup in that order, the two apart), with no iog-add-mirror class or rule, as before 16kz-refresh; only the output cards themselves are mirrored; a click on + Add destination and Enter on + Add AUX still add one each (one undo step)', async () => {
+  // 16la-wire-mv P4: REPLACES the check named in its header (reason in the block)
+  // 16la-wire-mv: RENAMED in place. Why: Omar 2026-09-29 12:05 (O): a section can have up to four + Add cards, some of them hidden
+  //   at the columns the window shows. The check measured every add card and kept the LAST one of each section, often a hidden one
+  //   (no box to measure). Now every add card that shows is measured and they must all read the same: + box on the left, apart.
+  // 16la-colour-mv A3: REPLACES the check named in its header (reason in the block)
+  // 16la-colour-mv: RENAMED in place and turned around. Why: Omar 2026-09-29 ~15:40 (T), his mockup: "THIS REPLACES the earlier rule
+  //   'the + Add cards keep their + box on the LEFT'": a + Add card is an outline of its section's card, so + Add destination / AUX /
+  //   multiviewer have their (empty) picture box on the RIGHT like the cards beside them, + Add source on the LEFT; its accessible
+  //   name is "Add AUX" (no "+"). No iog-add-mirror class or rule, the click and the Enter part are kept.
+  //   FAILS on 16la-ip (a + box on the left of every add card, named "+ Add AUX"), PASSES on 16la-colour-mv.
+  await check('Cards 16kz-fix (K) (16la-wire-mv (O): every + Add card that completes a section\'s last row; 16la-colour-mv (T), Omar 2026-09-29 ~15:40: the + Add card is an outline of its section\'s card, which REPLACES "keep the plus box on the left"): + Add source has its (empty) picture box on the LEFT and its label on the right, + Add destination, + Add AUX and + Add multiviewer have it on the RIGHT, like the cards beside them (the markup in that order, the two apart), with no iog-add-mirror class or rule; a click on + Add destination and Enter on + Add AUX still add one each (one undo step), + Add AUX is named "Add AUX"', async () => {
     await restore(); const out = {};
     try {
       await ioOpenSimple(); await wait(300);
-      out.cards = Object.fromEntries($$('#io-grid .iog-add').map(a => { const t = $('.fs-src-thumb', a).getBoundingClientRect(), i = $('.fs-src-info', a).getBoundingClientRect();
-        return [a.dataset.iogAdd, [...a.children].map(x => String(x.className).split(' ')[0]).join(',') + ':' + (t.left < i.left ? 'L' : 'R') + ':' + (t.right <= i.left + 1 || i.right <= t.left + 1)]; }));
+      out.cards = Object.fromEntries(['src', 'dst', 'aux', 'mv'].map(sec => { const v = [...new Set($$('#io-grid .iog-add[data-iog-add="' + sec + '"]').filter(a => a.getClientRects().length).map(a => { const t = ($('.iog-wf-col', a) || $('.fs-src-thumb', a)).getBoundingClientRect(), i = ($('.iog-wf-info', a) || $('.fs-src-info', a)).getBoundingClientRect();
+        return [...a.children].map(x => String(x.className).split(' ')[0]).join(',') + ':' + (t.left < i.left ? 'L' : 'R') + ':' + (t.right <= i.left + 1 || i.right <= t.left + 1); }))]; return [sec, v.length === 1 ? v[0] : v]; }));   /* 16la-wire-mv (O): every add card that shows */
       out.mirror = [$$('#io-grid .iog-add.iog-add-mirror').length, [...document.styleSheets].some(ss => { try { return [...ss.cssRules].some(r => /iog-add-mirror/.test(r.cssText)); } catch (e) { return false; } })];
       const n0 = screens.length, u0 = _undoStack.length; $('#io-grid .iog-add[data-iog-add="dst"]').click(); await wait(400); out.click = [screens.length - n0, _undoStack.length - u0];
       const a0 = dsms.length, u1 = _undoStack.length, ac = $('#io-grid .iog-add[data-iog-add="aux"]'); ac.focus(); _rzKd(ac, 'Enter'); await wait(400);
       out.enter = [dsms.length - a0, _undoStack.length - u1, ac.getAttribute('aria-label')];
     } finally { closeSystem(); await restore(); }
-    return is(out, { cards: { src: 'fs-src-thumb,fs-src-info:L:true', dst: 'fs-src-thumb,fs-src-info:L:true', aux: 'fs-src-thumb,fs-src-info:L:true', mv: 'fs-src-thumb,fs-src-info:L:true' }, mirror: [0, false], click: [1, 1], enter: [1, 1, '+ Add AUX'] },
-      'the + Add cards [children, the + box\'s side, apart] / [+ Add cards with iog-add-mirror, a CSS rule for it] / a click on + Add destination [added, undo steps] / Enter on + Add AUX [added, undo steps, its name]');
+    return is(out, { cards: { src: 'iog-wf-col,iog-wf-info,iog-wf-foot:L:true', dst: 'iog-wf-info,iog-wf-col,iog-wf-foot:R:true', aux: 'iog-wf-info,iog-wf-col,iog-wf-foot:R:true', mv: 'iog-wf-info,iog-wf-col,iog-wf-foot:R:true' }, mirror: [0, false], click: [1, 1], enter: [1, 1, 'Add AUX'] },   /* 16la-colour-mv (T) */
+      'the + Add cards [children, the picture box\'s side, apart] / [+ Add cards with iog-add-mirror, a CSS rule for it] / a click on + Add destination [added, undo steps] / Enter on + Add AUX [added, undo steps, its name]');
   });
   // 16kz-refresh Y14: NEW
   await check('Backdrop 16kz-refresh (L1): the only screen left is never deleted (Omar 2026-09-28 ~18:50, "all recommended"): with CENTER LED and RIGHT LED backdrops (Edit Show Info), the trash on LEFT LED\'s I/O Patch card, Remove (Destinations) > LEFT LED, the Video Presets table\'s ✕ (P01\'s first row) and Destination Properties\' Remove Globally each say "A show needs at least one screen", ask nothing and delete nothing (no undo step); Undo and Redo never restore a step with no screen (one an older build could have left: refused, the show keeps LEFT LED) and a normal Undo still works; with LEFT LED and CENTER LED backdrops Edit Show Info\'s − (it would take RIGHT LED) is refused and the list keeps its 3 rows', async () => {
@@ -9345,6 +9394,632 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
     } finally { try { const t = $('.io-note-pop textarea'); if (t) ioEsc(t); } catch (e) {} try { _ioSetView('simple'); } catch (e) {} await wait(300); closeSystem(); await restore(); }
     return is(out, { shift: [false, 'LINE ONE', 1], paste: 'FIRST SECOND', saved: ['FIRST SECOND', 'FIRST SECOND'] },
       'LINE ONE + Shift+Enter [the box open, CAM 1\'s note, undo steps] / FIRST, a line break, SECOND arriving in the box / after Enter [CAM 1\'s note, the cell]');
+  });
+  // ── 16la-wire-mv (Omar 2026-09-29): (M) the Wire drawing's destination / AUX tiles have their picture on the RIGHT like their
+  //    cards; (N) four multiviewer pictures, a new multiviewer gets one at random and a click on its card's picture shows the next;
+  //    (O) the I/O Patch Simple "+ Add …" cards come after the cards and complete each section's last row. Each check FAILS on
+  //    the 16kz page (c5c47cb) and PASSES on 16la-wire-mv. The helpers below are this round's own.
+  const _laPic = (w, h) => { const c = document.createElement('canvas'); c.width = w || 64; c.height = h || 36; const g = c.getContext('2d'); g.fillStyle = '#1d4ed8'; g.fillRect(0, 0, c.width, c.height); g.fillStyle = '#ffffff'; g.fillRect(0, 0, Math.round(c.width / 4), c.height); return c.toDataURL('image/png'); };   /* a picture with a white band on its LEFT: a mirrored drawing would show it on the right */
+  const _laNode = (root, id) => $$('g.wire-node', root).find(g => g.getAttribute('data-node-id') === id) || null;
+  const _laSimpleTile = g => { if (!g) return 'no tile'; const r = $(':scope > rect', g), im = $(':scope > image', g), t = $(':scope > text', g); const X = +r.getAttribute('x'), W = +r.getAttribute('width');
+    return [im ? +im.getAttribute('x') - X : 'no picture', im ? +im.getAttribute('width') : 0, t ? +t.getAttribute('x') - X : 'no name', im ? (im.getAttribute('transform') || 'none') : '', W]; };   /* [picture x in the tile, its width, name x in the tile, a transform on the picture, the tile width] */
+  const _laAdvTile = g => { if (!g) return 'no tile'; const r = $(':scope > rect', g), th = $(':scope > .wire-adv-thumb', g), tile = $('.wire-adv-tile', g); const X = +r.getAttribute('x'), W = +r.getAttribute('width');
+    const kids = tile ? [...tile.children].map(c => c.classList.contains('wire-source-info') ? 'info' : 'slot').join(',') : 'no card';
+    return [th ? +th.getAttribute('x') - X : 'no picture', th ? (th.getAttribute('transform') || 'none') : '', kids, W]; };   /* [picture x in the tile, a transform on it, the card's columns in order, the tile width] */
+  const _laWireUp = async v => { if (getComputedStyle($('#wire-overlay')).display !== 'flex') { openWireMode(); await wait(500); okDialogs(); }
+    if (v === 'advanced' && wireSettings.wireView !== 'advanced') { _wireSwitchToAdvanced(); await wait(450); okDialogs(); await wait(700); okDialogs(); }
+    if (v === 'simple' && wireSettings.wireView !== 'simple') { _wireSwitchToSimple(); await wait(450); okDialogs(); } _wireRender(); await wait(300); };
+  const _laEnd = (svgRoot, id) => { const p = $$('path.wire-edge', svgRoot).find(e => e.getAttribute('data-to') === id); if (!p) return null; const q = p.getPointAtLength(p.getTotalLength()); return Math.round(q.x * 10) / 10; };   /* where the cable meets the tile */
+  const _laShape = sec => { const g = $('.iog-grid', _kySec(sec)); return g ? [...g.children].filter(e => e.getClientRects().length).map(e => e.classList.contains('iog-card') ? 'C' : e.classList.contains('iog-add') ? '+' : e.classList.contains('iog-empty') ? 'E' : '?').join('') : 'no section'; };
+  const _laCols = sec => { const g = $('.iog-grid', _kySec(sec)); return g ? getComputedStyle(g).gridTemplateColumns.split(' ').length : 0; };
+  const _laWant = (n, c) => 'C'.repeat(n) + '+'.repeat(n % c ? c - n % c : c);
+  const _laAdds = sec => $$('.iog-add', _kySec(sec)).filter(a => a.getClientRects().length);
+  const _laBook = async view => { openPdfExportModal(); await wait(350); const r = $('input[name="pdf-opt-wire-view"][value="' + view + '"]'); if (r && !r.checked) r.click();   /* the export window's Wire: Simple / Advanced pick */
+    const real = exportPDF; let html = null; window.exportPDF = function () { html = real(true); }; try { _pdfConfirmExport(); } finally { window.exportPDF = real; } await wait(150); return html || ''; };
+  // 16la-wire-mv N1: NEW
+  await check('Wire 16la-wire-mv (M): the Wire drawing\'s tiles follow the cards (Omar 2026-09-29: "they should show up how I/O Patch simple show source image left which is correct and destination image right"): with a picture on LEFT LED, on AUX 1 and on the first source, Wire Simple draws the destination\'s and the AUX\'s picture at the RIGHT end of the tile (4 in) and the name on the left (12 in), the source\'s picture on the left and its name after it; Wire Advanced draws a destination / AUX tile (the show\'s and a hand-made one, with a picture or its colour tile) with the name, resolution and cable first and the picture 13 in from the RIGHT end, the source tile as before; the picture is never flipped, the tile keeps its size and its cable still ends on its left edge; the Simple export, the Advanced export and the Look Book\'s Wire page draw the same', async () => {
+    await restore(); const out = {}; const pic = _laPic(); const pdfWas = window._pdfOpts ? JSON.parse(JSON.stringify(window._pdfOpts)) : null;
+    const d = screens[0], a = dsms[0], s = _wireBuildAllSourceNames()[0];
+    try {
+      wireThumbnails['dst:' + d.id] = pic; wireThumbnails['dsm:' + a.id] = pic; wireThumbnails['src:' + s] = pic;
+      await _laWireUp('simple'); const live = $('#wire-diagram svg');
+      out.simple = [_laSimpleTile(_laNode(live, 'dst:' + d.id)), _laSimpleTile(_laNode(live, 'dsm:' + a.id)), _laSimpleTile(_laNode(live, 'src:' + s))];
+      { const g = _laNode(live, 'dst:' + d.id), X = g ? +$(':scope > rect', g).getAttribute('x') : NaN; out.simpleCable = _laEnd(live, 'dst:' + d.id) === X; }
+      { const doc = new DOMParser().parseFromString(_wireBuildExportSvg('light', { transparent: true, noLegend: true }), 'image/svg+xml');
+        const tile = n => { const g = $$('g', doc).find(x => $(':scope > text', x) && $(':scope > text', x).textContent === n); if (!g) return 'no tile'; const r = $(':scope > rect', g), im = $(':scope > image', g), t = $(':scope > text', g); return [im ? +im.getAttribute('x') - +r.getAttribute('x') : 'no picture', +t.getAttribute('x') - +r.getAttribute('x')]; };
+        out.simpleExport = [tile(d.name), tile(a.name), tile(s)]; }
+      { const html = await _laBook('simple'); const doc = new DOMParser().parseFromString(html, 'text/html'); const w = $('#pdf-wire', doc);
+        const tile = n => { const g = w ? $$('g', w).find(x => $(':scope > text', x) && $(':scope > text', x).textContent === n) : null; if (!g) return 'no tile'; const r = $(':scope > rect', g), im = $(':scope > image', g), t = $(':scope > text', g); return [im ? +im.getAttribute('x') - +r.getAttribute('x') : 'no picture', +t.getAttribute('x') - +r.getAttribute('x')]; };
+        out.lookBookSimple = [tile(d.name), tile(a.name), tile(s)]; }
+      await _laWireUp('advanced');
+      _wireAdvAddCustomDest(); const cd = wireAdvanced.customDests[wireAdvanced.customDests.length - 1]; _wireAdvAddCustomDsm(); const cm = wireAdvanced.customDsms[wireAdvanced.customDsms.length - 1];
+      wireAdvanced.dests.push({ id: 'laCd', refId: cd.id, x: 2400, y: 60 }); wireAdvanced.dsms.push({ id: 'laCm', refId: cm.id, x: 2400, y: 300 }); _wireRender(); await wait(400);
+      const inst = (arr, ref) => (arr.find(x => x && x.refId === ref) || {}).id;
+      const ids = { dst: 'adst:' + inst(wireAdvanced.dests, d.id), dsm: 'adsm:' + inst(wireAdvanced.dsms, a.id), src: 'asrc:' + ((wireAdvanced.sources.find(x => x && x.name === s) || {}).id), cd: 'adst:laCd', cm: 'adsm:laCm' };
+      const adv = $('#wire-diagram svg');
+      out.advanced = ['dst', 'dsm', 'src', 'cd', 'cm'].map(k => _laAdvTile(_laNode(adv, ids[k])));
+      { const g = _laNode(adv, ids.dst), X = g ? +$(':scope > rect', g).getAttribute('x') : NaN; const dot = g ? $$('circle.wire-adv-connector', g).find(c => c.getAttribute('data-source-id') === ids.dst) : null;
+        const th = g ? $(':scope > .wire-adv-thumb', g) : null, info = g ? $('.wire-adv-tile .wire-source-info', g) : null;
+        out.advancedMore = [!!dot && +dot.getAttribute('cx') === X, _laEnd(adv, ids.dst) === X, !!th && !!info && info.getBoundingClientRect().right <= th.getBoundingClientRect().left + 0.5]; }
+      { const doc = new DOMParser().parseFromString(_wireBuildAdvancedExportSvg('light', {}), 'image/svg+xml'); out.advancedExport = ['dst', 'src', 'cd'].map(k => _laAdvTile(_laNode(doc, ids[k]))); }
+      { const html = await _laBook('advanced'); const doc = new DOMParser().parseFromString(html, 'text/html'); out.lookBookAdvanced = ['dst', 'src', 'cd'].map(k => _laAdvTile(_laNode(doc, ids[k]))); }
+    } finally { window._pdfOpts = pdfWas; try { closeWireMode(); } catch (e) {} await wait(300); await restore(); }
+    const S = [172, 44, 12, 'none', 220], R = [4, 44, 56, 'none', 220], A = [137, 'none', 'info,slot', 260], L = [13, 'none', 'slot,info', 260];
+    return is(out, { simple: [S, S, R], simpleCable: true, simpleExport: [[172, 12], [172, 12], [4, 56]], lookBookSimple: [[172, 12], [172, 12], [4, 56]],
+      advanced: [A, A, L, A, A], advancedMore: [true, true, true], advancedExport: [A, L, A], lookBookAdvanced: [A, L, A] },
+      'Wire Simple [LEFT LED, AUX 1, the first source: picture x in the tile, its width, name x, a transform on the picture, the tile width] / LEFT LED\'s cable ends on its left edge / the Simple export and the Look Book\'s Wire page [picture x, name x] / Wire Advanced [LEFT LED, AUX 1, the first source, a hand-made destination, a hand-made AUX: picture x in the tile, a transform, the card\'s columns, the tile width] / LEFT LED on Advanced [its input dot on the left edge, its cable ends there, the name column left of the picture] / the Advanced export and the Look Book\'s Wire page [LEFT LED, the source, the hand-made destination]');
+  });
+  // 16la-wire-mv N2: NEW
+  await check('I/O 16la-wire-mv (N): four multiviewer pictures (Omar 2026-09-29: "select one of the 4 Pre-Created MV options ... put them in randomly ... by clicking the MV image ... it should just cycle"): four distinct 224 × 126 pictures are embedded, the first is 16ky-r2b\'s; a multiviewer stores its picture (mvPic 1-4); a new one gets one at random (Math.random 0.01 / 0.3 / 0.6 / 0.99 give 1 / 2 / 3 / 4); its Simple card shows its own picture, as a button with no upload; a click shows the next (3 → 4 → 1, wrapping), Enter and Space on the focused picture do the same, each ONE undo step that lights Save, the focus stays on the picture, Undo goes back; its Advanced page-1 row shows the same picture; the picture survives a save and a reopen (clean); each example show carries the picture it was given at random once (General Session 3, Awards Night 1, Town Hall 3) and opens clean; a show whose multiviewers have no picture (a file, a restored draft, a step undone into) gets a random one each, ONCE, and reads as changed (Save lit, no undo step); the Look Book and the Wire sheets carry none of the four', async () => {
+    await restore(); const out = {};
+    const P = (typeof _IOG_MV_PICS !== 'undefined' && Array.isArray(_IOG_MV_PICS)) ? _IOG_MV_PICS : [];
+    out.pics = await Promise.all(P.map(src => new Promise(res => { const im = new Image(); im.onload = () => res(im.naturalWidth + 'x' + im.naturalHeight); im.onerror = () => res('does not load'); im.src = src; })));
+    out.table = [P.length, new Set(P).size, P[0] === (typeof _IOG_MV_PIC === 'string' ? _IOG_MV_PIC : null)];
+    out.example = [multiviewers.every(m => [1, 2, 3, 4].includes(m.mvPic)), _kySaveLit()];
+    out.examples = ((typeof _LB_EXAMPLES !== 'undefined') ? _LB_EXAMPLES : []).map(e => e.id + ' ' + ((e.state && e.state.multiviewers) || []).map(m => m.name + '=' + m.mvPic).join(','));   /* each example carries the picture it was given (drawn at random once, for this build) */
+    const card = m => _kyCard('mv:' + m.id), thumb = m => (card(m) ? $('.wire-thumb', card(m)) : null), src = m => { const i = card(m) ? $('.wire-thumb img', card(m)) : null; return i ? i.getAttribute('src') : null; };
+    const rnd = Math.random; const got = [];
+    try { for (const v of [0.01, 0.3, 0.6, 0.99]) { Math.random = () => v; _sysAddMV(); got.push(multiviewers[multiviewers.length - 1].mvPic); } } finally { Math.random = rnd; }
+    out.random = got;
+    try {
+      await ioOpenSimple();
+      out.cards = multiviewers.map(m => { const t = thumb(m); return [src(m) === P[(m.mvPic || 1) - 1], t ? t.getAttribute('role') + ' ' + t.tabIndex : 'no picture', t ? !/_wireUploadThumbnail/.test(t.getAttribute('onclick') || '') : false, card(m) ? !$('.wire-color-swatch, .wire-thumb-clear, .wire-thumb-upload-hint', card(m)) : false]; });
+      closeSystem(); await wait(200);
+      { const st = JSON.parse(JSON.stringify(getProjectState())); st.multiviewers[0].mvPic = 3; _applyProjectText(JSON.stringify(st)); await wait(700); okDialogs(); }
+      await ioOpenSimple(); const m0 = () => multiviewers[0];
+      out.clean0 = [_kySaveLit(), m0().mvPic];
+      const u0 = _undoStack.length; thumb(m0()).click(); await wait(350);
+      out.click = [m0().mvPic, src(m0()) === P[3], _undoStack.length - u0, _kySaveLit()];
+      const u1 = _undoStack.length; thumb(m0()).click(); await wait(350); out.wrap = [m0().mvPic, src(m0()) === P[0], _undoStack.length - u1];
+      let t = thumb(m0()); t.focus(); const u2 = _undoStack.length; _rzKd(t, 'Enter'); await wait(350);
+      let f = document.activeElement; out.enter = [m0().mvPic, _undoStack.length - u2, !!f && f.classList.contains('iog-mv-cycle') && !!card(m0()) && card(m0()).contains(f)];
+      const u3 = _undoStack.length; _rzKd(document.activeElement, ' '); await wait(350); f = document.activeElement;
+      out.space = [m0().mvPic, _undoStack.length - u3, !!f && f.classList.contains('iog-mv-cycle') && !!card(m0()) && card(m0()).contains(f)];
+      doUndo(); await wait(350); out.undo = [m0().mvPic, src(m0()) === P[1]];
+      await r2Adv(); const rows = $$('.io-adv-rows .sys-row:not(.sys-row-global)', r2Sec('mv'));
+      out.page1 = rows.length ? rows.map(r => { const nm = (($('.sys-name-input', r) || {}).value || '').trim(), m = multiviewers.find(x => x.name === nm), i = $('.iog-mini img', r); return !!m && !!i && i.getAttribute('src') === P[m.mvPic - 1]; }) : 'no multiviewer rows';
+      await r2Sim(); closeSystem(); await wait(200);
+      const keep = multiviewers.map(x => x.mvPic); _applyProjectText(JSON.stringify(getProjectState())); await wait(700); okDialogs();
+      out.reopen = [JSON.stringify(multiviewers.map(x => x.mvPic)) === JSON.stringify(keep), _isDirty];
+      lbOpenExample('town-hall'); await wait(900); okDialogs(); await wait(300); okDialogs();
+      out.townHall = [(($('#show-name') || {}).value || ''), multiviewers.length, multiviewers.every(m => [1, 2, 3, 4].includes(m.mvPic)), _isDirty, _kySaveLit()];
+      { const st = JSON.parse(BASE); st.multiviewers.forEach(x => { delete x.mvPic; }); st.multiviewers.push({ id: 'laOld2', name: 'MV 2', connectorType: 'MV', resolution: '1920x1080', deviceType: 'Monitor', notes: '' });
+        _applyProjectText(JSON.stringify(st)); await wait(700); okDialogs();
+        out.file = [multiviewers.length, multiviewers.every(x => [1, 2, 3, 4].includes(x.mvPic)), _isDirty, _kySaveLit(), _undoStack.length];
+        const once = multiviewers.map(x => x.mvPic); await ioOpenSimple(); closeSystem(); await wait(200); out.fileOnce = JSON.stringify(multiviewers.map(x => x.mvPic)) === JSON.stringify(once); }
+      { const s0 = JSON.parse(_snapshot()); s0.multiviewers.forEach(x => { delete x.mvPic; }); _undoStack.push(JSON.stringify(s0)); doUndo(); await wait(300);
+        out.undoneInto = multiviewers.every(x => [1, 2, 3, 4].includes(x.mvPic)); }
+      { const KEY = (typeof _AUTO_SAVE_KEY !== 'undefined') ? _AUTO_SAVE_KEY : null; const was = KEY ? localStorage.getItem(KEY) : null;
+        try { const st = JSON.parse(BASE); st.multiviewers.forEach(x => { delete x.mvPic; }); st._savedAt = Date.now(); localStorage.setItem(KEY, JSON.stringify(st)); restoreAutoSave(); await wait(300);
+          const b = $('#dlg-confirm'); if (dlgOpen() && b) b.click(); await wait(600); okDialogs();
+          out.draft = [multiviewers.every(x => [1, 2, 3, 4].includes(x.mvPic)), _isDirty, _kySaveLit()];
+        } finally { if (KEY) { if (was === null) localStorage.removeItem(KEY); else localStorage.setItem(KEY, was); } try { _lbFromDraft = false; } catch (e) {} } }
+      await restore();
+      const lb = await userLookBook(); let sheets = ''; try { sheets = String(_wireExportSheetsSvg('light') || '') + String(_wireExportSheetsSvg('dark') || ''); } catch (e) { sheets = 'threw'; }
+      out.exports = P.map(p => [lb.includes(p.slice(60, 140)), sheets.includes(p.slice(60, 140))]);
+    } finally { try { closeSystem(); } catch (e) {} await restore(); }
+    const C = [true, 'button 0', true, true], F = [false, false];
+    return is(out, { pics: ['224x126', '224x126', '224x126', '224x126'], table: [4, 4, true], example: [true, false], examples: ['general-session MV 1=3', 'awards-night MV 1=1', 'town-hall MV 1=3'], random: [1, 2, 3, 4], cards: [C, C, C, C, C],
+      clean0: [false, 3], click: [4, true, 1, true], wrap: [1, true, 1], enter: [2, 1, true], space: [3, 1, true], undo: [2, true], page1: [true, true, true, true, true], reopen: [true, false],
+      townHall: ['Town Hall', 1, true, false, false], file: [2, true, true, true, 0], fileOnce: true, undoneInto: true, draft: [true, true, true], exports: [F, F, F, F] },
+      'the four pictures [natural sizes] / [how many, distinct, the first is 16ky-r2b\'s] / the example as opened [its multiviewer has a picture, Save lit] / the three examples\' multiviewers and their stored pictures / + Add multiviewer with Math.random 0.01, 0.3, 0.6, 0.99 / each multiviewer card [its own picture, the picture\'s role and tab index, no upload, no swatch / remove / upload mark] / opened clean with MV 1 at picture 3 [Save lit, its picture] / a click [picture, the card shows picture 4, undo steps, Save lit] / a second click [wraps to 1, shows it, undo steps] / Enter on the focused picture [picture, undo steps, the focus on it] / Space / Undo [picture, shown] / the Advanced page-1 multiviewer rows show their multiviewer\'s picture / saved and reopened [pictures kept, unsaved] / Town Hall opened from the examples [name, multiviewers, each has a picture, unsaved, Save lit] / a file with two multiviewers without a picture [how many, each got one, unsaved, Save lit, undo steps] / not again on the next look / a step without pictures undone into / a draft without pictures restored [each got one, unsaved, Save lit] / [the Look Book, the Wire sheets] carry each picture');
+  });
+  // 16la-wire-mv N3: NEW
+  // 16la-colour-mv A4: REPLACES the check named in its header (reason in the block)
+  // 16la-colour-mv: RENAMED in place. Why: Omar 2026-09-29 ~15:20 (S1) "do not keep note": an empty section's row of + Add cards
+  //   has no note under it any more (was: the note spanning the row); ~15:40 (T): each add card is the outline of its section's
+  //   card (was: today's add card, + box on the left). Same shape, classes, @media rules, adds, Undo, Enter and Space; the look
+  //   is read on the outline (its label, the picture box's side) and the empty section expects no note.
+  //   FAILS on 16la-ip (+ box add cards, the note), PASSES on 16la-colour-mv.
+  await check('I/O 16la-wire-mv (O): the I/O Patch Simple "+ Add …" cards complete each section\'s last row (Omar 2026-09-29 12:05: "10 sources row 1 and 2 are full but row 3 is only 2 source there should be 2 blank add x"): in Sources, Destinations, AUX / DSM and Multiviewers the cards come first, then as many + Add cards as the last row has room for (a full last row gets a new row of them, an empty section one whole row, 16la-colour-mv (S1): with no note under it); each add card has one class per column count at which it is not needed, and four @media rules hide those, in the same ranges as the grid\'s columns (so a resize re-fills the row); every one is the section\'s add card (16la-colour-mv (T): the outline of its card, the picture box on the left for a source and on the right for the others, its words, Tab reaches it); with two sources in the last row (Omar\'s 10 sources: 4 + 4 + 2 sources and 2 add cards; the example has 11, sources are added until two are left) the 2nd add card adds ONE source that lands where the first add card was; Enter and Space on an add card add one each (one undo step) and the keyboard stays on the section\'s first add card; the section titles keep their count and Set for all', async () => {
+    await restore(); const out = {}; const S4 = ['src', 'dst', 'aux', 'mv'];
+    try {
+      await ioOpenSimple();
+      out.cols = S4.map(_laCols);
+      out.shape = S4.map(s => _laShape(s) === _laWant(_kyKeys(s).length, _laCols(s)) ? 'ok' : _laShape(s));
+      out.classes = S4.map(s => { const n = _kyKeys(s).length, adds = $$('.iog-add', _kySec(s)); return [1, 2, 3, 4].every(c => { const need = n % c ? c - n % c : c; const on = adds.filter(a => !a.classList.contains('iog-add-x' + c)); return on.length === need && adds.slice(0, need).every(a => on.includes(a)); }); });
+      const rules = []; for (const ss of document.styleSheets) { let rs; try { rs = ss.cssRules; } catch (e) { continue; } for (const r of rs) { if (!r.media || !r.cssRules) continue; for (const q of r.cssRules) { const m = /^\.iog-grid\s*>\s*\.iog-add\.iog-add-x(\d)$/.exec(q.selectorText || ''); if (m && q.style.display === 'none') rules.push(m[1] + ' ' + r.conditionText); } } }
+      out.rules = rules.sort();
+      out.look = S4.map(s => { const words = new Set(), sides = new Set(); _laAdds(s).forEach(a => { words.add((($('.iog-wf-label', a) || $('.fs-src-name', a) || {}).textContent || '') + '|' + a.tabIndex + '|' + a.getAttribute('role')); const t = ($('.iog-wf-col', a) || $('.fs-src-thumb', a)).getBoundingClientRect(), i = ($('.iog-wf-info', a) || $('.fs-src-info', a)).getBoundingClientRect(); sides.add([...a.children].map(x => String(x.className).split(' ')[0]).join(',') + ':' + (t.left < i.left ? 'L' : 'R')); }); return [...words].concat([...sides]); });   /* 16la-colour-mv (T): the outline card */
+      out.titles = S4.map(s => [(($('.iog-hd-count', _kySec(s)) || {}).textContent || '') === String(_kyKeys(s).length), !!$('.iog-all', _kySec(s)), !!$('.iog-rm', _kySec(s))]);
+      const n00 = _kyKeys('src').length, k0 = (2 - n00 % 4 + 4) % 4 || 4, u0 = _undoStack.length; for (let i = 0; i < k0; i++) { const b = _laAdds('src')[0]; if (!b) break; b.click(); await wait(350); okDialogs(); }   /* until TWO sources are in the last row, as with Omar's 10 */
+      out.ten = [_kyKeys('src').length - n00 === k0, _kyKeys('src').length % 4, _laShape('src') === _laWant(_kyKeys('src').length, 4), _undoStack.length - u0 === k0];
+      { const g = $('.iog-grid', _kySec('src')), gr = () => g.getBoundingClientRect(); const a = _laAdds('src'); const r0 = a[0].getBoundingClientRect(), G0 = gr(); const at = [Math.round(r0.left - G0.left), Math.round(r0.top - G0.top)];
+        const n0 = sources.length, u1 = _undoStack.length; if (!a[1]) throw new Error('no second + Add source card in the last row'); a[1].click(); await wait(400); okDialogs();
+        const cs = $$('.iog-card', _kySec('src')), nr = cs[cs.length - 1].getBoundingClientRect(), G1 = $('.iog-grid', _kySec('src')).getBoundingClientRect();
+        out.lands = [sources.length - n0, _undoStack.length - u1, JSON.stringify([Math.round(nr.left - G1.left), Math.round(nr.top - G1.top)]) === JSON.stringify(at), cs[cs.length - 1].dataset.iogKey === 'src:' + sources[sources.length - 1].name, _kyKeys('src').length % 4, _laShape('src') === _laWant(_kyKeys('src').length, 4)]; }
+      doUndo(); await wait(350); out.undo = [_kyKeys('src').length % 4, _laShape('src') === _laWant(_kyKeys('src').length, 4)];
+      { const k = _laAdds('aux')[0]; k.focus(); const a0 = dsms.length, u2 = _undoStack.length; _rzKd(k, 'Enter'); await wait(400); okDialogs();
+        let f = document.activeElement; out.enter = [dsms.length - a0, _undoStack.length - u2, !!f && f === _laAdds('aux')[0], _laShape('aux')];
+        const a1 = dsms.length, u3 = _undoStack.length; _rzKd(document.activeElement, ' '); await wait(400); okDialogs();
+        f = document.activeElement; out.space = [dsms.length - a1, _undoStack.length - u3, !!f && f === _laAdds('aux')[0], _laShape('aux')]; }
+      { dsms.length = 0; _sysRender(); await wait(300); const e = $('.iog-empty', _kySec('aux')), g = $('.iog-grid', _kySec('aux'));
+        out.empty = [_laShape('aux'), !!e, _laAdds('aux').length]; }   /* 16la-colour-mv (S1): no note */
+    } finally { try { closeSystem(); } catch (e) {} await restore(); }
+    const L = (s, side) => [s, side || 'iog-wf-info,iog-wf-col,iog-wf-foot:R'];   /* 16la-colour-mv (T) */
+    return is(out, { cols: [4, 4, 4, 4], shape: ['ok', 'ok', 'ok', 'ok'], classes: [true, true, true, true],
+      rules: ['1 (width <= 719px)', '2 (719px < width <= 1099px)', '3 (1099px < width <= 1439px)', '4 (width > 1439px)'],
+      look: [L('+ Add source|0|button', 'iog-wf-col,iog-wf-info,iog-wf-foot:L'), L('+ Add destination|0|button'), L('+ Add AUX|0|button'), L('+ Add multiviewer|0|button')], titles: [[true, true, true], [true, true, true], [true, true, true], [true, true, true]],
+      ten: [true, 2, true, true], lands: [1, 1, true, true, 3, true], undo: [2, true], enter: [1, 1, true, 'CCC+'], space: [1, 1, true, 'CCCC++++'], empty: ['++++', false, 4] },
+      'the grid\'s columns [Sources, Destinations, AUX / DSM, Multiviewers] / each section: the cards, then the add cards completing the last row / each add card\'s classes for 1-4 columns / the @media rules that hide them [columns, range] / the add cards of each section [words|tab index|role, children:side of the + box] / each title [count, Set for all, Remove] / sources added until two are in the last row [added as many, left in the last row, the section, one undo step each] / the 2nd add card [added, undo steps, the new card where the 1st add card was, it is the new source, left in the last row, the section] / Undo [left in the last row, the section] / Enter on + Add AUX [added, undo steps, the focus on the first add card, the section] / Space the same / no AUX at all [the section, a note, add cards]');
+  });
+  // ── 16la-ip (Omar 2026-09-29 ~12:40): (P) an IP connector (NDI, ST-2110, Dante, Ethernet) set on a row gives its NOTE the
+  //    show's next free address (192.168.0.1, .5, .10 … .250, then 192.168.1.1 …) in the same undo step; Wire Advanced shows an
+  //    item's IP (Wire's own 16el IP, else the first address in its note) in a router's / switcher's untyped ID cell and in a
+  //    network switch's unnamed port. Each check FAILS on the 16la-wire-mv page and PASSES on 16la-ip. The helpers below are
+  //    this round's own (prefix _pP: never a name of the page's).
+  const _pPNote = n => { const e = sources.find(s => s && s.name === n); return e ? (e.notes == null ? '' : e.notes) : 'no entry'; };
+  const _pPConn = n => { const e = sources.find(s => s && s.name === n); return e ? (e.connectorType || '') : 'no entry'; };
+  const _pPCardBtn = key => { const c = _kyCard(key); return c ? $('.wire-cable-btn', c) : null; };
+  const _pPPick = async (btn, re) => btn ? await ioPick(btn, re) : 'no cable button';
+  const _pPStep = async (fn) => { const u0 = _undoStack.length; const r = await fn(); return [r, _undoStack.length - u0, _kySaveLit()]; };
+  const _pPWire = async v => { if (getComputedStyle($('#wire-overlay')).display !== 'flex') { openWireMode(); await wait(600); okDialogs(); }
+    if (v === 'advanced' && wireSettings.wireView !== 'advanced') { _wireSwitchToAdvanced(); await wait(450); okDialogs(); await wait(700); okDialogs(); }
+    if (v === 'simple' && wireSettings.wireView !== 'simple') { _wireSwitchToSimple(); await wait(450); okDialogs(); } _wireRender(); await wait(350); };
+  const _pPCell = (rid, side, i) => { const el = $$('#wire-diagram input.r-slot').find(x => { const k = _wireAdvPtCellKey(x); return k && k.rid === rid && k.side === side && k.idx === i; }); return el ? [el.value, el.getAttribute('data-ip-auto') || ''] : 'no cell'; };
+  const _pPPort = (did, i) => { const el = $$('#wire-diagram input.dv-name').find(x => (x.getAttribute('onchange') || '').indexOf("_wireAdvDevicePortName('" + did + "', 'in', " + i + ',') >= 0); return el ? [el.value, el.getAttribute('data-ip-auto') || '', el.placeholder] : 'no port'; };
+  // 16la-ip P1: NEW
+  await check('I/O 16la-ip (P): a connector set to NDI, ST-2110, Dante or Ethernet gives the row\'s note the show\'s next free IP address (Omar 2026-09-29: "you just put the IP address rules i wrote in the notes, it just auto populates there"; "192.168.0.1, 192.168.0.5, .10, .15 … so on", after .250 "192.168.1.1, .5 …"): on the Simple card of General Session, NDI on PPT A makes its note "192.168.0.1 · Presenter laptop A" (the text kept after the address), Dante on PPT B gives .5, each pick ONE undo step with Save lit, Undo takes the connector and the note back together and Redo brings both; an address already in any note (a destination\'s) or typed in Wire\'s Details (a source\'s 16el IP) is skipped, so ST-2110 on PLAYBACK gets .20; a note that already holds an IP address (10.0.0.7) gets nothing, nor do Fiber, SFP / QSFP or HDMI; a change away from IP leaves the note alone and back to NDI adds nothing; an empty note becomes the address alone; Custom… typed "dante" picks the built-in Dante and gives the address too, and a source that has its own Wire IP (16el) gets nothing; with every address of 192.168.0.x taken the next is 192.168.1.1; the user edits the address like any note; a show opened with NDI rows and no address is not changed and opens clean', async () => {
+    await restore(); const out = {};
+    try {
+      await ioOpenSimple();
+      out.ndi = await _pPStep(async () => [await _pPPick(_pPCardBtn('src:PPT A'), /^NDI/), _pPConn('PPT A'), _pPNote('PPT A')]);
+      doUndo(); await wait(350); out.undo = [_pPConn('PPT A'), _pPNote('PPT A')];
+      doRedo(); await wait(350); out.redo = [_pPConn('PPT A'), _pPNote('PPT A')];
+      out.dante = await _pPStep(async () => [await _pPPick(_pPCardBtn('src:PPT B'), /^Dante/), _pPNote('PPT B')]);
+      _sysSetMeta('dest', screens[1].id, 'notes', '192.168.0.10 · CENTER'); _sysSetSourceMeta('LOWER 3RD', { ip: '192.168.0.15' }); _sysRender(); await wait(300);
+      out.skip = await _pPStep(async () => [await _pPPick(_pPCardBtn('src:PLAYBACK'), /^ST-2110/), _pPNote('PLAYBACK')]);
+      _sysSetSourceMeta('LOGO', { notes: 'Spare 10.0.0.7' }); _sysRender(); await wait(250);
+      out.holds = [await _pPPick(_pPCardBtn('src:LOGO'), /^Ethernet/), _pPConn('LOGO'), _pPNote('LOGO')];
+      out.notIp = [await _pPPick(_pPCardBtn('src:CAM 1'), /^Fiber/), await _pPPick(_pPCardBtn('src:CAM 2'), /^SFP/), await _pPPick(_pPCardBtn('src:PROMPTER'), /^HDMI 1\.4/), _pPNote('CAM 1'), _pPNote('CAM 2'), _pPNote('PROMPTER')];
+      out.away = [await _pPPick(_pPCardBtn('src:PPT A'), /^HDMI 2\.0/), _pPNote('PPT A'), await _pPPick(_pPCardBtn('src:PPT A'), /^NDI/), _pPNote('PPT A')];
+      _sysSetSourceMeta('PROMPTER', { notes: '' }); _sysRender(); await wait(250);
+      out.empty = [await _pPPick(_pPCardBtn('src:PROMPTER'), /^Dante/), _pPNote('PROMPTER')];
+      out.typedConn = await _pPStep(async () => { const a = await _kwAsk(_pPCardBtn('src:CAM 1'), 'dante'); await wait(300); return [Array.isArray(a), _pPConn('CAM 1'), _pPNote('CAM 1')]; });   /* Custom… typed "dante": the built-in Dante */
+      out.ownIp = [Array.isArray(await _kwAsk(_pPCardBtn('src:LOWER 3RD'), 'ndi')), await wait(300), _pPConn('LOWER 3RD'), _pPNote('LOWER 3RD')];   /* LOWER 3RD has its own Wire IP (16el): nothing added */
+      { const all = []; for (let k = 1; k <= 250; k++) if (k === 1 || k % 5 === 0) all.push('192.168.0.' + k); ioAdvanced.pages[2].sources[0].notes = all.join(' '); }
+      out.range = [await _pPPick(_pPCardBtn('src:CAM 2'), /^NDI/), _pPNote('CAM 2')];
+      { const u0 = _undoStack.length; _sysWithUndo(() => _sysSetMeta('src', 'CAM 2', 'notes', '192.168.1.99 · House left camera')); out.edit = [_pPNote('CAM 2'), _undoStack.length - u0]; }
+      closeSystem(); await wait(250);
+      { const st = JSON.parse(BASE); st.sources.forEach(s => { s.connectorType = 'NDI'; s.notes = ''; }); st.screens.forEach(s => { s.connectorType = 'Dante'; }); _applyProjectText(JSON.stringify(st)); await wait(800); okDialogs();
+        await ioOpenSimple(); await wait(300); closeSystem(); await wait(250);
+        out.opened = [sources.map(s => s.notes || '').join('|'), screens.map(s => s.notes || '').join('|'), _kySaveLit()]; }
+    } finally { try { closeSystem(); } catch (e) {} await wait(200); await restore(); }
+    const G = n => (JSON.parse(BASE).sources.find(s => s.name === n) || {}).notes;
+    return is(out, { ndi: [[true, 'NDI', '192.168.0.1 · ' + G('PPT A')], 1, true], undo: ['HDMI 2.0', G('PPT A')], redo: ['NDI', '192.168.0.1 · ' + G('PPT A')],
+      dante: [[true, '192.168.0.5 · ' + G('PPT B')], 1, true], skip: [[true, '192.168.0.20 · ' + G('PLAYBACK')], 1, true],
+      holds: [true, 'Ethernet', 'Spare 10.0.0.7'], notIp: [true, true, true, G('CAM 1'), G('CAM 2'), G('PROMPTER')],
+      away: [true, '192.168.0.1 · ' + G('PPT A'), true, '192.168.0.1 · ' + G('PPT A')], empty: [true, '192.168.0.25'],
+      typedConn: [[true, 'Dante', '192.168.0.30 · ' + G('CAM 1')], 1, true], ownIp: [true, undefined, 'NDI', G('LOWER 3RD')],
+      range: [true, '192.168.1.1 · ' + G('CAM 2')], edit: ['192.168.1.99 · House left camera', 1],
+      opened: [JSON.parse(BASE).sources.map(() => '').join('|'), JSON.parse(BASE).screens.map(s => s.notes || '').join('|'), false] },
+      'NDI on PPT A [picked, connector, note] steps, Save / Undo / Redo / Dante on PPT B / ST-2110 on PLAYBACK skips .10 (a destination note) and .15 (a 16el IP) / a note holding 10.0.0.7 / Fiber, SFP, HDMI 1.4 and their notes / HDMI 2.0 then NDI again / an empty note / Custom… typed "dante" on CAM 1 [a box, connector, note] steps, Save / Custom… typed "ndi" on LOWER 3RD, which has its own Wire IP / 192.168.0.x all taken / the user edits it / a show opened with NDI rows and no address [source notes, destination notes, Save lit]');
+  });
+  // 16la-ip P2: NEW
+  await check('I/O 16la-ip (P): every path that sets a connector gives the note its address, one count for the show: the Simple Set for all rows give each row its OWN next address in card order in ONE undo step (S0 Dante: the 11 source cards .1 … .50; D0 NDI: the 3 destinations .55, .60, .65 and an I/O-only destination .70; A0 Ethernet: DSM 1 .75, AUX 1 .80; M0 ST-2110: MV 1 .85) and Undo takes a whole Set for all back; on Advanced page 1 a show source\'s row picked to NDI writes the address in the item\'s own note (the Look Book\'s and Excel\'s note) and page 1\'s Set for all gives each of its rows its own; a hand-made row on page 2 and page 2\'s Set for all do the same on their own rows; in Wire a source card, a destination card, a custom source (no note: its own IP, 16el\'s) and a source tile\'s output point do it too; the I/O Excel prints the address in the Notes column', async () => {
+    await restore(); const out = {};
+    try {
+      await ioOpenSimple();
+      ioDests.push({ id: 'pPio', name: 'REC DECK', connectorType: '', deviceType: '', customType: '', w: 1920, h: 1080, notes: '' }); _sysRender(); await wait(300);
+      const allBtn = sec => $('[data-sys-kind="' + sec + '-all"][data-sys-field="connector"]', _kySec(sec === 'dst' ? 'dst' : sec));
+      const cardNotes = () => _sysDiscoverSources().map(n => (_pPNote(n) || '').split(' · ')[0]);   /* in card order: the order a Set for all gives them */
+      out.s0 = await _pPStep(async () => [await _pPPick(allBtn('src'), /^Dante/), cardNotes()]);
+      out.d0 = await _pPStep(async () => [await _pPPick(allBtn('dst'), /^NDI/), screens.map(s => (s.notes || '').split(' · ')[0]), (ioDests.find(d => d.id === 'pPio') || {}).notes]);
+      out.a0 = await _pPStep(async () => [await _pPPick(allBtn('aux'), /^Ethernet/), dsms.map(s => (s.notes || '').split(' · ')[0])]);
+      out.m0 = await _pPStep(async () => [await _pPPick(allBtn('mv'), /^ST-2110/), multiviewers.map(s => (s.notes || '').split(' · ')[0])]);
+      doUndo(); doUndo(); doUndo(); await wait(400); out.undoS0 = [sources.every(s => s.connectorType === 'Dante'), cardNotes().join(',')];
+      doUndo(); await wait(400); out.undoAll = [sources.map(s => s.notes).join('|') === JSON.parse(BASE).sources.map(s => s.notes).join('|'), sources.map(s => s.connectorType).join(',')];
+      closeSystem(); await wait(200); await restore(); await ioOpenSimple();
+      await r2Adv(); _ioSetPage(0); await wait(400);
+      const p1Row = n => ioAdvanced.pages[0].sources.find(r => r && r.name === n);
+      const rowBtn = (kind, n) => { const r = $$('#io-adv .sys-row').find(x => ($('.sys-name-input', x) || {}).value === n && $('[data-sys-kind="' + kind + '"][data-sys-field="connector"]', x)); return r ? $('[data-sys-kind="' + kind + '"][data-sys-field="connector"]', r) : null; };
+      out.p1 = await _pPStep(async () => [await _pPPick(rowBtn('adv-src', 'CAM 1'), /^NDI/), (p1Row('CAM 1') || {}).notes, _pPNote('CAM 1'), _pPConn('CAM 1')]);
+      out.p1all = await _pPStep(async () => [await _pPPick($('[data-sys-kind="advaux-all"][data-sys-field="connector"]'), /^Dante/), ioAdvanced.pages[0].dests.filter(r => /^(DSM|AUX) 1$/.test(r.name)).map(r => (r.notes || '').split(' · ')[0]), dsms.map(d => (d.notes || '').split(' · ')[0])]);
+      _ioSetPage(1); await wait(400); const pg2 = ioAdvanced.pages[1];
+      _sysSetMeta('adv-src', pg2.sources[0].id, 'name', 'ENC 1'); _ioAdvAdd('src'); await wait(300); _sysSetMeta('adv-src', pg2.sources[1].id, 'name', 'ENC 2'); _sysRender(); await wait(300);
+      out.p2 = await _pPStep(async () => [await _pPPick(rowBtn('adv-src', 'ENC 1'), /^Ethernet/), pg2.sources.map(r => r.notes || '')]);
+      out.p2all = await _pPStep(async () => [await _pPPick($('[data-sys-kind="advsrc-all"][data-sys-field="connector"]'), /^NDI/), pg2.sources.map(r => r.notes || '')]);
+      _ioSetPage(0); await wait(300);
+      { const wb = await ioBookF(); const rows = wb ? xlRowsF(wb, 1).concat(xlRowsF(wb, 2), xlRowsF(wb, 3)) : []; out.excel = [rows.some(r => r.indexOf('CAM 1') >= 0 && r.some(c => /^192\.168\.0\.1 · Center camera, IMAG$/.test(c)))]; }
+      closeSystem(); await wait(200); await restore();
+      await _pPWire('simple');
+      const wBtn = (kind, id) => $('#wire-overlay .wire-cable-btn[data-sys-kind="' + kind + '"][data-sys-id="' + id + '"]');
+      out.wireSrc = await _pPStep(async () => [await _pPPick(wBtn('src', 'PPT A'), /^NDI/), _pPNote('PPT A')]);
+      out.wireDst = await _pPStep(async () => [await _pPPick(wBtn('dest', screens[0].id), /^Ethernet/), screens[0].notes]);
+      await _pPWire('advanced');
+      _wireAdvAddCustomSource(); const cs = wireAdvanced.customSources[wireAdvanced.customSources.length - 1]; _wireRender(); await wait(300);
+      out.custom = await _pPStep(async () => [await _pPPick(wBtn('wcustom', cs.id), /^Dante/), cs.ip || '', cs.notes === undefined]);
+      wireAdvanced.sources.push({ id: 'pPsrc', name: 'CAM 2', x: 80, y: 1400, outC: 3, portLabels: true }); _wireRender(); await wait(400);   /* 3 named points: each has its Cable Type button on the tile */
+      out.point = await _pPStep(async () => [await _pPPick(wBtn('wsp', 'pPsrc:0'), /^Ethernet/), _pPNote('CAM 2'), _pPConn('CAM 2')]);
+    } finally { try { closeWireMode(); } catch (e) {} try { closeSystem(); } catch (e) {} await wait(250); await restore(); }
+    const A = (a, b) => { const r = []; for (let k = a; k <= b; k += 5) r.push('192.168.0.' + (k || 1)); return r; };
+    return is(out, { s0: [[true, A(0, 50)], 1, true], d0: [[true, A(55, 65), '192.168.0.70'], 1, true], a0: [[true, A(75, 80)], 1, true], m0: [[true, ['192.168.0.85']], 1, true],
+      undoS0: [true, A(0, 50).join(',')], undoAll: [true, JSON.parse(BASE).sources.map(s => s.connectorType).join(',')],
+      p1: [[true, '192.168.0.1 · Center camera, IMAG', '192.168.0.1 · Center camera, IMAG', '12G-SDI'], 1, true],
+      p1all: [[true, ['192.168.0.5', '192.168.0.10'], ['192.168.0.5', '192.168.0.10']], 1, true],
+      p2: [[true, ['192.168.0.15', '']], 1, true], p2all: [[true, ['192.168.0.15', '192.168.0.20']], 1, true], excel: [true],
+      wireSrc: [[true, '192.168.0.1 · Presenter laptop A'], 1, true], wireDst: [[true, '192.168.0.5 · 2.6 mm, stage left'], 1, true],
+      custom: [[true, '192.168.0.10', true], 1, true], point: [[true, '192.168.0.15 · House left camera', '12G-SDI'], 1, true] },
+      'S0 Dante [picked, the sources\' addresses] steps, Save / D0 NDI [screens, the I/O-only destination] / A0 Ethernet / M0 ST-2110 / Undo x3 (S0 left) / Undo S0 [notes back, connectors] / page 1 CAM 1 NDI [row note, the source\'s own note, its Simple connector] / page 1 A0 Dante [rows, AUX outputs] / page 2 ENC 1 Ethernet [rows] / page 2 Set for all NDI / the I/O Excel\'s CAM 1 note / Wire source card NDI / Wire destination card Ethernet / a custom source Dante [its IP, no note] / a source tile\'s output point Ethernet [the source\'s note, its own connector]');
+  });
+  // 16la-ip P3: NEW
+  // 16la-fix A1: REPLACES the check named in its header (reason in the block)
+  // 16la-fix: RENAMED in place. Why: Omar 2026-09-29 ~22:10 (U1): an ID cell the user has not typed shows its automatic label AND the
+  //   IP ("OUT 2 · 10.1.1.9"), no longer the IP in place of the label; the tooltip reads the same. Only the three expectations that
+  //   show CAM 1's point 2 (the cell, its tooltip, the exported sheet / Look Book strings) change; everything else is as it was.
+  //   FAILS on 16la-colour-mv (it shows "10.1.1.9"), PASSES on 16la-fix; without this change it fails on 16la-fix.
+  await check('Wire 16la-ip (P): Wire Advanced shows an item\'s IP (Omar 2026-09-29: "Router Slot column fills in", "Network switch ports show it"; the item\'s IP is its own 16el IP, else the first address in its note): a router\'s ID cell that the user has not typed shows the IP of the source on that input (16la-fix (U1), Omar 2026-09-29 ~22:10: on a multi-point source AFTER its automatic "OUT 2", "OUT 2 · 10.1.1.9", and so in its tooltip, no longer in place of it) and of the destination on that output, a switcher\'s the same, a typed ID wins and clearing it shows the IP again, the IP follows the note live, and nothing of it is written into the show; a network switch\'s unnamed port shows the IP of what is cabled to it (a typed name wins); the exported Wire sheet and the Look Book\'s Advanced Wire page print them; Wire Simple\'s switcher is unchanged; Details\' IP box of an NDI source shows its note\'s address, and for one without an address suggests the show\'s next free one, which Enter stores as the source\'s IP in one undo step', async () => {
+    await restore(); const out = {}; const pdfWas = window._pdfOpts ? JSON.parse(JSON.stringify(window._pdfOpts)) : null;
+    try {
+      _sysSetSourceMeta('PPT A', { connectorType: 'NDI', notes: '192.168.0.1 · Presenter laptop A' });
+      _sysSetSourceMeta('CAM 1', { connectorType: 'NDI', notes: '192.168.0.5', ip: '10.1.1.9' });
+      _sysSetSourceMeta('CAM 2', { connectorType: 'Dante', notes: 'House left 192.168.0.30' });
+      screens[1].notes = '192.168.0.40 · center'; dsms[1].notes = 'rec 192.168.0.45';
+      await _pPWire('simple'); out.hub = $$('#wire-diagram .wire-hub input.r-slot, #wire-diagram .wire-hub .r-slot').map(e => (e.value !== undefined ? e.value : e.textContent) || '').filter(v => /\d+\.\d+\.\d+\.\d+/.test(v)).length;
+      await _pPWire('advanced');
+      _wireAdvAddRouter(10); const r = wireAdvanced.routers[wireAdvanced.routers.length - 1];
+      _wireAdvAddSwitcher('SW', 4, 4); const sw = wireAdvanced.routers[wireAdvanced.routers.length - 1];
+      _wireAdvAddDevice('switch', 4); const ns = wireAdvanced.devices[wireAdvanced.devices.length - 1];
+      wireAdvanced.sources.push({ id: 'pPa', name: 'PPT A', x: 60, y: 1500 }, { id: 'pPb', name: 'CAM 1', x: 60, y: 1700, outC: 2 }, { id: 'pPc', name: 'CAM 2', x: 60, y: 1900 }, { id: 'pPd', name: 'PPT B', x: 60, y: 2100 });
+      wireAdvanced.dests.push({ id: 'pPe', refId: screens[1].id, x: 2600, y: 1500 }); wireAdvanced.dsms.push({ id: 'pPf', refId: dsms[1].id, x: 2600, y: 1800 });
+      wireAdvanced.wires.push({ id: 'pPw1', fromId: 'asrc:pPa', toId: 'rip:' + r.id + ':0' }, { id: 'pPw2', fromId: 'asp:pPb:1', toId: 'rip:' + r.id + ':1' }, { id: 'pPw3', fromId: 'asrc:pPd', toId: 'rip:' + r.id + ':2' },
+        { id: 'pPw4', fromId: 'rop:' + r.id + ':0', toId: 'adst:pPe' }, { id: 'pPw5', fromId: 'asrc:pPc', toId: 'rip:' + sw.id + ':0' }, { id: 'pPw6', fromId: 'rop:' + sw.id + ':0', toId: 'adsm:pPf' },
+        { id: 'pPw7', fromId: 'asrc:pPa', toId: 'dvi:' + ns.id + ':0' }, { id: 'pPw8', fromId: 'dvo:' + ns.id + ':1', toId: 'adst:pPe' }, { id: 'pPw9', fromId: 'asrc:pPc', toId: 'dvi:' + ns.id + ':2' });
+      _wireRender(); await wait(600);
+      out.router = [_pPCell(r.id, 'in', 0), _pPCell(r.id, 'in', 1), _pPCell(r.id, 'in', 2), _pPCell(r.id, 'out', 0)];
+      out.switcher = [_pPCell(sw.id, 'in', 0), _pPCell(sw.id, 'out', 0)];
+      out.tip = ($$('#wire-diagram input.r-slot').find(x => { const k = _wireAdvPtCellKey(x); return k && k.rid === r.id && k.side === 'in' && k.idx === 1; }) || { title: 'no cell' }).title;
+      out.ports = [_pPPort(ns.id, 0), _pPPort(ns.id, 1), _pPPort(ns.id, 2), _pPPort(ns.id, 3)];
+      out.stored = [r.inputs[0].pt || '', r.inputs[1].pt || '', r.outputs[0].pt || '', ns.ins[0].name || '', /192\.168\.0\.1"|"192\.168\.0\.1 /.test(JSON.stringify(wireAdvanced))];
+      { const u0 = _undoStack.length; _wireAdvSwitcherPt(r.id, 'in', 0, 'RACK A'); await wait(250); out.typed = [_pPCell(r.id, 'in', 0), _undoStack.length - u0]; _wireAdvSwitcherPt(r.id, 'in', 0, ''); await wait(250); out.cleared = _pPCell(r.id, 'in', 0); }
+      _wireAdvDevicePortName(ns.id, 'in', 0, 'UPLINK'); await wait(250); out.portTyped = _pPPort(ns.id, 0); _wireAdvDevicePortName(ns.id, 'in', 0, ''); await wait(250);
+      _sysSetSourceMeta('PPT A', { notes: 'Laptop 192.168.3.3' }); _wireRender(); await wait(300); out.live = [_pPCell(r.id, 'in', 0), _pPPort(ns.id, 0)];
+      { const svg = _wireBuildAdvancedExportSvg('light', {}); out.sheet = ['value="192.168.3.3"', 'value="OUT 2 · 10.1.1.9"', 'value="192.168.0.40"', 'value="192.168.0.30"', 'value="192.168.0.45"'].map(s => svg.indexOf(s) >= 0); }
+      { openPdfExportModal(); await wait(350); const rb = $('input[name="pdf-opt-wire-view"][value="advanced"]'); if (rb && !rb.checked) rb.click(); const real = exportPDF; let html = null; window.exportPDF = function () { html = real(true); }; try { _pdfConfirmExport(); } finally { window.exportPDF = real; } await wait(150);
+        out.book = ['value="192.168.3.3"', 'value="OUT 2 · 10.1.1.9"', 'value="192.168.0.40"'].map(s => (html || '').indexOf(s) >= 0); }
+      await _pPWire('simple');
+      const ipBox = () => { const b = $('#wire-overlay .wire-ip-input'); return b ? [b.value, b.dataset.prefill || '', b.dataset.suggest || '', (($('#wire-overlay .wire-ip-hint') || {}).textContent || '')] : 'no IP box'; };
+      const pick = n => { _wireState.selectedNodes.clear(); _wireSelectNode('src:' + n); };
+      pick('PPT A'); await wait(400); out.detailNote = ipBox();
+      _sysSetSourceMeta('PPT B', { connectorType: 'NDI', notes: 'no address' }); pick('PPT B'); await wait(400); out.detailNext = ipBox();
+      { const b = $('#wire-overlay .wire-ip-input'); const u0 = _undoStack.length; if (b) { b.focus(); b.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true })); } await wait(400); out.enter = [(sources.find(s => s.name === 'PPT B') || {}).ip || '', _undoStack.length - u0]; }
+    } finally { window._pdfOpts = pdfWas; try { closeWireMode(); } catch (e) {} await wait(300); await restore(); }
+    return is(out, { hub: 0,
+      router: [['192.168.0.1', '192.168.0.1'], ['OUT 2 · 10.1.1.9', '10.1.1.9'], ['', ''], ['192.168.0.40', '192.168.0.40']], switcher: [['192.168.0.30', '192.168.0.30'], ['192.168.0.45', '192.168.0.45']], tip: 'OUT 2 · IP 10.1.1.9',
+      ports: [['192.168.0.1', '192.168.0.1', 'Port 1'], ['192.168.0.40', '192.168.0.40', 'Port 2'], ['192.168.0.30', '192.168.0.30', 'Port 3'], ['', '', 'Port 4']],
+      stored: ['', 'OUT 2', '', '', false], typed: [['RACK A', ''], 1], cleared: ['192.168.0.1', '192.168.0.1'], portTyped: ['UPLINK', '', 'Port 1'],
+      live: [['192.168.3.3', '192.168.3.3'], ['192.168.3.3', '192.168.3.3', 'Port 1']], sheet: [true, true, true, true, true], book: [true, true, true],
+      detailNote: ['192.168.3.3', '192.168.3.3', '', 'From this source’s notes (I/O Patch). Type another address to use that one in Wire instead.'],
+      detailNext: ['192.168.0.1', '', '192.168.0.1', 'The next free address in this show. Press Enter to use it, or type another.'], enter: ['192.168.0.1', 1] },
+      'Wire Simple\'s switcher cells with an IP / the router [in 1 PPT A, in 2 CAM 1\'s point 2 (16el IP wins), in 3 PPT B (no IP), out 1 CENTER LED: shown, data-ip-auto] / the switcher [in 1 CAM 2, out 1 AUX 1] / in 2\'s tooltip reads its auto ID and the IP / the network switch ports [shown, data-ip-auto, placeholder] / stored [pt in 1, pt in 2, pt out 1, port 1 name, an IP in wireAdvanced] / a typed ID, undo steps / cleared / a typed port name / the note changed / the exported sheet / the Look Book\'s Advanced Wire page / Details of PPT A (address in its note) / Details of PPT B (no address) / Enter [its IP, undo steps]');
+  });
+  // ── 16la-colour-mv (Omar 2026-09-29 ~13:30 - 15:40): (Q) a destination's / AUX's colour works like a source's and its Wire
+  //    drawing tile shows it; (R) multiviewers in Wire (the Multiviewers pane, dragged onto Advanced and Simple); (S1) an empty
+  //    I/O Patch section has no note; (T) the + Add cards are empty wireframes of the section's card. Each check FAILS on the
+  //    16la-ip page and PASSES on 16la-colour-mv. The helpers below are this round's own (prefix _cM: never a name of the page's).
+  const _cMHex = c => { const m = /rgba?\((\d+), (\d+), (\d+)/.exec(c || ''); return m ? '#' + [m[1], m[2], m[3]].map(x => (+x).toString(16).padStart(2, '0')).join('') : (c || ''); };
+  const _cMStep = async fn => { const u0 = _undoStack.length; const r = await fn(); await wait(250); return [r, _undoStack.length - u0, _kySaveLit()]; };
+  const _cMWire = async v => { if (getComputedStyle($('#wire-overlay')).display !== 'flex') { openWireMode(); await wait(600); okDialogs(); }
+    if (v === 'advanced' && wireSettings.wireView !== 'advanced') { _wireSwitchToAdvanced(); await wait(450); okDialogs(); await wait(700); okDialogs(); }
+    if (v === 'simple' && wireSettings.wireView !== 'simple') { _wireSwitchToSimple(); await wait(450); okDialogs(); } _wireRender(); await wait(350); };
+  const _cMWcard = n => $$('#wire-sources-panel .wire-source-card').find(k => (($('.wire-source-name', k) || {}).textContent || '').trim() === n) || null;
+  const _cMDrop = async (data, sx, sy) => {   /* a card's data dropped on the drawing at an SVG point, as Chrome's drop hands it to the page */
+    const c = $('#wire-diagram'), svg = $('#wire-diagram svg'); const r = svg.getBoundingClientRect(), vb = svg.viewBox.baseVal;
+    const dt = new DataTransfer(); dt.setData('text/plain', data);
+    c.dispatchEvent(new DragEvent('drop', { bubbles: true, cancelable: true, dataTransfer: dt, clientX: r.left + (sx - vb.x) * r.width / vb.width, clientY: r.top + (sy - vb.y) * r.height / vb.height }));
+    await wait(450); };
+  const _cMDragData = el => { if (!el) return 'no card'; const dt = new DataTransfer(); el.dispatchEvent(new DragEvent('dragstart', { bubbles: true, cancelable: true, dataTransfer: dt })); return dt.getData('text/plain'); };
+  const _cMGeo = () => { const o = {}; $$('#wire-diagram g.wire-node').forEach(g => { const r = $('rect', g); o[g.dataset.nodeId] = [+r.getAttribute('x'), +r.getAttribute('y'), +r.getAttribute('width'), +r.getAttribute('height')]; }); return o; };
+  const _cMDel = () => document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Delete', code: 'Delete', bubbles: true, cancelable: true }));
+  const _cMUpload = async (el, png) => { const real = HTMLInputElement.prototype.click; let inp = null; HTMLInputElement.prototype.click = function () { if (this.type === 'file') { inp = this; return; } return real.call(this); };
+    try { el.click(); } finally { HTMLInputElement.prototype.click = real; } if (!inp) return 'no file box';
+    const blob = await (await fetch(png)).blob(); const dt = new DataTransfer(); dt.items.add(new File([blob], 'cm.png', { type: 'image/png' })); inp.files = dt.files; inp.dispatchEvent(new Event('change')); await wait(900); return true; };
+  // 16la-colour-mv C1: NEW
+  await check('Wire 16la-colour-mv (Q): a destination / AUX tile in the Wire drawing shows its card\'s colour (Omar 2026-09-29: "between patch and wire the color changes and do not match, source where correct"; "the drawing tiles picture match the I/O Patch Card Colour"): LEFT LED given a colour with its I/O Patch card\'s colour bar shows it on its I/O card, its Wire card, its Wire Simple tile and its Wire Advanced tile (colour tile, border, name); AUX 1 at its default is yellow on all four (the Advanced colour tile was a fixed green, a destination\'s a fixed blue, their border and name the lane colour); a hand-made destination tile keeps its own card\'s colour; the Advanced export and the Look Book\'s Advanced Wire page print the same; a show that stores colours opens with none changed and Save dark; Help › Wire › Tile colours says so', async () => {
+    await restore(); const out = {}; const pdfWas = window._pdfOpts ? JSON.parse(JSON.stringify(window._pdfOpts)) : null;
+    const d = screens[0], a = dsms.find(x => x.name === 'AUX 1') || dsms[1];
+    try {
+      await ioOpenSimple();
+      { const s = $('.wire-color-swatch', _kyCard('dest:' + d.id)); s.value = '#7a3cff'; fire(s, 'change'); await wait(500); }
+      const ioCol = key => { const c = _kyCard(key); const t = c && $('.wire-thumb-auto', c); return t ? _cMHex(getComputedStyle(t).backgroundColor) : 'no colour tile'; };
+      out.io = [ioCol('dest:' + d.id), ioCol('aux:' + a.id)];
+      closeSystem(); await wait(200);
+      await _cMWire('simple');
+      const wcCol = n => { const c = _cMWcard(n); const t = c && $('.wire-thumb-auto', c); return t ? _cMHex(getComputedStyle(t).backgroundColor) : 'no colour tile'; };
+      out.wireCard = [wcCol(d.name), wcCol(a.name)];
+      { const live = $('#wire-diagram svg'); const st = id => { const g = _laNode(live, id); const r = g && $(':scope > rect', g); return r ? r.getAttribute('stroke') : 'no node'; }; out.simple = [st('dst:' + d.id), st('dsm:' + a.id)]; }
+      await _cMWire('advanced');
+      _wireAdvAddCustomDest(); const cd = wireAdvanced.customDests[wireAdvanced.customDests.length - 1];
+      wireAdvanced.dests.push({ id: 'cMCd', refId: cd.id, x: 2400, y: 60 }); _wireRender(); await wait(400);
+      const inst = (arr, ref) => (arr.find(x => x && x.refId === ref) || {}).id;
+      const ids = { d: 'adst:' + inst(wireAdvanced.dests, d.id), a: 'adsm:' + inst(wireAdvanced.dsms, a.id), cd: 'adst:cMCd' };
+      const tile = (root, nid) => { const g = _laNode(root, nid); if (!g) return 'no tile'; const th = $(':scope > .wire-adv-thumb', g), t = $('.wire-adv-tile', g), nm = $('.wire-adv-tile .wire-source-name', g);
+        return [th ? th.getAttribute('fill') : 'no colour tile', t ? _cMHex(t.style.borderColor) : 'no card', nm ? _cMHex(nm.style.color) : 'no name']; };
+      out.advanced = [tile($('#wire-diagram svg'), ids.d), tile($('#wire-diagram svg'), ids.a), tile($('#wire-diagram svg'), ids.cd)];
+      { const doc = new DOMParser().parseFromString(_wireBuildAdvancedExportSvg('light', {}), 'image/svg+xml'); out.export = [tile(doc, ids.d), tile(doc, ids.a)]; }
+      { const html = await _laBook('advanced'); const doc = new DOMParser().parseFromString(html, 'text/html'); out.lookBook = [tile(doc, ids.d), tile(doc, ids.a)]; }
+      closeWireMode(); await wait(300);
+      { const st = JSON.parse(BASE); st.screens[1].wireColor = '#12ab34'; st.dsms[0].wireColor = '#ab1234'; _applyProjectText(JSON.stringify(st)); await wait(800); okDialogs();
+        await _cMWire('advanced'); closeWireMode(); await wait(300); await ioOpenSimple(); closeSystem(); await wait(200);
+        out.opened = [screens.map(s => s.wireColor || ''), dsms.map(x => x.wireColor || ''), _kySaveLit()]; }
+      { const h = ($('#help-overlay') || {}).textContent || ''; const i = h.indexOf('Tile colours', h.indexOf('Wire — Signal Flow')); const row = i >= 0 ? h.slice(i, i + 1100) : '';
+        out.help = [/shows the same colour as its card in the I\/O Patch and in Wire/.test(row), /a picture you upload on its card \(its main colour\), a cable type you pick for it/.test(row), /The cable itself keeps the cable type’s own colour/.test(row), /opening a show changes no colour/.test(row)]; }
+    } finally { window._pdfOpts = pdfWas; try { closeWireMode(); } catch (e) {} try { closeSystem(); } catch (e) {} await wait(300); await restore(); }
+    const P = '#7a3cff', Y = '#f0c060', B = JSON.parse(BASE);
+    return is(out, { io: [P, Y], wireCard: [P, Y], simple: [P, Y], advanced: [[P, P, P], [Y, Y, Y], ['#0e7490', '', '']], export: [[P, P, P], [Y, Y, Y]], lookBook: [[P, P, P], [Y, Y, Y]],
+      opened: [B.screens.map((s, i) => i === 1 ? '#12ab34' : (s.wireColor || '')), B.dsms.map((x, i) => i === 0 ? '#ab1234' : (x.wireColor || '')), false], help: [true, true, true, true] },
+      'the I/O cards [LEFT LED set to #7a3cff, AUX 1 default] / their Wire cards / their Wire Simple tiles (stroke) / Wire Advanced [LEFT LED, AUX 1, a hand-made destination: colour tile, border, name] / the Advanced export / the Look Book\'s Advanced Wire page / a show storing two colours as opened [destinations, AUX, Save lit] / Help › Wire › Tile colours [one colour, the last wins, the cable keeps its colour, opening changes nothing]');
+  });
+  // 16la-colour-mv C2: NEW
+  await check('I/O 16la-colour-mv (Q): a destination\'s / AUX\'s colour follows a cable pick and an uploaded picture exactly as a source\'s does (Omar: "how does source handle this since the work flow between both should match?"), each in the SAME undo step with Save lit: a pick on a destination card and on an AUX card (the cable\'s colour; Undo takes connector and colour back together), Connector › Custom… typed "hdmi 2.1" (HDMI 2.1\'s colour), D0 (every destination its own, an I/O-only destination has no colour), A0 (every AUX), M0 (a multiviewer has no colour), a picture uploaded on a destination card (its main colour, the same as the same picture gives a source), then a cable, the shuffle and the colour bar (the last one wins); on Advanced page 1 a destination row\'s pick and page 1\'s D0 (the item\'s colour), a page-2 row\'s pick changes no item; a Wire card\'s pick; — Clear — changes no colour', async () => {
+    await restore(); const out = {};
+    const spec = t => (_wireCableSpec(t) || {}).color || 'no spec ' + t, col = (k, id) => _wireNodeColor(k, id);
+    const I = { d: screens[0].id, d2: screens[1].id, d3: screens[2].id, a: (dsms.find(x => x.name === 'AUX 1') || dsms[1]).id };
+    const scr = k => screens.find(s => s.id === I[k]) || {}, d = { get id() { return I.d; } }, d2 = { get id() { return I.d2; } }, d3 = { get id() { return I.d3; } }, a = { get id() { return I.a; }, get name() { return (dsms.find(x => x.id === I.a) || {}).name; } };   /* by id: Undo / Redo put new objects in place */
+    const pic = (() => { const c = document.createElement('canvas'); c.width = 96; c.height = 54; const g = c.getContext('2d'); g.fillStyle = '#c0308a'; g.fillRect(0, 0, 96, 54); g.fillStyle = '#ffffff'; g.fillRect(0, 40, 96, 14); return c.toDataURL('image/png'); })();
+    const rowConn = n => ((ioAdvanced.pages[0].dests || []).find(r => r && r.name === n) || {}).connectorType;
+    try {
+      await ioOpenSimple();
+      out.card = await _cMStep(async () => { await ioPick($('.wire-cable-btn', _kyCard('dest:' + d.id)), /^HDMI 2\.0$/); return col('dest', d.id) === spec('HDMI 2.0'); });
+      doUndo(); await wait(350); out.cardUndo = [scr('d').connectorType === JSON.parse(BASE).screens[0].connectorType, scr('d').wireColor || '']; doRedo(); await wait(350); out.cardRedo = col('dest', d.id) === spec('HDMI 2.0');
+      out.aux = await _cMStep(async () => { await ioPick($('.wire-cable-btn', _kyCard('aux:' + a.id)), /^Fiber$/); return col('dsm', a.id) === spec('Fiber'); });
+      out.typed = await _cMStep(async () => { const r = await _kwAsk($('.wire-cable-btn', _kyCard('dest:' + d2.id)), 'hdmi 2.1'); await wait(300); return [Array.isArray(r), scr('d2').connectorType, col('dest', d2.id) === spec('HDMI 2.1')]; });   /* a colour of its own (Dante\'s is the default orange) */
+      ioDests.push({ id: 'cMIo', name: 'REC DECK', connectorType: '', deviceType: '', customType: '', w: 1920, h: 1080, notes: '' }); _sysRender(); await wait(300);
+      out.d0 = await _cMStep(async () => { await ioPick($('[data-sys-kind="dst-all"][data-sys-field="connector"]', _kySec('dst')), /^DisplayPort$/); return [screens.every(s => col('dest', s.id) === spec(s.connectorType)), screens[0].connectorType, 'wireColor' in ioDests.find(x => x.id === 'cMIo')]; });
+      out.a0 = await _cMStep(async () => { await ioPick($('[data-sys-kind="aux-all"][data-sys-field="connector"]', _kySec('aux')), /^HDMI 2\.1$/); return dsms.every(x => col('dsm', x.id) === spec('HDMI 2.1')); });
+      await ioPick($('[data-sys-kind="mv-all"][data-sys-field="connector"]', _kySec('mv')), /^HDMI 2\.0$/); await wait(250); out.m0 = multiviewers.map(m => 'wireColor' in m);
+      { const c0 = col('dest', d3.id); await ioPick($('.wire-cable-btn', _kyCard('dest:' + d3.id)), /^— Clear —$/); await wait(250); out.clear = [scr('d3').connectorType || '', col('dest', d3.id) === c0]; }
+      out.upload = await _cMStep(async () => { const r = await _cMUpload($('.wire-thumb[role="button"]', _kyCard('dest:' + d3.id)), pic); return [r, col('dest', d3.id)]; });
+      { const s0 = _sysDiscoverSources()[0]; await _cMUpload($('.wire-thumb[role="button"]', _kyCard('src:' + s0)), pic); out.uploadSrc = _wireGetSourceMeta(s0).wireColor; }
+      await ioPick($('.wire-cable-btn', _kyCard('dest:' + d3.id)), /^3G-SDI$/); await wait(250); out.lastCable = col('dest', d3.id) === spec('3G-SDI');
+      out.shuffle = await _cMStep(async () => { $('.wire-color-shuffle', _kyCard('dest:' + d3.id)).click(); await wait(250); return _WIRE_COLOR_PALETTE.includes(col('dest', d3.id)); });
+      { const s = $('.wire-color-swatch', _kyCard('dest:' + d3.id)); s.value = '#123abc'; fire(s, 'change'); await wait(400); out.bar = col('dest', d3.id); }
+      await r2Adv(); if (ioAdvanced.page !== 0) { _ioSetPage(0); await wait(300); } okDialogs();
+      out.page1 = await _cMStep(async () => { await ioPick($('[data-sys-field="connector"]', r2Row(scr('d').name)), /^SFP/); return [rowConn(scr('d').name), col('dest', d.id) === spec(rowConn(scr('d').name))]; });
+      out.page1All = await _cMStep(async () => { await ioPick($('#io-adv [data-sys-kind="advdst-all"][data-sys-field="connector"]'), /^3G-SDI$/); return screens.every(s => col('dest', s.id) === spec('3G-SDI')); });
+      { const was = JSON.stringify(screens.map(s => s.wireColor || '')) + JSON.stringify(dsms.map(x => x.wireColor || '')); _ioSetPage(1); await wait(400); okDialogs();
+        const r = $$('#io-adv .io-adv-rows .sys-row:not(.sys-row-global) [data-sys-field="connector"]')[0]; if (r) await ioPick(r, /^NDI$/); await wait(250);
+        out.page2 = [!!r, JSON.stringify(screens.map(s => s.wireColor || '')) + JSON.stringify(dsms.map(x => x.wireColor || '')) === was]; _ioSetPage(0); await wait(300); okDialogs(); }
+      await r2Sim(); closeSystem(); await wait(250);
+      await _cMWire('simple');
+      out.wire = await _cMStep(async () => { await ioPick($('.wire-cable-btn', _cMWcard(a.name)), /^ST-2110$/); return col('dsm', a.id) === spec('ST-2110'); });
+      closeWireMode(); await wait(250);
+    } finally { try { closeWireMode(); } catch (e) {} try { closeSystem(); } catch (e) {} await wait(200); await restore(); }
+    return is(out, { card: [true, 1, true], cardUndo: [true, ''], cardRedo: true, aux: [true, 1, true], typed: [[true, 'HDMI 2.1', true], 1, true], d0: [[true, 'DP', false], 1, true], a0: [true, 1, true], m0: [false], clear: ['', true],
+      upload: [[true, '#c2328a'], 1, true], uploadSrc: '#c2328a', lastCable: true, shuffle: [true, 1, true], bar: '#123abc', page1: [['SFP', true], 1, true], page1All: [true, 1, true], page2: [true, true], wire: [true, 1, true] },
+      'a pick on LEFT LED\'s card [its colour = the cable\'s] steps, Save / Undo [connector back, no colour] / Redo / a pick on AUX 1\'s card / Custom… "hdmi 2.1" on CENTER LED / D0 DP [every destination the cable\'s colour, the stored name, the I/O-only destination has a colour] / A0 HDMI 2.1 / M0 [a multiviewer has a colour] / — Clear — [connector, colour unchanged] / a picture uploaded on RIGHT LED\'s card [done, its colour] / the same picture on a source / then 3G-SDI / the shuffle / the colour bar / page 1: LEFT LED\'s row SFP [row connector, the item\'s colour] / page 1\'s D0 3G-SDI / a page-2 row NDI [a row there, no item colour changed] / AUX 1\'s Wire card ST-2110');
+  });
+  // 16la-colour-mv C3: NEW
+  await check('Wire 16la-colour-mv (R): a MULTIVIEWERS pane in Wire\'s side panel and a multiviewer tile on Wire ADVANCED (Omar 2026-09-29: "we also need to add in Wire the MV icon so they can be dragged and used in wire, both simple and advance should be able to use it"): in Simple and Advanced the pane comes after AUX / DSM with one card per multiviewer (its picture on the RIGHT, the name, resolution and cable type, draggable); a click on the picture shows the next of the four (one undo step, Save lit; its I/O card shows it too) and Enter on it does the same; its card dropped on an Advanced page makes ONE destination tile of the page (one undo step: its picture 13 in from the right end, never cut, name / resolution / cable on the left, its input dot on the left edge); dropped again it MOVES that tile (still one); a switcher output cabled to it names it in the output cell; Delete on the selected tile takes it and its cable off, Undo brings both back; the multiviewer deleted in the I/O Patch takes its tiles off every page in ONE undo step (Undo brings them back); a new multiviewer is placed nowhere; the Advanced export and the Look Book\'s Advanced Wire page print the tile; Help › Wire › Multiviewers says so', async () => {
+    await restore(); const out = {}; const pdfWas = window._pdfOpts ? JSON.parse(JSON.stringify(window._pdfOpts)) : null;
+    const m = multiviewers[0], ref = 'mv:' + m.id;
+    const pane = () => { const panes = $$('#wire-sources-panel > .wire-pane'), p = $('#wire-sources-panel .wire-pane-mv'); if (!p) return 'no pane';
+      return [panes[panes.length - 1] === p, /AUX \/ DSM/.test((panes[panes.length - 2] || {}).textContent || ''), (($('.wire-pane-title', p) || {}).textContent || '').trim(), $$('.wire-source-card', p).map(c => { const nm = $('.wire-source-name', c), th = $('.wire-thumb', c), im = th && $('img', th);
+        return [(nm || {}).textContent, !!th && !!nm && th.getBoundingClientRect().left > nm.getBoundingClientRect().left, !!im && im.getAttribute('src') === _mvPicSrc(multiviewers.find(x => x.name === (nm || {}).textContent)), (($('.wire-source-res', c) || {}).value || ''), (($('.wire-cable-btn-label', c) || {}).textContent || ''), c.getAttribute('draggable'), th ? th.getAttribute('role') + ' ' + th.tabIndex : '']; })]; };
+    const tiles = () => { let n = 0; _wireAdvEachPage(pg => { n += (pg.dests || []).filter(x => x && x.refId === ref).length; }); return n; };
+    try {
+      await _cMWire('simple'); out.simplePane = pane();
+      await _cMWire('advanced'); out.advPane = pane();
+      { const pic0 = m.mvPic; out.cycle = await _cMStep(async () => { $('[data-cm-mvpic="' + m.id + '"]').click(); await wait(300); return [m.mvPic === (pic0 % 4) + 1, ($('[data-cm-mvpic="' + m.id + '"] img') || {}).getAttribute('src') === _mvPicSrc(m)]; });
+        const t = $('[data-cm-mvpic="' + m.id + '"]'); t.focus(); out.enter = await _cMStep(async () => { _rzKd(t, 'Enter'); await wait(300); return [m.mvPic === ((pic0 + 1) % 4) + 1, (document.activeElement || {}).getAttribute && document.activeElement.getAttribute('data-cm-mvpic') === m.id]; }); }
+      out.dragData = _cMDragData(_cMWcard(m.name)) === 'wire-adv-mv:' + m.id;
+      out.drop = await _cMStep(async () => { await _cMDrop('wire-adv-mv:' + m.id, 2600, 400); return tiles(); });
+      const inst = () => (wireAdvanced.dests || []).find(x => x && x.refId === ref) || {};
+      const at1 = [Math.round(inst().x), Math.round(inst().y)];
+      out.again = await _cMStep(async () => { await _cMDrop('wire-adv-mv:' + m.id, 3000, 700); return [tiles(), JSON.stringify([Math.round(inst().x), Math.round(inst().y)]) !== JSON.stringify(at1)]; });
+      const nid = 'adst:' + inst().id;
+      { const g = _laNode($('#wire-diagram svg'), nid); const r = g && $(':scope > rect', g), X = r ? +r.getAttribute('x') : NaN, W = r ? +r.getAttribute('width') : NaN;
+        const th = g && $(':scope > .wire-adv-thumb', g), im = g && $(':scope > image.wire-adv-thumb', g), info = g && $('.wire-adv-tile .wire-source-info', g), dot = g && $$('circle.wire-adv-connector', g).find(c => c.getAttribute('data-source-id') === nid);
+        out.tile = g ? [g.getAttribute('data-node-type'), th ? +th.getAttribute('x') - X : null, W, !!im && im.getAttribute('href') === _mvPicSrc(m), im ? im.getAttribute('preserveAspectRatio') : '', !!info && !!th && info.getBoundingClientRect().right <= th.getBoundingClientRect().left + 0.5, (($('.wire-adv-tile .wire-source-name', g) || {}).textContent || ''), !!dot && +dot.getAttribute('cx') === X] : 'no tile'; }
+      { const sw = (wireAdvanced.routers || [])[0]; if (sw) { _wireAdvRouterAddPort(sw.id, 'out'); await wait(200); const k = (sw.outC || sw.size) - 1;   /* a free output row, + Out */ const from = 'rop:' + sw.id + ':' + k; if (typeof pushUndo === 'function') pushUndo(); wireAdvanced.wires.push({ id: 'cMW', fromId: from, toId: nid }); _wireAdvAutofillRouterCells(from, nid, 'destination'); _wireRender(); await wait(300);
+        out.cell = [(sw.outputs[k] || {}).name, !!$$('#wire-diagram path.wire-edge').find(p => p.getAttribute('data-to') === nid)]; } else out.cell = 'no switcher on page 1'; }
+      _wireState.selectedNodes.clear(); _wireState.selectedNodes.add(nid); _wireRender(); await wait(200);
+      out.del = await _cMStep(async () => { _cMDel(); await wait(400); return [tiles(), (wireAdvanced.wires || []).filter(w => w.toId === nid).length]; });
+      doUndo(); await wait(400); out.delUndo = [tiles(), (wireAdvanced.wires || []).filter(w => w.toId === nid).length];
+      { const doc = new DOMParser().parseFromString(_wireBuildAdvancedExportSvg('light', {}), 'image/svg+xml'); const g = _laNode(doc, nid); out.export = g ? [!!$$('image', g).find(i => i.getAttribute('href') === _mvPicSrc(m)), (($('.wire-source-name', g) || {}).textContent || '')] : 'no tile'; }
+      { const html = await _laBook('advanced'); const doc = new DOMParser().parseFromString(html, 'text/html'); const g = _laNode(doc, nid); out.lookBook = g ? [!!$$('image', g).find(i => i.getAttribute('href') === _mvPicSrc(m)), (($('.wire-source-name', g) || {}).textContent || '')] : 'no tile'; }
+      { const p2 = (wireAdvanced._pages || [])[1]; if (p2) { _wireSwitchPage(p2.id); await wait(300); await _cMDrop('wire-adv-mv:' + m.id, 400, 400); _wireSwitchPage(wireAdvanced._pages[0].id); await wait(300); } out.pages = tiles(); }
+      closeWireMode(); await wait(250);
+      { const n0 = multiviewers.length; _sysAddMV(); const nm = multiviewers[multiviewers.length - 1]; let placed = 0; _wireAdvEachPage(pg => { placed += (pg.dests || []).filter(x => x && x.refId === 'mv:' + nm.id).length; });
+        out.newMv = [multiviewers.length - n0, placed, (wireSettings.mvSimple || []).includes(nm.id)]; doUndo(); await wait(300); }
+      out.deleteMv = await _cMStep(async () => { _sysRowDelete('mv', m.id); await wait(200); _sysCloseConfirmModal(true); await wait(400); return [multiviewers.some(x => x.id === m.id), tiles(), (wireAdvanced.wires || []).filter(w => w.toId === nid).length]; });
+      doUndo(); await wait(400); out.deleteUndo = [multiviewers.some(x => x.id === m.id), tiles()];
+      { const h = ($('#help-overlay') || {}).textContent || ''; const i = h.indexOf('Multiviewers', h.indexOf('Tile colours')); const row = i >= 0 ? h.slice(i, i + 1000) : '';
+        out.help = [/list under AUX \/ DSM has a card for each multiviewer/.test(row), /Drag a card onto the drawing to place it; nothing places it for you/.test(row), /once per page: dragging it again moves that tile/.test(row), /the switcher feeds it from one more output named after it/.test(row)]; }
+    } finally { window._pdfOpts = pdfWas; try { closeWireMode(); } catch (e) {} try { closeSystem(); } catch (e) {} await wait(300); await restore(); }
+    const card = [m.name, true, true, m.resolution || '', m.connectorType || '', 'true', 'button 0'];
+    const P = [true, true, 'Multiviewers', multiviewers.map(x => [x.name, true, true, x.resolution || '', x.connectorType || '', 'true', 'button 0'])];
+    return is(out, { simplePane: P, advPane: P, cycle: [[true, true], 1, true], enter: [[true, true], 1, true], dragData: true, drop: [1, 1, true], again: [[1, true], 1, true],
+      tile: ['destination', 137, 260, true, 'xMidYMid meet', true, m.name, true], cell: [m.name, true], del: [[0, 0], 1, true], delUndo: [1, 1], export: [true, m.name], lookBook: [true, m.name], pages: 2,
+      newMv: [1, 0, false], deleteMv: [[false, 0, 0], 1, true], deleteUndo: [true, 2], help: [true, true, true, true] },
+      'the Multiviewers pane in Simple [last, after AUX / DSM, title, each card: name, picture right, its own picture, resolution, cable, draggable, the picture a button] / in Advanced / a click on MV 1\'s picture [next picture, the card shows it] steps, Save / Enter [next, the focus kept] / the card\'s drag data / dropped on page 1 [tiles] / dropped again [still one, moved] / the tile [type, picture x, width, MV 1\'s picture, never cut, name column left of it, name, input dot on the left edge] / a switcher output cabled to it [the cell\'s name, the cable drawn] / Delete on the selected tile [tiles, its cables] / Undo / the Advanced export [its picture, its name] / the Look Book\'s Advanced Wire page / dropped on page 2 too [tiles in the show] / + Add multiviewer [added, tiles, in Simple] / MV 1 deleted in the I/O Patch [still there, tiles, cables] / Undo / Help › Wire › Multiviewers');
+  });
+  // 16la-colour-mv C4: NEW
+  await check('Wire 16la-colour-mv (R): a multiviewer card dropped on Wire SIMPLE is fed by the show\'s switcher (Omar: "Only when dragged in"; one more switcher output row: "this is fine"): the tile lands where it is dropped (one undo step, Save lit), the switcher gets one more output named after it (its OUT count up by one) and a cable to the tile, and nothing else in the drawing moves (every source, destination and AUX tile, the switcher\'s place); the tile has the multiviewer\'s picture at its RIGHT end (never cut) and its name on the left, and the Cable Colour Code lists its cable; dropped again it moves (still one row); a rename of the multiviewer reaches the tile and the row; the Simple export and the Look Book\'s Simple Wire page print both; Reset layout keeps it; Delete on the selected tile takes it and its row off (one undo step), Undo brings them back', async () => {
+    await restore(); const out = {}; const pdfWas = window._pdfOpts ? JSON.parse(JSON.stringify(window._pdfOpts)) : null;
+    const m = multiviewers[0], mid = 'mv:' + m.id, nm0 = m.name;
+    const hubOut = () => { const r = _laNode($('#wire-diagram svg'), 'hub'); const sub = r ? $$('div', r).map(e => (e.textContent || '').trim()).find(s => /^\d+ IN · \d+ OUT$/.test(s)) : null; return [sub || 'no label', r ? $$('circle.wire-hub-port', r).filter(c => /^hout:/.test(c.getAttribute('data-port-id') || '')).length : 0]; };
+    try {
+      await _cMWire('simple');
+      const g0 = _cMGeo(), h0 = hubOut(), n0 = _bdNoBd(screens).length + dsms.length;
+      out.drop = await _cMStep(async () => { await _cMDrop('wire-adv-mv:' + m.id, 1700, 900); return [wireSettings.mvSimple || null, !!_cMGeo()[mid]]; });
+      const g1 = _cMGeo();
+      out.key = _wireCableTypesInUse().some(r => r.spec && r.spec.type === (_wireCableSpec(m.connectorType) || {}).type && r.sources.includes(m.name));   /* the Cable Colour Code lists its cable */
+      out.moved = Object.keys(g0).filter(k => k !== 'hub' && JSON.stringify(g0[k]) !== JSON.stringify(g1[k] || null));
+      out.hubPlace = JSON.stringify((g0.hub || []).slice(0, 3)) === JSON.stringify((g1.hub || []).slice(0, 3));
+      out.hub = [h0, hubOut(), _wireHubRouter(_wireBuildAllSourceNames(), _bdNoBd(screens), dsms.concat(_cmMvSimpleNodes())).outputs[n0].name];
+      out.at = [Math.abs(g1[mid][0] - (1700 - 110)) <= 1, Math.abs(g1[mid][1] - (900 - 18)) <= 1];
+      { const p = $$('#wire-diagram path.wire-edge').find(e => e.getAttribute('data-to') === mid); const q = p ? p.getPointAtLength(p.getTotalLength()) : null; out.cable = [p ? p.getAttribute('data-from') : 'no cable', q ? Math.round(q.x) === g1[mid][0] : false]; }
+      { const g = _laNode($('#wire-diagram svg'), mid); const r = $(':scope > rect', g), X = +r.getAttribute('x'), im = $(':scope > image', g), t = $(':scope > text', g);
+        out.tile = [im ? +im.getAttribute('x') - X : 'no picture', !!im && im.getAttribute('href') === _mvPicSrc(m), im ? im.getAttribute('preserveAspectRatio') : '', t ? +t.getAttribute('x') - X : 'no name', t ? t.textContent : '', r.getAttribute('stroke')]; }
+      out.again = await _cMStep(async () => { await _cMDrop('wire-adv-mv:' + m.id, 1900, 1100); return [(wireSettings.mvSimple || []).length, hubOut()[0], [Math.round(wireLayout[mid].x), Math.round(wireLayout[mid].y)]]; });
+      _sysSetMeta('mv', m.id, 'name', 'OPS MV'); _wireRender(); await wait(300);
+      out.rename = [(($(':scope > text', _laNode($('#wire-diagram svg'), mid)) || {}).textContent || ''), _wireHubRouter(_wireBuildAllSourceNames(), _bdNoBd(screens), dsms.concat(_cmMvSimpleNodes())).outputs[n0].name];
+      { const doc = new DOMParser().parseFromString(_wireBuildExportSvg('light', { transparent: true, noLegend: true }), 'image/svg+xml'); const g = $$('g', doc).find(x => $(':scope > text', x) && $(':scope > text', x).textContent === 'OPS MV');
+        out.export = g ? [!!$$('image', g).find(i => i.getAttribute('href') === _mvPicSrc(m)), (doc.documentElement.textContent || '').includes(n0 + 1 + '')] : 'no tile'; }
+      { const html = await _laBook('simple'); const doc = new DOMParser().parseFromString(html, 'text/html'); const w = $('#pdf-wire', doc); const g = w ? $$('g', w).find(x => $(':scope > text', x) && $(':scope > text', x).textContent === 'OPS MV') : null;
+        out.lookBook = [!!g && !!$$('image', g).find(i => i.getAttribute('href') === _mvPicSrc(m)), !!w && $$('text', w).some(t => t.textContent === 'OPS MV' && !(t.parentNode === g))]; }
+      await _cMWire('simple');
+      _wireResetLayout(); await wait(300); out.reset = [(wireSettings.mvSimple || []).length, !!_cMGeo()[mid]]; doUndo(); await wait(300);
+      _wireState.selectedNodes.clear(); _wireState.selectedNodes.add(mid); _wireRender(); await wait(200);
+      out.del = await _cMStep(async () => { _cMDel(); await wait(400); return [wireSettings.mvSimple || null, !!_cMGeo()[mid], hubOut()]; });
+      doUndo(); await wait(400); out.undo = [(wireSettings.mvSimple || []).length, !!_cMGeo()[mid], hubOut()[0]];
+    } finally { window._pdfOpts = pdfWas; try { closeWireMode(); } catch (e) {} await wait(300); await restore(); }
+    const n = _bdNoBd(screens).length + dsms.length, S = _wireBuildAllSourceNames().length;
+    return is(out, { drop: [[[m.id], true], 1, true], key: true, moved: [], hubPlace: true, hub: [[S + ' IN · ' + n + ' OUT', n], [S + ' IN · ' + (n + 1) + ' OUT', n + 1], nm0], at: [true, true], cable: ['hout:' + n, true],
+      tile: [172, true, 'xMidYMid meet', 12, nm0, '#ffe04a'], again: [[1, S + ' IN · ' + (n + 1) + ' OUT', [1790, 1082]], 1, true], rename: ['OPS MV', 'OPS MV'], export: [true, true], lookBook: [true, true],
+      reset: [1, true], del: [[null, false, [S + ' IN · ' + n + ' OUT', n]], 1, true], undo: [1, true, S + ' IN · ' + (n + 1) + ' OUT'] },
+      'dropped [the Simple list, the tile] steps, Save / the Cable Colour Code lists its cable / tiles that moved / the switcher\'s place kept / the switcher [before, after, its new last output] / the tile where it was dropped / its cable [from, ends on its left edge] / the tile [picture x, its picture, never cut, name x, name, stroke] / dropped again [in the list, the switcher, where] steps, Save / renamed OPS MV [tile, output row] / the Simple export [its picture, the count] / the Look Book\'s Simple Wire page [its picture, the switcher row] / Reset layout [placed, drawn] / Delete [list, tile, switcher] steps, Save / Undo');
+  });
+  // 16la-colour-mv C5: NEW
+  await check('I/O 16la-colour-mv (S1 + T): the I/O Patch Simple "+ Add …" cards are dim, EMPTY WIREFRAMES of their section\'s card (Omar 2026-09-29, his add_card_outline_mockup.png: "the wire look or outline of that same look"): in all four sections every add card is one control (role button, Tab reaches it, its name "Add source" / "Add destination" / "Add AUX" / "Add multiviewer", everything inside hidden from a screen reader, nothing inside focusable or clickable: a click on its picture box lands on the card); it has the real card\'s size and layout (the picture box 110 × 62 on the LEFT for a source, on the RIGHT for a destination, AUX or multiviewer, exactly where the card beside it has its picture; two boxes where the resolution and cable type sit; an empty colour bar and shuffle square under the picture except on a multiviewer\'s; the bottom line with Reset, trash and an empty number chip; "+ Add source" with a pencil where the name sits); the big + box and the long description are gone (the description is the tooltip); a click and Enter still add one (one undo step); an empty section shows only its row of add cards, with no note (Help › Add & remove says so)', async () => {
+    await restore(); const out = {}; const S4 = ['src', 'dst', 'aux', 'mv'];
+    const rel = (c, e) => { if (!e) return null; const a = c.getBoundingClientRect(), b = e.getBoundingClientRect(); return [Math.round(b.left - a.left), Math.round(b.top - a.top), Math.round(b.width), Math.round(b.height)]; };
+    try {
+      await ioOpenSimple(); await wait(300);
+      out.look = S4.map(s => { const adds = $$('.iog-add', _kySec(s)).filter(a => a.getClientRects().length), c = $('.iog-card', _kySec(s)); const a = adds[0]; if (!a || !c) return 'no add card / card'; a.scrollIntoView({ block: 'center' });
+        const kids = [...a.children].map(k => String(k.className).split(' ')[0]).join(','), hidden = [...a.children].every(k => k.getAttribute('aria-hidden') === 'true');
+        const inner = $$('button, input, select, textarea, [tabindex], [onclick]', a).length;
+        const pic = $('.iog-wf-pic', a), real = $('.wire-thumb', c); const pr = rel(a, pic), rr = rel(c, real); const pc = pic ? pic.getBoundingClientRect() : null; const hit = pc ? document.elementFromPoint(pc.left + pc.width / 2, pc.top + pc.height / 2) : null;
+        const boxes = $$('.iog-wf-box', a).map(b => rel(a, b)), rb = [rel(c, $('.wire-res-row', c)), rel(c, $('.wire-cable-btn', c))];
+        return [a.getAttribute('role'), a.tabIndex, a.getAttribute('aria-label'), kids, hidden, inner, JSON.stringify(pr) === JSON.stringify(rr), pr ? pr[2] + 'x' + pr[3] : '', hit === a, JSON.stringify(boxes.map(b => b && b.slice(0, 2))) === JSON.stringify(rb.map(b => b && b.slice(0, 2))),
+          !!$('.iog-wf-crow .iog-wf-bar', a) && !!$('.iog-wf-crow .iog-wf-sq', a), $$('.iog-wf-foot .iog-wf-ico', a).length + '+' + $$('.iog-wf-foot .iog-wf-chip', a).length, (($('.iog-wf-name', a) || {}).textContent || '').trim(), !!$('.iog-wf-name svg', a),
+          Math.round(a.getBoundingClientRect().width) === Math.round(c.getBoundingClientRect().width), (a.title || '').replace(/^[^:]*: /, '')]; });
+      out.gone = [$$('#io-grid .fs-src-add-plus').length, $$('#io-grid .fs-src-meta').length, $$('#io-grid .iog-add.fs-src').length];
+      out.rules = (() => { let hov = false; for (const ss of document.styleSheets) { let rs; try { rs = ss.cssRules; } catch (e) { continue; } for (const r of rs) if (/\.iog-add\.iog-wf:hover/.test(r.selectorText || '') && /focus-visible/.test(r.selectorText || '') && /var\(--iog-c\)/.test(r.style.borderColor || '')) hov = true; } return hov; })();
+      { const a = $('.iog-add', _kySec('dst')); a.scrollIntoView({ block: 'center' }); await wait(100); const n0 = screens.length; out.click = await _cMStep(async () => { const p = $('.iog-wf-pic', a).getBoundingClientRect(); const t = document.elementFromPoint(p.left + 5, p.top + 5); t.click(); await wait(400); okDialogs(); return screens.length - n0; }); doUndo(); await wait(300); }
+      { const a = $('.iog-add', _kySec('aux')); a.focus(); const n0 = dsms.length; out.enter = await _cMStep(async () => { _rzKd(a, 'Enter'); await wait(400); okDialogs(); return dsms.length - n0; }); doUndo(); await wait(300); }
+      { dsms.length = 0; _sysRender(); await wait(300); const g = $('.iog-grid', _kySec('aux'));
+        out.empty = [[...g.children].filter(e => e.getClientRects().length).map(e => e.classList.contains('iog-add') ? '+' : e.classList.contains('iog-card') ? 'C' : e.className).join(''), $$('.iog-empty', _kySec('aux')).length, /No AUX or DSM outputs yet/.test(g.textContent || ''),
+          ['src', 'dst', 'mv'].map(s => $$('.iog-empty', _kySec(s)).length).join('')]; }
+      { const h = ($('#help-overlay') || {}).textContent || ''; const i = h.indexOf('Add & remove', h.indexOf('I/O Patch — Sources')); const row = i >= 0 ? h.slice(i, i + 1600) : '';
+        out.help = [/Each \+ Add card is drawn as an empty outline of its section’s card/.test(row), /an empty section shows only its row of them/.test(row)]; }
+    } finally { try { closeSystem(); } catch (e) {} await restore(); }
+    const L = (name, kids, crow, pen, tip) => ['button', 0, name, kids, true, 0, true, '110x62', true, true, crow, '2+1', '+ ' + name, pen, true, tip];
+    return is(out, { look: [L('Add source', 'iog-wf-col,iog-wf-info,iog-wf-foot', true, true, 'an I/O-only source: Wire sees it, the presets do not'), L('Add destination', 'iog-wf-info,iog-wf-col,iog-wf-foot', true, false, 'a 1920×1080 destination at the end of the canvas'),
+      L('Add AUX', 'iog-wf-info,iog-wf-col,iog-wf-foot', true, false, 'a 1920×1080 AUX output'), L('Add multiviewer', 'iog-wf-info,iog-wf-col,iog-wf-foot', false, false, 'an operator monitor, not on the canvas')],
+      gone: [0, 0, 0], rules: true, click: [1, 1, true], enter: [1, 1, true], empty: ['++++', 0, false, '000'], help: [true, true] },
+      'each section\'s first add card [role, tab index, name, its parts in order, all hidden from a screen reader, focusable / clickable things inside, the picture box where the card beside it has its picture, its size, a click on it lands on the card, the two boxes where the resolution and cable type sit, colour bar + shuffle, icons + chip, the label, a pencil, the card\'s width, the tooltip\'s description] / [+ boxes, descriptions, old add-card classes] left / the hover + focus rule / a click on + Add destination\'s picture box [added] steps, Save / Enter on + Add AUX / no AUX [the section, notes, the old note\'s words, notes in the other sections] / Help › Add & remove');
+  });
+  // ── 16la-fix (2026-09-30): Omar's answers to the IP builder's questions (U1: an ID cell shows its automatic label AND the IP;
+  //    U3: Wire Advanced's hand-made destinations / AUX get an IP box) and the fixes of the two attacks on 16la-colour-mv (a Simple
+  //    name never runs into its picture; the Help; dead CSS / arguments / comments). Each check FAILS on 16la-colour-mv (r16la/build3,
+  //    sha1 e1c953c7) and PASSES on 16la-fix.
+  const _fxPick = async (trig, re) => { if (!trig) return 'no trigger'; _sysOpenDropdown(trig); await wait(150); const it = $$('.sys-dd .sys-dd-item').find(i => re.test(((($('.item-text', i) || i).textContent) || '').trim())); if (!it) { _sysCloseMenu(); return 'no item'; } it.click(); await wait(350); okDialogs(); return 'ok'; };
+  const _fxCell = (rid, side, i) => { const el = $$('#wire-diagram input.r-slot').find(x => { const k = _wireAdvPtCellKey(x); return k && k.rid === rid && k.side === side && k.idx === i; }); return el ? [el.value, el.getAttribute('data-ip-auto') || '', el.title || '', el.scrollWidth <= el.clientWidth] : 'no cell'; };
+  const _fxHelp = async () => { openHelp(); await wait(400); const h = ($('#help-overlay') || {}).textContent || ''; closeHelp(); await wait(200); return h; };
+  // 16la-fix F1: NEW
+  await check('Wire 16la-fix (U1): an Advanced router\'s / switcher\'s ID cell the user has not typed shows its automatic label AND the item\'s IP (Omar 2026-09-29 ~22:10: "OUT 1 · 192.168.0.1" / "BKP · 192.168.0.1" where the cell had an automatic label, just the IP where it had none; a typed cell always wins; the tooltip can stay): a multi-point source\'s point 2 reads "OUT 2 · 10.1.1.9", a port label typed on a source tile is kept ("CENTER LED L · 192.168.0.30", "BACK UP · 192.168.0.30" on a switcher), a destination\'s backup input "BKP · 192.168.0.40", a single-point source and a destination just the IP; every such text is whole in its cell (drawn smaller when the column is narrow, 192.168.100.250 too), nothing of it is written into the show, a typed ID wins and clearing it brings the label and the IP back, and the exported Advanced Wire sheet and the Look Book\'s Advanced Wire page print the same texts', async () => {
+    await restore(); const out = {}; const pdfWas = window._pdfOpts ? JSON.parse(JSON.stringify(window._pdfOpts)) : null;
+    try {
+      _sysSetSourceMeta('PPT A', { connectorType: 'NDI', notes: '192.168.0.1 · Presenter laptop A' });
+      _sysSetSourceMeta('CAM 1', { connectorType: 'NDI', notes: '192.168.0.5', ip: '10.1.1.9' });
+      _sysSetSourceMeta('CAM 2', { connectorType: 'Dante', notes: 'House left 192.168.0.30' });
+      _sysSetSourceMeta('PLAYBACK', { connectorType: 'NDI', notes: '192.168.100.250' });
+      screens[1].notes = '192.168.0.40 · center'; dsms[1].notes = 'rec 192.168.0.45';
+      await _pPWire('advanced');
+      _wireAdvAddRouter(10); const r = wireAdvanced.routers[wireAdvanced.routers.length - 1];
+      _wireAdvAddSwitcher('SW', 4, 4); const sw = wireAdvanced.routers[wireAdvanced.routers.length - 1];
+      wireAdvanced.sources.push({ id: 'fxa', name: 'PPT A', x: 60, y: 1500 }, { id: 'fxb', name: 'CAM 1', x: 60, y: 1700, outC: 2 },
+        { id: 'fxc', name: 'CAM 2', x: 60, y: 1900, outC: 2, portLabels: true, portNames: ['CENTER LED L', 'BACK UP'] }, { id: 'fxd', name: 'PLAYBACK', x: 60, y: 2100 });
+      wireAdvanced.dests.push({ id: 'fxe', refId: screens[1].id, x: 2600, y: 1500, inC: 2 }); wireAdvanced.dsms.push({ id: 'fxf', refId: dsms[1].id, x: 2600, y: 1800 });
+      wireAdvanced.wires.push({ id: 'fxw1', fromId: 'asrc:fxa', toId: 'rip:' + r.id + ':0' }, { id: 'fxw2', fromId: 'asp:fxb:1', toId: 'rip:' + r.id + ':1' }, { id: 'fxw3', fromId: 'asp:fxc:0', toId: 'rip:' + r.id + ':2' },
+        { id: 'fxw4', fromId: 'asrc:fxd', toId: 'rip:' + r.id + ':3' }, { id: 'fxw5', fromId: 'rop:' + r.id + ':0', toId: 'adst:fxe' }, { id: 'fxw6', fromId: 'rop:' + r.id + ':1', toId: 'adp:fxe:1' },
+        { id: 'fxw7', fromId: 'asp:fxc:1', toId: 'rip:' + sw.id + ':0' }, { id: 'fxw8', fromId: 'rop:' + sw.id + ':0', toId: 'adsm:fxf' });
+      _wireRender(); await wait(600);
+      out.router = [_fxCell(r.id, 'in', 0), _fxCell(r.id, 'in', 1), _fxCell(r.id, 'in', 2), _fxCell(r.id, 'in', 3), _fxCell(r.id, 'out', 0), _fxCell(r.id, 'out', 1)];
+      out.switcher = [_fxCell(sw.id, 'in', 0), _fxCell(sw.id, 'out', 0)];
+      out.stored = [r.inputs[1].pt || '', r.inputs[2].pt || '', r.outputs[1].pt || '', sw.inputs[0].pt || '', /10\.1\.1\.9|192\.168\.0\.(30|40)|192\.168\.100/.test(JSON.stringify(wireAdvanced.routers))];
+      { const u0 = _undoStack.length; _wireAdvSwitcherPt(r.id, 'in', 1, 'RACK A'); await wait(250); out.typed = [_fxCell(r.id, 'in', 1).slice(0, 2), _undoStack.length - u0]; _wireAdvSwitcherPt(r.id, 'in', 1, ''); await wait(250); out.cleared = _fxCell(r.id, 'in', 1).slice(0, 2); }
+      const want = ['value="OUT 2 · 10.1.1.9"', 'value="CENTER LED L · 192.168.0.30"', 'value="BKP · 192.168.0.40"', 'value="BACK UP · 192.168.0.30"', 'value="192.168.100.250"'];
+      { const svg = _wireBuildAdvancedExportSvg('light', {}); out.sheet = want.map(s => svg.indexOf(s) >= 0); }
+      { openPdfExportModal(); await wait(350); const rb = $('input[name="pdf-opt-wire-view"][value="advanced"]'); if (rb && !rb.checked) rb.click(); const real = exportPDF; let html = null; window.exportPDF = function () { html = real(true); }; try { _pdfConfirmExport(); } finally { window.exportPDF = real; } await wait(150);
+        out.book = want.map(s => (html || '').indexOf(s) >= 0); }
+    } finally { window._pdfOpts = pdfWas; try { closeWireMode(); } catch (e) {} await wait(300); await restore(); }
+    return is(out, {
+      router: [['192.168.0.1', '192.168.0.1', 'IP 192.168.0.1', true], ['OUT 2 · 10.1.1.9', '10.1.1.9', 'OUT 2 · IP 10.1.1.9', true], ['CENTER LED L · 192.168.0.30', '192.168.0.30', 'CENTER LED L · IP 192.168.0.30', true],
+        ['192.168.100.250', '192.168.100.250', 'IP 192.168.100.250', true], ['192.168.0.40', '192.168.0.40', 'IP 192.168.0.40', true], ['BKP · 192.168.0.40', '192.168.0.40', 'BKP · IP 192.168.0.40', true]],
+      switcher: [['BACK UP · 192.168.0.30', '192.168.0.30', 'BACK UP · IP 192.168.0.30', true], ['192.168.0.45', '192.168.0.45', 'IP 192.168.0.45', true]],
+      stored: ['OUT 2', 'CENTER LED L', 'BKP', 'BACK UP', false], typed: [['RACK A', ''], 1], cleared: ['OUT 2 · 10.1.1.9', '10.1.1.9'], sheet: [true, true, true, true, true], book: [true, true, true, true, true] },
+      'the router [in 1 PPT A, in 2 CAM 1 point 2 (its 16el IP), in 3 CAM 2 point 1 (its typed port label), in 4 PLAYBACK (a long address), out 1 CENTER LED, out 2 CENTER LED\'s backup input: value, data-ip-auto, tooltip, whole in its cell] / the switcher [in 1 CAM 2 point 2, out 1 AUX 1] / stored IDs [router in 2, in 3, out 2, switcher in 1, an IP written into the routers] / a typed ID [cell, undo steps] / cleared / the exported sheet / the Look Book\'s Advanced Wire page');
+  });
+  // 16la-fix F2: NEW
+  await check('Wire 16la-fix (U3): Wire Advanced\'s HAND-MADE destination and AUX cards get an IP like a hand-made source (Omar 2026-09-29 ~22:10: "get an IP box like hand-drawn sources have … and a router / switcher row or a network switch port cabled to one shows that IP"): NDI picked on a hand-made destination card gives it the show\'s next free address as its own IP (customDests[].ip) in the same ONE undo step with Save lit, Dante on a hand-made AUX the next one (customDsms[].ip); a pick away from IP keeps it; their tiles show it (the source tile\'s IP line), a router output cabled to the destination and a network switch port cabled to the AUX show it; selected, the destination\'s tile has Details\' IP box (the source\'s box: its address, its hint); an address typed there is its IP in ONE undo step (cell and tile follow), Undo takes it back; cleared, the box suggests the next free address and Enter stores it; the numbering counts both addresses; on a non-IP cable there is no box; the exported Advanced sheet prints the tile\'s IP', async () => {
+    await restore(); const out = {};
+    try {
+      await _pPWire('advanced');
+      _wireAdvAddCustomDest(); const cdId = wireAdvanced.customDests[wireAdvanced.customDests.length - 1].id;
+      _wireAdvAddCustomDsm(); const cmId = wireAdvanced.customDsms[wireAdvanced.customDsms.length - 1].id;
+      const CD = () => wireAdvanced.customDests.find(d => d.id === cdId) || {}, CM = () => wireAdvanced.customDsms.find(d => d.id === cmId) || {};   /* read again after every step: Undo puts back a copy */
+      _wireRender(); await wait(400);
+      const btn = (kind, id) => $$('#wire-sources-panel .wire-cable-btn').find(b => b.dataset.sysKind === kind && b.dataset.sysId === id);
+      { const u0 = _undoStack.length; const r = await _fxPick(btn('wcustomd', cdId), /^NDI$/); out.destNdi = [r, CD().connectorType, CD().ip || '', _undoStack.length - u0, _kySaveLit()]; }
+      { const u0 = _undoStack.length; const r = await _fxPick(btn('wcustomm', cmId), /^Dante$/); out.auxDante = [r, CM().connectorType, CM().ip || '', _undoStack.length - u0]; }
+      _wireAdvAddRouter(10); const r = wireAdvanced.routers[wireAdvanced.routers.length - 1];
+      _wireAdvAddDevice('switch', 4); const ns = wireAdvanced.devices[wireAdvanced.devices.length - 1];
+      wireAdvanced.dests.push({ id: 'fxg', refId: cdId, x: 2600, y: 1500 }); wireAdvanced.dsms.push({ id: 'fxh', refId: cmId, x: 2600, y: 1800 });
+      wireAdvanced.wires.push({ id: 'fxw9', fromId: 'rop:' + r.id + ':0', toId: 'adst:fxg' }, { id: 'fxw10', fromId: 'dvo:' + ns.id + ':1', toId: 'adsm:fxh' });
+      _wireRender(); await wait(600);
+      const tileIp = id => (($('#wire-diagram g.wire-node[data-node-id="' + id + '"] .wire-adv-ip') || {}).textContent || '');
+      out.placed = [_fxCell(r.id, 'out', 0).slice(0, 2), _pPPort(ns.id, 1), tileIp('adst:fxg'), tileIp('adsm:fxh')];
+      const ipBox = () => { const b = $('#wire-overlay .wire-ip-input'); return b ? [b.value, b.dataset.cout || '', b.dataset.suggest || '', (($('#wire-overlay .wire-ip-hint') || {}).textContent || '')] : 'no IP box'; };
+      const pick = id => { _wireState.selectedNodes.clear(); _wireSelectNode(id); };
+      pick('adst:fxg'); await wait(400); out.box = ipBox();
+      { const b = $('#wire-overlay .wire-ip-input'); const u0 = _undoStack.length; if (b) { b.value = '10.20.30.40'; fire(b, 'change'); } await wait(400);
+        out.typed = [CD().ip, _undoStack.length - u0, _fxCell(r.id, 'out', 0).slice(0, 2), tileIp('adst:fxg'), _kySaveLit()]; }
+      doUndo(); await wait(400); out.undone = [CD().ip, tileIp('adst:fxg')];
+      pick('adst:fxg'); await wait(400);
+      { const b = $('#wire-overlay .wire-ip-input'); if (b) { b.value = ''; fire(b, 'change'); } await wait(400); out.clearedIp = CD().ip; }
+      pick('adst:fxg'); await wait(400); out.suggest = ipBox();
+      { const b = $('#wire-overlay .wire-ip-input'); const u0 = _undoStack.length; if (b) { b.focus(); b.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true })); } await wait(400); out.enter = [CD().ip, _undoStack.length - u0]; }
+      out.next = _ipNextFree();
+      { const svg = _wireBuildAdvancedExportSvg('light', {}); out.sheet = [/class="wire-adv-ip"[^>]*>192\.168\.0\.1</.test(svg), /class="wire-adv-ip"[^>]*>192\.168\.0\.5</.test(svg)]; }
+      { const r2 = await _fxPick(btn('wcustomd', cdId), /^HDMI 2\.0$/); pick('adst:fxg'); await wait(400); out.hdmi = [r2, CD().connectorType, CD().ip, ipBox()]; }
+    } finally { try { closeWireMode(); } catch (e) {} await wait(300); await restore(); }
+    return is(out, { destNdi: ['ok', 'NDI', '192.168.0.1', 1, true], auxDante: ['ok', 'Dante', '192.168.0.5', 1],
+      placed: [['192.168.0.1', '192.168.0.1'], ['192.168.0.5', '192.168.0.5', 'Port 2'], '192.168.0.1', '192.168.0.5'],
+      box: ['192.168.0.1', 'dst', '', 'Shown on the tile and printed on the drawing sheet.'],
+      typed: ['10.20.30.40', 1, ['10.20.30.40', '10.20.30.40'], '10.20.30.40', true], undone: ['192.168.0.1', '192.168.0.1'], clearedIp: '',
+      suggest: ['192.168.0.1', 'dst', '192.168.0.1', 'The next free address in this show. Press Enter to use it, or type another.'], enter: ['192.168.0.1', 1],
+      next: '192.168.0.10', sheet: [true, true], hdmi: ['ok', 'HDMI 2.0', '192.168.0.1', 'no IP box'] },
+      'NDI on the hand-made destination card [pick, connector, its IP, undo steps, Save lit] / Dante on the hand-made AUX card / placed [the router output cell, the switch port, the destination tile\'s IP line, the AUX tile\'s] / Details of the destination tile / typed [its IP, undo steps, the cell, the tile, Save lit] / Undo / cleared / the suggestion / Enter [its IP, undo steps] / the next free address / the exported sheet [the tiles\' IP lines] / HDMI 2.0 [pick, connector, the IP kept, no box]');
+  });
+  // 16la-fix F3: NEW
+  await check('Wire 16la-fix (M / R): in Wire SIMPLE a destination, AUX or multiviewer tile has its picture at its right end, and a long name never runs into it (the attack: "LEFT LED WALL MAIN STAG" drawn over the picture): the name is drawn smaller (12 down to 9 px), then cut after a whole word with "…"; every name ends at least 2 px before the picture; a short name and a tile without a picture there are drawn at 12 px as before; the exported Simple sheet draws each name the same', async () => {
+    await restore(); const out = {};
+    try {
+      const pic = _IOG_MV_PICS[1]; const L = screens[0], C = screens[1], A = dsms[1], M = multiviewers[0];
+      L.name = 'LEFT LED WALL MAIN STAGE'; A.name = 'AUX 1 RECORD AND STREAM FEED'; M.name = 'MULTIVIEWER OPERATOR POSITION';
+      wireThumbnails['dst:' + L.id] = pic; wireThumbnails['dst:' + C.id] = pic; wireThumbnails['dsm:' + A.id] = pic;
+      wireSettings.mvSimple = [M.id];
+      await _pPWire('simple'); await wait(300);
+      const node = id => { const g = $('#wire-diagram g.wire-node[data-node-id="' + id + '"]'); if (!g) return 'no node'; const t = g.querySelector('text'), ims = [...g.querySelectorAll('image')], im = ims[ims.length - 1], tb = t.getBBox();
+        return { fs: t.getAttribute('font-size'), t: t.textContent, pic: im ? +im.getAttribute('x') : null, right: tb.x + tb.width, x: +g.querySelector('rect').getAttribute('x') }; };
+      const ok = (n, name) => { if (typeof n === 'string') return n; const full = n.t === name, cut = /…$/.test(n.t) && name.startsWith(n.t.slice(0, -1)) && name.charAt(n.t.length - 1) === ' ';
+        return [n.pic !== null && n.pic > n.x + 100 ? (n.right <= n.pic - 2) : 'no picture at the right end', full ? (+n.fs >= 9 && +n.fs <= 12) : (cut && n.fs === '9')]; };
+      out.long = [ok(node('dst:' + L.id), L.name), ok(node('dsm:' + A.id), A.name), ok(node('mv:' + M.id), M.name)];
+      const c = node('dst:' + C.id), r = node('dst:' + screens[2].id); out.short = [c.fs, c.t, r.fs, r.t, r.pic];
+      const svg = _wireBuildExportSvg('light', {}); const live = [node('dst:' + L.id), node('dsm:' + A.id), node('mv:' + M.id), c];
+      out.sheet = live.map(n => svg.indexOf('font-size="' + n.fs + '" font-weight="600">' + _esc(n.t) + '</text>') >= 0);
+    } finally { try { closeWireMode(); } catch (e) {} await wait(300); await restore(); }
+    return is(out, { long: [[true, true], [true, true], [true, true]], short: ['12', 'CENTER LED', '12', 'RIGHT LED', null], sheet: [true, true, true, true] },
+      'long names [LEFT LED WALL MAIN STAGE, AUX 1 RECORD AND STREAM FEED, MULTIVIEWER OPERATOR POSITION: ends before the picture, drawn whole at 9-12 px or cut after a whole word at 9 px] / short [CENTER LED with a picture: size, text; RIGHT LED without one: size, text, picture] / the exported Simple sheet draws the same text at the same size');
+  });
+  // 16la-fix F4: NEW
+  await check('Help 16la-fix: the in-app Help says what 16la-colour-mv and 16la-fix do: I/O Patch › What it is calls the + Add cards empty outlines of their section\'s card (no more "keep their + on the left"), Multiviewer (MV) says its Wire card can be dragged onto the drawing (no more "lives only in the I/O Patch and the I/O export"), Wire › IP address says the ID cell shows the IP after the OUT n or BKP (OUT 1 · 192.168.0.1, no more "in place of") and that a hand-made destination or AUX has the same IP box, Wire › Source thumbnails says a long name is drawn smaller, then cut after a whole word', async () => {
+    const h = await _fxHelp();
+    return is([/keep their \+ on the left/.test(h), /The \+ Add cards, empty outlines of their section’s card, come after the cards/.test(h), /It lives only in the I\/O Patch and the I\/O export/.test(h), /It is never drawn on the canvas or in presets; in Wire its card can be dragged onto the drawing/.test(h),
+      /in place of the OUT n or BKP/.test(h), /after the OUT n or BKP it showed there \(OUT 1 · 192\.168\.0\.1\)/.test(h), /A hand-made destination or AUX \(Advanced\) has the same box: its own IP/.test(h), /in Simple a name too long for the room before the picture is drawn smaller, then cut after a whole word/.test(h)],
+      [false, true, false, true, false, true, true, true], 'What it is [old "+ on the left", outlines] / Multiviewer (MV) [old "only in the I/O Patch", Wire card] / Wire › IP address [old "in place of", after the label, hand-made outputs] / Source thumbnails [a long name]');
+  });
+  // 16la-fix F5: NEW
+  await check('Page 16la-fix: no dead code left by 16la-colour-mv (S1 / T): no CSS rule for the empty-section note (.iog-empty) or for the old + Add card (.fs-src-add on .iog-add) is left in the page\'s stylesheets, _iogSecHTML takes no empty-note argument and the four note strings are gone, and the comments that said the + Add cards keep their + on the left / are drawn as the Video Presets add card, and 16el\'s old IP prefill rule, now say what the page does', async () => {
+    const rules = []; [...document.styleSheets].forEach(s => { let rs = []; try { rs = [...s.cssRules]; } catch (e) {} const walk = l => l.forEach(r => { if (r.cssRules) walk([...r.cssRules]); if (r.selectorText) rules.push(r.selectorText); }); walk(rs); });
+    const src = await (await fetch(location.href.split('#')[0], { cache: 'no-store' })).text();
+    return is([rules.filter(t => /iog-empty/.test(t)).length, rules.filter(t => /fs-src-add/.test(t) && /iog-add/.test(t)).length, _iogSecHTML.length,
+      ["'No multiviewer.'", "'No AUX or DSM outputs yet.'", 'No sources yet: they come from the presets', "'No destinations yet: add one here or in the Video Presets.'"].filter(s => src.indexOf(s) >= 0),
+      ['all four keep the + box on the left', 'drawn as the Video Presets\n   Advanced dashed add card', 'the same look, words, + box on the left', "an empty section's note sits on its own line under them", '// ── 16el: IP addresses', 'Prefill rule (Omar)'].filter(s => src.indexOf(s) >= 0)],
+      [0, 0, 4, [], []], 'rules [.iog-empty, the old add card] / _iogSecHTML\'s arguments / the note strings still in the page / the stale comments still in the page');
   });
   try { _fsPauseAll(); } catch (e) {} $$('video').forEach(v => { try { v.muted = true; v.pause(); } catch (e) {} });
   return { checks };

@@ -1185,7 +1185,7 @@
    "ok": true
   },
   {
-   "name": "Wire Advanced: a custom card made on one page is offered on every page, and the tile stays on the page it was dropped on",
+   "name": "Wire Advanced: a custom card made on one page is offered on every page, and the tile stays on the page it was dropped on (16la-colour-mv (R): read in the three panes that take custom cards; the Multiviewers pane after them has none)",
    "ok": true
   },
   {
@@ -1197,7 +1197,7 @@
    "ok": true
   },
   {
-   "name": "Wire Advanced: a show saved with a custom list per page opens as ONE library, its tiles follow, the merge is not an edit and the next save holds the new shape",
+   "name": "Wire Advanced: a show saved with a custom list per page opens as ONE library, its tiles follow, the merge is not an edit and the next save holds the new shape (16la-colour-mv (R): read in the three panes that take custom cards)",
    "ok": true
   },
   {
@@ -2021,7 +2021,7 @@
    "ok": true
   },
   {
-   "name": "I/O 16ky: Simple is a card grid (Omar 2026-09-27, 10.png): four titled sections in this order, Sources, Destinations, AUX / DSM, Multiviewers, each with its icon and title and opening with its \"+ Add …\" card, then one card per source (S1 …), per destination (D1 …, then each I/O-only destination, IO), per AUX / DSM output (A1 …) and per multiviewer (MV1 …), in the model's order; the Simple table is gone (Advanced keeps its table)",
+   "name": "I/O 16ky (16la-wire-mv (O), Omar 2026-09-29: a section's \"+ Add …\" card now comes AFTER its cards; 16la-colour-mv (T): its label is read on the outline card's name line): Simple is a card grid (Omar 2026-09-27, 10.png): four titled sections in this order, Sources, Destinations, AUX / DSM, Multiviewers, each with its icon and title, then one card per source (S1 …), per destination (D1 …, then each I/O-only destination, IO), per AUX / DSM output (A1 …) and per multiviewer (MV1 …), in the model's order, and right after the last card its \"+ Add …\" card; the Simple table is gone (Advanced keeps its table)",
    "ok": true
   },
   {
@@ -2029,7 +2029,7 @@
    "ok": true
   },
   {
-   "name": "I/O 16ky-r2b (was 16ky C; the Globally / Only Here switch is gone, Omar 2026-09-27: \"simple adds it everywhere\"): the first card of each section adds one: + Add source (an I/O-only source: Wire sees it, the presets do not), + Add destination (ALWAYS a real 1920×1080 destination at the end of the canvas: in every preset and in the I/O Excel, also with the old scope left at Only Here; its caption says so, and the Destinations title has no Add switch), + Add AUX, + Add multiviewer; each is ONE undo step that lights Save, its card appears last in its section, and Undo takes it away; an I/O-only destination an older save made still has its card (IO)",
+   "name": "I/O 16ky-r2b (was 16ky C; the Globally / Only Here switch is gone, Omar 2026-09-27: \"simple adds it everywhere\"): the + Add card of each section (16la-wire-mv (O): after its cards; 16la-colour-mv (T): its caption is its tooltip) adds one: + Add source (an I/O-only source: Wire sees it, the presets do not), + Add destination (ALWAYS a real 1920×1080 destination at the end of the canvas: in every preset and in the I/O Excel, also with the old scope left at Only Here; its caption says so, and the Destinations title has no Add switch), + Add AUX, + Add multiviewer; each is ONE undo step that lights Save, its card appears last in its section, and Undo takes it away; an I/O-only destination an older save made still has its card (IO)",
    "ok": true
   },
   {
@@ -2049,7 +2049,7 @@
    "ok": true
   },
   {
-   "name": "I/O 16ky-r2: a Simple card is the name, the resolution and the cable type (Omar 2026-09-27: \"this should stay simple just name resolution and cable type\"): with a Type and a note stored on every kind of item, no card has a Type (chip, box or menu) or a notes box and none shows those words; a card's keys run left to right: on a source card the picture, colour swatch and shuffle, the name and its pencil, the name library, the resolution box and its menu, the Cable Type menu; on a destination or AUX / DSM card (mirrored, 16kz-refresh: its picture on the right) the name, the name library, the resolution box and its menu, the Cable Type menu, then the picture, the shuffle and the colour swatch; then Reset and Delete on the grey line, which keeps the red pill when the cable cannot carry the size and the number (S1, D1, IO, MV1) at its right end; the S0 / D0 bars set the Connector and the Resolution only",
+   "name": "I/O 16ky-r2: a Simple card is the name, the resolution and the cable type (Omar 2026-09-27: \"this should stay simple just name resolution and cable type\"): with a Type and a note stored on every kind of item, no card has a Type (chip, box or menu) or a notes box and none shows those words; a card's keys run left to right: on a source card the picture, colour swatch and shuffle, the name and its pencil, the name library, the resolution box and its menu, the Cable Type menu; on a destination or AUX / DSM card (mirrored, 16kz-refresh: its picture on the right) the name, the name library, the resolution box and its menu, the Cable Type menu, then the picture, the shuffle and the colour swatch; on a multiviewer card (16la-wire-mv (N): its picture is a button that shows the next picture) the name, the name library, the resolution box and its menu, the Cable Type menu, then the picture; then Reset and Delete on the grey line, which keeps the red pill when the cable cannot carry the size and the number (S1, D1, IO, MV1) at its right end; the S0 / D0 bars set the Connector and the Resolution only",
    "ok": true
   },
   {
@@ -2073,7 +2073,7 @@
    "ok": true
   },
   {
-   "name": "I/O 16ky-r2b: Omar's multiviewer picture (12_mv.png: a 2 + 8 multiview, preview green, program red) is the picture of every Multiviewer card on the Simple page and of every multiviewer row's small picture on the Advanced pages (page 1 and a page of its own), embedded in the page (a 224 × 126 PNG, 16:9) and fitted whole (not cut, not stretched); only multiviewers get it (no source, destination, AUX or I/O-only card or row), it takes no upload and no colour swatch, the name stays on the card's name line, the Set-for-all rows keep their badges; the Look Book and the Wire sheets do not carry it",
+   "name": "I/O 16ky-r2b (16la-wire-mv (N), Omar 2026-09-29: one of FOUR pictures, each multiviewer its own, the next one on a click): Omar's multiviewer picture (12_mv.png: a 2 + 8 multiview, preview green, program red) is picture 1 of the four, embedded in the page (a 224 × 126 PNG, 16:9); every Multiviewer card on the Simple page and every multiviewer row's small picture on the Advanced pages (page 1 and a page of its own) shows its multiviewer's own picture, fitted whole (not cut, not stretched); only multiviewers get one (no source, destination, AUX or I/O-only card or row), it takes no upload and no colour swatch, the name stays on the card's name line, the Set-for-all rows keep their badges; the Look Book and the Wire sheets carry none of the four",
    "ok": true
   },
   {
@@ -2225,7 +2225,7 @@
    "ok": true
   },
   {
-   "name": "Cards 16kz-fix (K): the + Add cards are NOT mirrored (Omar's correction 2026-09-28 22:00: \"should keep the plus box on the left still\"): + Add source, + Add destination, + Add AUX and + Add multiviewer all have their + box on the LEFT and the text on the right (the markup in that order, the two apart), with no iog-add-mirror class or rule, as before 16kz-refresh; only the output cards themselves are mirrored; a click on + Add destination and Enter on + Add AUX still add one each (one undo step)",
+   "name": "Cards 16kz-fix (K) (16la-wire-mv (O): every + Add card that completes a section's last row; 16la-colour-mv (T), Omar 2026-09-29 ~15:40: the + Add card is an outline of its section's card, which REPLACES \"keep the plus box on the left\"): + Add source has its (empty) picture box on the LEFT and its label on the right, + Add destination, + Add AUX and + Add multiviewer have it on the RIGHT, like the cards beside them (the markup in that order, the two apart), with no iog-add-mirror class or rule; a click on + Add destination and Enter on + Add AUX still add one each (one undo step), + Add AUX is named \"Add AUX\"",
    "ok": true
   },
   {
@@ -2262,6 +2262,70 @@
   },
   {
    "name": "I/O 16kz-fix (J) R5: a note stays one line: Shift+Enter in the Notes box saves it and closes the box like Enter (it stored a line break the cell could not show, and the next edit glued the words), and a line break that arrives in the box (a paste) becomes a space",
+   "ok": true
+  },
+  {
+   "name": "Wire 16la-wire-mv (M): the Wire drawing's tiles follow the cards (Omar 2026-09-29: \"they should show up how I/O Patch simple show source image left which is correct and destination image right\"): with a picture on LEFT LED, on AUX 1 and on the first source, Wire Simple draws the destination's and the AUX's picture at the RIGHT end of the tile (4 in) and the name on the left (12 in), the source's picture on the left and its name after it; Wire Advanced draws a destination / AUX tile (the show's and a hand-made one, with a picture or its colour tile) with the name, resolution and cable first and the picture 13 in from the RIGHT end, the source tile as before; the picture is never flipped, the tile keeps its size and its cable still ends on its left edge; the Simple export, the Advanced export and the Look Book's Wire page draw the same",
+   "ok": true
+  },
+  {
+   "name": "I/O 16la-wire-mv (N): four multiviewer pictures (Omar 2026-09-29: \"select one of the 4 Pre-Created MV options ... put them in randomly ... by clicking the MV image ... it should just cycle\"): four distinct 224 × 126 pictures are embedded, the first is 16ky-r2b's; a multiviewer stores its picture (mvPic 1-4); a new one gets one at random (Math.random 0.01 / 0.3 / 0.6 / 0.99 give 1 / 2 / 3 / 4); its Simple card shows its own picture, as a button with no upload; a click shows the next (3 → 4 → 1, wrapping), Enter and Space on the focused picture do the same, each ONE undo step that lights Save, the focus stays on the picture, Undo goes back; its Advanced page-1 row shows the same picture; the picture survives a save and a reopen (clean); each example show carries the picture it was given at random once (General Session 3, Awards Night 1, Town Hall 3) and opens clean; a show whose multiviewers have no picture (a file, a restored draft, a step undone into) gets a random one each, ONCE, and reads as changed (Save lit, no undo step); the Look Book and the Wire sheets carry none of the four",
+   "ok": true
+  },
+  {
+   "name": "I/O 16la-wire-mv (O): the I/O Patch Simple \"+ Add …\" cards complete each section's last row (Omar 2026-09-29 12:05: \"10 sources row 1 and 2 are full but row 3 is only 2 source there should be 2 blank add x\"): in Sources, Destinations, AUX / DSM and Multiviewers the cards come first, then as many + Add cards as the last row has room for (a full last row gets a new row of them, an empty section one whole row, 16la-colour-mv (S1): with no note under it); each add card has one class per column count at which it is not needed, and four @media rules hide those, in the same ranges as the grid's columns (so a resize re-fills the row); every one is the section's add card (16la-colour-mv (T): the outline of its card, the picture box on the left for a source and on the right for the others, its words, Tab reaches it); with two sources in the last row (Omar's 10 sources: 4 + 4 + 2 sources and 2 add cards; the example has 11, sources are added until two are left) the 2nd add card adds ONE source that lands where the first add card was; Enter and Space on an add card add one each (one undo step) and the keyboard stays on the section's first add card; the section titles keep their count and Set for all",
+   "ok": true
+  },
+  {
+   "name": "I/O 16la-ip (P): a connector set to NDI, ST-2110, Dante or Ethernet gives the row's note the show's next free IP address (Omar 2026-09-29: \"you just put the IP address rules i wrote in the notes, it just auto populates there\"; \"192.168.0.1, 192.168.0.5, .10, .15 … so on\", after .250 \"192.168.1.1, .5 …\"): on the Simple card of General Session, NDI on PPT A makes its note \"192.168.0.1 · Presenter laptop A\" (the text kept after the address), Dante on PPT B gives .5, each pick ONE undo step with Save lit, Undo takes the connector and the note back together and Redo brings both; an address already in any note (a destination's) or typed in Wire's Details (a source's 16el IP) is skipped, so ST-2110 on PLAYBACK gets .20; a note that already holds an IP address (10.0.0.7) gets nothing, nor do Fiber, SFP / QSFP or HDMI; a change away from IP leaves the note alone and back to NDI adds nothing; an empty note becomes the address alone; Custom… typed \"dante\" picks the built-in Dante and gives the address too, and a source that has its own Wire IP (16el) gets nothing; with every address of 192.168.0.x taken the next is 192.168.1.1; the user edits the address like any note; a show opened with NDI rows and no address is not changed and opens clean",
+   "ok": true
+  },
+  {
+   "name": "I/O 16la-ip (P): every path that sets a connector gives the note its address, one count for the show: the Simple Set for all rows give each row its OWN next address in card order in ONE undo step (S0 Dante: the 11 source cards .1 … .50; D0 NDI: the 3 destinations .55, .60, .65 and an I/O-only destination .70; A0 Ethernet: DSM 1 .75, AUX 1 .80; M0 ST-2110: MV 1 .85) and Undo takes a whole Set for all back; on Advanced page 1 a show source's row picked to NDI writes the address in the item's own note (the Look Book's and Excel's note) and page 1's Set for all gives each of its rows its own; a hand-made row on page 2 and page 2's Set for all do the same on their own rows; in Wire a source card, a destination card, a custom source (no note: its own IP, 16el's) and a source tile's output point do it too; the I/O Excel prints the address in the Notes column",
+   "ok": true
+  },
+  {
+   "name": "Wire 16la-ip (P): Wire Advanced shows an item's IP (Omar 2026-09-29: \"Router Slot column fills in\", \"Network switch ports show it\"; the item's IP is its own 16el IP, else the first address in its note): a router's ID cell that the user has not typed shows the IP of the source on that input (16la-fix (U1), Omar 2026-09-29 ~22:10: on a multi-point source AFTER its automatic \"OUT 2\", \"OUT 2 · 10.1.1.9\", and so in its tooltip, no longer in place of it) and of the destination on that output, a switcher's the same, a typed ID wins and clearing it shows the IP again, the IP follows the note live, and nothing of it is written into the show; a network switch's unnamed port shows the IP of what is cabled to it (a typed name wins); the exported Wire sheet and the Look Book's Advanced Wire page print them; Wire Simple's switcher is unchanged; Details' IP box of an NDI source shows its note's address, and for one without an address suggests the show's next free one, which Enter stores as the source's IP in one undo step",
+   "ok": true
+  },
+  {
+   "name": "Wire 16la-colour-mv (Q): a destination / AUX tile in the Wire drawing shows its card's colour (Omar 2026-09-29: \"between patch and wire the color changes and do not match, source where correct\"; \"the drawing tiles picture match the I/O Patch Card Colour\"): LEFT LED given a colour with its I/O Patch card's colour bar shows it on its I/O card, its Wire card, its Wire Simple tile and its Wire Advanced tile (colour tile, border, name); AUX 1 at its default is yellow on all four (the Advanced colour tile was a fixed green, a destination's a fixed blue, their border and name the lane colour); a hand-made destination tile keeps its own card's colour; the Advanced export and the Look Book's Advanced Wire page print the same; a show that stores colours opens with none changed and Save dark; Help › Wire › Tile colours says so",
+   "ok": true
+  },
+  {
+   "name": "I/O 16la-colour-mv (Q): a destination's / AUX's colour follows a cable pick and an uploaded picture exactly as a source's does (Omar: \"how does source handle this since the work flow between both should match?\"), each in the SAME undo step with Save lit: a pick on a destination card and on an AUX card (the cable's colour; Undo takes connector and colour back together), Connector › Custom… typed \"hdmi 2.1\" (HDMI 2.1's colour), D0 (every destination its own, an I/O-only destination has no colour), A0 (every AUX), M0 (a multiviewer has no colour), a picture uploaded on a destination card (its main colour, the same as the same picture gives a source), then a cable, the shuffle and the colour bar (the last one wins); on Advanced page 1 a destination row's pick and page 1's D0 (the item's colour), a page-2 row's pick changes no item; a Wire card's pick; — Clear — changes no colour",
+   "ok": true
+  },
+  {
+   "name": "Wire 16la-colour-mv (R): a MULTIVIEWERS pane in Wire's side panel and a multiviewer tile on Wire ADVANCED (Omar 2026-09-29: \"we also need to add in Wire the MV icon so they can be dragged and used in wire, both simple and advance should be able to use it\"): in Simple and Advanced the pane comes after AUX / DSM with one card per multiviewer (its picture on the RIGHT, the name, resolution and cable type, draggable); a click on the picture shows the next of the four (one undo step, Save lit; its I/O card shows it too) and Enter on it does the same; its card dropped on an Advanced page makes ONE destination tile of the page (one undo step: its picture 13 in from the right end, never cut, name / resolution / cable on the left, its input dot on the left edge); dropped again it MOVES that tile (still one); a switcher output cabled to it names it in the output cell; Delete on the selected tile takes it and its cable off, Undo brings both back; the multiviewer deleted in the I/O Patch takes its tiles off every page in ONE undo step (Undo brings them back); a new multiviewer is placed nowhere; the Advanced export and the Look Book's Advanced Wire page print the tile; Help › Wire › Multiviewers says so",
+   "ok": true
+  },
+  {
+   "name": "Wire 16la-colour-mv (R): a multiviewer card dropped on Wire SIMPLE is fed by the show's switcher (Omar: \"Only when dragged in\"; one more switcher output row: \"this is fine\"): the tile lands where it is dropped (one undo step, Save lit), the switcher gets one more output named after it (its OUT count up by one) and a cable to the tile, and nothing else in the drawing moves (every source, destination and AUX tile, the switcher's place); the tile has the multiviewer's picture at its RIGHT end (never cut) and its name on the left, and the Cable Colour Code lists its cable; dropped again it moves (still one row); a rename of the multiviewer reaches the tile and the row; the Simple export and the Look Book's Simple Wire page print both; Reset layout keeps it; Delete on the selected tile takes it and its row off (one undo step), Undo brings them back",
+   "ok": true
+  },
+  {
+   "name": "I/O 16la-colour-mv (S1 + T): the I/O Patch Simple \"+ Add …\" cards are dim, EMPTY WIREFRAMES of their section's card (Omar 2026-09-29, his add_card_outline_mockup.png: \"the wire look or outline of that same look\"): in all four sections every add card is one control (role button, Tab reaches it, its name \"Add source\" / \"Add destination\" / \"Add AUX\" / \"Add multiviewer\", everything inside hidden from a screen reader, nothing inside focusable or clickable: a click on its picture box lands on the card); it has the real card's size and layout (the picture box 110 × 62 on the LEFT for a source, on the RIGHT for a destination, AUX or multiviewer, exactly where the card beside it has its picture; two boxes where the resolution and cable type sit; an empty colour bar and shuffle square under the picture except on a multiviewer's; the bottom line with Reset, trash and an empty number chip; \"+ Add source\" with a pencil where the name sits); the big + box and the long description are gone (the description is the tooltip); a click and Enter still add one (one undo step); an empty section shows only its row of add cards, with no note (Help › Add & remove says so)",
+   "ok": true
+  },
+  {
+   "name": "Wire 16la-fix (U1): an Advanced router's / switcher's ID cell the user has not typed shows its automatic label AND the item's IP (Omar 2026-09-29 ~22:10: \"OUT 1 · 192.168.0.1\" / \"BKP · 192.168.0.1\" where the cell had an automatic label, just the IP where it had none; a typed cell always wins; the tooltip can stay): a multi-point source's point 2 reads \"OUT 2 · 10.1.1.9\", a port label typed on a source tile is kept (\"CENTER LED L · 192.168.0.30\", \"BACK UP · 192.168.0.30\" on a switcher), a destination's backup input \"BKP · 192.168.0.40\", a single-point source and a destination just the IP; every such text is whole in its cell (drawn smaller when the column is narrow, 192.168.100.250 too), nothing of it is written into the show, a typed ID wins and clearing it brings the label and the IP back, and the exported Advanced Wire sheet and the Look Book's Advanced Wire page print the same texts",
+   "ok": true
+  },
+  {
+   "name": "Wire 16la-fix (U3): Wire Advanced's HAND-MADE destination and AUX cards get an IP like a hand-made source (Omar 2026-09-29 ~22:10: \"get an IP box like hand-drawn sources have … and a router / switcher row or a network switch port cabled to one shows that IP\"): NDI picked on a hand-made destination card gives it the show's next free address as its own IP (customDests[].ip) in the same ONE undo step with Save lit, Dante on a hand-made AUX the next one (customDsms[].ip); a pick away from IP keeps it; their tiles show it (the source tile's IP line), a router output cabled to the destination and a network switch port cabled to the AUX show it; selected, the destination's tile has Details' IP box (the source's box: its address, its hint); an address typed there is its IP in ONE undo step (cell and tile follow), Undo takes it back; cleared, the box suggests the next free address and Enter stores it; the numbering counts both addresses; on a non-IP cable there is no box; the exported Advanced sheet prints the tile's IP",
+   "ok": true
+  },
+  {
+   "name": "Wire 16la-fix (M / R): in Wire SIMPLE a destination, AUX or multiviewer tile has its picture at its right end, and a long name never runs into it (the attack: \"LEFT LED WALL MAIN STAG\" drawn over the picture): the name is drawn smaller (12 down to 9 px), then cut after a whole word with \"…\"; every name ends at least 2 px before the picture; a short name and a tile without a picture there are drawn at 12 px as before; the exported Simple sheet draws each name the same",
+   "ok": true
+  },
+  {
+   "name": "Help 16la-fix: the in-app Help says what 16la-colour-mv and 16la-fix do: I/O Patch › What it is calls the + Add cards empty outlines of their section's card (no more \"keep their + on the left\"), Multiviewer (MV) says its Wire card can be dragged onto the drawing (no more \"lives only in the I/O Patch and the I/O export\"), Wire › IP address says the ID cell shows the IP after the OUT n or BKP (OUT 1 · 192.168.0.1, no more \"in place of\") and that a hand-made destination or AUX has the same IP box, Wire › Source thumbnails says a long name is drawn smaller, then cut after a whole word",
+   "ok": true
+  },
+  {
+   "name": "Page 16la-fix: no dead code left by 16la-colour-mv (S1 / T): no CSS rule for the empty-section note (.iog-empty) or for the old + Add card (.fs-src-add on .iog-add) is left in the page's stylesheets, _iogSecHTML takes no empty-note argument and the four note strings are gone, and the comments that said the + Add cards keep their + on the left / are drawn as the Video Presets add card, and 16el's old IP prefill rule, now say what the page does",
    "ok": true
   }
  ],
