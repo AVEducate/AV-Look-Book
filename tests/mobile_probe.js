@@ -308,11 +308,15 @@
     return is([seen, document.body.classList.contains('mb-wire-active'), getComputedStyle($('#wire-overlay')).display, !!$('#mobile-main .mb-preset-list')], [[true, true, true, true], false, 'none', true], 'card / Wire left / overlay / list back');
   });
   await rotate(LANDSCAPE);
-  await check('Wire landscape: the rotate card is gone and the diagram draws in Simple, fitted, with no Advanced tabs', async () => {
+  // 16lb-simple PA1: REPLACES the check named in its header (reason in the block)
+  // 16lb-simple: RENAMED in place. Why: Omar 2026-09-30 (3): Wire Simple's tiles look like their cards, the Advanced tile (class
+  //   .wire-adv-tile), and the phone draws the desktop's Simple drawing; this check counted every .wire-adv-tile as "an Advanced tile".
+  //   It now counts Advanced's own nodes (g.wire-adv-node), which Simple never draws. Everything else is as it was.
+  await check('Wire landscape: the rotate card is gone and the diagram draws in Simple, fitted, with no Advanced tabs and no Advanced node (16lb-simple: Simple\'s tiles are the cards\' Advanced tiles, so the count reads Advanced\'s own nodes)', async () => {
     const t = await tap($('#topbar-nav-wire')); if (t !== true) return t; await until(() => $('#wire-diagram svg'), 2000); await wait(800);
     const sc = $('#wire-diagram-scroll'), r = sc.getBoundingClientRect(); noteSide('Wire, diagram'); budget('wire-landscape', ['#wire-overlay']);
-    return is([innerWidth, vis($('#mb-wire-rotate')), !!$('#wire-diagram svg'), wireSettings.wireView, advTiles(), $$('#wire-tabs, #wire-page-tabs').filter(shown).length, _wireGetZoom() > 0 && _wireGetZoom() <= 1, r.width > innerWidth * 0.6 && r.height > 120, $$('#wire-sources-panel .wire-source-card').length > 0],
-      [LANDSCAPE[0], false, true, 'simple', 0, 0, true, true, true], 'width / rotate card / svg / view / Advanced tiles / Advanced tabs / zoom fitted / diagram area / source cards');
+    return is([innerWidth, vis($('#mb-wire-rotate')), !!$('#wire-diagram svg'), wireSettings.wireView, $$('#wire-overlay g.wire-adv-node').filter(shown).length, $$('#wire-tabs, #wire-page-tabs').filter(shown).length, _wireGetZoom() > 0 && _wireGetZoom() <= 1, r.width > innerWidth * 0.6 && r.height > 120, $$('#wire-sources-panel .wire-source-card').length > 0],
+      [LANDSCAPE[0], false, true, 'simple', 0, 0, true, true, true], 'width / rotate card / svg / view / Advanced nodes / Advanced tabs / zoom fitted / diagram area / source cards');
   });
   // 16kw-r2 W: NEW
   // 16kw-r2: Omar's answer 2 on the phone (Wire is landscape only there), with REAL taps and typing. FAILS on the 16kw-fix page
@@ -342,15 +346,61 @@
   let ADV = null;
   try { wireSettings.wireView = 'advanced'; _wireAdvSeedFromSimple(true); const st = JSON.parse(JSON.stringify(getProjectState())); st.wireSettings.wireView = 'advanced'; if ((st.wireAdvanced.sources || []).length) ADV = JSON.stringify(st); } catch (e) { ADV = null; }
   await restore();
-  await check('Wire: a show saved in Advanced is shown in Simple on the phone (no Advanced tiles or tabs on screen)', async () => {
+  // 16lb-simple PA2: REPLACES the check named in its header (reason in the block)
+  // 16lb-simple: RENAMED in place. Why: Omar 2026-09-30 (3): Wire Simple's tiles look like their cards, the Advanced tile (class
+  //   .wire-adv-tile), and the phone draws the desktop's Simple drawing; this check counted every .wire-adv-tile as "an Advanced tile".
+  //   It now counts Advanced's own nodes (g.wire-adv-node), which Simple never draws. Everything else is as it was.
+  await check('Wire: a show saved in Advanced is shown in Simple on the phone (no Advanced node or tab on screen; 16lb-simple: Simple\'s own tiles are the cards\' Advanced tiles, so the count reads Advanced\'s own nodes)', async () => {
     if (!ADV) return 'could not build a show saved in Advanced'; _applyProjectText(ADV); await wait(600); okDialogs(); if (savedView() !== 'advanced') return 'the test show did not load as Advanced';
     const t = await tap($('#topbar-nav-wire')); if (t !== true) return t; await until(() => $('#wire-diagram svg'), 2000); await wait(900);
-    return is([!!$('#wire-diagram svg'), advTiles(), $$('#wire-tabs, #wire-page-tabs').filter(shown).length, $$('#wire-sources-panel .wire-source-card').length > 0], [true, 0, 0, true], 'svg / Advanced tiles / Advanced tabs / Simple source cards');
+    return is([!!$('#wire-diagram svg'), $$('#wire-overlay g.wire-adv-node').filter(shown).length, $$('#wire-tabs, #wire-page-tabs').filter(shown).length, $$('#wire-sources-panel .wire-source-card').length > 0], [true, 0, 0, true], 'svg / Advanced nodes / Advanced tabs / Simple source cards');
   });
   await check('Wire: opening Wire on the phone does NOT change the saved view of a show saved in Advanced (wireSettings.wireView stays "advanced" for Save, Send and the autosave)', async () => {
     if (!ADV) return 'could not build a show saved in Advanced'; const open = savedView(); let draft = null; try { _writeAutoSaveNow(); draft = JSON.parse(localStorage.getItem('avlb_autosave') || 'null').wireSettings.wireView; } catch (e) { draft = 'unreadable'; }
     const t = await tap($('#topbar-nav-vp')); if (t !== true) return t; await wait(500); const closed = savedView();
     return is([open, draft, closed], ['advanced', 'advanced', 'advanced'], 'saved view while Wire is open / in the autosave draft / after leaving Wire');
+  });
+  // ── 16lb-simple (Omar 2026-09-30): Wire SIMPLE is a drawing of the cards' Advanced tiles and a router; the phone (landscape) draws
+  //    the desktop's drawing and does not edit it. FAILS on the 16la page (33d0496), PASSES on 16lb-simple (real taps).
+  // 16lb-simple M1: NEW
+  await check('Wire 16lb-simple on the phone (landscape, real taps): Wire shows the desktop\'s new Simple drawing, read only: every tile is its card\'s Advanced tile (laid out as on the desktop: a row, 260 x 110 in the drawing, not the side panel\'s stacked card), the router tile titled Generic Router with its rows; no ×, no point to drag, no rename pencil and no typing box in the drawing (the router\'s title and ID cells are text); nothing is written (no Simple drawing stored, the saved view unchanged)', async () => {
+    await restore(); const out = {};
+    try {
+      const t = await tap($('#topbar-nav-wire')); if (t !== true) return t; await until(() => $('#wire-diagram svg'), 2000); await wait(900);
+      const tiles = $$('#wire-diagram .wire-adv-tile'), fo = tiles[0] ? tiles[0].closest('foreignObject') : null;
+      out.tiles = [tiles.length === (_wireBuildAllSourceNames().length + _bdNoBd(screens).length + dsms.length), tiles[0] ? getComputedStyle(tiles[0]).flexDirection : 'no tile', fo ? [fo.getAttribute('width'), fo.getAttribute('height')] : null];
+      out.router = [txt($('#wire-diagram .wire-router-title')), $$('#wire-diagram span[data-slb-row^="in:"]').length === _wireBuildAllSourceNames().length];
+      out.readOnly = $$('#wire-diagram .slb-x, #wire-diagram circle.slb-dot, #wire-diagram .slb-rport, #wire-diagram .wire-src-pen, #wire-diagram input').length;
+      out.written = [wireSettings.simple === undefined, savedView()];
+    } finally { try { await tap($('#topbar-nav-vp')); } catch (e) {} await wait(400); }
+    return is(out, { tiles: [true, 'row', ['260', '110']], router: ['Generic Router', true], readOnly: 0, written: [true, 'simple'] },
+      'tiles [one per item, laid out in a row, the tile box] / the router [title, input rows] / controls in the drawing [×, points, row targets, pencils, typing boxes] / written [no Simple drawing stored, the saved view]');
+  });
+  // ── 16ld-tools (X, Omar 2026-09-30: "all tools should get a talller head ... this will work on both simple and advance"): the phone
+  //    (landscape) draws Simple's Generic Router with the taller header, the colour and the picture box, read only. FAILS on the 16ld
+  //    join page, PASSES on 16ld-tools (real taps).
+  // 16ld-tools M2: NEW
+  // 16ld-fix M2: REPLACES the check named in its header (reason in the block)
+  // 16ld-fix: RENAMED in place. Why: Omar 2026-09-30 ~17:10 (X2): the tools' picture box is 176 x 99 (was 110 x 62), 13 in and 13 down,
+  //   the header 125 high (was 110). What it pins is otherwise unchanged (read only, nothing written).
+  await check('Wire 16ld-tools on the phone (landscape, real taps): the Generic Router in the phone\'s read-only Simple drawing has the taller header, 125 high in the drawing (16ld-fix (X2): it was 110, with a 110 x 62 picture box), in the router\'s own colour with readable words (white or black, 4.5:1 or more), its name on the left and on the right its picture box (176 x 99, 13 in from the right end and 13 down) showing GENERIC ROUTER on that colour; read only: no pencil, no upload icon, no x, nothing to click on the picture; nothing is written (no Simple drawing stored, the saved view unchanged)', async () => {
+    await restore(); const out = {};
+    const hex = c => { const m = /rgba?\((\d+),\s*(\d+),\s*(\d+)/.exec(String(c)); return m ? '#' + [m[1], m[2], m[3]].map(x => (+x).toString(16).padStart(2, '0')).join('') : String(c).toLowerCase(); };
+    const lum = h => { const v = [1, 3, 5].map(i => { const c = parseInt(h.substr(i, 2), 16) / 255; return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); }); return 0.2126 * v[0] + 0.7152 * v[1] + 0.0722 * v[2]; };
+    const cr = (a, b) => { const x = lum(a), y = lum(b); return (Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05); };
+    try {
+      const t = await tap($('#topbar-nav-wire')); if (t !== true) return t; await until(() => $('#wire-diagram svg'), 2000); await wait(900);
+      const g = $('#wire-diagram g.wire-hub'), ti = g && $('.wire-router-title', g), nm = ti && $('span', ti), rc = g && $(':scope > rect', g), box = g && $('.wtl-pic rect.wtl-auto', g);
+      if (!ti || !nm) return 'no router header';
+      const bg = hex(getComputedStyle(ti).backgroundColor), ink = hex(getComputedStyle(nm).color);
+      const pal = ['#ff6ed4', '#b78fff', '#ff5e5e', '#5b9eff', '#e879f9', '#a4f9c8', '#84cc16', '#fc7575'];
+      out.header = [ti.offsetHeight, pal.indexOf(bg) >= 0, ink === '#ffffff' || ink === '#000000', cr(ink, bg) >= 4.5, txt(nm), ti.firstElementChild === nm];
+      out.box = box ? [+box.getAttribute('x') - +rc.getAttribute('x'), +box.getAttribute('y') - +rc.getAttribute('y'), +box.getAttribute('width'), +box.getAttribute('height'), hex(box.getAttribute('fill')) === bg, $$('.wtl-pic text', g).map(e => txt(e)).join(' ')] : 'no picture box';
+      out.readOnly = $$('#wire-diagram .wtl-ui, #wire-diagram .wtl-pen, #wire-diagram .wtl-hit, #wire-diagram .wtl-clr, #wire-diagram .wire-router-pen, #wire-diagram input').length;
+      out.written = [wireSettings.simple === undefined, savedView()];
+    } finally { try { await tap($('#topbar-nav-vp')); } catch (e) {} await wait(400); }
+    return is(out, { header: [125, true, true, true, 'Generic Router', true], box: [631, 13, 176, 99, true, 'GENERIC ROUTER'], readOnly: 0, written: [true, 'simple'] },
+      'the header [height, a palette colour, white or black words, 4.5:1, the name, the name first] / the picture box [x from the router, y, w, h, the bar\'s colour, its words] / controls [pencils, upload, x, typing boxes] / written [no Simple drawing stored, the saved view]');
   });
   try { localStorage.removeItem('avlb_autosave'); } catch (e) {}
   await rotate(PORTRAIT); await restore();

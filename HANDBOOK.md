@@ -684,6 +684,137 @@ anchor on the function name and replace the first occurrence after it, never all
   Not changed (owner's questions): + Add destination still lands before the I/O-only destinations; the Simple sheet's theme
   colours; a switcher fed THROUGH a router shows no IP; the website's packets; the Quick Guide. Found in passing, also on v0.7.0:
   committing a typed router / switcher ID cell by clicking elsewhere throws a NotFoundError (the redraw runs inside the blur).
+- **16lb-simple** (owner, 2026-09-30, after testing 16la; search `16lb-simple`, prefix `_slb`). Wire SIMPLE is a drawing the user
+  edits, with Advanced's tiles and cables (his answers (1)-(8)). DATA: `wireSettings.simple` (a data key: saved, undone, compared,
+  like `mvSimple`) = `rows {in, out}` (the tile key cabled to each router row, '' = free), `off` (taken off Simple), `loose` (on it,
+  cable deleted), `pt {in, out}` (typed ID cells per row), `routes` (shaped cables), `lay` (positions frozen). Keys are Simple's node
+  ids (`src:<name>`, `dst:<id>`, `dsm:<id>`, `mv:<id>`); a cable is `simple:<from>→<to>` with `hin:<row>` / `hout:<row>` (the old edge
+  keys, so old nudges in `edgeOffsets` still apply). NOTHING is written by a draw: `_slbState` derives the drawing from the show and
+  that key (no `rows` = the old switcher's order; a new item takes the next free row, a deleted one frees its row, trailing free
+  rows are trimmed), `_slbGeo` the places (today's columns at 260 x 110 / 130 a row; positions stored by the old Simple kept, a
+  tile that would overlap pushed down, from the stored numbers only; after `lay` literal, a later item under its column's last
+  tile). The FIRST edit writes the rows (`_slbMaterialize`) and the layout (`_slbFreeze`, also from `_wireStartNodeDrag`) in its
+  undo step; every edit goes through `_slbEdit` (pushUndo only when something changes). Drawing `_slbRenderDiagram` (live, the
+  phone read only, `print` headless): the four Advanced tile builders, one point per tile (`slb-dot`), the × (`slb-x`, CSS
+  `.slb-tile:hover`), `_slbRouterTileHTML` (the 6-column router markup, name cells follow the cables, ID cells type through
+  `_slbSetPt`, an IP label from `_slbIp` until typed), router row targets `slb-rport` (also `.wire-hub-port`, so drag-follow and the
+  16fd ghost work). Cables: `_slbPointDown` (a plugged point hands its end to `_slbStartEndDrag`, a free one starts
+  `_slbStartCable`), `_slbConnect` (a new cable: a taken row = the next free row; a free row onto a cabled tile moves its cable),
+  `_slbMoveEnd` (onto a point with a cable = swap), `_slbDeleteCable`, `_slbRemoveTiles` (Delete / ×, `_slbDeleteKey` from
+  `_wireEscClose`), `_slbDropCard` (every card, `_cmSimpleDrop`; one tile per item). Routes of Simple cables through
+  `_wireGet/SetEdgeRoute` ('simple:' keys), `_wireStartSegHandleDrag` finds its path by `data-edge-key`. The side-panel cards are
+  draggable in Simple too (`_slbCardDrag`: not the phone). Exports: `_wireBuildExportSvg` (Simple) = `_wireBuildAdvancedExportSvg`
+  with `opts.slb` (always headless, no selection / filter / handles); the light theme gives the router's title bars a light fill
+  (Advanced's too: they printed dark text on a dark bar). Page 1: `_slbBuildPage1` copies the drawing (places, router title / rows /
+  typed IDs, cables and shapes, multiviewer tiles); `_wireSimpleFingerprint` keeps its three parts and adds a 4th (the cable plan,
+  `_slbFingerprintPart`) only when the cabling is not the derived one, so every page 1 built before keeps matching; `_bdSeedDropWire`
+  drops a backdrop from it; `_bdShowHub` accepts GENERIC ROUTER (and the name typed on Simple's router, and a page 1 built before: SWITCHER I/O or
+  the old `wireSettings.hub.name`). The router is titled `Generic Router` (owner 2026-09-30: "the Router should not be called E2 it should
+  be Generic Router"): `_wireHubName` / `_wireSetHubName` read / write `wireSettings.simple.title`; the old `wireSettings.hub.name` stays in
+  the file and is not read for the title. Rename: `_wireRenameFollowLayout` renames the keys in rows / off / loose /
+  routes. Lanes and the Cable Colour Code count what is on the drawing. Gone: `_wireHubGeom`, `_wireHubRouter`, `_wireHubLiveSVG`,
+  `_wireHubTileSVG`, `_WIRE_HUB`, the plain-SVG Simple export, `_cmSimpleMvDelete`, `_cmMvSimplePic`, `_fxSimpleName`. Phone CSS:
+  the side-panel card rules are scoped to `#wire-sources-panel` (trap 13). (9) THE CONNECTION RULE (owner 2026-09-30, Simple AND
+  Advanced; prefix `_wcr`): a new cable or a moved end let go on a point of the same kind as the point it comes from (output on
+  output, input on input) does not attach, nothing changes (no pushUndo, no dirty), and `_wcrFlash` shows "<from> can not connect to
+  <to>" by the pointer for 3 s (`#wire-conn-warn`, made on first use, role status / aria-live polite, pointer-events none, inline
+  style: not copied into exports). Points: Simple `_wcrSlbRefuse` ({key} = a tile's one point, {side,row} = a router row; the
+  router's body keeps its rule), Advanced `_wcrAdvRefuse` (asrc / asp / rop / dvo = output, adst / adsm / adp / rip / dvi = input;
+  a source's or an output's card counts as its kind; a router / device body keeps its row rule), called first in
+  `_wireAdvStartWireDraw`'s drop and `_wireAdvStartEndDrag`'s drop. Before it, Advanced made an input-to-input cable (an input drawn
+  onto another destination) and let an output dropped on a router OUT dot fall through to the IN row. Help: Wire › What it is,
+  › Simple vs Advanced (Generic Router, the rule), › Multiviewers, › Source thumbnails. Zoom: the Wire floor is 10 % (was 25 %) in
+  `_wireGetZoom` / `_wireSetZoom` / pinch / the phone's pinch, and `_wireZoomFit` never rounds up past what fits (a Simple drawing of
+  ~20 sources, or a tile dragged far away, needed less than 25 % and Fit cut it). Flows checks S1..S16 (new) and the Simple-Wire checks renamed in place (the list is in the
+  round's report); phone checks M1 (new), PA1 / PA2 (renamed in place). Snapshots of the three examples regenerated on purpose (their
+  Simple Wire labels and the Look Book's Wire page), the phone's Wire landscape text budget moved on purpose (the tiles' 10 px
+  resolution line and cable chip). Open questions: the owner's first look (pictures).
+- **16lc-fixes** (builder, 2026-09-30; search `16lc-fixes`). The owner's three items "for the next build". (1) `_rcChip`'s
+  "Layer N" tag has `left:auto;right:3px` inline: the chip's upper-RIGHT corner, in every copy of the chip (Simple, Advanced,
+  the phone's visualiser, the Look Book, Display); a full-screen layer's tag no longer hides under the destination's name
+  (upper-left). The hover-only `.lc-reset` (↺, same corner) has `z-index:10` inline so it draws above the tag (9). The preset
+  cards still draw no tags (`.fs-pcard-clone`). A crop clips the tag as it clipped the old one. (2) `_DISP_CLEAN_CSS` made every
+  `.screen-box` background transparent; a backdrop IS its box's inline background (`_bdBox`: the picture or `_BD_SHADE`), so
+  Display showed it black. The rule is now `.screen-box:not(.lbbd-box)`; the frame stays hidden. The Simple canvas and the
+  Look Book already showed the picture. (3) Help › Keyboard: `#kbv-hint` wrapped a long description (Escape: 4 lines at 1440 px)
+  and pushed the list 34 px; with the pointer on the top of the Escape row the row above took the hover, its one-line hint
+  pulled the list back: a loop (about 35 row changes a second, only when the list is not scrolled; scrolled, Chrome's scroll
+  anchoring held it). The `.kbv-hint` rule (changed in place) is one line with an ellipsis. Flows checks N1..N3 (new); the three
+  examples' Look Book snapshots regenerated on purpose (the tag's and the ↺'s inline style only).
+- **16ld-port** (owner, 2026-09-30, joined with 16lb-simple and 16lc-fixes for v0.8.0; search `16ld-port`). The owner's picture of
+  Wire Simple: CAM 2's tile blue, its cable orange for 12G-SDI, its chip blue: "the port type should stay the cable color even if
+  the tile is a different color". On every Wire tile (Simple and Advanced; sources, destinations, AUX / DSM, multiviewers, hand-made
+  tiles; so the Wire sheets and the Look Book's Wire pages) the picture / colour tile, border and name keep the tile's colour
+  (16la-colour-mv (Q)); the PORT (the `.wire-type-btn` chip and the connection dot(s), a destination's backup input too) wears the
+  cable type's colour, `_wireCableSpec(type).color` (`_wirePortColor`; `_wireOutConn` reads an output tile's type, a hand-made one and
+  an `mv:` ref too; `_wirePortPill` keeps each output chip's own recipe, .12 fill / .4 outline). A source point with its own type
+  (16je) wears that type, as its cable. A port with no cable type is as before (a source: the tile colour; a destination / AUX /
+  multiviewer: the lane's cyan / amber / yellow chip, Simple's orange / amber / yellow dot, Advanced's cyan dot). Before: a source's chip
+  wore the tile colour and on Advanced its dot too; an output's chip and dot were the lane colour whatever its type. The light
+  sheet's rule that prints every word of a tile dark is kept. No CSS rule added. A cable from a router / switcher row on Advanced
+  keeps the row's cyan (a router row has no cable type), so a typed destination's port can differ from its incoming cable there.
+  Flows checks P1..P3 (new); the three examples' Look Book snapshots regenerated on purpose (the Wire page's chip and dot colours).
+- **16ld-tools** (owner, 2026-09-30 ~11:45, "my last update for while", with the 16ld join for v0.8.0; search `16ld-tools`). His
+  mockup of a RANDOM SWITCHER router tile: "all tools should get a talller head to add images the same size has the tiles ... the
+  left hand side is the name center and the edit pencil first ... pick a color from the uploaded logo uploaded or select a random
+  color if none is uploaded"; the picture on the right "Like the mockup", the colour on "The whole header bar". Every Wire TOOL tile
+  (Advanced: router, switcher, I/O Patch page tile, converter, network switch; Simple's Generic Router, so page 1's router built from
+  it) has a 110 px title bar (`_WTL_HDR`; was 56 on a router, 44 on a converter / switch): the pencil first (a router's resizes it,
+  `_wireRouterPenHTML(id, ink)`; a converter's / switch's / Simple's puts the cursor in the name, `_wtlPenHTML` / `_wtlPenName`; the
+  I/O Patch page tile keeps its lock there), then the name; on the right a native picture box, a tile's picture (110 x 62, 13 in,
+  `_wtlPicSVG`, class `wire-adv-thumb` / `wire-adv-follow` so it moves with a dragged tile): the image, else the name on the colour
+  (`_wtlLines`); a click uploads / replaces (`_wtlUpload`: `_wireUploadThumbnail`'s 240 x 140 JPEG .85 resize, one pushUndo),
+  the x removes (`_wtlRemovePic`). Data on the tool: `color` (palette, stored when made: `_wireRandomPaletteColor()` in the five
+  adders), `pic`, `picColor` (`_wireDominantColor`); Simple's router keeps `pic` / `picColor` in `wireSettings.simple` (no rows /
+  lay written, the fingerprint untouched). Bar colour `_wtlColor` = picColor when a picture, else `_wtlPalette` = the stored colour or
+  `_WIRE_COLOR_PALETTE[FNV-1a(id) % 8]` (older tools, Simple's router: nothing written, no Save light). Ink `_wtlInk`: white or black
+  by WCAG contrast (4.58:1 at worst). Inline styles only (the Wire export copies only :root / #wire-overlay rules), `!important` so
+  the light sheet's grey title-bar rule does not win; `.wtl-ui` is stripped from every sheet; one rule added to the export's CSS
+  string (an empty name box's placeholder in the bar's ink). Geometry: `_WTL_RT_TOP` (198, was 144) and `_WTL_DV_TOP` (146, was 80)
+  replace every hard-coded offset (render, `_SLB.TOP`, `_wireAdvDevGeom`, free spots, node rect, drop / draw rows, drag, Tidy).
+  Also: the I/O Patch page tile draws the IN / OUT band (`.wire-router-subtitle`, its label) the other router tiles have: it had
+  none, so its rows sat 44 px above their points (pre-existing since 16ix). A router renamed on its tile refreshes its picture in
+  place (`_wtlRefreshPic`, the focus stays). Help: Wire > Tool headers. Flows checks T1..T6, phone check M2 (new); one flows check
+  renamed in place (the converter push-down: its switch set 8 px under the converter as drawn, not at the old 460); the three
+  examples' snapshots regenerated on purpose (the Look Book's Wire page, the wireSimple labels: the picture's words). Known: a tile
+  stored right under a tool in an older show can be covered by the taller header (Advanced positions are the user's; not moved).
+- **16ld-fix** (owner + the two attackers, 2026-09-30, the v0.8.0 candidate; search `16ld-fix`). (X2) Omar after the tool-header
+  pictures: "the image thumbnail on the tools should be has big has the source size and the I/O Patch they are way smaller in the
+  preview photos. so that needs to be bigger". The 110 x 62 box WAS a canvas tile's picture (= the cards' 110 x 62 only at 100 %
+  zoom; his mockup, made at ~2/3 zoom, has ~172 x 96): it is 176 x 99 now (the card shape x 1.6: at 62.5 % zoom exactly the cards'
+  110 x 62 on screen), 13 in / 13 down, corner 6, the cards' upload icon and x; `_WTL_HDR` 125, `_WTL_PW` 176, `_WTL_PH` 99, rows from
+  213 (router) / 161 (converter, switch). The name in the box stays inside the middle `_WTL_PW - 52` (A5: it ran under the icon).
+  Attackers' defects fixed (each reproduced with real input first): A1 the zoom - button at 10 % gave 0 = 100 % (`_wireZoomBy` floors
+  at 0.1; 16lb's); A2 Simple: a row whose item was deleted from the show is free but never handed to an item placed automatically
+  (`_slbState`'s GONE marker), so an item added since the last edit no longer jumps onto it with its typed ID (16lb's); A3 a name
+  typed without Enter is committed before the picture / x acts (`_wtlCommitName`; a router showed its old name, a converter / switch
+  threw NotFoundError); A4 / B2 the name shows in full: `_wtlNameHTML` = the pencil (or lock) + `.wtl-nm` (`.wtl-nm-show`: wrapped,
+  3 lines, font fitted by `_wtlNameFit` down to 9 px; the one-line type box over it, opacity 0 until focused, `.wtl-ui` so it never
+  prints); the bar wraps (`flex-wrap`) so on the 300-wide switch the name goes under the pencil; A6 the picture box's press is the
+  tile's (it starts the drag), a click without a 3 px move uploads on mouseup (`_wtlDown` / `_wtlUp`); B1 a tool with no `hdr` settles
+  ONCE at its page's draw inside the draw's `_lbNotAChange` (`_wtlSettle`: 16kf's push-below for every grown tool together, then a
+  stored route whose inner run now crosses a tile that grew or moved is dropped to the automatic path); `hdr: _WTL_HDR` is stored on
+  new tools by the five adders and page 1's router; B5 the picture's address is `_esc`aped; B6 the picture box and its x are
+  keyboard buttons (tabindex, role, aria-label, Enter / Space: `_wtlKey`; the focus comes back, `_wtlRefocus`); B7 Help > Wire >
+  Tool headers says the lock, the worked-out colour, the wrap, the keyboard, the drag, page 1 and older shows. Also renamed in place:
+  16lb's check about Simple drawing the Advanced tile (its name still said 4 in / 12 in). Rejected (questions): the phone's
+  wire-landscape small-text budget (16lb's, approved), page 1 following a logo added later (the fingerprint rule). Known: on ORGILL
+  page 1 the Decimator now sits lower (pushed under the taller router), level with the NETGEAR switch 21 px to its left, so the
+  automatic path of the cable into its In 1 crosses under NETGEAR (the auto-router finds no path through the 21 px gap).
+- **16ld-fix2** (owner, 2026-09-30 21:45, the v0.8.0 candidate; search `16ld-fix2`). (X2) REPLACED: Omar after the 176 x 99
+  tool pictures: "Longer tool names let make this half the logo size then to save on space" (he confirmed: the TOOL'S picture box).
+  Every tool's picture box is HALF a Wire source tile's, 55 x 31 (`_WTL_PW` / `_WTL_PH`), 13 in from the right end, centred in the
+  bar (`_wtlHdr(kind)`); corner 3, a 9 x 9 upload icon 2 in, the x 12 across; the name in the box goes under the icon's row, 9 px at
+  most, a line needing under 6 px cut with ... (`_wtlLines`). The bar is back to its pre-16ld-tools height, `_WTL_HDR` 56 (router,
+  switcher, I/O Patch page tile, Generic Router: rows from 144) and `_WTL_HDR_D` 44 (converter, network switch: rows from 80;
+  `_wtlBarStyle(bg, ink, h)`), so every row / point / cable end is where it was on 16la and an older tool grows by nothing:
+  `_wtlSettle` now acts only on a header that GROWS (no `hdr` is written, nothing moves; ORGILL page 1 and AVE_TEST_File are as on
+  the join page: 16ld-fix's Decimator push-down and its NETGEAR cable residual are gone). The name gets the width back (164 px on
+  the 300-wide switch, 304 on a converter, 684 on a router) at the bar's own size (18 / 15 px; 16ld-fix's `_wtlNameFit`, 3 lines
+  down to 9 px, is gone): one line, or two (`-webkit-line-clamp:2`), longer cut with ...; the whole name is the `.wtl-nm` block's
+  title (the app tooltip, 16hi; the I/O Patch page tile adds "named by its I/O Patch page"). Help > Wire > Tool headers updated.
+  Checks renamed in place: T1, T2 (16ld-tools), F4, F5, F6, F10 (16ld-fix); new: G1. The phone is frozen (Omar 21:40): its probe,
+  its golden and PHONE.md are not touched (its M2 still names 125 / 176 x 99) and the gates run with --no-mobile.
 - Declined by the owner, do not resurface: mask shapes, anchor points, hardware profiles, canvas/WebGL renderer,
   interpolation filter toggles, upscale-factor notes, per-layer "sharp pixels", any licence mention.
 

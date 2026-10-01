@@ -4305,16 +4305,20 @@
     const steps = _undoStack.length - u0; const has = !!wireThumbnails['src:' + name]; doUndo(); await wait(400); const left = !!wireThumbnails['src:' + name];
     await restore(); await wsOpen(); return is([has, steps, left], [true, 1, false], 'uploaded / undo steps / picture left after one undo');
   });
-  await check('Wire Simple: moving a cable by its handle is one undo step, and Reset Layout puts the cable back', async () => {
+  // 16lb-simple A1: REPLACES the check named in its header (reason in the block)
+  // 16lb-simple: RENAMED in place. Why: Omar 2026-09-30 (5) "cables work EXACTLY as in Advanced": a selected Simple cable has a handle on
+  //   every straight run (the old Simple had one white midpoint handle, an X / Y offset); the handle drag stores the shape. What it pins is
+  //   unchanged: one undo step, Reset Layout puts the cable back, Undo of the reset brings it back.
+  await check('Wire Simple: moving a cable by a handle is one undo step (16lb-simple: a handle on every straight run, as in Advanced; the shape is stored with the cable), and Reset Layout puts the cable back', async () => {
     await wsOpen(); _wireSetZoom(1); await wait(200); const p = $('#wire-diagram .wire-edge[data-edge-key^="simple:hout:0"]'); const key = p.getAttribute('data-edge-key');
-    _wireState.selectedNodes.clear(); _wireState.selectedEdgeKey = key; _wireRender(); await wait(250); const h = $('#wire-diagram .wire-mid-handle'); if (!h) return 'no handle on the selected cable';
+    _wireState.selectedNodes.clear(); _wireState.selectedEdgeKey = key; _wireRender(); await wait(250); const h = $$('#wire-diagram .wire-seg-handle').find(e => e.getAttribute('data-edge-key') === key && e.getAttribute('data-orient') === 'v'); if (!h) return 'no handle on the selected cable';
     const r = h.getBoundingClientRect(), x = r.left + r.width / 2, y = r.top + r.height / 2; const u0 = _undoStack.length;
     h.dispatchEvent(new MouseEvent('mousedown', { clientX: x, clientY: y, button: 0, bubbles: true, cancelable: true }));
     window.dispatchEvent(new MouseEvent('mousemove', { clientX: x + 20, clientY: y + 24, bubbles: true })); window.dispatchEvent(new MouseEvent('mousemove', { clientX: x + 30, clientY: y + 36, bubbles: true }));
     window.dispatchEvent(new MouseEvent('mouseup', { clientX: x + 30, clientY: y + 36, bubbles: true })); await wait(300);
-    const moved = Math.round(_wireGetEdgeOffset(key)), steps = _undoStack.length - u0; _wireResetLayout(); await wait(300); const afterReset = Math.round(_wireGetEdgeOffset(key));
-    doUndo(); await wait(300); const undone = Math.round(_wireGetEdgeOffset(key)); await restore(); await wsOpen();
-    return is([moved !== 0, steps, afterReset, undone === moved], [true, 1, 0, true], 'moved / undo steps / offset after Reset Layout / undo of the reset brings it back');
+    const shape = () => JSON.stringify(_wireGetEdgeRoute(key)); const moved = shape(), steps = _undoStack.length - u0; _wireResetLayout(); await wait(300); const afterReset = shape();
+    doUndo(); await wait(300); const undone = shape(); await restore(); await wsOpen();
+    return is([moved !== 'null', steps, afterReset, undone === moved], [true, 1, 'null', true], 'moved (a shape stored) / undo steps / shape after Reset Layout / undo of the reset brings it back');
   });
   await check('Wire Simple: typing the switcher name is one undo step', async () => {
     await wsOpen(); const inp = $('#wire-diagram .wire-hub-name'); const u0 = _undoStack.length; inp.value = 'E2 MAIN'; inp.dispatchEvent(new Event('change', { bubbles: true })); await wait(300);
@@ -4354,9 +4358,12 @@
       o += 30 + nl + el + sz; }
     return is([px.dest, px.aux], [_wireNodeColor('dest', screens[0].id).toLowerCase(), _wireNodeColor('dsm', dsms[0].id).toLowerCase()], 'first destination tile / first AUX tile');
   });
-  await check('Help: the Wire section describes the switcher in the middle, not "lines showing what feeds what"', async () => {
+  // 16lb-simple A2: REPLACES the check named in its header (reason in the block)
+  // 16lb-simple: RENAMED in place. Why: Omar 2026-09-30 (2) "lets update it to a router": Help › Wire › What it is says "the router in
+  //   the middle" now; the old "lines showing what feeds what" must still be gone.
+  await check('Help: the Wire section describes the router in the middle (16lb-simple; the switcher before it), not "lines showing what feeds what"', async () => {
     actions.help(); await wait(300); if (typeof helpTab === 'function') helpTab('ref'); await wait(200); const t = ($('#help-overlay') || document.body).textContent; closeHelp(); await wait(150);
-    return is([/lines showing what feeds what/.test(t), /the switcher in the middle/.test(t)], [false, true], 'old sentence / new sentence');
+    return is([/lines showing what feeds what/.test(t), /the router in the middle/.test(t)], [false, true], 'old sentence / new sentence');
   });
   await check('Wire Advanced: page 1 is built from the show, every source wired into the switcher', async () => {
     wireSettings.wireView = 'advanced'; _wireRender(); await wait(400); _wireAdvSeedFromSimple(true); _wireRender(); await wait(600); hub = wireAdvanced.routers[0];
@@ -4543,8 +4550,14 @@
     const box = $('.wire-srcport-name[data-src-id="waPn"][data-port="1"]'); if (!box) { await _waHome(); return 'no name box'; } const u0 = _undoStack.length;
     box.value = 'BACKUP'; fire(box, 'change'); await wait(250); const steps = _undoStack.length - u0; await _waHome(); return is(steps, 1, 'undo steps');
   });
-  await check('Wire Advanced: a converter that grows pushes the tile under it down, an I/O Patch page tile never lands on another tile', async () => {
-    await _waSpare(); wireAdvanced.devices.push({ id: 'waV1', kind: 'converter', name: '', x: 420, y: 260, ins: [{ conn: '', name: '' }, { conn: '', name: '' }], outs: [{ conn: '', name: '' }] }, { id: 'waV2', kind: 'switch', name: '', x: 420, y: 460, ins: [{ conn: 'Ethernet', name: '' }], outs: [] }); _wireRender(); await wait(200);
+  // 16ld-tools A1: REPLACES the check named in its header (reason in the block)
+  // 16ld-tools: RENAMED in place. Why: Omar 2026-09-30 (X) "all tools should get a talller head": a converter's title bar is 110 high
+  //   (was 44), so the converter this check sets at y 260 is 66 px taller and already covered the switch it set at y 460 (8 px under
+  //   the old converter) before growing; the push-below rule only moves a tile that starts under the converter's bottom. The switch
+  //   is now set 8 px under the converter as it is drawn (260 + its height + 8; the same 460 on the join page). What it pins is
+  //   unchanged: the grown converter pushes the tile under it down; an I/O Patch page tile never lands on another tile.
+  await check('Wire Advanced: a converter that grows pushes the tile under it down, an I/O Patch page tile never lands on another tile (16ld-tools: the switch is set 8 px under the converter as the converter is drawn; it was set at 460, 8 px under the converter of a 44 px title, which the 110 px title now overlaps before it grows)', async () => {
+    await _waSpare(); wireAdvanced.devices.push({ id: 'waV1', kind: 'converter', name: '', x: 420, y: 260, ins: [{ conn: '', name: '' }, { conn: '', name: '' }], outs: [{ conn: '', name: '' }] }, { id: 'waV2', kind: 'switch', name: '', x: 420, y: 260 + _wireAdvDevGeom({ kind: 'converter', ins: [{}, {}], outs: [{}] }).h + 8, ins: [{ conn: 'Ethernet', name: '' }], outs: [] }); _wireRender(); await wait(200);
     for (let i = 0; i < 4; i++) _wireAdvDeviceAddPort('waV1', 'in'); await wait(250); const a = _wireAdvNodeRect('device:waV1'), b = _wireAdvNodeRect('device:waV2'); const overlap = a.y + a.h > b.y;
     await _waHome(); const keep = JSON.stringify(ioAdvanced.pages[1]); const pg = ioAdvanced.pages[1]; pg.sources = [{ name: 'WA SRV 1' }, { name: 'WA SRV 2' }]; pg.dests = [{ name: 'WA LED' }];
     const n = wireAdvanced.routers.length; _wireAdvAddPatchTile(1); await wait(400); const L = _wireAdvTileList(), me = L.find(t => t.id === 'router:' + wireAdvanced.routers[wireAdvanced.routers.length - 1].id);
@@ -9417,20 +9430,26 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
   const _laBook = async view => { openPdfExportModal(); await wait(350); const r = $('input[name="pdf-opt-wire-view"][value="' + view + '"]'); if (r && !r.checked) r.click();   /* the export window's Wire: Simple / Advanced pick */
     const real = exportPDF; let html = null; window.exportPDF = function () { html = real(true); }; try { _pdfConfirmExport(); } finally { window.exportPDF = real; } await wait(150); return html || ''; };
   // 16la-wire-mv N1: NEW
-  await check('Wire 16la-wire-mv (M): the Wire drawing\'s tiles follow the cards (Omar 2026-09-29: "they should show up how I/O Patch simple show source image left which is correct and destination image right"): with a picture on LEFT LED, on AUX 1 and on the first source, Wire Simple draws the destination\'s and the AUX\'s picture at the RIGHT end of the tile (4 in) and the name on the left (12 in), the source\'s picture on the left and its name after it; Wire Advanced draws a destination / AUX tile (the show\'s and a hand-made one, with a picture or its colour tile) with the name, resolution and cable first and the picture 13 in from the RIGHT end, the source tile as before; the picture is never flipped, the tile keeps its size and its cable still ends on its left edge; the Simple export, the Advanced export and the Look Book\'s Wire page draw the same', async () => {
+  // 16lb-simple A3: REPLACES the check named in its header (reason in the block)
+  // 16lb-simple: RENAMED in place. Why: Omar 2026-09-30 (3) "the tile should look the same has the tiles from the left columm same has
+  //   advance": a Simple tile is the Advanced tile (260 x 110, the picture 13 in from the right end of an output, the info column first),
+  //   on screen, on the Simple sheet and in the Look Book; it was the 220 x 36 node (picture 4 in, name 12 in). The Advanced half is unchanged.
+  // 16ld-fix A3: REPLACES the check named in its header (reason in the block)
+  // 16ld-fix: RENAMED in place. Why: the regression attacker (2026-09-30) found that 16lb renamed this check but its name still said
+  //   "the picture at the RIGHT end of the tile (4 in) and the name on the left (12 in)" (the old Simple node), while its body pins
+  //   the Advanced tile (picture x 137 = 13 in from the right end of the 260 tile, the columns info, slot). Only the name changes.
+  await check('Wire 16la-wire-mv (M) (16lb-simple: Simple draws the Advanced tile too, so its tiles read like Advanced\'s): the Wire drawing\'s tiles follow the cards (Omar 2026-09-29: "they should show up how I/O Patch simple show source image left which is correct and destination image right"): with a picture on LEFT LED, on AUX 1 and on the first source, Wire Simple draws the destination\'s and the AUX\'s tile as Wire Advanced does (16ld-fix: the name said 4 in / 12 in, the old Simple node\'s numbers, which this check no longer pins): the name, resolution and cable first and the picture 13 in from the RIGHT end, the source\'s picture 13 in from the left and its name after it; Wire Advanced draws a destination / AUX tile (the show\'s and a hand-made one, with a picture or its colour tile) with the name, resolution and cable first and the picture 13 in from the RIGHT end, the source tile as before; the picture is never flipped, the tile keeps its size and its cable still ends on its left edge; the Simple export, the Advanced export and the Look Book\'s Wire page draw the same', async () => {
     await restore(); const out = {}; const pic = _laPic(); const pdfWas = window._pdfOpts ? JSON.parse(JSON.stringify(window._pdfOpts)) : null;
     const d = screens[0], a = dsms[0], s = _wireBuildAllSourceNames()[0];
     try {
       wireThumbnails['dst:' + d.id] = pic; wireThumbnails['dsm:' + a.id] = pic; wireThumbnails['src:' + s] = pic;
       await _laWireUp('simple'); const live = $('#wire-diagram svg');
-      out.simple = [_laSimpleTile(_laNode(live, 'dst:' + d.id)), _laSimpleTile(_laNode(live, 'dsm:' + a.id)), _laSimpleTile(_laNode(live, 'src:' + s))];
+      out.simple = [_laAdvTile(_laNode(live, 'dst:' + d.id)), _laAdvTile(_laNode(live, 'dsm:' + a.id)), _laAdvTile(_laNode(live, 'src:' + s))];
       { const g = _laNode(live, 'dst:' + d.id), X = g ? +$(':scope > rect', g).getAttribute('x') : NaN; out.simpleCable = _laEnd(live, 'dst:' + d.id) === X; }
       { const doc = new DOMParser().parseFromString(_wireBuildExportSvg('light', { transparent: true, noLegend: true }), 'image/svg+xml');
-        const tile = n => { const g = $$('g', doc).find(x => $(':scope > text', x) && $(':scope > text', x).textContent === n); if (!g) return 'no tile'; const r = $(':scope > rect', g), im = $(':scope > image', g), t = $(':scope > text', g); return [im ? +im.getAttribute('x') - +r.getAttribute('x') : 'no picture', +t.getAttribute('x') - +r.getAttribute('x')]; };
-        out.simpleExport = [tile(d.name), tile(a.name), tile(s)]; }
+        out.simpleExport = [_laAdvTile(_laNode(doc, 'dst:' + d.id)), _laAdvTile(_laNode(doc, 'dsm:' + a.id)), _laAdvTile(_laNode(doc, 'src:' + s))]; }
       { const html = await _laBook('simple'); const doc = new DOMParser().parseFromString(html, 'text/html'); const w = $('#pdf-wire', doc);
-        const tile = n => { const g = w ? $$('g', w).find(x => $(':scope > text', x) && $(':scope > text', x).textContent === n) : null; if (!g) return 'no tile'; const r = $(':scope > rect', g), im = $(':scope > image', g), t = $(':scope > text', g); return [im ? +im.getAttribute('x') - +r.getAttribute('x') : 'no picture', +t.getAttribute('x') - +r.getAttribute('x')]; };
-        out.lookBookSimple = [tile(d.name), tile(a.name), tile(s)]; }
+        out.lookBookSimple = w ? [_laAdvTile(_laNode(w, 'dst:' + d.id)), _laAdvTile(_laNode(w, 'dsm:' + a.id)), _laAdvTile(_laNode(w, 'src:' + s))] : 'no Wire page'; }
       await _laWireUp('advanced');
       _wireAdvAddCustomDest(); const cd = wireAdvanced.customDests[wireAdvanced.customDests.length - 1]; _wireAdvAddCustomDsm(); const cm = wireAdvanced.customDsms[wireAdvanced.customDsms.length - 1];
       wireAdvanced.dests.push({ id: 'laCd', refId: cd.id, x: 2400, y: 60 }); wireAdvanced.dsms.push({ id: 'laCm', refId: cm.id, x: 2400, y: 300 }); _wireRender(); await wait(400);
@@ -9444,10 +9463,10 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
       { const doc = new DOMParser().parseFromString(_wireBuildAdvancedExportSvg('light', {}), 'image/svg+xml'); out.advancedExport = ['dst', 'src', 'cd'].map(k => _laAdvTile(_laNode(doc, ids[k]))); }
       { const html = await _laBook('advanced'); const doc = new DOMParser().parseFromString(html, 'text/html'); out.lookBookAdvanced = ['dst', 'src', 'cd'].map(k => _laAdvTile(_laNode(doc, ids[k]))); }
     } finally { window._pdfOpts = pdfWas; try { closeWireMode(); } catch (e) {} await wait(300); await restore(); }
-    const S = [172, 44, 12, 'none', 220], R = [4, 44, 56, 'none', 220], A = [137, 'none', 'info,slot', 260], L = [13, 'none', 'slot,info', 260];
-    return is(out, { simple: [S, S, R], simpleCable: true, simpleExport: [[172, 12], [172, 12], [4, 56]], lookBookSimple: [[172, 12], [172, 12], [4, 56]],
+    const A = [137, 'none', 'info,slot', 260], L = [13, 'none', 'slot,info', 260];
+    return is(out, { simple: [A, A, L], simpleCable: true, simpleExport: [A, A, L], lookBookSimple: [A, A, L],
       advanced: [A, A, L, A, A], advancedMore: [true, true, true], advancedExport: [A, L, A], lookBookAdvanced: [A, L, A] },
-      'Wire Simple [LEFT LED, AUX 1, the first source: picture x in the tile, its width, name x, a transform on the picture, the tile width] / LEFT LED\'s cable ends on its left edge / the Simple export and the Look Book\'s Wire page [picture x, name x] / Wire Advanced [LEFT LED, AUX 1, the first source, a hand-made destination, a hand-made AUX: picture x in the tile, a transform, the card\'s columns, the tile width] / LEFT LED on Advanced [its input dot on the left edge, its cable ends there, the name column left of the picture] / the Advanced export and the Look Book\'s Wire page [LEFT LED, the source, the hand-made destination]');
+      'Wire Simple [LEFT LED, AUX 1, the first source: picture x in the tile, a transform, the card\'s columns, the tile width] / LEFT LED\'s cable ends on its left edge / the Simple export and the Look Book\'s Wire page [the same] / Wire Advanced [LEFT LED, AUX 1, the first source, a hand-made destination, a hand-made AUX: picture x in the tile, a transform, the card\'s columns, the tile width] / LEFT LED on Advanced [its input dot on the left edge, its cable ends there, the name column left of the picture] / the Advanced export and the Look Book\'s Wire page [LEFT LED, the source, the hand-made destination]');
   });
   // 16la-wire-mv N2: NEW
   await check('I/O 16la-wire-mv (N): four multiviewer pictures (Omar 2026-09-29: "select one of the 4 Pre-Created MV options ... put them in randomly ... by clicking the MV image ... it should just cycle"): four distinct 224 × 126 pictures are embedded, the first is 16ky-r2b\'s; a multiviewer stores its picture (mvPic 1-4); a new one gets one at random (Math.random 0.01 / 0.3 / 0.6 / 0.99 give 1 / 2 / 3 / 4); its Simple card shows its own picture, as a button with no upload; a click shows the next (3 → 4 → 1, wrapping), Enter and Space on the focused picture do the same, each ONE undo step that lights Save, the focus stays on the picture, Undo goes back; its Advanced page-1 row shows the same picture; the picture survives a save and a reopen (clean); each example show carries the picture it was given at random once (General Session 3, Awards Night 1, Town Hall 3) and opens clean; a show whose multiviewers have no picture (a file, a restored draft, a step undone into) gets a random one each, ONCE, and reads as changed (Save lit, no undo step); the Look Book and the Wire sheets carry none of the four', async () => {
@@ -9648,7 +9667,11 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
   //   IP ("OUT 2 · 10.1.1.9"), no longer the IP in place of the label; the tooltip reads the same. Only the three expectations that
   //   show CAM 1's point 2 (the cell, its tooltip, the exported sheet / Look Book strings) change; everything else is as it was.
   //   FAILS on 16la-colour-mv (it shows "10.1.1.9"), PASSES on 16la-fix; without this change it fails on 16la-fix.
-  await check('Wire 16la-ip (P): Wire Advanced shows an item\'s IP (Omar 2026-09-29: "Router Slot column fills in", "Network switch ports show it"; the item\'s IP is its own 16el IP, else the first address in its note): a router\'s ID cell that the user has not typed shows the IP of the source on that input (16la-fix (U1), Omar 2026-09-29 ~22:10: on a multi-point source AFTER its automatic "OUT 2", "OUT 2 · 10.1.1.9", and so in its tooltip, no longer in place of it) and of the destination on that output, a switcher\'s the same, a typed ID wins and clearing it shows the IP again, the IP follows the note live, and nothing of it is written into the show; a network switch\'s unnamed port shows the IP of what is cabled to it (a typed name wins); the exported Wire sheet and the Look Book\'s Advanced Wire page print them; Wire Simple\'s switcher is unchanged; Details\' IP box of an NDI source shows its note\'s address, and for one without an address suggests the show\'s next free one, which Enter stores as the source\'s IP in one undo step', async () => {
+  // 16lb-simple A4: REPLACES the check named in its header (reason in the block)
+  // 16lb-simple: RENAMED in place. Why: Omar 2026-09-30 (2): the Simple router has "the 16la ID / Slot cells with OUT 1 · 192.168.0.1 IP
+  //   labels": its ID cells show the IP of the item on their row (5 of this check's items have one: PPT A, CAM 1 (its 16el IP), CAM 2,
+  //   CENTER LED and AUX 1); the old Simple switcher showed none. Everything Advanced is unchanged.
+  await check('Wire 16la-ip (P): Wire Advanced shows an item\'s IP (Omar 2026-09-29: "Router Slot column fills in", "Network switch ports show it"; the item\'s IP is its own 16el IP, else the first address in its note): a router\'s ID cell that the user has not typed shows the IP of the source on that input (16la-fix (U1), Omar 2026-09-29 ~22:10: on a multi-point source AFTER its automatic "OUT 2", "OUT 2 · 10.1.1.9", and so in its tooltip, no longer in place of it) and of the destination on that output, a switcher\'s the same, a typed ID wins and clearing it shows the IP again, the IP follows the note live, and nothing of it is written into the show; a network switch\'s unnamed port shows the IP of what is cabled to it (a typed name wins); the exported Wire sheet and the Look Book\'s Advanced Wire page print them; Wire Simple\'s router (16lb-simple (2), before: its switcher showed none) shows the same IPs in its ID cells; Details\' IP box of an NDI source shows its note\'s address, and for one without an address suggests the show\'s next free one, which Enter stores as the source\'s IP in one undo step', async () => {
     await restore(); const out = {}; const pdfWas = window._pdfOpts ? JSON.parse(JSON.stringify(window._pdfOpts)) : null;
     try {
       _sysSetSourceMeta('PPT A', { connectorType: 'NDI', notes: '192.168.0.1 · Presenter laptop A' });
@@ -9684,7 +9707,7 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
       _sysSetSourceMeta('PPT B', { connectorType: 'NDI', notes: 'no address' }); pick('PPT B'); await wait(400); out.detailNext = ipBox();
       { const b = $('#wire-overlay .wire-ip-input'); const u0 = _undoStack.length; if (b) { b.focus(); b.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true })); } await wait(400); out.enter = [(sources.find(s => s.name === 'PPT B') || {}).ip || '', _undoStack.length - u0]; }
     } finally { window._pdfOpts = pdfWas; try { closeWireMode(); } catch (e) {} await wait(300); await restore(); }
-    return is(out, { hub: 0,
+    return is(out, { hub: 5,
       router: [['192.168.0.1', '192.168.0.1'], ['OUT 2 · 10.1.1.9', '10.1.1.9'], ['', ''], ['192.168.0.40', '192.168.0.40']], switcher: [['192.168.0.30', '192.168.0.30'], ['192.168.0.45', '192.168.0.45']], tip: 'OUT 2 · IP 10.1.1.9',
       ports: [['192.168.0.1', '192.168.0.1', 'Port 1'], ['192.168.0.40', '192.168.0.40', 'Port 2'], ['192.168.0.30', '192.168.0.30', 'Port 3'], ['', '', 'Port 4']],
       stored: ['', 'OUT 2', '', '', false], typed: [['RACK A', ''], 1], cleared: ['192.168.0.1', '192.168.0.1'], portTyped: ['UPLINK', '', 'Port 1'],
@@ -9715,7 +9738,11 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
     try { el.click(); } finally { HTMLInputElement.prototype.click = real; } if (!inp) return 'no file box';
     const blob = await (await fetch(png)).blob(); const dt = new DataTransfer(); dt.items.add(new File([blob], 'cm.png', { type: 'image/png' })); inp.files = dt.files; inp.dispatchEvent(new Event('change')); await wait(900); return true; };
   // 16la-colour-mv C1: NEW
-  await check('Wire 16la-colour-mv (Q): a destination / AUX tile in the Wire drawing shows its card\'s colour (Omar 2026-09-29: "between patch and wire the color changes and do not match, source where correct"; "the drawing tiles picture match the I/O Patch Card Colour"): LEFT LED given a colour with its I/O Patch card\'s colour bar shows it on its I/O card, its Wire card, its Wire Simple tile and its Wire Advanced tile (colour tile, border, name); AUX 1 at its default is yellow on all four (the Advanced colour tile was a fixed green, a destination\'s a fixed blue, their border and name the lane colour); a hand-made destination tile keeps its own card\'s colour; the Advanced export and the Look Book\'s Advanced Wire page print the same; a show that stores colours opens with none changed and Save dark; Help › Wire › Tile colours says so', async () => {
+  // 16lb-simple A5: REPLACES the check named in its header (reason in the block)
+  // 16lb-simple: RENAMED in place. Why: Omar 2026-09-30 (3): a Simple tile is the Advanced tile, so its colour is read where the
+  //   Advanced tile carries it (the colour tile, the card's border, the name) instead of the old node's stroke. The colours pinned are
+  //   the same: LEFT LED's own colour, AUX 1's default yellow.
+  await check('Wire 16la-colour-mv (Q): a destination / AUX tile in the Wire drawing shows its card\'s colour (Omar 2026-09-29: "between patch and wire the color changes and do not match, source where correct"; "the drawing tiles picture match the I/O Patch Card Colour"): LEFT LED given a colour with its I/O Patch card\'s colour bar shows it on its I/O card, its Wire card, its Wire Simple tile and its Wire Advanced tile (colour tile, border, name; 16lb-simple: the Simple tile is the Advanced tile, read the same way); AUX 1 at its default is yellow on all four (the Advanced colour tile was a fixed green, a destination\'s a fixed blue, their border and name the lane colour); a hand-made destination tile keeps its own card\'s colour; the Advanced export and the Look Book\'s Advanced Wire page print the same; a show that stores colours opens with none changed and Save dark; Help › Wire › Tile colours says so', async () => {
     await restore(); const out = {}; const pdfWas = window._pdfOpts ? JSON.parse(JSON.stringify(window._pdfOpts)) : null;
     const d = screens[0], a = dsms.find(x => x.name === 'AUX 1') || dsms[1];
     try {
@@ -9727,14 +9754,14 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
       await _cMWire('simple');
       const wcCol = n => { const c = _cMWcard(n); const t = c && $('.wire-thumb-auto', c); return t ? _cMHex(getComputedStyle(t).backgroundColor) : 'no colour tile'; };
       out.wireCard = [wcCol(d.name), wcCol(a.name)];
-      { const live = $('#wire-diagram svg'); const st = id => { const g = _laNode(live, id); const r = g && $(':scope > rect', g); return r ? r.getAttribute('stroke') : 'no node'; }; out.simple = [st('dst:' + d.id), st('dsm:' + a.id)]; }
+      const tile = (root, nid) => { const g = _laNode(root, nid); if (!g) return 'no tile'; const th = $(':scope > .wire-adv-thumb', g), t = $('.wire-adv-tile', g), nm = $('.wire-adv-tile .wire-source-name', g);
+        return [th ? th.getAttribute('fill') : 'no colour tile', t ? _cMHex(t.style.borderColor) : 'no card', nm ? _cMHex(nm.style.color) : 'no name']; };
+      { const live = $('#wire-diagram svg'); out.simple = [tile(live, 'dst:' + d.id), tile(live, 'dsm:' + a.id)]; }
       await _cMWire('advanced');
       _wireAdvAddCustomDest(); const cd = wireAdvanced.customDests[wireAdvanced.customDests.length - 1];
       wireAdvanced.dests.push({ id: 'cMCd', refId: cd.id, x: 2400, y: 60 }); _wireRender(); await wait(400);
       const inst = (arr, ref) => (arr.find(x => x && x.refId === ref) || {}).id;
       const ids = { d: 'adst:' + inst(wireAdvanced.dests, d.id), a: 'adsm:' + inst(wireAdvanced.dsms, a.id), cd: 'adst:cMCd' };
-      const tile = (root, nid) => { const g = _laNode(root, nid); if (!g) return 'no tile'; const th = $(':scope > .wire-adv-thumb', g), t = $('.wire-adv-tile', g), nm = $('.wire-adv-tile .wire-source-name', g);
-        return [th ? th.getAttribute('fill') : 'no colour tile', t ? _cMHex(t.style.borderColor) : 'no card', nm ? _cMHex(nm.style.color) : 'no name']; };
       out.advanced = [tile($('#wire-diagram svg'), ids.d), tile($('#wire-diagram svg'), ids.a), tile($('#wire-diagram svg'), ids.cd)];
       { const doc = new DOMParser().parseFromString(_wireBuildAdvancedExportSvg('light', {}), 'image/svg+xml'); out.export = [tile(doc, ids.d), tile(doc, ids.a)]; }
       { const html = await _laBook('advanced'); const doc = new DOMParser().parseFromString(html, 'text/html'); out.lookBook = [tile(doc, ids.d), tile(doc, ids.a)]; }
@@ -9746,7 +9773,7 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
         out.help = [/shows the same colour as its card in the I\/O Patch and in Wire/.test(row), /a picture you upload on its card \(its main colour\), a cable type you pick for it/.test(row), /The cable itself keeps the cable type’s own colour/.test(row), /opening a show changes no colour/.test(row)]; }
     } finally { window._pdfOpts = pdfWas; try { closeWireMode(); } catch (e) {} try { closeSystem(); } catch (e) {} await wait(300); await restore(); }
     const P = '#7a3cff', Y = '#f0c060', B = JSON.parse(BASE);
-    return is(out, { io: [P, Y], wireCard: [P, Y], simple: [P, Y], advanced: [[P, P, P], [Y, Y, Y], ['#0e7490', '', '']], export: [[P, P, P], [Y, Y, Y]], lookBook: [[P, P, P], [Y, Y, Y]],
+    return is(out, { io: [P, Y], wireCard: [P, Y], simple: [[P, P, P], [Y, Y, Y]], advanced: [[P, P, P], [Y, Y, Y], ['#0e7490', '', '']], export: [[P, P, P], [Y, Y, Y]], lookBook: [[P, P, P], [Y, Y, Y]],
       opened: [B.screens.map((s, i) => i === 1 ? '#12ab34' : (s.wireColor || '')), B.dsms.map((x, i) => i === 0 ? '#ab1234' : (x.wireColor || '')), false], help: [true, true, true, true] },
       'the I/O cards [LEFT LED set to #7a3cff, AUX 1 default] / their Wire cards / their Wire Simple tiles (stroke) / Wire Advanced [LEFT LED, AUX 1, a hand-made destination: colour tile, border, name] / the Advanced export / the Look Book\'s Advanced Wire page / a show storing two colours as opened [destinations, AUX, Save lit] / Help › Wire › Tile colours [one colour, the last wins, the cable keeps its colour, opening changes nothing]');
   });
@@ -9790,7 +9817,10 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
       'a pick on LEFT LED\'s card [its colour = the cable\'s] steps, Save / Undo [connector back, no colour] / Redo / a pick on AUX 1\'s card / Custom… "hdmi 2.1" on CENTER LED / D0 DP [every destination the cable\'s colour, the stored name, the I/O-only destination has a colour] / A0 HDMI 2.1 / M0 [a multiviewer has a colour] / — Clear — [connector, colour unchanged] / a picture uploaded on RIGHT LED\'s card [done, its colour] / the same picture on a source / then 3G-SDI / the shuffle / the colour bar / page 1: LEFT LED\'s row SFP [row connector, the item\'s colour] / page 1\'s D0 3G-SDI / a page-2 row NDI [a row there, no item colour changed] / AUX 1\'s Wire card ST-2110');
   });
   // 16la-colour-mv C3: NEW
-  await check('Wire 16la-colour-mv (R): a MULTIVIEWERS pane in Wire\'s side panel and a multiviewer tile on Wire ADVANCED (Omar 2026-09-29: "we also need to add in Wire the MV icon so they can be dragged and used in wire, both simple and advance should be able to use it"): in Simple and Advanced the pane comes after AUX / DSM with one card per multiviewer (its picture on the RIGHT, the name, resolution and cable type, draggable); a click on the picture shows the next of the four (one undo step, Save lit; its I/O card shows it too) and Enter on it does the same; its card dropped on an Advanced page makes ONE destination tile of the page (one undo step: its picture 13 in from the right end, never cut, name / resolution / cable on the left, its input dot on the left edge); dropped again it MOVES that tile (still one); a switcher output cabled to it names it in the output cell; Delete on the selected tile takes it and its cable off, Undo brings both back; the multiviewer deleted in the I/O Patch takes its tiles off every page in ONE undo step (Undo brings them back); a new multiviewer is placed nowhere; the Advanced export and the Look Book\'s Advanced Wire page print the tile; Help › Wire › Multiviewers says so', async () => {
+  // 16lb-simple A6: REPLACES the check named in its header (reason in the block)
+  // 16lb-simple: RENAMED in place. Why: Help › Wire › Multiviewers now says a multiviewer "arrives cabled to the router's next free output
+  //   row" (answer (4)) instead of "the switcher feeds it from one more output named after it". Nothing else changed.
+  await check('Wire 16la-colour-mv (R) (16lb-simple: Help says Simple cables it to the router\'s next free output row): a MULTIVIEWERS pane in Wire\'s side panel and a multiviewer tile on Wire ADVANCED (Omar 2026-09-29: "we also need to add in Wire the MV icon so they can be dragged and used in wire, both simple and advance should be able to use it"): in Simple and Advanced the pane comes after AUX / DSM with one card per multiviewer (its picture on the RIGHT, the name, resolution and cable type, draggable); a click on the picture shows the next of the four (one undo step, Save lit; its I/O card shows it too) and Enter on it does the same; its card dropped on an Advanced page makes ONE destination tile of the page (one undo step: its picture 13 in from the right end, never cut, name / resolution / cable on the left, its input dot on the left edge); dropped again it MOVES that tile (still one); a switcher output cabled to it names it in the output cell; Delete on the selected tile takes it and its cable off, Undo brings both back; the multiviewer deleted in the I/O Patch takes its tiles off every page in ONE undo step (Undo brings them back); a new multiviewer is placed nowhere; the Advanced export and the Look Book\'s Advanced Wire page print the tile; Help › Wire › Multiviewers says so', async () => {
     await restore(); const out = {}; const pdfWas = window._pdfOpts ? JSON.parse(JSON.stringify(window._pdfOpts)) : null;
     const m = multiviewers[0], ref = 'mv:' + m.id;
     const pane = () => { const panes = $$('#wire-sources-panel > .wire-pane'), p = $('#wire-sources-panel .wire-pane-mv'); if (!p) return 'no pane';
@@ -9825,7 +9855,7 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
       out.deleteMv = await _cMStep(async () => { _sysRowDelete('mv', m.id); await wait(200); _sysCloseConfirmModal(true); await wait(400); return [multiviewers.some(x => x.id === m.id), tiles(), (wireAdvanced.wires || []).filter(w => w.toId === nid).length]; });
       doUndo(); await wait(400); out.deleteUndo = [multiviewers.some(x => x.id === m.id), tiles()];
       { const h = ($('#help-overlay') || {}).textContent || ''; const i = h.indexOf('Multiviewers', h.indexOf('Tile colours')); const row = i >= 0 ? h.slice(i, i + 1000) : '';
-        out.help = [/list under AUX \/ DSM has a card for each multiviewer/.test(row), /Drag a card onto the drawing to place it; nothing places it for you/.test(row), /once per page: dragging it again moves that tile/.test(row), /the switcher feeds it from one more output named after it/.test(row)]; }
+        out.help = [/list under AUX \/ DSM has a card for each multiviewer/.test(row), /Drag a card onto the drawing to place it; nothing places it for you/.test(row), /once per page: dragging it again moves that tile/.test(row), /In Simple it arrives cabled to the router’s next free output row/.test(row)]; }
     } finally { window._pdfOpts = pdfWas; try { closeWireMode(); } catch (e) {} try { closeSystem(); } catch (e) {} await wait(300); await restore(); }
     const card = [m.name, true, true, m.resolution || '', m.connectorType || '', 'true', 'button 0'];
     const P = [true, true, 'Multiviewers', multiviewers.map(x => [x.name, true, true, x.resolution || '', x.connectorType || '', 'true', 'button 0'])];
@@ -9835,30 +9865,40 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
       'the Multiviewers pane in Simple [last, after AUX / DSM, title, each card: name, picture right, its own picture, resolution, cable, draggable, the picture a button] / in Advanced / a click on MV 1\'s picture [next picture, the card shows it] steps, Save / Enter [next, the focus kept] / the card\'s drag data / dropped on page 1 [tiles] / dropped again [still one, moved] / the tile [type, picture x, width, MV 1\'s picture, never cut, name column left of it, name, input dot on the left edge] / a switcher output cabled to it [the cell\'s name, the cable drawn] / Delete on the selected tile [tiles, its cables] / Undo / the Advanced export [its picture, its name] / the Look Book\'s Advanced Wire page / dropped on page 2 too [tiles in the show] / + Add multiviewer [added, tiles, in Simple] / MV 1 deleted in the I/O Patch [still there, tiles, cables] / Undo / Help › Wire › Multiviewers');
   });
   // 16la-colour-mv C4: NEW
-  await check('Wire 16la-colour-mv (R): a multiviewer card dropped on Wire SIMPLE is fed by the show\'s switcher (Omar: "Only when dragged in"; one more switcher output row: "this is fine"): the tile lands where it is dropped (one undo step, Save lit), the switcher gets one more output named after it (its OUT count up by one) and a cable to the tile, and nothing else in the drawing moves (every source, destination and AUX tile, the switcher\'s place); the tile has the multiviewer\'s picture at its RIGHT end (never cut) and its name on the left, and the Cable Colour Code lists its cable; dropped again it moves (still one row); a rename of the multiviewer reaches the tile and the row; the Simple export and the Look Book\'s Simple Wire page print both; Reset layout keeps it; Delete on the selected tile takes it and its row off (one undo step), Undo brings them back', async () => {
+  // 16lb-simple A7: REPLACES the check named in its header (reason in the block)
+  // 16lb-simple: RENAMED in place and rewritten on the new Simple (it called the old switcher's row table, _wireHubRouter, which is gone).
+  //   Why: Omar 2026-09-30 (2)-(4): the switcher is a router, a dropped tile is cabled to the router's next free output row (the rule
+  //   16la gave a dropped multiviewer, which he approved) and the tile is the Advanced multiviewer tile. What it pins is the same as
+  //   before: placed where dropped (one step, Save lit), one more output row named after it and its cable, nothing else moves, the router
+  //   stays where it is, its picture at the right end never cut, the key lists its cable, dropped again it moves (one row still), a
+  //   rename reaches tile and row, the Simple sheet and the Look Book print it, Reset Layout keeps it, Delete takes it and its row off,
+  //   Undo brings them back.
+  await check('Wire 16la-colour-mv (R): a multiviewer card dropped on Wire SIMPLE is fed by the show\'s router (16lb-simple: the router\'s next free output row, the tile the Advanced multiviewer tile; Omar: "Only when dragged in"; one more output row: "this is fine"): the tile lands where it is dropped (one undo step, Save lit), the router gets one more output named after it (its OUT count up by one) and a cable to the tile, and nothing else in the drawing moves (every source, destination and AUX tile, the router\'s place); the tile has the multiviewer\'s picture at its RIGHT end (never cut) and its name on the left, and the Cable Colour Code lists its cable; dropped again it moves (still one row); a rename of the multiviewer reaches the tile and the row; the Simple sheet and the Look Book\'s Simple Wire page print it; Reset Layout keeps it; Delete takes it and its row off; Undo brings them back', async () => {
     await restore(); const out = {}; const pdfWas = window._pdfOpts ? JSON.parse(JSON.stringify(window._pdfOpts)) : null;
     const m = multiviewers[0], mid = 'mv:' + m.id, nm0 = m.name;
-    const hubOut = () => { const r = _laNode($('#wire-diagram svg'), 'hub'); const sub = r ? $$('div', r).map(e => (e.textContent || '').trim()).find(s => /^\d+ IN · \d+ OUT$/.test(s)) : null; return [sub || 'no label', r ? $$('circle.wire-hub-port', r).filter(c => /^hout:/.test(c.getAttribute('data-port-id') || '')).length : 0]; };
+    const hubOut = () => { const r = _laNode($('#wire-diagram svg'), 'hub'); const sub = r ? (($('.wire-router-subtitle', r) || {}).textContent || '').trim() : 'no label'; return [sub, r ? $$('circle.wire-hub-port', r).filter(c => /^hout:/.test(c.getAttribute('data-port-id') || '') && !c.classList.contains('slb-rport')).length : 0]; };
+    const lastOut = () => { const r = _laNode($('#wire-diagram svg'), 'hub'); const o = r ? $$('span[data-slb-row^="out:"]', r).map(e => e.textContent) : []; return o[o.length - 1] || ''; };
+    const near = (p, x, y) => !!p && Math.abs(p[0] - x) <= 1 && Math.abs(p[1] - y) <= 1;
     try {
       await _cMWire('simple');
       const g0 = _cMGeo(), h0 = hubOut(), n0 = _bdNoBd(screens).length + dsms.length;
       out.drop = await _cMStep(async () => { await _cMDrop('wire-adv-mv:' + m.id, 1700, 900); return [wireSettings.mvSimple || null, !!_cMGeo()[mid]]; });
       const g1 = _cMGeo();
-      out.key = _wireCableTypesInUse().some(r => r.spec && r.spec.type === (_wireCableSpec(m.connectorType) || {}).type && r.sources.includes(m.name));   /* the Cable Colour Code lists its cable */
+      out.key = _wireCableTypesInUse().some(r => r.spec && r.spec.type === (_wireCableSpec(m.connectorType) || {}).type && r.sources.includes(m.name));
       out.moved = Object.keys(g0).filter(k => k !== 'hub' && JSON.stringify(g0[k]) !== JSON.stringify(g1[k] || null));
-      out.hubPlace = JSON.stringify((g0.hub || []).slice(0, 3)) === JSON.stringify((g1.hub || []).slice(0, 3));
-      out.hub = [h0, hubOut(), _wireHubRouter(_wireBuildAllSourceNames(), _bdNoBd(screens), dsms.concat(_cmMvSimpleNodes())).outputs[n0].name];
-      out.at = [Math.abs(g1[mid][0] - (1700 - 110)) <= 1, Math.abs(g1[mid][1] - (900 - 18)) <= 1];
-      { const p = $$('#wire-diagram path.wire-edge').find(e => e.getAttribute('data-to') === mid); const q = p ? p.getPointAtLength(p.getTotalLength()) : null; out.cable = [p ? p.getAttribute('data-from') : 'no cable', q ? Math.round(q.x) === g1[mid][0] : false]; }
-      { const g = _laNode($('#wire-diagram svg'), mid); const r = $(':scope > rect', g), X = +r.getAttribute('x'), im = $(':scope > image', g), t = $(':scope > text', g);
-        out.tile = [im ? +im.getAttribute('x') - X : 'no picture', !!im && im.getAttribute('href') === _mvPicSrc(m), im ? im.getAttribute('preserveAspectRatio') : '', t ? +t.getAttribute('x') - X : 'no name', t ? t.textContent : '', r.getAttribute('stroke')]; }
-      out.again = await _cMStep(async () => { await _cMDrop('wire-adv-mv:' + m.id, 1900, 1100); return [(wireSettings.mvSimple || []).length, hubOut()[0], [Math.round(wireLayout[mid].x), Math.round(wireLayout[mid].y)]]; });
+      out.hubPlace = JSON.stringify((g0.hub || []).slice(0, 2)) === JSON.stringify((g1.hub || []).slice(0, 2));
+      out.hub = [h0, hubOut(), lastOut()];
+      out.at = near(g1[mid], 1700 - 130, 900 - 55);
+      { const p = $$('#wire-diagram path.wire-edge').find(e => e.getAttribute('data-to') === mid); const q = p ? p.getPointAtLength(p.getTotalLength()) : null; out.cable = [p ? p.getAttribute('data-from') : 'no cable', q ? Math.round(q.x) === Math.round(g1[mid][0]) : false]; }
+      { const g = _laNode($('#wire-diagram svg'), mid); const r = $(':scope > rect', g), X = +r.getAttribute('x'), im = $$(':scope > image.wire-adv-thumb', g)[0], nm = $('.wire-adv-tile .wire-source-name', g), card = $('.wire-adv-tile', g);
+        out.tile = [im ? +im.getAttribute('x') - X : 'no picture', !!im && im.getAttribute('href') === _mvPicSrc(m), im ? im.getAttribute('preserveAspectRatio') : '', card ? [...card.children].map(c => c.classList.contains('wire-source-info') ? 'info' : 'slot').join(',') : 'no card', nm ? nm.textContent.trim() : '', card ? _cMHex(card.style.borderColor) : '']; }
+      out.again = await _cMStep(async () => { await _cMDrop('wire-adv-mv:' + m.id, 1900, 1100); return [(wireSettings.mvSimple || []).length, hubOut()[0], near([wireLayout[mid].x, wireLayout[mid].y], 1900 - 130, 1100 - 55)]; });
       _sysSetMeta('mv', m.id, 'name', 'OPS MV'); _wireRender(); await wait(300);
-      out.rename = [(($(':scope > text', _laNode($('#wire-diagram svg'), mid)) || {}).textContent || ''), _wireHubRouter(_wireBuildAllSourceNames(), _bdNoBd(screens), dsms.concat(_cmMvSimpleNodes())).outputs[n0].name];
-      { const doc = new DOMParser().parseFromString(_wireBuildExportSvg('light', { transparent: true, noLegend: true }), 'image/svg+xml'); const g = $$('g', doc).find(x => $(':scope > text', x) && $(':scope > text', x).textContent === 'OPS MV');
-        out.export = g ? [!!$$('image', g).find(i => i.getAttribute('href') === _mvPicSrc(m)), (doc.documentElement.textContent || '').includes(n0 + 1 + '')] : 'no tile'; }
-      { const html = await _laBook('simple'); const doc = new DOMParser().parseFromString(html, 'text/html'); const w = $('#pdf-wire', doc); const g = w ? $$('g', w).find(x => $(':scope > text', x) && $(':scope > text', x).textContent === 'OPS MV') : null;
-        out.lookBook = [!!g && !!$$('image', g).find(i => i.getAttribute('href') === _mvPicSrc(m)), !!w && $$('text', w).some(t => t.textContent === 'OPS MV' && !(t.parentNode === g))]; }
+      out.rename = [(($('.wire-adv-tile .wire-source-name', _laNode($('#wire-diagram svg'), mid)) || {}).textContent || '').trim(), lastOut()];
+      { const doc = new DOMParser().parseFromString(_wireBuildExportSvg('light', { transparent: true, noLegend: true }), 'image/svg+xml'); const g = _laNode(doc, mid);
+        out.export = g ? [!!$$('image', g).find(i => i.getAttribute('href') === _mvPicSrc(m)), ($('.wire-source-name', g) || {}).textContent === 'OPS MV', $$('span', doc).some(e => (e.getAttribute('data-slb-row') || '') === 'out:' + n0 && e.textContent === 'OPS MV')] : 'no tile'; }
+      { const html = await _laBook('simple'); const doc = new DOMParser().parseFromString(html, 'text/html'); const w = $('#pdf-wire', doc); const g = w ? _laNode(w, mid) : null;
+        out.lookBook = [!!g && !!$$('image', g).find(i => i.getAttribute('href') === _mvPicSrc(m)), !!w && $$('span[data-slb-row="out:' + n0 + '"]', w).some(e => e.textContent === 'OPS MV')]; }
       await _cMWire('simple');
       _wireResetLayout(); await wait(300); out.reset = [(wireSettings.mvSimple || []).length, !!_cMGeo()[mid]]; doUndo(); await wait(300);
       _wireState.selectedNodes.clear(); _wireState.selectedNodes.add(mid); _wireRender(); await wait(200);
@@ -9866,10 +9906,10 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
       doUndo(); await wait(400); out.undo = [(wireSettings.mvSimple || []).length, !!_cMGeo()[mid], hubOut()[0]];
     } finally { window._pdfOpts = pdfWas; try { closeWireMode(); } catch (e) {} await wait(300); await restore(); }
     const n = _bdNoBd(screens).length + dsms.length, S = _wireBuildAllSourceNames().length;
-    return is(out, { drop: [[[m.id], true], 1, true], key: true, moved: [], hubPlace: true, hub: [[S + ' IN · ' + n + ' OUT', n], [S + ' IN · ' + (n + 1) + ' OUT', n + 1], nm0], at: [true, true], cable: ['hout:' + n, true],
-      tile: [172, true, 'xMidYMid meet', 12, nm0, '#ffe04a'], again: [[1, S + ' IN · ' + (n + 1) + ' OUT', [1790, 1082]], 1, true], rename: ['OPS MV', 'OPS MV'], export: [true, true], lookBook: [true, true],
+    return is(out, { drop: [[[m.id], true], 1, true], key: true, moved: [], hubPlace: true, hub: [[S + ' IN · ' + n + ' OUT', n], [S + ' IN · ' + (n + 1) + ' OUT', n + 1], nm0], at: true, cable: ['hout:' + n, true],
+      tile: [137, true, 'xMidYMid meet', 'info,slot', nm0, '#ffe04a'], again: [[1, S + ' IN · ' + (n + 1) + ' OUT', true], 1, true], rename: ['OPS MV', 'OPS MV'], export: [true, true, true], lookBook: [true, true],
       reset: [1, true], del: [[null, false, [S + ' IN · ' + n + ' OUT', n]], 1, true], undo: [1, true, S + ' IN · ' + (n + 1) + ' OUT'] },
-      'dropped [the Simple list, the tile] steps, Save / the Cable Colour Code lists its cable / tiles that moved / the switcher\'s place kept / the switcher [before, after, its new last output] / the tile where it was dropped / its cable [from, ends on its left edge] / the tile [picture x, its picture, never cut, name x, name, stroke] / dropped again [in the list, the switcher, where] steps, Save / renamed OPS MV [tile, output row] / the Simple export [its picture, the count] / the Look Book\'s Simple Wire page [its picture, the switcher row] / Reset layout [placed, drawn] / Delete [list, tile, switcher] steps, Save / Undo');
+      'dropped [the Simple list, the tile] steps, Save / the Cable Colour Code lists its cable / tiles that moved / the router\'s place kept / the router [before, after, its new last output] / the tile where it was dropped / its cable [from, ends on its left edge] / the tile [picture x, its picture, never cut, the card\'s columns, name, border] / dropped again [in the list, the router, where] steps, Save / renamed OPS MV [tile, output row] / the Simple sheet [its picture, its name, its router row] / the Look Book\'s Simple Wire page [its picture, the router row] / Reset layout [placed, drawn] / Delete [list, tile, router] steps, Save / Undo');
   });
   // 16la-colour-mv C5: NEW
   await check('I/O 16la-colour-mv (S1 + T): the I/O Patch Simple "+ Add …" cards are dim, EMPTY WIREFRAMES of their section\'s card (Omar 2026-09-29, his add_card_outline_mockup.png: "the wire look or outline of that same look"): in all four sections every add card is one control (role button, Tab reaches it, its name "Add source" / "Add destination" / "Add AUX" / "Add multiviewer", everything inside hidden from a screen reader, nothing inside focusable or clickable: a click on its picture box lands on the card); it has the real card\'s size and layout (the picture box 110 × 62 on the LEFT for a source, on the RIGHT for a destination, AUX or multiviewer, exactly where the card beside it has its picture; two boxes where the resolution and cable type sit; an empty colour bar and shuffle square under the picture except on a multiviewer\'s; the bottom line with Reset, trash and an empty number chip; "+ Add source" with a pencil where the name sits); the big + box and the long description are gone (the description is the tooltip); a click and Enter still add one (one undo step); an empty section shows only its row of add cards, with no note (Help › Add & remove says so)', async () => {
@@ -9985,32 +10025,39 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
       'NDI on the hand-made destination card [pick, connector, its IP, undo steps, Save lit] / Dante on the hand-made AUX card / placed [the router output cell, the switch port, the destination tile\'s IP line, the AUX tile\'s] / Details of the destination tile / typed [its IP, undo steps, the cell, the tile, Save lit] / Undo / cleared / the suggestion / Enter [its IP, undo steps] / the next free address / the exported sheet [the tiles\' IP lines] / HDMI 2.0 [pick, connector, the IP kept, no box]');
   });
   // 16la-fix F3: NEW
-  await check('Wire 16la-fix (M / R): in Wire SIMPLE a destination, AUX or multiviewer tile has its picture at its right end, and a long name never runs into it (the attack: "LEFT LED WALL MAIN STAG" drawn over the picture): the name is drawn smaller (12 down to 9 px), then cut after a whole word with "…"; every name ends at least 2 px before the picture; a short name and a tile without a picture there are drawn at 12 px as before; the exported Simple sheet draws each name the same', async () => {
+  // 16lb-simple A8: REPLACES the check named in its header (reason in the block)
+  // 16lb-simple: RENAMED in place and rewritten. Why: Omar 2026-09-30 (3): a Simple tile is the Advanced tile; its name sits in the info
+  //   column LEFT of the picture's 110 x 62 slot and wraps between words there, as on the Advanced tile, so the 16la-fix fitting of the
+  //   old 220 x 36 node (smaller, then cut with "…", _fxSimpleName) is gone. What it pins is the attack's point, unchanged: a long name
+  //   never runs into the picture, on screen and on the Simple sheet, and it is whole (not cut).
+  await check('Wire 16la-fix (M / R) (16lb-simple: the Simple tile is the Advanced tile): in Wire SIMPLE a destination, AUX or multiviewer tile has its picture at its right end, and a long name never runs into it (the attack: "LEFT LED WALL MAIN STAG" drawn over the picture): the name is whole and ends before the picture (it wraps between words in the card\'s info column); a short name and a tile without a picture read as before; the exported Simple sheet prints each name whole', async () => {
     await restore(); const out = {};
     try {
       const pic = _IOG_MV_PICS[1]; const L = screens[0], C = screens[1], A = dsms[1], M = multiviewers[0];
       L.name = 'LEFT LED WALL MAIN STAGE'; A.name = 'AUX 1 RECORD AND STREAM FEED'; M.name = 'MULTIVIEWER OPERATOR POSITION';
       wireThumbnails['dst:' + L.id] = pic; wireThumbnails['dst:' + C.id] = pic; wireThumbnails['dsm:' + A.id] = pic;
       wireSettings.mvSimple = [M.id];
-      await _pPWire('simple'); await wait(300);
-      const node = id => { const g = $('#wire-diagram g.wire-node[data-node-id="' + id + '"]'); if (!g) return 'no node'; const t = g.querySelector('text'), ims = [...g.querySelectorAll('image')], im = ims[ims.length - 1], tb = t.getBBox();
-        return { fs: t.getAttribute('font-size'), t: t.textContent, pic: im ? +im.getAttribute('x') : null, right: tb.x + tb.width, x: +g.querySelector('rect').getAttribute('x') }; };
-      const ok = (n, name) => { if (typeof n === 'string') return n; const full = n.t === name, cut = /…$/.test(n.t) && name.startsWith(n.t.slice(0, -1)) && name.charAt(n.t.length - 1) === ' ';
-        return [n.pic !== null && n.pic > n.x + 100 ? (n.right <= n.pic - 2) : 'no picture at the right end', full ? (+n.fs >= 9 && +n.fs <= 12) : (cut && n.fs === '9')]; };
-      out.long = [ok(node('dst:' + L.id), L.name), ok(node('dsm:' + A.id), A.name), ok(node('mv:' + M.id), M.name)];
-      const c = node('dst:' + C.id), r = node('dst:' + screens[2].id); out.short = [c.fs, c.t, r.fs, r.t, r.pic];
-      const svg = _wireBuildExportSvg('light', {}); const live = [node('dst:' + L.id), node('dsm:' + A.id), node('mv:' + M.id), c];
-      out.sheet = live.map(n => svg.indexOf('font-size="' + n.fs + '" font-weight="600">' + _esc(n.t) + '</text>') >= 0);
+      await _pPWire('simple'); _wireSetZoom(1); _wireRender(); await wait(400);
+      const node = id => { const g = _laNode($('#wire-diagram svg'), id); if (!g) return 'no node'; const n = $('.wire-adv-tile .wire-source-name', g), th = $(':scope > .wire-adv-thumb', g);
+        const a = n.getBoundingClientRect(), b = th ? th.getBoundingClientRect() : null; return [n.textContent.trim(), b ? a.right <= b.left - 2 : 'no picture slot', n.scrollWidth <= n.clientWidth + 1]; };
+      out.long = [node('dst:' + L.id), node('dsm:' + A.id), node('mv:' + M.id)];
+      out.short = [node('dst:' + C.id)[0], node('dst:' + screens[2].id)[0], !!$(':scope > rect.wire-adv-thumb', _laNode($('#wire-diagram svg'), 'dst:' + screens[2].id))];
+      const doc = new DOMParser().parseFromString(_wireBuildExportSvg('light', {}), 'image/svg+xml');
+      out.sheet = [L, A, M, C].map(o => $$('.wire-source-name', doc).some(e => e.textContent.trim() === o.name));
     } finally { try { closeWireMode(); } catch (e) {} await wait(300); await restore(); }
-    return is(out, { long: [[true, true], [true, true], [true, true]], short: ['12', 'CENTER LED', '12', 'RIGHT LED', null], sheet: [true, true, true, true] },
-      'long names [LEFT LED WALL MAIN STAGE, AUX 1 RECORD AND STREAM FEED, MULTIVIEWER OPERATOR POSITION: ends before the picture, drawn whole at 9-12 px or cut after a whole word at 9 px] / short [CENTER LED with a picture: size, text; RIGHT LED without one: size, text, picture] / the exported Simple sheet draws the same text at the same size');
+    return is(out, { long: [['LEFT LED WALL MAIN STAGE', true, true], ['AUX 1 RECORD AND STREAM FEED', true, true], ['MULTIVIEWER OPERATOR POSITION', true, true]], short: ['CENTER LED', 'RIGHT LED', true], sheet: [true, true, true, true] },
+      'long names [LEFT LED WALL MAIN STAGE, AUX 1 RECORD AND STREAM FEED, MULTIVIEWER OPERATOR POSITION: the name, ends 2 px before the picture, not cut] / short [CENTER LED with a picture, RIGHT LED without one, its colour tile at the right end] / the exported Simple sheet prints each name whole');
   });
   // 16la-fix F4: NEW
-  await check('Help 16la-fix: the in-app Help says what 16la-colour-mv and 16la-fix do: I/O Patch › What it is calls the + Add cards empty outlines of their section\'s card (no more "keep their + on the left"), Multiviewer (MV) says its Wire card can be dragged onto the drawing (no more "lives only in the I/O Patch and the I/O export"), Wire › IP address says the ID cell shows the IP after the OUT n or BKP (OUT 1 · 192.168.0.1, no more "in place of") and that a hand-made destination or AUX has the same IP box, Wire › Source thumbnails says a long name is drawn smaller, then cut after a whole word', async () => {
+  // 16lb-simple A9: REPLACES the check named in its header (reason in the block)
+  // 16lb-simple: RENAMED in place. Why: Help › Wire › Source thumbnails no longer says "in Simple a name too long for the room before the
+  //   picture is drawn smaller, then cut after a whole word" (that fitting went with the old Simple node, see A8); the check now pins that
+  //   the sentence is gone. Every other expectation is unchanged.
+  await check('Help 16la-fix (16lb-simple: the Simple long-name sentence is gone with the old node): the in-app Help says what 16la-colour-mv and 16la-fix do: I/O Patch › What it is calls the + Add cards empty outlines of their section\'s card (no more "keep their + on the left"), Multiviewer (MV) says its Wire card can be dragged onto the drawing (no more "lives only in the I/O Patch and the I/O export"), Wire › IP address says the ID cell shows the IP after the OUT n or BKP (OUT 1 · 192.168.0.1, no more "in place of") and that a hand-made destination or AUX has the same IP box', async () => {
     const h = await _fxHelp();
     return is([/keep their \+ on the left/.test(h), /The \+ Add cards, empty outlines of their section’s card, come after the cards/.test(h), /It lives only in the I\/O Patch and the I\/O export/.test(h), /It is never drawn on the canvas or in presets; in Wire its card can be dragged onto the drawing/.test(h),
       /in place of the OUT n or BKP/.test(h), /after the OUT n or BKP it showed there \(OUT 1 · 192\.168\.0\.1\)/.test(h), /A hand-made destination or AUX \(Advanced\) has the same box: its own IP/.test(h), /in Simple a name too long for the room before the picture is drawn smaller, then cut after a whole word/.test(h)],
-      [false, true, false, true, false, true, true, true], 'What it is [old "+ on the left", outlines] / Multiviewer (MV) [old "only in the I/O Patch", Wire card] / Wire › IP address [old "in place of", after the label, hand-made outputs] / Source thumbnails [a long name]');
+      [false, true, false, true, false, true, true, false], 'What it is [old "+ on the left", outlines] / Multiviewer (MV) [old "only in the I/O Patch", Wire card] / Wire › IP address [old "in place of", after the label, hand-made outputs] / Source thumbnails [the old Simple long-name sentence]');
   });
   // 16la-fix F5: NEW
   await check('Page 16la-fix: no dead code left by 16la-colour-mv (S1 / T): no CSS rule for the empty-section note (.iog-empty) or for the old + Add card (.fs-src-add on .iog-add) is left in the page\'s stylesheets, _iogSecHTML takes no empty-note argument and the four note strings are gone, and the comments that said the + Add cards keep their + on the left / are drawn as the Video Presets add card, and 16el\'s old IP prefill rule, now say what the page does', async () => {
@@ -10020,6 +10067,1198 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
       ["'No multiviewer.'", "'No AUX or DSM outputs yet.'", 'No sources yet: they come from the presets', "'No destinations yet: add one here or in the Video Presets.'"].filter(s => src.indexOf(s) >= 0),
       ['all four keep the + box on the left', 'drawn as the Video Presets\n   Advanced dashed add card', 'the same look, words, + box on the left', "an empty section's note sits on its own line under them", '// ── 16el: IP addresses', 'Prefill rule (Omar)'].filter(s => src.indexOf(s) >= 0)],
       [0, 0, 4, [], []], 'rules [.iog-empty, the old add card] / _iogSecHTML\'s arguments / the note strings still in the page / the stale comments still in the page');
+  });
+  // ── 16lb-simple (Omar 2026-09-30, testing 16la: "the wire page simple i should still be able to drag and drop sources destinations,
+  //    AUX/DSM and MV ... the tile should look the same has the tiles from the left columm same has advance ... wires or cables should
+  //    always work the same in both places", and his answers (1)-(8) of the same day): Wire SIMPLE is a drawing the user edits, with
+  //    Advanced's tiles, router tile and cables. Each check FAILS on the 16la page (33d0496) and PASSES on 16lb-simple. The helpers
+  //    below are this round's own (prefix _lb: never a name of the page's). Mouse gestures are dispatched on the drawing's own
+  //    elements at their places on screen (the drawing is fitted first), so the page resolves the drop the way a real drop does.
+  const _lbOpen = async mut => { const st = JSON.parse(BASE); if (mut) mut(st); _applyProjectText(JSON.stringify(st)); await wait(700); okDialogs(); await wait(150); okDialogs();
+    await _cMWire('simple'); _wireState.selectedNodes.clear(); _wireState.selectedEdgeKey = null; _wireState.activePreset = null; _wireZoomFit(); await wait(450); _wireRender(); await wait(200); };
+  const _lbPt = el => { const r = el.getBoundingClientRect(); return [r.left + r.width / 2, r.top + r.height / 2]; };
+  const _lbMouse = (el, type, x, y, o) => el.dispatchEvent(new MouseEvent(type, Object.assign({ bubbles: true, cancelable: true, view: window, clientX: x, clientY: y, button: 0, buttons: type === 'mouseup' ? 0 : 1 }, o || {})));
+  const _lbDrag = async (el, to, o) => { if (!el) return 'no point to drag from'; const [x0, y0] = _lbPt(el), [x1, y1] = Array.isArray(to) ? to : _lbPt(to); _lbMouse(el, 'mousedown', x0, y0, o);
+    for (let k = 1; k <= 6; k++) { _lbMouse(window, 'mousemove', x0 + (x1 - x0) * k / 6, y0 + (y1 - y0) * k / 6, o); await wait(15); } _lbMouse(window, 'mouseup', x1, y1, o); await wait(450); return true; };
+  const _lbClick = async el => { if (!el) return 'nothing to click'; const [x, y] = _lbPt(el); _lbMouse(el, 'mousedown', x, y); _lbMouse(window, 'mouseup', x, y); await wait(350); return true; };
+  const _lbSvg = () => $('#wire-diagram svg');
+  const _lbTile = k => _laNode(_lbSvg(), k);
+  const _lbGrab = k => { const g = _lbTile(k); return g ? $('.wire-adv-res-text', g) : null; };   /* a spot on the tile's card that is neither its name's pencil nor its point */
+  const _lbDot = k => $$('#wire-diagram circle.slb-dot').find(c => c.dataset.slbKey === k) || null;
+  const _lbRow = (side, i) => $$('#wire-diagram circle.slb-rport').find(c => c.dataset.portId === 'h' + side + ':' + i) || null;
+  const _lbX = k => $$('#wire-diagram circle.slb-x').find(c => c.dataset.slbKey === k) || null;
+  const _lbEdge = ek => $$('#wire-diagram path.wire-edge').find(p => p.getAttribute('data-edge-key') === ek) || null;
+  const _lbRows = () => { const s = (typeof _slbState === 'function') ? _slbState() : null; return s ? [s.ins.slice(), s.outs.slice(), [...s.loose], [...s.off]] : ['no Simple drawing state']; };
+  const _lbCells = () => { const t = _lbTile('hub'); return t ? [($('.wire-hub-name', t) || {}).value, (($('.wire-router-subtitle', t) || {}).textContent || '').trim(), $$('span[data-slb-row^="in:"]', t).map(e => e.textContent), $$('span[data-slb-row^="out:"]', t).map(e => e.textContent)] : 'no router'; };
+  const _lbKeys = () => ({ S: _wireBuildAllSourceNames().map(n => 'src:' + n), D: _bdNoBd(screens).map(s => 'dst:' + s.id), A: dsms.map(d => 'dsm:' + d.id) });
+  const _lbSel = ids => { _wireState.selectedNodes.clear(); ids.forEach(i => _wireState.selectedNodes.add(i)); _wireState.selectedEdgeKey = null; _wireRender(); };
+  const _lbOpenCanvas = () => { const r = $('#wire-diagram-scroll').getBoundingClientRect(); for (let y = r.bottom - 30; y > r.top + 30; y -= 15) for (let x = r.right - 290; x > r.left + 290; x -= 15) { const t = document.elementFromPoint(x, y); if (t && t.tagName === 'svg') return [x, y]; } return null; };
+  const _lbTiles = () => $$('g.wire-node', _lbSvg()).map(g => g.dataset.nodeId).filter(i => i !== 'hub');
+  const _lbDirty = () => { _recomputeDirty(); return [!!_isDirty, _kySaveLit()]; };
+  // 16lb-simple S1: NEW
+  await check('Wire 16lb-simple (1)(2)(3): Wire SIMPLE opens as the show\'s drawing (Omar 2026-09-30: "Today\'s drawing, then edit it"; "lets update it to a router"; "the tile should look the same has the tiles from the left columm same has advance"): every source is cabled into a ROUTER, the Advanced 6-column Router I/O tile (# Source ID # Destination ID) titled Generic Router (Omar 2026-09-30: "the Router should not be called E2 it should be Generic Router": an older show whose switcher was named E2 opens titled Generic Router too, its file left as it was; "n IN · n OUT"), and every destination and AUX out of it, in the show\'s order; every tile is its card\'s Advanced tile, 260 x 110 (its picture or colour at the LEFT of a source, the RIGHT of a destination / AUX; its name, resolution and cable chip) with ONE point (a source\'s output dot on its right edge, an output\'s input dot on its left); a show opened with a position stored by the old Simple keeps it; opening and looking write nothing and light no Save', async () => {
+    const out = {};
+    try {
+      await _lbOpen();
+      const k = _lbKeys(), svg = _lbSvg(), ids = _lbTiles();
+      out.tiles = [ids.slice().sort().join('|') === k.S.concat(k.D, k.A).slice().sort().join('|'), ids.filter(i => $('.wire-adv-tile', _lbTile(i))).length === ids.length];
+      const one = id => { const g = _lbTile(id); if (!g) return 'no tile'; const r = $(':scope > rect', g), X = +r.getAttribute('x'), Y = +r.getAttribute('y'), th = $(':scope > .wire-adv-thumb', g), dots = $$('circle.slb-dot', g);
+        return [+r.getAttribute('width'), +r.getAttribute('height'), th ? +th.getAttribute('x') - X : 'no picture', dots.length, dots[0] ? [+dots[0].getAttribute('cx') - X, +dots[0].getAttribute('cy') - Y] : null, (($('.wire-source-name', g) || {}).textContent || '').trim(), (($('.wire-adv-res-text', g) || {}).textContent || '').trim(), (($('.wire-type-btn', g) || {}).textContent || '').trim()]; };
+      out.src = one('src:PPT A'); out.dst = one('dst:' + screens[0].id); out.aux = one('dsm:' + dsms[1].id);
+      out.router = [$$('.wire-switcher-grid .r-hdr', _lbTile('hub')).map(e => e.textContent.trim()), _lbCells()];
+      out.clean = [wireSettings.simple === undefined, _lbDirty()];
+      await _lbOpen(st => { st.wireSettings.hub = { name: 'E2' }; st.wireLayout = { 'src:PPT A': { x: -240, y: 40 } }; });   /* an older show: its switcher named E2, a source moved by hand */
+      const r2 = $(':scope > rect', _lbTile('src:PPT A'));
+      out.older = [_lbCells()[0], (wireSettings.hub || {}).name, r2 ? [+r2.getAttribute('x'), +r2.getAttribute('y')] : 'no tile', wireSettings.simple === undefined, _lbDirty()];
+    } finally { try { closeWireMode(); } catch (e) {} await restore(); }
+    const S = _wireBuildAllSourceNames(), D = _bdNoBd(screens).map(s => s.name).concat(dsms.map(d => d.name));
+    return is(out, { tiles: [true, true], src: [260, 110, 13, 1, [260, 55], 'PPT A', '1920x1080', 'HDMI 2.0'], dst: [260, 110, 137, 1, [0, 55], 'LEFT LED', '1920x1080', '12G-SDI'], aux: [260, 110, 137, 1, [0, 55], 'AUX 1', '1920x1080', '12G-SDI'],
+      router: [['#', 'Source', 'ID', '#', 'Destination', 'ID'], ['Generic Router', S.length + ' IN · ' + D.length + ' OUT', S, D]], clean: [true, [false, false]], older: ['Generic Router', 'E2', [-240, 40], true, [false, false]] },
+      'tiles [one per source / destination / AUX, each the Advanced tile] / PPT A, LEFT LED, AUX 1 [width, height, picture x, points, the point, name, resolution, cable chip] / the router [its columns, (title, label, input rows, output rows)] / nothing written, [unsaved, Save lit] / an older show [the router title, its old switcher name still in the file, PPT A where it was stored, nothing written, (unsaved, Save lit)]');
+  });
+  // 16lb-simple S2: NEW
+  await check('Wire 16lb-simple (4): every left-column card drags onto Wire SIMPLE as it does onto Advanced (Omar: "the work flow between simple and advance should be the same where the user can drag and drop a tile onto the diagram page"): the source, destination, AUX / DSM and multiviewer cards are draggable on Simple and hand the drop Advanced\'s data; ONE tile per item: a card whose item is on the drawing moves its tile to the drop point (one undo step, Save lit, no second tile, its cable kept); a tile taken off (selected, Delete) comes back where its card is dropped, cabled to the router\'s next free row; a multiviewer card brings its tile cabled to the next free output row', async () => {
+    const out = {};
+    try {
+      await _lbOpen();
+      out.data = ['PPT A', screens[0].name, dsms[0].name, multiviewers[0].name].map(n => { const c = _cMWcard(n); return [c ? c.getAttribute('draggable') : 'no card', _cMDragData(c)]; });
+      const L = screens[0].id;
+      const near = (p, x, y) => !!p && Math.abs(p.x - x) <= 1 && Math.abs(p.y - y) <= 1;   /* the drop point, centred, to the pixel */
+      out.move = await _cMStep(async () => { await _cMDrop('wire-adv-dest:' + L, 2400, 500); return [near(wireLayout['dst:' + L], 2270, 445), _lbTiles().filter(i => i === 'dst:' + L).length, _lbRows()[1][0]]; });
+      _lbSel(['src:CAM 2']); _cMDel(); await wait(400);
+      out.off = [_lbRows()[3], !!_lbTile('src:CAM 2')];
+      out.back = await _cMStep(async () => { await _cMDrop('wire-adv-source:CAM 2', 2400, 900); return [_lbRows()[0][3], !!_lbTile('src:CAM 2'), near(wireLayout['src:CAM 2'], 2270, 845), _lbRows()[3]]; });
+      const m = multiviewers[0];
+      out.mv = await _cMStep(async () => { await _cMDrop('wire-adv-mv:' + m.id, 2400, 1300); return [_lbRows()[1][5], (wireSettings.mvSimple || []).slice(), !!_lbEdge('simple:hout:5→mv:' + m.id), _lbCells()[1]]; });
+    } finally { try { closeWireMode(); } catch (e) {} await restore(); }
+    const L = screens[0].id, m = multiviewers[0], S = _wireBuildAllSourceNames().length;
+    return is(out, { data: [['true', 'wire-adv-source:PPT A'], ['true', 'wire-adv-dest:' + L], ['true', 'wire-adv-dsm:' + dsms[0].id], ['true', 'wire-adv-mv:' + m.id]],
+      move: [[true, 1, 'dst:' + L], 1, true], off: [['src:CAM 2'], false], back: [['src:CAM 2', true, true, []], 1, true], mv: [['mv:' + m.id, [m.id], true, S + ' IN · 6 OUT'], 1, true] },
+      'the four cards [draggable, drag data] / LEFT LED\'s card dropped again [its place, tiles of it, still on output row 1] steps, Save / CAM 2 taken off [off the drawing, tile] / its card dropped [input row 4, tile, its place, off] steps, Save / MV 1\'s card [output row 6, the Simple list, its cable, the router label] steps, Save');
+  });
+  // 16lb-simple S3: NEW
+  await check('Wire 16lb-simple (5): a NEW cable is drawn as in Advanced, from a free point (Omar: "in simple the tiles is just a single cable drag. wires or cables should always work the same in both places"): a cable selected and deleted leaves its tile on the drawing with a free point; a drag from that point dropped on open canvas does nothing; dropped on a router input row that has a cable it lands on the router\'s next free row (one cable per row); a drag from a FREE router output row dropped on a destination moves that destination\'s one cable to it; dropped on a destination with a free point it cables it; each is one undo step and lights Save', async () => {
+    const out = {};
+    try {
+      await _lbOpen();
+      const e3 = _lbEdge('simple:src:CAM 2→hin:3'); if (!e3) return 'no cable from CAM 2 to row 4';
+      { const [x, y] = _lbPt(e3); const p = e3.getPointAtLength(e3.getTotalLength() / 2), m = e3.getScreenCTM(); _lbMouse(e3, 'mousedown', p.x * m.a + m.e, p.y * m.d + m.f); await wait(300); }
+      out.selected = _wireState.selectedEdgeKey;
+      out.del = await _cMStep(async () => { _cMDel(); await wait(400); return [_lbRows()[0][3], _lbRows()[2], !!_lbTile('src:CAM 2'), !!_lbDot('src:CAM 2') && !_lbDot('src:CAM 2').classList.contains('has-cable')]; });
+      const open = _lbOpenCanvas(); if (!open) return 'no open canvas on screen';
+      out.canvas = await _cMStep(async () => { await _lbDrag(_lbDot('src:CAM 2'), open); return _lbRows()[2]; });
+      out.taken = await _cMStep(async () => { await _lbDrag(_lbDot('src:CAM 2'), _lbRow('in', 0)); return [_lbRows()[0][0], _lbRows()[0][3], _lbRows()[2]]; });
+      /* free LEFT LED's row (its cable deleted), then from that free row onto CENTER LED (cabled on row 2): its cable moves to row 1 */
+      const L = screens[0].id, C = screens[1].id;
+      _wireState.selectedNodes.clear(); _wireState.selectedEdgeKey = 'simple:hout:0→dst:' + L; _cMDel(); await wait(400);
+      out.moveTo = await _cMStep(async () => { await _lbDrag(_lbRow('out', 0), _lbGrab('dst:' + C)); return _lbRows()[1].slice(0, 3); });
+      out.cableIt = await _cMStep(async () => { await _lbDrag(_lbRow('out', 1), _lbGrab('dst:' + L)); return [_lbRows()[1].slice(0, 3), _lbRows()[2]]; });
+    } finally { try { closeWireMode(); } catch (e) {} await restore(); }
+    const L = screens[0].id, C = screens[1].id, R = screens[2].id;
+    return is(out, { selected: 'simple:src:CAM 2→hin:3', del: [['', ['src:CAM 2'], true, true], 1, true], canvas: [['src:CAM 2'], 0, true], taken: [['src:PPT A', 'src:CAM 2', []], 1, true],
+      moveTo: [['dst:' + C, '', 'dst:' + R], 1, true], cableIt: [[['dst:' + C, 'dst:' + L, 'dst:' + R], []], 1, true] },
+      'the cable selected / Delete [input row 4, the free points, CAM 2 still drawn, its point free] steps, Save / dropped on open canvas [free points] steps, Save / dropped on row 1 (PPT A\'s) [row 1, row 4, free points] steps, Save / a free output row onto CENTER LED [output rows 1-3] steps, Save / a free output row onto LEFT LED [output rows 1-3, free points] steps, Save');
+  });
+  // 16lb-simple S4: NEW
+  await check('Wire 16lb-simple (5): a cable\'s END is moved as in Advanced: a plugged router row dragged onto a row that has a cable SWAPS the two cables, onto a free row moves it; a destination\'s plugged point dragged onto another destination swaps their rows; the cable wears its cable type (colour, line and arrow of HDMI 2.0 / 12G-SDI, not the source\'s colour); a selected cable shows a handle on every straight run, a handle dragged shapes it (stored, one step) and the shape stays while a tile it meets is dragged, whose cable follows it; a double-click on a handle resets the shape; a double-click on a cable deletes it', async () => {
+    const out = {};
+    try {
+      await _lbOpen();
+      out.swapRow = await _cMStep(async () => { await _lbDrag(_lbRow('in', 0), _lbRow('in', 4)); return _lbRows()[0].slice(0, 5); });
+      const L = screens[0].id, R = screens[2].id;
+      out.swapTile = await _cMStep(async () => { await _lbDrag(_lbDot('dst:' + L), _lbGrab('dst:' + R)); return _lbRows()[1].slice(0, 3); });
+      const pa = _lbEdge('simple:src:PPT A→hin:4'), ll = _lbEdge('simple:hout:2→dst:' + L), hd = _wireCableSpec('HDMI 2.0'), sd = _wireCableSpec('12G-SDI');
+      out.look = [pa ? [pa.getAttribute('stroke') === _wireRgba(hd.color, 0.7), pa.getAttribute('marker-end') === hd.markerEnd, pa.getAttribute('stroke-dasharray') || ''] : 'no cable', ll ? [ll.getAttribute('stroke') === _wireRgba(sd.color, 0.7), ll.getAttribute('marker-end') === sd.markerEnd, ll.getAttribute('stroke-dasharray') || ''] : 'no cable', _wireGetSourceColor('PPT A') !== hd.color];
+      /* shape PPT B's cable by a handle */
+      const ek = 'simple:src:PPT B→hin:1', e1 = _lbEdge(ek);
+      { const p = e1.getPointAtLength(e1.getTotalLength() / 2), m = e1.getScreenCTM(); _lbMouse(e1, 'mousedown', p.x * m.a + m.e, p.y * m.d + m.f); await wait(300); }
+      const hs = $$('#wire-diagram .wire-seg-handle').filter(h => h.getAttribute('data-edge-key') === ek), hv = hs.find(h => h.getAttribute('data-orient') === 'v');
+      out.handles = [_wireState.selectedEdgeKey === ek, hs.length >= 3];
+      out.shape = await _cMStep(async () => { const [x, y] = _lbPt(hv); await _lbDrag(hv, [x - 25, y]); const r = (wireSettings.simple && wireSettings.simple.routes) ? wireSettings.simple.routes[ek] : null; return Array.isArray(r) && r.length % 2 === 1; });
+      const route0 = JSON.stringify(wireSettings.simple.routes[ek]);
+      /* drag PPT B's tile: its cable's end follows while it moves, the shape is kept */
+      const t = _lbGrab('src:PPT B'), [tx, ty] = _lbPt(t); _lbMouse(t, 'mousedown', tx, ty); for (let k = 1; k <= 5; k++) { _lbMouse(window, 'mousemove', tx - 8 * k, ty + 6 * k); await wait(20); }
+      const live = _lbEdge(ek), q = live.getPointAtLength(0), g = $(':scope > rect', _lbTile('src:PPT B'));
+      out.follow = Math.abs(q.x - (+g.getAttribute('x') + 260)) < 1;
+      _lbMouse(window, 'mouseup', tx - 40, ty + 30); await wait(450);
+      out.kept = [JSON.stringify(wireSettings.simple.routes[ek]) === route0, !!wireLayout['src:PPT B']];
+      /* a double-click on a handle resets the shape */
+      if (_wireState.selectedEdgeKey !== ek){ const e2 = _lbEdge(ek), p = e2.getPointAtLength(e2.getTotalLength() / 2), m = e2.getScreenCTM(); _lbMouse(e2, 'mousedown', p.x * m.a + m.e, p.y * m.d + m.f); await wait(300); }   /* a click on a selected cable lets it go, as in Advanced */
+      const h2 = $$('#wire-diagram .wire-seg-handle').find(h => h.getAttribute('data-edge-key') === ek);
+      if (h2) { h2.dispatchEvent(new MouseEvent('dblclick', { bubbles: true, cancelable: true })); await wait(350); }
+      out.reset = !(wireSettings.simple.routes && wireSettings.simple.routes[ek]);
+      /* a double-click on a cable deletes it */
+      out.dbl = await _cMStep(async () => { const e = _lbEdge('simple:src:CAM 1→hin:2'), p = e.getPointAtLength(e.getTotalLength() / 2), m = e.getScreenCTM(), X = p.x * m.a + m.e, Y = p.y * m.d + m.f; _lbMouse(e, 'mousedown', X, Y); await wait(60); const e2 = _lbEdge('simple:src:CAM 1→hin:2'); if (e2) _lbMouse(e2, 'mousedown', X, Y); await wait(400); return [_lbRows()[0][2], _lbRows()[2]]; });
+    } finally { try { closeWireMode(); } catch (e) {} await restore(); }
+    const L = screens[0].id, C = screens[1].id, R = screens[2].id;
+    return is(out, { swapRow: [['src:LOGO', 'src:PPT B', 'src:CAM 1', 'src:CAM 2', 'src:PPT A'], 1, true], swapTile: [['dst:' + R, 'dst:' + C, 'dst:' + L], 1, true],
+      look: [[true, true, _wireCableSpec('HDMI 2.0').dash || ''], [true, true, _wireCableSpec('12G-SDI').dash || ''], true], handles: [true, true], shape: [true, 1, true], follow: true, kept: [true, true], reset: true, dbl: [['', ['src:CAM 1']], 1, true] },
+      'row 1 dropped on row 5 [input rows 1-5] steps, Save / LEFT LED\'s point dropped on RIGHT LED [output rows 1-3] steps, Save / the cable wears its type [(PPT A: HDMI colour, arrow), (LEFT LED: 12G-SDI colour, arrow)] / PPT B\'s cable selected [selected, handles] / a handle dragged [a shape stored] steps, Save / its end follows the dragged tile / after the drag [the shape kept, the tile\'s place stored] / a double-click on a handle resets it / a double-click on CAM 1\'s cable [input row 3, free points] steps, Save');
+  });
+  // 16lb-simple S5: NEW
+  await check('Wire 16lb-simple (6): a tile is taken off Wire SIMPLE only (Omar: "REMOVE from Simple"): CAM 1 selected and Delete, PPT B by the × on its corner (shown on hover): each tile goes with its cable and its router row is freed, in one undo step with Save lit; the item stays in the show, in the I/O Patch and in the side panel (its card, to drag back); two tiles selected go together; Undo brings each back, cabled as it was', async () => {
+    const out = {};
+    try {
+      await _lbOpen();
+      out.del = await _cMStep(async () => { await _lbClick(_lbGrab('src:CAM 1')); const sel = [..._wireState.selectedNodes]; _cMDel(); await wait(400); return [sel, !!_lbTile('src:CAM 1'), !!_lbEdge('simple:src:CAM 1→hin:2'), _lbRows()[0][2], _lbRows()[3]]; });
+      out.x = await _cMStep(async () => { const x = _lbX('src:PPT B'); if (!x) return 'no ×'; const op0 = getComputedStyle(x).opacity; _lbSel(['src:PPT B']); const x2 = _lbX('src:PPT B'); const op1 = getComputedStyle(x2).opacity; await _lbClick(x2); x2.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true })); await wait(400); return [op0, op1, !!_lbTile('src:PPT B'), _lbRows()[0][1], _lbRows()[3]]; });
+      out.kept = [_wireBuildAllSourceNames().includes('CAM 1') && _wireBuildAllSourceNames().includes('PPT B'), !!_cMWcard('CAM 1') && !!_cMWcard('PPT B'), (sources.find(s => s.name === 'CAM 1') || {}).connectorType];
+      out.two = await _cMStep(async () => { _lbSel(['dst:' + screens[2].id, 'dsm:' + dsms[0].id]); _cMDel(); await wait(400); return [_lbTiles().length, _lbRows()[3].length]; });
+      doUndo(); await wait(300); out.undo1 = [_lbTiles().length, _lbRows()[3].length];
+      doUndo(); await wait(300); out.undo2 = [!!_lbTile('src:PPT B'), _lbRows()[0][1]];
+      doUndo(); await wait(300); out.undo3 = [!!_lbTile('src:CAM 1'), _lbRows()[0][2], wireSettings.simple === undefined];
+    } finally { try { closeWireMode(); } catch (e) {} await restore(); }
+    const n = _wireBuildAllSourceNames().length + _bdNoBd(screens).length + dsms.length;
+    return is(out, { del: [[['src:CAM 1'], false, false, '', ['src:CAM 1']], 1, true], x: [['0', '1', false, '', ['src:CAM 1', 'src:PPT B']], 1, true], kept: [true, true, '12G-SDI'],
+      two: [[n - 4, 4], 1, true], undo1: [n - 2, 2], undo2: [true, 'src:PPT B'], undo3: [true, 'src:CAM 1', true] },
+      'CAM 1 clicked + Delete [selected, tile, cable, input row 3, off the drawing] steps, Save / PPT B\'s × [its opacity at rest, when selected, tile, input row 2, off] steps, Save / kept [in the show, cards in the side panel, its cable type] / RIGHT LED + DSM 1 selected, Delete [tiles, off] steps, Save / Undo [tiles, off] / Undo [PPT B, input row 2] / Undo [CAM 1, input row 3, nothing of the edits left]');
+  });
+  // 16lb-simple S6: NEW
+  await check('Wire 16lb-simple (7): an item added to the show later appears on Wire SIMPLE cabled to the router\'s next free row (Omar: "Add it and cable it to the router"), unless it was taken off Simple ("an item you removed from Simple stays removed"): with DSM 1 taken off, a destination added in the Video Presets takes DSM 1\'s free output row, an AUX added takes a new last row, a source added in the I/O Patch a new last input row; DSM 1 stays off; the destination deleted from the show takes its tile and cable (its row is free again); an I/O-only destination never appears', async () => {
+    const out = {};
+    try {
+      await _lbOpen();
+      const A1 = 'dsm:' + dsms[0].id; _lbSel([A1]); _cMDel(); await wait(400);
+      closeWireMode(); await wait(200);
+      actions.addDestination(); await wait(300); $('#ms-n').value = 'NEW LED'; confirmScreen(); await wait(400); okDialogs();
+      const nd = screens[screens.length - 1];
+      actions.addDSM(); await wait(300); okDialogs(); const na = dsms[dsms.length - 1];
+      _sysAddSource(); await wait(300); okDialogs(); const ns = (sources[sources.length - 1] || {}).name;
+      await _cMWire('simple'); _wireZoomFit(); await wait(400);
+      out.added = [_lbRows()[1], _lbRows()[0].slice(-1)[0] === 'src:' + ns, !!_lbTile('dst:' + nd.id), !!_lbEdge('simple:hout:3→dst:' + nd.id), _lbRows()[3]];
+      deleteScreen(nd.id); await wait(350); okDialogs(); _wireRender(); await wait(300);
+      out.deleted = [!!_lbTile('dst:' + nd.id), _lbRows()[1].includes('dst:' + nd.id), $$('#wire-diagram path.wire-edge').some(p => (p.getAttribute('data-to') || '') === 'dst:' + nd.id)];
+      ioDests.push({ id: 'lbio1', name: 'IO ONLY', w: 1920, h: 1080, connectorType: '', notes: '' }); _wireRender(); await wait(300);
+      out.ioOnly = [_lbTiles().some(i => /lbio1/.test(i)), _lbRows()[1].some(k => /lbio1/.test(k))];
+    } finally { try { closeWireMode(); } catch (e) {} await restore(); }
+    const D = _bdNoBd(screens).map(s => 'dst:' + s.id), o = (out.added || [])[0] || [];
+    const rows = [o.length, o.slice(0, 3).join('|') === D.join('|'), /^dst:/.test(o[3] || '') && D.indexOf(o[3]) < 0, o[4] === 'dsm:' + dsms[1].id, /^dsm:/.test(o[5] || '') && o[5] !== 'dsm:' + dsms[0].id && o[5] !== 'dsm:' + dsms[1].id];
+    return is([rows, (out.added || []).slice(1), out.deleted, out.ioOnly], [[6, true, true, true, true], [true, true, true, ['dsm:' + dsms[0].id]], [false, false, false], [false, false]],
+      'added [output rows, the three destinations first, NEW LED on DSM 1\'s free row 4, AUX 1 on row 5, the new AUX on a new row 6] / [the new source on a new last input row, NEW LED\'s tile, its cable from output 4, off: DSM 1 stays off] / NEW LED deleted from the show [tile, a router row, a cable to it] / an I/O-only destination [a tile, a row]');
+  });
+  // 16lb-simple S7: NEW
+  await check('Wire 16lb-simple (8): every Wire export and the Look Book print the EDITED Simple drawing (Omar: "everything that reads Simple follows"): with CAM 2 taken off, PPT A and LOGO swapped and an ID typed on input 3 (one undo step, the cell keeps it), the Simple sheet (the one the PDF, PNG and SVG exports draw) and the Look Book\'s Simple Wire page print the router titled Generic Router on a light title bar, its rows as cabled (LOGO, PPT B, CAM 1, a free row, PPT A …), the typed ID, every tile but CAM 2, one cable per tile, and none of the drawing\'s handles (×, points, pencils, row targets, typing boxes)', async () => {
+    const out = {};
+    try {
+      await _lbOpen();
+      _lbSel(['src:CAM 2']); _cMDel(); await wait(400);
+      await _lbDrag(_lbRow('in', 0), _lbRow('in', 4));
+      out.typed = await _cMStep(async () => { const c = $$('#wire-diagram input.slb-pt').find(i => i.dataset.slbSide === 'in' && i.dataset.slbRow === '2'); if (!c) return 'no ID cell'; c.focus(); c.value = 'SLOT 9'; fire(c, 'change'); await wait(350); const c2 = $$('#wire-diagram input.slb-pt').find(i => i.dataset.slbSide === 'in' && i.dataset.slbRow === '2'); return c2 ? c2.value : 'gone'; });
+      const read = root => { const t = $('.wire-router-tile', root); return t ? [(($('.wire-router-title', t) || {}).textContent || '').trim(), $$('span[data-slb-row^="in:"]', t).map(e => e.textContent).slice(0, 5), (($$('.slb-pt', t).find(e => e.dataset.slbSide === 'in' && e.dataset.slbRow === '2') || {}).textContent || ''),
+        $$('.wire-adv-tile .wire-source-name', root).map(e => e.textContent.trim()).includes('CAM 2'), $$('.wire-adv-tile', root).length, $$('path.slb-edge', root).length, $$('.slb-x, .slb-rport, circle.slb-dot, .wire-src-pen, .wire-seg-handle, .wire-end-dot, .wire-edge-hit, input', root).length] : 'no router'; };
+      const sheetTxt = _wireExportSheetList('light')[0], sheet = new DOMParser().parseFromString('<!DOCTYPE html><body>' + sheetTxt.replace(/^<\?xml[^>]*>/, '') + '</body>', 'text/html');
+      out.sheet = read(sheet.body);
+      out.lightBar = /\.wire-router-title,[^{]*\{background:#e2e8f0/.test(sheetTxt);
+      const html = await _laBook('simple'); const doc = new DOMParser().parseFromString(html, 'text/html'); const w = $('#pdf-wire', doc);
+      out.book = w ? read(w) : 'no Wire page';
+      out.note = w ? (($('.ph-notes', w) || {}).textContent || '') : '';
+    } finally { try { closeWireMode(); } catch (e) {} await restore(); }
+    const n = _wireBuildAllSourceNames().length + _bdNoBd(screens).length + dsms.length - 1;
+    const want = ['Generic Router', ['LOGO', 'PPT B', 'CAM 1', '—', 'PPT A'], 'SLOT 9', false, n, n, 0];
+    return is(out, { typed: ['SLOT 9', 1, true], sheet: want, lightBar: true, book: want, note: 'The Simple drawing: sources, the router, destinations and AUX as cabled in Wire' },
+      'the ID typed [the cell] steps, Save / the Simple sheet [router title, input rows 1-5, input 3\'s ID, CAM 2 printed, tiles, cables, handles printed] / its light title bar / the Look Book\'s Simple Wire page [the same] / its note');
+  });
+  // 16lb-simple S8: NEW
+  await check('Wire 16lb-simple (8): Advanced page 1 "opens as this show: the Simple drawing" and "Simple changed since Page 1 was built" asks exactly when Simple really changed: a Simple left as it opened builds page 1 with the same 3-part note as every page 1 before it; an edited Simple (CAM 2 off, PPT A and LOGO swapped, an ID typed, a tile moved) builds page 1 as a copy of it: every tile at its Simple place, the router at its place titled GENERIC ROUTER (Advanced\'s capitals, as SWITCHER I/O before), its input rows LOGO, PPT B, CAM 1, a free row, PPT A … with the typed ID, one cable per Simple cable, no CAM 2; back on Simple, looking, a switch of view and a tile moved ask nothing; a cable deleted asks once (Keep my page keeps page 1); Undo of that delete asks nothing', async () => {
+    const out = {}, asked = []; const real = window.showConfirm;
+    try {
+      await _lbOpen(); await _cMWire('advanced'); okDialogs(); await wait(500);
+      out.plain = [(JSON.parse((wireAdvanced._pages[0] || {}).seed || '[]')).length, wireAdvanced.routers.length && wireAdvanced.routers[0].title];
+      await _lbOpen();
+      _lbSel(['src:CAM 2']); _cMDel(); await wait(400); await _lbDrag(_lbRow('in', 0), _lbRow('in', 4));
+      { const c = $$('#wire-diagram input.slb-pt').find(i => i.dataset.slbSide === 'in' && i.dataset.slbRow === '2'); c.value = 'SLOT 9'; fire(c, 'change'); await wait(300); }
+      { const t = _lbGrab('src:NOTES'), [x, y] = _lbPt(t); await _lbDrag(t, [x - 30, y + 20]); }
+      const g = _slbGeo(_slbState());
+      window.showConfirm = function (o) { asked.push((o && o.title) || ''); return real.apply(this, arguments); };
+      await _cMWire('advanced'); okDialogs(); await wait(700); okDialogs();
+      const r = wireAdvanced.routers[0] || {}; const nm = {}; (wireAdvanced.sources || []).forEach(s => nm['asrc:' + s.id] = s.name);
+      out.page1 = { router: [r.title, r.x === g.hub.x && r.y === g.hub.y, (r.inputs || []).slice(0, 5).map(c => c.name), (r.inputs || [])[2] && r.inputs[2].pt],
+        places: (wireAdvanced.sources || []).every(s => g.tiles['src:' + s.name] && g.tiles['src:' + s.name].x === s.x && g.tiles['src:' + s.name].y === s.y) && (wireAdvanced.dests || []).every(d => g.tiles['dst:' + d.refId] && g.tiles['dst:' + d.refId].x === d.x),
+        tiles: [(wireAdvanced.sources || []).map(s => s.name).includes('CAM 2'), (wireAdvanced.sources || []).length, (wireAdvanced.dests || []).length, (wireAdvanced.dsms || []).length], wires: (wireAdvanced.wires || []).length,
+        seed: (JSON.parse((wireAdvanced._pages[0] || {}).seed || '[]')).length };
+      const ask0 = asked.length;
+      await _cMWire('simple'); _wireSwitchToAdvanced(); await wait(900); out.view = asked.length - ask0; if (dlgOpen()) { $('#dlg-cancel').click(); await wait(300); }
+      await _cMWire('simple'); _wireZoomFit(); await wait(400); { const t = _lbGrab('src:PPT B'), [x, y] = _lbPt(t); await _lbDrag(t, [x - 20, y + 10]); }
+      _wireSwitchToAdvanced(); await wait(900); out.moved = asked.length - ask0; if (dlgOpen()) { $('#dlg-cancel').click(); await wait(300); }
+      await _cMWire('simple'); _wireZoomFit(); await wait(400); _wireState.selectedNodes.clear(); _wireState.selectedEdgeKey = 'simple:src:PPT B→hin:1'; _cMDel(); await wait(400);
+      _wireSwitchToAdvanced(); await wait(900); out.cable = asked.slice(ask0); if (dlgOpen()) { $('#dlg-cancel').click(); await wait(300); }   /* Keep my page (the helper that opens Advanced would confirm it) */
+      out.kept = (wireAdvanced.wires || []).length;
+      await _cMWire('simple'); doUndo(); await wait(300); const ask1 = asked.length;
+      _wireSwitchToAdvanced(); await wait(900); out.undo = asked.length - ask1; if (dlgOpen()) { $('#dlg-cancel').click(); await wait(300); }
+    } finally { window.showConfirm = real; try { closeWireMode(); } catch (e) {} await restore(); }
+    const S = _wireBuildAllSourceNames().length;
+    return is(out, { plain: [3, 'GENERIC ROUTER'], page1: { router: ['GENERIC ROUTER', true, ['LOGO', 'PPT B', 'CAM 1', '', 'PPT A'], 'SLOT 9'], places: true, tiles: [false, S - 1, 3, 2], wires: S - 1 + 5, seed: 4 }, view: 0, moved: 0, cable: ['Simple changed since Page 1 was built'], kept: S - 1 + 5, undo: 0 },
+      'an untouched Simple [page 1\'s note parts, its router title] / page 1 of the edited Simple [router (title, at the Simple place, input rows 1-5, input 3\'s ID), every tile at its Simple place, tiles (CAM 2, sources, destinations, AUX), cables, note parts] / questions after a view switch / after a tile moved / after a cable deleted / page 1\'s cables after Keep my page / questions after Undo');
+  });
+  // 16lb-simple S9: NEW
+  await check('Wire 16lb-simple (8): undo / redo and save / reopen keep the edited Simple drawing: four edits (a tile off, a cable deleted, two rows swapped, an ID typed) undo one step at a time back to the show as it opened (nothing of the drawing stored) and redo forward; the show saved and opened again draws the same drawing (tiles, rows, free points, the ID, the places) with no Save lit', async () => {
+    const out = {};
+    try {
+      await _lbOpen();
+      const snaps = [JSON.stringify(_lbRows())];
+      _lbSel(['src:CAM 2']); _cMDel(); await wait(400); snaps.push(JSON.stringify(_lbRows()));
+      _wireState.selectedNodes.clear(); _wireState.selectedEdgeKey = 'simple:src:PPT B→hin:1'; _cMDel(); await wait(400); snaps.push(JSON.stringify(_lbRows()));
+      await _lbDrag(_lbRow('in', 0), _lbRow('in', 4)); snaps.push(JSON.stringify(_lbRows()));
+      _slbSetPt('out', 0, 'OUT A'); await wait(300); snaps.push(JSON.stringify(_lbRows()) + (wireSettings.simple.pt ? JSON.stringify(wireSettings.simple.pt) : ''));
+      const u = []; for (let i = 3; i >= 0; i--) { doUndo(); await wait(250); u.push(JSON.stringify(_lbRows()) === snaps[i]); }
+      out.undo = [u, wireSettings.simple === undefined];
+      const r = []; for (let i = 1; i <= 4; i++) { doRedo(); await wait(250); r.push((JSON.stringify(_lbRows()) + (i === 4 && wireSettings.simple.pt ? JSON.stringify(wireSettings.simple.pt) : '')) === snaps[i]); }
+      out.redo = r;
+      const g0 = JSON.stringify(_slbGeo(_slbState())), rows0 = JSON.stringify(_lbRows()), txt = JSON.stringify(getProjectState());
+      _applyProjectText(BASE); await wait(600); okDialogs();
+      _applyProjectText(txt); await wait(700); okDialogs(); await _cMWire('simple'); await wait(300);
+      out.reopen = [JSON.stringify(_lbRows()) === rows0, JSON.stringify(_slbGeo(_slbState())) === g0, (($$('#wire-diagram input.slb-pt').find(i => i.dataset.slbSide === 'out' && i.dataset.slbRow === '0') || {}).value || ''), _lbDirty()];
+    } finally { try { closeWireMode(); } catch (e) {} await restore(); }
+    return is(out, { undo: [[true, true, true, true], true], redo: [true, true, true, true], reopen: [true, true, 'OUT A', [false, false]] }, 'Undo x4 [each step back, nothing stored at the end] / Redo x4 / reopened [rows, places, output 1\'s ID, (unsaved, Save lit)]');
+  });
+  // 16lb-simple S10: NEW
+  await check('Wire 16lb-simple (8): Details follows the Simple drawing: the Lanes key counts the tiles ON the drawing, the Cable Colour Code lists the cables drawn (a tile taken off or with its cable deleted leaves its type\'s count), a selected tile says which router row it is cabled to (or that it has a free point) and how to take it off, the selected router says its rows follow the cables', async () => {
+    const out = {};
+    try {
+      await _lbOpen();
+      const lanes = () => $$('#wire-details .wire-lane-row').map(r => [((r.querySelector('span:nth-child(2)') || {}).textContent || '').trim(), ((r.querySelector('.wire-lane-count') || {}).textContent || '').trim()]);
+      const key = t => { const row = _wireCableTypesInUse().find(x => x.spec && x.spec.type === t); return row ? row.sources.slice().sort() : []; };
+      out.before = [lanes(), key('12G-SDI').includes('CAM 2'), key('HDMI 2.0').includes('DSM 1')];
+      _lbSel(['dsm:' + dsms[0].id]); _cMDel(); await wait(400);
+      _wireState.selectedNodes.clear(); _wireState.selectedEdgeKey = 'simple:src:CAM 2→hin:3'; _cMDel(); await wait(400); _wireRender(); await wait(200);
+      out.after = [lanes(), key('12G-SDI').includes('CAM 2'), key('HDMI 2.0').includes('DSM 1')];
+      _lbSel(['src:CAM 1']); await wait(200); out.cabled = /Cabled to the router, input 3\./.test($('#wire-details').textContent) && /Press Delete \(or the × on the tile\) to take it off the Simple drawing/.test($('#wire-details').textContent);
+      _lbSel(['src:CAM 2']); await wait(200); out.free = /No cable: drag from its dot to the router\./.test($('#wire-details').textContent);
+      _lbSel(['hub']); await wait(200); out.router = /Generic Router/.test($('#wire-details').textContent) && /Its rows follow the cables/.test($('#wire-details').textContent);
+    } finally { try { closeWireMode(); } catch (e) {} await restore(); }
+    const S = String(_wireBuildAllSourceNames().length);
+    return is(out, { before: [[['Sources', S], ['Destinations', '3'], ['AUX / DSM', '2']], true, true], after: [[['Sources', S], ['Destinations', '3'], ['AUX / DSM', '1']], false, false], cabled: true, free: true, router: true },
+      'before [lanes, CAM 2 in the 12G-SDI key, DSM 1 in the HDMI key] / after DSM 1 off and CAM 2\'s cable deleted [the same] / Details of CAM 1 / of CAM 2 (a free point) / of the router');
+  });
+  // 16lb-simple S11: NEW
+  await check('Wire 16lb-simple: a source renamed from its card keeps what Simple knows of it: its router row (LOGO swapped onto row 1 stays on row 1 as LOGO 2), its taken-off state (CAM 2 off stays off as CAM X) and its cable\'s shape; the router\'s cell reads the new name', async () => {
+    const out = {};
+    try {
+      await _lbOpen();
+      _lbSel(['src:CAM 2']); _cMDel(); await wait(400);
+      await _lbDrag(_lbRow('in', 0), _lbRow('in', 4));
+      _wireSetEdgeRoute('simple:src:LOGO→hin:0', [400, 500, 440]); _wireRender(); await wait(200);
+      const ren = async (old, nn) => { const pen = $$('#wire-sources-panel .wire-src-pen').find(b => b.closest('.wire-source-name').textContent.trim() === old); if (!pen) return 'no pencil on ' + old; pen.click(); await wait(200); const inp = $('#wire-sources-panel .wire-src-rename'); inp.value = nn; inp.dispatchEvent(new Event('blur')); await wait(500); return true; };
+      out.r1 = await ren('LOGO', 'LOGO 2'); out.r2 = await ren('CAM 2', 'CAM X');
+      out.after = [_lbRows()[0][0], _lbRows()[3], !!(wireSettings.simple.routes && wireSettings.simple.routes['simple:src:LOGO 2→hin:0']), _lbCells()[2][0], !!_lbTile('src:CAM X')];
+    } finally { try { closeWireMode(); } catch (e) {} await restore(); }
+    return is(out, { r1: true, r2: true, after: ['src:LOGO 2', ['src:CAM X'], true, 'LOGO 2', false] }, 'renamed [LOGO, CAM 2] / after [input row 1, off, LOGO 2\'s cable shape, the router cell, CAM X drawn]');
+  });
+  // 16lb-simple S12: NEW
+  await check('Help 16lb-simple: the in-app Help says what Wire Simple is now: Wire › What it is (the router in the middle, tiles like their cards), › Simple vs Advanced (drag any card on, cable, move an end, delete, take a tile off, one cable per tile and row, new items arrive cabled, page 1 a copy of the Simple drawing), › Multiviewers (cabled to the router\'s next free output row), the router called Generic Router until named, and the connection rule (a cable runs from an output to an input; a same-kind drop does not attach and a warning says so); the old "auto-draws every path", "the switcher in the middle" and "one more output named after it" are gone', async () => {
+    const h = await _fxHelp();
+    return is([/sources on the left, the router in the middle, destinations and AUX on the right, each a tile like its card/.test(h), /starts as the whole show and is yours to edit/.test(h), /One cable per tile and per router row/.test(h), /arrives cabled, unless you took it off Simple/.test(h),
+      /a copy of the Simple drawing under the show name/.test(h), /In Simple it arrives cabled to the router’s next free output row/.test(h), /The router is called Generic Router until you type a name in its title/.test(h),
+      /In Simple and Advanced alike a cable runs from an output to an input: let go on a point of the same kind \(an output on an output, an input on an input\) it does not attach, and a warning by the pointer says so for a few seconds/.test(h), /auto-draws every path in the show/.test(h), /the switcher in the middle/.test(h), /one more output named after it/.test(h)],
+      [true, true, true, true, true, true, true, true, false, false, false], 'What it is / Simple vs Advanced [edit, one cable, new items, page 1] / Multiviewers / the router\'s name / the connection rule / old words [auto-draws, switcher in the middle, one more output]');
+  });
+  // 16lb-simple S13: NEW
+  await check('Page 16lb-simple: the old Simple drawing\'s code is gone, not left dead: the switcher\'s geometry, row table and live / printed tiles (_wireHubGeom, _wireHubRouter, _wireHubLiveSVG, _wireHubTileSVG), the plain-SVG Simple export, 16la\'s _cmSimpleMvDelete and _cmMvSimplePic and 16la-fix\'s _fxSimpleName (only the old 220 x 36 node used them)', async () => {
+    const src = await (await fetch(location.href.split('#')[0], { cache: 'no-store' })).text();
+    return is([typeof window._wireHubGeom, typeof window._wireHubRouter, typeof window._wireHubLiveSVG, typeof window._wireHubTileSVG, typeof window._cmSimpleMvDelete, typeof window._cmMvSimplePic, typeof window._fxSimpleName,
+      ['parts.push(_wireHubTileSVG(', 'const hubGeom0 = _wireHubGeom(', "_fxSimpleName(p, !!expThumb)", '_cmSimpleMvDelete()'].filter(s => src.indexOf(s) >= 0), typeof window._slbRenderDiagram],
+      ['undefined', 'undefined', 'undefined', 'undefined', 'undefined', 'undefined', 'undefined', [], 'function'], 'the old functions / their calls still in the page / the new drawing');
+  });
+  // 16lb-simple S14: NEW
+  await check('Wire 16lb-simple (2): the router\'s ID cell and its name commit when the user clicks elsewhere on the drawing (the click starts a box-select, which redraws): the typed ID "RACK 4" and the name "E2" are kept and shown, one undo step each, and nothing throws (the redraw does not run inside the box\'s own blur); the name cleared the same way reads Generic Router again', async () => {
+    const out = {}; let thrown = null; const onErr = e => { thrown = String((e && e.message) || e); };
+    window.addEventListener('error', onErr);
+    try {
+      await _lbOpen();
+      const bg = () => { const [x, y] = _lbOpenCanvas() || [0, 0]; const svg = _lbSvg(); _lbMouse(svg, 'mousedown', x, y); _lbMouse(window, 'mouseup', x, y); };
+      const cell = () => $$('#wire-diagram input.slb-pt').find(e => e.dataset.slbSide === 'in' && e.dataset.slbRow === '1');
+      out.id = await _cMStep(async () => { const c = cell(); if (!c) return 'no ID cell'; c.focus(); c.value = 'RACK 4'; bg(); await wait(400); const c2 = cell(); return [JSON.stringify(((wireSettings.simple || {}).pt || {}).in || null), c2 ? c2.value : 'gone']; });
+      const name = () => $('#wire-diagram .wire-hub-name');
+      out.name = await _cMStep(async () => { const n = name(); n.focus(); n.value = 'E2'; bg(); await wait(400); return [_wireHubName(), name().value]; });
+      { const n = name(); n.focus(); n.value = ''; bg(); await wait(400); out.cleared = [_wireHubName(), name().value]; }
+      out.thrown = thrown;
+    } finally { window.removeEventListener('error', onErr); try { closeWireMode(); } catch (e) {} await restore(); }
+    return is(out, { id: [['{"1":"RACK 4"}', 'RACK 4'], 1, true], name: [['E2', 'E2'], 1, true], cleared: ['', 'Generic Router'], thrown: null }, 'the ID cell [stored, shown] steps, Save / the name [stored, shown] steps, Save / the name cleared [stored, shown] / an error thrown');
+  });
+  // 16lb-simple S15: NEW
+  await check('Wire 16lb-simple (9): THE CONNECTION RULE in Wire SIMPLE (Omar 2026-09-30: "make a rule output can only connect to input and input can only connect to outputs. when a user try to connect any input to an input or and output to an output the cable should not attach ... a simple warning flash for a few sec and disappears"): a cable end let go on a point of the SAME kind as the point it comes from does not attach and nothing changes (no undo step, no Save light, the rows as they were), and a warning flashes by the pointer naming both points as the drawing shows them: PPT A\'s router end on OUT 3 ("PPT A OUT can not connect to OUT 3"), CAM 2\'s free point on OUT 4 and on PPT A\'s card, LEFT LED\'s plugged point on PPT A\'s card ("OUT 1 can not connect to PPT A OUT"), OUT 1\'s router end on IN 3 ("LEFT LED IN can not connect to IN 3"), the free input row 4 on IN 5 and on LEFT LED\'s card; the warning is a polite live region that never takes the pointer, reads at 4.5:1 or better, and is gone about 3 seconds later; a drop of the right kind still cables (CAM 2 onto its free row: one step, Save lit, no warning)', async () => {
+    const out = {};
+    try {
+      await _lbOpen();
+      const W = () => { const e = document.getElementById('wire-conn-warn'); if (!e) return null; const cs = getComputedStyle(e); return { text: (($('.wcr-tx', e) || e).textContent || '').trim(), on: cs.visibility === 'visible' && +cs.opacity > 0.5, pe: cs.pointerEvents, role: e.getAttribute('role'), live: e.getAttribute('aria-live'), fg: cs.color, bg: cs.backgroundColor, r: e.getBoundingClientRect() }; };
+      const book = () => JSON.stringify([_undoStack.length, _lbDirty(), JSON.stringify(wireSettings.simple || null), _lbRows()]);
+      const near = (r, p) => Math.hypot(Math.max(r.left - p[0], 0, p[0] - r.right), Math.max(r.top - p[1], 0, p[1] - r.bottom)) < 40;
+      const refused = async (from, to) => { if (!from || !to) return 'no point: ' + [!!from, !!to]; const b0 = book(), p = _lbPt(to); const r = await _lbDrag(from, to); if (r !== true) return r; const w = W(); return [w ? (w.on ? w.text : 'hidden') : 'no warning', book() === b0, w ? near(w.r, p) : false]; };
+      const L = screens[0].id;
+      out.a = await refused(_lbRow('in', 0), _lbRow('out', 2));
+      _wireState.selectedNodes.clear(); _wireState.selectedEdgeKey = 'simple:src:CAM 2→hin:3'; _cMDel(); await wait(400);
+      out.b1 = await refused(_lbDot('src:CAM 2'), _lbRow('out', 3));
+      out.b2 = await refused(_lbDot('src:CAM 2'), _lbGrab('src:PPT A'));
+      out.c = await refused(_lbDot('dst:' + L), _lbGrab('src:PPT A'));
+      out.d = await refused(_lbRow('out', 0), _lbRow('in', 2));
+      out.e1 = await refused(_lbRow('in', 3), _lbRow('in', 4));
+      out.e2 = await refused(_lbRow('in', 3), _lbGrab('dst:' + L));
+      const w = W();
+      const lum = c => { const m = /(\d+),\s*(\d+),\s*(\d+)/.exec(c || ''); const f = v => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }; return m ? 0.2126 * f(+m[1]) + 0.7152 * f(+m[2]) + 0.0722 * f(+m[3]) : 0; };
+      out.a11y = w ? [w.role, w.live, w.pe, (Math.max(lum(w.fg), lum(w.bg)) + 0.05) / (Math.min(lum(w.fg), lum(w.bg)) + 0.05) >= 4.5] : 'no warning';
+      await wait(3200); const w2 = W(); out.gone = w2 ? [w2.on, w2.text] : 'no warning';
+      out.ok = await _cMStep(async () => { await _lbDrag(_lbDot('src:CAM 2'), _lbRow('in', 3)); const w3 = W(); return [_lbRows()[0][3], w3 ? w3.on : false]; });
+    } finally { try { closeWireMode(); } catch (e) {} await restore(); }
+    return is(out, { a: ['PPT A OUT can not connect to OUT 3', true, true], b1: ['CAM 2 OUT can not connect to OUT 4', true, true], b2: ['CAM 2 OUT can not connect to PPT A OUT', true, true], c: ['OUT 1 can not connect to PPT A OUT', true, true],
+      d: ['LEFT LED IN can not connect to IN 3', true, true], e1: ['IN 4 can not connect to IN 5', true, true], e2: ['IN 4 can not connect to LEFT LED IN', true, true], a11y: ['status', 'polite', 'none', true], gone: [false, ''], ok: [['src:CAM 2', false], 1, true] },
+      'each refused drop [the warning shown, nothing changed (undo steps, Save, the drawing), the warning by the pointer]: a PPT A\'s router end on OUT 3 / b1 CAM 2\'s free point on OUT 4 / b2 on PPT A\'s card / c LEFT LED\'s plugged point on PPT A\'s card / d OUT 1\'s router end on IN 3 / e1 free IN 4 on IN 5 / e2 on LEFT LED\'s card / the warning [role, aria-live, pointer-events, contrast >= 4.5] / 3.2 s later [shown, text] / CAM 2 onto IN 4 [input row 4, a warning shown] steps, Save');
+  });
+  // 16lb-simple S16: NEW
+  await check('Wire 16lb-simple (9): THE CONNECTION RULE in Wire ADVANCED (Omar 2026-09-30: "output can only connect to input and input can only connect to outputs ... the cable should not attach"): on page 1, a cable drawn from PPT A\'s output and let go on the router\'s OUT 3 point (before: it fell through to the router\'s IN 3) or on PPT B\'s card, one drawn from OUT 1 onto OUT 4, CENTER LED\'s plugged input moved onto OUT 5, and LEFT LED\'s free input drawn onto CENTER LED\'s card (before: an input-to-input cable was made) or onto the router\'s IN 3 point (before: it was turned into OUT 3) do not attach: nothing changes (the cables, no undo step, no Save light) and the warning names both points ("PPT A OUT can not connect to OUT 3", "LEFT LED IN can not connect to CENTER LED IN", …); LEFT LED\'s input onto OUT 1 still cables it, with no warning', async () => {
+    const out = {};
+    try {
+      await _lbOpen(); await _cMWire('advanced'); okDialogs(); await wait(500); okDialogs(); _wireZoomFit(); await wait(450); _wireRender(); await wait(250);
+      const W = () => { const e = document.getElementById('wire-conn-warn'); if (!e) return null; const cs = getComputedStyle(e); return { text: (($('.wcr-tx', e) || e).textContent || '').trim(), on: cs.visibility === 'visible' && +cs.opacity > 0.5 }; };
+      const wires = () => JSON.stringify((wireAdvanced.wires || []).map(w => w.fromId + '>' + w.toId).sort());
+      const book = () => JSON.stringify([_undoStack.length, _lbDirty(), wires()]);
+      const dot = (id, r) => $$('#wire-diagram circle.wire-adv-connector').find(c => c.dataset.sourceId === id && (!r || c.getAttribute('r') === r)) || null;
+      const rin = id => $$('#wire-diagram circle.wire-adv-rport-in').find(c => c.dataset.rportId === id) || null;
+      const card = id => { const g = $$('#wire-diagram g.wire-adv-node').find(x => x.dataset.nodeId === id); return g ? $('.wire-adv-res-text', g) : null; };
+      const refused = async (from, to) => { if (!from || !to) return 'no point: ' + [!!from, !!to]; const b0 = book(); const r = await _lbDrag(from, to); if (r !== true) return r; const w = W(); return [w ? (w.on ? w.text : 'hidden') : 'no warning', book() === b0]; };
+      const R = (wireAdvanced.routers[0] || {}).id, S1 = (wireAdvanced.sources[0] || {}).id, S2 = (wireAdvanced.sources[1] || {}).id, D1 = (wireAdvanced.dests[0] || {}).id, D2 = (wireAdvanced.dests[1] || {}).id;
+      out.names = [(wireAdvanced.sources[0] || {}).name, (wireAdvanced.sources[1] || {}).name, [D1, D2].map(d => (_wireAdvGetDestTemplate((wireAdvanced.dests.find(x => x.id === d) || {}).refId) || {}).name)];
+      out.a = await refused(dot('asrc:' + S1), dot('rop:' + R + ':2'));
+      out.b = await refused(dot('asrc:' + S1), card('asrc:' + S2));
+      out.c = await refused(dot('rop:' + R + ':0'), dot('rop:' + R + ':3'));
+      out.d = await refused(dot('adst:' + D2, '12'), dot('rop:' + R + ':4'));
+      { const w = (wireAdvanced.wires || []).find(x => x.toId === 'adst:' + D1); _wireState.selectedNodes.clear(); _wireState.selectedEdgeKey = w ? 'adv:' + w.id : null; _cMDel(); await wait(400); }
+      out.free = !(wireAdvanced.wires || []).some(x => x.toId === 'adst:' + D1);
+      out.e = await refused(dot('adst:' + D1, '12'), card('adst:' + D2));
+      out.f = await refused(dot('adst:' + D1, '12'), rin('rip:' + R + ':2'));
+      await wait(3200);
+      out.ok = await _cMStep(async () => { const w0 = wires(); await _lbDrag(dot('adst:' + D1, '12'), dot('rop:' + R + ':0')); const w = W(); return [JSON.parse(wires()).filter(x => !JSON.parse(w0).includes(x)).map(x => x === 'rop:' + R + ':0>adst:' + D1), w ? w.on : false]; });
+    } finally { try { closeWireMode(); } catch (e) {} await restore(); }
+    return is(out, { names: ['PPT A', 'PPT B', ['LEFT LED', 'CENTER LED']], a: ['PPT A OUT can not connect to OUT 3', true], b: ['PPT A OUT can not connect to PPT B OUT', true], c: ['OUT 1 can not connect to OUT 4', true], d: ['OUT 2 can not connect to OUT 5', true],
+      free: true, e: ['LEFT LED IN can not connect to CENTER LED IN', true], f: ['LEFT LED IN can not connect to IN 3', true], ok: [[[true], false], 1, true] },
+      'page 1 [its first two sources, first two destinations] / each refused drop [the warning shown, nothing changed (cables, undo steps, Save)]: a PPT A onto OUT 3 / b onto PPT B\'s card / c OUT 1 onto OUT 4 / d CENTER LED\'s plugged input onto OUT 5 / LEFT LED\'s cable deleted / e its free input onto CENTER LED\'s card / f onto IN 3 / its input onto OUT 1 [the new cables (OUT 1 to LEFT LED), a warning shown] steps, Save');
+  });
+  // ── 16lc-fixes (2026-09-30): Omar's three items "for the next build": (1) every layer's tag at its layer's upper-RIGHT corner
+  //    (a full-screen layer's tag hid under its destination's name), (2) a backdrop's picture on the Display output, (3) Help ›
+  //    Keyboard: hovering a row never moves the list (the readout's height changed under the pointer: a flicker loop). Each check
+  //    FAILS on the 16la page (r16lb/base, sha1 269d1507) and PASSES on 16lc-fixes.
+  /* every drawn layer tag of a canvas: its gaps to its layer box in LAYOUT px (offsets, so a scaled Display stage reads the same), and
+     whether it overlaps its destination's own name tag (screen rectangles, the same space for both) */
+  const _lcTags = (root, doc) => [...(doc || document).querySelectorAll(root + ' .layer-chip')].map(c => { const w = (doc && doc.defaultView) || window; const t = c.querySelector(':scope > .screen-lbl'); if (!t || w.getComputedStyle(t).display === 'none' || !(t.offsetWidth > 0)) return null;
+    const gapR = c.clientWidth - (t.offsetLeft + t.offsetWidth), gapT = t.offsetTop, gapL = t.offsetLeft;
+    const a = t.getBoundingClientRect(), d = c.parentElement.querySelector(':scope > .screen-lbl'), e = d && w.getComputedStyle(d).display !== 'none' ? d.getBoundingClientRect() : null;
+    return { k: c.dataset.sid + ':' + c.dataset.lid, corner: Math.abs(gapR - 3) <= 1.5 && Math.abs(gapT - 3) <= 1.5, inside: gapR >= -0.5, narrow: t.offsetWidth < c.clientWidth - 7, gapL,
+      under: !!e && e.width > 0 && Math.min(a.right, e.right) > Math.max(a.left, e.left) + 0.5 && Math.min(a.bottom, e.bottom) > Math.max(a.top, e.top) + 0.5 }; }).filter(Boolean);
+  const _lcSum = l => [l.length > 0, l.filter(t => !(t.corner && t.inside)).map(t => t.k), l.filter(t => t.narrow && !(t.gapL > 3.5)).map(t => t.k), l.filter(t => t.under).map(t => t.k)];   /* tags drawn / not at the upper-right / narrow ones not clear of the left edge / under a destination name */
+  const _lcFakeOut = () => { const fr = document.createElement('iframe'); fr.style.cssText = 'position:fixed;left:-3000px;top:0;width:1280px;height:480px;border:0'; document.body.appendChild(fr); const fake = fr.contentWindow; try { Object.defineProperty(fake, 'closed', { get() { return !fr.isConnected; }, configurable: true }); } catch (e) {} fake.close = function () { fr.remove(); }; return { fr, fake }; };
+  const _lcOpenOut = async () => { const o = _lcFakeOut(); const real = window.open; window.open = function () { return o.fake; }; try { _dispOpen(); } finally { window.open = real; } await wait(900); return o; };
+  const _lcCloseOut = async o => { try { if (_dispIsOpen()) _dispClose(); } catch (e) {} await wait(200); if (o && o.fr.isConnected) o.fr.remove(); };
+  // 16lc-fixes N1: NEW
+  await check('Video Presets 16lc-fixes (1): every layer\'s tag sits at its layer\'s upper-RIGHT corner (Omar 2026-09-30: "LED RIGHT is the Destination, when a layer is full screen it hides behind the Destination name lets make all LAYERS on a layer go on the upper right side not upper left side"): on the Simple canvas, the Advanced canvas, the Display output and in the Look Book\'s preset pictures every "Layer N" tag is 3 px in from its layer box\'s right and top edges and inside the box, a PIP\'s tag is clear of its left edge, no full-screen layer\'s tag is under its destination\'s name (RIGHT LED, LEFT LED, CENTER LED on P03), the destination\'s own name stays upper-left, the preset cards still draw no tags, and the hover-only ↺ reset button, still in that corner, draws above the tag', async () => {
+    await restore(); const p = presets[2], R = screens.find(s => s.name === 'RIGHT LED'), L = screens.find(s => s.name === 'LEFT LED'); if (!p || !R || !L) return 'no P03 / RIGHT LED / LEFT LED';
+    const full = screens.map(s => { const z = getLayerSize(p.id, s.id, 1) || {}; return !!getL(p.id, s.id, 1) && z.wf === 1 && z.hf === 1; });
+    scheduleRender(); await wait(500); const row = '#canvas-area .preset-row[data-pid="' + p.id + '"]';
+    const simple = _lcSum(_lcTags(row));
+    const destName = $$(row + ' .screen-inner > .screen-lbl').filter(vis).map(d => { const a = d.getBoundingClientRect(), b = d.closest('.screen-inner').getBoundingClientRect(); return Math.round(a.left - b.left) + ',' + Math.round(a.top - b.top); });
+    setLayerSize(p.id, L.id, 1, 0.3, 0.3, 0.06, 0.55); scheduleRender(); await wait(500);   /* a PIP in LEFT LED's lower-left area (clear of the destination's name) */
+    const pip = _lcTags(row).find(t => t.k === L.id + ':1'); const pipOk = !!pip && pip.corner && pip.inside && pip.narrow && pip.gapL > 20;
+    openFullscreen(p.id); await wait(900);
+    const adv = _lcSum(_lcTags('#fs-canvas'));
+    const chip = $('#fs-canvas .layer-chip[data-sid="' + R.id + '"][data-lid="1"]'), tag = chip && $(':scope > .screen-lbl', chip), rst = chip && $(':scope > .lc-reset', chip);
+    const zs = tag && rst ? [+getComputedStyle(rst).zIndex > +getComputedStyle(tag).zIndex, getComputedStyle(rst).top, getComputedStyle(rst).right] : 'no tag / reset on RIGHT LED L1';
+    const cards = $$('.fs-pcard-clone .layer-chip > .screen-lbl').filter(vis).length;
+    const o = await _lcOpenOut(); const out = _lcSum(_lcTags('#disp-stage', o.fake.document)); await _lcCloseOut(o);
+    closeFullscreen(); await wait(400);
+    const html = await userLookBook(); const lbAll = (html.match(/>Layer \d+<\/div>/g) || []).length, lbRight = (html.match(/;left:auto;right:3px">Layer \d+<\/div>/g) || []).length;
+    await restore();
+    return is([full, simple, destName.every(x => x === '3,3'), pipOk, adv, zs, cards, out, lbAll > 0 && lbAll === lbRight],
+      [[true, true, true], [true, [], [], []], true, true, [true, [], [], []], [true, '3px', '3px'], 0, [true, [], [], []], true],
+      'P03\'s L1 full screen on the three destinations / Simple [tags, not upper-right, narrow not clear of the left, under a destination name] / destination names upper-left / a PIP\'s tag / Advanced [same] / ↺ above the tag, where it was / preset cards\' tags shown / Display [same] / Look Book: every tag upper-right');
+  });
+  // 16lc-fixes N2: NEW
+  await check('Video Presets 16lc-fixes (2): the Display output shows a backdrop exactly as the Advanced canvas draws it (Omar 2026-09-30: "when i output the video preset on advance the image i added to the Backdrop. should also show on the output screen"): with a picture added in its Destination Properties the output\'s backdrop box has the same picture (a JPEG in the show), the same BACKDROP name and feet size shown; it follows a preset change, a picture change (Replace) and Undo; with the picture removed it shows the same shaded box as the canvas; every other destination box stays see-through and every frame hidden', async () => {
+    await restore(); const C = screens.find(s => s.name === 'CENTER LED'); if (!C) return 'no CENTER LED';
+    const sid = C.id, fail = async (m, o) => { await _lcCloseOut(o); try { closeFullscreen(); } catch (e) {} await wait(300); await restore(); return m; };
+    _bdAskMake(sid); await wait(300); okDialogs(); await wait(500); if (!_bdIs(screens.find(s => s.id === sid))) return fail('CENTER LED did not become a backdrop');
+    const pic = async colour => { const cv = document.createElement('canvas'); cv.width = 320; cv.height = 90; const g = cv.getContext('2d'); g.fillStyle = colour; g.fillRect(0, 0, 320, 90); g.fillStyle = '#ffffff'; g.fillRect(30, 20, 70, 50);
+      const blob = await new Promise(r => cv.toBlob(r, 'image/png')); const f = new File([blob], 'pic.png', { type: 'image/png' });
+      await Promise.race([new Promise(res => _bdImgFromFile(f, url => { const s = screens.find(x => x.id === sid); if (!s || !_bdIs(s)) { res(); return; } const snap = _snapshot(); s.bdImg = url; pushUndoFrom(snap); scheduleRender(); res(); })), wait(4000)]); await wait(500); };   /* _bdPropsImg's own steps once the file is picked */
+    await pic('#d0306a'); const img1 = (screens.find(s => s.id === sid) || {}).bdImg || '';
+    openFullscreen(presets[1].id); await wait(900); const o = await _lcOpenOut();
+    const look = () => { const ed = $('#fs-canvas .screen-box[data-sid="' + sid + '"]'), od = o.fake.document.querySelector('#disp-stage .screen-box[data-sid="' + sid + '"]'); if (!ed || !od) return 'no backdrop box ' + (ed ? 'in the output' : 'in the editor');
+      const ec = getComputedStyle(ed), oc = o.fake.getComputedStyle(od); const lab = (e, w) => [...e.querySelectorAll('.screen-lbl,.screen-res')].map(x => (w.getComputedStyle(x).display !== 'none' ? '' : 'HIDDEN ') + x.textContent);
+      return [oc.backgroundImage === ec.backgroundImage, /^url\("?data:image\/jpeg/.test(oc.backgroundImage) ? 'picture' : oc.backgroundImage === 'none' ? 'none' : 'other', oc.backgroundColor === ec.backgroundColor, JSON.stringify(lab(od, o.fake)) === JSON.stringify(lab(ed, window)), oc.borderTopColor]; };
+    const url = () => { const od = o.fake.document.querySelector('#disp-stage .screen-box[data-sid="' + sid + '"]'); return od ? o.fake.getComputedStyle(od).backgroundImage : ''; };
+    const others = () => [...o.fake.document.querySelectorAll('#disp-stage .screen-box:not([data-sid="' + sid + '"])')].map(e => o.fake.getComputedStyle(e).backgroundColor + '|' + o.fake.getComputedStyle(e).backgroundImage).filter(v => v !== 'rgba(0, 0, 0, 0)|none').length;
+    const a = look(), u1 = url(), oth = others();
+    fsSwitchPreset(presets[2].id); await wait(900); const b = look();
+    await pic('#1e7be0'); const img2 = (screens.find(s => s.id === sid) || {}).bdImg || ''; await wait(400); const c = look(), u2 = url();
+    doUndo(); await wait(900); const d = look(), u3 = url(), back = ((screens.find(s => s.id === sid) || {}).bdImg || '') === img1;
+    _bdPropsImgClear(sid); await wait(900); const e = look();
+    await _lcCloseOut(o); closeFullscreen(); await wait(400); await restore();
+    const T = [true, 'picture', true, true, 'rgba(0, 0, 0, 0)'];
+    return is([!!img1 && !!img2 && img1 !== img2, a, oth, b, c, u2 !== u1, d, u3 === u1 && back, e],
+      [true, T, 0, T, T, true, T, true, [true, 'none', true, true, 'rgba(0, 0, 0, 0)']],
+      'two pictures stored / P02 opened [same picture as the canvas, a picture, same colour, same name + feet shown, frame hidden] / other boxes not see-through / P03 [same] / Replace [same] / the output\'s picture changed / Undo [same] / the first picture back / picture removed [same, no picture, the shade]');
+  });
+  // 16lc-fixes N3: NEW
+  await check('Help 16lc-fixes (3): Help › Keyboard stays still under the pointer (Omar 2026-09-30: "in keybaord there is a weird bug where when i hover over add a new preset the whole program glitches out"): a hover (mouseenter) on EVERY shortcut row, at the window\'s own width and in a narrow Help window, never changes the readout\'s height or moves the list (before, Escape\'s 4-line readout pushed the list 34 px down under the pointer and the row above\'s one-line readout pulled it back, about 35 times a second); the readout is one line holding the whole text (cut with … when long), "Ctrl / Cmd + Shift + N" still lights Ctrl or Cmd, Shift and N and reads Add a new preset, and leaving the row puts the keys out', async () => {
+    actions.help(); helpTab('kbd'); await wait(400); const panel = $('#hpanel-kbd'), box = panel && panel.parentElement, foot = $('#lb-kbviz .kbv-foot'), hint = $('#kbv-hint'); if (!panel || !foot || !hint) { closeHelp(); return 'no Keyboard tab'; }
+    const rows = $$('#hpanel-kbd .kbv-sc'); const was = box.style.width;
+    const sweep = () => { panel.scrollTop = 0; const f0 = Math.round(foot.getBoundingClientRect().height), t0 = Math.round(rows[0].getBoundingClientRect().top); const moved = [], tall = [], cut = [];
+      rows.forEach(r => { r.dispatchEvent(new MouseEvent('mouseenter')); const f = Math.round(foot.getBoundingClientRect().height), t = Math.round(rows[0].getBoundingClientRect().top); const nm = (r.children[0] || r).textContent.trim();
+        if (f !== f0 || t !== t0) moved.push(nm + ' (' + (t - t0) + ' px)'); if (hint.getBoundingClientRect().height > parseFloat(getComputedStyle(hint).lineHeight) * 1.5) tall.push(nm);
+        const d = (r.children[1] || r).textContent; if (!JSON.parse(r.dataset.kbv || '{}').mouse && hint.textContent.indexOf(d) < 0) cut.push(nm);
+        r.dispatchEvent(new MouseEvent('mouseleave')); }); return [rows.length > 40, moved.slice(0, 6), tall.slice(0, 6), cut.slice(0, 6)]; };
+    const wide = sweep(); box.style.width = '640px'; await wait(200); const narrow = sweep(); box.style.width = was; await wait(200);
+    const add = rows.find(r => /Shift \+ N$/.test((r.children[0] || r).textContent.trim())); add.dispatchEvent(new MouseEvent('mouseenter')); await wait(100);
+    const lit = $$('#kbv-board .kbv-key.on').map(k => k.dataset.k).filter((k, i, a) => a.indexOf(k) === i).sort().join('+'), said = /Add a new preset$/.test(hint.textContent), mod = _kbvLayout === 'mac' ? 'cmd' : 'ctrl';
+    add.dispatchEvent(new MouseEvent('mouseleave')); await wait(100); const off = $$('#kbv-board .kbv-key.on').length; closeHelp(); await wait(200);
+    return is([wide, narrow, lit, said, off], [[true, [], [], []], [true, [], [], []], [mod, 'n', 'shift'].sort().join('+'), true, 0],
+      'at the window\'s width [49 rows, rows whose hover moved the list, readouts taller than a line, readouts missing their row\'s text] / in a 640 px Help window [same] / Add a new preset lights / its readout / keys out after leaving');
+  });
+  // ── 16ld-port (W2, Omar 2026-09-30, his picture of Wire Simple: CAM 2's tile blue, its cable orange for 12G-SDI): "the port type
+  //    should stay the cable color even if the tile is a different color ... the title can stay blue but the port or selected port is
+  //    12G-SDI which is orange, so they tile can stay blue but the port should change to orange". On every Wire tile the picture /
+  //    colour tile, border and name keep the TILE's colour; the PORT (the cable-type chip and the connection dot(s)) wears the colour
+  //    of its CABLE TYPE (_wireCableSpec, the colour its cable line draws in); a port with no cable type keeps what it showed before.
+  //    Each check FAILS on the joined page before (W2) (16lb-simple + 16lc-fixes, r16ld/join/pages/step1_joined.html) and PASSES after.
+  //    Helpers prefixed _ld (never a name of the page's).
+  const _ldHex = c => { const s = String(c || '').trim().toLowerCase(); if (/^#[0-9a-f]{6}$/.test(s)) return s; if (/^#[0-9a-f]{8}$/.test(s)) return s.slice(0, 7); const m = /rgba?\((\d+),\s*(\d+),\s*(\d+)/.exec(s); return m ? '#' + [m[1], m[2], m[3]].map(x => (+x).toString(16).padStart(2, '0')).join('') : s; };
+  const _ldSpec = c => _ldHex(((c && _wireCableSpec(c)) || {}).color || '');
+  /* one tile of a drawing: its colour tile, its card's border and name, its chip [text, colour, outline, fill], its dot(s), its backup
+     input; live = what the screen shows (computed), else the printed file's own attributes (a parsed sheet has no layout) */
+  const _ldRead = (g, live) => {
+    if (!g) return 'no tile';
+    const tile = $('.wire-adv-tile', g), nm = $('.wire-source-name', g), chip = $('.wire-type-btn', g), th = $$('rect.wire-adv-thumb', g)[0];
+    const cs = e => live ? getComputedStyle(e) : e.style;
+    const dots = $$('circle', g).filter(c => c.getAttribute('r') === '7' && !c.closest('foreignObject') && !c.classList.contains('wire-adv-inport')).map(c => _ldHex(live ? getComputedStyle(c).fill : (c.style.fill || c.getAttribute('fill'))));
+    const bk = $$('circle.wire-adv-inport', g).map(c => _ldHex(c.getAttribute('stroke')));
+    return { thumb: th ? _ldHex(th.getAttribute('fill')) : '', border: tile ? _ldHex(cs(tile).borderTopColor) : '', name: nm ? _ldHex(cs(nm).color) : '',
+      chip: chip ? [chip.textContent.trim(), _ldHex(cs(chip).color), _ldHex(cs(chip).borderTopColor), _ldHex(cs(chip).backgroundColor)] : 'no chip', dots, bk };
+  };
+  /* the colours a tile should show: its own colour on the picture / border / name, its port in its cable type's colour (else as before) */
+  const _ldWant = (tileCol, text, port, dots, bk, thumb, card) => ({ thumb: thumb === undefined ? tileCol : thumb, border: card === undefined ? tileCol : card, name: card === undefined ? tileCol : card, chip: [text, port, port, port], dots, bk: bk || [] });
+  /* a hand-made destination / AUX tile draws its own card's colour on its picture only; its border and name are the lane's (CSS), as before */
+  const _ldMut = st => {   /* the show of these checks: CAM 2 blue with its 12G-SDI (Omar's picture); PROMPTER and RIGHT LED with no cable type; MV 1 on HDMI 2.0, dragged onto Simple */
+    const s = n => st.sources.find(x => x.name === n);
+    s('CAM 2').wireColor = '#5b9eff'; s('PROMPTER').connectorType = ''; s('PROMPTER').wireColor = '#e879f9'; s('PLAYBACK').wireColor = '#a4f9c8';
+    st.screens.find(x => x.name === 'RIGHT LED').connectorType = '';
+    st.multiviewers[0].connectorType = 'HDMI 2.0';
+    st.wireSettings = st.wireSettings || {}; st.wireSettings.mvSimple = [st.multiviewers[0].id];
+  };
+  const _ldCyan = () => _ldHex(getComputedStyle($('#wire-overlay')).getPropertyValue('--n-cyan'));
+  // 16ld-port P1: NEW
+  await check('Wire 16ld-port (W2): on Wire SIMPLE a tile\'s PORT wears its CABLE TYPE\'s colour and the tile keeps its own (Omar 2026-09-30, his picture of CAM 2: "the port type should stay the cable color even if the tile is a different color ... the title can stay blue but the port or selected port is 12G-SDI which is orange"): CAM 2 coloured blue with its 12G-SDI cable keeps its blue colour tile, border and name while its "12G-SDI" chip and its dot are the SDI orange its cable draws in, also while it is selected (its cable\'s end dots too); a destination (LEFT LED, 12G-SDI), an AUX / DSM (DSM 1, HDMI 2.0) and a multiviewer (MV 1 on HDMI 2.0) keep their tile colour and wear their cable type on the chip and the dot; a port with no cable type (PROMPTER\'s "Source", RIGHT LED\'s "Destination") keeps what it showed before', async () => {
+    const out = {}; let want = null;
+    try {
+      await _lbOpen(_ldMut);
+      const L = screens.find(x => x.name === 'LEFT LED'), R = screens.find(x => x.name === 'RIGHT LED'), D = dsms.find(x => x.name === 'DSM 1'), M = multiviewers[0];
+      const T = k => _ldRead(_lbTile(k), true);
+      const line = k => { const p = $$('#wire-diagram path.slb-edge').find(e => e.getAttribute('data-from') === k || e.getAttribute('data-to') === k); return p ? _ldHex(p.getAttribute('stroke')) : 'no cable'; };
+      const keys = { cam2: 'src:CAM 2', playback: 'src:PLAYBACK', prompter: 'src:PROMPTER', left: 'dst:' + L.id, right: 'dst:' + R.id, dsm: 'dsm:' + D.id, mv: 'mv:' + M.id };
+      Object.keys(keys).forEach(n => { out[n] = T(keys[n]); out[n].line = line(keys[n]); });
+      _lbSel(['src:CAM 2']); await wait(300);
+      out.selected = T('src:CAM 2'); out.ends = $$('#wire-diagram circle.wire-end-dot').map(c => _ldHex(c.getAttribute('stroke')));
+      const sdi = _ldSpec('12G-SDI'), hdmi = _ldSpec('HDMI 2.0'), cy = _ldCyan();
+      const dstCol = _ldHex(_cmTileColor('dest', L.id)), rCol = _ldHex(_cmTileColor('dest', R.id)), dsmCol = _ldHex(_cmTileColor('dsm', D.id)), mvCol = _ldHex(_cmMvC());
+      want = {
+        cam2: Object.assign(_ldWant('#5b9eff', '12G-SDI', sdi, [sdi]), { line: sdi }),
+        playback: Object.assign(_ldWant('#a4f9c8', '12G-SDI', sdi, [sdi]), { line: sdi }),
+        prompter: Object.assign(_ldWant('#e879f9', 'Source', '#e879f9', ['#e879f9']), { line: '#e879f9' }),
+        left: Object.assign(_ldWant(dstCol, '12G-SDI', sdi, [sdi]), { line: sdi }),
+        right: Object.assign(_ldWant(rCol, 'Destination', cy, ['#ff8a3d']), { line: rCol }),
+        dsm: Object.assign(_ldWant(dsmCol, 'HDMI 2.0', hdmi, [hdmi]), { line: hdmi }),
+        mv: Object.assign(_ldWant(mvCol, 'HDMI 2.0', hdmi, [hdmi], [], '#000000'), { line: hdmi }),
+        selected: _ldWant('#5b9eff', '12G-SDI', sdi, [sdi]), ends: [sdi, sdi] };
+      out.cam2Stored = (sources.find(s => s.name === 'CAM 2') || {}).wireColor;
+      want.cam2Stored = '#5b9eff';
+    } finally { try { closeWireMode(); } catch (e) {} await restore(); }
+    return is(out, want, 'each tile {its colour tile, card border, name / chip [text, colour, outline, fill] / dot(s) / backup input / its cable} (CAM 2 blue, 12G-SDI; PLAYBACK mint, 12G-SDI; PROMPTER no cable type; LEFT LED 12G-SDI; RIGHT LED no cable type; DSM 1 HDMI 2.0; MV 1 HDMI 2.0), CAM 2 selected, its cable\'s end dots, CAM 2\'s stored colour');
+  });
+  // 16ld-port P2: NEW
+  await check('Wire 16ld-port (W2): on Wire ADVANCED every tile\'s PORT wears its cable type\'s colour and the tile keeps its own, on the page and on its printed sheet (Omar 2026-09-30: "so they tile can stay blue but the port should change to orange"): page 1 built from Simple, CAM 2 blue on 12G-SDI: its chip and its dot orange (the dot was the tile\'s blue before); CAM 1 with two points, the second on its own HDMI 2.0 (16je): SDI orange then HDMI green, as its two cables; a hand-made source (NDI), destination (HDMI 2.0, with a backup input) and AUX (12G-SDI), a show destination with a backup input (LEFT LED, 12G-SDI), an AUX / DSM (DSM 1, HDMI 2.0) and a multiviewer tile (MV 1, HDMI 2.0): chip, input dot and backup input in the cable type\'s colour, colour tile / border / name in the tile\'s; no cable type (PROMPTER, RIGHT LED) as before; the Advanced sheet and the Look Book\'s Advanced Wire page print the same', async () => {
+    const out = {}; let want = null; const pdfWas = window._pdfOpts;
+    try {
+      await _lbOpen(_ldMut);
+      await _cMWire('advanced'); _wireAdvHelpers();
+      const L = screens.find(x => x.name === 'LEFT LED'), R = screens.find(x => x.name === 'RIGHT LED'), D = dsms.find(x => x.name === 'DSM 1'), M = multiviewers[0];
+      const inst = n => (wireAdvanced.sources || []).find(s => s.name === n), dIn = rid => (wireAdvanced.dests || []).find(d => d.refId === rid), aIn = rid => (wireAdvanced.dsms || []).find(d => d.refId === rid);
+      if (!inst('CAM 2') || !inst('CAM 1') || !dIn(L.id) || !dIn(R.id) || !aIn(D.id)) return 'page 1 is not the Simple drawing: ' + JSON.stringify((wireAdvanced.sources || []).map(s => s.name));
+      const c1 = inst('CAM 1'); c1.outC = 2; c1.portConns = ['', 'HDMI 2.0']; dIn(L.id).inC = 2;
+      wireAdvanced.customSources.push({ id: 'ldcs', name: 'HAND SRC', resolution: '', wireColor: '#ff6ed4', connectorType: 'NDI' });
+      wireAdvanced.customDests.push({ id: 'ldcd', name: 'HAND DEST', w: 1920, h: 1080, connectorType: 'HDMI 2.0' });
+      wireAdvanced.customDsms.push({ id: 'ldcm', name: 'HAND AUX', w: 1920, h: 1080, connectorType: '12G-SDI' });
+      wireAdvanced.sources.push({ id: 'ldsa', name: 'HAND SRC', x: -900, y: 0 });
+      wireAdvanced.dests.push({ id: 'ldda', refId: 'ldcd', x: 3400, y: 0, inC: 2 }); if (!dIn('mv:' + M.id)) wireAdvanced.dests.push({ id: 'lddm', refId: 'mv:' + M.id, x: 3400, y: 300 });
+      wireAdvanced.dsms.push({ id: 'ldma', refId: 'ldcm', x: 3400, y: 600 });
+      wireAdvanced.wires.push({ id: 'ldw1', fromId: 'asp:' + c1.id + ':1', toId: 'adst:ldda' });   /* CAM 1's second point, on its own HDMI 2.0, cabled */
+      _wireRender(); await wait(600);
+      const ids = { cam2: 'asrc:' + inst('CAM 2').id, cam1: 'asrc:' + c1.id, prompter: 'asrc:' + inst('PROMPTER').id, hsrc: 'asrc:ldsa', left: 'adst:' + dIn(L.id).id, right: 'adst:' + dIn(R.id).id, dsm: 'adsm:' + aIn(D.id).id, hdst: 'adst:ldda', mv: 'adst:' + dIn('mv:' + M.id).id, haux: 'adsm:ldma' };
+      const svg = $('#wire-diagram svg');
+      out.page = {}; Object.keys(ids).forEach(n => { out.page[n] = _ldRead(_laNode(svg, ids[n]), true); });
+      const lines = n => $$('path.wire-edge', svg).filter(p => (p.getAttribute('data-from') || '').split(':')[1] === ids[n].split(':')[1] && /^as(rc|p):/.test(p.getAttribute('data-from') || '')).map(p => [p.getAttribute('data-from').split(':')[2] || '0', _ldHex(p.getAttribute('stroke'))]).sort().map(x => x[1]);
+      out.lines = { cam2: lines('cam2'), cam1: lines('cam1') };
+      const sheetTxt = _wireBuildAdvancedExportSvg('light', {}), sheet = new DOMParser().parseFromString('<!DOCTYPE html><body>' + sheetTxt.replace(/^<\?xml[^>]*>/, '') + '</body>', 'text/html');
+      out.sheet = {}; ['cam2', 'cam1', 'left', 'hdst', 'prompter'].forEach(n => { out.sheet[n] = _ldRead(_laNode(sheet.body, ids[n]), false); });
+      out.sheetDarkWords = /\.lb-wire-export \.wire-source-card \*\{color:#1f2937 !important/.test(sheetTxt);
+      const html = await _laBook('advanced'); const doc = new DOMParser().parseFromString(html, 'text/html'); const pg = $$('.wire-page', doc).find(p => $$('g.wire-node', p).some(g => g.getAttribute('data-node-id') === ids.cam2));
+      out.book = pg ? _ldRead(_laNode(pg, ids.cam2), false) : 'no Advanced Wire page with CAM 2';
+      const sdi = _ldSpec('12G-SDI'), hdmi = _ldSpec('HDMI 2.0'), ndi = _ldSpec('NDI'), cy = _ldCyan();
+      const tc = (k, id) => _ldHex(_cmTileColor(k, id)), sc = n => _ldHex(_wireGetSourceColor(n));
+      want = { page: {
+        cam2: _ldWant('#5b9eff', '12G-SDI', sdi, [sdi]),
+        cam1: _ldWant(sc('CAM 1'), '12G-SDI', sdi, [sdi, hdmi]),
+        prompter: _ldWant('#e879f9', 'Source', '#e879f9', ['#e879f9']),
+        hsrc: _ldWant('#ff6ed4', 'NDI', ndi, [ndi]),
+        left: _ldWant(tc('dest', L.id), '12G-SDI', sdi, [sdi, sdi], [sdi]),
+        right: _ldWant(tc('dest', R.id), 'Destination', cy, ['#ff8a3d', cy]),
+        dsm: _ldWant(tc('dsm', D.id), 'HDMI 2.0', hdmi, [hdmi, hdmi]),
+        hdst: _ldWant(tc('dest', 'ldcd'), 'HDMI 2.0', hdmi, [hdmi, hdmi], [hdmi], undefined, _ldHex(getComputedStyle($('#wire-overlay')).getPropertyValue('--n-orange'))),
+        mv: _ldWant(_ldHex(_cmMvC()), 'HDMI 2.0', hdmi, [hdmi, hdmi], [], '#000000'),
+        haux: _ldWant(tc('dsm', 'ldcm'), '12G-SDI', sdi, [sdi, sdi], [], undefined, _ldHex(getComputedStyle($('#wire-overlay')).getPropertyValue('--n-amber'))) },
+        lines: { cam2: [sdi], cam1: [sdi, hdmi] },
+        sheet: { cam2: _ldWant('#5b9eff', '12G-SDI', sdi, [sdi]), cam1: _ldWant(sc('CAM 1'), '12G-SDI', sdi, [sdi, hdmi]), left: _ldWant(tc('dest', L.id), '12G-SDI', sdi, [sdi, sdi], [sdi]), hdst: _ldWant(tc('dest', 'ldcd'), 'HDMI 2.0', hdmi, [hdmi, hdmi], [hdmi], undefined, ''),
+          prompter: _ldWant('#e879f9', 'Source', '#e879f9', ['#e879f9']) },
+        sheetDarkWords: true, book: _ldWant('#5b9eff', '12G-SDI', sdi, [sdi]) };
+      /* a parsed sheet has no computed values: an output chip's outline / fill are written as rgba(), read back as their colour; the
+         untyped destination's cyan is a var() there, so RIGHT LED is read on the page only */
+    } finally { window._pdfOpts = pdfWas; try { closeWireMode(); } catch (e) {} await wait(300); await restore(); }
+    return is(out, want, 'Advanced page 1: each tile {colour tile, border, name / chip [text, colour, outline, fill] / dot(s) (a destination: its connector and its painted dot) / backup input} (CAM 2 blue 12G-SDI; CAM 1 two points, the 2nd on HDMI 2.0; PROMPTER no cable type; a hand-made source NDI; LEFT LED 12G-SDI with a backup input; RIGHT LED no cable type; DSM 1 HDMI 2.0; a hand-made destination HDMI 2.0 with a backup input; MV 1 HDMI 2.0; a hand-made AUX 12G-SDI) / CAM 2\'s and CAM 1\'s cables / the light Advanced sheet [CAM 2, CAM 1, LEFT LED, the hand-made destination, PROMPTER] / its rule printing a tile\'s words dark / the Look Book\'s Advanced Wire page [CAM 2]');
+  });
+  // 16ld-port P3: NEW
+  await check('Wire 16ld-port (W2): the PRINTED Simple drawing shows the same ports (Omar 2026-09-30: "the port should change to orange"): the Simple Wire sheet the PDF / PNG / SVG exports draw (light and dark) and the Look Book\'s Simple Wire page print CAM 2\'s colour tile and border blue and its "12G-SDI" chip (outline, fill and, on the dark sheet, its words) and its dot SDI orange; LEFT LED\'s and DSM 1\'s chips and dots their cable type\'s; PROMPTER (no cable type) its tile colour as before; the light sheet still prints every word of a tile dark', async () => {
+    const out = {}; let want = null; const pdfWas = window._pdfOpts;
+    try {
+      await _lbOpen(_ldMut);
+      const L = screens.find(x => x.name === 'LEFT LED'), D = dsms.find(x => x.name === 'DSM 1');
+      const keys = { cam2: 'src:CAM 2', prompter: 'src:PROMPTER', left: 'dst:' + L.id, dsm: 'dsm:' + D.id };
+      const read = root => { const r = {}; Object.keys(keys).forEach(n => { r[n] = _ldRead(_laNode(root, keys[n]), false); }); return r; };
+      const parse = t => new DOMParser().parseFromString('<!DOCTYPE html><body>' + String(t || '').replace(/^<\?xml[^>]*>/, '') + '</body>', 'text/html').body;
+      const light = _wireExportSheetList('light')[0], dark = _wireExportSheetList('dark')[0];
+      out.light = read(parse(light)); out.dark = read(parse(dark));
+      out.lightDarkWords = /\.lb-wire-export \.wire-source-card \*\{color:#1f2937 !important/.test(light);
+      const html = await _laBook('simple'); const doc = new DOMParser().parseFromString(html, 'text/html'); const w = $('#pdf-wire', doc);
+      out.book = w ? read(w) : 'no Simple Wire page';
+      const sdi = _ldSpec('12G-SDI'), hdmi = _ldSpec('HDMI 2.0');
+      const one = { cam2: _ldWant('#5b9eff', '12G-SDI', sdi, [sdi]), prompter: _ldWant('#e879f9', 'Source', '#e879f9', ['#e879f9']),
+        left: _ldWant(_ldHex(_cmTileColor('dest', L.id)), '12G-SDI', sdi, [sdi]), dsm: _ldWant(_ldHex(_cmTileColor('dsm', D.id)), 'HDMI 2.0', hdmi, [hdmi]) };
+      want = { light: one, dark: one, lightDarkWords: true, book: one };
+    } finally { window._pdfOpts = pdfWas; try { closeWireMode(); } catch (e) {} await wait(300); await restore(); }
+    return is(out, want, 'the Simple sheet light / dark / its rule printing a tile\'s words dark / the Look Book\'s Simple Wire page: each tile {colour tile, border, name / chip [text, colour, outline, fill] / dot / backup} (CAM 2 blue 12G-SDI, PROMPTER no cable type, LEFT LED 12G-SDI, DSM 1 HDMI 2.0)');
+  });
+  // ── 16ld-tools (X, Omar 2026-09-30 ~11:45, "my last update for while", his mockup of a RANDOM SWITCHER router tile: "all the tools i
+  //    want to update to add an image ... that can be changed out at any time, the name placed it should make the thumbnail if no image
+  //    is used ... all tools should get a talller head to add images the same size has the tiles. this will work on both simple and
+  //    advance. the left hand side is the name center and the edit pencil first. i also want the top bar of the tiles to pick a color
+  //    from the uploaded logo uploaded or select a random color if none is uploaded"; the picture "Like the mockup", the colour on "The
+  //    whole header bar"). Every Wire tool tile has a 110 px header: the pencil and the name on the left, a tile's picture box on the
+  //    right, the whole bar in the tool's colour. Each check FAILS on the 16ld join page (r16ld/join/pages/final.html) and PASSES after.
+  //    Helpers prefixed _tx (never a name of the page's). An upload goes through the page's own file window: the click on the picture
+  //    box opens it (the page's <input type=file>) and it is handed the file, as a user picks one.
+  const _txHex = c => { const s = String(c || '').trim().toLowerCase(); if (/^#[0-9a-f]{6}$/.test(s)) return s; const m = /rgba?\((\d+),\s*(\d+),\s*(\d+)/.exec(s); return m ? '#' + [m[1], m[2], m[3]].map(x => (+x).toString(16).padStart(2, '0')).join('') : s; };
+  const _txLum = h => { h = _txHex(h); if (!/^#[0-9a-f]{6}$/.test(h)) return 0; const v = [1, 3, 5].map(i => { const c = parseInt(h.substr(i, 2), 16) / 255; return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); }); return 0.2126 * v[0] + 0.7152 * v[1] + 0.0722 * v[2]; };
+  const _txCR = (a, b) => { const x = _txLum(a), y = _txLum(b); return Math.round((Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05) * 100) / 100; };
+  const _txPal = ['#ff6ed4', '#b78fff', '#ff5e5e', '#5b9eff', '#e879f9', '#a4f9c8', '#84cc16', '#fc7575'];   /* the Wire palette (16hh) */
+  const _txFnv = s => { let h = 2166136261; s = String(s); for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; };
+  const _txIdCol = id => _txPal[_txFnv(id) % _txPal.length];   /* the palette colour a tool with no stored colour shows: worked out from its id */
+  const _txNode = id => $$('#wire-diagram g.wire-node').find(g => g.getAttribute('data-node-id') === id) || null;
+  const _txTool = (kind, id) => kind === 'hub' ? ((wireSettings && wireSettings.simple) || null) : ((kind === 'device' ? wireAdvanced.devices : wireAdvanced.routers) || []).find(t => t && t.id === id) || null;
+  const _txNid = (kind, id) => kind === 'hub' ? 'hub' : kind + ':' + id;
+  /* a tool's header as drawn: its height, what comes first, the name centred, the picture box (relative to the tile), the bar's colours */
+  const _txHead = nid => {
+    const g = _txNode(nid); if (!g) return 'no tile ' + nid;
+    const rc = $(':scope > rect', g), X = +rc.getAttribute('x'), Y = +rc.getAttribute('y'), fo = $(':scope > foreignObject', g);
+    const ti = $('.wire-router-title', g); if (!ti) return 'no header';
+    const fe = ti.firstElementChild, nm = $('input', ti) || $('span', ti), tb = ti.getBoundingClientRect(), nb = nm.getBoundingClientRect(), fb = fe.getBoundingClientRect();
+    const box = $('.wtl-pic rect.wtl-auto, .wtl-pic image.wtl-img', g), pb = box ? box.getBoundingClientRect() : null;
+    const bg = _txHex(getComputedStyle(ti).backgroundColor), ink = _txHex(getComputedStyle(nm).color);
+    return {
+      h: ti.offsetHeight, w: +fo.getAttribute('width'),
+      first: fe === nm ? 'the name' : fe.classList.contains('wire-router-pen') ? 'the size pencil' : fe.classList.contains('wtl-pen') ? 'the name pencil' : fe.tagName.toLowerCase() === 'svg' ? 'the lock' : String(fe.className),
+      then: fe !== nm && fe.nextElementSibling === nm && fb.right <= nb.left + 0.5, centred: Math.abs((nb.top + nb.height / 2) - (tb.top + tb.height / 2)) <= tb.height * 0.03,
+      box: box ? [+box.getAttribute('x') - X, +box.getAttribute('y') - Y, +box.getAttribute('width'), +box.getAttribute('height'), box.tagName.toLowerCase() === 'image' ? 'image' : _txHex(box.getAttribute('fill')), $$('.wtl-pic text.wtl-auto-t', g).map(e => e.textContent).join(' ')] : 'no picture box',
+      nameClear: !!pb && nb.right <= pb.left, bg, ink: [ink, ink === '#ffffff' || ink === '#000000', _txCR(ink, bg) >= 4.5, _txHex(getComputedStyle(ti).color) === ink],
+    };
+  };
+  const _txWant = (h, w, first, boxFill, boxName, bg, ink) => ({ h, w, first, then: true, centred: true, box: [w - 123, 24, 110, 62, boxFill, boxName], nameClear: true, bg, ink: [ink, true, true, true] });
+  /* every row of a tool: its point(s) at the row's height (drawing units), level with the row as the tile draws it; every cable on it ends on its point */
+  const _txRows = (nid, cellsOf, top, step) => {
+    const g = _txNode(nid); if (!g) return 'no tile ' + nid;
+    const rc = $(':scope > rect', g), X = +rc.getAttribute('x'), Y = +rc.getAttribute('y'), W = +rc.getAttribute('width'), fo = $(':scope > foreignObject', g), fr = fo.getBoundingClientRect(), z = fr.height / +fo.getAttribute('height');
+    const id = nid.split(':')[1], cells = cellsOf(g), bad = [];
+    const pts = $$('circle', g).map(c => ({ c, k: c.dataset.rportId || c.dataset.sourceId || '' })).filter(o => new RegExp('^(rip|rop|dvi|dvo):' + id + ':\\d+$').test(o.k));
+    cells.forEach((cell, i) => { const want = top + i * step + step / 2, cr = cell.getBoundingClientRect(), cy = (cr.top + cr.height / 2 - fr.top) / z; if (Math.abs(cy - want) > 1.5) bad.push('row ' + (i + 1) + ' drawn at ' + cy.toFixed(1) + ', not ' + want); });
+    pts.forEach(o => { const i = +o.k.split(':')[2], want = top + i * step + step / 2, cy = +o.c.getAttribute('cy') - Y, cx = +o.c.getAttribute('cx') - X, side = /^(rip|dvi)/.test(o.k) ? 0 : W; if (Math.abs(cy - want) > 0.01 || Math.abs(cx - side) > 0.01) bad.push(o.k + ' at ' + cx + ',' + cy + ', not ' + side + ',' + want); });
+    let cables = 0;
+    $$('#wire-diagram path.wire-adv-edge').forEach(p => { [['from', 0], ['to', 1]].forEach(([end, atEnd]) => { const k = p.getAttribute('data-' + end) || ''; const o = pts.find(q => q.k === k); if (!o) return; cables++; const L = p.getTotalLength(), a = p.getPointAtLength(atEnd ? L : 0); if (Math.hypot(a.x - +o.c.getAttribute('cx'), a.y - +o.c.getAttribute('cy')) > 0.6) bad.push('the cable on ' + k + ' ends at ' + a.x.toFixed(1) + ',' + a.y.toFixed(1)); }); });
+    return { rows: cells.length, points: pts.length, cables, bad };
+  };
+  const _txRouterCells = g => $$('.rc-num', g).filter((e, i) => i % 2 === 0);
+  const _txConvCells = g => $$('.wire-device-grid > .rc', g).filter((e, i) => i % 2 === 0);
+  const _txSwitchCells = g => $$('.wire-device-grid > .rc', g);
+  /* a picture file as a user picks one: one colour with a white mark (the mark is skipped by the dominant colour, as near-white is) */
+  const _txFile = async (hex, w, h) => { const c = document.createElement('canvas'); c.width = w || 320; c.height = h || 180; const x = c.getContext('2d'); x.fillStyle = hex; x.fillRect(0, 0, c.width, c.height); x.fillStyle = '#ffffff'; x.fillRect(12, 12, 70, 34); const b = await new Promise(r => c.toBlob(r, 'image/png')); return new File([b], 'logo-' + hex.slice(1) + '.png', { type: 'image/png' }); };
+  /* a click on the picture box; the page's file window gets FILE; waits for the upload to land */
+  const _txPick = async (nid, file, done) => {
+    const g = _txNode(nid), hit = g && $('.wtl-pic .wtl-hit', g); if (!hit) return 'no picture box to click on ' + nid;
+    const real = HTMLInputElement.prototype.click; let opened = 0;
+    HTMLInputElement.prototype.click = function () { if (this.type === 'file') { opened++; const dt = new DataTransfer(); dt.items.add(file); this.files = dt.files; this.dispatchEvent(new Event('change', { bubbles: true })); return; } return real.apply(this, arguments); };
+    try { const r = hit.getBoundingClientRect(), o = { bubbles: true, cancelable: true, view: window, clientX: r.left + r.width / 2, clientY: r.top + r.height / 2, button: 0 }; hit.dispatchEvent(new MouseEvent('mousedown', o)); hit.dispatchEvent(new MouseEvent('mouseup', o)); hit.dispatchEvent(new MouseEvent('click', o)); }
+    finally { HTMLInputElement.prototype.click = real; }
+    for (let i = 0; i < 60 && !done(); i++) await wait(100);
+    await wait(250); return opened === 1 ? true : 'the file window opened ' + opened + ' times';
+  };
+  const _txClickEl = async el => { if (!el) return 'nothing to click'; const r = el.getBoundingClientRect(), o = { bubbles: true, cancelable: true, view: window, clientX: r.left + r.width / 2, clientY: r.top + r.height / 2, button: 0 }; el.dispatchEvent(new MouseEvent('mousedown', o)); el.dispatchEvent(new MouseEvent('mouseup', o)); el.dispatchEvent(new MouseEvent('click', o)); await wait(350); return true; };
+  const _txDims = async src => { try { const im = new Image(); im.src = src; await im.decode(); return [im.naturalWidth, im.naturalHeight]; } catch (e) { return 'not an image'; } };
+  const _txNAVY = '#1e3a8a', _txAMBER = '#f6ca46';   /* every channel 2 over a multiple of 4: _wireDominantColor gives them back exactly */
+  // 16ld-tools T1: NEW
+  // 16ld-fix T1: REPLACES the check named in its header (reason in the block)
+  // 16ld-fix: RENAMED in place. Why: Omar 2026-09-30 ~17:10 (X2), after the tool-header pictures: "the image thumbnail on the tools should
+  //   be has big has the source size and the I/O Patch they are way smaller in the preview photos. so that needs to be bigger": the
+  //   picture box is 176 x 99 (was 110 x 62), 13 in and 13 down, the header 125 high (was 110), a router's rows from 213 (was 198), a
+  //   converter's / switch's from 161 (was 146). And (A4 / B2) the name shows in full in its own block (the type box over it), so the
+  //   header is read from the drawing as it is now (_txHead / _txWant, local). What it pins is otherwise unchanged.
+  // 16ld-fix2 T1: REPLACES the check named in its header (reason in the block)
+  // 16ld-fix2: RENAMED in place. Why: Omar 2026-09-30 21:45 (X2 REPLACED), after the 176 x 99 tool pictures: "Longer tool names let make
+  //   this half the logo size then to save on space" (the TOOL'S picture box): the box is 55 x 31, half a source tile's 110 x 62, 13 in
+  //   from the right end and centred in the bar; the bar is back to its old height (56 on a router / switcher / I/O Patch page tile /
+  //   the Generic Router, 44 on a converter / network switch), so a router's rows start at 144 and a converter's / switch's at 80 again;
+  //   the name sits beside the pencil on every tool (the bar no longer wraps). What it pins is otherwise unchanged.
+  await check('Wire 16ld-tools (X) on ADVANCED (Omar 2026-09-30: "all tools should get a talller head to add images the same size has the tiles ... the left hand side is the name center and the edit pencil first", his mockup; the picture "Like the mockup", the colour on "The whole header bar"): every tool the I/O Tools menu adds, a router (the 10 x 10 default and a custom 3 x 5), a switcher (the 8 x 2 default), a tile made from an I/O Patch page, a converter and a network switch, and page 1\'s router built from Simple, has a header bar 56 high, 44 on a converter / network switch (16ld-fix2 (X2), Omar 21:45: "Longer tool names let make this half the logo size then to save on space": the heights they had before 16ld-tools; 16ld-fix made it 125 with a 176 x 99 picture): the pencil first on the left (the lock on the I/O Patch page\'s tile), then the name beside it, the two centred in the bar\'s height, the name shown in full and clear of the picture; on the right a picture box 55 x 31 (half a source tile\'s 110 x 62), 13 in from the right end and centred in the bar\'s height, showing the tool\'s name on the tool\'s colour; the WHOLE bar in that colour, a palette colour stored on each tool when it is made (page 1\'s router: Simple\'s router\'s); its words white or black at 4.5:1 or more; the tile 820 / 440 / 300 wide and its IN / OUT band as before (the I/O Patch page\'s tile gets the band the other router tiles have: it drew none, so its rows sat 44 px above their points); every row\'s point level with its row, a router\'s rows from 144, a converter\'s / switch\'s from 80 (where they were before 16ld-tools; 16ld-fix had 213 / 161), and every cable on a tool ends on its point', async () => {
+    const out = {}, want = {};
+    /* 16ld-fix: the header read as it is drawn now: the bar's first child is the pencil (or the lock), the next its name block
+       (.wtl-nm: the name shown in full, .wtl-nm-show, and the type box over it); on the 300-wide switch the name sits under the
+       pencil, so "centred" is the pencil and the name together; "full" = the name shown is not cut */
+    const _txHead = nid => {
+      const g = _txNode(nid); if (!g) return 'no tile ' + nid;
+      const rc = $(':scope > rect', g), X = +rc.getAttribute('x'), Y = +rc.getAttribute('y'), fo = $(':scope > foreignObject', g);
+      const ti = $('.wire-router-title', g); if (!ti) return 'no header';
+      const fe = ti.firstElementChild, nm = $('.wtl-nm', ti), sh = nm && $('.wtl-nm-show', nm); if (!fe || !nm || !sh) return 'no name block';
+      const tb = ti.getBoundingClientRect(), nb = nm.getBoundingClientRect(), fb = fe.getBoundingClientRect(), top = Math.min(fb.top, nb.top), bot = Math.max(fb.bottom, nb.bottom);
+      const box = $('.wtl-pic rect.wtl-auto, .wtl-pic image.wtl-img', g), pb = box ? box.getBoundingClientRect() : null;
+      const bg = _txHex(getComputedStyle(ti).backgroundColor), ink = _txHex(getComputedStyle(sh).color);
+      return {
+        h: ti.offsetHeight, w: +fo.getAttribute('width'),
+        first: fe === nm ? 'the name' : fe.classList.contains('wire-router-pen') ? 'the size pencil' : fe.classList.contains('wtl-pen') ? 'the name pencil' : fe.tagName.toLowerCase() === 'svg' ? 'the lock' : String(fe.className),
+        then: fe !== nm && fe.nextElementSibling === nm && fb.right <= nb.left + 0.5, centred: Math.abs((top + bot) / 2 - (tb.top + tb.height / 2)) <= tb.height * 0.03,
+        box: box ? [+box.getAttribute('x') - X, +box.getAttribute('y') - Y, +box.getAttribute('width'), +box.getAttribute('height'), box.tagName.toLowerCase() === 'image' ? 'image' : _txHex(box.getAttribute('fill')), $$('.wtl-pic text.wtl-auto-t', g).map(e => e.textContent).join(' ')] : 'no picture box',
+        nameClear: !!pb && nb.right <= pb.left, full: sh.scrollHeight <= sh.clientHeight + 1 && sh.scrollWidth <= sh.clientWidth + 1, bg, ink: [ink, ink === '#ffffff' || ink === '#000000', _txCR(ink, bg) >= 4.5, _txHex(getComputedStyle(ti).color) === ink],
+      };
+    };
+    const _txWant = (h, w, first, boxFill, boxName, bg, ink) => ({ h, w, first, then: true, centred: true, box: [w - 68, (h - 31) / 2, 55, 31, boxFill, boxName], nameClear: true, full: true, bg, ink: [ink, true, true, true] });
+    try {
+      await restore();
+      const pg = ioAdvanced.pages[1]; pg.name = 'ROSS RACK';
+      pg.sources = [{ id: 'txs1', name: 'CAM A', connectorType: '', customType: '', resolution: '', notes: '', type: '' }, { id: 'txs2', name: 'CAM B', connectorType: '', customType: '', resolution: '', notes: '', type: '' }];
+      pg.dests = [{ id: 'txd1', name: 'MON 1', connectorType: '', customType: '', resolution: '', notes: '', deviceType: '' }];
+      await _cMWire('advanced');
+      const p1 = wireAdvanced.routers[0]; if (!p1) return 'page 1 has no router';
+      const r0 = wireAdvanced.routers.length, d0 = (wireAdvanced.devices || []).length, u0 = _undoStack.length;
+      _wireAdvAddRouter(10); _wireAdvAddRouterAsym(3, 5); _wireAdvAddSwitcher('8×2 Switcher', 8, 2); _wireAdvAddPatchTile(1); _wireAdvAddDevice('converter', 2, 3); _wireAdvAddDevice('switch', 4);
+      await wait(400);
+      const R = wireAdvanced.routers.slice(r0), D = wireAdvanced.devices.slice(d0), S0 = wireAdvanced.sources[0];
+      out.made = [R.length, D.length, _undoStack.length - u0, R.concat(D).map(t => _txPal.indexOf(String(t.color || '').toLowerCase()) >= 0)];
+      want.made = [4, 2, 6, [true, true, true, true, true, true]];
+      /* cables on the new tools: a source into the 10 x 10's input 3; its output 2 into the converter's input 1; the converter's output 2 into the 3 x 5's input 1; a source into the switch's port 4 */
+      wireAdvanced.wires.push({ id: 'txw1', fromId: 'asrc:' + S0.id, toId: 'rip:' + R[0].id + ':2' }, { id: 'txw2', fromId: 'rop:' + R[0].id + ':1', toId: 'dvi:' + D[0].id + ':0' },
+        { id: 'txw3', fromId: 'dvo:' + D[0].id + ':1', toId: 'rip:' + R[1].id + ':0' }, { id: 'txw4', fromId: 'asrc:' + S0.id, toId: 'dvi:' + D[1].id + ':3' });
+      _wireZoomFit(); await wait(400); _wireRender(); await wait(400);
+      const tools = [['page 1', 'router', p1, 820, 'the size pencil', 'GENERIC ROUTER'], ['10 x 10', 'router', R[0], 820, 'the size pencil', 'ROUTER I/O'], ['3 x 5', 'router', R[1], 820, 'the size pencil', 'ROUTER I/O'],
+        ['8 x 2 switcher', 'router', R[2], 820, 'the size pencil', '8×2 SWITCHER'], ['I/O Patch page', 'router', R[3], 820, 'the lock', 'ROSS RACK'], ['converter', 'device', D[0], 440, 'the name pencil', 'CONVERTER'], ['switch', 'device', D[1], 300, 'the name pencil', 'SWITCH']];
+      out.head = {}; want.head = {}; out.rows = {}; want.rows = {};
+      tools.forEach(([label, kind, t, w, first, name]) => {
+        const col = String(t.color || '').toLowerCase(), ink = _txCR('#ffffff', col) >= _txCR('#000000', col) ? '#ffffff' : '#000000';
+        out.head[label] = _txHead(_txNid(kind, t.id)); want.head[label] = _txWant(kind === 'device' ? 44 : 56, w, first, col, name, col, ink);
+      });
+      out.pageOneColour = String(p1.color || '').toLowerCase() === _txIdCol('hub');
+      want.pageOneColour = true;
+      const rows = (label, kind, t, cellsOf, top, step, n, np, nc) => { const r = _txRows(_txNid(kind, t.id), cellsOf, top, step); out.rows[label] = r; want.rows[label] = { rows: n, points: np, cables: nc, bad: [] }; };
+      const cab = t => wireAdvanced.wires.filter(w => [w.fromId, w.toId].some(k => new RegExp('^(rip|rop|dvi|dvo):' + t.id + ':').test(String(k)))).length;
+      rows('page 1', 'router', p1, _txRouterCells, 144, 44, p1.size, (p1.inC || p1.size) + (p1.outC || p1.size), cab(p1));
+      rows('10 x 10', 'router', R[0], _txRouterCells, 144, 44, 10, 20, 2);
+      rows('3 x 5', 'router', R[1], _txRouterCells, 144, 44, 5, 8, 1);
+      rows('8 x 2 switcher', 'router', R[2], _txRouterCells, 144, 44, 8, 10, 0);
+      rows('I/O Patch page', 'router', R[3], _txRouterCells, 144, 44, 2, 3, 0);
+      rows('converter', 'device', D[0], _txConvCells, 80, 36, 3, 5, 2);
+      rows('switch', 'device', D[1], _txSwitchCells, 80, 36, 4, 8, 1);
+      out.labels = R.map(r => { const s = $('.wire-router-subtitle', _txNode('router:' + r.id)); return s ? (($('input', s) || {}).value || s.textContent || '').trim() : 'no IN / OUT band'; });
+      want.labels = ['UNTITLED 10X10 ENGINEERING RACK', 'UNTITLED 3X5 ENGINEERING RACK', '8 IN · 2 OUT', '2 IN · 1 OUT'];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { await restore(); }
+    return is(out, want, 'tools made [routers, devices, undo steps, a palette colour stored on each] / each header [height, tile width, first on the left, the name right after it, beside the pencil, the pencil and the name centred, the picture box (x from the tile, y, w, h, its fill, its words), the name clear of it, the name shown in full, the bar, the words (colour, white or black, 4.5:1, the pencil too)] / page 1\'s router in Simple\'s router\'s colour / each tool\'s rows [rows, points, cable ends, what is off] / the IN · OUT labels');
+  });
+  // 16ld-tools T2: NEW
+  // 16ld-fix T2: REPLACES the check named in its header (reason in the block)
+  // 16ld-fix: RENAMED in place. Why: Omar 2026-09-30 ~17:10 (X2), after the tool-header pictures: "the image thumbnail on the tools should
+  //   be has big has the source size and the I/O Patch they are way smaller in the preview photos. so that needs to be bigger": the
+  //   picture box is 176 x 99 (was 110 x 62), 13 in and 13 down, the header 125 high (was 110), a router's rows from 213 (was 198), a
+  //   converter's / switch's from 161 (was 146). And (A4 / B2) the name shows in full in its own block (the type box over it), so the
+  //   header is read from the drawing as it is now (_txHead / _txWant, local). What it pins is otherwise unchanged.
+  // 16ld-fix2 T2: REPLACES the check named in its header (reason in the block)
+  // 16ld-fix2: RENAMED in place. Why: Omar 2026-09-30 21:45 (X2 REPLACED), after the 176 x 99 tool pictures: "Longer tool names let make
+  //   this half the logo size then to save on space" (the TOOL'S picture box): the box is 55 x 31, half a source tile's 110 x 62, 13 in
+  //   from the right end and centred in the bar; the bar is back to its old height (56 on a router / switcher / I/O Patch page tile /
+  //   the Generic Router, 44 on a converter / network switch), so a router's rows start at 144 and a converter's / switch's at 80 again;
+  //   the name sits beside the pencil on every tool (the bar no longer wraps). What it pins is otherwise unchanged.
+  await check('Wire 16ld-tools (X) on SIMPLE (Omar: "this will work on both simple and advance"): the Generic Router has the same header: 56 high (16ld-fix2 (X2), Omar 21:45: "Longer tool names let make this half the logo size then to save on space": its height before 16ld-tools; 16ld-fix made it 125 with a 176 x 99 picture box), its pencil first on the left, then its name beside it, centred and shown in full; the picture box (55 x 31, half a source tile\'s 110 x 62, 13 in from the right end, centred in the bar\'s height) showing GENERIC ROUTER on the router\'s colour; the WHOLE bar in that colour, which Simple\'s router (never "made") takes from its id: the same palette colour on every draw and after the show is opened again, and nothing is written for it (no Simple drawing stored, no undo step, no Save lit); its words readable (4.5:1 or more); the router 820 wide; its rows from 144 (where they were before 16ld-tools; 16ld-fix had 213), each row\'s two points level with it, every cable ending on its row\'s point; the pencil puts the cursor in the name box, the name selected', async () => {
+    const out = {}, want = {};
+    /* 16ld-fix: the header read as it is drawn now: the bar's first child is the pencil (or the lock), the next its name block
+       (.wtl-nm: the name shown in full, .wtl-nm-show, and the type box over it); on the 300-wide switch the name sits under the
+       pencil, so "centred" is the pencil and the name together; "full" = the name shown is not cut */
+    const _txHead = nid => {
+      const g = _txNode(nid); if (!g) return 'no tile ' + nid;
+      const rc = $(':scope > rect', g), X = +rc.getAttribute('x'), Y = +rc.getAttribute('y'), fo = $(':scope > foreignObject', g);
+      const ti = $('.wire-router-title', g); if (!ti) return 'no header';
+      const fe = ti.firstElementChild, nm = $('.wtl-nm', ti), sh = nm && $('.wtl-nm-show', nm); if (!fe || !nm || !sh) return 'no name block';
+      const tb = ti.getBoundingClientRect(), nb = nm.getBoundingClientRect(), fb = fe.getBoundingClientRect(), top = Math.min(fb.top, nb.top), bot = Math.max(fb.bottom, nb.bottom);
+      const box = $('.wtl-pic rect.wtl-auto, .wtl-pic image.wtl-img', g), pb = box ? box.getBoundingClientRect() : null;
+      const bg = _txHex(getComputedStyle(ti).backgroundColor), ink = _txHex(getComputedStyle(sh).color);
+      return {
+        h: ti.offsetHeight, w: +fo.getAttribute('width'),
+        first: fe === nm ? 'the name' : fe.classList.contains('wire-router-pen') ? 'the size pencil' : fe.classList.contains('wtl-pen') ? 'the name pencil' : fe.tagName.toLowerCase() === 'svg' ? 'the lock' : String(fe.className),
+        then: fe !== nm && fe.nextElementSibling === nm && fb.right <= nb.left + 0.5, centred: Math.abs((top + bot) / 2 - (tb.top + tb.height / 2)) <= tb.height * 0.03,
+        box: box ? [+box.getAttribute('x') - X, +box.getAttribute('y') - Y, +box.getAttribute('width'), +box.getAttribute('height'), box.tagName.toLowerCase() === 'image' ? 'image' : _txHex(box.getAttribute('fill')), $$('.wtl-pic text.wtl-auto-t', g).map(e => e.textContent).join(' ')] : 'no picture box',
+        nameClear: !!pb && nb.right <= pb.left, full: sh.scrollHeight <= sh.clientHeight + 1 && sh.scrollWidth <= sh.clientWidth + 1, bg, ink: [ink, ink === '#ffffff' || ink === '#000000', _txCR(ink, bg) >= 4.5, _txHex(getComputedStyle(ti).color) === ink],
+      };
+    };
+    const _txWant = (h, w, first, boxFill, boxName, bg, ink) => ({ h, w, first, then: true, centred: true, box: [w - 68, (h - 31) / 2, 55, 31, boxFill, boxName], nameClear: true, full: true, bg, ink: [ink, true, true, true] });
+    try {
+      await _lbOpen(); const u0 = _undoStack.length;
+      const col = _txIdCol('hub'), ink = _txCR('#ffffff', col) >= _txCR('#000000', col) ? '#ffffff' : '#000000';
+      out.head = _txHead('hub'); want.head = _txWant(56, 820, 'the name pencil', col, 'GENERIC ROUTER', col, ink);
+      const st = _slbState(), n = Math.max(st.ins.length, st.outs.length), g = _txNode('hub');
+      const hub = $(':scope > rect', g), HX = +hub.getAttribute('x'), HY = +hub.getAttribute('y'), HW = +hub.getAttribute('width'), fo = $(':scope > foreignObject', g), fr = fo.getBoundingClientRect(), z = fr.height / +fo.getAttribute('height');
+      const bad = [];
+      for (let i = 0; i < n; i++) ['in', 'out'].forEach(s => {
+        if (i >= (s === 'in' ? st.ins.length : st.outs.length)) return;
+        const want2 = 144 + i * 44 + 22, sp = $('span[data-slb-row="' + s + ':' + i + '"]', g), dots = $$('circle.wire-hub-port', g).filter(c => c.getAttribute('data-port-id') === 'h' + s + ':' + i);
+        if (!sp) bad.push('no row ' + s + ' ' + (i + 1)); else { const r = sp.getBoundingClientRect(), cy = (r.top + r.height / 2 - fr.top) / z; if (Math.abs(cy - want2) > 1.5) bad.push(s + ' row ' + (i + 1) + ' drawn at ' + cy.toFixed(1)); }
+        if (dots.length !== 2) bad.push(s + ' ' + (i + 1) + ': ' + dots.length + ' points');
+        dots.forEach(c => { if (Math.abs(+c.getAttribute('cy') - HY - want2) > 0.01 || Math.abs(+c.getAttribute('cx') - HX - (s === 'in' ? 0 : HW)) > 0.01) bad.push(s + ' ' + (i + 1) + ' point at ' + (+c.getAttribute('cy') - HY)); });
+      });
+      let ends = 0;
+      $$('#wire-diagram path.slb-edge').forEach(p => { const f = p.getAttribute('data-from'), t = p.getAttribute('data-to'), k = /^h(in|out):/.test(t) ? t : f, atEnd = k === t; const c = $$('circle.wire-hub-port', g).find(c => c.getAttribute('data-port-id') === k); if (!c) return; ends++; const L = p.getTotalLength(), a = p.getPointAtLength(atEnd ? L : 0); if (Math.hypot(a.x - +c.getAttribute('cx'), a.y - +c.getAttribute('cy')) > 0.6) bad.push('the cable on ' + k + ' ends at ' + a.y.toFixed(1)); });
+      out.rows = { cables: ends, bad }; want.rows = { cables: st.ins.filter(Boolean).length + st.outs.filter(Boolean).length, bad: [] };
+      out.clean = [wireSettings.simple === undefined, _undoStack.length - u0, _lbDirty()]; want.clean = [true, 0, [false, false]];
+      _wireRender(); await wait(300); const again = _txHead('hub'); out.redraw = again.bg === col;
+      await _lbOpen(); out.reopen = [_txHead('hub').bg === col, wireSettings.simple === undefined, _lbDirty()]; want.redraw = true; want.reopen = [true, true, [false, false]];
+      const pen = $('.wire-router-title > .wtl-pen', _txNode('hub')); await _txClickEl(pen); const a = document.activeElement;
+      out.pencil = [!!a && a.classList.contains('wire-hub-name') && !!a.closest('g.wire-hub'), a && a.selectionStart === 0 && a.selectionEnd === String(a.value || '').length]; want.pencil = [true, true];
+      if (a && a.blur) a.blur();
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { await restore(); }
+    return is(out, want, 'the header [height, width, first on the left, the name right after it, centred, the picture box, the name clear of it, the name in full, the bar, the words] / rows [cable ends on the router, what is off] / opened [no Simple drawing stored, undo steps, dirty and Save lit] / the colour after a redraw / after a reopen [the colour, nothing stored, dirty and Save lit] / the pencil [the cursor in the name box, the name selected]');
+  });
+  // 16ld-tools T3: NEW
+  await check('Wire 16ld-tools (X) (Omar: "add an image ... that can be changed out at any time"; "the top bar of the tiles to pick a color from the uploaded logo uploaded"): a click on a tool\'s picture box opens the file window and the picked image is its picture, on Advanced\'s 10 x 10 router, on a converter and on Simple\'s Generic Router: stored on the tool as a JPEG at most 240 x 140 (a tile\'s picture\'s resize), drawn in the box with its upload icon and an x; the WHOLE header bar takes the image\'s dominant colour (a navy logo: navy bar, white words); one undo step, Save lit; a second click replaces it (an amber logo: amber bar, black words, one more step); the x removes it (the bar back to the tool\'s own palette colour, the box back to its name, one step); Undo walks back through amber, navy and none; on Simple nothing of the drawing is stored or frozen by a picture and "Simple changed since Page 1 was built" has nothing new to say', async () => {
+    const out = {}, want = {};
+    try {
+      const navy = await _txFile(_txNAVY), amber = await _txFile(_txAMBER);
+      const walk = async (label, kind, id, base) => {
+        const nid = _txNid(kind, id), t = () => _txTool(kind, id), bar = () => { const h = _txHead(nid); return typeof h === 'string' ? h : [h.bg, h.ink[0], h.box[4]]; };
+        const u0 = _undoStack.length, o = {};
+        o.pick1 = await _txPick(nid, navy, () => t() && t().pic);
+        const p1 = t() && t().pic;
+        o.navy = [String(p1 || '').slice(0, 23), await _txDims(p1 || ''), t() && t().picColor, bar(), (($('.wtl-pic image.wtl-img', _txNode(nid)) || { getAttribute: () => '' }).getAttribute('href') === p1), !!$('.wtl-pic .wtl-ico', _txNode(nid)), !!$('.wtl-pic circle.wtl-clr', _txNode(nid)), _undoStack.length - u0, _kySaveLit()];
+        o.pick2 = await _txPick(nid, amber, () => t() && t().pic && t().pic !== p1);
+        o.amber = [t() && t().picColor, bar(), _undoStack.length - u0];
+        await _txClickEl($('.wtl-pic circle.wtl-clr', _txNode(nid)));
+        o.removed = [!!(t() && t().pic), bar(), _undoStack.length - u0];
+        const back = []; for (let i = 0; i < 3; i++) { doUndo(); await wait(350); _wireRender(); await wait(250); back.push([t() ? t().picColor || '' : 'none', bar()[0]]); }
+        o.undo = back;
+        want[label] = { pick1: true, navy: ['data:image/jpeg;base64,', [240, 135], _txNAVY, [_txNAVY, '#ffffff', 'image'], true, true, true, 1, true], pick2: true, amber: [_txAMBER, [_txAMBER, '#000000', 'image'], 2], removed: [false, [base, _txCR('#ffffff', base) >= _txCR('#000000', base) ? '#ffffff' : '#000000', base], 3], undo: [[_txAMBER, _txAMBER], [_txNAVY, _txNAVY], [kind === 'hub' ? 'none' : '', base]] };
+        return o;
+      };
+      await restore(); await _cMWire('advanced');
+      _wireAdvAddRouter(10); _wireAdvAddDevice('converter', 2, 2); await wait(300); _wireZoomFit(); await wait(400);
+      const R = wireAdvanced.routers[wireAdvanced.routers.length - 1], D = wireAdvanced.devices[wireAdvanced.devices.length - 1];
+      out.router = await walk('router', 'router', R.id, String(R.color).toLowerCase());
+      out.converter = await walk('converter', 'device', D.id, String(D.color).toLowerCase());
+      await _lbOpen(); const fp0 = JSON.stringify(_slbFingerprintPart());
+      out.hub = await walk('hub', 'hub', 'hub', _txIdCol('hub'));
+      /* the picture on Simple's router: stored next to its title only; the drawing is not stored, frozen or "changed" */
+      await _txPick('hub', navy, () => wireSettings.simple && wireSettings.simple.pic);
+      out.simpleData = [Object.keys(wireSettings.simple || {}).sort(), JSON.stringify(_slbFingerprintPart()) === fp0];
+      want.simpleData = [['pic', 'picColor'], true];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { await restore(); }
+    return is(out, want, 'per tool: [the file window opened once] / navy [the stored picture, its size, its colour, the bar (colour, words, box), the box draws it, its upload icon, its x, undo steps, Save lit] / amber (replaced) [its colour, the bar, undo steps] / removed [a picture left, the bar, undo steps] / Undo x3 [the picture\'s colour, the bar] / Simple [what is stored for the router, the drawing\'s cable plan unchanged]');
+  });
+  // 16ld-tools T4: NEW
+  await check('Wire 16ld-tools (X) ("select a random color if none is uploaded"): a tool made before this build has no colour stored and shows the palette colour of its id: a show saved with a router, a switcher, a converter and a network switch that have no colour opens with each bar in its id\'s palette colour, the same after a redraw, a page switch and a save and reopen, and nothing is written (no colour stored, no undo step, no Save lit); a new tool gets its own palette colour when it is made (in its one undo step); on every palette colour, and on a dark and a light logo\'s colour, the bar\'s words are white or black at 4.5:1 or more', async () => {
+    const out = {}, want = {};
+    try {
+      await restore(); await _cMWire('advanced');
+      _wireAdvAddRouter(10); _wireAdvAddSwitcher('8×2 Switcher', 8, 2); _wireAdvAddDevice('converter', 2, 2); _wireAdvAddDevice('switch', 4); await wait(300);
+      wireAdvanced.routers.concat(wireAdvanced.devices).forEach(t => { delete t.color; });   /* as an older build saved them */
+      const ids = wireAdvanced.routers.map(r => 'router:' + r.id).concat(wireAdvanced.devices.map(d => 'device:' + d.id));
+      const text = JSON.stringify(getProjectState());
+      _applyProjectText(text); await wait(700); okDialogs(); await wait(150); okDialogs(); await _cMWire('advanced'); _wireZoomFit(); await wait(400);
+      const u0 = _undoStack.length;
+      const cols = () => ids.map(nid => { const h = _txHead(nid); return typeof h === 'string' ? h : [h.bg === _txIdCol(nid.split(':')[1]), h.ink[2]]; });
+      const stored = () => wireAdvanced.routers.concat(wireAdvanced.devices).filter(t => t.color !== undefined).length;
+      out.opened = [cols(), stored(), _undoStack.length - u0, _lbDirty()];
+      _wireRender(); await wait(300); out.redraw = cols();
+      const pages = wireAdvanced._pages.map(p => p.id); _wireSwitchPage(pages[1]); await wait(300); _wireSwitchPage(pages[0]); await wait(300); _wireRender(); await wait(300); out.page = [cols(), stored()];
+      _applyProjectText(JSON.stringify(getProjectState())); await wait(700); okDialogs(); await wait(150); okDialogs(); await _cMWire('advanced'); await wait(300);
+      out.reopened = [cols(), stored(), _lbDirty()];
+      const all = ids.map(() => [true, true]);
+      want.opened = [all, 0, 0, [false, false]]; want.redraw = all; want.page = [all, 0]; want.reopened = [all, 0, [false, false]];
+      const u1 = _undoStack.length; _wireAdvAddDevice('converter', 2, 2); await wait(300); const nd = wireAdvanced.devices[wireAdvanced.devices.length - 1];
+      out.made = [_undoStack.length - u1, _txPal.indexOf(String(nd.color || '').toLowerCase()) >= 0, _txHead('device:' + nd.id).bg === String(nd.color || '').toLowerCase()]; want.made = [1, true, true];
+      /* the words on every palette colour and on a dark and a light logo's colour (the router's own colour set for a draw, then put back) */
+      const R = wireAdvanced.routers[0], sweep = [];
+      for (const c of _txPal) { R.color = c; _wireRender(); await wait(120); const h = _txHead('router:' + R.id); sweep.push([c, h.bg === c, h.ink[1], h.ink[2]]); }
+      for (const c of [_txNAVY, _txAMBER]) { R.pic = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=='; R.picColor = c; _wireRender(); await wait(120); const h = _txHead('router:' + R.id); sweep.push([c, h.bg === c, h.ink[1], h.ink[2], h.ink[0]]); }
+      out.sweep = sweep; want.sweep = _txPal.map(c => [c, true, true, true]).concat([[_txNAVY, true, true, true, '#ffffff'], [_txAMBER, true, true, true, '#000000']]);
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { await restore(); }
+    return is(out, want, 'opened [each bar in its id\'s colour, its words 4.5:1] + colours stored + undo steps + [dirty, Save lit] / after a redraw / after a page switch [bars, colours stored] / saved and reopened [bars, colours stored, dirty and Save lit] / a new converter [undo steps, a palette colour stored, its bar] / the words on each colour [the colour, the bar in it, white or black, 4.5:1 (, which)]');
+  });
+  // 16ld-tools T5: NEW
+  await check('Wire 16ld-tools (X): the printed Wire sheets, the Look Book and Advanced page 1 show the new headers: with a navy logo on Simple\'s Generic Router, the Simple sheet (light and dark) and the Look Book\'s Simple Wire page print its navy bar with white words and the logo in its picture box; Advanced page 1, built from Simple, has its router in Simple\'s router\'s colour with Simple\'s logo; with a converter added, the Advanced sheet (light and dark) and the Look Book\'s Advanced Wire page print the router\'s navy bar and logo and the converter\'s own-colour bar with CONVERTER in its box (on the light sheet the bars keep their colours: the light sheet\'s grey title-bar rule does not grey them); on paper there is no upload icon, x, rename pencil or resize pencil', async () => {
+    const out = {}, want = {};
+    const inDoc = (svg, sel) => { const box = document.createElement('div'); box.style.cssText = 'position:absolute;left:-100000px;top:0;width:4000px'; box.innerHTML = String(svg).replace(/^<\?xml[^>]*>/, ''); document.body.appendChild(box); try { return $$(sel, box).map(t => [_txHex(getComputedStyle(t).backgroundColor), _txHex(getComputedStyle($('input, span', t) || t).color)]); } finally { box.remove(); } };
+    const paper = root => [$$('.wire-router-title', root).map(t => (/background:\s*(#[0-9a-f]{6})\s*!important/i.exec(t.getAttribute('style') || '') || [])[1] || 'no colour'), $$('.wtl-pic image.wtl-img', root).map(i => String(i.getAttribute('href') || '').slice(0, 23)), $$('.wtl-pic text.wtl-auto-t', root).map(e => e.textContent).join(' '), $$('.wtl-ui, .wtl-pen, .wire-router-pen, .wtl-hit, .wtl-clr, .wtl-ico', root).length];
+    const parseSvg = s => new DOMParser().parseFromString('<!DOCTYPE html><body>' + String(s).replace(/^<\?xml[^>]*>/, '') + '</body>', 'text/html').body;
+    const bookWire = html => new DOMParser().parseFromString(html, 'text/html').body;
+    try {
+      const navy = await _txFile(_txNAVY);
+      await _lbOpen();
+      want.pick = true; out.pick = await _txPick('hub', navy, () => wireSettings.simple && wireSettings.simple.pic);
+      const hubPic = wireSettings.simple.pic, hubCol = _txIdCol('hub');
+      const sL = _wireExportSheetList('light')[0], sD = _wireExportSheetList('dark')[0];
+      out.simpleLight = paper(parseSvg(sL)); out.simpleDark = paper(parseSvg(sD)); out.simpleLightLook = inDoc(sL, '.wire-router-title');
+      want.simpleLight = [[_txNAVY], ['data:image/jpeg;base64,'], '', 0]; want.simpleDark = want.simpleLight; want.simpleLightLook = [[_txNAVY, '#ffffff']];
+      out.bookSimple = paper(bookWire(await _laBook('simple'))); want.bookSimple = want.simpleLight;
+      await _cMWire('advanced');
+      const p1 = wireAdvanced.routers[0];
+      out.pageOne = [String(p1.color || '').toLowerCase() === hubCol, p1.pic === hubPic, p1.picColor, _txHead('router:' + p1.id).bg]; want.pageOne = [true, true, _txNAVY, _txNAVY];
+      _wireAdvAddDevice('converter', 2, 2); await wait(300); const D = wireAdvanced.devices[wireAdvanced.devices.length - 1], dc = String(D.color).toLowerCase(), dInk = _txCR('#ffffff', dc) >= _txCR('#000000', dc) ? '#ffffff' : '#000000';
+      _wireRender(); await wait(300);
+      const aL = _wireExportSheetList('light').join(''), aD = _wireExportSheetList('dark').join('');
+      out.advLight = paper(parseSvg(aL)); out.advDark = paper(parseSvg(aD)); out.advLightLook = inDoc(aL, '.wire-router-title');
+      want.advLight = [[_txNAVY, dc], ['data:image/jpeg;base64,'], 'CONVERTER', 0]; want.advDark = want.advLight; want.advLightLook = [[_txNAVY, '#ffffff'], [dc, dInk]];
+      out.bookAdv = paper(bookWire(await _laBook('advanced'))); want.bookAdv = want.advLight;
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { await restore(); }
+    return is(out, want, 'the upload / each print [the bars\' colours, the pictures, the words in the boxes, upload icons / x / pencils left] / on the light sheet as drawn [bar, words] / page 1\'s router [Simple\'s router\'s colour, Simple\'s picture, its colour, its bar]');
+  });
+  // 16ld-tools T6: NEW
+  await check('Wire 16ld-tools (X) (Omar: "the name center and the edit pencil first"): the pencil comes first on every tool and does what it did, or puts you in the name: a router\'s / switcher\'s pencil opens its size window as before; a converter\'s, a network switch\'s and Simple\'s Generic Router\'s pencil puts the cursor in its name box, the name selected; a router renamed on its tile shows the new name in its picture box at once, the focus staying in its name box (no redraw, one undo step); and the in-app Help\'s Wire section has a Tool headers row that says so', async () => {
+    const out = {}, want = {};
+    try {
+      await restore(); await _cMWire('advanced');
+      _wireAdvAddRouter(10); _wireAdvAddDevice('converter', 2, 2); _wireAdvAddDevice('switch', 4); await wait(300); _wireZoomFit(); await wait(400);
+      const R = wireAdvanced.routers[wireAdvanced.routers.length - 1], C = wireAdvanced.devices[wireAdvanced.devices.length - 2], W = wireAdvanced.devices[wireAdvanced.devices.length - 1];
+      const firstOf = nid => { const t = $('.wire-router-title', _txNode(nid)); return t ? t.firstElementChild : null; };
+      await _txClickEl(firstOf('router:' + R.id)); out.size = !!$('#wire-iocount-overlay'); const cx = $('#wire-ioc-cancel'); if (cx) cx.click(); await wait(250);
+      const inName = nid => { const a = document.activeElement; return !!a && a.tagName === 'INPUT' && a.closest('g.wire-node') === _txNode(nid) && !!a.closest('.wire-router-title') && a.selectionStart === 0 && a.selectionEnd === String(a.value || '').length; };
+      await _txClickEl(firstOf('device:' + C.id)); out.converter = inName('device:' + C.id); if (document.activeElement) document.activeElement.blur(); await wait(200);
+      await _txClickEl(firstOf('device:' + W.id)); out.switch = inName('device:' + W.id); if (document.activeElement) document.activeElement.blur(); await wait(200);
+      const inp = $('.wire-router-title input', _txNode('router:' + R.id)), u0 = _undoStack.length; inp.focus(); inp.value = 'Random Switcher'; fire(inp, 'change'); await wait(300);
+      out.rename = [$$('.wtl-pic text.wtl-auto-t', _txNode('router:' + R.id)).map(e => e.textContent).join(' '), inp.isConnected, document.activeElement === inp, _undoStack.length - u0, R.title];
+      inp.blur(); await wait(200);
+      await _cMWire('simple'); await wait(300);
+      await _txClickEl(firstOf('hub')); out.simple = inName('hub'); if (document.activeElement) document.activeElement.blur();
+      actions.help(); await wait(300); if (typeof helpTab === 'function') helpTab('ref'); await wait(200);
+      const row = $$('#help-overlay div').find(d => d.children.length === 0 && d.textContent.trim() === 'Tool headers'), tx = row && row.nextElementSibling ? row.nextElementSibling.textContent.replace(/\s+/g, ' ') : '';
+      closeHelp(); await wait(150);
+      out.help = [!!row, /pencil and name on the left, a picture on the right/.test(tx), /Click the picture to upload/.test(tx), /removes it/.test(tx), /colour of the image/.test(tx), /picked at random/.test(tx), /white or black/.test(tx), /Generic Router/.test(tx)];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { await restore(); }
+    return is(out, { size: true, converter: true, switch: true, rename: ['RANDOM SWITCHER', true, true, 1, 'Random Switcher'], simple: true, help: [true, true, true, true, true, true, true, true] },
+      'router pencil [size window] / converter pencil [in its name, selected] / switch pencil / router renamed [its picture box, the name box still there, still focused, undo steps, stored] / Simple\'s pencil / Help [the row, left / right, upload, remove, the image\'s colour, random, white or black, Generic Router]');
+  });
+  // ── 16ld-fix (the v0.8.0 candidate's fixes: Omar's (X2) "the image thumbnail on the tools should be has big has the source size and
+  //    the I/O Patch they are way smaller in the preview photos. so that needs to be bigger", and the attackers' defects A1-A6, B1, B5-B7,
+  //    each reproduced with real input first). Each check FAILS on the 16ld tools page (r16ld/tools/lookbook_builder.html, ee34ca0d) and
+  //    PASSES after. Helpers prefixed _fx (never a name of the page's); they use the 16ld-tools helpers (_tx*) and 16lb's (_lb*).
+  const _fxCatch = async fn => { const errs = []; const on = e => errs.push(String((e && (e.message || (e.error && e.error.message))) || e)); window.addEventListener('error', on); try { await fn(); } finally { window.removeEventListener('error', on); } return errs; };
+  /* the name a tool's bar shows: its shown name (16ld-fix), else its name box */
+  const _fxNameEl = root => $('.wtl-nm-show', root) || $('input', root) || $('span', root);
+  const _fxShown = nid => { const g = _txNode(nid), ti = g && $('.wire-router-title', g), el = ti && _fxNameEl(ti); return el ? (el.tagName === 'INPUT' ? el.value : el.textContent) : null; };
+  const _fxCut = el => !el ? 'nothing' : (el.tagName === 'INPUT' ? el.scrollWidth > el.clientWidth + 1 : (el.scrollWidth > el.clientWidth + 1 || el.scrollHeight > el.clientHeight + 1));
+  /* typing into a box as a user does (the box fires its change when it is left) */
+  const _fxTyped = (inp, text) => { inp.focus(); inp.select(); document.execCommand('insertText', false, text); };
+  /* the page's file window: counted; handed FILE when one is set */
+  const _fxStub = () => { const real = HTMLInputElement.prototype.click; const s = { opened: 0, file: null, restore: () => { HTMLInputElement.prototype.click = real; } };
+    HTMLInputElement.prototype.click = function () { if (this.type === 'file') { s.opened++; if (s.file) { const dt = new DataTransfer(); dt.items.add(s.file); this.files = dt.files; this.dispatchEvent(new Event('change', { bubbles: true })); } return; } return real.apply(this, arguments); }; return s; };
+  const _fxPNG = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
+  // 16ld-fix F1: NEW
+  await check('Wire 16ld-fix (A1) (attacker 2026-09-30: on ORGILL at Fit the zoom-out button went 23 % > 15 % > 10 % > 100 %: 16lb-simple\'s 10 % floor rounded 10 % - 10 % to 0, which the zoom reads as 100 %): the - button never zooms in: from 15 % it gives 10 %, at 10 % it stays at 10 % (the readout says 10%), + from there gives 20 %; on Advanced, - at 12 % gives 10 %', async () => {
+    const out = {};
+    try {
+      await _lbOpen();
+      const btn = d => $$('[onclick="_wireZoomBy(' + d + ')"]').find(vis);
+      _wireSetZoom(0.15); await wait(200); const seq = [];
+      for (let i = 0; i < 3; i++) { btn(-0.1).click(); await wait(250); seq.push(Math.round(_wireGetZoom() * 100)); }
+      seq.push(($('#wire-zoom-readout') || {}).textContent.trim());
+      btn(0.1).click(); await wait(250); seq.push(Math.round(_wireGetZoom() * 100));
+      out.simple = seq;
+      await _cMWire('advanced'); _wireSetZoom(0.12); await wait(200); btn(-0.1).click(); await wait(250); out.advanced = Math.round(_wireGetZoom() * 100);
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { _wireSetZoom(1); } catch (e) {} await restore(); }
+    return is(out, { simple: [10, 10, 10, '10%', 20], advanced: 10 }, 'Simple [- from 15 %, - again, - again, the readout, then +] / Advanced [- from 12 %]');
+  });
+  // 16ld-fix F2: NEW
+  await check('Wire 16ld-fix (A2) (attacker 2026-09-30: with an ID typed on OUT 1 and a destination added since, deleting LEFT LED in the I/O Patch moved the new destination from OUT 6 onto OUT 1, with LEFT LED\'s typed ID): on an edited Simple drawing an item placed on the next free row keeps its row, its cable and its own empty ID when another item is deleted from the show; the deleted item\'s row is drawn free and keeps its typed ID; the next tile that needs a free row (a multiviewer dragged in) takes it', async () => {
+    const out = {};
+    try {
+      await _lbOpen();
+      const L = _bdNoBd(screens)[0], ids = () => $$('#wire-diagram input.slb-pt').filter(e => e.dataset.slbSide === 'out').map(e => e.value);
+      _slbSetPt('out', 0, 'PGM-A', true); _wireRender(); await wait(300);
+      closeWireMode(); await wait(200);
+      actions.addDestination(); await wait(300); $('#ms-n').value = 'NEW LED'; confirmScreen(); await wait(400); okDialogs();
+      const nd = screens[screens.length - 1], k = 'dst:' + nd.id;
+      await _cMWire('simple'); await wait(300);
+      const r0 = _lbRows()[1].indexOf(k);
+      out.added = [r0, ids()[r0], !!_lbEdge('simple:hout:' + r0 + '→' + k)];
+      deleteScreen(L.id); await wait(350); okDialogs(); _wireRender(); await wait(300);
+      const rows = _lbRows()[1];
+      out.deleted = [rows.indexOf(k), rows[0], ids()[0], ids()[r0], !!_lbEdge('simple:hout:' + r0 + '→' + k), $$('#wire-diagram path.slb-edge').some(p => /^simple:hout:0→/.test(p.getAttribute('data-edge-key') || ''))];
+      const mv = multiviewers[0]; _slbDropCard('mv', mv.id, 2600, 900); await wait(300); _wireRender(); await wait(300);
+      out.next = [_lbRows()[1].indexOf('mv:' + mv.id), _lbRows()[1].indexOf(k)];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { closeWireMode(); } catch (e) {} await restore(); }
+    return is(out, { added: [5, '', true], deleted: [5, '', 'PGM-A', '', true, false], next: [0, 5] },
+      'NEW LED added [its row, its ID, its cable] / LEFT LED deleted [NEW LED\'s row, output 1 drawn free, output 1\'s ID, NEW LED\'s ID, NEW LED\'s cable, a cable on output 1] / a multiviewer dragged in [its row, NEW LED\'s row]');
+  });
+  // 16ld-fix F3: NEW
+  await check('Wire 16ld-fix (A3) (attacker 2026-09-30: a tool\'s name typed without Enter, then its picture\'s x or its picture box clicked: a router kept showing ROUTER I/O, a converter / a switch threw NotFoundError): the name being typed is committed first: a router, a converter and a network switch renamed and their x clicked show the new name in the bar and in the picture box at once, with no page error, two undo steps (the name, the picture); a router renamed and its picture box clicked (an image picked) shows its new name too', async () => {
+    const out = {};
+    try {
+      await restore(); await _cMWire('advanced');
+      _wireAdvAddRouter(10); _wireAdvAddDevice('converter', 2, 2); _wireAdvAddDevice('switch', 4); await wait(300); _wireZoomFit(); await wait(300);
+      const R = wireAdvanced.routers[wireAdvanced.routers.length - 1], C = wireAdvanced.devices[wireAdvanced.devices.length - 2], W = wireAdvanced.devices[wireAdvanced.devices.length - 1];
+      [R, C, W].forEach(t => { t.pic = _fxPNG; }); _wireRender(); await wait(300);
+      const viaX = async (kind, t, name) => {
+        const nid = kind + ':' + t.id, inp = $('.wire-router-title input', _txNode(nid)), u0 = _undoStack.length;
+        const errs = await _fxCatch(async () => { _fxTyped(inp, name); await wait(100); await _txClickEl($('.wtl-pic circle.wtl-clr', _txNode(nid))); await wait(300); });
+        return [_fxShown(nid), $$('.wtl-pic text.wtl-auto-t', _txNode(nid)).map(e => e.textContent).join(' '), kind === 'router' ? t.title : t.name, !t.pic, _undoStack.length - u0, errs.length];
+      };
+      out.router = await viaX('router', R, 'Main Router');
+      out.converter = await viaX('device', C, 'Decimator 7');
+      out.switch = await viaX('device', W, 'Netgear A');
+      const navy = await _txFile(_txNAVY), nid = 'router:' + R.id, inp = $('.wire-router-title input', _txNode(nid)), u0 = _undoStack.length;
+      _fxTyped(inp, 'Edit Rack'); await wait(100);
+      const pick = await _txPick(nid, navy, () => !!R.pic && R.title === 'Edit Rack');
+      await wait(300);
+      out.upload = [pick, _fxShown(nid), R.title, !!R.pic, _undoStack.length - u0];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { const a = document.activeElement; if (a && a.blur) a.blur(); await restore(); }
+    return is(out, { router: ['Main Router', 'MAIN ROUTER', 'Main Router', true, 2, 0], converter: ['Decimator 7', 'DECIMATOR 7', 'Decimator 7', true, 2, 0], switch: ['Netgear A', 'NETGEAR A', 'Netgear A', true, 2, 0], upload: [true, 'Edit Rack', 'Edit Rack', true, 2] },
+      'renamed then its x clicked [the bar shows, the picture box shows, stored, the picture gone, undo steps, page errors] (router / converter / switch) / renamed then its picture box clicked [the file window, the bar shows, stored, the picture, undo steps]');
+  });
+  // 16ld-fix F4: NEW
+  // 16ld-fix2 F4: REPLACES the check named in its header (reason in the block)
+  // 16ld-fix2: RENAMED in place. Why: Omar 2026-09-30 21:45 (X2 REPLACED), after the 176 x 99 tool pictures: "Longer tool names let make
+  //   this half the logo size then to save on space" (the TOOL'S picture box): the box is 55 x 31, half a source tile's 110 x 62, 13 in
+  //   from the right end and centred in the bar; the bar is back to its old height (56 on a router / switcher / I/O Patch page tile /
+  //   the Generic Router, 44 on a converter / network switch), so a router's rows start at 144 and a converter's / switch's at 80 again;
+  //   the name sits beside the pencil on every tool (the bar no longer wraps). 16ld-fix drew a long name smaller (down to 9 px) on up to
+  //   three lines; it is now drawn at the bar's own size on one or two lines: the check also reads the size and the number of lines.
+  await check('Wire 16ld-fix (A4 / B2) (both attackers 2026-09-30: a network switch named NETGEAR M4250-26G4F read "NETGEAR ..." in its bar on screen, on the Wire sheet and in the Look Book, and with a logo in its picture box the full name was nowhere) (16ld-fix2 (X2), Omar 21:45: the half-size picture gives the name its width back): a tool\'s name shows in full in its bar, at the bar\'s own size (15 px on a converter / switch, 18 on a router: never smaller), on one line or two, on screen, on the light Wire sheet and on the Look Book\'s Advanced Wire page, with a logo in the picture box: a network switch NETGEAR M4250-26G4F (the name beside its pencil), a converter DECIMATOR MD-HX CROSS CONVERTER, a router BARCO E2 MAIN SCREEN; the one-line box you type in shows while it has the focus', async () => {
+    const out = {};
+    try {
+      await restore(); await _cMWire('advanced');
+      _wireAdvAddDevice('switch', 4); _wireAdvAddDevice('converter', 2, 2); _wireAdvAddRouter(10); await wait(300);
+      const W = wireAdvanced.devices[wireAdvanced.devices.length - 2], C = wireAdvanced.devices[wireAdvanced.devices.length - 1], R = wireAdvanced.routers[wireAdvanced.routers.length - 1];
+      W.name = 'NETGEAR M4250-26G4F'; C.name = 'DECIMATOR MD-HX CROSS CONVERTER'; R.title = 'BARCO E2 MAIN SCREEN'; [W, C, R].forEach(t => { t.pic = _fxPNG; });
+      _wireSetZoom(1); _wireRender(); await wait(400);
+      const tools = [['device:' + W.id, W.name], ['device:' + C.id, C.name], ['router:' + R.id, R.title]];
+      const read = root => tools.map(([nid, nm]) => { const g = $$('g.wire-node', root).find(x => x.getAttribute('data-node-id') === nid), ti = g && $('.wire-router-title', g), el = ti && _fxNameEl(ti); if (!el) return 'no name'; const v = el.tagName === 'INPUT' ? (el.value || el.getAttribute('value')) : el.textContent; return [v === nm, _fxCut(el), getComputedStyle(el).fontSize, Math.round(el.offsetHeight / parseFloat(getComputedStyle(el).lineHeight)) <= 2]; });
+      const laid = (html, fn) => { const box = document.createElement('div'); box.style.cssText = 'position:absolute;left:-100000px;top:0;width:6000px'; box.innerHTML = html; document.body.appendChild(box); try { return fn(box); } finally { box.remove(); } };
+      out.screen = read(document);
+      out.sheet = laid(_wireExportSheetList('light').join('').replace(/<\?xml[^>]*>/g, ''), read);
+      { const doc = new DOMParser().parseFromString(await _laBook('advanced'), 'text/html'), w = $('#pdf-wire', doc); out.book = w ? laid(w.outerHTML, read) : 'no Wire page'; }
+      const inp = $('.wire-router-title input', _txNode('device:' + W.id)); inp.focus(); await wait(200);
+      out.typing = [getComputedStyle(inp).opacity, getComputedStyle(_fxNameEl($('.wire-router-title', _txNode('device:' + W.id)))).visibility];
+      inp.blur();
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { _wireSetZoom(1); } catch (e) {} await restore(); }
+    const F = [[true, false, '15px', true], [true, false, '15px', true], [true, false, '18px', true]];
+    return is(out, { screen: F, sheet: F, book: F, typing: ['1', 'hidden'] }, 'each name [all of it, cut, its size, two lines at most] on screen / on the light sheet / on the Look Book\'s Advanced Wire page (switch, converter, router) / while the box is typed in [the box shown, the name shown under it hidden]');
+  });
+  // 16ld-fix F5: NEW
+  // 16ld-fix2 F5: REPLACES the check named in its header (reason in the block)
+  // 16ld-fix2: RENAMED in place (REPLACED). Why: Omar 2026-09-30 21:45 changed (X2) after the 176 x 99 tool pictures: "Longer tool names
+  //   let make this half the logo size then to save on space" (the TOOL'S picture box). 16ld-fix's check pinned 176 x 99 = 1.6 times a
+  //   source tile's picture; it now pins HALF of it (55 x 31) on the same drawing, measured the same way at 100 % zoom, the look halved
+  //   (corner 3, the 9 x 9 icon 2 in), the box centred in the bar (56 / 44), the name in the box clear of the icon (A5) and the sheet.
+  await check('Wire 16ld-fix (X2) (16ld-fix2: REPLACED by Omar 2026-09-30 21:45, "Longer tool names let make this half the logo size then to save on space", the TOOL\'S picture box; 16ld-fix made it 176 x 99): measured on screen at 100 % zoom, every tool\'s picture box (Simple\'s Generic Router; on Advanced page 1\'s router, a 10 x 10 router, an 8 x 2 switcher, an I/O Patch page tile, a converter, a network switch) is 55 x 31: HALF the source tile\'s picture box on the same drawing (110 x 62) in both directions, within 1 px; the cards\' pictures (Wire, I/O Patch) stay 110 x 62; it looks like a tile\'s picture halved: corner radius 3, 13 in from the right end, centred in its bar (56 high, 44 on a converter / network switch), the upload icon 9 x 9 2 in from its top-left; a name in the box (no image) stays inside the box and clear of the upload icon (A5: a long name ran under the icon); the Advanced sheet prints it 55 x 31', async () => {
+    const out = {}, want = {};
+    try {
+      await _lbOpen(); _wireSetZoom(1); _wireRender(); await wait(400);
+      const sz = el => { if (!el) return 'none'; const r = el.getBoundingClientRect(); return [Math.round(r.width * 10) / 10, Math.round(r.height * 10) / 10]; };
+      const half = (t, s) => (Array.isArray(t) && Array.isArray(s)) ? [Math.abs(t[0] - s[0] / 2) <= 1, Math.abs(t[1] - s[1] / 2) <= 1] : 'none';
+      const src = () => $$('#wire-diagram g.wire-node').filter(g => g.dataset.nodeType === 'source').map(g => $('.wire-adv-thumb', g))[0];
+      const tool = nid => { const g = _txNode(nid); return g ? $('.wtl-pic rect.wtl-auto, .wtl-pic image.wtl-img', g) : null; };
+      const s0 = sz(src()), h0 = sz(tool('hub'));
+      out.simple = [s0, h0, half(h0, s0)]; want.simple = [[110, 62], [55, 31], [true, true]];
+      out.cards = [sz($('#wire-sources-panel .wire-source-card .wire-thumb'))]; want.cards = [[110, 62]];
+      { const g = _txNode('hub'), b = tool('hub'), rc = $(':scope > rect', g), X = +rc.getAttribute('x'), Y = +rc.getAttribute('y'), W = +rc.getAttribute('width'), hint = $('.wtl-pic .wtl-hint', g);
+        out.look = [+b.getAttribute('rx'), W - (+b.getAttribute('x') - X) - +b.getAttribute('width'), +b.getAttribute('y') - Y, hint ? [+hint.getAttribute('width'), +hint.getAttribute('height'), +hint.getAttribute('x') - +b.getAttribute('x'), +hint.getAttribute('y') - +b.getAttribute('y')] : 'no icon', ($('.wire-router-title', g) || {}).offsetHeight];
+        want.look = [3, 13, 12.5, [9, 9, 2, 2], 56]; }
+      openSystem(); await wait(400); if (ioAdvanced.view !== 'simple') { _ioSetView('simple'); await wait(400); } okDialogs();
+      out.cards.push(sz($('#io-grid .iog-card .wire-thumb'))); want.cards.push([110, 62]);
+      const pg = ioAdvanced.pages[1]; pg.name = 'ROSS RACK';
+      pg.sources = [{ id: 'fxs1', name: 'CAM A', connectorType: '', customType: '', resolution: '', notes: '', type: '' }]; pg.dests = [{ id: 'fxd1', name: 'MON 1', connectorType: '', customType: '', resolution: '', notes: '', deviceType: '' }];
+      await _cMWire('advanced');
+      _wireAdvAddRouter(10); _wireAdvAddSwitcher('8×2 Switcher', 8, 2); _wireAdvAddPatchTile(1); _wireAdvAddDevice('converter', 2, 2); _wireAdvAddDevice('switch', 4); await wait(400);
+      _wireSetZoom(1); _wireRender(); await wait(400);
+      const ids = wireAdvanced.routers.map(r => 'router:' + r.id).concat(wireAdvanced.devices.map(d => 'device:' + d.id)), as = sz(src());
+      out.advanced = [as, ids.length, ids.map(nid => { const t = sz(tool(nid)); return [t, half(t, as)]; })]; want.advanced = [[110, 62], 6, ids.map(() => [[55, 31], [true, true]])];
+      out.bars = ids.map(nid => { const g = _txNode(nid), b = tool(nid), rc = $(':scope > rect', g), ti = $('.wire-router-title', g); return [ti ? ti.offsetHeight : 'no bar', b ? +b.getAttribute('y') - +rc.getAttribute('y') : 'no box', b ? +rc.getAttribute('width') - (+b.getAttribute('x') - +rc.getAttribute('x')) - +b.getAttribute('width') : 'no box']; });
+      want.bars = ids.map(nid => nid.indexOf('device:') === 0 ? [44, 6.5, 13] : [56, 12.5, 13]);
+      const C = wireAdvanced.devices[wireAdvanced.devices.length - 2], clear = [];
+      for (const nm of ['DECIMATOR 7', 'BLACKMAGIC SMART VIDEOHUB 40X40', 'NETGEAR M4250 RACK A', 'AJA FS-HDR', 'WMWMWM WMWMWM', 'SWITCH']) {
+        C.name = nm; _wireRender(); await wait(150);
+        const gg = _txNode('device:' + C.id), bx = $('.wtl-pic rect.wtl-auto', gg).getBBox(), hi = $('.wtl-pic .wtl-hint', gg).getBBox(), T = $$('.wtl-pic text.wtl-auto-t', gg);
+        clear.push(T.length > 0 && T.every(t => { const tb = t.getBBox(); const inside = tb.x >= bx.x - 0.5 && tb.x + tb.width <= bx.x + bx.width + 0.5 && tb.y >= bx.y - 0.5 && tb.y + tb.height <= bx.y + bx.height + 0.5; const off = tb.x >= hi.x + hi.width || tb.x + tb.width <= hi.x || tb.y >= hi.y + hi.height || tb.y + tb.height <= hi.y; return inside && off; }));
+      }
+      out.clear = clear; want.clear = [true, true, true, true, true, true];
+      const doc = new DOMParser().parseFromString(_wireBuildAdvancedExportSvg('light', {}), 'image/svg+xml');
+      out.sheet = [...new Set($$('.wtl-pic rect.wtl-auto, .wtl-pic image.wtl-img', doc).map(e => e.getAttribute('width') + 'x' + e.getAttribute('height')))]; want.sheet = ['55x31'];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { _wireSetZoom(1); } catch (e) {} await restore(); }
+    return is(out, want, 'Simple at 100 % [a source tile\'s picture, the router\'s, half of it within 1 px (w, h)] / the cards\' pictures [Wire\'s source card, the I/O Patch card] / its look [corner radius, in from the right end, down, the upload icon (w, h, in, down), the header\'s height] / Advanced at 100 % [a source tile\'s picture, tools, each tool\'s [size, half (w, h)]] / each tool [its bar\'s height, the box down, in from the right end] / a name inside the box and clear of the icon (6 names) / the Advanced sheet\'s picture boxes');
+  });
+  // 16ld-fix F6: NEW
+  // 16ld-fix2 F6: REPLACES the check named in its header (reason in the block)
+  // 16ld-fix2: RENAMED in place. Why: Omar 2026-09-30 21:45 (X2 REPLACED): the tool headers are their old heights again (56 / 44), so a tool
+  //   from an older show has nothing to grow: the show of this check (laid out for the old 56 / 44 px titles) now opens with every tile
+  //   where it was, both cable paths kept, nothing written (16ld-fix moved the converter and the AUX tile down, reset the hugging path
+  //   and stored hdr 125). What it pins otherwise is unchanged: no overlap, not an edit, the same after a redraw, a page switch, a reopen.
+  await check('Wire 16ld-fix (B1) (the regression attacker 2026-09-30: on Omar\'s ORGILL page 1 the router\'s taller header covered the Decimator 40 under it and the cable between them vanished; in AVE_TEST_File a hand-drawn cable under a converter ran inside the taller converter) (16ld-fix2 (X2), Omar 21:45: the headers are their old heights again, 56 / 44): a show saved before the tool pictures (a 10 x 10 router 40 above a converter 40 above an AUX tile, a hand-drawn path hugging the converter\'s bottom, one well clear) opens with every tile where it was, none on another, both paths kept, nothing written on the tools (no hdr), no undo step, Save not lit; the same after a redraw, a page switch and a save and reopen', async () => {
+    const out = {};
+    try {
+      await restore(); await _cMWire('advanced');
+      _wireAdvAddRouter(10); _wireAdvAddDevice('converter', 2, 2); await wait(300);
+      const R = wireAdvanced.routers[wireAdvanced.routers.length - 1], C = wireAdvanced.devices[wireAdvanced.devices.length - 1], rid = R.id, cid = C.id;
+      [R, C].forEach(t => { delete t.color; delete t.hdr; });   /* as an older build saved them, laid out for the 56 / 44 px titles */
+      R.x = 6000; R.y = 100;   /* right of everything page 1 has; 144 + 440 + 4 + the 36 footer = 624: bottom 724 */
+      C.x = 6200; C.y = 764;   /* 40 under it; 80 + 72 + 36 + 4 = 192: bottom 956 */
+      wireAdvanced.dsms.push({ id: 'fxA1', refId: dsms[0].id, x: 6220, y: 996 }, { id: 'fxA2', refId: dsms[1].id, x: 6220, y: 1700 });
+      wireAdvanced.wires.push({ id: 'fxW1', fromId: 'rop:' + rid + ':0', toId: 'dvi:' + cid + ':0' },
+        { id: 'fxW2', fromId: 'dvo:' + cid + ':1', toId: 'adsm:fxA1', route: [6680, 970, 6180] },     /* hugs the converter's bottom */
+        { id: 'fxW3', fromId: 'dvo:' + cid + ':0', toId: 'adsm:fxA2', route: [6760, 1600, 6180] });   /* well clear of everything */
+      const open = async text => { _applyProjectText(text); await wait(700); okDialogs(); await wait(150); okDialogs(); await _cMWire('advanced'); await wait(400); };
+      const read = () => { const r = wireAdvanced.routers.find(x => x.id === rid), c = (wireAdvanced.devices || []).find(x => x.id === cid), a1 = wireAdvanced.dsms.find(x => x.id === 'fxA1'), a2 = wireAdvanced.dsms.find(x => x.id === 'fxA2'), w = id => wireAdvanced.wires.find(x => x.id === id) || {};
+        const mine = ['router:' + rid, 'device:' + cid, 'adsm:fxA1', 'adsm:fxA2'], L = _wireAdvTileList().filter(t => mine.indexOf(t.id) >= 0), hits = []; for (let i = 0; i < L.length; i++) for (let j = i + 1; j < L.length; j++) { const a = L[i], b = L[j]; if (a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y) hits.push(a.id + ' x ' + b.id); }
+        return [[r.y, c.y, a1.y, a2.y], hits, [JSON.stringify(w('fxW2').route || null), JSON.stringify(w('fxW3').route || null)], [r.hdr === undefined, c.hdr === undefined]]; };
+      await open(JSON.stringify(getProjectState()));
+      const u0 = _undoStack.length;
+      out.opened = read().concat([_undoStack.length - u0, _lbDirty()]);
+      _wireRender(); await wait(300); out.redraw = read()[0];
+      const pages = wireAdvanced._pages.map(p => p.id); _wireSwitchPage(pages[1]); await wait(300); _wireSwitchPage(pages[0]); await wait(300); out.page = read()[0];
+      await open(JSON.stringify(getProjectState())); out.reopened = [read()[0], read()[3], _lbDirty()];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { await restore(); }
+    const Y = [100, 764, 996, 1700];
+    return is(out, { opened: [Y, [], ['[6680,970,6180]', '[6760,1600,6180]'], [true, true], 0, [false, false]], redraw: Y, page: Y, reopened: [Y, [true, true], [false, false]] },
+      'opened [[the router, the converter, the AUX tile under it, the AUX tile far below], tiles on each other, [the hugging path, the clear path], [no hdr on the router, on the converter], undo steps, [dirty, Save lit]] / after a redraw / after a page switch / saved and reopened [the places, no hdr, dirty and Save lit]');
+  });
+  // 16ld-fix F7: NEW
+  await check('Wire 16ld-fix (A6) (attacker 2026-09-30: grabbing a tool by its picture did not move it, and a short drag opened the file window): a tool\'s picture works like a tile\'s: pressed and dragged, it moves the tool (Simple\'s Generic Router by 150 x 90 and by 8 x 6, an Advanced router by 150 x 90), one undo step each, no file window; a plain click on it (no move) opens the file window once', async () => {
+    const out = {}; const st = _fxStub();
+    try {
+      await _lbOpen(); _wireSetZoom(1); _wireRender(); await wait(300);
+      const drag = async (nid, dx, dy) => { const g = _txNode(nid), hit = $('.wtl-pic .wtl-hit', g), r0 = $(':scope > rect', g), x0 = +r0.getAttribute('x'), y0 = +r0.getAttribute('y'), u0 = _undoStack.length, o0 = st.opened;
+        const [px, py] = _lbPt(hit); _lbMouse(hit, 'mousedown', px, py); for (let k = 1; k <= 6; k++) { _lbMouse(window, 'mousemove', px + dx * k / 6, py + dy * k / 6); await wait(15); }
+        _lbMouse(hit, 'mouseup', px + dx, py + dy); await wait(450);
+        const r1 = $(':scope > rect', _txNode(nid)); return [Math.round(+r1.getAttribute('x') - x0), Math.round(+r1.getAttribute('y') - y0), _undoStack.length - u0, st.opened - o0]; };
+      const click = async nid => { const hit = $('.wtl-pic .wtl-hit', _txNode(nid)), o0 = st.opened, [px, py] = _lbPt(hit); _lbMouse(hit, 'mousedown', px, py); _lbMouse(hit, 'mouseup', px, py); hit.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window, clientX: px, clientY: py, button: 0 })); await wait(400); return st.opened - o0; };
+      out.simple = [await drag('hub', 150, 90), await drag('hub', 8, 6), await click('hub')];
+      await _cMWire('advanced'); _wireAdvAddRouter(10); await wait(300); _wireSetZoom(1); _wireRender(); await wait(300);
+      const R = wireAdvanced.routers[wireAdvanced.routers.length - 1];
+      out.advanced = [await drag('router:' + R.id, 150, 90), await click('router:' + R.id)];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { st.restore(); await restore(); }
+    return is(out, { simple: [[150, 90, 1, 0], [8, 6, 1, 0], 1], advanced: [[150, 90, 1, 0], 1] }, 'Simple\'s router [dragged by its picture 150 x 90 (moved x, y, undo steps, file windows), by 8 x 6, a plain click (file windows)] / an Advanced router [dragged, a click]');
+  });
+  // 16ld-fix F8: NEW
+  await check('Wire 16ld-fix (B5) (the regression attacker 2026-09-30: a show file whose tool picture held x" onerror="... ran that script when Wire Advanced drew it): a tool\'s picture read from a show file goes into the drawing escaped: the picture box of a router and of Simple\'s Generic Router opened with such a picture has an image with no onerror attribute whose address is the text as stored', async () => {
+    const out = {};
+    try {
+      const bad = 'x" onerror="window.__fxPwn=1';
+      await restore(); await _cMWire('advanced'); _wireAdvAddRouter(10); await wait(300);
+      const st = JSON.parse(JSON.stringify(getProjectState())), rr = st.wireAdvanced.routers[st.wireAdvanced.routers.length - 1]; rr.pic = bad;
+      if (!st.wireSettings) st.wireSettings = {}; st.wireSettings.simple = Object.assign({}, st.wireSettings.simple || {}, { pic: bad });
+      try { closeWireMode(); } catch (e) {} await wait(200);
+      _applyProjectText(JSON.stringify(st)); await wait(700); okDialogs(); await wait(150); okDialogs();
+      const R = wireAdvanced.routers.find(r => r.id === rr.id);
+      /* the markup each draw puts in the drawing, read in an inert document (nothing loads, nothing runs) */
+      const parse = m => new DOMParser().parseFromString('<svg xmlns="http://www.w3.org/2000/svg">' + m + '</svg>', 'image/svg+xml');
+      const look = m => { const i = $('image', parse(m)); return i ? [i.hasAttribute('onerror'), i.getAttribute('href') === bad] : 'no image'; };
+      out.router = R ? look(_wtlPicSVG('router', R.id, R, R.x, R.y, 820, 'R', false)) : 'no router';
+      out.simple = look(_wtlPicSVG('hub', 'hub', _slbM(), 0, 0, 820, 'G', false));
+      out.printed = R ? look(_wtlPicSVG('router', R.id, R, R.x, R.y, 820, 'R', true)) : 'no router';
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { await restore(); }
+    return is(out, { router: [false, true], simple: [false, true], printed: [false, true] }, 'a router\'s picture box [an onerror attribute, the address as stored] / Simple\'s router\'s / on paper');
+  });
+  // 16ld-fix F9: NEW
+  await check('Wire 16ld-fix (B6) (the regression attacker 2026-09-30: a tool\'s picture box could only be used with the mouse): a tool\'s picture box is a button the keyboard reaches (tabindex 0, role button, named "Upload a picture for ..."); Enter on it opens the file window and the picked image lands (one undo step), the focus back on its picture box; its x is a button too ("Remove the picture of ..."), shown while it has the focus; Space on it removes the picture (one undo step), the focus back on the picture box', async () => {
+    const out = {}; const st = _fxStub();
+    try {
+      await _lbOpen();
+      const hit = () => $('.wtl-pic .wtl-hit', _txNode('hub')), h0 = hit();
+      out.box = h0 ? [h0.getAttribute('tabindex'), h0.getAttribute('role'), /^Upload a picture for /.test(h0.getAttribute('aria-label') || '')] : 'no box';
+      st.file = await _txFile(_txNAVY); const u0 = _undoStack.length;
+      h0.focus(); h0.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true }));
+      for (let i = 0; i < 60 && !(wireSettings.simple && wireSettings.simple.pic); i++) await wait(100); await wait(300);
+      out.upload = [st.opened, !!(wireSettings.simple && wireSettings.simple.pic), _undoStack.length - u0, document.activeElement === hit()];
+      const x = $('.wtl-pic circle.wtl-clr', _txNode('hub'));
+      if (x) { x.focus(); await wait(300); out.x = [x.getAttribute('tabindex'), x.getAttribute('role'), /^Remove the picture of /.test(x.getAttribute('aria-label') || ''), getComputedStyle(x).opacity]; } else out.x = 'no x';
+      const u1 = _undoStack.length; if (x) { x.dispatchEvent(new KeyboardEvent('keydown', { key: ' ', bubbles: true, cancelable: true })); await wait(400); }
+      out.remove = [!(wireSettings.simple && wireSettings.simple.pic), _undoStack.length - u1, document.activeElement === hit()];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { st.restore(); const a = document.activeElement; if (a && a.blur) a.blur(); await restore(); }
+    return is(out, { box: ['0', 'button', true], upload: [1, true, 1, true], x: ['0', 'button', true, '1'], remove: [true, 1, true] }, 'the picture box [tabindex, role, name] / Enter [file windows, the picture, undo steps, the focus back] / its x [tabindex, role, name, shown] / Space on the x [gone, undo steps, the focus back]');
+  });
+  // 16ld-fix F10: NEW
+  // 16ld-fix2 F10: REPLACES the check named in its header (reason in the block)
+  // 16ld-fix2: RENAMED in place. Why: Omar 2026-09-30 21:45 (X2 REPLACED): the Help row now says the picture is half a tile's picture and
+  //   that a name longer than two lines ends in ... with the whole name when you point at it; its sentence about a tile under a tool moving
+  //   down in an older show is gone (nothing moves now: the headers are their old heights). The other phrases it pins are unchanged.
+  await check('Help 16ld-fix (B7) (the regression attacker 2026-09-30: Help > Wire > Tool headers said every tool has a pencil and that the colour is always picked at random) (16ld-fix2 (X2), Omar 21:45): the Tool headers row says an I/O Patch page\'s tile shows a lock instead of the pencil, that the picture is half the size of a tile\'s picture, that Simple\'s Generic Router and a tool from an older show get a colour worked out from the tool, that a long name wraps onto a second line and a longer one ends in ... and shows in full when pointed at, that the keyboard reaches the picture (Tab, Enter) and that dragging it moves the tool, that Advanced page 1 takes the Generic Router\'s colour and picture when it is built; it no longer says a tile under a tool moves down in an older show', async () => {
+    let tx = '';
+    try {
+      actions.help(); await wait(300); if (typeof helpTab === 'function') helpTab('ref'); await wait(200);
+      const row = $$('#help-overlay div').find(d => d.children.length === 0 && d.textContent.trim() === 'Tool headers'); tx = row && row.nextElementSibling ? row.nextElementSibling.textContent.replace(/\s+/g, ' ') : '';
+    } finally { try { closeHelp(); } catch (e) {} await wait(150); }
+    return is([/shows a lock instead of the pencil/.test(tx), /half the size of a tile.s picture/.test(tx), /worked out from the tool/.test(tx), /A long name wraps onto a second line/.test(tx), /ends in … and shows in full when you point at it/.test(tx), /Tab to the picture and press Enter/.test(tx), /Drag the picture/.test(tx), /page 1 takes the Generic Router.s colour and picture when it is built/.test(tx), /moves down to make room/.test(tx)],
+      [true, true, true, true, true, true, true, true, false], 'Help > Wire > Tool headers [the lock, half a tile\'s picture, the worked-out colour, a long name wraps, a longer one ends in ..., the keyboard, a drag, page 1, the old "moves down" sentence]');
+  });
+  // ── 16ld-fix2 (Omar 2026-09-30 21:45, after the 176 x 99 tool pictures: "Longer tool names let make this half the logo size then to save
+  //    on space"; he confirmed it is the TOOL'S picture box). This check FAILS on the 16ld-fix page (r16ld/fix/lookbook_builder.html,
+  //    d1cd27a5) and PASSES after. It uses the 16ld-tools helpers (_tx*) and 16ld-fix's (_fx*).
+  // 16ld-fix2 G1: NEW
+  await check('Wire 16ld-fix2 (X2) (Omar 2026-09-30 21:45: "Longer tool names let make this half the logo size then to save on space", the TOOL\'S picture box): measured on screen at 100 % zoom, a tool\'s picture box is HALF the picture box of a Wire source tile on the same drawing, within 1 px in both directions (Simple: the Generic Router, 55 x 31 next to a source tile\'s 110 x 62; Advanced: a network switch the same); the width it gives back goes to the name: on the 300-wide network switch the name has 160 px or more beside its pencil, and NETGEAR M4250-26G4F shows whole, beside the pencil, at the bar\'s own 15 px, on two lines at most; a name too long for two lines (BLACKMAGIC SMART VIDEOHUB 40X40 RACK B) is cut with ... on its second line and the whole name is the name\'s tooltip; the light Wire sheet shows the same (the short name whole, the long one cut, its tooltip)', async () => {
+    const out = {}, want = {};
+    try {
+      const sz = el => { if (!el) return 'none'; const r = el.getBoundingClientRect(); return [Math.round(r.width * 10) / 10, Math.round(r.height * 10) / 10]; };
+      const half = (t, s) => (Array.isArray(t) && Array.isArray(s)) ? [Math.abs(t[0] - s[0] / 2) <= 1, Math.abs(t[1] - s[1] / 2) <= 1] : 'none';
+      const src = () => $$('#wire-diagram g.wire-node').filter(g => g.dataset.nodeType === 'source').map(g => $('.wire-adv-thumb', g))[0];
+      const tool = nid => { const g = _txNode(nid); return g ? $('.wtl-pic rect.wtl-auto, .wtl-pic image.wtl-img', g) : null; };
+      await _lbOpen(); _wireSetZoom(1); _wireRender(); await wait(400);
+      { const s = sz(src()), t = sz(tool('hub')); out.simple = [s, t, half(t, s)]; want.simple = [[110, 62], [55, 31], [true, true]]; }
+      await _cMWire('advanced'); _wireAdvAddDevice('switch', 4); await wait(300);
+      const W = wireAdvanced.devices[wireAdvanced.devices.length - 1], nid = 'device:' + W.id;
+      W.pic = _fxPNG; W.name = 'NETGEAR M4250-26G4F'; _wireSetZoom(1); _wireRender(); await wait(400);
+      { const s = sz(src()), t = sz(tool(nid)); out.advanced = [s, t, half(t, s)]; want.advanced = [[110, 62], [55, 31], [true, true]]; }
+      const name = root => { const g = $$('g.wire-node', root).find(x => x.getAttribute('data-node-id') === nid), ti = g && $('.wire-router-title', g), nm = ti && $('.wtl-nm', ti), sh = nm && $('.wtl-nm-show', nm), pen = ti && ti.firstElementChild;
+        if (!sh) return 'no name';
+        const cs = getComputedStyle(sh), lh = parseFloat(cs.lineHeight), r = sh.getBoundingClientRect(), pr = pen && pen !== nm ? pen.getBoundingClientRect() : null;
+        return { text: sh.textContent, width: nm.offsetWidth >= 160, beside: !pr ? 'no pencil' : (pr.right <= r.left + 0.5 && Math.abs((pr.top + pr.height / 2) - (r.top + r.height / 2)) <= 2), font: cs.fontSize, lines: Math.round(sh.offsetHeight / lh), cut: sh.scrollHeight > sh.clientHeight + 1 || sh.scrollWidth > sh.clientWidth + 1, clamp: cs.webkitLineClamp || cs.getPropertyValue('-webkit-line-clamp'), tip: nm.getAttribute('title') }; };
+      const laid = (html, fn) => { const box = document.createElement('div'); box.style.cssText = 'position:absolute;left:-100000px;top:0;width:6000px'; box.innerHTML = html; document.body.appendChild(box); try { return fn(box); } finally { box.remove(); } };
+      const LONG = 'BLACKMAGIC SMART VIDEOHUB 40X40 RACK B';
+      out.short = name(document);
+      want.short = { text: 'NETGEAR M4250-26G4F', width: true, beside: true, font: '15px', lines: 2, cut: false, clamp: '2', tip: 'NETGEAR M4250-26G4F' };
+      out.shortSheet = laid(_wireExportSheetList('light').join('').replace(/<\?xml[^>]*>/g, ''), name); want.shortSheet = Object.assign({}, want.short, { beside: 'no pencil' });   /* paper has no pencil; sizes are read in layout px (offsetWidth / offsetHeight): the sheet draws the drawing scaled */
+      W.name = LONG; _wireRender(); await wait(400);
+      out.long = name(document);
+      want.long = { text: LONG, width: true, beside: true, font: '15px', lines: 2, cut: true, clamp: '2', tip: LONG };
+      out.longSheet = laid(_wireExportSheetList('light').join('').replace(/<\?xml[^>]*>/g, ''), name); want.longSheet = Object.assign({}, want.long, { beside: 'no pencil' });
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { _wireSetZoom(1); } catch (e) {} await restore(); }
+    return is(out, want, 'Simple at 100 % [a source tile\'s picture box, the Generic Router\'s, half of it within 1 px (w, h)] / Advanced [a source tile\'s, a network switch\'s, half (w, h)] / the switch named NETGEAR M4250-26G4F [the name, 160 px or more for it, beside the pencil, its size, lines, cut, the line limit, its tooltip] / on the light sheet / named ' + 'BLACKMAGIC SMART VIDEOHUB 40X40 RACK B / on the light sheet');
   });
   try { _fsPauseAll(); } catch (e) {} $$('video').forEach(v => { try { v.muted = true; v.pause(); } catch (e) {} });
   return { checks };

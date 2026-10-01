@@ -1041,7 +1041,7 @@
    "ok": true
   },
   {
-   "name": "Wire Simple: moving a cable by its handle is one undo step, and Reset Layout puts the cable back",
+   "name": "Wire Simple: moving a cable by a handle is one undo step (16lb-simple: a handle on every straight run, as in Advanced; the shape is stored with the cable), and Reset Layout puts the cable back",
    "ok": true
   },
   {
@@ -1069,7 +1069,7 @@
    "ok": true
   },
   {
-   "name": "Help: the Wire section describes the switcher in the middle, not \"lines showing what feeds what\"",
+   "name": "Help: the Wire section describes the router in the middle (16lb-simple; the switcher before it), not \"lines showing what feeds what\"",
    "ok": true
   },
   {
@@ -1169,7 +1169,7 @@
    "ok": true
   },
   {
-   "name": "Wire Advanced: a converter that grows pushes the tile under it down, an I/O Patch page tile never lands on another tile",
+   "name": "Wire Advanced: a converter that grows pushes the tile under it down, an I/O Patch page tile never lands on another tile (16ld-tools: the switch is set 8 px under the converter as the converter is drawn; it was set at 460, 8 px under the converter of a 44 px title, which the 110 px title now overlaps before it grows)",
    "ok": true
   },
   {
@@ -2265,7 +2265,7 @@
    "ok": true
   },
   {
-   "name": "Wire 16la-wire-mv (M): the Wire drawing's tiles follow the cards (Omar 2026-09-29: \"they should show up how I/O Patch simple show source image left which is correct and destination image right\"): with a picture on LEFT LED, on AUX 1 and on the first source, Wire Simple draws the destination's and the AUX's picture at the RIGHT end of the tile (4 in) and the name on the left (12 in), the source's picture on the left and its name after it; Wire Advanced draws a destination / AUX tile (the show's and a hand-made one, with a picture or its colour tile) with the name, resolution and cable first and the picture 13 in from the RIGHT end, the source tile as before; the picture is never flipped, the tile keeps its size and its cable still ends on its left edge; the Simple export, the Advanced export and the Look Book's Wire page draw the same",
+   "name": "Wire 16la-wire-mv (M) (16lb-simple: Simple draws the Advanced tile too, so its tiles read like Advanced's): the Wire drawing's tiles follow the cards (Omar 2026-09-29: \"they should show up how I/O Patch simple show source image left which is correct and destination image right\"): with a picture on LEFT LED, on AUX 1 and on the first source, Wire Simple draws the destination's and the AUX's tile as Wire Advanced does (16ld-fix: the name said 4 in / 12 in, the old Simple node's numbers, which this check no longer pins): the name, resolution and cable first and the picture 13 in from the RIGHT end, the source's picture 13 in from the left and its name after it; Wire Advanced draws a destination / AUX tile (the show's and a hand-made one, with a picture or its colour tile) with the name, resolution and cable first and the picture 13 in from the RIGHT end, the source tile as before; the picture is never flipped, the tile keeps its size and its cable still ends on its left edge; the Simple export, the Advanced export and the Look Book's Wire page draw the same",
    "ok": true
   },
   {
@@ -2285,11 +2285,11 @@
    "ok": true
   },
   {
-   "name": "Wire 16la-ip (P): Wire Advanced shows an item's IP (Omar 2026-09-29: \"Router Slot column fills in\", \"Network switch ports show it\"; the item's IP is its own 16el IP, else the first address in its note): a router's ID cell that the user has not typed shows the IP of the source on that input (16la-fix (U1), Omar 2026-09-29 ~22:10: on a multi-point source AFTER its automatic \"OUT 2\", \"OUT 2 · 10.1.1.9\", and so in its tooltip, no longer in place of it) and of the destination on that output, a switcher's the same, a typed ID wins and clearing it shows the IP again, the IP follows the note live, and nothing of it is written into the show; a network switch's unnamed port shows the IP of what is cabled to it (a typed name wins); the exported Wire sheet and the Look Book's Advanced Wire page print them; Wire Simple's switcher is unchanged; Details' IP box of an NDI source shows its note's address, and for one without an address suggests the show's next free one, which Enter stores as the source's IP in one undo step",
+   "name": "Wire 16la-ip (P): Wire Advanced shows an item's IP (Omar 2026-09-29: \"Router Slot column fills in\", \"Network switch ports show it\"; the item's IP is its own 16el IP, else the first address in its note): a router's ID cell that the user has not typed shows the IP of the source on that input (16la-fix (U1), Omar 2026-09-29 ~22:10: on a multi-point source AFTER its automatic \"OUT 2\", \"OUT 2 · 10.1.1.9\", and so in its tooltip, no longer in place of it) and of the destination on that output, a switcher's the same, a typed ID wins and clearing it shows the IP again, the IP follows the note live, and nothing of it is written into the show; a network switch's unnamed port shows the IP of what is cabled to it (a typed name wins); the exported Wire sheet and the Look Book's Advanced Wire page print them; Wire Simple's router (16lb-simple (2), before: its switcher showed none) shows the same IPs in its ID cells; Details' IP box of an NDI source shows its note's address, and for one without an address suggests the show's next free one, which Enter stores as the source's IP in one undo step",
    "ok": true
   },
   {
-   "name": "Wire 16la-colour-mv (Q): a destination / AUX tile in the Wire drawing shows its card's colour (Omar 2026-09-29: \"between patch and wire the color changes and do not match, source where correct\"; \"the drawing tiles picture match the I/O Patch Card Colour\"): LEFT LED given a colour with its I/O Patch card's colour bar shows it on its I/O card, its Wire card, its Wire Simple tile and its Wire Advanced tile (colour tile, border, name); AUX 1 at its default is yellow on all four (the Advanced colour tile was a fixed green, a destination's a fixed blue, their border and name the lane colour); a hand-made destination tile keeps its own card's colour; the Advanced export and the Look Book's Advanced Wire page print the same; a show that stores colours opens with none changed and Save dark; Help › Wire › Tile colours says so",
+   "name": "Wire 16la-colour-mv (Q): a destination / AUX tile in the Wire drawing shows its card's colour (Omar 2026-09-29: \"between patch and wire the color changes and do not match, source where correct\"; \"the drawing tiles picture match the I/O Patch Card Colour\"): LEFT LED given a colour with its I/O Patch card's colour bar shows it on its I/O card, its Wire card, its Wire Simple tile and its Wire Advanced tile (colour tile, border, name; 16lb-simple: the Simple tile is the Advanced tile, read the same way); AUX 1 at its default is yellow on all four (the Advanced colour tile was a fixed green, a destination's a fixed blue, their border and name the lane colour); a hand-made destination tile keeps its own card's colour; the Advanced export and the Look Book's Advanced Wire page print the same; a show that stores colours opens with none changed and Save dark; Help › Wire › Tile colours says so",
    "ok": true
   },
   {
@@ -2297,11 +2297,11 @@
    "ok": true
   },
   {
-   "name": "Wire 16la-colour-mv (R): a MULTIVIEWERS pane in Wire's side panel and a multiviewer tile on Wire ADVANCED (Omar 2026-09-29: \"we also need to add in Wire the MV icon so they can be dragged and used in wire, both simple and advance should be able to use it\"): in Simple and Advanced the pane comes after AUX / DSM with one card per multiviewer (its picture on the RIGHT, the name, resolution and cable type, draggable); a click on the picture shows the next of the four (one undo step, Save lit; its I/O card shows it too) and Enter on it does the same; its card dropped on an Advanced page makes ONE destination tile of the page (one undo step: its picture 13 in from the right end, never cut, name / resolution / cable on the left, its input dot on the left edge); dropped again it MOVES that tile (still one); a switcher output cabled to it names it in the output cell; Delete on the selected tile takes it and its cable off, Undo brings both back; the multiviewer deleted in the I/O Patch takes its tiles off every page in ONE undo step (Undo brings them back); a new multiviewer is placed nowhere; the Advanced export and the Look Book's Advanced Wire page print the tile; Help › Wire › Multiviewers says so",
+   "name": "Wire 16la-colour-mv (R) (16lb-simple: Help says Simple cables it to the router's next free output row): a MULTIVIEWERS pane in Wire's side panel and a multiviewer tile on Wire ADVANCED (Omar 2026-09-29: \"we also need to add in Wire the MV icon so they can be dragged and used in wire, both simple and advance should be able to use it\"): in Simple and Advanced the pane comes after AUX / DSM with one card per multiviewer (its picture on the RIGHT, the name, resolution and cable type, draggable); a click on the picture shows the next of the four (one undo step, Save lit; its I/O card shows it too) and Enter on it does the same; its card dropped on an Advanced page makes ONE destination tile of the page (one undo step: its picture 13 in from the right end, never cut, name / resolution / cable on the left, its input dot on the left edge); dropped again it MOVES that tile (still one); a switcher output cabled to it names it in the output cell; Delete on the selected tile takes it and its cable off, Undo brings both back; the multiviewer deleted in the I/O Patch takes its tiles off every page in ONE undo step (Undo brings them back); a new multiviewer is placed nowhere; the Advanced export and the Look Book's Advanced Wire page print the tile; Help › Wire › Multiviewers says so",
    "ok": true
   },
   {
-   "name": "Wire 16la-colour-mv (R): a multiviewer card dropped on Wire SIMPLE is fed by the show's switcher (Omar: \"Only when dragged in\"; one more switcher output row: \"this is fine\"): the tile lands where it is dropped (one undo step, Save lit), the switcher gets one more output named after it (its OUT count up by one) and a cable to the tile, and nothing else in the drawing moves (every source, destination and AUX tile, the switcher's place); the tile has the multiviewer's picture at its RIGHT end (never cut) and its name on the left, and the Cable Colour Code lists its cable; dropped again it moves (still one row); a rename of the multiviewer reaches the tile and the row; the Simple export and the Look Book's Simple Wire page print both; Reset layout keeps it; Delete on the selected tile takes it and its row off (one undo step), Undo brings them back",
+   "name": "Wire 16la-colour-mv (R): a multiviewer card dropped on Wire SIMPLE is fed by the show's router (16lb-simple: the router's next free output row, the tile the Advanced multiviewer tile; Omar: \"Only when dragged in\"; one more output row: \"this is fine\"): the tile lands where it is dropped (one undo step, Save lit), the router gets one more output named after it (its OUT count up by one) and a cable to the tile, and nothing else in the drawing moves (every source, destination and AUX tile, the router's place); the tile has the multiviewer's picture at its RIGHT end (never cut) and its name on the left, and the Cable Colour Code lists its cable; dropped again it moves (still one row); a rename of the multiviewer reaches the tile and the row; the Simple sheet and the Look Book's Simple Wire page print it; Reset Layout keeps it; Delete takes it and its row off; Undo brings them back",
    "ok": true
   },
   {
@@ -2317,15 +2317,171 @@
    "ok": true
   },
   {
-   "name": "Wire 16la-fix (M / R): in Wire SIMPLE a destination, AUX or multiviewer tile has its picture at its right end, and a long name never runs into it (the attack: \"LEFT LED WALL MAIN STAG\" drawn over the picture): the name is drawn smaller (12 down to 9 px), then cut after a whole word with \"…\"; every name ends at least 2 px before the picture; a short name and a tile without a picture there are drawn at 12 px as before; the exported Simple sheet draws each name the same",
+   "name": "Wire 16la-fix (M / R) (16lb-simple: the Simple tile is the Advanced tile): in Wire SIMPLE a destination, AUX or multiviewer tile has its picture at its right end, and a long name never runs into it (the attack: \"LEFT LED WALL MAIN STAG\" drawn over the picture): the name is whole and ends before the picture (it wraps between words in the card's info column); a short name and a tile without a picture read as before; the exported Simple sheet prints each name whole",
    "ok": true
   },
   {
-   "name": "Help 16la-fix: the in-app Help says what 16la-colour-mv and 16la-fix do: I/O Patch › What it is calls the + Add cards empty outlines of their section's card (no more \"keep their + on the left\"), Multiviewer (MV) says its Wire card can be dragged onto the drawing (no more \"lives only in the I/O Patch and the I/O export\"), Wire › IP address says the ID cell shows the IP after the OUT n or BKP (OUT 1 · 192.168.0.1, no more \"in place of\") and that a hand-made destination or AUX has the same IP box, Wire › Source thumbnails says a long name is drawn smaller, then cut after a whole word",
+   "name": "Help 16la-fix (16lb-simple: the Simple long-name sentence is gone with the old node): the in-app Help says what 16la-colour-mv and 16la-fix do: I/O Patch › What it is calls the + Add cards empty outlines of their section's card (no more \"keep their + on the left\"), Multiviewer (MV) says its Wire card can be dragged onto the drawing (no more \"lives only in the I/O Patch and the I/O export\"), Wire › IP address says the ID cell shows the IP after the OUT n or BKP (OUT 1 · 192.168.0.1, no more \"in place of\") and that a hand-made destination or AUX has the same IP box",
    "ok": true
   },
   {
    "name": "Page 16la-fix: no dead code left by 16la-colour-mv (S1 / T): no CSS rule for the empty-section note (.iog-empty) or for the old + Add card (.fs-src-add on .iog-add) is left in the page's stylesheets, _iogSecHTML takes no empty-note argument and the four note strings are gone, and the comments that said the + Add cards keep their + on the left / are drawn as the Video Presets add card, and 16el's old IP prefill rule, now say what the page does",
+   "ok": true
+  },
+  {
+   "name": "Wire 16lb-simple (1)(2)(3): Wire SIMPLE opens as the show's drawing (Omar 2026-09-30: \"Today's drawing, then edit it\"; \"lets update it to a router\"; \"the tile should look the same has the tiles from the left columm same has advance\"): every source is cabled into a ROUTER, the Advanced 6-column Router I/O tile (# Source ID # Destination ID) titled Generic Router (Omar 2026-09-30: \"the Router should not be called E2 it should be Generic Router\": an older show whose switcher was named E2 opens titled Generic Router too, its file left as it was; \"n IN · n OUT\"), and every destination and AUX out of it, in the show's order; every tile is its card's Advanced tile, 260 x 110 (its picture or colour at the LEFT of a source, the RIGHT of a destination / AUX; its name, resolution and cable chip) with ONE point (a source's output dot on its right edge, an output's input dot on its left); a show opened with a position stored by the old Simple keeps it; opening and looking write nothing and light no Save",
+   "ok": true
+  },
+  {
+   "name": "Wire 16lb-simple (4): every left-column card drags onto Wire SIMPLE as it does onto Advanced (Omar: \"the work flow between simple and advance should be the same where the user can drag and drop a tile onto the diagram page\"): the source, destination, AUX / DSM and multiviewer cards are draggable on Simple and hand the drop Advanced's data; ONE tile per item: a card whose item is on the drawing moves its tile to the drop point (one undo step, Save lit, no second tile, its cable kept); a tile taken off (selected, Delete) comes back where its card is dropped, cabled to the router's next free row; a multiviewer card brings its tile cabled to the next free output row",
+   "ok": true
+  },
+  {
+   "name": "Wire 16lb-simple (5): a NEW cable is drawn as in Advanced, from a free point (Omar: \"in simple the tiles is just a single cable drag. wires or cables should always work the same in both places\"): a cable selected and deleted leaves its tile on the drawing with a free point; a drag from that point dropped on open canvas does nothing; dropped on a router input row that has a cable it lands on the router's next free row (one cable per row); a drag from a FREE router output row dropped on a destination moves that destination's one cable to it; dropped on a destination with a free point it cables it; each is one undo step and lights Save",
+   "ok": true
+  },
+  {
+   "name": "Wire 16lb-simple (5): a cable's END is moved as in Advanced: a plugged router row dragged onto a row that has a cable SWAPS the two cables, onto a free row moves it; a destination's plugged point dragged onto another destination swaps their rows; the cable wears its cable type (colour, line and arrow of HDMI 2.0 / 12G-SDI, not the source's colour); a selected cable shows a handle on every straight run, a handle dragged shapes it (stored, one step) and the shape stays while a tile it meets is dragged, whose cable follows it; a double-click on a handle resets the shape; a double-click on a cable deletes it",
+   "ok": true
+  },
+  {
+   "name": "Wire 16lb-simple (6): a tile is taken off Wire SIMPLE only (Omar: \"REMOVE from Simple\"): CAM 1 selected and Delete, PPT B by the × on its corner (shown on hover): each tile goes with its cable and its router row is freed, in one undo step with Save lit; the item stays in the show, in the I/O Patch and in the side panel (its card, to drag back); two tiles selected go together; Undo brings each back, cabled as it was",
+   "ok": true
+  },
+  {
+   "name": "Wire 16lb-simple (7): an item added to the show later appears on Wire SIMPLE cabled to the router's next free row (Omar: \"Add it and cable it to the router\"), unless it was taken off Simple (\"an item you removed from Simple stays removed\"): with DSM 1 taken off, a destination added in the Video Presets takes DSM 1's free output row, an AUX added takes a new last row, a source added in the I/O Patch a new last input row; DSM 1 stays off; the destination deleted from the show takes its tile and cable (its row is free again); an I/O-only destination never appears",
+   "ok": true
+  },
+  {
+   "name": "Wire 16lb-simple (8): every Wire export and the Look Book print the EDITED Simple drawing (Omar: \"everything that reads Simple follows\"): with CAM 2 taken off, PPT A and LOGO swapped and an ID typed on input 3 (one undo step, the cell keeps it), the Simple sheet (the one the PDF, PNG and SVG exports draw) and the Look Book's Simple Wire page print the router titled Generic Router on a light title bar, its rows as cabled (LOGO, PPT B, CAM 1, a free row, PPT A …), the typed ID, every tile but CAM 2, one cable per tile, and none of the drawing's handles (×, points, pencils, row targets, typing boxes)",
+   "ok": true
+  },
+  {
+   "name": "Wire 16lb-simple (8): Advanced page 1 \"opens as this show: the Simple drawing\" and \"Simple changed since Page 1 was built\" asks exactly when Simple really changed: a Simple left as it opened builds page 1 with the same 3-part note as every page 1 before it; an edited Simple (CAM 2 off, PPT A and LOGO swapped, an ID typed, a tile moved) builds page 1 as a copy of it: every tile at its Simple place, the router at its place titled GENERIC ROUTER (Advanced's capitals, as SWITCHER I/O before), its input rows LOGO, PPT B, CAM 1, a free row, PPT A … with the typed ID, one cable per Simple cable, no CAM 2; back on Simple, looking, a switch of view and a tile moved ask nothing; a cable deleted asks once (Keep my page keeps page 1); Undo of that delete asks nothing",
+   "ok": true
+  },
+  {
+   "name": "Wire 16lb-simple (8): undo / redo and save / reopen keep the edited Simple drawing: four edits (a tile off, a cable deleted, two rows swapped, an ID typed) undo one step at a time back to the show as it opened (nothing of the drawing stored) and redo forward; the show saved and opened again draws the same drawing (tiles, rows, free points, the ID, the places) with no Save lit",
+   "ok": true
+  },
+  {
+   "name": "Wire 16lb-simple (8): Details follows the Simple drawing: the Lanes key counts the tiles ON the drawing, the Cable Colour Code lists the cables drawn (a tile taken off or with its cable deleted leaves its type's count), a selected tile says which router row it is cabled to (or that it has a free point) and how to take it off, the selected router says its rows follow the cables",
+   "ok": true
+  },
+  {
+   "name": "Wire 16lb-simple: a source renamed from its card keeps what Simple knows of it: its router row (LOGO swapped onto row 1 stays on row 1 as LOGO 2), its taken-off state (CAM 2 off stays off as CAM X) and its cable's shape; the router's cell reads the new name",
+   "ok": true
+  },
+  {
+   "name": "Help 16lb-simple: the in-app Help says what Wire Simple is now: Wire › What it is (the router in the middle, tiles like their cards), › Simple vs Advanced (drag any card on, cable, move an end, delete, take a tile off, one cable per tile and row, new items arrive cabled, page 1 a copy of the Simple drawing), › Multiviewers (cabled to the router's next free output row), the router called Generic Router until named, and the connection rule (a cable runs from an output to an input; a same-kind drop does not attach and a warning says so); the old \"auto-draws every path\", \"the switcher in the middle\" and \"one more output named after it\" are gone",
+   "ok": true
+  },
+  {
+   "name": "Page 16lb-simple: the old Simple drawing's code is gone, not left dead: the switcher's geometry, row table and live / printed tiles (_wireHubGeom, _wireHubRouter, _wireHubLiveSVG, _wireHubTileSVG), the plain-SVG Simple export, 16la's _cmSimpleMvDelete and _cmMvSimplePic and 16la-fix's _fxSimpleName (only the old 220 x 36 node used them)",
+   "ok": true
+  },
+  {
+   "name": "Wire 16lb-simple (2): the router's ID cell and its name commit when the user clicks elsewhere on the drawing (the click starts a box-select, which redraws): the typed ID \"RACK 4\" and the name \"E2\" are kept and shown, one undo step each, and nothing throws (the redraw does not run inside the box's own blur); the name cleared the same way reads Generic Router again",
+   "ok": true
+  },
+  {
+   "name": "Wire 16lb-simple (9): THE CONNECTION RULE in Wire SIMPLE (Omar 2026-09-30: \"make a rule output can only connect to input and input can only connect to outputs. when a user try to connect any input to an input or and output to an output the cable should not attach ... a simple warning flash for a few sec and disappears\"): a cable end let go on a point of the SAME kind as the point it comes from does not attach and nothing changes (no undo step, no Save light, the rows as they were), and a warning flashes by the pointer naming both points as the drawing shows them: PPT A's router end on OUT 3 (\"PPT A OUT can not connect to OUT 3\"), CAM 2's free point on OUT 4 and on PPT A's card, LEFT LED's plugged point on PPT A's card (\"OUT 1 can not connect to PPT A OUT\"), OUT 1's router end on IN 3 (\"LEFT LED IN can not connect to IN 3\"), the free input row 4 on IN 5 and on LEFT LED's card; the warning is a polite live region that never takes the pointer, reads at 4.5:1 or better, and is gone about 3 seconds later; a drop of the right kind still cables (CAM 2 onto its free row: one step, Save lit, no warning)",
+   "ok": true
+  },
+  {
+   "name": "Wire 16lb-simple (9): THE CONNECTION RULE in Wire ADVANCED (Omar 2026-09-30: \"output can only connect to input and input can only connect to outputs ... the cable should not attach\"): on page 1, a cable drawn from PPT A's output and let go on the router's OUT 3 point (before: it fell through to the router's IN 3) or on PPT B's card, one drawn from OUT 1 onto OUT 4, CENTER LED's plugged input moved onto OUT 5, and LEFT LED's free input drawn onto CENTER LED's card (before: an input-to-input cable was made) or onto the router's IN 3 point (before: it was turned into OUT 3) do not attach: nothing changes (the cables, no undo step, no Save light) and the warning names both points (\"PPT A OUT can not connect to OUT 3\", \"LEFT LED IN can not connect to CENTER LED IN\", …); LEFT LED's input onto OUT 1 still cables it, with no warning",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16lc-fixes (1): every layer's tag sits at its layer's upper-RIGHT corner (Omar 2026-09-30: \"LED RIGHT is the Destination, when a layer is full screen it hides behind the Destination name lets make all LAYERS on a layer go on the upper right side not upper left side\"): on the Simple canvas, the Advanced canvas, the Display output and in the Look Book's preset pictures every \"Layer N\" tag is 3 px in from its layer box's right and top edges and inside the box, a PIP's tag is clear of its left edge, no full-screen layer's tag is under its destination's name (RIGHT LED, LEFT LED, CENTER LED on P03), the destination's own name stays upper-left, the preset cards still draw no tags, and the hover-only ↺ reset button, still in that corner, draws above the tag",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16lc-fixes (2): the Display output shows a backdrop exactly as the Advanced canvas draws it (Omar 2026-09-30: \"when i output the video preset on advance the image i added to the Backdrop. should also show on the output screen\"): with a picture added in its Destination Properties the output's backdrop box has the same picture (a JPEG in the show), the same BACKDROP name and feet size shown; it follows a preset change, a picture change (Replace) and Undo; with the picture removed it shows the same shaded box as the canvas; every other destination box stays see-through and every frame hidden",
+   "ok": true
+  },
+  {
+   "name": "Help 16lc-fixes (3): Help › Keyboard stays still under the pointer (Omar 2026-09-30: \"in keybaord there is a weird bug where when i hover over add a new preset the whole program glitches out\"): a hover (mouseenter) on EVERY shortcut row, at the window's own width and in a narrow Help window, never changes the readout's height or moves the list (before, Escape's 4-line readout pushed the list 34 px down under the pointer and the row above's one-line readout pulled it back, about 35 times a second); the readout is one line holding the whole text (cut with … when long), \"Ctrl / Cmd + Shift + N\" still lights Ctrl or Cmd, Shift and N and reads Add a new preset, and leaving the row puts the keys out",
+   "ok": true
+  },
+  {
+   "name": "Wire 16ld-port (W2): on Wire SIMPLE a tile's PORT wears its CABLE TYPE's colour and the tile keeps its own (Omar 2026-09-30, his picture of CAM 2: \"the port type should stay the cable color even if the tile is a different color ... the title can stay blue but the port or selected port is 12G-SDI which is orange\"): CAM 2 coloured blue with its 12G-SDI cable keeps its blue colour tile, border and name while its \"12G-SDI\" chip and its dot are the SDI orange its cable draws in, also while it is selected (its cable's end dots too); a destination (LEFT LED, 12G-SDI), an AUX / DSM (DSM 1, HDMI 2.0) and a multiviewer (MV 1 on HDMI 2.0) keep their tile colour and wear their cable type on the chip and the dot; a port with no cable type (PROMPTER's \"Source\", RIGHT LED's \"Destination\") keeps what it showed before",
+   "ok": true
+  },
+  {
+   "name": "Wire 16ld-port (W2): on Wire ADVANCED every tile's PORT wears its cable type's colour and the tile keeps its own, on the page and on its printed sheet (Omar 2026-09-30: \"so they tile can stay blue but the port should change to orange\"): page 1 built from Simple, CAM 2 blue on 12G-SDI: its chip and its dot orange (the dot was the tile's blue before); CAM 1 with two points, the second on its own HDMI 2.0 (16je): SDI orange then HDMI green, as its two cables; a hand-made source (NDI), destination (HDMI 2.0, with a backup input) and AUX (12G-SDI), a show destination with a backup input (LEFT LED, 12G-SDI), an AUX / DSM (DSM 1, HDMI 2.0) and a multiviewer tile (MV 1, HDMI 2.0): chip, input dot and backup input in the cable type's colour, colour tile / border / name in the tile's; no cable type (PROMPTER, RIGHT LED) as before; the Advanced sheet and the Look Book's Advanced Wire page print the same",
+   "ok": true
+  },
+  {
+   "name": "Wire 16ld-port (W2): the PRINTED Simple drawing shows the same ports (Omar 2026-09-30: \"the port should change to orange\"): the Simple Wire sheet the PDF / PNG / SVG exports draw (light and dark) and the Look Book's Simple Wire page print CAM 2's colour tile and border blue and its \"12G-SDI\" chip (outline, fill and, on the dark sheet, its words) and its dot SDI orange; LEFT LED's and DSM 1's chips and dots their cable type's; PROMPTER (no cable type) its tile colour as before; the light sheet still prints every word of a tile dark",
+   "ok": true
+  },
+  {
+   "name": "Wire 16ld-tools (X) on ADVANCED (Omar 2026-09-30: \"all tools should get a talller head to add images the same size has the tiles ... the left hand side is the name center and the edit pencil first\", his mockup; the picture \"Like the mockup\", the colour on \"The whole header bar\"): every tool the I/O Tools menu adds, a router (the 10 x 10 default and a custom 3 x 5), a switcher (the 8 x 2 default), a tile made from an I/O Patch page, a converter and a network switch, and page 1's router built from Simple, has a header bar 56 high, 44 on a converter / network switch (16ld-fix2 (X2), Omar 21:45: \"Longer tool names let make this half the logo size then to save on space\": the heights they had before 16ld-tools; 16ld-fix made it 125 with a 176 x 99 picture): the pencil first on the left (the lock on the I/O Patch page's tile), then the name beside it, the two centred in the bar's height, the name shown in full and clear of the picture; on the right a picture box 55 x 31 (half a source tile's 110 x 62), 13 in from the right end and centred in the bar's height, showing the tool's name on the tool's colour; the WHOLE bar in that colour, a palette colour stored on each tool when it is made (page 1's router: Simple's router's); its words white or black at 4.5:1 or more; the tile 820 / 440 / 300 wide and its IN / OUT band as before (the I/O Patch page's tile gets the band the other router tiles have: it drew none, so its rows sat 44 px above their points); every row's point level with its row, a router's rows from 144, a converter's / switch's from 80 (where they were before 16ld-tools; 16ld-fix had 213 / 161), and every cable on a tool ends on its point",
+   "ok": true
+  },
+  {
+   "name": "Wire 16ld-tools (X) on SIMPLE (Omar: \"this will work on both simple and advance\"): the Generic Router has the same header: 56 high (16ld-fix2 (X2), Omar 21:45: \"Longer tool names let make this half the logo size then to save on space\": its height before 16ld-tools; 16ld-fix made it 125 with a 176 x 99 picture box), its pencil first on the left, then its name beside it, centred and shown in full; the picture box (55 x 31, half a source tile's 110 x 62, 13 in from the right end, centred in the bar's height) showing GENERIC ROUTER on the router's colour; the WHOLE bar in that colour, which Simple's router (never \"made\") takes from its id: the same palette colour on every draw and after the show is opened again, and nothing is written for it (no Simple drawing stored, no undo step, no Save lit); its words readable (4.5:1 or more); the router 820 wide; its rows from 144 (where they were before 16ld-tools; 16ld-fix had 213), each row's two points level with it, every cable ending on its row's point; the pencil puts the cursor in the name box, the name selected",
+   "ok": true
+  },
+  {
+   "name": "Wire 16ld-tools (X) (Omar: \"add an image ... that can be changed out at any time\"; \"the top bar of the tiles to pick a color from the uploaded logo uploaded\"): a click on a tool's picture box opens the file window and the picked image is its picture, on Advanced's 10 x 10 router, on a converter and on Simple's Generic Router: stored on the tool as a JPEG at most 240 x 140 (a tile's picture's resize), drawn in the box with its upload icon and an x; the WHOLE header bar takes the image's dominant colour (a navy logo: navy bar, white words); one undo step, Save lit; a second click replaces it (an amber logo: amber bar, black words, one more step); the x removes it (the bar back to the tool's own palette colour, the box back to its name, one step); Undo walks back through amber, navy and none; on Simple nothing of the drawing is stored or frozen by a picture and \"Simple changed since Page 1 was built\" has nothing new to say",
+   "ok": true
+  },
+  {
+   "name": "Wire 16ld-tools (X) (\"select a random color if none is uploaded\"): a tool made before this build has no colour stored and shows the palette colour of its id: a show saved with a router, a switcher, a converter and a network switch that have no colour opens with each bar in its id's palette colour, the same after a redraw, a page switch and a save and reopen, and nothing is written (no colour stored, no undo step, no Save lit); a new tool gets its own palette colour when it is made (in its one undo step); on every palette colour, and on a dark and a light logo's colour, the bar's words are white or black at 4.5:1 or more",
+   "ok": true
+  },
+  {
+   "name": "Wire 16ld-tools (X): the printed Wire sheets, the Look Book and Advanced page 1 show the new headers: with a navy logo on Simple's Generic Router, the Simple sheet (light and dark) and the Look Book's Simple Wire page print its navy bar with white words and the logo in its picture box; Advanced page 1, built from Simple, has its router in Simple's router's colour with Simple's logo; with a converter added, the Advanced sheet (light and dark) and the Look Book's Advanced Wire page print the router's navy bar and logo and the converter's own-colour bar with CONVERTER in its box (on the light sheet the bars keep their colours: the light sheet's grey title-bar rule does not grey them); on paper there is no upload icon, x, rename pencil or resize pencil",
+   "ok": true
+  },
+  {
+   "name": "Wire 16ld-tools (X) (Omar: \"the name center and the edit pencil first\"): the pencil comes first on every tool and does what it did, or puts you in the name: a router's / switcher's pencil opens its size window as before; a converter's, a network switch's and Simple's Generic Router's pencil puts the cursor in its name box, the name selected; a router renamed on its tile shows the new name in its picture box at once, the focus staying in its name box (no redraw, one undo step); and the in-app Help's Wire section has a Tool headers row that says so",
+   "ok": true
+  },
+  {
+   "name": "Wire 16ld-fix (A1) (attacker 2026-09-30: on ORGILL at Fit the zoom-out button went 23 % > 15 % > 10 % > 100 %: 16lb-simple's 10 % floor rounded 10 % - 10 % to 0, which the zoom reads as 100 %): the - button never zooms in: from 15 % it gives 10 %, at 10 % it stays at 10 % (the readout says 10%), + from there gives 20 %; on Advanced, - at 12 % gives 10 %",
+   "ok": true
+  },
+  {
+   "name": "Wire 16ld-fix (A2) (attacker 2026-09-30: with an ID typed on OUT 1 and a destination added since, deleting LEFT LED in the I/O Patch moved the new destination from OUT 6 onto OUT 1, with LEFT LED's typed ID): on an edited Simple drawing an item placed on the next free row keeps its row, its cable and its own empty ID when another item is deleted from the show; the deleted item's row is drawn free and keeps its typed ID; the next tile that needs a free row (a multiviewer dragged in) takes it",
+   "ok": true
+  },
+  {
+   "name": "Wire 16ld-fix (A3) (attacker 2026-09-30: a tool's name typed without Enter, then its picture's x or its picture box clicked: a router kept showing ROUTER I/O, a converter / a switch threw NotFoundError): the name being typed is committed first: a router, a converter and a network switch renamed and their x clicked show the new name in the bar and in the picture box at once, with no page error, two undo steps (the name, the picture); a router renamed and its picture box clicked (an image picked) shows its new name too",
+   "ok": true
+  },
+  {
+   "name": "Wire 16ld-fix (A4 / B2) (both attackers 2026-09-30: a network switch named NETGEAR M4250-26G4F read \"NETGEAR ...\" in its bar on screen, on the Wire sheet and in the Look Book, and with a logo in its picture box the full name was nowhere) (16ld-fix2 (X2), Omar 21:45: the half-size picture gives the name its width back): a tool's name shows in full in its bar, at the bar's own size (15 px on a converter / switch, 18 on a router: never smaller), on one line or two, on screen, on the light Wire sheet and on the Look Book's Advanced Wire page, with a logo in the picture box: a network switch NETGEAR M4250-26G4F (the name beside its pencil), a converter DECIMATOR MD-HX CROSS CONVERTER, a router BARCO E2 MAIN SCREEN; the one-line box you type in shows while it has the focus",
+   "ok": true
+  },
+  {
+   "name": "Wire 16ld-fix (X2) (16ld-fix2: REPLACED by Omar 2026-09-30 21:45, \"Longer tool names let make this half the logo size then to save on space\", the TOOL'S picture box; 16ld-fix made it 176 x 99): measured on screen at 100 % zoom, every tool's picture box (Simple's Generic Router; on Advanced page 1's router, a 10 x 10 router, an 8 x 2 switcher, an I/O Patch page tile, a converter, a network switch) is 55 x 31: HALF the source tile's picture box on the same drawing (110 x 62) in both directions, within 1 px; the cards' pictures (Wire, I/O Patch) stay 110 x 62; it looks like a tile's picture halved: corner radius 3, 13 in from the right end, centred in its bar (56 high, 44 on a converter / network switch), the upload icon 9 x 9 2 in from its top-left; a name in the box (no image) stays inside the box and clear of the upload icon (A5: a long name ran under the icon); the Advanced sheet prints it 55 x 31",
+   "ok": true
+  },
+  {
+   "name": "Wire 16ld-fix (B1) (the regression attacker 2026-09-30: on Omar's ORGILL page 1 the router's taller header covered the Decimator 40 under it and the cable between them vanished; in AVE_TEST_File a hand-drawn cable under a converter ran inside the taller converter) (16ld-fix2 (X2), Omar 21:45: the headers are their old heights again, 56 / 44): a show saved before the tool pictures (a 10 x 10 router 40 above a converter 40 above an AUX tile, a hand-drawn path hugging the converter's bottom, one well clear) opens with every tile where it was, none on another, both paths kept, nothing written on the tools (no hdr), no undo step, Save not lit; the same after a redraw, a page switch and a save and reopen",
+   "ok": true
+  },
+  {
+   "name": "Wire 16ld-fix (A6) (attacker 2026-09-30: grabbing a tool by its picture did not move it, and a short drag opened the file window): a tool's picture works like a tile's: pressed and dragged, it moves the tool (Simple's Generic Router by 150 x 90 and by 8 x 6, an Advanced router by 150 x 90), one undo step each, no file window; a plain click on it (no move) opens the file window once",
+   "ok": true
+  },
+  {
+   "name": "Wire 16ld-fix (B5) (the regression attacker 2026-09-30: a show file whose tool picture held x\" onerror=\"... ran that script when Wire Advanced drew it): a tool's picture read from a show file goes into the drawing escaped: the picture box of a router and of Simple's Generic Router opened with such a picture has an image with no onerror attribute whose address is the text as stored",
+   "ok": true
+  },
+  {
+   "name": "Wire 16ld-fix (B6) (the regression attacker 2026-09-30: a tool's picture box could only be used with the mouse): a tool's picture box is a button the keyboard reaches (tabindex 0, role button, named \"Upload a picture for ...\"); Enter on it opens the file window and the picked image lands (one undo step), the focus back on its picture box; its x is a button too (\"Remove the picture of ...\"), shown while it has the focus; Space on it removes the picture (one undo step), the focus back on the picture box",
+   "ok": true
+  },
+  {
+   "name": "Help 16ld-fix (B7) (the regression attacker 2026-09-30: Help > Wire > Tool headers said every tool has a pencil and that the colour is always picked at random) (16ld-fix2 (X2), Omar 21:45): the Tool headers row says an I/O Patch page's tile shows a lock instead of the pencil, that the picture is half the size of a tile's picture, that Simple's Generic Router and a tool from an older show get a colour worked out from the tool, that a long name wraps onto a second line and a longer one ends in ... and shows in full when pointed at, that the keyboard reaches the picture (Tab, Enter) and that dragging it moves the tool, that Advanced page 1 takes the Generic Router's colour and picture when it is built; it no longer says a tile under a tool moves down in an older show",
+   "ok": true
+  },
+  {
+   "name": "Wire 16ld-fix2 (X2) (Omar 2026-09-30 21:45: \"Longer tool names let make this half the logo size then to save on space\", the TOOL'S picture box): measured on screen at 100 % zoom, a tool's picture box is HALF the picture box of a Wire source tile on the same drawing, within 1 px in both directions (Simple: the Generic Router, 55 x 31 next to a source tile's 110 x 62; Advanced: a network switch the same); the width it gives back goes to the name: on the 300-wide network switch the name has 160 px or more beside its pencil, and NETGEAR M4250-26G4F shows whole, beside the pencil, at the bar's own 15 px, on two lines at most; a name too long for two lines (BLACKMAGIC SMART VIDEOHUB 40X40 RACK B) is cut with ... on its second line and the whole name is the name's tooltip; the light Wire sheet shows the same (the short name whole, the long one cut, its tooltip)",
    "ok": true
   }
  ],

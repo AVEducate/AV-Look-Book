@@ -31,7 +31,9 @@ Nothing is pushed, tagged or released until the owner has tried it on his own Ma
   v0.4.0 on 2026-09-25 from 16ku; v0.3.0 on 2026-09-22 from 16ks, lifting the 2026-09-14 freeze.)
 
 ## The release gate (before any tag without a suffix)
-1. `node tests/run_smoke.mjs` prints `SMOKE: PASS`. Every difference it reports must be one we meant; if a change
+1. `node tests/run_smoke.mjs --no-mobile` prints `SMOKE: PASS`. **The phone build is FROZEN (owner, 2026-09-30: "Freeze all
+   phone updates and checks")**: no phone features, no phone checks, phone-only issues are not fixed;
+   `tests/mobile_probe.js` and `tests/golden/mobile.json` are kept but not run. Every difference it reports must be one we meant; if a change
    was intended, regenerate the goldens from that build (`--golden`) in the same commit and say so in the message.
 2. `python3 tools/check_js.py` exits 0 (syntax, brace balance, no new duplicate function names).
 3. Open the three example shows (General Session, Awards Night, Town Hall) in the app: Video Presets Simple and

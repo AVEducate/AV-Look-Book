@@ -157,7 +157,7 @@
    "ok": true
   },
   {
-   "name": "Wire landscape: the rotate card is gone and the diagram draws in Simple, fitted, with no Advanced tabs",
+   "name": "Wire landscape: the rotate card is gone and the diagram draws in Simple, fitted, with no Advanced tabs and no Advanced node (16lb-simple: Simple's tiles are the cards' Advanced tiles, so the count reads Advanced's own nodes)",
    "ok": true
   },
   {
@@ -165,11 +165,19 @@
    "ok": true
   },
   {
-   "name": "Wire: a show saved in Advanced is shown in Simple on the phone (no Advanced tiles or tabs on screen)",
+   "name": "Wire: a show saved in Advanced is shown in Simple on the phone (no Advanced node or tab on screen; 16lb-simple: Simple's own tiles are the cards' Advanced tiles, so the count reads Advanced's own nodes)",
    "ok": true
   },
   {
    "name": "Wire: opening Wire on the phone does NOT change the saved view of a show saved in Advanced (wireSettings.wireView stays \"advanced\" for Save, Send and the autosave)",
+   "ok": true
+  },
+  {
+   "name": "Wire 16lb-simple on the phone (landscape, real taps): Wire shows the desktop's new Simple drawing, read only: every tile is its card's Advanced tile (laid out as on the desktop: a row, 260 x 110 in the drawing, not the side panel's stacked card), the router tile titled Generic Router with its rows; no ×, no point to drag, no rename pencil and no typing box in the drawing (the router's title and ID cells are text); nothing is written (no Simple drawing stored, the saved view unchanged)",
+   "ok": true
+  },
+  {
+   "name": "Wire 16ld-tools on the phone (landscape, real taps): the Generic Router in the phone's read-only Simple drawing has the taller header, 125 high in the drawing (16ld-fix (X2): it was 110, with a 110 x 62 picture box), in the router's own colour with readable words (white or black, 4.5:1 or more), its name on the left and on the right its picture box (176 x 99, 13 in from the right end and 13 down) showing GENERIC ROUTER on that colour; read only: no pencil, no upload icon, no x, nothing to click on the picture; nothing is written (no Simple drawing stored, the saved view unchanged)",
    "ok": true
   },
   {
@@ -364,7 +372,7 @@
   },
   "wire-landscape": {
    "smallTaps": 5,
-   "smallText": 5
+   "smallText": 37
   },
   "io-patch": {
    "smallTaps": 3,

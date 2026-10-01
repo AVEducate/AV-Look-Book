@@ -155,7 +155,7 @@ layers from every preset AND its Wire Advanced tiles, cables and the show switch
 hand keeps its ports: the port is emptied), and its own I/O Patch Advanced rows, in one
 Undo step (16kx-r3: the Type menu always asks, in plain words; a converter that fed only it goes too, freeing what fed it). Size in whole INCHES (`bdLin` / `bdHin`, read 12' 6" × 8'; a screen starts at its
 pixels to the nearest half foot; `w` / `h` follow the px per foot on every draw), one picture (`bdImg`, JPEG <= 1600 px). Drawn inline
-by `_bdBox`; left out of the Canvas size, the I/O Patch, the I/O Excel, Wire and every destination / port / output count (`_bdNoBd`); it
+by `_bdBox` (the Display output shows it too since 16lc-fixes: `_DISP_CLEAN_CSS` leaves `.lbbd-box`'s background); left out of the Canvas size, the I/O Patch, the I/O Excel, Wire and every destination / port / output count (`_bdNoBd`); it
 exists only in the Video Presets and has NO number: every destination number is `_bdNo(s)` (16kx-r3, D1 / D2 around it); a new or unnamed destination takes its number or the next
 free one, never a name the show has (16ky-r4fix, `_r4fNewDest` / `_bdQsDef`); back as a
 screen it gets its old resolution (`bdWasW` / `bdWasH`); ⌘D names its copy BACKDROP 2; the only screen left never
@@ -186,8 +186,22 @@ and its Wire Advanced tile shows it (`_cmTileColor`); a Multiviewers pane in Wir
 tile, refId `mv:<id>`, once per page) and Simple (`wireSettings.mvSimple`: one more switcher output each); the + Add cards are
 outline cards and an empty section has no note. 16la-fix (2026-09-30): an untyped Advanced ID cell shows its automatic label AND
 the IP ("OUT 1 · 192.168.0.1", `_ipCell` / `_fxSlotStyle`); a hand-made destination / AUX has its own IP (`customDests[].ip`,
-Details' box `_fxIpCustomSelHTML`); a long Simple name never runs into its right-end picture (`_fxSimpleName`). Details: HANDBOOK section 5
-(`16ky-r3`, `16kz-answers`, `16kz-refresh`, `16kz-fix`, `16la-wire-mv`, `16la-ip`, `16la-colour-mv`, `16la-fix`).
+Details' box `_fxIpCustomSelHTML`). 16lb-simple (2026-09-30): Wire SIMPLE is a drawing the user edits (`_slb*`): the cards' Advanced
+tiles with one point each, a 6-column router tile, Advanced's cables, every card drags on, tiles come off; its data is `wireSettings.simple`
+(rows / off / loose / pt / routes / lay / title), derived at draw time and written only by an edit; its router is titled Generic Router until
+named; page 1 is a copy of it; the old switcher code and `_fxSimpleName` are gone. Simple AND Advanced refuse a cable end let go on a point of
+the same kind (output on output, input on input) with a 3 s warning by the pointer (`_wcr*`). 16ld-port (2026-09-30): a Wire tile's
+port (its chip and dots, Simple and Advanced) wears its cable type's colour (`_wirePortColor`, `_wireOutConn`, `_wirePortPill`); the
+tile keeps its own colour. 16ld-tools (2026-09-30): every Wire tool tile (router, switcher, I/O Patch page tile, converter,
+network switch, Simple's router) has a tall title bar (`_WTL_*`, `_wtl*`): pencil first, name, a picture box on the right (upload /
+replace / remove), the whole bar in the tool's colour (the picture's dominant colour, else a palette colour stored when made, else
+one derived from its id; white or black ink). 16ld-fix (2026-09-30): the name shows in full (`_wtlNameHTML`, the type box over it); the picture drags the tool, a click uploads, the
+keyboard reaches it; a tool from an older show settles once at its page's draw (`_wtlSettle`, `hdr`); plus the zoom floor and
+Simple's deleted-item rows. 16ld-fix2 (2026-09-30, Omar "half the logo size"): the tool picture is half a tile's
+(55 x 31) and the bar its old height (56 / 44: `_wtlHdr`), so an older show grows by nothing; the name at the bar's size on up to
+two lines, then cut with ... and whole in its tooltip. Details: HANDBOOK section 5
+(`16ky-r3`, `16kz-answers`, `16kz-refresh`, `16kz-fix`, `16la-wire-mv`, `16la-ip`, `16la-colour-mv`, `16la-fix`, `16lb-simple`,
+`16lc-fixes`, `16ld-port`, `16ld-tools`, `16ld-fix`, `16ld-fix2`).
 
 **Layer strip + ghost view (round 16ks)** — `_ls*` block in front of `_rcPresetRow`: `_lsStripHTML(p)` fills the header's old flex:1 spacer,
 `_lsTopTag(p,s)` prefixes `.screen-res`, `_lsGhost` is editor-only view state (class `lb-ghost` on the live DOM of `#canvas-area` / `#fs-canvas`,
@@ -303,7 +317,8 @@ Users must never receive a build that has not passed the gate. Two lines:
 - **Development = `main`**, tags WITH a `-` (`v0.8.0-beta.1`). The workflow publishes those as pre-releases;
   both updaters ignore pre-releases, so users stay on the last full release. Bump `electron/package.json` to
   the matching `0.8.0-beta.N` before tagging.
-- **Before any full release** run `node tests/run_smoke.mjs` (must print `SMOKE: PASS`), `python3 tools/check_js.py`, and
+- **Before any full release** run `node tests/run_smoke.mjs --no-mobile` (must print `SMOKE: PASS`; the phone build is FROZEN since
+  2026-09-30 by the owner: no phone features, no phone checks), `python3 tools/check_js.py`, and
   open the three example shows by hand. `tests/golden/` is the behaviour of v0.7.0: a difference is a
   regression unless the change was intended, in which case regenerate with `--golden` in the same commit and say so.
 - Full checklist: `RELEASE.md`. The smoke probe (`tests/smoke_probe.js`) is where new core behaviour gets a check
