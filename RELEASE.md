@@ -4,8 +4,8 @@ Two lines, two kinds of tag. Users only ever see full releases.
 
 | Line | Branch | Tags | Who gets it |
 |---|---|---|---|
-| Stable | `release/0.7` | `v0.7.1`, `v0.7.2` … (no suffix) | Every user: Windows self-update + Mac page update |
-| Development | `main` | `v0.8.0-beta.1`, `v0.8.0-beta.2` … (a `-` in the tag) | Nobody automatically. Install by hand from the pre-release |
+| Stable | `release/0.8` | `v0.8.1`, `v0.8.2` … (no suffix) | Every user: Windows self-update + Mac page update |
+| Development | `main` | `v0.9.0-beta.1`, `v0.9.0-beta.2` … (a `-` in the tag) | Nobody automatically. Install by hand from the pre-release |
 
 The workflow marks a tag with a `-` in it as a **pre-release**. The Windows updater and the in-app content updater
 (`releases/latest`) both ignore pre-releases, so a beta never reaches a user.
@@ -21,11 +21,12 @@ Nothing is pushed, tagged or released until the owner has tried it on his own Ma
    If he finds a problem: fix, re-run the gate, he tests again. Users have seen nothing in the meantime.
 
 ## Day to day
-- Build on `main`. Bump `electron/package.json` to the beta version (`0.8.0-beta.N`) and tag `v0.8.0-beta.N`.
-- A user-facing bug: fix it on `main`, then `git cherry-pick` that one commit onto `release/0.7`, bump the patch
-  version there (`0.7.1`), tag `v0.7.1`. Users get the fix and nothing else.
-- Features ship in one jump: when `main` is ready, run the gate below, then tag `v0.8.0` (no suffix) from `main`,
-  and cut `release/0.8` from that tag. `release/0.7` retires. (v0.7.0 shipped this way on 2026-09-29 from 16kz;
+- Build on `main`. Bump `electron/package.json` to the beta version (`0.9.0-beta.N`) and tag `v0.9.0-beta.N`.
+- A user-facing bug: fix it on `main`, then `git cherry-pick` that one commit onto `release/0.8`, bump the patch
+  version there (`0.8.1`), tag `v0.8.1`. Users get the fix and nothing else.
+- Features ship in one jump: when `main` is ready, run the gate below, then tag `v0.9.0` (no suffix) from `main`,
+  and cut `release/0.9` from that tag. `release/0.8` retires. (v0.8.0 shipped this way on 2026-10-02 from 16lb, with 16la;
+  v0.7.0 on 2026-09-29 from 16kz;
   v0.6.0 on 2026-09-28 from 16ky;
   v0.5.0 on 2026-09-27 from 16kv;
   v0.4.0 on 2026-09-25 from 16ku; v0.3.0 on 2026-09-22 from 16ks, lifting the 2026-09-14 freeze.)
@@ -60,13 +61,14 @@ Nothing is pushed, tagged or released until the owner has tried it on his own Ma
   `--flows-only` skips the three snapshots while you work. Randomness is seeded inside the probes (the app gives an
   uncoloured source a random cable colour), and dates are normalised, so two runs of the same page always match.
   Needs Node 22 and Chrome (`LB_CHROME=/path/to/chrome` to override).
-- On `release/0.7` `tests/golden/` is the behaviour of **v0.7.0**, the version users trust. On `main` it follows
+- On `release/0.8` `tests/golden/` is the behaviour of **v0.8.0**, the version users trust. On `main` it follows
   each intended change (regenerated in the same commit, named in the message). Regenerate only on purpose.
 
 ## Backups of the trusted version
-- Source: tag `v0.7.0`, branch `release/0.7` (the previous trusted version: tag `v0.6.0`, branch `release/0.6`).
-- Installers and page: the GitHub release for v0.7.0 (Mac arm64 / x64 DMG, Windows EXE, `lookbook_builder.html`).
-- Local: the page at v0.7.0 is build 16kz (`deploy/lookbook_builder.html` at tag v0.7.0);
+- Source: tag `v0.8.0`, branch `release/0.8` (the previous trusted version: tag `v0.7.0`, branch `release/0.7`).
+- Installers and page: the GitHub release for v0.8.0 (Mac arm64 / x64 DMG, Windows EXE, `lookbook_builder.html`).
+- Local: the page at v0.8.0 is build 16lb (`deploy/lookbook_builder.html` at tag v0.8.0);
+  `backups/deploy_lookbook_builder_2026-09-30_before-16la.html` is the page at v0.7.0 (build 16kz);
   `backups/deploy_lookbook_builder_2026-09-29_before-16kz.html` is the page at v0.6.0 (build 16ky);
   `backups/deploy_lookbook_builder_2026-09-27_before-16kw.html` is the page at v0.5.0 (build 16kv);
   `backups/lookbook_builder_2026-09-25_before-16kv.html` is the page at v0.4.0 (build 16ku);
