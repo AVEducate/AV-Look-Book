@@ -199,9 +199,13 @@ one derived from its id; white or black ink). 16ld-fix (2026-09-30): the name sh
 keyboard reaches it; a tool from an older show settles once at its page's draw (`_wtlSettle`, `hdr`); plus the zoom floor and
 Simple's deleted-item rows. 16ld-fix2 (2026-09-30, Omar "half the logo size"): the tool picture is half a tile's
 (55 x 31) and the bar its old height (56 / 44: `_wtlHdr`), so an older show grows by nothing; the name at the bar's size on up to
-two lines, then cut with ... and whole in its tooltip. Details: HANDBOOK section 5
+two lines, then cut with ... and whole in its tooltip. 16lc-picsize (2026-10-02, v0.8.1, Omar "match the image size of the tiles"): every
+tool but a converter has a tile's picture again (110 x 62) in an 88 bar (`_WTL_HDR`; rows 176 / 124: `_WTL_RT_TOP`, `_wtlDvTop(d)`), a
+converter keeps 55 x 31 in 44 (`_wtlSmall`); `_wtlSettle` grows an older tool once and moves only a tile it would cover (16lc-fix: Simple's
+router too, `_slbSettle`; a test build's hdr counts as v0.8.0 drew it, `_wtlWas`; no undo step from the opening click, `_wtlNetRebase`); every switch,
+the page tabs and FIT read white / `--ss-t3` grey, no cyan; EXPORT takes Reset Layout's recipe (`lb-rl-btn`). Details: HANDBOOK section 5
 (`16ky-r3`, `16kz-answers`, `16kz-refresh`, `16kz-fix`, `16la-wire-mv`, `16la-ip`, `16la-colour-mv`, `16la-fix`, `16lb-simple`,
-`16lc-fixes`, `16ld-port`, `16ld-tools`, `16ld-fix`, `16ld-fix2`).
+`16lc-fixes`, `16ld-port`, `16ld-tools`, `16ld-fix`, `16ld-fix2`, `16lc-picsize`, `16lc-fix`).
 
 **Layer strip + ghost view (round 16ks)** — `_ls*` block in front of `_rcPresetRow`: `_lsStripHTML(p)` fills the header's old flex:1 spacer,
 `_lsTopTag(p,s)` prefixes `.screen-res`, `_lsGhost` is editor-only view state (class `lb-ghost` on the live DOM of `#canvas-area` / `#fs-canvas`,

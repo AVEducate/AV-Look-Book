@@ -815,6 +815,40 @@ anchor on the function name and replace the first occurrence after it, never all
   title (the app tooltip, 16hi; the I/O Patch page tile adds "named by its I/O Patch page"). Help > Wire > Tool headers updated.
   Checks renamed in place: T1, T2 (16ld-tools), F4, F5, F6, F10 (16ld-fix); new: G1. The phone is frozen (Omar 21:40): its probe,
   its golden and PHONE.md are not touched (its M2 still names 125 / 176 x 99) and the gates run with --no-mobile.
+- **16lc-picsize** (owner, 2026-10-02, the v0.8.1 follow-up; search `16lc-picsize`). (P) Omar after testing v0.8.0: "everything looks
+  good minus the size, they should match the image size of the tiles, the converters being this current smaller size it fine". The
+  picture box of a router (every size), a switcher, an I/O Patch page tile, a network switch and Simple's Generic Router (so page 1's
+  router) is a Wire tile's picture again, `_WTL_PW` x `_WTL_PH` = 110 x 62, 13 in and 13 down, corner 6 (clip round 5), the 18 x 18
+  upload icon 4 in, its name under the icon's row at 13 px at most (`_wtlLines(name, small)`); their bar `_WTL_HDR` 88 (13 + 62 + 13):
+  a router's rows from 176 (`_WTL_RT_TOP`), a network switch's from 124 (`_wtlDvTop(d)`, which replaced the `_WTL_DV_TOP` constant in
+  the geometry and the three hit-tests). A CONVERTER is untouched: `_wtlSmall(kind, t)` keeps 16ld-fix2's 55 x 31 (`_WTL_PW_S` /
+  `_WTL_PH_S`) in its 44 bar (`_WTL_HDR_D`), byte for byte the same markup; `_wtlBarStyle(bg, ink, h, pw)` pads for the box it holds.
+  The network switch's name has 109 px beside its pencil (16ld-fix2: 164): NETGEAR M4250-26G4F ends in ... (tooltip whole). An older
+  show (v0.8.0 stored `hdr` 56 / 44; older none): `_wtlSettle` grows the tool once at its page's draw (no undo step, no Save light) and
+  now moves ONLY a tile the taller tool would cover (16ld-fix also moved a tile less than 20 clear, 16kf's margin: on ORGILL page 1
+  that pushed the Decimator under NETGEAR's level and its In 2 cable lost its path; now nothing on ORGILL moves). Help > Wire > Tool
+  headers says so. (Y) "add this to tonights run" + "Every switch in the app": every sliding switch (`.lb-seg`, `.lp-mode-toggle`, the
+  top bar's tool switch) and Help's Mac / PC switch read white on the chosen side, `--ss-t3` on the others (`--ss-t2` hovered), the
+  thumb's inset line neutral (`rgba(255,255,255,.05)`, the black skin's pills); the page tabs (`_pageTabStyle`, both tab bars) white /
+  grey, the open tab now found by its pill (`--sk-pill1`, not its cyan); FIT white on both zoom widgets; every page bar's EXPORT takes
+  Reset Layout's recipe: the class `lb-rl-btn` is named next to `button[onclick="_wireResetLayout()"]` in each of its eight rules and
+  the Export buttons carry Reset Layout's inline style (`lb-pg-export` keeps them from shrinking); DISPLAY keeps its old look. The focus
+  ring (`--ss-ring`) is untouched. Checks renamed in place: T1, T2 (16ld-tools), F4, F5, F6, F10 (16ld-fix), G1 (16ld-fix2); new:
+  P1-P4, Y1-Y4. The phone is frozen: its probe, golden and PHONE.md are not touched; the gates run with --no-mobile.
+- **16lc-fix** (the fixer's round on 16lc-picsize, 2026-10-02, v0.8.1; search `16lc-fix`). (S1) both attackers: a Simple drawing
+  arranged by hand on v0.8.0 with a tile under the Generic Router opened with the 88 bar grown 32 down onto it (16fd's see-through
+  ghost on screen, in the Look Book and on the sheet; nothing moved). `_slbSettle` / `_slbSettleOnce`: when `wireLayout.hub` is stored
+  and `wireSettings.simple.hdr` is not 88, the router makes room ONCE by `_wtlSettle`'s rule (only a tile it now covers moves, to 40
+  under it, cascading; a hand-drawn route through the router's new bottom or a moved tile is forgotten, `_slbForgetCable`), hdr 88 is
+  marked; run in `_slbRenderDiagram` (screen, Look Book, sheet), `_slbBuildPage1` and `_slbFreeze`, inside `_lbNotAChange` (get/set
+  over wireLayout + wireSettings). `_slbFreeze` marks a drawing arranged in this build hdr 88. A router centred on its columns (no
+  stored place) never settles. (S2) the like-Omar attacker: a tool saved by a 16ld test build (hdr 110 / 125) that v0.8.0 drew at 56 / 44
+  covered a tile at 88 with nothing moved; `_wtlWas(o, old, now)`: the old height is min(stored, 56 / 44), a tool marked 88 is done.
+  (S3) found while fixing: the settle's writes became the undo step of the click that first drew an older page (the Advanced switch,
+  the Look Book's Export: undo 0 -> 1, v0.8.0 0), so the first Undo only put the old heights back; `_wtlNetRebase(pre)` moves the open
+  gesture's "before" picture along (as `_ioAdvNetRebase`, also when the gesture changed only the view); `_wtlSettle` is now a wrapper
+  (need test, snapshot, `_wtlSettle0`, rebase). Probe: F5 measures the converter's look its name states (same name); new Q1-Q3. The
+  CSS-trap guard of patch_fix.py checks every selector of every 16lc-picsize rule (build/patch.py checked only parts new to the sheet).
 - Declined by the owner, do not resurface: mask shapes, anchor points, hardware profiles, canvas/WebGL renderer,
   interpolation filter toggles, upscale-factor notes, per-layer "sharp pixels", any licence mention.
 

@@ -10719,7 +10719,12 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
   //   from the right end and centred in the bar; the bar is back to its old height (56 on a router / switcher / I/O Patch page tile /
   //   the Generic Router, 44 on a converter / network switch), so a router's rows start at 144 and a converter's / switch's at 80 again;
   //   the name sits beside the pencil on every tool (the bar no longer wraps). What it pins is otherwise unchanged.
-  await check('Wire 16ld-tools (X) on ADVANCED (Omar 2026-09-30: "all tools should get a talller head to add images the same size has the tiles ... the left hand side is the name center and the edit pencil first", his mockup; the picture "Like the mockup", the colour on "The whole header bar"): every tool the I/O Tools menu adds, a router (the 10 x 10 default and a custom 3 x 5), a switcher (the 8 x 2 default), a tile made from an I/O Patch page, a converter and a network switch, and page 1\'s router built from Simple, has a header bar 56 high, 44 on a converter / network switch (16ld-fix2 (X2), Omar 21:45: "Longer tool names let make this half the logo size then to save on space": the heights they had before 16ld-tools; 16ld-fix made it 125 with a 176 x 99 picture): the pencil first on the left (the lock on the I/O Patch page\'s tile), then the name beside it, the two centred in the bar\'s height, the name shown in full and clear of the picture; on the right a picture box 55 x 31 (half a source tile\'s 110 x 62), 13 in from the right end and centred in the bar\'s height, showing the tool\'s name on the tool\'s colour; the WHOLE bar in that colour, a palette colour stored on each tool when it is made (page 1\'s router: Simple\'s router\'s); its words white or black at 4.5:1 or more; the tile 820 / 440 / 300 wide and its IN / OUT band as before (the I/O Patch page\'s tile gets the band the other router tiles have: it drew none, so its rows sat 44 px above their points); every row\'s point level with its row, a router\'s rows from 144, a converter\'s / switch\'s from 80 (where they were before 16ld-tools; 16ld-fix had 213 / 161), and every cable on a tool ends on its point', async () => {
+  // 16lc-picsize T1: REPLACES the check named in its header (reason in the block)
+  // 16lc-picsize: RENAMED in place. Why: Omar 2026-10-02 (16lc-picsize): "they should match the image size of the tiles, the converters being this current smaller size
+  //   it fine": a router's, a switcher's, an I/O Patch page tile's and a network switch's picture box is a tile's picture again, 110 x
+  //   62, 13 in from the right end and 13 down, in an 88-high header, so a router's rows start at 176 and a network switch's at 124; a
+  //   converter keeps 16ld-fix2's 55 x 31 in its 44 bar (rows from 80). What it pins is otherwise unchanged.
+  await check('Wire 16ld-tools (X) on ADVANCED (Omar 2026-09-30: "all tools should get a talller head to add images the same size has the tiles ... the left hand side is the name center and the edit pencil first", his mockup; the picture "Like the mockup", the colour on "The whole header bar"): every tool the I/O Tools menu adds, a router (the 10 x 10 default and a custom 3 x 5), a switcher (the 8 x 2 default), a tile made from an I/O Patch page, a converter and a network switch, and page 1\'s router built from Simple, has a header bar 88 high, 44 on a converter (16lc-picsize, Omar 2026-10-02: "they should match the image size of the tiles, the converters being this current smaller size it fine"; 16ld-fix2 had 56 / 44 and a 55 x 31 picture on every tool): the pencil first on the left (the lock on the I/O Patch page\'s tile), then the name beside it, the two centred in the bar\'s height, the name shown in full and clear of the picture; on the right a picture box the size of a tile\'s picture, 110 x 62, 13 in from the right end and 13 down (a converter\'s 55 x 31, half that, centred in its bar), showing the tool\'s name on the tool\'s colour; the WHOLE bar in that colour, a palette colour stored on each tool when it is made (page 1\'s router: Simple\'s router\'s); its words white or black at 4.5:1 or more; the tile 820 / 440 / 300 wide and its IN / OUT band as before (the I/O Patch page\'s tile gets the band the other router tiles have: it drew none, so its rows sat 44 px above their points); every row\'s point level with its row, a router\'s rows from 176, a network switch\'s from 124, a converter\'s from 80 (16ld-fix2 had 144 / 80 / 80), and every cable on a tool ends on its point', async () => {
     const out = {}, want = {};
     /* 16ld-fix: the header read as it is drawn now: the bar's first child is the pencil (or the lock), the next its name block
        (.wtl-nm: the name shown in full, .wtl-nm-show, and the type box over it); on the 300-wide switch the name sits under the
@@ -10740,7 +10745,7 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
         nameClear: !!pb && nb.right <= pb.left, full: sh.scrollHeight <= sh.clientHeight + 1 && sh.scrollWidth <= sh.clientWidth + 1, bg, ink: [ink, ink === '#ffffff' || ink === '#000000', _txCR(ink, bg) >= 4.5, _txHex(getComputedStyle(ti).color) === ink],
       };
     };
-    const _txWant = (h, w, first, boxFill, boxName, bg, ink) => ({ h, w, first, then: true, centred: true, box: [w - 68, (h - 31) / 2, 55, 31, boxFill, boxName], nameClear: true, full: true, bg, ink: [ink, true, true, true] });
+    const _txWant = (h, w, first, boxFill, boxName, bg, ink) => ({ h, w, first, then: true, centred: true, box: (w === 440) ? [w - 68, (h - 31) / 2, 55, 31, boxFill, boxName] : [w - 123, (h - 62) / 2, 110, 62, boxFill, boxName]   /* 16lc-picsize: the converter (the only 440-wide tool) keeps the half-size box */, nameClear: true, full: true, bg, ink: [ink, true, true, true] });
     try {
       await restore();
       const pg = ioAdvanced.pages[1]; pg.name = 'ROSS RACK';
@@ -10763,19 +10768,19 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
       out.head = {}; want.head = {}; out.rows = {}; want.rows = {};
       tools.forEach(([label, kind, t, w, first, name]) => {
         const col = String(t.color || '').toLowerCase(), ink = _txCR('#ffffff', col) >= _txCR('#000000', col) ? '#ffffff' : '#000000';
-        out.head[label] = _txHead(_txNid(kind, t.id)); want.head[label] = _txWant(kind === 'device' ? 44 : 56, w, first, col, name, col, ink);
+        out.head[label] = _txHead(_txNid(kind, t.id)); want.head[label] = _txWant(label === 'converter' ? 44 : 88, w, first, col, name, col, ink);
       });
       out.pageOneColour = String(p1.color || '').toLowerCase() === _txIdCol('hub');
       want.pageOneColour = true;
       const rows = (label, kind, t, cellsOf, top, step, n, np, nc) => { const r = _txRows(_txNid(kind, t.id), cellsOf, top, step); out.rows[label] = r; want.rows[label] = { rows: n, points: np, cables: nc, bad: [] }; };
       const cab = t => wireAdvanced.wires.filter(w => [w.fromId, w.toId].some(k => new RegExp('^(rip|rop|dvi|dvo):' + t.id + ':').test(String(k)))).length;
-      rows('page 1', 'router', p1, _txRouterCells, 144, 44, p1.size, (p1.inC || p1.size) + (p1.outC || p1.size), cab(p1));
-      rows('10 x 10', 'router', R[0], _txRouterCells, 144, 44, 10, 20, 2);
-      rows('3 x 5', 'router', R[1], _txRouterCells, 144, 44, 5, 8, 1);
-      rows('8 x 2 switcher', 'router', R[2], _txRouterCells, 144, 44, 8, 10, 0);
-      rows('I/O Patch page', 'router', R[3], _txRouterCells, 144, 44, 2, 3, 0);
+      rows('page 1', 'router', p1, _txRouterCells, 176, 44, p1.size, (p1.inC || p1.size) + (p1.outC || p1.size), cab(p1));
+      rows('10 x 10', 'router', R[0], _txRouterCells, 176, 44, 10, 20, 2);
+      rows('3 x 5', 'router', R[1], _txRouterCells, 176, 44, 5, 8, 1);
+      rows('8 x 2 switcher', 'router', R[2], _txRouterCells, 176, 44, 8, 10, 0);
+      rows('I/O Patch page', 'router', R[3], _txRouterCells, 176, 44, 2, 3, 0);
       rows('converter', 'device', D[0], _txConvCells, 80, 36, 3, 5, 2);
-      rows('switch', 'device', D[1], _txSwitchCells, 80, 36, 4, 8, 1);
+      rows('switch', 'device', D[1], _txSwitchCells, 124, 36, 4, 8, 1);
       out.labels = R.map(r => { const s = $('.wire-router-subtitle', _txNode('router:' + r.id)); return s ? (($('input', s) || {}).value || s.textContent || '').trim() : 'no IN / OUT band'; });
       want.labels = ['UNTITLED 10X10 ENGINEERING RACK', 'UNTITLED 3X5 ENGINEERING RACK', '8 IN · 2 OUT', '2 IN · 1 OUT'];
     } catch (e) { return 'threw: ' + e.message; }
@@ -10795,7 +10800,11 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
   //   from the right end and centred in the bar; the bar is back to its old height (56 on a router / switcher / I/O Patch page tile /
   //   the Generic Router, 44 on a converter / network switch), so a router's rows start at 144 and a converter's / switch's at 80 again;
   //   the name sits beside the pencil on every tool (the bar no longer wraps). What it pins is otherwise unchanged.
-  await check('Wire 16ld-tools (X) on SIMPLE (Omar: "this will work on both simple and advance"): the Generic Router has the same header: 56 high (16ld-fix2 (X2), Omar 21:45: "Longer tool names let make this half the logo size then to save on space": its height before 16ld-tools; 16ld-fix made it 125 with a 176 x 99 picture box), its pencil first on the left, then its name beside it, centred and shown in full; the picture box (55 x 31, half a source tile\'s 110 x 62, 13 in from the right end, centred in the bar\'s height) showing GENERIC ROUTER on the router\'s colour; the WHOLE bar in that colour, which Simple\'s router (never "made") takes from its id: the same palette colour on every draw and after the show is opened again, and nothing is written for it (no Simple drawing stored, no undo step, no Save lit); its words readable (4.5:1 or more); the router 820 wide; its rows from 144 (where they were before 16ld-tools; 16ld-fix had 213), each row\'s two points level with it, every cable ending on its row\'s point; the pencil puts the cursor in the name box, the name selected', async () => {
+  // 16lc-picsize T2: REPLACES the check named in its header (reason in the block)
+  // 16lc-picsize: RENAMED in place. Why: Omar 2026-10-02 (16lc-picsize): "they should match the image size of the tiles, the converters being this current smaller size
+  //   it fine": the Generic Router's picture box is a tile's picture again, 110 x 62, 13 in and 13 down, in an 88-high header, so its
+  //   rows start at 176. What it pins is otherwise unchanged.
+  await check('Wire 16ld-tools (X) on SIMPLE (Omar: "this will work on both simple and advance"): the Generic Router has the same header: 88 high (16lc-picsize, Omar 2026-10-02: "they should match the image size of the tiles, the converters being this current smaller size it fine"; 16ld-fix2 had 56 with a 55 x 31 picture box), its pencil first on the left, then its name beside it, centred and shown in full; the picture box (110 x 62, a source tile\'s picture, 13 in from the right end and 13 down) showing GENERIC ROUTER on the router\'s colour; the WHOLE bar in that colour, which Simple\'s router (never "made") takes from its id: the same palette colour on every draw and after the show is opened again, and nothing is written for it (no Simple drawing stored, no undo step, no Save lit); its words readable (4.5:1 or more); the router 820 wide; its rows from 176 (16ld-fix2 had 144), each row\'s two points level with it, every cable ending on its row\'s point; the pencil puts the cursor in the name box, the name selected', async () => {
     const out = {}, want = {};
     /* 16ld-fix: the header read as it is drawn now: the bar's first child is the pencil (or the lock), the next its name block
        (.wtl-nm: the name shown in full, .wtl-nm-show, and the type box over it); on the 300-wide switch the name sits under the
@@ -10816,17 +10825,17 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
         nameClear: !!pb && nb.right <= pb.left, full: sh.scrollHeight <= sh.clientHeight + 1 && sh.scrollWidth <= sh.clientWidth + 1, bg, ink: [ink, ink === '#ffffff' || ink === '#000000', _txCR(ink, bg) >= 4.5, _txHex(getComputedStyle(ti).color) === ink],
       };
     };
-    const _txWant = (h, w, first, boxFill, boxName, bg, ink) => ({ h, w, first, then: true, centred: true, box: [w - 68, (h - 31) / 2, 55, 31, boxFill, boxName], nameClear: true, full: true, bg, ink: [ink, true, true, true] });
+    const _txWant = (h, w, first, boxFill, boxName, bg, ink) => ({ h, w, first, then: true, centred: true, box: [w - 123, (h - 62) / 2, 110, 62, boxFill, boxName], nameClear: true, full: true, bg, ink: [ink, true, true, true] });
     try {
       await _lbOpen(); const u0 = _undoStack.length;
       const col = _txIdCol('hub'), ink = _txCR('#ffffff', col) >= _txCR('#000000', col) ? '#ffffff' : '#000000';
-      out.head = _txHead('hub'); want.head = _txWant(56, 820, 'the name pencil', col, 'GENERIC ROUTER', col, ink);
+      out.head = _txHead('hub'); want.head = _txWant(88, 820, 'the name pencil', col, 'GENERIC ROUTER', col, ink);
       const st = _slbState(), n = Math.max(st.ins.length, st.outs.length), g = _txNode('hub');
       const hub = $(':scope > rect', g), HX = +hub.getAttribute('x'), HY = +hub.getAttribute('y'), HW = +hub.getAttribute('width'), fo = $(':scope > foreignObject', g), fr = fo.getBoundingClientRect(), z = fr.height / +fo.getAttribute('height');
       const bad = [];
       for (let i = 0; i < n; i++) ['in', 'out'].forEach(s => {
         if (i >= (s === 'in' ? st.ins.length : st.outs.length)) return;
-        const want2 = 144 + i * 44 + 22, sp = $('span[data-slb-row="' + s + ':' + i + '"]', g), dots = $$('circle.wire-hub-port', g).filter(c => c.getAttribute('data-port-id') === 'h' + s + ':' + i);
+        const want2 = 176 + i * 44 + 22, sp = $('span[data-slb-row="' + s + ':' + i + '"]', g), dots = $$('circle.wire-hub-port', g).filter(c => c.getAttribute('data-port-id') === 'h' + s + ':' + i);
         if (!sp) bad.push('no row ' + s + ' ' + (i + 1)); else { const r = sp.getBoundingClientRect(), cy = (r.top + r.height / 2 - fr.top) / z; if (Math.abs(cy - want2) > 1.5) bad.push(s + ' row ' + (i + 1) + ' drawn at ' + cy.toFixed(1)); }
         if (dots.length !== 2) bad.push(s + ' ' + (i + 1) + ': ' + dots.length + ' points');
         dots.forEach(c => { if (Math.abs(+c.getAttribute('cy') - HY - want2) > 0.01 || Math.abs(+c.getAttribute('cx') - HX - (s === 'in' ? 0 : HW)) > 0.01) bad.push(s + ' ' + (i + 1) + ' point at ' + (+c.getAttribute('cy') - HY)); });
@@ -11053,13 +11062,18 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
   //   the Generic Router, 44 on a converter / network switch), so a router's rows start at 144 and a converter's / switch's at 80 again;
   //   the name sits beside the pencil on every tool (the bar no longer wraps). 16ld-fix drew a long name smaller (down to 9 px) on up to
   //   three lines; it is now drawn at the bar's own size on one or two lines: the check also reads the size and the number of lines.
-  await check('Wire 16ld-fix (A4 / B2) (both attackers 2026-09-30: a network switch named NETGEAR M4250-26G4F read "NETGEAR ..." in its bar on screen, on the Wire sheet and in the Look Book, and with a logo in its picture box the full name was nowhere) (16ld-fix2 (X2), Omar 21:45: the half-size picture gives the name its width back): a tool\'s name shows in full in its bar, at the bar\'s own size (15 px on a converter / switch, 18 on a router: never smaller), on one line or two, on screen, on the light Wire sheet and on the Look Book\'s Advanced Wire page, with a logo in the picture box: a network switch NETGEAR M4250-26G4F (the name beside its pencil), a converter DECIMATOR MD-HX CROSS CONVERTER, a router BARCO E2 MAIN SCREEN; the one-line box you type in shows while it has the focus', async () => {
+  // 16lc-picsize F4: REPLACES the check named in its header (reason in the block)
+  // 16lc-picsize: RENAMED in place. Why: Omar 2026-10-02 (16lc-picsize): "they should match the image size of the tiles, the converters being this current smaller size
+  //   it fine": the network switch's picture box is a tile's again (110 x 62), so the 300-wide switch has 109 px beside its pencil for
+  //   its name (16ld-fix2: 164); NETGEAR M4250-26G4F no longer fits two lines there: it is cut with ... and shown whole in its tooltip
+  //   (16ld-fix2's G1, renamed too). This check names the switch NETGEAR M4250, which does; everything it pins is otherwise unchanged.
+  await check('Wire 16ld-fix (A4 / B2) (both attackers 2026-09-30: a network switch named NETGEAR M4250-26G4F read "NETGEAR ..." in its bar on screen, on the Wire sheet and in the Look Book, and with a logo in its picture box the full name was nowhere) (16ld-fix2 (X2), Omar 21:45: the half-size picture gives the name its width back): a tool\'s name shows in full in its bar, at the bar\'s own size (15 px on a converter / switch, 18 on a router: never smaller), on one line or two, on screen, on the light Wire sheet and on the Look Book\'s Advanced Wire page, with a logo in the picture box: a network switch NETGEAR M4250 (the name beside its pencil; 16lc-picsize: with its tile-size picture the switch has 109 px for its name, so the longer NETGEAR M4250-26G4F is cut with ... and whole in its tooltip, see 16ld-fix2\'s G1), a converter DECIMATOR MD-HX CROSS CONVERTER, a router BARCO E2 MAIN SCREEN; the one-line box you type in shows while it has the focus', async () => {
     const out = {};
     try {
       await restore(); await _cMWire('advanced');
       _wireAdvAddDevice('switch', 4); _wireAdvAddDevice('converter', 2, 2); _wireAdvAddRouter(10); await wait(300);
       const W = wireAdvanced.devices[wireAdvanced.devices.length - 2], C = wireAdvanced.devices[wireAdvanced.devices.length - 1], R = wireAdvanced.routers[wireAdvanced.routers.length - 1];
-      W.name = 'NETGEAR M4250-26G4F'; C.name = 'DECIMATOR MD-HX CROSS CONVERTER'; R.title = 'BARCO E2 MAIN SCREEN'; [W, C, R].forEach(t => { t.pic = _fxPNG; });
+      W.name = 'NETGEAR M4250'; C.name = 'DECIMATOR MD-HX CROSS CONVERTER'; R.title = 'BARCO E2 MAIN SCREEN'; [W, C, R].forEach(t => { t.pic = _fxPNG; });
       _wireSetZoom(1); _wireRender(); await wait(400);
       const tools = [['device:' + W.id, W.name], ['device:' + C.id, C.name], ['router:' + R.id, R.title]];
       const read = root => tools.map(([nid, nm]) => { const g = $$('g.wire-node', root).find(x => x.getAttribute('data-node-id') === nid), ti = g && $('.wire-router-title', g), el = ti && _fxNameEl(ti); if (!el) return 'no name'; const v = el.tagName === 'INPUT' ? (el.value || el.getAttribute('value')) : el.textContent; return [v === nm, _fxCut(el), getComputedStyle(el).fontSize, Math.round(el.offsetHeight / parseFloat(getComputedStyle(el).lineHeight)) <= 2]; });
@@ -11081,7 +11095,16 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
   //   let make this half the logo size then to save on space" (the TOOL'S picture box). 16ld-fix's check pinned 176 x 99 = 1.6 times a
   //   source tile's picture; it now pins HALF of it (55 x 31) on the same drawing, measured the same way at 100 % zoom, the look halved
   //   (corner 3, the 9 x 9 icon 2 in), the box centred in the bar (56 / 44), the name in the box clear of the icon (A5) and the sheet.
-  await check('Wire 16ld-fix (X2) (16ld-fix2: REPLACED by Omar 2026-09-30 21:45, "Longer tool names let make this half the logo size then to save on space", the TOOL\'S picture box; 16ld-fix made it 176 x 99): measured on screen at 100 % zoom, every tool\'s picture box (Simple\'s Generic Router; on Advanced page 1\'s router, a 10 x 10 router, an 8 x 2 switcher, an I/O Patch page tile, a converter, a network switch) is 55 x 31: HALF the source tile\'s picture box on the same drawing (110 x 62) in both directions, within 1 px; the cards\' pictures (Wire, I/O Patch) stay 110 x 62; it looks like a tile\'s picture halved: corner radius 3, 13 in from the right end, centred in its bar (56 high, 44 on a converter / network switch), the upload icon 9 x 9 2 in from its top-left; a name in the box (no image) stays inside the box and clear of the upload icon (A5: a long name ran under the icon); the Advanced sheet prints it 55 x 31', async () => {
+  // 16lc-picsize F5: REPLACES the check named in its header (reason in the block)
+  // 16lc-picsize: RENAMED in place. Why: Omar 2026-10-02 (16lc-picsize): "they should match the image size of the tiles, the converters being this current smaller size
+  //   it fine": the picture box of every tool but a converter is a source tile's picture again (110 x 62 within 1 px, 16ld-fix2: half
+  //   of it), with a tile picture's look (corner 6, 13 in, 13 down in its 88 bar, the 18 x 18 icon 4 in); a converter keeps the
+  //   half-size box (55 x 31, corner 3, centred in its 44 bar, the 9 x 9 icon 2 in). The name-in-the-box rule (A5) is now pinned in
+  //   both sizes, and the Advanced sheet prints both. What it pins is otherwise unchanged.
+  // 16lc-fix F5: BODY EXTENDED in place, the same name. Why: the regression attacker 2026-10-02 (on 16lc-picsize): the name states the
+  //   converter's halved look (corner 3, centred in its 44 bar, the icon 9 x 9 2 in) and the body measured only the Generic Router's;
+  //   it now measures the converter's too (out.lookCv). Nothing it measured before changes.
+  await check('Wire 16ld-fix (X2) (16ld-fix2: REPLACED by Omar 2026-09-30 21:45, "Longer tool names let make this half the logo size then to save on space", the TOOL\'S picture box; 16ld-fix made it 176 x 99): (16lc-picsize, Omar 2026-10-02: "they should match the image size of the tiles, the converters being this current smaller size it fine") measured on screen at 100 % zoom, the picture box of Simple\'s Generic Router and on Advanced of page 1\'s router, a 10 x 10 router, an 8 x 2 switcher, an I/O Patch page tile and a network switch is the source tile\'s picture box on the same drawing (110 x 62) within 1 px, a converter\'s HALF of it (55 x 31); the cards\' pictures (Wire, I/O Patch) stay 110 x 62; it looks like a tile\'s picture: corner radius 6, 13 in from the right end, 13 down in its 88 bar, the upload icon 18 x 18 4 in from its top-left (a converter\'s halved: corner 3, centred in its 44 bar, the icon 9 x 9 2 in); a name in the box (no image) stays inside the box and clear of the upload icon in both sizes (A5: a long name ran under the icon); the Advanced sheet prints 110 x 62 and 55 x 31', async () => {
     const out = {}, want = {};
     try {
       await _lbOpen(); _wireSetZoom(1); _wireRender(); await wait(400);
@@ -11090,11 +11113,12 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
       const src = () => $$('#wire-diagram g.wire-node').filter(g => g.dataset.nodeType === 'source').map(g => $('.wire-adv-thumb', g))[0];
       const tool = nid => { const g = _txNode(nid); return g ? $('.wtl-pic rect.wtl-auto, .wtl-pic image.wtl-img', g) : null; };
       const s0 = sz(src()), h0 = sz(tool('hub'));
-      out.simple = [s0, h0, half(h0, s0)]; want.simple = [[110, 62], [55, 31], [true, true]];
+      const eq = (t, s) => (Array.isArray(t) && Array.isArray(s)) ? [Math.abs(t[0] - s[0]) <= 1, Math.abs(t[1] - s[1]) <= 1] : 'none';
+      out.simple = [s0, h0, eq(h0, s0)]; want.simple = [[110, 62], [110, 62], [true, true]];
       out.cards = [sz($('#wire-sources-panel .wire-source-card .wire-thumb'))]; want.cards = [[110, 62]];
       { const g = _txNode('hub'), b = tool('hub'), rc = $(':scope > rect', g), X = +rc.getAttribute('x'), Y = +rc.getAttribute('y'), W = +rc.getAttribute('width'), hint = $('.wtl-pic .wtl-hint', g);
         out.look = [+b.getAttribute('rx'), W - (+b.getAttribute('x') - X) - +b.getAttribute('width'), +b.getAttribute('y') - Y, hint ? [+hint.getAttribute('width'), +hint.getAttribute('height'), +hint.getAttribute('x') - +b.getAttribute('x'), +hint.getAttribute('y') - +b.getAttribute('y')] : 'no icon', ($('.wire-router-title', g) || {}).offsetHeight];
-        want.look = [3, 13, 12.5, [9, 9, 2, 2], 56]; }
+        want.look = [6, 13, 13, [18, 18, 4, 4], 88]; }
       openSystem(); await wait(400); if (ioAdvanced.view !== 'simple') { _ioSetView('simple'); await wait(400); } okDialogs();
       out.cards.push(sz($('#io-grid .iog-card .wire-thumb'))); want.cards.push([110, 62]);
       const pg = ioAdvanced.pages[1]; pg.name = 'ROSS RACK';
@@ -11103,9 +11127,14 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
       _wireAdvAddRouter(10); _wireAdvAddSwitcher('8×2 Switcher', 8, 2); _wireAdvAddPatchTile(1); _wireAdvAddDevice('converter', 2, 2); _wireAdvAddDevice('switch', 4); await wait(400);
       _wireSetZoom(1); _wireRender(); await wait(400);
       const ids = wireAdvanced.routers.map(r => 'router:' + r.id).concat(wireAdvanced.devices.map(d => 'device:' + d.id)), as = sz(src());
-      out.advanced = [as, ids.length, ids.map(nid => { const t = sz(tool(nid)); return [t, half(t, as)]; })]; want.advanced = [[110, 62], 6, ids.map(() => [[55, 31], [true, true]])];
+      const CV = 'device:' + wireAdvanced.devices[wireAdvanced.devices.length - 2].id, SWD = 'device:' + wireAdvanced.devices[wireAdvanced.devices.length - 1].id;   /* the converter, then the network switch */
+      out.advanced = [as, ids.length, ids.map(nid => { const t = sz(tool(nid)); return [t, nid === CV ? half(t, as) : eq(t, as)]; })]; want.advanced = [[110, 62], 6, ids.map(nid => [nid === CV ? [55, 31] : [110, 62], [true, true]])];
       out.bars = ids.map(nid => { const g = _txNode(nid), b = tool(nid), rc = $(':scope > rect', g), ti = $('.wire-router-title', g); return [ti ? ti.offsetHeight : 'no bar', b ? +b.getAttribute('y') - +rc.getAttribute('y') : 'no box', b ? +rc.getAttribute('width') - (+b.getAttribute('x') - +rc.getAttribute('x')) - +b.getAttribute('width') : 'no box']; });
-      want.bars = ids.map(nid => nid.indexOf('device:') === 0 ? [44, 6.5, 13] : [56, 12.5, 13]);
+      want.bars = ids.map(nid => nid === CV ? [44, 6.5, 13] : [88, 13, 13]);
+      /* 16lc-fix (F5): the converter's halved look the name states, measured: [corner, in from the right end, down, the upload icon (w, h, in, down), the bar's height] */
+      { const g = _txNode(CV), b = tool(CV), rc = g && $(':scope > rect', g), hint = g && $('.wtl-pic .wtl-hint', g);
+        out.lookCv = (g && b && rc) ? [+b.getAttribute('rx'), +rc.getAttribute('width') - (+b.getAttribute('x') - +rc.getAttribute('x')) - +b.getAttribute('width'), +b.getAttribute('y') - +rc.getAttribute('y'), hint ? [+hint.getAttribute('width'), +hint.getAttribute('height'), +hint.getAttribute('x') - +b.getAttribute('x'), +hint.getAttribute('y') - +b.getAttribute('y')] : 'no icon', ($('.wire-router-title', g) || {}).offsetHeight] : 'no converter box';
+        want.lookCv = [3, 13, 6.5, [9, 9, 2, 2], 44]; }
       const C = wireAdvanced.devices[wireAdvanced.devices.length - 2], clear = [];
       for (const nm of ['DECIMATOR 7', 'BLACKMAGIC SMART VIDEOHUB 40X40', 'NETGEAR M4250 RACK A', 'AJA FS-HDR', 'WMWMWM WMWMWM', 'SWITCH']) {
         C.name = nm; _wireRender(); await wait(150);
@@ -11113,11 +11142,19 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
         clear.push(T.length > 0 && T.every(t => { const tb = t.getBBox(); const inside = tb.x >= bx.x - 0.5 && tb.x + tb.width <= bx.x + bx.width + 0.5 && tb.y >= bx.y - 0.5 && tb.y + tb.height <= bx.y + bx.height + 0.5; const off = tb.x >= hi.x + hi.width || tb.x + tb.width <= hi.x || tb.y >= hi.y + hi.height || tb.y + tb.height <= hi.y; return inside && off; }));
       }
       out.clear = clear; want.clear = [true, true, true, true, true, true];
+      /* 16lc-picsize: the same names in a tile-size box (the network switch's) */
+      const SW = wireAdvanced.devices[wireAdvanced.devices.length - 1], clearBig = [];
+      for (const nm of ['DECIMATOR 7', 'BLACKMAGIC SMART VIDEOHUB 40X40', 'NETGEAR M4250 RACK A', 'AJA FS-HDR', 'WMWMWM WMWMWM', 'SWITCH']) {
+        SW.name = nm; _wireRender(); await wait(150);
+        const gg = _txNode('device:' + SW.id), bx = $('.wtl-pic rect.wtl-auto', gg).getBBox(), hi = $('.wtl-pic .wtl-hint', gg).getBBox(), T = $$('.wtl-pic text.wtl-auto-t', gg);
+        clearBig.push(T.length > 0 && T.every(t => { const tb = t.getBBox(); const inside = tb.x >= bx.x - 0.5 && tb.x + tb.width <= bx.x + bx.width + 0.5 && tb.y >= bx.y - 0.5 && tb.y + tb.height <= bx.y + bx.height + 0.5; const off = tb.x >= hi.x + hi.width || tb.x + tb.width <= hi.x || tb.y >= hi.y + hi.height || tb.y + tb.height <= hi.y; return inside && off; }));
+      }
+      out.clearBig = clearBig; want.clearBig = [true, true, true, true, true, true];
       const doc = new DOMParser().parseFromString(_wireBuildAdvancedExportSvg('light', {}), 'image/svg+xml');
-      out.sheet = [...new Set($$('.wtl-pic rect.wtl-auto, .wtl-pic image.wtl-img', doc).map(e => e.getAttribute('width') + 'x' + e.getAttribute('height')))]; want.sheet = ['55x31'];
+      out.sheet = [...new Set($$('.wtl-pic rect.wtl-auto, .wtl-pic image.wtl-img', doc).map(e => e.getAttribute('width') + 'x' + e.getAttribute('height')))].sort(); want.sheet = ['110x62', '55x31'];
     } catch (e) { return 'threw: ' + e.message; }
     finally { try { _wireSetZoom(1); } catch (e) {} await restore(); }
-    return is(out, want, 'Simple at 100 % [a source tile\'s picture, the router\'s, half of it within 1 px (w, h)] / the cards\' pictures [Wire\'s source card, the I/O Patch card] / its look [corner radius, in from the right end, down, the upload icon (w, h, in, down), the header\'s height] / Advanced at 100 % [a source tile\'s picture, tools, each tool\'s [size, half (w, h)]] / each tool [its bar\'s height, the box down, in from the right end] / a name inside the box and clear of the icon (6 names) / the Advanced sheet\'s picture boxes');
+    return is(out, want, 'Simple at 100 % [a source tile\'s picture, the router\'s, half of it within 1 px (w, h)] / the cards\' pictures [Wire\'s source card, the I/O Patch card] / its look [corner radius, in from the right end, down, the upload icon (w, h, in, down), the header\'s height] / Advanced at 100 % [a source tile\'s picture, tools, each tool\'s [size, half (w, h)]] / each tool [its bar\'s height, the box down, in from the right end] / a name inside the box and clear of the icon (6 names, a converter\'s box) / the same in a tile-size box / the Advanced sheet\'s picture boxes / the converter\'s look [corner radius, in from the right end, down, the upload icon (w, h, in, down), the header\'s height]');
   });
   // 16ld-fix F6: NEW
   // 16ld-fix2 F6: REPLACES the check named in its header (reason in the block)
@@ -11125,14 +11162,21 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
   //   from an older show has nothing to grow: the show of this check (laid out for the old 56 / 44 px titles) now opens with every tile
   //   where it was, both cable paths kept, nothing written (16ld-fix moved the converter and the AUX tile down, reset the hugging path
   //   and stored hdr 125). What it pins otherwise is unchanged: no overlap, not an edit, the same after a redraw, a page switch, a reopen.
-  await check('Wire 16ld-fix (B1) (the regression attacker 2026-09-30: on Omar\'s ORGILL page 1 the router\'s taller header covered the Decimator 40 under it and the cable between them vanished; in AVE_TEST_File a hand-drawn cable under a converter ran inside the taller converter) (16ld-fix2 (X2), Omar 21:45: the headers are their old heights again, 56 / 44): a show saved before the tool pictures (a 10 x 10 router 40 above a converter 40 above an AUX tile, a hand-drawn path hugging the converter\'s bottom, one well clear) opens with every tile where it was, none on another, both paths kept, nothing written on the tools (no hdr), no undo step, Save not lit; the same after a redraw, a page switch and a save and reopen', async () => {
+  // 16lc-picsize F6: REPLACES the check named in its header (reason in the block)
+  // 16lc-picsize: RENAMED in place. Why: Omar 2026-10-02 (16lc-picsize): "they should match the image size of the tiles, the converters being this current smaller size
+  //   it fine": a router's header is 32 taller again (88), so the router of this older show grows once when its page is drawn and
+  //   notes hdr 88 (as 16ld-fix did); the converter 40 under it is still 8 clear, and only a tile a taller tool would cover moves now
+  //   (16ld-fix also moved one less than 20 clear), so every tile stays where it was and both paths keep their shape; nothing is
+  //   written on the converter. What it pins is otherwise unchanged (no overlap, not an edit, the same after a redraw, a page switch,
+  //   a reopen).
+  await check('Wire 16ld-fix (B1) (the regression attacker 2026-09-30: on Omar\'s ORGILL page 1 the router\'s taller header covered the Decimator 40 under it and the cable between them vanished; in AVE_TEST_File a hand-drawn cable under a converter ran inside the taller converter) (16lc-picsize, Omar 2026-10-02: the tile-size picture makes a router\'s header 32 taller again): a show saved before the tool pictures (a 10 x 10 router 40 above a converter 40 above an AUX tile, a hand-drawn path hugging the converter\'s bottom, one well clear) opens with every tile where it was (the converter is 8 clear of the taller router: only a tile a taller tool would cover moves), none on another, both paths kept, the grown router noting hdr 88 and nothing written on the converter, no undo step, Save not lit; the same after a redraw, a page switch and a save and reopen', async () => {
     const out = {};
     try {
       await restore(); await _cMWire('advanced');
       _wireAdvAddRouter(10); _wireAdvAddDevice('converter', 2, 2); await wait(300);
       const R = wireAdvanced.routers[wireAdvanced.routers.length - 1], C = wireAdvanced.devices[wireAdvanced.devices.length - 1], rid = R.id, cid = C.id;
       [R, C].forEach(t => { delete t.color; delete t.hdr; });   /* as an older build saved them, laid out for the 56 / 44 px titles */
-      R.x = 6000; R.y = 100;   /* right of everything page 1 has; 144 + 440 + 4 + the 36 footer = 624: bottom 724 */
+      R.x = 6000; R.y = 100;   /* right of everything page 1 has; 144 + 440 + 4 + the 36 footer = 624: bottom 724 (16lc-picsize: 756 with the 88 header, 8 clear of the converter) */
       C.x = 6200; C.y = 764;   /* 40 under it; 80 + 72 + 36 + 4 = 192: bottom 956 */
       wireAdvanced.dsms.push({ id: 'fxA1', refId: dsms[0].id, x: 6220, y: 996 }, { id: 'fxA2', refId: dsms[1].id, x: 6220, y: 1700 });
       wireAdvanced.wires.push({ id: 'fxW1', fromId: 'rop:' + rid + ':0', toId: 'dvi:' + cid + ':0' },
@@ -11141,7 +11185,7 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
       const open = async text => { _applyProjectText(text); await wait(700); okDialogs(); await wait(150); okDialogs(); await _cMWire('advanced'); await wait(400); };
       const read = () => { const r = wireAdvanced.routers.find(x => x.id === rid), c = (wireAdvanced.devices || []).find(x => x.id === cid), a1 = wireAdvanced.dsms.find(x => x.id === 'fxA1'), a2 = wireAdvanced.dsms.find(x => x.id === 'fxA2'), w = id => wireAdvanced.wires.find(x => x.id === id) || {};
         const mine = ['router:' + rid, 'device:' + cid, 'adsm:fxA1', 'adsm:fxA2'], L = _wireAdvTileList().filter(t => mine.indexOf(t.id) >= 0), hits = []; for (let i = 0; i < L.length; i++) for (let j = i + 1; j < L.length; j++) { const a = L[i], b = L[j]; if (a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y) hits.push(a.id + ' x ' + b.id); }
-        return [[r.y, c.y, a1.y, a2.y], hits, [JSON.stringify(w('fxW2').route || null), JSON.stringify(w('fxW3').route || null)], [r.hdr === undefined, c.hdr === undefined]]; };
+        return [[r.y, c.y, a1.y, a2.y], hits, [JSON.stringify(w('fxW2').route || null), JSON.stringify(w('fxW3').route || null)], [r.hdr === undefined ? 'none' : r.hdr, c.hdr === undefined ? 'none' : c.hdr]]; };
       await open(JSON.stringify(getProjectState()));
       const u0 = _undoStack.length;
       out.opened = read().concat([_undoStack.length - u0, _lbDirty()]);
@@ -11151,8 +11195,8 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
     } catch (e) { return 'threw: ' + e.message; }
     finally { await restore(); }
     const Y = [100, 764, 996, 1700];
-    return is(out, { opened: [Y, [], ['[6680,970,6180]', '[6760,1600,6180]'], [true, true], 0, [false, false]], redraw: Y, page: Y, reopened: [Y, [true, true], [false, false]] },
-      'opened [[the router, the converter, the AUX tile under it, the AUX tile far below], tiles on each other, [the hugging path, the clear path], [no hdr on the router, on the converter], undo steps, [dirty, Save lit]] / after a redraw / after a page switch / saved and reopened [the places, no hdr, dirty and Save lit]');
+    return is(out, { opened: [Y, [], ['[6680,970,6180]', '[6760,1600,6180]'], [88, 'none'], 0, [false, false]], redraw: Y, page: Y, reopened: [Y, [88, 'none'], [false, false]] },
+      'opened [[the router, the converter, the AUX tile under it, the AUX tile far below], tiles on each other, [the hugging path, the clear path], [the router\'s hdr, the converter\'s], undo steps, [dirty, Save lit]] / after a redraw / after a page switch / saved and reopened [the places, the hdr, dirty and Save lit]');
   });
   // 16ld-fix F7: NEW
   await check('Wire 16ld-fix (A6) (attacker 2026-09-30: grabbing a tool by its picture did not move it, and a short drag opened the file window): a tool\'s picture works like a tile\'s: pressed and dragged, it moves the tool (Simple\'s Generic Router by 150 x 90 and by 8 x 6, an Advanced router by 150 x 90), one undo step each, no file window; a plain click on it (no move) opens the file window once', async () => {
@@ -11217,48 +11261,447 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
   // 16ld-fix2: RENAMED in place. Why: Omar 2026-09-30 21:45 (X2 REPLACED): the Help row now says the picture is half a tile's picture and
   //   that a name longer than two lines ends in ... with the whole name when you point at it; its sentence about a tile under a tool moving
   //   down in an older show is gone (nothing moves now: the headers are their old heights). The other phrases it pins are unchanged.
-  await check('Help 16ld-fix (B7) (the regression attacker 2026-09-30: Help > Wire > Tool headers said every tool has a pencil and that the colour is always picked at random) (16ld-fix2 (X2), Omar 21:45): the Tool headers row says an I/O Patch page\'s tile shows a lock instead of the pencil, that the picture is half the size of a tile\'s picture, that Simple\'s Generic Router and a tool from an older show get a colour worked out from the tool, that a long name wraps onto a second line and a longer one ends in ... and shows in full when pointed at, that the keyboard reaches the picture (Tab, Enter) and that dragging it moves the tool, that Advanced page 1 takes the Generic Router\'s colour and picture when it is built; it no longer says a tile under a tool moves down in an older show', async () => {
+  // 16lc-picsize F10: REPLACES the check named in its header (reason in the block)
+  // 16lc-picsize: RENAMED in place. Why: Omar 2026-10-02 (16lc-picsize): "they should match the image size of the tiles, the converters being this current smaller size
+  //   it fine": the Help row now says the picture is the size of a tile's picture, half that on a converter, and again that in a show
+  //   saved before, a tile right under a router, a switcher or a network switch moves down to make room the first time its page is
+  //   drawn (true again: those headers grew). The other phrases it pins are unchanged.
+  await check('Help 16ld-fix (B7) (the regression attacker 2026-09-30: Help > Wire > Tool headers said every tool has a pencil and that the colour is always picked at random) (16ld-fix2 (X2), Omar 21:45): the Tool headers row says an I/O Patch page\'s tile shows a lock instead of the pencil, that the picture is the size of a tile\'s picture, half that on a converter (16lc-picsize), that Simple\'s Generic Router and a tool from an older show get a colour worked out from the tool, that a long name wraps onto a second line and a longer one ends in ... and shows in full when pointed at, that the keyboard reaches the picture (Tab, Enter) and that dragging it moves the tool, that Advanced page 1 takes the Generic Router\'s colour and picture when it is built; and that in a show saved before, a tile right under a router, a switcher or a network switch moves down to make room the first time its page is drawn (16lc-picsize: true again)', async () => {
     let tx = '';
     try {
       actions.help(); await wait(300); if (typeof helpTab === 'function') helpTab('ref'); await wait(200);
       const row = $$('#help-overlay div').find(d => d.children.length === 0 && d.textContent.trim() === 'Tool headers'); tx = row && row.nextElementSibling ? row.nextElementSibling.textContent.replace(/\s+/g, ' ') : '';
     } finally { try { closeHelp(); } catch (e) {} await wait(150); }
-    return is([/shows a lock instead of the pencil/.test(tx), /half the size of a tile.s picture/.test(tx), /worked out from the tool/.test(tx), /A long name wraps onto a second line/.test(tx), /ends in … and shows in full when you point at it/.test(tx), /Tab to the picture and press Enter/.test(tx), /Drag the picture/.test(tx), /page 1 takes the Generic Router.s colour and picture when it is built/.test(tx), /moves down to make room/.test(tx)],
-      [true, true, true, true, true, true, true, true, false], 'Help > Wire > Tool headers [the lock, half a tile\'s picture, the worked-out colour, a long name wraps, a longer one ends in ..., the keyboard, a drag, page 1, the old "moves down" sentence]');
+    return is([/shows a lock instead of the pencil/.test(tx), /the size of a tile.s picture, half that on a converter/.test(tx), /worked out from the tool/.test(tx), /A long name wraps onto a second line/.test(tx), /ends in … and shows in full when you point at it/.test(tx), /Tab to the picture and press Enter/.test(tx), /Drag the picture/.test(tx), /page 1 takes the Generic Router.s colour and picture when it is built/.test(tx), /moves down to make room/.test(tx)],
+      [true, true, true, true, true, true, true, true, true], 'Help > Wire > Tool headers [the lock, a tile\'s picture (half on a converter), the worked-out colour, a long name wraps, a longer one ends in ..., the keyboard, a drag, page 1, the "moves down" sentence]');
   });
   // ── 16ld-fix2 (Omar 2026-09-30 21:45, after the 176 x 99 tool pictures: "Longer tool names let make this half the logo size then to save
   //    on space"; he confirmed it is the TOOL'S picture box). This check FAILS on the 16ld-fix page (r16ld/fix/lookbook_builder.html,
   //    d1cd27a5) and PASSES after. It uses the 16ld-tools helpers (_tx*) and 16ld-fix's (_fx*).
   // 16ld-fix2 G1: NEW
-  await check('Wire 16ld-fix2 (X2) (Omar 2026-09-30 21:45: "Longer tool names let make this half the logo size then to save on space", the TOOL\'S picture box): measured on screen at 100 % zoom, a tool\'s picture box is HALF the picture box of a Wire source tile on the same drawing, within 1 px in both directions (Simple: the Generic Router, 55 x 31 next to a source tile\'s 110 x 62; Advanced: a network switch the same); the width it gives back goes to the name: on the 300-wide network switch the name has 160 px or more beside its pencil, and NETGEAR M4250-26G4F shows whole, beside the pencil, at the bar\'s own 15 px, on two lines at most; a name too long for two lines (BLACKMAGIC SMART VIDEOHUB 40X40 RACK B) is cut with ... on its second line and the whole name is the name\'s tooltip; the light Wire sheet shows the same (the short name whole, the long one cut, its tooltip)', async () => {
+  // 16lc-picsize G1: REPLACES the check named in its header (reason in the block)
+  // 16lc-picsize: RENAMED in place. Why: Omar 2026-10-02 (16lc-picsize): "they should match the image size of the tiles, the converters being this current smaller size
+  //   it fine": only a converter keeps 16ld-fix2's half-size picture box; the Generic Router and the network switch take a tile's
+  //   again (110 x 62), so the switch has 109 px for its name, not 164. The check now pins the half-size box and the room it gives the
+  //   name on a CONVERTER (NETGEAR M4250-26G4F whole on one line), and on the network switch that the same name and a longer one are
+  //   cut with ... with the whole name as the tooltip, on screen and on the light sheet.
+  await check('Wire 16ld-fix2 (X2) (16lc-picsize: only a CONVERTER keeps the half-size box now, Omar 2026-10-02: "the converters being this current smaller size it fine"; the Generic Router and the network switch take a tile\'s picture again): measured on screen at 100 % zoom, a converter\'s picture box is HALF the picture box of a Wire source tile on the same drawing, within 1 px in both directions (55 x 31 next to 110 x 62), and the width it gives back goes to the name: the converter\'s name has 300 px or more beside its pencil and NETGEAR M4250-26G4F shows whole there, beside the pencil, at the bar\'s own 15 px, on one line; on the network switch (a tile-size box now: 109 px for its name, 16ld-fix2 gave it 164) the same name is cut with ... on its second line and its whole name is the name\'s tooltip, as is a name too long for two lines (BLACKMAGIC SMART VIDEOHUB 40X40 RACK B); the light Wire sheet shows the same, except that on paper (no pencil) the switch\'s name has the pencil\'s room too and NETGEAR M4250-26G4F shows whole on two lines there (the longer name stays cut; the tooltips)', async () => {
     const out = {}, want = {};
     try {
       const sz = el => { if (!el) return 'none'; const r = el.getBoundingClientRect(); return [Math.round(r.width * 10) / 10, Math.round(r.height * 10) / 10]; };
       const half = (t, s) => (Array.isArray(t) && Array.isArray(s)) ? [Math.abs(t[0] - s[0] / 2) <= 1, Math.abs(t[1] - s[1] / 2) <= 1] : 'none';
       const src = () => $$('#wire-diagram g.wire-node').filter(g => g.dataset.nodeType === 'source').map(g => $('.wire-adv-thumb', g))[0];
       const tool = nid => { const g = _txNode(nid); return g ? $('.wtl-pic rect.wtl-auto, .wtl-pic image.wtl-img', g) : null; };
-      await _lbOpen(); _wireSetZoom(1); _wireRender(); await wait(400);
-      { const s = sz(src()), t = sz(tool('hub')); out.simple = [s, t, half(t, s)]; want.simple = [[110, 62], [55, 31], [true, true]]; }
-      await _cMWire('advanced'); _wireAdvAddDevice('switch', 4); await wait(300);
-      const W = wireAdvanced.devices[wireAdvanced.devices.length - 1], nid = 'device:' + W.id;
-      W.pic = _fxPNG; W.name = 'NETGEAR M4250-26G4F'; _wireSetZoom(1); _wireRender(); await wait(400);
-      { const s = sz(src()), t = sz(tool(nid)); out.advanced = [s, t, half(t, s)]; want.advanced = [[110, 62], [55, 31], [true, true]]; }
-      const name = root => { const g = $$('g.wire-node', root).find(x => x.getAttribute('data-node-id') === nid), ti = g && $('.wire-router-title', g), nm = ti && $('.wtl-nm', ti), sh = nm && $('.wtl-nm-show', nm), pen = ti && ti.firstElementChild;
+      const NG = 'NETGEAR M4250-26G4F', LONG = 'BLACKMAGIC SMART VIDEOHUB 40X40 RACK B';
+      await _lbOpen(); await _cMWire('advanced'); _wireAdvAddDevice('converter', 2, 2); _wireAdvAddDevice('switch', 4); await wait(300);
+      const C = wireAdvanced.devices[wireAdvanced.devices.length - 2], W = wireAdvanced.devices[wireAdvanced.devices.length - 1], cid = 'device:' + C.id, wid = 'device:' + W.id;
+      C.pic = _fxPNG; C.name = NG; W.pic = _fxPNG; W.name = NG; _wireSetZoom(1); _wireRender(); await wait(400);
+      { const s = sz(src()), t = sz(tool(cid)); out.converter = [s, t, half(t, s)]; want.converter = [[110, 62], [55, 31], [true, true]]; }
+      const name = (root, nid, minW) => { const g = $$('g.wire-node', root).find(x => x.getAttribute('data-node-id') === nid), ti = g && $('.wire-router-title', g), nm = ti && $('.wtl-nm', ti), sh = nm && $('.wtl-nm-show', nm), pen = ti && ti.firstElementChild;
         if (!sh) return 'no name';
         const cs = getComputedStyle(sh), lh = parseFloat(cs.lineHeight), r = sh.getBoundingClientRect(), pr = pen && pen !== nm ? pen.getBoundingClientRect() : null;
-        return { text: sh.textContent, width: nm.offsetWidth >= 160, beside: !pr ? 'no pencil' : (pr.right <= r.left + 0.5 && Math.abs((pr.top + pr.height / 2) - (r.top + r.height / 2)) <= 2), font: cs.fontSize, lines: Math.round(sh.offsetHeight / lh), cut: sh.scrollHeight > sh.clientHeight + 1 || sh.scrollWidth > sh.clientWidth + 1, clamp: cs.webkitLineClamp || cs.getPropertyValue('-webkit-line-clamp'), tip: nm.getAttribute('title') }; };
+        return { text: sh.textContent, width: nm.offsetWidth >= minW, beside: !pr ? 'no pencil' : (pr.right <= r.left + 0.5 && Math.abs((pr.top + pr.height / 2) - (r.top + r.height / 2)) <= 2), font: cs.fontSize, lines: Math.round(sh.offsetHeight / lh), cut: sh.scrollHeight > sh.clientHeight + 1 || sh.scrollWidth > sh.clientWidth + 1, clamp: cs.webkitLineClamp || cs.getPropertyValue('-webkit-line-clamp'), tip: nm.getAttribute('title') }; };
       const laid = (html, fn) => { const box = document.createElement('div'); box.style.cssText = 'position:absolute;left:-100000px;top:0;width:6000px'; box.innerHTML = html; document.body.appendChild(box); try { return fn(box); } finally { box.remove(); } };
-      const LONG = 'BLACKMAGIC SMART VIDEOHUB 40X40 RACK B';
-      out.short = name(document);
-      want.short = { text: 'NETGEAR M4250-26G4F', width: true, beside: true, font: '15px', lines: 2, cut: false, clamp: '2', tip: 'NETGEAR M4250-26G4F' };
-      out.shortSheet = laid(_wireExportSheetList('light').join('').replace(/<\?xml[^>]*>/g, ''), name); want.shortSheet = Object.assign({}, want.short, { beside: 'no pencil' });   /* paper has no pencil; sizes are read in layout px (offsetWidth / offsetHeight): the sheet draws the drawing scaled */
+      const sheet = () => _wireExportSheetList('light').join('').replace(/<\?xml[^>]*>/g, '');
+      out.onConverter = name(document, cid, 300); want.onConverter = { text: NG, width: true, beside: true, font: '15px', lines: 1, cut: false, clamp: '2', tip: NG };
+      out.onSwitch = name(document, wid, 100); want.onSwitch = { text: NG, width: true, beside: true, font: '15px', lines: 2, cut: true, clamp: '2', tip: NG };
+      { const sh = sheet(); out.converterSheet = laid(sh, b => name(b, cid, 300)); out.switchSheet = laid(sh, b => name(b, wid, 100)); }   /* paper has no pencil; sizes are read in layout px (offsetWidth / offsetHeight): the sheet draws the drawing scaled */
+      want.converterSheet = Object.assign({}, want.onConverter, { beside: 'no pencil' }); want.switchSheet = Object.assign({}, want.onSwitch, { beside: 'no pencil', cut: false });   /* on paper the name has the pencil's room too: whole on two lines */
       W.name = LONG; _wireRender(); await wait(400);
-      out.long = name(document);
-      want.long = { text: LONG, width: true, beside: true, font: '15px', lines: 2, cut: true, clamp: '2', tip: LONG };
-      out.longSheet = laid(_wireExportSheetList('light').join('').replace(/<\?xml[^>]*>/g, ''), name); want.longSheet = Object.assign({}, want.long, { beside: 'no pencil' });
+      out.long = name(document, wid, 100); want.long = { text: LONG, width: true, beside: true, font: '15px', lines: 2, cut: true, clamp: '2', tip: LONG };
+      out.longSheet = laid(sheet(), b => name(b, wid, 100)); want.longSheet = Object.assign({}, want.long, { beside: 'no pencil' });
     } catch (e) { return 'threw: ' + e.message; }
     finally { try { _wireSetZoom(1); } catch (e) {} await restore(); }
-    return is(out, want, 'Simple at 100 % [a source tile\'s picture box, the Generic Router\'s, half of it within 1 px (w, h)] / Advanced [a source tile\'s, a network switch\'s, half (w, h)] / the switch named NETGEAR M4250-26G4F [the name, 160 px or more for it, beside the pencil, its size, lines, cut, the line limit, its tooltip] / on the light sheet / named ' + 'BLACKMAGIC SMART VIDEOHUB 40X40 RACK B / on the light sheet');
+    return is(out, want, 'Advanced at 100 % [a source tile\'s picture box, a converter\'s, half of it within 1 px (w, h)] / NETGEAR M4250-26G4F on the converter [the name, 300 px or more for it, beside the pencil, its size, lines, cut, the line limit, its tooltip] / on the network switch [the same, 100 px or more] / on the light sheet (converter, switch) / BLACKMAGIC SMART VIDEOHUB 40X40 RACK B on the switch / on the light sheet');
+  });
+  // ── 16lc-picsize (v0.8.1, Omar 2026-10-02). (P) after testing v0.8.0: "everything looks good minus the size, they should match the image
+  //    size of the tiles, the converters being this current smaller size it fine". (Y) "add this to tonights run": no cyan on the switches,
+  //    the page tabs and FIT, EXPORT like RESET LAYOUT on all three pages ("Every switch in the app"). Each check below FAILS on the v0.8.0
+  //    page (build 16lb, cb3e859) and PASSES after. Helpers prefixed _pz (never a name of the page's); they use the 16ld-tools helpers (_tx*),
+  //    16ld-fix's (_fx*) and 16lb's (_lb*).
+  const _pzSz = el => { if (!el) return 'none'; const r = el.getBoundingClientRect(); return [Math.round(r.width * 10) / 10, Math.round(r.height * 10) / 10]; };
+  const _pzEq = (t, s) => (Array.isArray(t) && Array.isArray(s)) ? [Math.abs(t[0] - s[0]) <= 1, Math.abs(t[1] - s[1]) <= 1] : 'none';
+  const _pzHalf = (t, s) => (Array.isArray(t) && Array.isArray(s)) ? [Math.abs(t[0] - s[0] / 2) <= 1, Math.abs(t[1] - s[1] / 2) <= 1] : 'none';
+  const _pzTilePic = type => $$('#wire-diagram g.wire-node').filter(g => g.dataset.nodeType === type).map(g => $('.wire-adv-thumb', g)).filter(Boolean)[0] || null;
+  const _pzToolPic = nid => { const g = _txNode(nid); return g ? $('.wtl-pic rect.wtl-auto, .wtl-pic image.wtl-img', g) : null; };
+  /* a tool's picture box as drawn, against its tile: [corner, in from the right end, down, the upload icon [w, h, in, down], the bar's height] */
+  const _pzLook = nid => { const g = _txNode(nid), b = _pzToolPic(nid); if (!g || !b) return 'no box ' + nid; const rc = $(':scope > rect', g), X = +rc.getAttribute('x'), Y = +rc.getAttribute('y'), W = +rc.getAttribute('width'), hint = $('.wtl-pic .wtl-hint', g), ti = $('.wire-router-title', g);
+    return [+b.getAttribute('rx'), W - (+b.getAttribute('x') - X) - +b.getAttribute('width'), +b.getAttribute('y') - Y, hint ? [+hint.getAttribute('width'), +hint.getAttribute('height'), +hint.getAttribute('x') - +b.getAttribute('x'), +hint.getAttribute('y') - +b.getAttribute('y')] : 'no icon', ti ? ti.offsetHeight : 'no bar']; };
+  const _pzCyan = v => /78,\s*195,\s*224|34,\s*228,\s*255/.test(String(v || ''));
+  const _pzGrey = 'rgb(126, 135, 148)', _pzWhite = 'rgb(255, 255, 255)';   /* --ss-t3 (the top toolbar's idle tools, 16ku) and white */
+  /* a cable's share drawn inside a tile (30 in from each end), on the drawing as it is */
+  const _pzHidden = (from, to) => { const p = $$('#wire-diagram path.wire-edge').find(e => e.getAttribute('data-from') === from && e.getAttribute('data-to') === to); if (!p) return 'no cable ' + from + ' -> ' + to;
+    const nodes = $$('#wire-diagram g.wire-node').map(n => { const r = $(':scope > rect', n); return r ? { x: +r.getAttribute('x'), y: +r.getAttribute('y'), w: +r.getAttribute('width'), h: +r.getAttribute('height') } : null; }).filter(Boolean);
+    const L = p.getTotalLength(); let n = 0, hid = 0; for (let s = 30; s < L - 30; s += 3) { n++; const q = p.getPointAtLength(s); if (nodes.some(t => q.x > t.x + 1 && q.x < t.x + t.w - 1 && q.y > t.y + 1 && q.y < t.y + t.h - 1)) hid++; } return n ? Math.round(100 * hid / n) : 0; };
+  /* every cable end on a point of the tools named, within 0.6 */
+  const _pzEnds = ids => { const bad = []; let n = 0; const circ = $$('#wire-diagram circle'), key = c => c.dataset.rportId || c.dataset.sourceId || c.getAttribute('data-port-id') || '';
+    $$('#wire-diagram path.wire-edge').forEach(p => { ['from', 'to'].forEach((e, i) => { const k = p.getAttribute('data-' + e) || ''; if (!ids.some(id => k.indexOf(':' + id + ':') > 0)) return; const c = circ.filter(c => key(c) === k).sort((a, b) => (+b.getAttribute('r')) - (+a.getAttribute('r')))[0]; if (!c) { bad.push(k + ' no point'); return; } n++; const L = p.getTotalLength(), a = p.getPointAtLength(i ? L : 0); if (Math.hypot(a.x - +c.getAttribute('cx'), a.y - +c.getAttribute('cy')) > 0.6) bad.push(k); }); });
+    return { ends: n, bad }; };
+  const _pzOverlaps = ids => { const L = _wireAdvTileList().filter(t => ids.indexOf(t.id) >= 0), hits = []; for (let i = 0; i < L.length; i++) for (let j = i + 1; j < L.length; j++) { const a = L[i], b = L[j]; if (a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y) hits.push(a.id + ' x ' + b.id); } return hits; };
+  const _pzReopen = async () => { _applyProjectText(JSON.stringify(getProjectState())); await wait(700); okDialogs(); await wait(150); okDialogs(); await _cMWire('advanced'); await wait(400); };
+  // 16lc-picsize P1: NEW
+  await check('Wire 16lc-picsize (P) (Omar 2026-10-02: "they should match the image size of the tiles, the converters being this current smaller size it fine"): measured on screen at 100 % zoom, the picture box of Simple\'s Generic Router, and on Advanced of page 1\'s router, a 10 x 10 router, a 3 x 5 router, an 8 x 2 switcher, an I/O Patch page tile and a network switch, is the size of a source tile\'s picture AND of a destination tile\'s picture on the same drawing, within 1 px (110 x 62), with a tile picture\'s look (corner radius 6, 13 in from the right end, 13 down, the 18 x 18 upload icon 4 in) in an 88-high header; a CONVERTER is unchanged: its box half a tile\'s picture (55 x 31), corner radius 3, 13 in, centred in its 44 bar, the 9 x 9 icon 2 in, the bar\'s right padding 82 px and its name at 15 px', async () => {
+    const out = {}, want = {};
+    try {
+      await _lbOpen(); _wireSetZoom(1); _wireRender(); await wait(400);
+      { const s = _pzSz(_pzTilePic('source')), d = _pzSz(_pzTilePic('destination')), t = _pzSz(_pzToolPic('hub'));
+        out.simple = [s, d, t, _pzEq(t, s), _pzEq(t, d), _pzLook('hub')]; want.simple = [[110, 62], [110, 62], [110, 62], [true, true], [true, true], [6, 13, 13, [18, 18, 4, 4], 88]]; }
+      const pg = ioAdvanced.pages[1]; pg.name = 'ROSS RACK';
+      pg.sources = [{ id: 'pzs1', name: 'CAM A', connectorType: '', customType: '', resolution: '', notes: '', type: '' }]; pg.dests = [{ id: 'pzd1', name: 'MON 1', connectorType: '', customType: '', resolution: '', notes: '', deviceType: '' }];
+      await _cMWire('advanced');
+      const r0 = wireAdvanced.routers.length;
+      _wireAdvAddRouter(10); _wireAdvAddRouterAsym(3, 5); _wireAdvAddSwitcher('8×2 Switcher', 8, 2); _wireAdvAddPatchTile(1); _wireAdvAddDevice('switch', 4); _wireAdvAddDevice('converter', 2, 2); await wait(400);
+      _wireSetZoom(1); _wireRender(); await wait(400);
+      const R = wireAdvanced.routers, D = wireAdvanced.devices, C = D[D.length - 1], W = D[D.length - 2];
+      const big = [['page 1\'s router', 'router:' + R[0].id], ['10 x 10', 'router:' + R[r0].id], ['3 x 5', 'router:' + R[r0 + 1].id], ['8 x 2 switcher', 'router:' + R[r0 + 2].id], ['I/O Patch page tile', 'router:' + R[r0 + 3].id], ['network switch', 'device:' + W.id]];
+      const s = _pzSz(_pzTilePic('source')), d = _pzSz(_pzTilePic('destination'));
+      out.tiles = [s, d]; want.tiles = [[110, 62], [110, 62]];
+      out.big = {}; want.big = {};
+      big.forEach(([label, nid]) => { const t = _pzSz(_pzToolPic(nid)); out.big[label] = [t, _pzEq(t, s), _pzEq(t, d), _pzLook(nid)]; want.big[label] = [[110, 62], [true, true], [true, true], [6, 13, 13, [18, 18, 4, 4], 88]]; });
+      { const nid = 'device:' + C.id, t = _pzSz(_pzToolPic(nid)), g = _txNode(nid), ti = $('.wire-router-title', g), sh = $('.wtl-nm-show', ti);
+        out.converter = [t, _pzHalf(t, s), _pzHalf(t, d), _pzLook(nid), getComputedStyle(ti).paddingRight, getComputedStyle(sh).fontSize, +$('.wtl-pic .wtl-ico', g).getAttribute('width')];
+        want.converter = [[55, 31], [true, true], [true, true], [3, 13, 6.5, [9, 9, 2, 2], 44], '82px', '15px', 6.5]; }
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { _wireSetZoom(1); } catch (e) {} await restore(); }
+    return is(out, want, 'Simple at 100 % [a source tile\'s picture, a destination tile\'s, the Generic Router\'s, equal to the source\'s (w, h), to the destination\'s, its look (corner, in, down, icon [w, h, in, down], bar)] / Advanced [the source tile\'s, the destination tile\'s] / each tool [its box, equal to the source\'s, to the destination\'s, its look] / the converter [its box, half the source\'s, half the destination\'s, its look, the bar\'s right padding, its name\'s size, its icon]');
+  });
+  // 16lc-picsize P2: NEW
+  await check('Wire 16lc-picsize (P): a cable is drawn onto every tool kind below its taller header as before: a source tile\'s output dragged and let go on the drawn middle of a 10 x 10 router\'s input row 5, of a network switch\'s port 3 and of a converter\'s In 2 lands on that row (rip:4, dvi:2, dvi:1), one undo step each; the rows are drawn where the taller header puts them (the router\'s row 5 at 176 + 4 x 44 + 22, the switch\'s port 3 at 124 + 2 x 36 + 18, the converter\'s In 2 at 80 + 36 + 18, unchanged), and each new cable ends on its point', async () => {
+    const out = {}, want = {};
+    try {
+      await restore(); await _cMWire('advanced');
+      _wireAdvAddRouter(10); _wireAdvAddDevice('switch', 4); _wireAdvAddDevice('converter', 2, 2); await wait(400);
+      const R = wireAdvanced.routers[wireAdvanced.routers.length - 1], D = wireAdvanced.devices, C = D[D.length - 1], W = D[D.length - 2];
+      /* a source tile and the three tools right of everything page 1 has, so nothing else is under the pointer */
+      wireAdvanced.sources.push({ id: 'pzSrc', name: srcNames()[0], x: 6000, y: 300 }); const S0 = wireAdvanced.sources[wireAdvanced.sources.length - 1];
+      R.x = 6500; R.y = 100; W.x = 6500; W.y = 900; C.x = 6900; C.y = 900;
+      _wireSetZoom(0.5); _wireRender(); await wait(400);
+      const targets = [['router', 'router:' + R.id, R, 176 + 4 * 44 + 22, 'rip:' + R.id + ':4', g => $$('.rc-num', g).filter((e, i) => i % 2 === 0)[4]],
+        ['switch', 'device:' + W.id, W, 124 + 2 * 36 + 18, 'dvi:' + W.id + ':2', g => $$('.wire-device-grid > .rc', g)[2]],
+        ['converter', 'device:' + C.id, C, 80 + 36 + 18, 'dvi:' + C.id + ':1', g => $$('.wire-device-grid > .rc', g).filter((e, i) => i % 2 === 0)[1]]];
+      out.rows = {}; want.rows = {};
+      for (const [label, nid, T, rowY, port, cellOf] of targets) {
+        const sc = $('#wire-diagram-scroll'), g0 = _txNode(nid), src0 = $$('#wire-diagram circle.wire-adv-connector').find(c => c.dataset.sourceId === 'asrc:' + S0.id);
+        if (!g0 || !src0) { out.rows[label] = 'no tile / no source point'; continue; }
+        /* bring the source point and the row into view (a view change) */
+        { const a = src0.getBoundingClientRect(), b = cellOf(g0).getBoundingClientRect(), s = sc.getBoundingClientRect(); sc.scrollLeft += ((a.left + b.right) / 2) - (s.left + s.width / 2); sc.scrollTop += ((a.top + b.top) / 2) - (s.top + s.height / 2); await wait(250); }
+        const g = _txNode(nid), cell = cellOf(g), src = $$('#wire-diagram circle.wire-adv-connector').find(c => c.dataset.sourceId === 'asrc:' + S0.id);
+        const fo = $(':scope > foreignObject', g), fr = fo.getBoundingClientRect(), z = fr.height / +fo.getAttribute('height'), cr = cell.getBoundingClientRect(), drawnAt = Math.round(((cr.top + cr.height / 2) - fr.top) / z * 10) / 10;
+        const n0 = wireAdvanced.wires.length, u0 = _undoStack.length;
+        const [x0, y0] = _lbPt(src), x1 = fr.left + fr.width * 0.5, y1 = cr.top + cr.height / 2;
+        _lbMouse(src, 'mousedown', x0, y0); for (let k = 1; k <= 8; k++) { _lbMouse(window, 'mousemove', x0 + (x1 - x0) * k / 8, y0 + (y1 - y0) * k / 8); await wait(20); } const under = document.elementFromPoint(x1, y1); _lbMouse(under || window, 'mouseup', x1, y1); await wait(500);
+        const wNew = wireAdvanced.wires.slice(n0)[0];
+        out.rows[label] = [Math.abs(drawnAt - rowY) <= 1.5 ? rowY : drawnAt, wNew ? wNew.toId : 'no cable', _undoStack.length - u0, _pzEnds([T.id]).bad];   /* within 1.5 (a row's cell borders) */
+        want.rows[label] = [rowY, port, 1, []];
+      }
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { _wireSetZoom(1); } catch (e) {} await restore(); }
+    return is(out, want, 'per tool [the row drawn at (drawing units), the cable let go on it lands on, undo steps, cable ends off their points]');
+  });
+  // 16lc-picsize P3: NEW
+  await check('Wire 16lc-picsize (P): an existing hand-drawn page saved with the smaller headers (v0.8.0 stored hdr 56 on a router, 44 on a converter / network switch) opens with ONLY what a taller tool would cover moved: a converter 20 under a 10 x 10 router (covered by the 32 px taller header) moves to 40 under it and the AUX tile 40 under the converter, which the moved converter would cover, follows; a hand-drawn path that now runs through the moved converter goes back to the automatic path, one well clear keeps its shape; a converter 40 under another router (8 clear after the growth) stays; a source tile 16 under a network switch (covered by its 44 px taller header) moves to 40 under it; a far AUX tile stays; the grown tools note hdr 88, the converters keep 44; no tile on another, no undo step, Save not lit; the same after a redraw, a page switch and a save and reopen', async () => {
+    const out = {};
+    try {
+      await restore(); await _cMWire('advanced');
+      _wireAdvAddRouter(10); _wireAdvAddDevice('converter', 2, 2); _wireAdvAddRouter(10); _wireAdvAddDevice('converter', 2, 2); _wireAdvAddDevice('switch', 4); await wait(300);
+      const RR = wireAdvanced.routers, DD = wireAdvanced.devices, R = RR[RR.length - 2], R2 = RR[RR.length - 1], C = DD[DD.length - 3], C2 = DD[DD.length - 2], W = DD[DD.length - 1];
+      [R, R2].forEach(t => { t.hdr = 56; }); [C, C2, W].forEach(t => { t.hdr = 44; });   /* as v0.8.0 saved them */
+      R.x = 6000; R.y = 100;     /* 56 + 88 + 440 + 4 + the 36 footer = 624: bottom 724 (with the 88 header: 756) */
+      C.x = 6200; C.y = 744;     /* 20 under it: covered after the growth; 80 + 72 + 36 + 4 = 192: bottom 936 */
+      R2.x = 8000; R2.y = 100; C2.x = 8200; C2.y = 764;   /* 40 under it: 8 clear after the growth */
+      W.x = 9000; W.y = 100;     /* 44 + 36 + 4 x 36 + 36 + 4 = 264: bottom 364 (with the 88 header: 408) */
+      wireAdvanced.dsms.push({ id: 'pzA1', refId: dsms[0].id, x: 6220, y: 976 }, { id: 'pzA2', refId: dsms[1].id, x: 6220, y: 1700 });
+      wireAdvanced.sources.push({ id: 'pzS1', name: srcNames()[0], x: 9020, y: 380 });
+      wireAdvanced.wires.push({ id: 'pzW1', fromId: 'rop:' + R.id + ':0', toId: 'adsm:pzA2', route: [6880, 980, 6180] },   /* runs through where the converter goes */
+        { id: 'pzW2', fromId: 'rop:' + R.id + ':1', toId: 'adsm:pzA2', route: [6900, 1600, 6180] });                           /* well clear of everything */
+      const ids = ['router:' + R.id, 'device:' + C.id, 'adsm:pzA1', 'adsm:pzA2', 'router:' + R2.id, 'device:' + C2.id, 'device:' + W.id, 'asrc:pzS1'];
+      const read = () => { const f = (arr, id) => (arr || []).find(x => x.id === id) || {}, w = id => wireAdvanced.wires.find(x => x.id === id) || {};
+        return [[f(wireAdvanced.routers, R.id).y, f(wireAdvanced.devices, C.id).y, f(wireAdvanced.dsms, 'pzA1').y, f(wireAdvanced.dsms, 'pzA2').y, f(wireAdvanced.routers, R2.id).y, f(wireAdvanced.devices, C2.id).y, f(wireAdvanced.devices, W.id).y, f(wireAdvanced.sources, 'pzS1').y],
+          _pzOverlaps(ids), [JSON.stringify(w('pzW1').route || null), JSON.stringify(w('pzW2').route || null)],
+          [f(wireAdvanced.routers, R.id).hdr, f(wireAdvanced.devices, C.id).hdr, f(wireAdvanced.routers, R2.id).hdr, f(wireAdvanced.devices, C2.id).hdr, f(wireAdvanced.devices, W.id).hdr]]; };
+      await _pzReopen();
+      const u0 = _undoStack.length;
+      out.opened = read().concat([_undoStack.length - u0, _lbDirty()]);
+      _wireRender(); await wait(300); out.redraw = read()[0];
+      const pages = wireAdvanced._pages.map(p => p.id); _wireSwitchPage(pages[1]); await wait(300); _wireSwitchPage(pages[0]); await wait(300); out.page = read()[0];
+      await _pzReopen(); out.reopened = [read()[0], read()[3], _lbDirty()];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { await restore(); }
+    const Y = [100, 796, 1028, 1700, 100, 764, 100, 448], H = [88, 44, 88, 44, 88];
+    return is(out, { opened: [Y, [], ['null', '[6900,1600,6180]'], H, 0, [false, false]], redraw: Y, page: Y, reopened: [Y, H, [false, false]] },
+      'opened [[router, converter 20 under it, the AUX 40 under that, the far AUX, router 2, converter 40 under it, network switch, the source 16 under it], tiles on each other, [the path through the moved converter, the clear path], hdr [router, converter, router 2, converter 2, switch], undo steps, [dirty, Save lit]] / after a redraw / after a page switch / saved and reopened [the places, hdr, dirty and Save lit]');
+  });
+  // 16lc-picsize P4: NEW
+  await check('Wire 16lc-picsize (P): Omar\'s ORGILL Advanced page 1 as he drew it (rebuilt from his show file\'s numbers: the 10 x 10 router at 80, 80 with 10 in / 6 out, the Decimator converter 40 under it at 247.9, 744, the NETGEAR network switch 21 px to its left at -73.3, 904.7, the POWERPOINT source tile and the LEFT LED tile, and his eight cables, nothing stored on the tools) opens with the router\'s and the switch\'s header 88 high and their picture boxes 110 x 62, the Decimator\'s 44 with 55 x 31; nothing covered and nothing moved (the Decimator is 8 clear of the taller router); the router\'s cable into the Decimator\'s In 2 keeps a path outside every tile (16ld-fix pushed the Decimator down and that path then ran under the two tiles); every cable end on its point; no undo step, Save not lit', async () => {
+    const out = {};
+    try {
+      await restore(); await _cMWire('advanced');
+      const sp = wireAdvanced._pages[wireAdvanced._pages.length - 1]; _wireSwitchPage(sp.id); await wait(300);
+      const src = srcNames()[0], scr = (screens || [])[0];
+      const rows = (n, f) => Array.from({ length: n }, (x, i) => f(i));
+      wireAdvanced.sources.push({ id: 'pzOs', name: src, x: -432.365757817729, y: 148.8172338869956, outC: 6, portLabels: true, portNames: [], portConns: [null, null, null, null, null, 'Dante'] });
+      wireAdvanced.dests.push({ id: 'pzOd', refId: scr.id, x: 1325.6387901245953, y: 205.16198181975415 });
+      wireAdvanced.routers.push({ id: 'pzOr', title: 'ROUTER I/O', label: 'UNTITLED 4X4 ENGINEERING RACK', size: 10, x: 80, y: 80, inC: 10, outC: 6,
+        inputs: rows(10, i => ({ name: '', slot: '', wireId: null, auto: true, ptAuto: true })), outputs: rows(10, i => ({ name: '', slot: '', assignedInput: null, wireId: null, auto: true, ptAuto: true })) });
+      wireAdvanced.devices.push({ id: 'pzOc', kind: 'converter', name: 'Decimator', x: 247.863558858256, y: 744, ins: rows(4, () => ({ conn: 'HDMI 2.0', name: '' })), outs: rows(5, () => ({ conn: '12G-SDI', name: '' })) },
+        { id: 'pzOw', kind: 'switch', name: 'NETGEAR', x: -73.3334809424316, y: 904.6840104501894, ins: rows(4, () => ({ conn: 'Ethernet', name: '' })), outs: [] });
+      wireAdvanced.wires.push({ id: 'pzO1', fromId: 'asrc:pzOs', toId: 'rip:pzOr:0' }, { id: 'pzO2', fromId: 'asp:pzOs:1', toId: 'rip:pzOr:1' }, { id: 'pzO3', fromId: 'asp:pzOs:2', toId: 'rip:pzOr:2' },
+        { id: 'pzO4', fromId: 'asp:pzOs:3', toId: 'dvi:pzOc:0' }, { id: 'pzO5', fromId: 'dvo:pzOc:0', toId: 'rip:pzOr:3' }, { id: 'pzO6', fromId: 'rop:pzOr:3', toId: 'dvi:pzOc:1' },
+        { id: 'pzO7', fromId: 'asp:pzOs:5', toId: 'dvi:pzOw:0' }, { id: 'pzO8', fromId: 'rop:pzOr:4', toId: 'adst:pzOd' });
+      const ids = ['asrc:pzOs', 'adst:pzOd', 'router:pzOr', 'device:pzOc', 'device:pzOw'];
+      await _pzReopen(); _wireSetZoom(1); _wireRender(); await wait(400);
+      const u0 = _undoStack.length;
+      const bar = nid => { const g = _txNode(nid), ti = g && $('.wire-router-title', g), b = _pzToolPic(nid); return [ti ? ti.offsetHeight : 'no bar', b ? b.getAttribute('width') + 'x' + b.getAttribute('height') : 'no box']; };
+      const f = (arr, id) => (arr || []).find(x => x.id === id) || {};
+      out.heads = [bar('router:pzOr'), bar('device:pzOw'), bar('device:pzOc')];
+      out.places = [f(wireAdvanced.routers, 'pzOr').y, Math.round(f(wireAdvanced.devices, 'pzOc').y * 10) / 10, Math.round(f(wireAdvanced.devices, 'pzOw').y * 10) / 10, Math.round(f(wireAdvanced.sources, 'pzOs').y * 10) / 10, Math.round(f(wireAdvanced.dests, 'pzOd').y * 10) / 10];
+      out.covered = _pzOverlaps(ids);
+      out.inside = _pzHidden('rop:pzOr:3', 'dvi:pzOc:1');
+      out.ends = _pzEnds(['pzOr', 'pzOc', 'pzOw']);
+      out.clean = [_undoStack.length - u0, _lbDirty()];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { await restore(); }
+    return is(out, { heads: [[88, '110x62'], [88, '110x62'], [44, '55x31']], places: [80, 744, 904.7, 148.8, 205.2], covered: [], inside: 0, ends: { ends: 10, bad: [] }, clean: [0, [false, false]] },
+      'the headers [router, NETGEAR, Decimator: bar, box] / the places [router, Decimator, NETGEAR, POWERPOINT, LEFT LED] / tiles on each other / % of the router OUT 4 -> Decimator In 2 cable inside a tile / cable ends on the tools [ends, off] / [undo steps, [dirty, Save lit]]');
+  });
+  /* (Y) a sliding switch as drawn: each choice's words, the thumb, whether it sits on the chosen one, any cyan */
+  const _pzSeg = sel => { const g = $(sel); if (!g || !g.getBoundingClientRect().width) return 'not shown: ' + sel;
+    const bs = $$(':scope > .lb-seg-btn, :scope > .lp-mode-btn, :scope > .wire-nav-btn, :scope > .kbv-sw', g), th = $(':scope > .seg-thumb, :scope > .wire-nav-thumb', g);
+    const onB = bs.find(b => b.classList.contains('on') || b.classList.contains('active') || b.classList.contains('lb-nav-lit'));
+    const R = e => { const r = e.getBoundingClientRect(); return [r.left, r.top, r.width, r.height]; };
+    const look = e => { const c = getComputedStyle(e); return [c.color, c.boxShadow, c.textShadow, c.borderTopColor, c.backgroundImage, c.backgroundColor]; };
+    /* the thumb sits on the chosen side; a thumb not placed yet (a window shown without a pointer event: _mountSegThumbs waits for one) leaves the chosen side wearing the same lifted pill itself */
+    const placed = !!th && (g.classList.contains('seg-on') || g.classList.contains('wire-nav-pillgroup')) && R(th)[2] > 0;
+    const over = placed ? (() => { const a = R(th), b = onB ? R(onB) : null; return !!b && a.every((v, i) => Math.abs(v - b[i]) <= 1.5); })() : (onB ? /gradient/.test(getComputedStyle(onB).backgroundImage) : false);
+    return { chosen: onB ? getComputedStyle(onB).color : 'none', others: [...new Set(bs.filter(b => b !== onB).map(b => getComputedStyle(b).color))], onThumb: over, cyan: [g].concat(bs, th ? [th] : []).some(e => look(e).some(_pzCyan)) || bs.some(b => { const i = $('svg', b); return !!i && _pzCyan(getComputedStyle(i).color); }) }; };
+  // 16lc-picsize Y1: NEW
+  await check('16lc-picsize (Y1) (Omar 2026-10-02: "simple and advance should be white no used is grey and the button is slide the opposite and the button is over what is active and white"; "Every switch in the app"): in every sliding switch the chosen side reads WHITE and sits on the lifted thumb that slides to it, the other side reads GREY (the top toolbar\'s idle grey, --ss-t3), and there is no cyan in the switch (words, icons, thumb, inset line): Video Presets Simple / Advanced (and on its Advanced page), the top bar\'s tool switch, a preset\'s DSM / AUX, the layer panel\'s Simple / Advanced, the Advanced Video Presets panels\' tabs, the Look Book export\'s Theme, Help > Keyboard\'s Mac / PC (its chosen key on the lifted pill), I/O Patch and Wire Simple / Advanced (both ways), the Wire export\'s Format, Theme and Sheet; after a click on another choice the white and the thumb go with it', async () => {
+    const out = {}; const W = _pzWhite, G = _pzGrey; const ok = { chosen: W, others: [G], onThumb: true, cyan: false };
+    try {
+      await restore(); await wait(300);
+      const take = async (label, sel) => { await wait(450); out[label] = _pzSeg(sel); };
+      await take('Video Presets', '#vp-tabs .lb-seg'); await take('the tool switch', '.wire-nav-pillgroup'); await take('DSM / AUX', '.dsm-toolbar .lb-seg');
+      { const chip = $('#canvas-area .preset-row .layer-chip'); if (chip) { chip.scrollIntoView({ block: 'center' }); chip.dispatchEvent(new MouseEvent('dblclick', { bubbles: true, cancelable: true })); } await take('the layer panel', '#layer-panel .lp-mode-toggle'); try { closeLayerPanel(); } catch (e) {} }
+      _vpSetView('advanced'); await wait(900); okDialogs();
+      await take('Video Presets Advanced', '#fs-tabs .lb-seg'); await take('the sources panel tabs', '#fs-src-tabs .lb-seg'); await take('the properties panel tabs', '#fs-prop-tabs .lb-seg');
+      _vpSetView('simple'); await wait(700); okDialogs();
+      openPdfExportModal(); await take('the Look Book export: Theme', '[data-seg="pdf-theme"]'); closePdfExportModal(); await wait(250);
+      actions.help(); await wait(300); helpTab('kbd'); await take('Help > Keyboard: Mac / PC', '.kbv-switch'); closeHelp(); await wait(250);
+      openSystem(); await wait(500); if (ioAdvanced.view !== 'simple') { _ioSetView('simple'); await wait(400); } okDialogs();
+      await take('I/O Patch Simple', '#io-tabs .lb-seg'); _ioSetView('advanced'); await wait(700); okDialogs(); await take('I/O Patch Advanced', '#io-tabs .lb-seg'); _ioSetView('simple'); await wait(400); okDialogs();
+      await _cMWire('simple'); await take('Wire Simple', '#wire-tabs .lb-seg'); await _cMWire('advanced'); await take('Wire Advanced', '#wire-tabs .lb-seg');
+      openWireExportModal(); await wait(300);
+      await take('the Wire export: Format', '[data-seg="wire-fmt"]'); await take('the Wire export: Theme', '[data-seg="wire-theme"]'); await take('the Wire export: Sheet', '[data-seg="wire-sheet"]');
+      $('[data-wire-theme="dark"]').click(); await take('the Wire export: Theme, Dark clicked', '[data-seg="wire-theme"]'); const darkOn = $('[data-wire-theme="dark"]').classList.contains('on');
+      $('[data-wire-theme="light"]').click(); await wait(200); closeWireExportModal(); await wait(250);
+      out.darkClicked = darkOn;
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { closeWireExportModal(); } catch (e) {} await restore(); }
+    const want = {}; Object.keys(out).forEach(k => { want[k] = (k === 'darkClicked') ? true : ok; });   /* the same key order as read */
+    if (Object.keys(out).length < 18) return 'switches read: ' + (Object.keys(out).length - 1) + ' of 17';
+    return is(out, want, 'each switch {the chosen side\'s words, the other sides\' words, the thumb on the chosen side, any cyan}');
+  });
+  // 16lc-picsize Y2: NEW
+  await check('16lc-picsize (Y2) (Omar 2026-10-02: "get rid of the cyan color", his picture of the page tabs with "1 TEST FILE" in cyan): on the Wire Advanced and the I/O Patch Advanced page tabs the open tab\'s number, name, copy icon and x read WHITE (fully: not faded) on its lifted pill, the other tabs GREY (--ss-t3), no cyan in any tab (words, icons, inset line); the tab being renamed types in white; with more tabs than the bar holds, opening the last one still scrolls it into view (the open tab is found by its pill now, not by its cyan)', async () => {
+    const out = {};
+    const read = root => $$('button', root).map(b => { const on = /--sk-pill1/.test(b.getAttribute('style') || ''), cs = getComputedStyle(b);
+      const parts = $$('span, svg', b).filter(e => e.tagName.toLowerCase() === 'svg' || !e.children.length).map(e => { let o = 1; for (let n = e; n && n !== b.parentNode; n = n.parentNode) o *= +getComputedStyle(n).opacity; return [getComputedStyle(e).color, Math.round(o * 100) / 100]; });
+      return { on, color: cs.color, parts: on ? parts : [...new Set(parts.map(p => p[0]))], cyan: _pzCyan(cs.color) || _pzCyan(cs.boxShadow) || parts.some(p => _pzCyan(p[0])) }; });
+    const sum = list => ({ open: list.filter(t => t.on).map(t => [t.color, t.parts.every(p => p[0] === _pzWhite && p[1] === 1), t.parts.length]), others: [...new Set(list.filter(t => !t.on).map(t => t.color + ' ' + JSON.stringify(t.parts)))], cyan: list.some(t => t.cyan) });
+    try {
+      await restore(); await _cMWire('advanced'); await wait(300);
+      out.wire = sum(read($('#wire-page-tabs')));
+      _wireBeginRenamePage(wireAdvanced._activePageId); await wait(300); { const i = $('#wire-page-rename-input'); out.wireRename = i ? getComputedStyle(i).color : 'no box'; } { const i = $('#wire-page-rename-input'); if (i) { i.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true })); } } await wait(300); okDialogs();
+      openSystem(); await wait(500); _ioSetView('advanced'); await wait(700); okDialogs(); if (ioAdvanced.page !== 0) { _ioSetPage(0); await wait(300); }
+      out.io = sum(read($('#io-page-tabs')));
+      _ioRenamePage(0); await wait(300); { const i = $('#io-page-rename'); out.ioRename = i ? getComputedStyle(i).color : 'no box'; if (i) i.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true })); } await wait(300); okDialogs();
+      _ioSetView('simple'); await wait(400); okDialogs();
+      /* many pages: the last one opened is scrolled into view in the Wire tab strip */
+      await _cMWire('advanced'); const before = wireAdvanced._pages.length;
+      for (let i = 0; i < 12; i++) { _wireCopyPage(wireAdvanced._pages[0].id); await wait(60); okDialogs(); }   /* the copy icon's own action: "<name> copy" on the spare page, a new spare after it */
+      _wireRender(); await wait(300); const pids = wireAdvanced._pages.map(p => p.id); _wireSwitchPage(pids[pids.length - 2]); await wait(400);
+      { const c = $('#wire-page-tabs'), on = $$('button', c).find(b => /--sk-pill1/.test(b.getAttribute('style') || '')), cr = c.getBoundingClientRect(), br = on ? on.getBoundingClientRect() : null;
+        out.scrolled = [pids.length > before, c.scrollWidth > c.clientWidth, !!br && br.left >= cr.left - 1 && br.right <= cr.right + 1]; }
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { await restore(); }
+    const tabs = { open: [[_pzWhite, true, 4]], others: [_pzGrey + ' ["' + _pzGrey + '"]'], cyan: false };
+    return is(out, { wire: tabs, wireRename: _pzWhite, io: { open: [[_pzWhite, true, 3]], others: tabs.others, cyan: false }, ioRename: _pzWhite, scrolled: [true, true, true] },
+      'Wire tabs {the open tab [its words, number / name / copy / x all white and not faded, parts], the other tabs [colour, parts], any cyan} / the Wire tab being renamed / the I/O Patch tabs / the I/O Patch tab being renamed / many pages [more tabs, the strip overflows, the open last tab in view]');
+  });
+  // 16lc-picsize Y3: NEW
+  await check('16lc-picsize (Y3) (Omar 2026-10-02: "the FIT icon for size should be white"): FIT on the Wire zoom widget and on the Advanced Video Presets page\'s zoom widget reads WHITE, its icon and its word, on its lifted pill with no cyan in its inset line or anywhere on it; it still fits the drawing', async () => {
+    const out = {};
+    const fit = sel => { const b = $(sel); if (!b) return 'no FIT'; const c = getComputedStyle(b), i = $('svg', b); return [c.color, i ? getComputedStyle(i).color : 'no icon', i ? i.getAttribute('stroke') : '', (b.textContent || '').trim(), _pzCyan(c.color) || _pzCyan(c.boxShadow) || _pzCyan(c.backgroundImage) || _pzCyan(c.borderLeftColor)]; };
+    try {
+      await _lbOpen(); _wireSetZoom(1); await wait(300);
+      out.wire = fit('#wire-zoom-widget button:last-child');
+      $('#wire-zoom-widget button:last-child').click(); await wait(500); out.fits = Math.round(_wireGetZoom() * 100) !== 100;
+      try { closeWireMode(); } catch (e) {} await wait(300);
+      _vpSetView('advanced'); await wait(900); okDialogs();
+      out.vp = fit('#fs-zoom-widget button:last-child');
+      _vpSetView('simple'); await wait(600); okDialogs();
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { await restore(); }
+    const F = [_pzWhite, _pzWhite, 'currentColor', 'Fit', false];
+    return is(out, { wire: F, fits: true, vp: F }, 'FIT [its words, its icon, the icon\'s stroke, its text, any cyan] on Wire / Fit still zooms the drawing / on the Advanced Video Presets page');
+  });
+  // 16lc-picsize Y4: NEW
+  await check('16lc-picsize (Y4) (Omar 2026-10-02: "the EXPORT on all 3 location is the same but its a different style then the rest of the program it should match the same button style of reset layout. on all 3 pages"): EXPORT in the page bar of Video Presets, of its Advanced page, of the I/O Patch and of Wire has exactly the computed style of Wire\'s RESET LAYOUT (fill, border, radius, height, padding, letters, colours, shadow, its lifted pill, the icon\'s size and colour) and shares its class; each keeps its own download icon and its own action', async () => {
+    const P = ['color', 'background-color', 'background-image', 'border-top-width', 'border-top-style', 'border-top-color', 'border-top-left-radius', 'border-bottom-right-radius', 'height', 'box-sizing', 'padding-top', 'padding-right', 'padding-bottom', 'padding-left', 'font-family', 'font-size', 'font-weight', 'letter-spacing', 'text-transform', 'box-shadow', 'text-shadow', 'display', 'align-items', 'column-gap', 'cursor', 'opacity', 'position', 'isolation', 'transition'];
+    const B = ['content', 'position', 'top', 'left', 'right', 'bottom', 'border-top-left-radius', 'background-image', 'box-shadow', 'z-index', 'filter'];
+    const look = sel => { const e = $(sel); if (!e) return 'no button ' + sel; const c = getComputedStyle(e), b = getComputedStyle(e, '::before'), i = $('svg', e), ic = i ? getComputedStyle(i) : null, o = {};
+      P.forEach(p => { o[p] = c.getPropertyValue(p); }); B.forEach(p => { o['::before ' + p] = b.getPropertyValue(p); }); if (ic) { o['icon width'] = ic.width; o['icon height'] = ic.height; o['icon colour'] = ic.color; o['icon vertical-align'] = ic.verticalAlign; o['icon margin-right'] = ic.marginRight; }
+      o.cls = e.classList.contains('lb-rl-btn'); return o; };
+    const diff = (a, b) => (typeof a === 'string' || typeof b === 'string') ? [String(typeof a === 'string' ? a : b)] : Object.keys(a).filter(k => a[k] !== b[k]).map(k => k + ': ' + a[k] + ' vs ' + b[k]);
+    const own = sel => { const e = $(sel); return e ? [$$('svg path, svg polyline', e).map(x => x.getAttribute('d') || x.getAttribute('points')).join(' | '), (e.textContent || '').trim()] : 'none'; };
+    const DL = ['M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4 | 7 10 12 15 17 10', 'Export'];
+    const out = {};
+    try {
+      await restore(); await _cMWire('simple'); await wait(300);
+      const reset = look('#wire-topbar button[onclick="_wireResetLayout()"]'), sel = { wire: '#wire-topbar [onclick="openWireExportModal()"]', vp: '#vp-topbar [onclick="actions.exportExcel()"]', vpAdv: '#fs-topbar [onclick="actions.exportExcel()"]', io: '#sys-overlay .sys-topbar [onclick^="runExportWithValidation(_sysExportIOExcel"]' };
+      out.wire = [diff(reset, look(sel.wire)), own(sel.wire)];
+      try { closeWireMode(); } catch (e) {} await wait(300);
+      out.vp = [diff(reset, look(sel.vp)), own(sel.vp)];
+      _vpSetView('advanced'); await wait(900); okDialogs(); out.vpAdv = [diff(reset, look(sel.vpAdv)), own(sel.vpAdv)]; _vpSetView('simple'); await wait(600); okDialogs();
+      openSystem(); await wait(500); out.io = [diff(reset, look(sel.io)), own(sel.io)];
+      out.reset = reset.cls;
+      /* each keeps its action: Wire's opens the Wire export window */
+      await _cMWire('simple'); $(sel.wire).click(); await wait(400); out.wireAction = getComputedStyle($('#wire-export-modal')).display !== 'none'; closeWireExportModal(); await wait(250);
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { closeWireExportModal(); } catch (e) {} await restore(); }
+    return is(out, { wire: [[], DL], vp: [[], DL], vpAdv: [[], DL], io: [[], DL], reset: true, wireAction: true }, 'each EXPORT [its style\'s differences from RESET LAYOUT, [its icon, its text]] (Wire, Video Presets, its Advanced page, I/O Patch) / RESET LAYOUT has the class / Wire\'s EXPORT still opens its window');
+  });
+  // ── 16lc-fix (v0.8.1, the fixer's round on 16lc-picsize, 2026-10-02). Each check below FAILS on the 16lc-picsize page (r16le/build,
+  //    23be3744) and PASSES after. Helpers prefixed _qf (never a name of the page's); they use 16lb's (_lb*) and 16lc-picsize's (_pz*).
+  /* Simple as drawn: the router's box, the tiles it covers, its see-through (16fd) class, a tile's top */
+  const _qfSimple = () => { const svg = $('#wire-diagram svg'); if (!svg) return null; const hub = $('g.wire-hub', svg), fo = hub && $(':scope > foreignObject', hub);
+    const H = fo ? { x: +fo.getAttribute('x'), y: +fo.getAttribute('y'), w: +fo.getAttribute('width'), h: +fo.getAttribute('height') } : null;
+    const T = $$('g.wire-node', svg).filter(g => g !== hub).map(g => { const f = $(':scope > foreignObject', g) || $(':scope > rect', g); return f ? { id: g.getAttribute('data-node-id'), x: +f.getAttribute('x'), y: +f.getAttribute('y'), w: +f.getAttribute('width'), h: +f.getAttribute('height') } : null; }).filter(Boolean);
+    const ov = (a, b) => a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
+    return { hub: H, covered: H ? T.filter(t => ov(t, H)).map(t => t.id) : 'no router', ghost: hub ? hub.classList.contains('wire-hub-ghost') : 'no router', y: id => { const t = T.find(q => q.id === id); return t ? Math.round(t.y * 10) / 10 : 'none'; } }; };
+  /* a show opened from text (as a file is), undo counted from the open, then Wire Simple drawn */
+  const _qfOpen = async (mut, view) => { const st = JSON.parse(BASE); if (mut) mut(st); _applyProjectText(JSON.stringify(st)); await wait(700); okDialogs(); await wait(150); okDialogs();
+    const u0 = _undoStack.length; await _cMWire(view || 'simple'); _wireState.selectedNodes.clear(); _wireState.selectedEdgeKey = null; _wireState.activePreset = null; _wireZoomFit(); await wait(450); _wireRender(); await wait(200); return u0; };
+  /* the Look Book's Simple Wire page: the router's class and the tiles it covers */
+  const _qfBook = html => { const doc = new DOMParser().parseFromString(html || '', 'text/html'), pg = doc.getElementById('pdf-wire'), svg = pg && pg.querySelector('svg'); if (!svg) return 'no Wire page';
+    const hub = svg.querySelector('g.wire-hub'); if (!hub) return 'no router'; const R = g => { const f = g.querySelector(':scope > foreignObject') || g.querySelector(':scope > rect'); return f ? [+f.getAttribute('x'), +f.getAttribute('y'), +f.getAttribute('width'), +f.getAttribute('height')] : null; };
+    const H = R(hub); return [hub.getAttribute('class'), [...svg.querySelectorAll('g.wire-node')].filter(g => g !== hub).filter(g => { const r = R(g); return r && r[0] < H[0] + H[2] && r[0] + r[2] > H[0] && r[1] < H[1] + H[3] && r[1] + r[3] > H[1]; }).map(g => g.getAttribute('data-node-id'))]; };
+  /* the Look Book exactly as a user exports it, its Wire page set to SIMPLE in the export window (the window keeps the last export's
+     choice, and an earlier check may have printed Advanced); click: the Export button clicked (a gesture of its own), else confirmed */
+  const _qfLookBook = async click => { openPdfExportModal(); await wait(350);
+    const sv = $('#pdf-opt-wire-view-simple'), wo = $('#pdf-opt-wire'); if (wo && !wo.checked) wo.click(); if (sv && !sv.checked) sv.click(); await wait(150);
+    const real = exportPDF; let html = null; window.exportPDF = function () { html = real(true); };
+    try { if (click) $('[onclick="_pdfConfirmExport()"]').click(); else _pdfConfirmExport(); } finally { await wait(300); window.exportPDF = real; }
+    await wait(150); return html || ''; };
+  // 16lc-fix Q1: NEW
+  await check('Wire 16lc-fix (S1) (both attackers 2026-10-02: a Simple drawing arranged by hand on v0.8.0, a tile placed under the Generic Router, opened with the taller router (16lc-picsize\'s 88 bar) covering it and see-through over it, on screen, in the Look Book and on the Wire sheet; nothing moved): Simple\'s router makes room ONCE as Advanced\'s tools do. A drawing saved by v0.8.0 (its places stored, the router at 470, 420 drawn with the 56 bar, no hdr) with a destination 12 under the router, an AUX 15 under that, a destination 40 under the router (8 clear of the 88 bar) and three hand-drawn cable paths opens with ONLY what the taller router covers moved: the destination to 40 under it (1124), the AUX it would then cover to 40 under that (1274); the 8-clear destination and every other tile stay; the path through the moved destination and the one through the router\'s new bottom go back to automatic, a clear one keeps its shape; hdr 88 noted; nothing covered, the router not see-through, on screen and in the Look Book\'s Wire page; no undo step, Save not lit; the same after a redraw and a save and reopen. An older show whose router place was kept from the old switcher (no Simple data) makes room the same way. A drawing first arranged in this build is marked hdr 88 and a tile then put into the router\'s bottom stays where it was put', async () => {
+    const out = {}, want = {};
+    try {
+      await _lbOpen(); const st0 = _slbState(), g0 = _slbGeo(st0), K = _lbKeys();
+      const A = K.D[0], B = K.A[0], C = K.D[1], far = K.S[0], ins = st0.ins;
+      const L = {}; Object.keys(g0.tiles).forEach(k => { L[k] = { x: g0.tiles[k].x, y: g0.tiles[k].y }; });
+      L.hub = { x: 470, y: 420 };     /* where v0.8.0 froze it: 56 + 44 + 44 + 11 rows x 44 + 4 = 632 high, bottom 1052 (1084 with the 88 bar) */
+      L[A] = { x: 670, y: 1064 };     /* 12 under it: covered by the taller bar */
+      L[B] = { x: 700, y: 1189 };     /* 15 under A (A's bottom 1174): covered once A moves */
+      L[C] = { x: 1100, y: 1092 };    /* 40 under it: 8 clear of the 88 bar */
+      const e1 = 'simple:' + ins[0] + '→hin:0', e2 = 'simple:' + ins[1] + '→hin:1', e3 = 'simple:' + ins[2] + '→hin:2', routes = {};
+      routes[e1] = [400, 1200, 800];  /* runs through where A goes (1124 - 1234), not through where it was (1064 - 1174) */
+      routes[e2] = [400, 1600, 450];  /* clear of everything */
+      routes[e3] = [480, 1070, 600];  /* runs through the router's new bottom (1052 - 1084) */
+      const u0 = await _qfOpen(st => { st.wireLayout = JSON.parse(JSON.stringify(L)); st.wireSettings.simple = { lay: 1, routes: JSON.parse(JSON.stringify(routes)) }; });
+      const read = () => { const s = _qfSimple(), M = wireSettings.simple || {}, R = M.routes || {};
+        return [[s.y(A), s.y(B), s.y(C), s.y(far)], s.covered, s.ghost, [!!R[e1], JSON.stringify(R[e2] || null), !!R[e3]], M.hdr]; };
+      out.opened = read().concat([_undoStack.length - u0, _lbDirty()]);
+      _wireRender(); await wait(250); out.redraw = read();
+      out.book = _qfBook(await _qfLookBook(false)); out.bookClean = [_undoStack.length - u0, _lbDirty()];
+      _applyProjectText(JSON.stringify(getProjectState())); await wait(700); okDialogs(); await wait(150); okDialogs(); await _cMWire('simple'); await wait(300);
+      out.reopened = read().concat([_lbDirty()]);
+      const Y = [1124, 1274, 1092, Math.round(L[far].y * 10) / 10], kept = [false, '[400,1600,450]', false];
+      want.opened = [Y, [], false, kept, 88, 0, [false, false]]; want.redraw = [Y, [], false, kept, 88];
+      want.book = ['wire-node wire-hub', []]; want.bookClean = [0, [false, false]]; want.reopened = [Y, [], false, kept, 88, [false, false]];
+      /* an older show: the router's place kept from the old switcher, no Simple data (ORGILL's kind), a tile 8 under its 56 bar */
+      const u1 = await _qfOpen(st => { st.wireLayout = { hub: { x: 470, y: 420 } }; st.wireLayout[A] = { x: 700, y: 1060 }; delete st.wireSettings.simple; });
+      { const s = _qfSimple(); out.legacy = [s.y(A), s.covered, JSON.stringify(wireSettings.simple || null), _undoStack.length - u1, _lbDirty()]; }
+      want.legacy = [1124, [], '{"hdr":88}', 0, [false, false]];
+      /* a drawing first arranged in this build (its first edit, a source dragged down 60): marked hdr 88; a destination then put 10 into the router's bottom stays there */
+      await _qfOpen();
+      { const p = _lbPt(_lbGrab(far)); await _lbDrag(_lbGrab(far), [p[0], p[1] + 60]); }
+      const M1 = wireSettings.simple || {}; out.fresh = [M1.lay, M1.hdr, !!(wireLayout.hub && typeof wireLayout.hub.y === 'number')];
+      want.fresh = [1, 88, true];
+      { const s = _qfSimple(), t = $(':scope > foreignObject', _lbTile(A)), m = $('#wire-diagram svg').getScreenCTM(), p = _lbPt(_lbGrab(A));
+        const dx = (s.hub.x + 200 - +t.getAttribute('x')) * m.a, dy = (s.hub.y + s.hub.h - 10 - +t.getAttribute('y')) * m.d;
+        await _lbDrag(_lbGrab(A), [p[0] + dx, p[1] + dy]);
+        const want1 = s.hub.y + s.hub.h - 10, s2 = _qfSimple(); _wireRender(); await wait(250); const s3 = _qfSimple();
+        out.putIn = [Math.abs(s2.y(A) - want1) <= 2, s2.covered.indexOf(A) >= 0, s3.y(A) === s2.y(A), wireSettings.simple.hdr]; want.putIn = [true, true, true, 88]; }
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { await restore(); }
+    return is(out, want, 'opened [[the destination 12 under, the AUX 15 under it, the destination 40 under, a source], tiles under the router, see-through, [the path through the moved destination kept, the clear path, the path through the router\'s new bottom kept], hdr, undo steps, [dirty, Save lit]] / after a redraw / the Look Book\'s Wire page [the router\'s class, tiles it covers] / [undo steps, [dirty, Save lit]] after the Look Book / saved and reopened / an older show with the old switcher\'s router place [the destination 8 under, covered, Simple data, undo steps, [dirty, Save lit]] / a drawing first arranged here [lay, hdr, the router\'s place stored] / a destination put 10 into its router [where it was put, covered, still there after a redraw, hdr]');
+  });
+  // 16lc-fix Q2: NEW
+  await check('Wire 16lc-fix (S2) (the like-Omar attacker 2026-10-02: a router saved by a 16ld test build stores hdr 125; v0.8.0 drew it with its 56 bar, and a tile placed 12 under it there was covered by the 88 bar with nothing moved): the old height is what v0.8.0 drew, whatever a test build stored. An Advanced page saved by v0.8.0 whose 10 x 10 router and network switch carry a test build\'s hdr 125 opens with ONLY what their 88 bars cover moved, as for a v0.8.0 tool: a converter 12 under the router\'s 56 bar to 40 under its 88 bar (796), a source 12 under the switch\'s 44 bar to 40 under its 88 bar (448); a converter 20 under a router the test build drew with its 125 bar stays; the routers and the switch note hdr 88, a converter carrying 125 keeps it and its 44 bar; nothing covered, no undo step, Save not lit; the same after a redraw, a page switch and a save and reopen', async () => {
+    const out = {};
+    try {
+      await restore(); await _cMWire('advanced');
+      _wireAdvAddRouter(10); _wireAdvAddDevice('converter', 2, 2); _wireAdvAddRouter(10); _wireAdvAddDevice('converter', 2, 2); _wireAdvAddDevice('switch', 4); _wireAdvAddDevice('converter', 2, 2); await wait(300);
+      const RR = wireAdvanced.routers, DD = wireAdvanced.devices, R = RR[RR.length - 2], R2 = RR[RR.length - 1], C = DD[DD.length - 4], C2 = DD[DD.length - 3], W = DD[DD.length - 2], C3 = DD[DD.length - 1];
+      [R, R2, W, C3].forEach(t => { t.hdr = 125; }); [C, C2].forEach(t => { t.hdr = 44; });   /* as a 16ld test build stored them; v0.8.0 kept them */
+      R.x = 6000; R.y = 100;       /* v0.8.0 drew it 56 + 88 + 440 + 4 + the 36 footer = 624 high: bottom 724 (with the 88 bar: 756) */
+      C.x = 6200; C.y = 736;       /* 12 under that 56 bar: covered by the 88 bar */
+      R2.x = 8000; R2.y = 100; C2.x = 8200; C2.y = 813;   /* arranged on the test build: its 125 bar drew it 693 high, bottom 793; 20 under that */
+      W.x = 9000; W.y = 100;       /* v0.8.0: 44 + 36 + 4 x 36 + 36 + 4 = 264: bottom 364 (with the 88 bar: 408) */
+      C3.x = 10000; C3.y = 100;    /* a converter carrying 125: drawn with its 44 bar as always */
+      wireAdvanced.sources.push({ id: 'qfS1', name: srcNames()[0], x: 9020, y: 376 });   /* 12 under the switch's 44 bar */
+      const ids = ['router:' + R.id, 'device:' + C.id, 'router:' + R2.id, 'device:' + C2.id, 'device:' + W.id, 'asrc:qfS1', 'device:' + C3.id];
+      const read = () => { const f = (arr, id) => (arr || []).find(x => x.id === id) || {};
+        return [[f(wireAdvanced.routers, R.id).y, f(wireAdvanced.devices, C.id).y, f(wireAdvanced.routers, R2.id).y, f(wireAdvanced.devices, C2.id).y, f(wireAdvanced.devices, W.id).y, f(wireAdvanced.sources, 'qfS1').y, f(wireAdvanced.devices, C3.id).y],
+          _pzOverlaps(ids), [f(wireAdvanced.routers, R.id).hdr, f(wireAdvanced.devices, C.id).hdr, f(wireAdvanced.routers, R2.id).hdr, f(wireAdvanced.devices, C2.id).hdr, f(wireAdvanced.devices, W.id).hdr, f(wireAdvanced.devices, C3.id).hdr]]; };
+      await _pzReopen();
+      const u0 = _undoStack.length;
+      out.opened = read().concat([_undoStack.length - u0, _lbDirty(), ($('.wire-router-title', _txNode('device:' + C3.id)) || {}).offsetHeight]);
+      _wireRender(); await wait(300); out.redraw = read()[0];
+      const pages = wireAdvanced._pages.map(p => p.id); _wireSwitchPage(pages[1]); await wait(300); _wireSwitchPage(pages[0]); await wait(300); out.page = read()[0];
+      await _pzReopen(); out.reopened = [read()[0], read()[2], _lbDirty()];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { await restore(); }
+    const Y = [100, 796, 100, 813, 100, 448, 100], H = [88, 44, 88, 44, 88, 125];
+    return is(out, { opened: [Y, [], H, 0, [false, false], 44], redraw: Y, page: Y, reopened: [Y, H, [false, false]] },
+      'opened [[router (hdr 125), the converter 12 under its 56 bar, router 2 (hdr 125, arranged on the test build), the converter 20 under its 125 bar, network switch (hdr 125), the source 12 under its 44 bar, a converter carrying 125], tiles on each other, hdr [router, converter, router 2, converter 2, switch, converter 3], undo steps, [dirty, Save lit], converter 3\'s bar] / after a redraw / after a page switch / saved and reopened [the places, hdr, dirty and Save lit]');
+  });
+  // 16lc-fix Q3: NEW
+  await check('Wire 16lc-fix (S3) (found by the fixer 2026-10-02 with real input: on 16lc-picsize the first draw of an older page reached by a click, the ADVANCED switch or the Look Book\'s Export, became that click\'s undo step (v0.8.0: none), so the first Undo only put the old heights back and the next draw made room again): an Advanced page saved by v0.8.0 (a 10 x 10 router hdr 56, a converter 20 under it) opened in Simple, the ADVANCED switch clicked: it makes room (the converter to 40 under the router, hdr 88) with no undo step and Save not lit; a Simple drawing saved by v0.8.0 (a destination 12 under the router) opened in Advanced, the SIMPLE switch clicked: the same (the destination to 40 under it); a Simple drawing saved by v0.8.0 opened in Simple with Wire closed, the Look Book exported with a click on Export: no undo step, Save not lit, nothing covered on its Wire page', async () => {
+    const out = {};
+    try {
+      /* (a) Advanced reached by the switch */
+      await restore(); await _cMWire('advanced');
+      _wireAdvAddRouter(10); _wireAdvAddDevice('converter', 2, 2); await wait(300);
+      const R = wireAdvanced.routers[wireAdvanced.routers.length - 1], C = wireAdvanced.devices[wireAdvanced.devices.length - 1];
+      R.hdr = 56; C.hdr = 44; R.x = 6000; R.y = 100; C.x = 6200; C.y = 744;   /* 20 under the router's 56 bar (bottom 724): covered by the 88 bar (756) */
+      const textA = (() => { const s = getProjectState(); s.wireSettings.wireView = 'simple'; return JSON.stringify(s); })();
+      _applyProjectText(textA); await wait(700); okDialogs(); await wait(150); okDialogs(); await _cMWire('simple'); await wait(300);
+      const u0 = _undoStack.length;
+      $('#wire-topbar [onclick="_wireSwitchToAdvanced()"]').click(); await wait(1200); okDialogs(); await wait(400);
+      const f = (arr, id) => (arr || []).find(x => x.id === id) || {};
+      out.advanced = [wireSettings.wireView, f(wireAdvanced.devices, C.id).y, f(wireAdvanced.routers, R.id).hdr, _undoStack.length - u0, _lbDirty()];
+      /* (b) Simple reached by the switch (page 1 built already, so nothing but the switch draws Simple) */
+      await restore(); await _cMWire('advanced'); await wait(300);
+      const st0 = _slbState(), g0 = _slbGeo(st0), K = _lbKeys(), A = K.D[0];
+      const L = {}; Object.keys(g0.tiles).forEach(k => { L[k] = { x: g0.tiles[k].x, y: g0.tiles[k].y }; }); L.hub = { x: 470, y: 420 }; L[A] = { x: 670, y: 1064 };   /* 12 under v0.8.0's router */
+      const textB = (() => { const s = getProjectState(); s.wireLayout = JSON.parse(JSON.stringify(L)); s.wireSettings.simple = { lay: 1 }; s.wireSettings.wireView = 'advanced'; return JSON.stringify(s); })();
+      _applyProjectText(textB); await wait(700); okDialogs(); await wait(150); okDialogs(); await _cMWire('advanced'); await wait(300);
+      const n1 = _undoStack.length, pre1 = JSON.stringify(wireSettings.simple || null);
+      $('#wire-topbar [onclick="_wireSwitchToSimple()"]').click(); await wait(1200); okDialogs(); await wait(400);
+      { const s = _qfSimple(); out.simple = [pre1, wireSettings.wireView, s ? s.y(A) : 'no drawing', s ? s.covered : 'no drawing', (wireSettings.simple || {}).hdr, _undoStack.length - n1, _lbDirty()]; }
+      /* (c) the Look Book's Export clicked, Wire closed */
+      try { closeWireMode(); } catch (e) {} await wait(300);
+      { const s = JSON.parse(textB); s.wireSettings.wireView = 'simple'; _applyProjectText(JSON.stringify(s)); await wait(700); okDialogs(); await wait(150); okDialogs(); }
+      try { closeWireMode(); } catch (e) {} await wait(300);
+      const n2 = _undoStack.length, pre2 = JSON.stringify(wireSettings.simple || null);
+      const html = await _qfLookBook(true); await wait(150);
+      out.book = [pre2, _qfBook(html), (wireSettings.simple || {}).hdr, _undoStack.length - n2, _lbDirty()];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { await restore(); }
+    return is(out, { advanced: ['advanced', 796, 88, 0, [false, false]], simple: ['{"lay":1}', 'simple', 1124, [], 88, 0, [false, false]], book: ['{"lay":1}', ['wire-node wire-hub', []], 88, 0, [false, false]] },
+      'the ADVANCED switch clicked [view, the converter 20 under the router, the router\'s hdr, undo steps, [dirty, Save lit]] / the SIMPLE switch clicked [Simple data before the click, view, the destination 12 under the router, tiles under the router, hdr, undo steps, [dirty, Save lit]] / the Look Book\'s Export clicked [Simple data before the click, its Wire page [the router\'s class, tiles it covers], hdr, undo steps, [dirty, Save lit]]');
   });
   try { _fsPauseAll(); } catch (e) {} $$('video').forEach(v => { try { v.muted = true; v.pause(); } catch (e) {} });
   return { checks };
