@@ -2453,7 +2453,7 @@
    "ok": true
   },
   {
-   "name": "Wire 16ld-fix (A4 / B2) (both attackers 2026-09-30: a network switch named NETGEAR M4250-26G4F read \"NETGEAR ...\" in its bar on screen, on the Wire sheet and in the Look Book, and with a logo in its picture box the full name was nowhere) (16ld-fix2 (X2), Omar 21:45: the half-size picture gives the name its width back): a tool's name shows in full in its bar, at the bar's own size (15 px on a converter / switch, 18 on a router: never smaller), on one line or two, on screen, on the light Wire sheet and on the Look Book's Advanced Wire page, with a logo in the picture box: a network switch NETGEAR M4250 (the name beside its pencil; 16lc-picsize: with its tile-size picture the switch has 109 px for its name, so the longer NETGEAR M4250-26G4F is cut with ... and whole in its tooltip, see 16ld-fix2's G1), a converter DECIMATOR MD-HX CROSS CONVERTER, a router BARCO E2 MAIN SCREEN; the one-line box you type in shows while it has the focus",
+   "name": "Wire 16ld-fix (A4 / B2) (both attackers 2026-09-30: a network switch named NETGEAR M4250-26G4F read \"NETGEAR ...\" in its bar on screen, on the Wire sheet and in the Look Book, and with a logo in its picture box the full name was nowhere) (16ld-fix2 (X2), Omar 21:45: the half-size picture gives the name its width back): a tool's name shows in full in its bar, at the bar's own size (15 px on a converter / switch, 18 on a router: never smaller), on one line or two, on screen, on the light Wire sheet and on the Look Book's Advanced Wire page, with a logo in the picture box: a network switch NETGEAR M4250 (the name beside its pencil; 16lc-picsize: with its tile-size picture the switch has 109 px for its name; 16lc-names: the longer NETGEAR M4250-26G4F shows whole there on three lines, see 16ld-fix2's G1 and 16lc-names N1), a converter DECIMATOR MD-HX CROSS CONVERTER, a router BARCO E2 MAIN SCREEN; the one-line box you type in shows while it has the focus",
    "ok": true
   },
   {
@@ -2481,7 +2481,7 @@
    "ok": true
   },
   {
-   "name": "Wire 16ld-fix2 (X2) (16lc-picsize: only a CONVERTER keeps the half-size box now, Omar 2026-10-02: \"the converters being this current smaller size it fine\"; the Generic Router and the network switch take a tile's picture again): measured on screen at 100 % zoom, a converter's picture box is HALF the picture box of a Wire source tile on the same drawing, within 1 px in both directions (55 x 31 next to 110 x 62), and the width it gives back goes to the name: the converter's name has 300 px or more beside its pencil and NETGEAR M4250-26G4F shows whole there, beside the pencil, at the bar's own 15 px, on one line; on the network switch (a tile-size box now: 109 px for its name, 16ld-fix2 gave it 164) the same name is cut with ... on its second line and its whole name is the name's tooltip, as is a name too long for two lines (BLACKMAGIC SMART VIDEOHUB 40X40 RACK B); the light Wire sheet shows the same, except that on paper (no pencil) the switch's name has the pencil's room too and NETGEAR M4250-26G4F shows whole on two lines there (the longer name stays cut; the tooltips)",
+   "name": "Wire 16ld-fix2 (X2) (16lc-picsize: only a CONVERTER keeps the half-size box now, Omar 2026-10-02: \"the converters being this current smaller size it fine\"; the Generic Router and the network switch take a tile's picture again): measured on screen at 100 % zoom, a converter's picture box is HALF the picture box of a Wire source tile on the same drawing, within 1 px in both directions (55 x 31 next to 110 x 62), and the width it gives back goes to the name: the converter's name has 300 px or more beside its pencil and NETGEAR M4250-26G4F shows whole there, beside the pencil, at the bar's own 15 px, on one line; on the network switch (a tile-size box now: 109 px for its name, 16ld-fix2 gave it 164) the same name shows WHOLE on three lines at 15 px with its whole name as the tooltip (16lc-names, Omar 2026-10-02: \"doesnt the bigger header allow verbiage to be on 2 lines now?\"; 16lc-picsize cut it with ... on its second line), and a name too long for three lines even at 11 px (BLACKMAGIC SMART VIDEOHUB 40X40 RACK B) is cut with ... at 11 px on three lines, its whole name the tooltip; the light Wire sheet shows the same, except that on paper (no pencil) the switch's name has the pencil's room too: NETGEAR M4250-26G4F shows whole on two lines at 15 px and the longer name whole on three lines at 12.5 px (the tooltips)",
    "ok": true
   },
   {
@@ -2526,6 +2526,30 @@
   },
   {
    "name": "Wire 16lc-fix (S3) (found by the fixer 2026-10-02 with real input: on 16lc-picsize the first draw of an older page reached by a click, the ADVANCED switch or the Look Book's Export, became that click's undo step (v0.8.0: none), so the first Undo only put the old heights back and the next draw made room again): an Advanced page saved by v0.8.0 (a 10 x 10 router hdr 56, a converter 20 under it) opened in Simple, the ADVANCED switch clicked: it makes room (the converter to 40 under the router, hdr 88) with no undo step and Save not lit; a Simple drawing saved by v0.8.0 (a destination 12 under the router) opened in Advanced, the SIMPLE switch clicked: the same (the destination to 40 under it); a Simple drawing saved by v0.8.0 opened in Simple with Wire closed, the Look Book exported with a click on Export: no undo step, Save not lit, nothing covered on its Wire page",
+   "ok": true
+  },
+  {
+   "name": "Wire 16lc-names (Omar 2026-10-02, on NETGEAR M4250-26G4F cut with ... on a network switch after 16lc-picsize gave it a tile-size picture: \"doesnt the bigger header allow verbiage to be on 2 lines now?\"): a network switch named NETGEAR M4250-26G4F shows its WHOLE name in its 88 bar beside its pencil at the bar's own 15 px, on three lines broken between the words and after the hyphen (NETGEAR / M4250- / 26G4F), never mid-word, nothing cut, the pencil and the name block centred in the bar, clear of the picture box, its tooltip the whole name; the same with a logo in the picture box, and after it is renamed in its name box (the change), and at 75 % zoom",
+   "ok": true
+  },
+  {
+   "name": "Wire 16lc-names: a long name uses THREE lines in the 88 bar of a 10 x 10 router, an 8 x 2 switcher and a tile made from an I/O Patch page (the lock beside it): each shows its whole name (over 100 letters) at the bar's own 18 px on three lines broken only between words, nothing cut, the pencil (the lock) and the name block centred in the bar, clear of the picture box, the tooltip the whole name (the I/O Patch tile adds \"named by its I/O Patch page\"); a router renamed in its name box keeps the focus (16ju) and its name is fitted again in place: three lines, whole",
+   "ok": true
+  },
+  {
+   "name": "Wire 16lc-names: a word too wide for its line is never broken mid-word: on a network switch BLACKMAGIC SWITCH is drawn smaller (13 px) so BLACKMAGIC fits its line whole (BLACKMAGIC / SWITCH); on a 10 x 10 router a 51-letter word with no space or hyphen is drawn on one line at 14.5 px; on Simple's Generic Router a 40-letter word likewise (13.5 px); nothing cut; only a word too wide even at 11 px (MICROCONVERTER BIDIRECTIONAL on the switch) is cut with ... at 11 px on its own line, the other word whole, the tooltip the whole name",
+   "ok": true
+  },
+  {
+   "name": "Wire 16lc-names: a CONVERTER is unchanged (its 44 bar, the half-size picture): its name is the 16ld-fix2 block byte for byte (one line or two at 15 px, -webkit-line-clamp 2, longer cut with ...; no fitting mark), NETGEAR M4250-26G4F whole on one line beside its pencil and a 63-letter name cut on its second line with its tooltip whole, while a network switch beside it with the same NETGEAR name shows it whole on three lines",
+   "ok": true
+  },
+  {
+   "name": "Wire 16lc-names: on paper (no tooltip) the whole name shows whenever it can: the light Wire sheet and the Look Book's Advanced Wire page print NETGEAR M4250-26G4F whole on the network switch (no pencil on paper, so its room is wider: NETGEAR / M4250-26G4F at 15 px), BLACKMAGIC SMART VIDEOHUB 40X40 RACK B whole on a second switch (cut on screen at 11 px; on paper three lines at 12.5 px), a 107-letter router name whole on three lines at 18 px and the converter's name as before; nothing cut, never mid-word, no fitting mark printed; the Look Book's Simple Wire page prints the Generic Router's 40-letter one-word name whole on one line",
+   "ok": true
+  },
+  {
+   "name": "Help 16lc-names: Help > Wire > Tool headers says that a long name wraps onto a second line, and on every tool but a converter onto a third, breaking only between words (a word too long for the line breaks after its hyphens, or is drawn smaller), and that one longer still ends in ... and shows in full when you point at it",
    "ok": true
   }
  ],

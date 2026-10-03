@@ -849,6 +849,23 @@ anchor on the function name and replace the first occurrence after it, never all
   gesture's "before" picture along (as `_ioAdvNetRebase`, also when the gesture changed only the view); `_wtlSettle` is now a wrapper
   (need test, snapshot, `_wtlSettle0`, rebase). Probe: F5 measures the converter's look its name states (same name); new Q1-Q3. The
   CSS-trap guard of patch_fix.py checks every selector of every 16lc-picsize rule (build/patch.py checked only parts new to the sheet).
+- **16lc-names** (owner, 2026-10-02, v0.8.1; search `16lc-names`). Omar, on NETGEAR M4250-26G4F cut with ... on a network switch after
+  16lc-picsize: "doesnt the bigger header allow verbiage to be on 2 lines now?". In the 88 bar of a tool with the tile-size picture
+  (`o.big` in `_wtlNameHTML`: a router, a switcher, a network switch, an I/O Patch page tile, the Generic Router) the name may use up
+  to THREE lines (`_WTL_NM_LINES`): `_wtlNmFit(name, room, base, ls)` breaks between words only, a word wider than the line after its
+  hyphens, and makes the whole name smaller (0.5 px steps, down to `_WTL_NM_MIN` 11 px) rather than breaking mid-word; only a name
+  that cannot fit three lines at 11 px is cut (each line `white-space:nowrap` + `text-overflow:ellipsis`; the tooltip keeps the whole
+  name). Widths come from the cards' canvas measure `_nfW` (the bar's face, 800, capitals, letter spacing; within 0.02 px of the
+  DOM), with 1 px of air; the room is `_wtlNameRoom(o)` = the tile's width - 2 (border) - 16 - 137 (the paddings) - the pencil and its
+  gap (24 + 12; the lock 12 + 12, `o.leadW`): 109 on the switch, 629 on a router / switcher / the Generic Router, 641 on an I/O Patch
+  tile, 665 on Simple's sheet. A name that fits ONE line at the bar's size keeps the 16ld-fix2 markup byte for byte (so the three
+  examples' snapshots and Omar's shows' Look Books and sheets are unchanged); a longer one is drawn as its lines (`<br/>` between, the
+  text still the whole name: `_wtlNmShow` / `_wtlNmStyle`). An editable tool's name carries `data-wtl-fit` (room on screen | on
+  paper | size | spacing | ink): `_wtlRefreshPic` fits a router renamed in place again (`_wtlNmSet`, the focus kept) and
+  `_wireBuildAdvancedExportSvg` fits it again on paper to the room the removed pencil leaves and drops the mark (`_wtlNmPaper`).
+  A CONVERTER is untouched (one or two lines, `-webkit-line-clamp:2`). Help > Wire > Tool headers says the third line. Checks: G1
+  renamed in place (NETGEAR whole on three lines; the longer name cut at 11 px on screen, whole on paper at 12.5 px), F4 renamed (name
+  only); new N1-N6. The phone is frozen: not looked at (its read-only Simple drawing uses the same code).
 - Declined by the owner, do not resurface: mask shapes, anchor points, hardware profiles, canvas/WebGL renderer,
   interpolation filter toggles, upscale-factor notes, per-layer "sharp pixels", any licence mention.
 

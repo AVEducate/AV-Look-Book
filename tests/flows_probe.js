@@ -11067,7 +11067,12 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
   //   it fine": the network switch's picture box is a tile's again (110 x 62), so the 300-wide switch has 109 px beside its pencil for
   //   its name (16ld-fix2: 164); NETGEAR M4250-26G4F no longer fits two lines there: it is cut with ... and shown whole in its tooltip
   //   (16ld-fix2's G1, renamed too). This check names the switch NETGEAR M4250, which does; everything it pins is otherwise unchanged.
-  await check('Wire 16ld-fix (A4 / B2) (both attackers 2026-09-30: a network switch named NETGEAR M4250-26G4F read "NETGEAR ..." in its bar on screen, on the Wire sheet and in the Look Book, and with a logo in its picture box the full name was nowhere) (16ld-fix2 (X2), Omar 21:45: the half-size picture gives the name its width back): a tool\'s name shows in full in its bar, at the bar\'s own size (15 px on a converter / switch, 18 on a router: never smaller), on one line or two, on screen, on the light Wire sheet and on the Look Book\'s Advanced Wire page, with a logo in the picture box: a network switch NETGEAR M4250 (the name beside its pencil; 16lc-picsize: with its tile-size picture the switch has 109 px for its name, so the longer NETGEAR M4250-26G4F is cut with ... and whole in its tooltip, see 16ld-fix2\'s G1), a converter DECIMATOR MD-HX CROSS CONVERTER, a router BARCO E2 MAIN SCREEN; the one-line box you type in shows while it has the focus', async () => {
+  // 16lc-names F4: REPLACES the check named in its header (reason in the block)
+  // 16lc-names: RENAMED in place. Why: Omar 2026-10-02 (16lc-names): the name may use three lines in a tool's 88 bar, so its name's
+  //   remark that NETGEAR M4250-26G4F "is cut with ... and whole in its tooltip" on the network switch is no longer true (it shows
+  //   whole on three lines: G1, N1). Only the name changes; what the body pins (NETGEAR M4250, a converter, a router: whole at the
+  //   bar's own size, two lines at most, on screen, on the light sheet and in the Look Book) is unchanged.
+  await check('Wire 16ld-fix (A4 / B2) (both attackers 2026-09-30: a network switch named NETGEAR M4250-26G4F read "NETGEAR ..." in its bar on screen, on the Wire sheet and in the Look Book, and with a logo in its picture box the full name was nowhere) (16ld-fix2 (X2), Omar 21:45: the half-size picture gives the name its width back): a tool\'s name shows in full in its bar, at the bar\'s own size (15 px on a converter / switch, 18 on a router: never smaller), on one line or two, on screen, on the light Wire sheet and on the Look Book\'s Advanced Wire page, with a logo in the picture box: a network switch NETGEAR M4250 (the name beside its pencil; 16lc-picsize: with its tile-size picture the switch has 109 px for its name; 16lc-names: the longer NETGEAR M4250-26G4F shows whole there on three lines, see 16ld-fix2\'s G1 and 16lc-names N1), a converter DECIMATOR MD-HX CROSS CONVERTER, a router BARCO E2 MAIN SCREEN; the one-line box you type in shows while it has the focus', async () => {
     const out = {};
     try {
       await restore(); await _cMWire('advanced');
@@ -11285,7 +11290,15 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
   //   again (110 x 62), so the switch has 109 px for its name, not 164. The check now pins the half-size box and the room it gives the
   //   name on a CONVERTER (NETGEAR M4250-26G4F whole on one line), and on the network switch that the same name and a longer one are
   //   cut with ... with the whole name as the tooltip, on screen and on the light sheet.
-  await check('Wire 16ld-fix2 (X2) (16lc-picsize: only a CONVERTER keeps the half-size box now, Omar 2026-10-02: "the converters being this current smaller size it fine"; the Generic Router and the network switch take a tile\'s picture again): measured on screen at 100 % zoom, a converter\'s picture box is HALF the picture box of a Wire source tile on the same drawing, within 1 px in both directions (55 x 31 next to 110 x 62), and the width it gives back goes to the name: the converter\'s name has 300 px or more beside its pencil and NETGEAR M4250-26G4F shows whole there, beside the pencil, at the bar\'s own 15 px, on one line; on the network switch (a tile-size box now: 109 px for its name, 16ld-fix2 gave it 164) the same name is cut with ... on its second line and its whole name is the name\'s tooltip, as is a name too long for two lines (BLACKMAGIC SMART VIDEOHUB 40X40 RACK B); the light Wire sheet shows the same, except that on paper (no pencil) the switch\'s name has the pencil\'s room too and NETGEAR M4250-26G4F shows whole on two lines there (the longer name stays cut; the tooltips)', async () => {
+  // 16lc-names G1: REPLACES the check named in its header (reason in the block)
+  // 16lc-names: RENAMED in place. Why: Omar 2026-10-02 (16lc-names), on NETGEAR M4250-26G4F cut with ... on the network switch:
+  //   "doesnt the bigger header allow verbiage to be on 2 lines now?": in the 88 bar of a tool with the tile-size picture the name
+  //   may use three lines, broken between words and after a hyphen in a word too wide, drawn smaller (11 px at least) rather than
+  //   broken mid-word. On the switch NETGEAR M4250-26G4F now shows whole on three lines at 15 px (it was cut on its second line), and
+  //   BLACKMAGIC SMART VIDEOHUB 40X40 RACK B, too long for three lines even at 11 px, is cut at 11 px on three lines (it was cut at 15 px
+  //   on two); on paper (the pencil's room too) NETGEAR is whole on two lines at 15 px as before and the longer name whole on three
+  //   lines at 12.5 px (it was cut). The converter half and everything else it pins are unchanged.
+  await check('Wire 16ld-fix2 (X2) (16lc-picsize: only a CONVERTER keeps the half-size box now, Omar 2026-10-02: "the converters being this current smaller size it fine"; the Generic Router and the network switch take a tile\'s picture again): measured on screen at 100 % zoom, a converter\'s picture box is HALF the picture box of a Wire source tile on the same drawing, within 1 px in both directions (55 x 31 next to 110 x 62), and the width it gives back goes to the name: the converter\'s name has 300 px or more beside its pencil and NETGEAR M4250-26G4F shows whole there, beside the pencil, at the bar\'s own 15 px, on one line; on the network switch (a tile-size box now: 109 px for its name, 16ld-fix2 gave it 164) the same name shows WHOLE on three lines at 15 px with its whole name as the tooltip (16lc-names, Omar 2026-10-02: "doesnt the bigger header allow verbiage to be on 2 lines now?"; 16lc-picsize cut it with ... on its second line), and a name too long for three lines even at 11 px (BLACKMAGIC SMART VIDEOHUB 40X40 RACK B) is cut with ... at 11 px on three lines, its whole name the tooltip; the light Wire sheet shows the same, except that on paper (no pencil) the switch\'s name has the pencil\'s room too: NETGEAR M4250-26G4F shows whole on two lines at 15 px and the longer name whole on three lines at 12.5 px (the tooltips)', async () => {
     const out = {}, want = {};
     try {
       const sz = el => { if (!el) return 'none'; const r = el.getBoundingClientRect(); return [Math.round(r.width * 10) / 10, Math.round(r.height * 10) / 10]; };
@@ -11304,12 +11317,12 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
       const laid = (html, fn) => { const box = document.createElement('div'); box.style.cssText = 'position:absolute;left:-100000px;top:0;width:6000px'; box.innerHTML = html; document.body.appendChild(box); try { return fn(box); } finally { box.remove(); } };
       const sheet = () => _wireExportSheetList('light').join('').replace(/<\?xml[^>]*>/g, '');
       out.onConverter = name(document, cid, 300); want.onConverter = { text: NG, width: true, beside: true, font: '15px', lines: 1, cut: false, clamp: '2', tip: NG };
-      out.onSwitch = name(document, wid, 100); want.onSwitch = { text: NG, width: true, beside: true, font: '15px', lines: 2, cut: true, clamp: '2', tip: NG };
+      out.onSwitch = name(document, wid, 100); want.onSwitch = { text: NG, width: true, beside: true, font: '15px', lines: 3, cut: false, clamp: 'none', tip: NG };   /* 16lc-names: whole on three lines (was 2 lines, cut, clamp 2) */
       { const sh = sheet(); out.converterSheet = laid(sh, b => name(b, cid, 300)); out.switchSheet = laid(sh, b => name(b, wid, 100)); }   /* paper has no pencil; sizes are read in layout px (offsetWidth / offsetHeight): the sheet draws the drawing scaled */
-      want.converterSheet = Object.assign({}, want.onConverter, { beside: 'no pencil' }); want.switchSheet = Object.assign({}, want.onSwitch, { beside: 'no pencil', cut: false });   /* on paper the name has the pencil's room too: whole on two lines */
+      want.converterSheet = Object.assign({}, want.onConverter, { beside: 'no pencil' }); want.switchSheet = Object.assign({}, want.onSwitch, { beside: 'no pencil', lines: 2 });   /* on paper the name has the pencil's room too: whole on two lines */
       W.name = LONG; _wireRender(); await wait(400);
-      out.long = name(document, wid, 100); want.long = { text: LONG, width: true, beside: true, font: '15px', lines: 2, cut: true, clamp: '2', tip: LONG };
-      out.longSheet = laid(sheet(), b => name(b, wid, 100)); want.longSheet = Object.assign({}, want.long, { beside: 'no pencil' });
+      out.long = name(document, wid, 100); want.long = { text: LONG, width: true, beside: true, font: '11px', lines: 3, cut: true, clamp: 'none', tip: LONG };   /* 16lc-names: 11 px on three lines, still cut (was 15 px, 2 lines, clamp 2) */
+      out.longSheet = laid(sheet(), b => name(b, wid, 100)); want.longSheet = Object.assign({}, want.long, { beside: 'no pencil', font: '12.5px', cut: false });   /* 16lc-names: whole on paper (was cut) */
     } catch (e) { return 'threw: ' + e.message; }
     finally { try { _wireSetZoom(1); } catch (e) {} await restore(); }
     return is(out, want, 'Advanced at 100 % [a source tile\'s picture box, a converter\'s, half of it within 1 px (w, h)] / NETGEAR M4250-26G4F on the converter [the name, 300 px or more for it, beside the pencil, its size, lines, cut, the line limit, its tooltip] / on the network switch [the same, 100 px or more] / on the light sheet (converter, switch) / BLACKMAGIC SMART VIDEOHUB 40X40 RACK B on the switch / on the light sheet');
@@ -11702,6 +11715,156 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
     finally { await restore(); }
     return is(out, { advanced: ['advanced', 796, 88, 0, [false, false]], simple: ['{"lay":1}', 'simple', 1124, [], 88, 0, [false, false]], book: ['{"lay":1}', ['wire-node wire-hub', []], 88, 0, [false, false]] },
       'the ADVANCED switch clicked [view, the converter 20 under the router, the router\'s hdr, undo steps, [dirty, Save lit]] / the SIMPLE switch clicked [Simple data before the click, view, the destination 12 under the router, tiles under the router, hdr, undo steps, [dirty, Save lit]] / the Look Book\'s Export clicked [Simple data before the click, its Wire page [the router\'s class, tiles it covers], hdr, undo steps, [dirty, Save lit]]');
+  });
+  // ── 16lc-names (v0.8.1, Omar 2026-10-02, on NETGEAR M4250-26G4F cut with ... on a network switch after 16lc-picsize gave it a tile-size
+  //    picture: "doesnt the bigger header allow verbiage to be on 2 lines now?"): in the 88 px bar of every tool with the tile-size
+  //    picture (a router, a switcher, a network switch, an I/O Patch page tile, Simple's Generic Router) the name may use up to THREE
+  //    lines, broken only between words, a word wider than the line after its hyphens, a word still too wide drawn smaller (down to
+  //    11 px) instead of broken mid-word; only a name that cannot fit three lines at 11 px is cut with ... (the tooltip whole). A
+  //    converter is unchanged. Each check below FAILS on the 16lc page (348409c, cc491edc) and PASSES after. Helpers prefixed _nm
+  //    (never a name of the page's); they use the 16ld-tools helpers (_tx*), 16ld-fix's (_fx*) and 16lb's (_laBook).
+  /* the lines of a name block as DRAWN: its characters grouped by the line they sit on (Range rects), and how each break falls:
+     'word' (at a space), 'hyphen' (after a -), 'MID-WORD' (anything else) */
+  const _nmLines = el => { if (!el) return null; const text = el.textContent, rows = [], rg = document.createRange(); let idx = 0, n; const tw = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+    while ((n = tw.nextNode())) { for (let i = 0; i < n.data.length; i++, idx++) { if (/\s/.test(n.data[i])) continue; rg.setStart(n, i); rg.setEnd(n, i + 1); const r = [...rg.getClientRects()].find(q => q.width > 0 && q.height > 0); if (!r) continue;
+      const y = r.top + r.height / 2; let L = rows.find(q => Math.abs(q.y - y) < r.height * 0.5); if (!L) { L = { y, a: idx, b: idx }; rows.push(L); } L.a = Math.min(L.a, idx); L.b = Math.max(L.b, idx); } }
+    rows.sort((p, q) => p.y - q.y); const breaks = []; for (let i = 0; i + 1 < rows.length; i++) { const gap = text.slice(rows[i].b + 1, rows[i + 1].a); breaks.push(/\s/.test(gap) ? 'word' : text[rows[i].b] === '-' ? 'hyphen' : 'MID-WORD'); }
+    return { lines: rows.map(q => text.slice(q.a, q.b + 1)), breaks }; };
+  /* a tool's name in its bar, read as drawn: [the whole text, its lines, the breaks, the size, cut (anything hidden: a line too long or
+     a line clamped off), beside the pencil / lock (and that centred too), the name block centred in the bar, clear of the picture box,
+     the tooltip, the bar's height] */
+  const _nmRead = (root, nid) => { const g = $$('g.wire-node', root).find(x => x.getAttribute('data-node-id') === nid), ti = g && $('.wire-router-title', g), nm = ti && $('.wtl-nm', ti), sh = nm && $('.wtl-nm-show', nm);
+    if (!sh) return 'no name ' + nid;
+    const cs = getComputedStyle(sh), L = _nmLines(sh), tb = ti.getBoundingClientRect(), sb = sh.getBoundingClientRect(), fe = ti.firstElementChild, pen = fe && fe !== nm ? fe.getBoundingClientRect() : null;
+    const box = $('.wtl-pic rect.wtl-auto, .wtl-pic image.wtl-img', g), pb = box ? box.getBoundingClientRect() : null, mid = tb.top + tb.height / 2, tol = tb.height * 0.03;
+    return { text: sh.textContent, lines: L.lines, breaks: L.breaks, font: cs.fontSize, cut: sh.scrollHeight > sh.clientHeight + 1 || sh.scrollWidth > sh.clientWidth + 1,
+      beside: pen ? (pen.right <= sb.left + 0.5 && Math.abs(pen.top + pen.height / 2 - mid) <= tol) : 'no pencil', centred: Math.abs(sb.top + sb.height / 2 - mid) <= tol, clear: !!pb && sb.right <= pb.left + 0.5, tip: nm.getAttribute('title'), bar: ti.offsetHeight }; };
+  /* paper (a sheet, a Look Book page) laid out off screen, read, removed */
+  const _nmLaid = (html, fn) => { const box = document.createElement('div'); box.style.cssText = 'position:absolute;left:-100000px;top:0;width:6000px'; box.innerHTML = html; document.body.appendChild(box); try { return fn(box); } finally { box.remove(); } };
+  const _nmSheet = () => _wireExportSheetList('light').join('').replace(/<\?xml[^>]*>/g, '');
+  const _nmBookAdv = async () => { const doc = new DOMParser().parseFromString(await _laBook('advanced'), 'text/html'), w = $('#pdf-wire', doc); return w ? w.outerHTML : ''; };
+  const _nmNG = 'NETGEAR M4250-26G4F';
+  const _nmLR = 'MAIN STAGE BLACKMAGIC SMART VIDEOHUB 40X40 ENGINEERING RACK FOR THE BALLROOM AND THE BREAKOUT ROOMS A B C D';
+  const _nmLS = 'PROGRAM SWITCHER FOR THE GENERAL SESSION ROOM WITH THE CONFIDENCE MONITORS AND THE IMAG SCREENS LEFT AND RIGHT';
+  const _nmLP = 'ROSS CARBONITE ULTRA ENGINEERING RACK BACKSTAGE LEFT WITH THE RECORD DECKS AND THE STREAM ENCODERS FOR VIDEO';
+  const _nmLR2 = 'BARCO E2 MAIN SCREEN PROCESSOR WITH THE EXPANSION CHASSIS AND THE BACKUP UNIT FOR THE LEFT AND RIGHT IMAG';
+  const _nmLONG = 'BLACKMAGIC SMART VIDEOHUB 40X40 RACK B';
+  // 16lc-names N1: NEW
+  await check('Wire 16lc-names (Omar 2026-10-02, on NETGEAR M4250-26G4F cut with ... on a network switch after 16lc-picsize gave it a tile-size picture: "doesnt the bigger header allow verbiage to be on 2 lines now?"): a network switch named NETGEAR M4250-26G4F shows its WHOLE name in its 88 bar beside its pencil at the bar\'s own 15 px, on three lines broken between the words and after the hyphen (NETGEAR / M4250- / 26G4F), never mid-word, nothing cut, the pencil and the name block centred in the bar, clear of the picture box, its tooltip the whole name; the same with a logo in the picture box, and after it is renamed in its name box (the change), and at 75 % zoom', async () => {
+    const out = {}, want = {};
+    try {
+      await restore(); await _cMWire('advanced'); _wireAdvAddDevice('switch', 4); await wait(300);
+      const W = wireAdvanced.devices[wireAdvanced.devices.length - 1], nid = 'device:' + W.id;
+      W.name = _nmNG; _wireSetZoom(1); _wireRender(); await wait(400);
+      const N = { text: _nmNG, lines: ['NETGEAR', 'M4250-', '26G4F'], breaks: ['word', 'hyphen'], font: '15px', cut: false, beside: true, centred: true, clear: true, tip: _nmNG, bar: 88 };
+      out.drawn = _nmRead(document, nid); want.drawn = N;
+      W.pic = _fxPNG; _wireRender(); await wait(300);
+      out.logo = _nmRead(document, nid); want.logo = N;
+      W.name = 'SWITCH A'; _wireRender(); await wait(300);
+      const inp = $('.wire-router-title input', _txNode(nid)); inp.focus(); inp.value = _nmNG; fire(inp, 'change'); await wait(400);
+      { const a = document.activeElement; if (a && a.blur) a.blur(); } await wait(300);
+      out.renamed = [W.name, _nmRead(document, nid)]; want.renamed = [_nmNG, N];
+      _wireSetZoom(0.75); _wireRender(); await wait(400);
+      out.zoom75 = _nmRead(document, nid); want.zoom75 = N;
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { _wireSetZoom(1); } catch (e) {} await restore(); }
+    return is(out, want, 'the switch\'s name [the text, its lines as drawn, the breaks, the size, cut, beside the pencil (centred), the block centred, clear of the picture, the tooltip, the bar] as drawn / with a logo / renamed in its name box [stored, the name] / at 75 %');
+  });
+  // 16lc-names N2: NEW
+  await check('Wire 16lc-names: a long name uses THREE lines in the 88 bar of a 10 x 10 router, an 8 x 2 switcher and a tile made from an I/O Patch page (the lock beside it): each shows its whole name (over 100 letters) at the bar\'s own 18 px on three lines broken only between words, nothing cut, the pencil (the lock) and the name block centred in the bar, clear of the picture box, the tooltip the whole name (the I/O Patch tile adds "named by its I/O Patch page"); a router renamed in its name box keeps the focus (16ju) and its name is fitted again in place: three lines, whole', async () => {
+    const out = {}, want = {};
+    try {
+      await restore();
+      const pg = ioAdvanced.pages[1]; pg.name = _nmLP;
+      pg.sources = [{ id: 'nms1', name: 'CAM A', connectorType: '', customType: '', resolution: '', notes: '', type: '' }]; pg.dests = [{ id: 'nmd1', name: 'MON 1', connectorType: '', customType: '', resolution: '', notes: '', deviceType: '' }];
+      await _cMWire('advanced');
+      const r0 = wireAdvanced.routers.length; _wireAdvAddRouter(10); _wireAdvAddSwitcher('8×2 Switcher', 8, 2); _wireAdvAddPatchTile(1); await wait(400);
+      const [R, S, P] = wireAdvanced.routers.slice(r0); R.title = _nmLR; S.title = _nmLS;
+      _wireSetZoom(1); _wireRender(); await wait(400);
+      const three = (txt, lines, tip) => ({ text: txt, lines, breaks: ['word', 'word'], font: '18px', cut: false, beside: true, centred: true, clear: true, tip: tip || txt, bar: 88 });
+      out.router = _nmRead(document, 'router:' + R.id); want.router = three(_nmLR, ['MAIN STAGE BLACKMAGIC SMART VIDEOHUB 40X40', 'ENGINEERING RACK FOR THE BALLROOM AND THE', 'BREAKOUT ROOMS A B C D']);
+      out.switcher = _nmRead(document, 'router:' + S.id); want.switcher = three(_nmLS, ['PROGRAM SWITCHER FOR THE GENERAL SESSION', 'ROOM WITH THE CONFIDENCE MONITORS AND THE', 'IMAG SCREENS LEFT AND RIGHT']);
+      out.patch = [P && P.title, _nmRead(document, 'router:' + P.id)]; want.patch = [_nmLP, three(_nmLP, ['ROSS CARBONITE ULTRA ENGINEERING RACK', 'BACKSTAGE LEFT WITH THE RECORD DECKS AND THE', 'STREAM ENCODERS FOR VIDEO'], _nmLP + ' — named by its I/O Patch page, rename it there')];
+      const inp = $('.wire-router-title input', _txNode('router:' + R.id)); inp.focus(); inp.value = _nmLR2; fire(inp, 'change'); await wait(400);
+      const kept = document.activeElement === inp && inp.isConnected; inp.blur(); await wait(300);
+      out.renamed = [R.title, kept, _nmRead(document, 'router:' + R.id)]; want.renamed = [_nmLR2, true, three(_nmLR2, ['BARCO E2 MAIN SCREEN PROCESSOR WITH THE', 'EXPANSION CHASSIS AND THE BACKUP UNIT FOR', 'THE LEFT AND RIGHT IMAG'])];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { _wireSetZoom(1); } catch (e) {} await restore(); }
+    return is(out, want, 'each name [the text, its lines as drawn, the breaks, the size, cut, beside the pencil / lock (centred), the block centred, clear of the picture, the tooltip, the bar] on a 10 x 10 router / an 8 x 2 switcher / an I/O Patch page tile [its title, its name] / the router renamed in its name box [stored, the focus kept, its name]');
+  });
+  // 16lc-names N3: NEW
+  await check('Wire 16lc-names: a word too wide for its line is never broken mid-word: on a network switch BLACKMAGIC SWITCH is drawn smaller (13 px) so BLACKMAGIC fits its line whole (BLACKMAGIC / SWITCH); on a 10 x 10 router a 51-letter word with no space or hyphen is drawn on one line at 14.5 px; on Simple\'s Generic Router a 40-letter word likewise (13.5 px); nothing cut; only a word too wide even at 11 px (MICROCONVERTER BIDIRECTIONAL on the switch) is cut with ... at 11 px on its own line, the other word whole, the tooltip the whole name', async () => {
+    const out = {}, want = {};
+    try {
+      await restore(); const WW = 'MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMW', R51 = 'VIDEOHUB_40X40_12G_MAIN_ENGINEERING_RACK_BALLROOM_A';
+      await _lbOpen(); _wireSetZoom(1); _slbSetTitle(WW); await wait(300); _wireRender(); await wait(400);
+      out.simple = _nmRead(document, 'hub'); want.simple = { text: WW, lines: [WW], breaks: [], font: '13.5px', cut: false, beside: true, centred: true, clear: true, tip: WW, bar: 88 };
+      await restore(); await _cMWire('advanced'); _wireAdvAddDevice('switch', 4); _wireAdvAddRouter(10); await wait(300);
+      const W = wireAdvanced.devices[wireAdvanced.devices.length - 1], R = wireAdvanced.routers[wireAdvanced.routers.length - 1], wid = 'device:' + W.id, rid = 'router:' + R.id;
+      W.name = 'BLACKMAGIC SWITCH'; R.title = R51; _wireSetZoom(1); _wireRender(); await wait(400);
+      out.switch = _nmRead(document, wid); want.switch = { text: 'BLACKMAGIC SWITCH', lines: ['BLACKMAGIC', 'SWITCH'], breaks: ['word'], font: '13px', cut: false, beside: true, centred: true, clear: true, tip: 'BLACKMAGIC SWITCH', bar: 88 };
+      out.router = _nmRead(document, rid); want.router = { text: R51, lines: [R51], breaks: [], font: '14.5px', cut: false, beside: true, centred: true, clear: true, tip: R51, bar: 88 };
+      W.name = 'MICROCONVERTER BIDIRECTIONAL'; _wireRender(); await wait(400);
+      { const r = _nmRead(document, wid), sh = $('.wtl-nm-show', _txNode(wid)); out.tooWide = [r, sh ? sh.innerHTML.split(/<br\s*\/?>/i).length : 0, sh ? getComputedStyle(sh).textOverflow : 'none'];
+        want.tooWide = [{ text: 'MICROCONVERTER BIDIRECTIONAL', lines: ['MICROCONVERTER', 'BIDIRECTIONAL'], breaks: ['word'], font: '11px', cut: true, beside: true, centred: true, clear: true, tip: 'MICROCONVERTER BIDIRECTIONAL', bar: 88 }, 2, 'ellipsis']; }
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { _wireSetZoom(1); } catch (e) {} await restore(); }
+    return is(out, want, 'each name [the text, its lines as drawn, the breaks, the size, cut, beside the pencil (centred), the block centred, clear of the picture, the tooltip, the bar] on Simple\'s Generic Router (a 40-letter word) / a network switch (BLACKMAGIC SWITCH) / a 10 x 10 router (a 51-letter word) / the switch with MICROCONVERTER BIDIRECTIONAL [the name, its drawn lines, the line\'s overflow]');
+  });
+  // 16lc-names N4: NEW
+  await check('Wire 16lc-names: a CONVERTER is unchanged (its 44 bar, the half-size picture): its name is the 16ld-fix2 block byte for byte (one line or two at 15 px, -webkit-line-clamp 2, longer cut with ...; no fitting mark), NETGEAR M4250-26G4F whole on one line beside its pencil and a 63-letter name cut on its second line with its tooltip whole, while a network switch beside it with the same NETGEAR name shows it whole on three lines', async () => {
+    const out = {}, want = {};
+    try {
+      await restore(); await _cMWire('advanced'); _wireAdvAddDevice('converter', 2, 2); _wireAdvAddDevice('switch', 4); await wait(300);
+      const C = wireAdvanced.devices[wireAdvanced.devices.length - 2], W = wireAdvanced.devices[wireAdvanced.devices.length - 1], cid = 'device:' + C.id, wid = 'device:' + W.id;
+      const LONG63 = 'BLACKMAGIC DESIGN TERANEX AV STANDARDS CONVERTER FOR STAGE LEFT';
+      const recipe = (name, ink) => '<span class="wtl-nm-show" aria-hidden="true" style="display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;text-overflow:ellipsis;white-space:normal;overflow-wrap:anywhere;line-height:1.15;width:100%;text-align:left;font-size:15px;letter-spacing:0.12em;color:' + ink + ' !important;background:transparent !important">' + name + '</span>';
+      const ink = () => _wtlInk(_wtlColor(C, C.id));
+      C.name = _nmNG; W.name = _nmNG; _wireSetZoom(1); _wireRender(); await wait(400);
+      const shC = () => $('.wtl-nm-show', _txNode(cid));
+      out.converter = [shC().outerHTML === recipe(_nmNG, ink()), _nmRead(document, cid)];
+      want.converter = [true, { text: _nmNG, lines: [_nmNG], breaks: [], font: '15px', cut: false, beside: true, centred: true, clear: true, tip: _nmNG, bar: 44 }];
+      out.switch = _nmRead(document, wid); want.switch = { text: _nmNG, lines: ['NETGEAR', 'M4250-', '26G4F'], breaks: ['word', 'hyphen'], font: '15px', cut: false, beside: true, centred: true, clear: true, tip: _nmNG, bar: 88 };
+      C.name = LONG63; _wireRender(); await wait(400);
+      { const r = _nmRead(document, cid), cs = getComputedStyle(shC()); out.long = [shC().outerHTML === recipe(LONG63, ink()), r.text, r.font, r.cut, Math.round(shC().offsetHeight / parseFloat(cs.lineHeight)), cs.webkitLineClamp || cs.getPropertyValue('-webkit-line-clamp'), r.tip, r.bar]; }
+      want.long = [true, LONG63, '15px', true, 2, '2', LONG63, 44];
+      out.noMark = $$('#wire-diagram g.wire-node').filter(g => g.getAttribute('data-node-id') === cid).map(g => $$('[data-wtl-fit]', g).length); want.noMark = [0];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { _wireSetZoom(1); } catch (e) {} await restore(); }
+    return is(out, want, 'the converter named NETGEAR M4250-26G4F [its name block the 16ld-fix2 recipe byte for byte, its name as drawn] / the network switch beside it, the same name / the converter with a 63-letter name [the recipe, the text, the size, cut, lines, the line limit, the tooltip, the bar] / fitting marks on the converter');
+  });
+  // 16lc-names N5: NEW
+  await check('Wire 16lc-names: on paper (no tooltip) the whole name shows whenever it can: the light Wire sheet and the Look Book\'s Advanced Wire page print NETGEAR M4250-26G4F whole on the network switch (no pencil on paper, so its room is wider: NETGEAR / M4250-26G4F at 15 px), BLACKMAGIC SMART VIDEOHUB 40X40 RACK B whole on a second switch (cut on screen at 11 px; on paper three lines at 12.5 px), a 107-letter router name whole on three lines at 18 px and the converter\'s name as before; nothing cut, never mid-word, no fitting mark printed; the Look Book\'s Simple Wire page prints the Generic Router\'s 40-letter one-word name whole on one line', async () => {
+    const out = {}, want = {};
+    try {
+      await restore(); await _cMWire('advanced'); _wireAdvAddDevice('switch', 4); _wireAdvAddDevice('switch', 4); _wireAdvAddDevice('converter', 2, 2); _wireAdvAddRouter(10); await wait(300);
+      const D = wireAdvanced.devices, W = D[D.length - 3], W2 = D[D.length - 2], C = D[D.length - 1], R = wireAdvanced.routers[wireAdvanced.routers.length - 1];
+      W.name = _nmNG; W2.name = _nmLONG; C.name = _nmNG; R.title = _nmLR; _wireSetZoom(1); _wireRender(); await wait(400);
+      out.screenLong = _nmRead(document, 'device:' + W2.id).cut; want.screenLong = true;
+      const read = root => { const f = nid => { const r = _nmRead(root, nid); return typeof r === 'string' ? r : [r.text, r.lines, r.breaks, r.font, r.cut, r.beside]; };
+        return { ng: f('device:' + W.id), long: f('device:' + W2.id), conv: f('device:' + C.id), router: f('router:' + R.id), marks: $$('[data-wtl-fit]', root).length }; };
+      const P = { ng: [_nmNG, ['NETGEAR', 'M4250-26G4F'], ['word'], '15px', false, 'no pencil'], long: [_nmLONG, ['BLACKMAGIC', 'SMART VIDEOHUB', '40X40 RACK B'], ['word', 'word'], '12.5px', false, 'no pencil'],
+        conv: [_nmNG, [_nmNG], [], '15px', false, 'no pencil'], router: [_nmLR, ['MAIN STAGE BLACKMAGIC SMART VIDEOHUB 40X40', 'ENGINEERING RACK FOR THE BALLROOM AND THE', 'BREAKOUT ROOMS A B C D'], ['word', 'word'], '18px', false, 'no pencil'], marks: 0 };
+      out.sheet = _nmLaid(_nmSheet(), read); want.sheet = P;
+      { const h = await _nmBookAdv(); out.book = h ? _nmLaid(h, read) : 'no Wire page'; want.book = P; }
+      out.screenAfter = $$('#wire-diagram [data-wtl-fit]').length > 0; want.screenAfter = true;   /* the mark stays on screen (a rename in place uses it) */
+      await restore(); const WW = 'MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMW'; await _lbOpen(); _slbSetTitle(WW); await wait(300);
+      { const doc = new DOMParser().parseFromString(await _qfLookBook(false), 'text/html'), w = $('#pdf-wire', doc);
+        out.simpleBook = w ? _nmLaid(w.outerHTML, b => { const r = _nmRead(b, 'hub'); return typeof r === 'string' ? r : [r.text, r.lines, r.breaks, r.cut, r.beside, $$('[data-wtl-fit]', b).length]; }) : 'no Wire page'; }
+      want.simpleBook = [WW, [WW], [], false, 'no pencil', 0];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { _wireSetZoom(1); } catch (e) {} await restore(); }
+    return is(out, want, 'on screen the long name on the second switch [cut] / the light Wire sheet / the Look Book\'s Advanced Wire page [each name: the text, its lines as drawn, the breaks, the size, cut, the pencil; fitting marks printed] (NETGEAR switch, the long switch, the converter, the router) / the mark kept on screen / the Look Book\'s Simple Wire page (the Generic Router) [the text, lines, breaks, cut, pencil, marks]');
+  });
+  // 16lc-names N6: NEW
+  await check('Help 16lc-names: Help > Wire > Tool headers says that a long name wraps onto a second line, and on every tool but a converter onto a third, breaking only between words (a word too long for the line breaks after its hyphens, or is drawn smaller), and that one longer still ends in ... and shows in full when you point at it', async () => {
+    let tx = '';
+    try {
+      actions.help(); await wait(300); if (typeof helpTab === 'function') helpTab('ref'); await wait(200);
+      const row = $$('#help-overlay div').find(d => d.children.length === 0 && d.textContent.trim() === 'Tool headers'); tx = row && row.nextElementSibling ? row.nextElementSibling.textContent.replace(/\s+/g, ' ') : '';
+    } finally { try { closeHelp(); } catch (e) {} await wait(150); }
+    return is([/A long name wraps onto a second line, and on every tool but a converter onto a third, breaking only between words/.test(tx), /a word too long for the line breaks after its hyphens, or is drawn smaller/.test(tx), /one longer still ends in … and shows in full when you point at it/.test(tx)],
+      [true, true, true], 'Help > Wire > Tool headers [a third line on every tool but a converter, between words only, hyphens / smaller, the … and the tooltip]');
   });
   try { _fsPauseAll(); } catch (e) {} $$('video').forEach(v => { try { v.muted = true; v.pause(); } catch (e) {} });
   return { checks };
