@@ -866,6 +866,77 @@ anchor on the function name and replace the first occurrence after it, never all
   A CONVERTER is untouched (one or two lines, `-webkit-line-clamp:2`). Help > Wire > Tool headers says the third line. Checks: G1
   renamed in place (NETGEAR whole on three lines; the longer name cut at 11 px on screen, whole on paper at 12.5 px), F4 renamed (name
   only); new N1-N6. The phone is frozen: not looked at (its read-only Simple drawing uses the same code).
+- **16lc-midword** (owner, 2026-10-02, on top of 16lc-names, not released; search `16lc-midword`). Omar, shown CORE_SW_01_STAGE_LEFT_RACK_A
+  on a network switch drawn "CORE_SW_01..." at 11 px on ONE line with two lines empty (v0.8.1 broke it mid-word at 15 px): "Break
+  mid-word as a last resort — only when a word can't fit even at the smallest size, split it anywhere onto the empty lines, the way
+  v0.8.1 did." `_wtlNmFit`'s last branch now asks first whether a piece (`toks(11)`: a word; a word too wide, its parts after each
+  hyphen) is wider than the line at 11 px. No: the 16lc-names 11 px cut exactly as before (a name only too long for three lines,
+  e.g. FEED STANDARDS DANTE ENGINEERING CONSOLE on the switch, keeps its words whole: the first try of this build split those too,
+  "FEED / STANDARD / S DANTE...", and was fixed before release). Yes: `_wtlNmMid(s, R, f, ls, W)` draws the name at the bar's own
+  size f (18; 15 on a network switch) the way CSS `overflow-wrap:anywhere` did in v0.8.1: pieces again at f, a piece that does not
+  fit the rest of its line starts the next, a piece wider than a whole line fills it to the last grapheme that fits (`Intl.Segmenter`;
+  the letter spacing counted once a grapheme, `_nfW` counts it once a UTF-16 unit) and goes on; three lines, the rest joined on the
+  third and cut with ... (`white-space:nowrap` + `text-overflow:ellipsis`, as 16lc-names). The lines are the name cut in order (every
+  space kept), so the text is the whole name and `_wtlNmSet` / `_wtlNmPaper` (reads textContent) work unchanged; on paper the rule
+  runs again in the paper room (CORE_SW prints whole: CORE_SW_01_S / TAGE_LEFT_RA / CK_A). Rule-1 / rule-2 names, converters, the
+  cards (`_nfFit`) and the empty picture box's name (`_wtlLines`) are byte for byte unchanged (a 658-name sweep, base vs this build:
+  every tool, three accessibility sizes, two zooms, the light and dark sheets).
+  Help > Wire > Tool headers: one clause (only a word too long even at the smallest size is split mid-word, at full size). Checks:
+  N3 renamed in place (MICROCONVERTER BIDIRECTIONAL on the switch: MICROCON / VERTER / BIDIRECTIONAL... at 15 px), new M1-M6; G1 and
+  N5 unchanged (their long switch name is rule 2). The phone is frozen: not looked at.
+- **16lc-midword-fix** (the attackers of 16lc-midword, 2026-10-03, not released; search `16lc-midword-fix`). Inside the last resort
+  only. (D1) a line that broke at a no-break space (Option+Space) or a full-width space (a Japanese IME) kept it at its end, where the
+  browser draws it under `white-space:nowrap`: the line ran past its block and ended in ... with letters hidden (lines 1-2 too). (D2)
+  ß / ﬁ / ﬂ / ŉ were measured a letter spacing short (the capitals draw ß as SS), so "filled" lines ran past the block (on paper a
+  letter or two lost mid-name). (D3) the test measured with `_nfW` (the spacing once a UTF-16 unit): decomposed accents (macOS file
+  names), emoji, flags, Thai / Devanagari marks and Arabic (not letter-spaced by the browser) were taken as too wide at 11 px although
+  they fit, and broken mid-word (SCÈNE_CÔT / É_A; 16lc-names draws it whole at 11 px). (D4) Arabic lines not filled. (D5) the whole name
+  was laid out though three lines show (40,000 letters: 2.4 s a redraw). Now `_wtlNmX(t, f, ls)` measures as drawn: capitals
+  (`toUpperCase`), the letter spacing applied by the canvas itself (`letterSpacing`, Chrome 99+; Electron 33 has it), equal to the
+  drawn width on every script tried; without it, the spacing once a drawn grapheme. `_wtlNmTooWide` (the test) and `_wtlNmMid` (the
+  lines) use it; a line is measured as drawn (a run of spaces once, the spaces it ends with not at all) and the no-break / full-width
+  spaces a line ends with are written in `<span style="font-size:0;letter-spacing:0">` (`_wtlNmLineHTML`, only for a last-resort
+  name, `F.mid`): not drawn, not counted, the text still the whole name; `_wtlNmMid` stops at two full lines (the third is the rest).
+  `_nfW`, `_nfFit` and 16lc-names' own loop and 11 px cut are untouched, so a name the test does not send to the last resort is byte
+  for byte the 16lc-names page's. A consequence of measuring as drawn: a name whose ß word is wider than the line at 11 px as drawn
+  (which `_nfW` took as fitting) now goes to the last resort. Help > Wire > Tool headers: "only when a word is too long even at the
+  smallest size is the name split mid-word, at full size" (it said "only a word ... is split": untrue, every word too long for its
+  line at full size is split). Checks: M6 renamed in place, M4's accents decomposed (name unchanged), new X1-X6. The phone is frozen.
+- **16lc-onlyword** (owner, 2026-10-04, on top of 16lc-midword-fix, not released; search `16lc-onlyword`). Omar, shown that the last
+  resort drawn at the bar's full size split or cut the other long words of the name (BLACKMAGIC CORE_SW_01_STAGE_LEFT_RACK_A on a
+  network switch: "BLACKMAGI / C / CORE_SW..."; MICROCONVERTER BIDIRECTIONAL: "MICROCON / VERTER / BIDIRECTI..."): "Split only the word
+  that can't fit — Make the name a bit smaller so the other words stay whole, and split only the word that can't fit even at the
+  smallest size"; for a word with a hyphen that fits a line (MD-HX_AJA, rack-b): "Keep the word whole" (it already was). Only the last
+  resort changes: `_wtlNmSize(words, R, base, ls)` (new) takes `_wtlNmTooWide`'s pieces (a word; a word wider than the line at 11 px,
+  its parts after each hyphen), UNFITTABLE = wider than the line even at 11 px, FITTABLE = the rest, and returns the bar's own size when
+  every fittable piece fits a line there, else the largest size in 0.5 px steps down to 11 px at which every fittable piece fits a line
+  whole (every width `_wtlNmX`'s, as drawn); `_wtlNmFit` passes it to `_wtlNmMid` instead of the bar's size, and `_wtlNmMid` is
+  unchanged: at that size only an unfittable piece is wider than a whole line, so only it is split mid-word, and a fittable hyphen word
+  fits a line whole. A name with no fittable piece (CORE_SW_01_STAGE_LEFT_RACK_A alone, a 105-letter router name) and every name that
+  does not reach the last resort are byte for byte the 16lc-midword-fix page's; converters, the cards (`_nfFit`), the empty picture box
+  (`_wtlLines`), 16lc-names' loop and 11 px cut are untouched; on paper `_wtlNmPaper` runs the same code in the paper room. The size
+  counts every fittable piece, also one that ends up on the third line. On the switch: BLACKMAGIC CORE_SW... at 13 px (BLACKMAGIC /
+  CORE_SW_01 / _STAGE_LE...), MICROCONVERTER BIDIRECTIONAL at 11 px (MICROCONVER / TER / BIDIRECTIONAL, whole), MD-HX_AJA CORE_SW... at
+  14.5 px (MD-HX_AJA whole). Help > Wire > Tool headers: "only a word too long even at the smallest size is split mid-word, at the
+  largest size that keeps the other words whole" (it said "... is the name split mid-word, at full size"). Checks: N3, M2, M4, M6
+  renamed in place (they pinned the full-size split of a fittable word, or Help's "at full size"); new O1-O7. The phone is frozen.
+- **16lc-onlyword-fix** (the attackers of 16lc-onlyword, 2026-10-04, on top of 16lc-onlyword, not released; search
+  `16lc-onlyword-fix`; every case reproduced by real input first). (A) The last resort's new size was chosen at 100 % only. Help >
+  Accessibility 90 % / 115 % is the body's CSS zoom and the drawing is not fitted again when it changes; under it Chrome draws emoji
+  and flags up to 5 % wider (whole-pixel advances at the zoomed size) and Japanese at 15-17 px 2 % wider, while the size packs a
+  fittable word to within a pixel of its line: that word ran past its block and ended in ... (network switch "📺📺📺📺📺📺📺
+  CORE_SW_01_STAGE_LEFT_RA" at 11.5 px; a router named 33 Japanese letters + 70 x 照 at 16.5 px). `_wtlNmSize` now takes a size only
+  when `_wtlNmZoomOK` agrees: every fittable piece also fits its line as drawn at 90 % and 115 % (and any other size in force),
+  measured on a hidden span appended to `<html>` (outside the body, so its own CSS zoom is the Help size) and removed at once; no
+  canvas reproduces the zoomed widths. A piece of printable ASCII only (the bar's face keeps its width under the zoom, within 0.1 %)
+  and a piece narrower than 0.8 of the line are not measured, so a Latin name is fitted exactly as before. On paper (`_wtlNmPaper`;
+  Simple's sheet via `o.paper`, `paper: ro`) `_wtlNmPap` is set and only the 100 % measure counts. (B) `_wtlNmSize` measured every
+  piece of the whole name (a pasted 40,000-letter router name redrew about a third slower than on the 16lc-midword-fix page): each
+  distinct word and piece is measured once, the fittable pieces widest first; the size found is the same. Not changed (questions for
+  Omar): a fittable word behind the ... still counts; a hyphen word that fits a line at 11 px is kept whole at a smaller size; a
+  mid-word-filled line (only an unfittable word) and a line packed with several fittable words keep the 100 % layout and can still
+  run one letter past at 90 / 115 % (rule 4, as on the base page); the words of an EMPTY picture box on paper. Checks: new OF1-OF3
+  (OF2 pins paper at 100 %). The phone is frozen.
 - Declined by the owner, do not resurface: mask shapes, anchor points, hardware profiles, canvas/WebGL renderer,
   interpolation filter toggles, upscale-factor notes, per-layer "sharp pixels", any licence mention.
 

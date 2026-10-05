@@ -11793,7 +11793,21 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
     return is(out, want, 'each name [the text, its lines as drawn, the breaks, the size, cut, beside the pencil / lock (centred), the block centred, clear of the picture, the tooltip, the bar] on a 10 x 10 router / an 8 x 2 switcher / an I/O Patch page tile [its title, its name] / the router renamed in its name box [stored, the focus kept, its name]');
   });
   // 16lc-names N3: NEW
-  await check('Wire 16lc-names: a word too wide for its line is never broken mid-word: on a network switch BLACKMAGIC SWITCH is drawn smaller (13 px) so BLACKMAGIC fits its line whole (BLACKMAGIC / SWITCH); on a 10 x 10 router a 51-letter word with no space or hyphen is drawn on one line at 14.5 px; on Simple\'s Generic Router a 40-letter word likewise (13.5 px); nothing cut; only a word too wide even at 11 px (MICROCONVERTER BIDIRECTIONAL on the switch) is cut with ... at 11 px on its own line, the other word whole, the tooltip the whole name', async () => {
+  // 16lc-midword N3: REPLACES the check named in its header (reason in the block)
+  // 16lc-midword: RENAMED in place. Why: Omar 2026-10-02 (16lc-midword), shown CORE_SW_01_STAGE_LEFT_RACK_A on a network switch in small letters on
+  //   ONE line with the other two lines empty: "Break mid-word as a last resort — only when a word can't fit even at the smallest size,
+  //   split it anywhere onto the empty lines, the way v0.8.1 did.": a name with a word (or a hyphen part of a word too wide) wider than
+  //   the line even at 11 px is drawn at the bar's own size, such a piece broken mid-word, three lines, the rest on the third cut with .... So MICROCONVERTER
+  //   BIDIRECTIONAL on the switch (MICROCONVERTER too wide even at 11 px) is drawn at 15 px: MICROCON / VERTER / BIDIRECTIONAL..., three
+  //   lines, cut (16lc-names: MICROCONVERTER... / BIDIRECTIONAL at 11 px, never mid-word). Its other names are unchanged.
+  // 16lc-onlyword N3: REPLACES the check named in its header (reason in the block)
+  // 16lc-onlyword: RENAMED in place. Why: Omar 2026-10-04 (16lc-onlyword), shown that the last resort drawn at the bar's full size split or cut the other long words
+  //   of the name: "Split only the word that can't fit — Make the name a bit smaller so the other words stay whole, and split only the word
+  //   that can't fit even at the smallest size". The last resort is now drawn at the largest size (down to 11 px) at which every piece that
+  //   fits a line at 11 px fits a line whole, so only a piece too wide even at 11 px is split mid-word. Here: MICROCONVERTER BIDIRECTIONAL on the switch was
+  //   drawn at 15 px with BIDIRECTIONAL cut on its third line; it is now drawn at 11 px (BIDIRECTIONAL fits there), MICROCONVER / TER /
+  //   BIDIRECTIONAL, nothing cut. Its other names are unchanged.
+  await check('Wire 16lc-names: a word too wide for its line is drawn smaller rather than broken mid-word while it fits a line at 11 px: on a network switch BLACKMAGIC SWITCH is drawn smaller (13 px) so BLACKMAGIC fits its line whole (BLACKMAGIC / SWITCH); on a 10 x 10 router a 51-letter word with no space or hyphen is drawn on one line at 14.5 px; on Simple\'s Generic Router a 40-letter word likewise (13.5 px); nothing cut; only a word too wide even at 11 px (MICROCONVERTER BIDIRECTIONAL on the switch) goes to the last resort (16lc-midword, Omar 2026-10-02: "Break mid-word as a last resort"; 16lc-onlyword, Omar 2026-10-04: "Split only the word that can\'t fit"): 11 px, the largest size at which BIDIRECTIONAL fits its line whole, only MICROCONVERTER broken mid-word (MICROCONVER / TER), BIDIRECTIONAL whole on the third, nothing cut, the tooltip the whole name', async () => {
     const out = {}, want = {};
     try {
       await restore(); const WW = 'MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMW', R51 = 'VIDEOHUB_40X40_12G_MAIN_ENGINEERING_RACK_BALLROOM_A';
@@ -11806,7 +11820,7 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
       out.router = _nmRead(document, rid); want.router = { text: R51, lines: [R51], breaks: [], font: '14.5px', cut: false, beside: true, centred: true, clear: true, tip: R51, bar: 88 };
       W.name = 'MICROCONVERTER BIDIRECTIONAL'; _wireRender(); await wait(400);
       { const r = _nmRead(document, wid), sh = $('.wtl-nm-show', _txNode(wid)); out.tooWide = [r, sh ? sh.innerHTML.split(/<br\s*\/?>/i).length : 0, sh ? getComputedStyle(sh).textOverflow : 'none'];
-        want.tooWide = [{ text: 'MICROCONVERTER BIDIRECTIONAL', lines: ['MICROCONVERTER', 'BIDIRECTIONAL'], breaks: ['word'], font: '11px', cut: true, beside: true, centred: true, clear: true, tip: 'MICROCONVERTER BIDIRECTIONAL', bar: 88 }, 2, 'ellipsis']; }
+        want.tooWide = [{ text: 'MICROCONVERTER BIDIRECTIONAL', lines: ['MICROCONVER', 'TER', 'BIDIRECTIONAL'], breaks: ['MID-WORD', 'word'], font: '11px', cut: false, beside: true, centred: true, clear: true, tip: 'MICROCONVERTER BIDIRECTIONAL', bar: 88 }, 3, 'ellipsis']; }   /* 16lc-midword: the last resort (16lc-names: [MICROCONVERTER, BIDIRECTIONAL] at 11 px, 2 lines); 16lc-onlyword: at 11 px, only MICROCONVERTER split (16lc-midword: MICROCON / VERTER / BIDIRECTIONAL... at 15 px, cut) */
     } catch (e) { return 'threw: ' + e.message; }
     finally { try { _wireSetZoom(1); } catch (e) {} await restore(); }
     return is(out, want, 'each name [the text, its lines as drawn, the breaks, the size, cut, beside the pencil (centred), the block centred, clear of the picture, the tooltip, the bar] on Simple\'s Generic Router (a 40-letter word) / a network switch (BLACKMAGIC SWITCH) / a 10 x 10 router (a 51-letter word) / the switch with MICROCONVERTER BIDIRECTIONAL [the name, its drawn lines, the line\'s overflow]');
@@ -11865,6 +11879,561 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
     } finally { try { closeHelp(); } catch (e) {} await wait(150); }
     return is([/A long name wraps onto a second line, and on every tool but a converter onto a third, breaking only between words/.test(tx), /a word too long for the line breaks after its hyphens, or is drawn smaller/.test(tx), /one longer still ends in … and shows in full when you point at it/.test(tx)],
       [true, true, true], 'Help > Wire > Tool headers [a third line on every tool but a converter, between words only, hyphens / smaller, the … and the tooltip]');
+  });
+  // ── 16lc-midword (Omar 2026-10-02, shown that under 16lc-names CORE_SW_01_STAGE_LEFT_RACK_A on a network switch read "CORE_SW_01..."
+  //    in small letters on ONE line with the other two lines empty, where v0.8.1 broke it mid-word over the lines: "Break mid-word as a
+  //    last resort — only when a word can't fit even at the smallest size, split it anywhere onto the empty lines, the way v0.8.1 did."):
+  //    ONLY a name with a piece (a word; for a word too wide, a part after its hyphens) wider than the line even at 11 px goes to the last
+  //    resort: drawn at the bar's OWN size (18 / 15 px); lines break between words and after a hyphen in a word too wide; a piece that
+  //    does not fit the rest of its line starts the next; a piece wider than a whole line is split mid-word, filling the line to the
+  //    last letter that fits; three lines at most, the rest on the third cut with ...; the block's text is still the whole name. A
+  //    name whose pieces all fit at 11 px but need more than three lines keeps the 16lc-names 11 px cut (no mid-word break). On paper
+  //    the same rule again in the paper room. Everything else is drawn byte for byte as before; a converter is unchanged. Each check
+  //    that pins the new behaviour FAILS on the 16lc-names page (r16lf/build, 67b18d50) and PASSES after; M3 (and M5's converter half)
+  //    pin what must NOT change and pass on both. Helpers prefixed _mw (never a name of the page's); they use 16lc-names' (_nm*),
+  //    16ld-tools' (_tx*) and 16ld-fix's (_fx*).
+  const _mwCS = 'CORE_SW_01_STAGE_LEFT_RACK_A', _mwNGU = 'NETGEAR_M4250-26G4F', _mwMC = 'MICROCONVERTER BIDIRECTIONAL';
+  const _mwR105 = 'VIDEOHUB_40X40_12G_MAIN_ENGINEERING_RACK_BALLROOM_A_VIDEOHUB_40X40_12G_MAIN_ENGINEERING_RACK_BALLROOM_B_C';
+  const _mwFEED = 'FEED STANDARDS DANTE ENGINEERING CONSOLE';
+  const _mwDS = 'A  B   CORE_SW_01_STAGE_LEFT_RACK_A  Z', _mwJP = '日本語のネットワークスイッチ名前とても長い', _mwAC = 'e\u0301'.repeat(20);   /* 16lc-midword-fix: decomposed (e + a combining acute): the precomposed U+00E9 it had has no mark, so
+     M4's "a letter never split from its accent" could never fail */
+  /* a router name too long for three lines even at 11 px, every word short: 16lc-names' 11 px cut, no mid-word break (rule 2) */
+  const _mwR2 = Array.from({ length: 4 }, (x, i) => 'MAIN STAGE ENGINEERING RACK ' + String.fromCharCode(65 + i) + ' WITH THE RECORD DECKS AND THE STREAM ENCODERS').join(' ');
+  /* the name block of a tool, and its lines as written (the inside split at its <br>, entities read back) */
+  const _mwSh = (root, nid) => { const g = $$('g.wire-node', root).find(x => x.getAttribute('data-node-id') === nid); return g ? $('.wire-router-title .wtl-nm .wtl-nm-show', g) : null; };
+  const _mwParts = sh => sh ? sh.innerHTML.split(/<br\s*\/?>/i).map(s => { const d = document.createElement('div'); d.innerHTML = s; return d.textContent; }) : null;
+  /* a tool's name read as drawn (16lc-names' _nmRead) and more: [its lines as written, which drawn lines overflow the block (their last
+     letter past its right edge), the line ending (text-overflow), white-space, each MID-WORD break filled (the line plus the next
+     letter is wider than the room less its pixel of air, measured with the DOM in the same face / size / spacing)] */
+  const _mwRead = (root, nid) => { const r = _nmRead(root, nid); if (typeof r === 'string') return r; const sh = _mwSh(root, nid), cs = getComputedStyle(sh), sb = sh.getBoundingClientRect();
+    const rows = []; const rg = document.createRange(); let n; const tw = document.createTreeWalker(sh, NodeFilter.SHOW_TEXT);
+    while ((n = tw.nextNode())) { for (let i = 0; i < n.data.length; i++) { if (/\s/.test(n.data[i])) continue; rg.setStart(n, i); rg.setEnd(n, i + 1); const q = [...rg.getClientRects()].find(z => z.width > 0 && z.height > 0); if (!q) continue;
+      const y = q.top + q.height / 2; let L = rows.find(z => Math.abs(z.y - y) < q.height * 0.5); if (!L) { L = { y, right: q.right }; rows.push(L); } L.right = Math.max(L.right, q.right); } }
+    rows.sort((p, q) => p.y - q.y);
+    const parts = _mwParts(sh), m = document.createElement('span'); m.style.cssText = 'position:absolute;visibility:hidden;white-space:pre;left:0;top:0;padding:0;margin:0;border:0;font-family:' + cs.fontFamily + ';font-weight:' + cs.fontWeight + ';font-size:' + cs.fontSize + ';letter-spacing:' + cs.letterSpacing + ';text-transform:' + cs.textTransform;
+    sh.parentNode.appendChild(m); const k = sb.width / (sh.offsetWidth || 1), W = t => { m.textContent = t; return m.getBoundingClientRect().width / k; };
+    const filled = []; r.breaks.forEach((b, i) => { if (b === 'MID-WORD' && parts[i + 1]) filled.push(W(parts[i] + Array.from(parts[i + 1])[0]) > sh.offsetWidth - 1 - 0.5); });
+    m.remove();
+    return Object.assign({}, r, { parts, over: rows.map(z => z.right > sb.right + 0.5), ending: cs.textOverflow, ws: cs.whiteSpace, filled }); };
+  /* the 16lc-names markup of a name drawn as lines, and the 16ld-fix2 block of a name on one line, byte for byte (the base page's) */
+  const _mwLinesHTML = (parts, fs, ls, ink, fit) => '<span class="wtl-nm-show" aria-hidden="true" style="display:block;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;line-height:1.15;width:100%;text-align:left;font-size:' + fs + 'px;letter-spacing:' + ls + 'em;color:' + ink + ' !important;background:transparent !important"' + (fit ? ' data-wtl-fit="' + fit + '"' : '') + '>' + parts.join('<br>') + '</span>';
+  const _mwOneHTML = (name, fs, ls, ink, fit) => '<span class="wtl-nm-show" aria-hidden="true" style="display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;text-overflow:ellipsis;white-space:normal;overflow-wrap:anywhere;line-height:1.15;width:100%;text-align:left;font-size:' + fs + 'px;letter-spacing:' + ls + 'em;color:' + ink + ' !important;background:transparent !important"' + (fit ? ' data-wtl-fit="' + fit + '"' : '') + '>' + name + '</span>';
+  const _mwInk = t => _wtlInk(_wtlColor(t, t.id));
+  // 16lc-midword M1: NEW
+  await check('Wire 16lc-midword (Omar 2026-10-02, shown CORE_SW_01_STAGE_LEFT_RACK_A on a network switch in small letters on ONE line with the other two lines empty: "Break mid-word as a last resort — only when a word can\'t fit even at the smallest size, split it anywhere onto the empty lines, the way v0.8.1 did."): that name (one word wider than the line even at 11 px) shows at the bar\'s own 15 px on THREE lines broken mid-word (CORE_SW_ / 01_STAGE_ / LEFT_RACK_A), the first two each filled to the last letter that fits, the rest on the third cut with ... (only the third overflows), the block\'s text exactly the name, the tooltip the whole name, beside the pencil, centred, clear of the picture box, the picture box\'s own words as before; the same after it is typed in its name box (the change) and at 75 % zoom', async () => {
+    const out = {}, want = {};
+    try {
+      await restore(); await _cMWire('advanced'); _wireAdvAddDevice('switch', 4); await wait(300);
+      const W = wireAdvanced.devices[wireAdvanced.devices.length - 1], nid = 'device:' + W.id;
+      W.name = _mwCS; _wireSetZoom(1); _wireRender(); await wait(400);
+      const N = { text: _mwCS, lines: ['CORE_SW_', '01_STAGE_', 'LEFT_RACK_A'], breaks: ['MID-WORD', 'MID-WORD'], font: '15px', cut: true, beside: true, centred: true, clear: true, tip: _mwCS, bar: 88,
+        parts: ['CORE_SW_', '01_STAGE_', 'LEFT_RACK_A'], over: [false, false, true], ending: 'ellipsis', ws: 'nowrap', filled: [true, true] };
+      out.drawn = _mwRead(document, nid); want.drawn = N;
+      out.box = $$('.wtl-pic text.wtl-auto-t', _txNode(nid)).map(e => e.textContent); want.box = ['CORE_SW_01_STAGE_LEF…'];   /* the picture box's own words (_wtlLines), as on the 16lc-names page */
+      W.name = 'SWITCH A'; _wireRender(); await wait(300);
+      const inp = $('.wire-router-title input', _txNode(nid)); inp.focus(); inp.value = _mwCS; fire(inp, 'change'); await wait(400);
+      { const a = document.activeElement; if (a && a.blur) a.blur(); } await wait(300);
+      out.renamed = [W.name, _mwRead(document, nid)]; want.renamed = [_mwCS, N];
+      _wireSetZoom(0.75); _wireRender(); await wait(400);
+      out.zoom75 = _mwRead(document, nid); want.zoom75 = N;
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { _wireSetZoom(1); } catch (e) {} await restore(); }
+    return is(out, want, 'the switch\'s name [the text, its lines as drawn, the breaks, the size, cut, beside the pencil (centred), the block centred, clear of the picture, the tooltip, the bar, its lines as written, each drawn line overflowing, the line ending, white-space, each mid-word line filled] as drawn / the picture box\'s words / typed in its name box [stored, the name] / at 75 %');
+  });
+  // 16lc-midword M2: NEW
+  // 16lc-onlyword M2: REPLACES the check named in its header (reason in the block)
+  // 16lc-onlyword: RENAMED in place. Why: Omar 2026-10-04 (16lc-onlyword), shown that the last resort drawn at the bar's full size split or cut the other long words
+  //   of the name: "Split only the word that can't fit — Make the name a bit smaller so the other words stay whole, and split only the word
+  //   that can't fit even at the smallest size". The last resort is now drawn at the largest size (down to 11 px) at which every piece that
+  //   fits a line at 11 px fits a line whole, so only a piece too wide even at 11 px is split mid-word. Here: its screen half pinned MICROCONVERTER BIDIRECTIONAL
+  //   on the switch at 15 px (MICROCON / VERTER / BIDIRECTIONAL, cut); it is now 11 px, MICROCONVER / TER / BIDIRECTIONAL, nothing cut. Its
+  //   paper half (the 16lc-names breaks at 12 px) and its other names are unchanged.
+  await check('Wire 16lc-midword: on paper the rule is fitted again to the paper room (the 16lc-names breaks first, the mid-word last resort only when a piece is too wide there even at 11 px), so a name with no space shows whole on paper whenever it can: the light and the dark Wire sheet and the Look Book\'s Advanced Wire page print CORE_SW_01_STAGE_LEFT_RACK_A whole on the network switch at 15 px on three lines broken mid-word (CORE_SW_01_S / TAGE_LEFT_RA / CK_A; on screen cut on its third line), NETGEAR_M4250-26G4F (mid-word at 15 px on screen) with the 16lc-names breaks at 12.5 px (NETGEAR_M4250- / 26G4F) and MICROCONVERTER BIDIRECTIONAL (on screen at 11 px, only MICROCONVERTER mid-word: 16lc-onlyword) between its words at 12 px; nothing cut there, the printed text exactly the name, no fitting mark printed', async () => {
+    const out = {}, want = {};
+    try {
+      await restore(); await _cMWire('advanced'); _wireAdvAddDevice('switch', 4); _wireAdvAddDevice('switch', 4); _wireAdvAddDevice('switch', 4); await wait(300);
+      const D = wireAdvanced.devices, A = D[D.length - 3], B = D[D.length - 2], C = D[D.length - 1];
+      A.name = _mwCS; B.name = _mwNGU; C.name = _mwMC; _wireSetZoom(1); _wireRender(); await wait(400);
+      const read = root => { const f = nid => { const r = _mwRead(root, nid); return typeof r === 'string' ? r : [r.text, r.lines, r.breaks, r.font, r.cut, r.parts, r.beside]; };
+        const mk = nid => { const g = $$('g.wire-node', root).find(x => x.getAttribute('data-node-id') === nid); return g ? $$('[data-wtl-fit]', g).length : 'no ' + nid; };
+        return { cs: f('device:' + A.id), ngu: f('device:' + B.id), mc: f('device:' + C.id), marks: [mk('device:' + A.id), mk('device:' + B.id), mk('device:' + C.id), root === document ? 'screen' : $$('[data-wtl-fit]', root).length] }; };
+      out.screen = read(document);
+      want.screen = { cs: [_mwCS, ['CORE_SW_', '01_STAGE_', 'LEFT_RACK_A'], ['MID-WORD', 'MID-WORD'], '15px', true, ['CORE_SW_', '01_STAGE_', 'LEFT_RACK_A'], true],
+        ngu: [_mwNGU, ['NETGEAR_', 'M4250-', '26G4F'], ['MID-WORD', 'hyphen'], '15px', false, ['NETGEAR_', 'M4250-', '26G4F'], true],
+        mc: [_mwMC, ['MICROCONVER', 'TER', 'BIDIRECTIONAL'], ['MID-WORD', 'word'], '11px', false, ['MICROCONVER', 'TER ', 'BIDIRECTIONAL'], true], marks: [1, 1, 1, 'screen'] };   /* 16lc-onlyword: was MICROCON / VERTER / BIDIRECTIONAL at 15 px, cut */
+      const P = { cs: [_mwCS, ['CORE_SW_01_S', 'TAGE_LEFT_RA', 'CK_A'], ['MID-WORD', 'MID-WORD'], '15px', false, ['CORE_SW_01_S', 'TAGE_LEFT_RA', 'CK_A'], 'no pencil'],
+        ngu: [_mwNGU, ['NETGEAR_M4250-', '26G4F'], ['hyphen'], '12.5px', false, ['NETGEAR_M4250-', '26G4F'], 'no pencil'],
+        mc: [_mwMC, ['MICROCONVERTER', 'BIDIRECTIONAL'], ['word'], '12px', false, ['MICROCONVERTER ', 'BIDIRECTIONAL'], 'no pencil'], marks: [0, 0, 0, 0] };
+      out.sheet = _nmLaid(_nmSheet(), read); want.sheet = P;
+      out.dark = _nmLaid(_wireExportSheetList('dark').join('').replace(/<\?xml[^>]*>/g, ''), read); want.dark = P;
+      { const h = await _nmBookAdv(); out.book = h ? _nmLaid(h, read) : 'no Wire page'; want.book = P; }
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { _wireSetZoom(1); } catch (e) {} await restore(); }
+    return is(out, want, 'each switch\'s name [the text, its lines as drawn, the breaks, the size, cut, its lines as written, the pencil; the fitting marks on the three switches and in all] (CORE_SW_01_STAGE_LEFT_RACK_A, NETGEAR_M4250-26G4F, MICROCONVERTER BIDIRECTIONAL) on screen / on the light Wire sheet / on the dark Wire sheet / on the Look Book\'s Advanced Wire page');
+  });
+  // 16lc-midword M3: NEW
+  await check('Wire 16lc-midword: every name the 16lc-names rule fits, and every name whose words all fit a line at 11 px but need more than three lines, is drawn BYTE FOR BYTE as before (no mid-word break), on screen and on paper: on a network switch NETGEAR M4250-26G4F (three lines at 15 px), BLACKMAGIC SWITCH (13 px), SWITCH A (one line, the 16ld-fix2 block), FEED STANDARDS DANTE ENGINEERING CONSOLE and BLACKMAGIC SMART VIDEOHUB 40X40 RACK B (too long for three lines even at 11 px, every word fits: three lines at 11 px by words, cut with ...), on a 10 x 10 router the 107-letter spaced name and on an 8 x 2 switcher the 110-letter one (three lines at 18 px, between words): each name block\'s HTML is the 16lc-names markup exactly (its style, its fitting mark, its lines); on the light Wire sheet NETGEAR M4250-26G4F (NETGEAR / M4250-26G4F at 15 px), FEED STANDARDS DANTE ENGINEERING CONSOLE (three lines at 11 px, whole) and the router\'s name likewise, with no fitting mark', async () => {
+    const out = {}, want = {};
+    try {
+      await restore(); await _cMWire('advanced'); for (let i = 0; i < 5; i++) _wireAdvAddDevice('switch', 4); await wait(300);
+      const r0 = wireAdvanced.routers.length; _wireAdvAddRouter(10); _wireAdvAddSwitcher('8×2 Switcher', 8, 2); await wait(300);
+      const D = wireAdvanced.devices, [A, B, C, E, F] = D.slice(D.length - 5), [R, S] = wireAdvanced.routers.slice(r0);
+      A.name = _nmNG; B.name = 'BLACKMAGIC SWITCH'; C.name = 'SWITCH A'; E.name = _mwFEED; F.name = _nmLONG; R.title = _nmLR; S.title = _nmLS; _wireSetZoom(1); _wireRender(); await wait(400);
+      const sw = t => '109|145|15|0.12|' + _mwInk(t), rt = t => '629|665|18|0.18|' + _mwInk(t);
+      const html = root => ({ ng: (_mwSh(root, 'device:' + A.id) || {}).outerHTML, bs: (_mwSh(root, 'device:' + B.id) || {}).outerHTML, one: (_mwSh(root, 'device:' + C.id) || {}).outerHTML,
+        feed: (_mwSh(root, 'device:' + E.id) || {}).outerHTML, long: (_mwSh(root, 'device:' + F.id) || {}).outerHTML, router: (_mwSh(root, 'router:' + R.id) || {}).outerHTML, switcher: (_mwSh(root, 'router:' + S.id) || {}).outerHTML });
+      out.screen = html(document);
+      want.screen = { ng: _mwLinesHTML(['NETGEAR ', 'M4250-', '26G4F'], 15, 0.12, _mwInk(A), sw(A)), bs: _mwLinesHTML(['BLACKMAGIC ', 'SWITCH'], 13, 0.12, _mwInk(B), sw(B)), one: _mwOneHTML('SWITCH A', 15, 0.12, _mwInk(C), sw(C)),
+        feed: _mwLinesHTML(['FEED ', 'STANDARDS ', 'DANTE ENGINEERING CONSOLE'], 11, 0.12, _mwInk(E), sw(E)), long: _mwLinesHTML(['BLACKMAGIC ', 'SMART ', 'VIDEOHUB 40X40 RACK B'], 11, 0.12, _mwInk(F), sw(F)),
+        router: _mwLinesHTML(['MAIN STAGE BLACKMAGIC SMART VIDEOHUB 40X40 ', 'ENGINEERING RACK FOR THE BALLROOM AND THE ', 'BREAKOUT ROOMS A B C D'], 18, 0.18, _mwInk(R), rt(R)),
+        switcher: _mwLinesHTML(['PROGRAM SWITCHER FOR THE GENERAL SESSION ', 'ROOM WITH THE CONFIDENCE MONITORS AND THE ', 'IMAG SCREENS LEFT AND RIGHT'], 18, 0.18, _mwInk(S), rt(S)) };
+      { const r = _nmRead(document, 'device:' + E.id); out.feedDrawn = typeof r === 'string' ? r : [r.lines, r.breaks, r.font, r.cut]; want.feedDrawn = [['FEED', 'STANDARDS', 'DANTE ENGINEERING CONSOLE'], ['word', 'word'], '11px', true]; }
+      { const p = _nmLaid(_nmSheet(), b => ({ ng: (_mwSh(b, 'device:' + A.id) || {}).outerHTML, feed: (_mwSh(b, 'device:' + E.id) || {}).outerHTML, router: (_mwSh(b, 'router:' + R.id) || {}).outerHTML, marks: $$('[data-wtl-fit]', b).length }));
+        out.sheet = p; want.sheet = { ng: _mwLinesHTML(['NETGEAR ', 'M4250-26G4F'], 15, 0.12, _mwInk(A), null), feed: _mwLinesHTML(['FEED STANDARDS ', 'DANTE ENGINEERING ', 'CONSOLE'], 11, 0.12, _mwInk(E), null),
+          router: _mwLinesHTML(['MAIN STAGE BLACKMAGIC SMART VIDEOHUB 40X40 ', 'ENGINEERING RACK FOR THE BALLROOM AND THE ', 'BREAKOUT ROOMS A B C D'], 18, 0.18, _mwInk(R), null), marks: 0 }; }
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { _wireSetZoom(1); } catch (e) {} await restore(); }
+    return is(out, want, 'each name block\'s HTML on screen (the switch: NETGEAR M4250-26G4F / BLACKMAGIC SWITCH / SWITCH A / FEED STANDARDS DANTE ENGINEERING CONSOLE / BLACKMAGIC SMART VIDEOHUB 40X40 RACK B; the 10 x 10 router; the 8 x 2 switcher) / FEED as drawn [lines, breaks, size, cut] / on the light Wire sheet (NETGEAR, FEED, the router) [and the fitting marks printed]');
+  });
+  // 16lc-midword M4: NEW
+  // 16lc-onlyword M4: REPLACES the check named in its header (reason in the block)
+  // 16lc-onlyword: RENAMED in place. Why: Omar 2026-10-04 (16lc-onlyword), shown that the last resort drawn at the bar's full size split or cut the other long words
+  //   of the name: "Split only the word that can't fit — Make the name a bit smaller so the other words stay whole, and split only the word
+  //   that can't fit even at the smallest size". The last resort is now drawn at the largest size (down to 11 px) at which every piece that
+  //   fits a line at 11 px fits a line whole, so only a piece too wide even at 11 px is split mid-word. Here: it pinned every one of its switch names at 15 px;
+  //   MICROCONVERTER BIDIRECTIONAL is now drawn at 11 px (only MICROCONVERTER split). The text is still exactly the name; nothing else changed.
+  await check('Wire 16lc-midword: the name block\'s text stays EXACTLY the whole name when the last resort draws it (no letter or space added or lost; lines joined by <br>, three at most, a letter never split from its accent): CORE_SW_01_STAGE_LEFT_RACK_A, a name with double spaces, a Japanese name, MICROCONVERTER BIDIRECTIONAL (at 11 px, 16lc-onlyword; the others at the bar\'s 15 px) and twenty accented letters on a network switch; and a 10 x 10 router renamed IN PLACE in its name box (the focus kept, 16ju) is fitted again each time: a 105-letter name with no space three lines at 18 px broken mid-word and whole, then NETGEAR M4250-26G4F on one line (the 16ld-fix2 block), then a 105-letter spaced name three lines between words, then a 303-letter name of short words cut at 11 px on three lines by words (no mid-word break)', async () => {
+    const out = {}, want = {};
+    try {
+      await restore(); await _cMWire('advanced'); _wireAdvAddDevice('switch', 4); _wireAdvAddRouter(10); await wait(300);
+      const W = wireAdvanced.devices[wireAdvanced.devices.length - 1], R = wireAdvanced.routers[wireAdvanced.routers.length - 1], wid = 'device:' + W.id, rid = 'router:' + R.id;
+      _wireSetZoom(1); out.text = {}; want.text = {};
+      for (const nm of [_mwCS, _mwDS, _mwJP, _mwMC, _mwAC]) {
+        W.name = nm; _wireRender(); await wait(300);
+        const sh = _mwSh(document, wid), parts = _mwParts(sh);
+        out.text[nm] = [sh.textContent === nm, parts.join('') === nm, parts.length, parts.some(p => /^\p{M}/u.test(p)), getComputedStyle(sh).fontSize, ($('.wtl-nm', _txNode(wid)) || {}).title === nm];
+        want.text[nm] = [true, true, 3, false, nm === _mwMC ? '11px' : '15px', true];   /* 16lc-onlyword: MICROCONVERTER BIDIRECTIONAL at 11 px (BIDIRECTIONAL fits there), the others have no piece that fits a line at 11 px but not at 15 */
+      }
+      const inp = $('.wire-router-title input', _txNode(rid)); inp.focus();
+      const step = async v => { inp.value = v; fire(inp, 'change'); await wait(400); const r = _mwRead(document, rid); return [R.title, document.activeElement === inp && inp.isConnected, typeof r === 'string' ? r : [r.text, r.lines.length, r.breaks, r.font, r.cut, r.parts.join('') === v, r.tip], (_mwSh(document, rid).getAttribute('style') || '').slice(0, 20)]; };
+      out.inPlace = [await step(_mwR105), await step(_nmNG), await step(_nmLR2), await step(_mwR2)];
+      want.inPlace = [[_mwR105, true, [_mwR105, 3, ['MID-WORD', 'MID-WORD'], '18px', false, true, _mwR105], 'display:block;overfl'],
+        [_nmNG, true, [_nmNG, 1, [], '18px', false, true, _nmNG], 'display:-webkit-box;'],
+        [_nmLR2, true, [_nmLR2, 3, ['word', 'word'], '18px', false, true, _nmLR2], 'display:block;overfl'],
+        [_mwR2, true, [_mwR2, 3, ['word', 'word'], '11px', true, true, _mwR2], 'display:block;overfl']];
+      inp.blur(); await wait(300);
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { _wireSetZoom(1); } catch (e) {} await restore(); }
+    return is(out, want, 'on the switch, each name [the block\'s text is the name, its lines joined are the name, lines, a line starting with an accent, the size, the tooltip] / the router renamed in place four times [stored, the focus kept, its name (text, lines, breaks, size, cut, lines joined are the name, tooltip), its style]');
+  });
+  // 16lc-midword M5: NEW
+  await check('Wire 16lc-midword: a CONVERTER is unchanged: named CORE_SW_01_STAGE_LEFT_RACK_A its name block is the 16ld-fix2 block byte for byte (the 2-line clamp, broken anywhere by the browser, 15 px), no fitting mark, on screen and on the light Wire sheet, and its picture box\'s words as before; the network switch beside it with the same name breaks it mid-word on three lines at 15 px', async () => {
+    const out = {}, want = {};
+    try {
+      await restore(); await _cMWire('advanced'); _wireAdvAddDevice('converter', 2, 2); _wireAdvAddDevice('switch', 4); await wait(300);
+      const C = wireAdvanced.devices[wireAdvanced.devices.length - 2], W = wireAdvanced.devices[wireAdvanced.devices.length - 1], cid = 'device:' + C.id, wid = 'device:' + W.id;
+      C.name = _mwCS; W.name = _mwCS; _wireSetZoom(1); _wireRender(); await wait(400);
+      const conv = root => { const sh = _mwSh(root, cid), r = _nmRead(root, cid); return [sh ? sh.outerHTML : 'none', typeof r === 'string' ? r : [r.text, r.font, r.bar, r.tip], $$('[data-wtl-fit]', $$('g.wire-node', root).find(x => x.getAttribute('data-node-id') === cid)).length]; };
+      out.converter = conv(document); want.converter = [_mwOneHTML(_mwCS, 15, 0.12, _mwInk(C), null), [_mwCS, '15px', 44, _mwCS], 0];
+      out.convSheet = _nmLaid(_nmSheet(), conv); want.convSheet = [_mwOneHTML(_mwCS, 15, 0.12, _mwInk(C), null), [_mwCS, '15px', 44, _mwCS], 0];
+      out.convBox = $$('.wtl-pic text.wtl-auto-t', _txNode(cid)).map(e => e.textContent); want.convBox = ['CORE_SW_0…'];   /* as on the 16lc-names page */
+      { const r = _mwRead(document, wid); out.switch = typeof r === 'string' ? r : [r.lines, r.breaks, r.font, r.cut]; want.switch = [['CORE_SW_', '01_STAGE_', 'LEFT_RACK_A'], ['MID-WORD', 'MID-WORD'], '15px', true]; }
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { _wireSetZoom(1); } catch (e) {} await restore(); }
+    return is(out, want, 'the converter named CORE_SW_01_STAGE_LEFT_RACK_A [its name block\'s HTML, its name (text, size, bar, tooltip), fitting marks] on screen / on the light Wire sheet / its picture box\'s words / the network switch beside it [lines, breaks, size, cut]');
+  });
+  // 16lc-midword M6: NEW
+  // 16lc-midword-fix M6: REPLACES the check named in its header (reason in the block)
+  // 16lc-midword-fix: RENAMED in place. Why: the attackers of 16lc-midword (2026-10-03): the Help sentence "only a word too long even at the smallest size is split
+  //   mid-word, at full size" was not true: in the last resort (Omar 2026-10-02, "Break mid-word as a last resort") the name is drawn at
+  //   full size and EVERY word too long for its line there is split (BLACKMAGIC CORE_SW_01_STAGE_LEFT_RACK_A: BLACKMAGI / C / CORE_SW...). Help now
+  //   says "only when a word is too long even at the smallest size is the name split mid-word, at full size" (the sentence changed only
+  //   as far as needed to stay true).
+  // 16lc-onlyword M6: REPLACES the check named in its header (reason in the block)
+  // 16lc-onlyword: RENAMED in place. Why: Omar 2026-10-04 (16lc-onlyword), shown that the last resort drawn at the bar's full size split or cut the other long words
+  //   of the name: "Split only the word that can't fit — Make the name a bit smaller so the other words stay whole, and split only the word
+  //   that can't fit even at the smallest size". The last resort is now drawn at the largest size (down to 11 px) at which every piece that
+  //   fits a line at 11 px fits a line whole, so only a piece too wide even at 11 px is split mid-word. Here: Help said "only when a word is too long even at the
+  //   smallest size is the name split mid-word, at full size"; the name is no longer always at full size. Help now says "only a word too
+  //   long even at the smallest size is split mid-word, at the largest size that keeps the other words whole" (changed only as far as
+  //   needed to stay true).
+  await check('Help 16lc-midword: Help > Wire > Tool headers still says a long name wraps onto a second line, and on every tool but a converter onto a third, breaking only between words, that a word too long for the line breaks after its hyphens or is drawn smaller, and now that only a word too long even at the smallest size is split mid-word, at the largest size that keeps the other words whole; one longer still ends in ... and shows in full when you point at it', async () => {
+    let tx = '';
+    try {
+      actions.help(); await wait(300); if (typeof helpTab === 'function') helpTab('ref'); await wait(200);
+      const row = $$('#help-overlay div').find(d => d.children.length === 0 && d.textContent.trim() === 'Tool headers'); tx = row && row.nextElementSibling ? row.nextElementSibling.textContent.replace(/\s+/g, ' ') : '';
+    } finally { try { closeHelp(); } catch (e) {} await wait(150); }
+    return is([/A long name wraps onto a second line, and on every tool but a converter onto a third, breaking only between words \(a word too long for the line breaks after its hyphens, or is drawn smaller; only a word too long even at the smallest size is split mid-word, at the largest size that keeps the other words whole\)/.test(tx), /one longer still ends in … and shows in full when you point at it/.test(tx), /at full size/.test(tx)],
+      [true, true, false], 'Help > Wire > Tool headers [the third line, between words, hyphens / smaller, and only the word too long even at the smallest size split mid-word, at the largest size that keeps the other words whole; the … and the tooltip; "at full size" gone]');
+  });
+  // ── 16lc-midword-fix (the attackers of 16lc-midword, 2026-10-03; each case reproduced by real input before it was fixed). Inside
+  //    16lc-midword's last resort only: every width of its test and of its lines is now _wtlNmX's, the text as the browser draws it (in
+  //    capitals, ß as SS, the letter spacing the canvas applies itself, so accents written as second characters, emoji and Arabic come
+  //    out as drawn); a no-break / full-width space a line ends with is kept in the name but not drawn there (a span of size 0); the fit
+  //    stops when two lines are full. A name the test does not send to the last resort is drawn byte for byte as on the 16lc-names page.
+  //    Each check FAILS on the 16lc-midword page (r16lg/build, 0ef581be) and PASSES after. Helpers prefixed _mf (never a page name).
+  const _mfJP = '予備照明本番　ステージ照明ラック映像サブ', _mfNB = 'LED B AUDIO LEFT A_NETGEAR_A_AUDIO_CORE', _mfNB2 = 'MAINSTAGE CORE_SW_01_STAGE_LEFT_RACK';
+  const _mfSS = 'KONGREß_SAAL_CORE_SW', _mfSSR = 'WEIßER_B_MAßSTAB_40X40_AUßEN_RECHTS_VERTEILER_12G_FESTSAAL_40X40_RACK_STRAßENSEITE', _mfSSP = 'SCHLOßHOF_BÜHNE_LINKS_A';
+  const _mfSSP2 = 'KONGRESSZENTRUM_GROßER_SAAL_HAUPTREGIE_VIDEOKREUZSCHIENE_40X40_RACK_A_LINKS', _mfSSW = 'MAßESTRAßE A B C D E F G H I J K L M N O P Q R S T U V W';
+  const _mfNFD = 'SCÈNE_CÔTÉ_A'.normalize('NFD'), _mfNFC = 'SCÈNE_CÔTÉ_A'.normalize('NFC'), _mfE12 = 'É'.normalize('NFD').repeat(12);
+  const _mfRNFD = 'DÉCOR_B_ÉTAGE_SÉCURITÉ_GÉANTS_PRINCIPALE_CÔTÉ_DÉCOR_RÉSEAU_JARDIN'.normalize('NFD'), _mfEMO = '\u{1F3A4}'.repeat(36);
+  const _mfAR = 'المسرح_الرئيسي_يسار_الرف_أ', _mfAR4 = _mfAR.repeat(4), _mf40K = 'VIDEOHUB_40X40_12G_'.repeat(2106).slice(0, 40000);
+  /* each <br> part of a tool's name block as drawn: [its text, how far its drawn extent (Range rects of its nodes, a trailing no-break or
+     full-width space included) runs past the block's right edge, px to 0.01]; _mfOver: which parts run past it by more than 0.05 px (the
+     browser then draws ... and hides letters) */
+  const _mfParts = (root, nid) => { const sh = _mwSh(root, nid); if (!sh) return 'no name ' + nid; const sb = sh.getBoundingClientRect(), out = []; let seg = [];
+    const flush = () => { const d = document.createElement('div'); seg.forEach(c => d.appendChild(c.cloneNode(true))); let w = null;
+      if (seg.length) { const r = document.createRange(); r.setStartBefore(seg[0]); r.setEndAfter(seg[seg.length - 1]); const rs = [...r.getClientRects()].filter(q => q.width > 0); if (rs.length) w = Math.max(...rs.map(q => q.right)) - sb.right; }
+      out.push([d.textContent, w === null ? null : Math.round(w * 100) / 100]); seg = []; };
+    [...sh.childNodes].forEach(c => { if (c.nodeName === 'BR') flush(); else seg.push(c); }); flush(); return out; };
+  const _mfOver = p => typeof p === 'string' ? p : p.map(q => q[1] !== null && q[1] > 0.05);
+  const _mfTexts = p => typeof p === 'string' ? p : p.map(q => q[0]);
+  /* a tool's name for the checks: [its parts as written, which run past the block, the size, the block's text is the name, the tooltip is the name, each mid-word line filled] */
+  const _mfRead = (root, nid, nm) => { const p = _mfParts(root, nid), sh = _mwSh(root, nid), r = _mwRead(root, nid);
+    return [_mfTexts(p), _mfOver(p), sh ? getComputedStyle(sh).fontSize : 'none', sh ? sh.textContent === nm : 'none', typeof r === 'string' ? r : r.tip === nm || r.tip === 'no tooltip', typeof r === 'string' ? r : r.filled]; };
+  // 16lc-midword-fix X1: NEW
+  await check('Wire 16lc-midword-fix (D1): in the last resort a line that breaks at a no-break space (Option+Space) or a full-width space (a Japanese IME) keeps that space in the name but does not draw it at the end of the line, so lines 1 and 2 are never cut: on a network switch a Japanese name with a full-width space reads its first word whole on line 1 (it was cut with ..., 113 px in 109), LED B AUDIO LEFT + no-break space + A_NETGEAR_A_AUDIO_CORE reads LED B / AUDIO LEFT / A_NETGEAR... (line 2 was cut), MAINSTAGE + no-break space + CORE_SW_01_STAGE_LEFT_RACK reads MAINSTAGE / CORE_SW_ / 01_STAGE... (line 1 was cut); only the third line ends in ..., the block\'s text and the tooltip are the whole name; on the light Wire sheet the Japanese name prints whole and the others keep lines 1 and 2 whole', async () => {
+    const out = {}, want = {};
+    try {
+      await restore(); await _cMWire('advanced'); for (let i = 0; i < 3; i++) _wireAdvAddDevice('switch', 4); await wait(300);
+      const D = wireAdvanced.devices, [A, B, C] = D.slice(D.length - 3), ids = ['device:' + A.id, 'device:' + B.id, 'device:' + C.id];
+      A.name = _mfJP; B.name = _mfNB; C.name = _mfNB2; _wireSetZoom(1); _wireRender(); await wait(400);
+      out.screen = [_mfRead(document, ids[0], _mfJP), _mfRead(document, ids[1], _mfNB), _mfRead(document, ids[2], _mfNB2)];
+      want.screen = [[['予備照明本番　', 'ステージ照明', 'ラック映像サブ'], [false, false, true], '15px', true, true, [true]],
+        [['LED B ', 'AUDIO LEFT ', 'A_NETGEAR_A_AUDIO_CORE'], [false, false, true], '15px', true, true, []],
+        [['MAINSTAGE ', 'CORE_SW_', '01_STAGE_LEFT_RACK'], [false, false, true], '15px', true, true, [true]]];
+      out.sheet = _nmLaid(_nmSheet(), b => [_mfRead(b, ids[0], _mfJP), _mfRead(b, ids[1], _mfNB), _mfRead(b, ids[2], _mfNB2)].map(r => [r[0], r[1], r[2], r[3]]));
+      want.sheet = [[['予備照明本番\u3000', 'ステージ照明ラッ', 'ク映像サブ'], [false, false, false], '15px', true], [['LED B AUDIO ', 'LEFT\u00a0', 'A_NETGEAR_A_AUDIO_CORE'], [false, false, true], '15px', true], [['MAINSTAGE\u00a0', 'CORE_SW_01_S', 'TAGE_LEFT_RACK'], [false, false, true], '15px', true]];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { _wireSetZoom(1); } catch (e) {} await restore(); }
+    return is(out, want, 'each switch\'s name (the Japanese name with a full-width space; LED B AUDIO LEFT / no-break space / A_NETGEAR...; MAINSTAGE / no-break space / CORE_SW...) [its lines as written, which run past the block (... drawn), the size, text = name, tooltip = name, each mid-word line filled] on screen / on the light Wire sheet [lines, past the block, size, text = name]');
+  });
+  // 16lc-midword-fix X2: NEW
+  await check('Wire 16lc-midword-fix (D2): a name with ss written as one letter (the German sharp s, which the bar\'s capitals draw as SS, two letters and two letter spacings) is measured as drawn in the last resort, so no line runs past its block and each line broken mid-word is filled to the last letter that fits: on a network switch KONGRE(sharp s)_SAAL_CORE_SW (line 1 ran 0.6 px past and was cut), a 10 x 10 router with a long German name with four sharp s (line 1 ran 7.5 px past and lost ER); on the light Wire sheet SCHLO(sharp s)HOF_BUHNE_LINKS_A prints whole on three lines (it printed SCHLOSSHOF... / ...: the _B lost) and the router KONGRESSZENTRUM_GRO(sharp s)ER_SAAL_... on two lines whole (it lost DE); and a name of short words with one German word wider than the switch line even at 11 px as drawn (it was taken as fitting, its line cut at 11 px) goes to the last resort', async () => {
+    const out = {}, want = {};
+    try {
+      await restore(); await _cMWire('advanced'); _wireAdvAddDevice('switch', 4); _wireAdvAddDevice('switch', 4); _wireAdvAddDevice('switch', 4); const r0 = wireAdvanced.routers.length; _wireAdvAddRouter(10); _wireAdvAddRouter(10); await wait(300);
+      const D = wireAdvanced.devices, [A, B, C] = D.slice(D.length - 3), [R, Q] = wireAdvanced.routers.slice(r0), a = 'device:' + A.id, b = 'device:' + B.id, c = 'device:' + C.id, r = 'router:' + R.id, q = 'router:' + Q.id;
+      A.name = _mfSS; B.name = _mfSSP; C.name = _mfSSW; R.title = _mfSSR; Q.title = _mfSSP2; _wireSetZoom(1); _wireRender(); await wait(400);
+      out.screen = [_mfRead(document, a, _mfSS), _mfRead(document, r, _mfSSR), _mfRead(document, c, _mfSSW)];
+      want.screen = [[['KONGREß', '_SAAL_CO', 'RE_SW'], [false, false, false], '15px', true, true, [true, true]], [['WEIßER_B_MAßSTAB_40X40_AUßEN_RECHTS_VE', 'RTEILER_12G_FESTSAAL_40X40_RACK_STRAßENSEI', 'TE'], [false, false, false], '18px', true, true, [true, true]],
+        [['MAßESTR', 'AßE A B C ', 'D E F G H I J K L M N O P Q R S T U V W'], [false, false, true], '15px', true, true, [true]]];
+      out.sheet = _nmLaid(_nmSheet(), x => [_mfRead(x, b, _mfSSP), _mfRead(x, q, _mfSSP2)].map(z => [z[0], z[1], z[2], z[3]]));
+      want.sheet = [[['SCHLOßHOF_', 'BÜHNE_LINKS_', 'A'], [false, false, false], '15px', true], [['KONGRESSZENTRUM_GROßER_SAAL_HAUPTREGIE_VID', 'EOKREUZSCHIENE_40X40_RACK_A_LINKS'], [false, false], '18px', true]];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { _wireSetZoom(1); } catch (e) {} await restore(); }
+    return is(out, want, 'on screen the switch KONGRE(sharp s)_SAAL_CORE_SW / the router\'s German name / the switch with one German word too wide at 11 px [lines as written, past the block, size, text = name, tooltip = name, each mid-word line filled] / on the light Wire sheet SCHLO(sharp s)HOF_BUHNE_LINKS_A on a switch and the router KONGRESSZENTRUM... [lines, past the block, size, text = name]');
+  });
+  // 16lc-midword-fix X3: NEW
+  await check('Wire 16lc-midword-fix (D3): a word that fits the line at 11 px as drawn never goes to the last resort, whatever its letters: on a network switch SCENE_COTE_A with its accents written as second characters (as macOS file names give them) is drawn byte for byte as the 16lc-names page draws it, whole at 11 px, the same as the name typed with composed accents (it was SCENE_COT / E_A at 15 px), and so are twelve such E-acute; a 10 x 10 router named a 63-letter French name with such accents, 36 emoji, or an Arabic name of 104 letters is drawn whole at 11 px on one line byte for byte as on the 16lc-names page (each was broken mid-word at 18 px)', async () => {
+    const out = {}, want = {};
+    try {
+      await restore(); await _cMWire('advanced'); for (let i = 0; i < 3; i++) _wireAdvAddDevice('switch', 4); const r0 = wireAdvanced.routers.length; _wireAdvAddRouter(10); await wait(300);
+      const D = wireAdvanced.devices, [A, B, C] = D.slice(D.length - 3), R = wireAdvanced.routers[r0];
+      const sw = t => '109|145|15|0.12|' + _mwInk(t), rt = t => '629|665|18|0.18|' + _mwInk(t);
+      A.name = _mfNFD; B.name = _mfNFC; C.name = _mfE12; _wireSetZoom(1); _wireRender(); await wait(400);
+      out.switch = [(_mwSh(document, 'device:' + A.id) || {}).outerHTML, (_mwSh(document, 'device:' + B.id) || {}).outerHTML, (_mwSh(document, 'device:' + C.id) || {}).outerHTML];
+      want.switch = [_mwLinesHTML([_mfNFD], 11, 0.12, _mwInk(A), sw(A)), _mwLinesHTML([_mfNFC], 11, 0.12, _mwInk(B), sw(B)), _mwLinesHTML([_mfE12], 11, 0.12, _mwInk(C), sw(C))];
+      out.router = []; want.router = [];
+      for (const nm of [_mfRNFD, _mfEMO, _mfAR4]) { R.title = nm; _wireRender(); await wait(300); out.router.push((_mwSh(document, 'router:' + R.id) || {}).outerHTML); want.router.push(_mwLinesHTML([nm], 11, 0.18, _mwInk(R), rt(R))); }
+      out.drawn = _mfOver(_mfParts(document, 'router:' + R.id)); want.drawn = [false];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { _wireSetZoom(1); } catch (e) {} await restore(); }
+    return is(out, want, 'the name block\'s HTML of the switches (decomposed accents / composed / twelve decomposed E-acute) / of the router named the decomposed French name, 36 emoji, the Arabic name [the 16lc-names markup: one line at 11 px] / the Arabic name past the block');
+  });
+  // 16lc-midword-fix X4: NEW
+  await check('Wire 16lc-midword-fix (D4): an Arabic name in the last resort fills each line broken mid-word to the last letter that fits (the browser does not space joined Arabic letters, the measure now does not either): on a network switch an Arabic name of 26 letters with no space is drawn at 15 px on two lines, the first filled (it broke a letter or more early), nothing past the block, the block\'s text and tooltip the whole name', async () => {
+    const out = {}, want = {};
+    try {
+      await restore(); await _cMWire('advanced'); _wireAdvAddDevice('switch', 4); await wait(300);
+      const W = wireAdvanced.devices[wireAdvanced.devices.length - 1], nid = 'device:' + W.id;
+      W.name = _mfAR; _wireSetZoom(1); _wireRender(); await wait(400);
+      out.drawn = _mfRead(document, nid, _mfAR); want.drawn = [['المسرح_الرئيس', 'ي_يسار_الرف_أ'], [false, false], '15px', true, true, [true]];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { _wireSetZoom(1); } catch (e) {} await restore(); }
+    return is(out, want, 'the switch\'s Arabic name [lines as written, past the block, size, text = name, tooltip = name, each mid-word line filled]');
+  });
+  // 16lc-midword-fix X5: NEW
+  await check('Wire 16lc-midword-fix (D5): the last resort stops when two lines are full, so a pasted 40,000-letter router name with no space is fitted in well under half a second (it took about 2.4 s, every redraw): on a 10 x 10 router it shows at 18 px on three lines, lines 1 and 2 filled and whole, the rest on the third cut with ..., the block\'s text exactly the name', async () => {
+    const out = {}, want = {};
+    try {
+      await restore(); await _cMWire('advanced'); const r0 = wireAdvanced.routers.length; _wireAdvAddRouter(10); await wait(300);
+      const R = wireAdvanced.routers[r0], rid = 'router:' + R.id, ink = _mwInk(R);
+      const ms = []; for (let i = 0; i < 3; i++) { const t0 = performance.now(); _wtlNmShow(_mf40K, 629, 18, 0.18, ink); ms.push(performance.now() - t0); }
+      ms.sort((x, y) => x - y); out.fast = ms[1] < 500; want.fast = true;
+      R.title = _mf40K; _wireSetZoom(1); _wireRender(); await wait(500);
+      const sh = _mwSh(document, rid), p = _mfParts(document, rid);
+      out.drawn = [p.length, _mfOver(p), p.map(z => z[0]).join('') === _mf40K, sh.textContent === _mf40K, getComputedStyle(sh).fontSize, p.slice(0, 2).map(z => z[0].length)];
+      want.drawn = [3, [false, false, true], true, true, '18px', [42, 42]];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { _wireSetZoom(1); } catch (e) {} await restore(); }
+    return is(out, want, 'fitted in under 500 ms (the middle of three) / the router\'s name [parts, past the block, the parts joined are the name, the text is the name, the size, letters on lines 1 and 2]');
+  });
+  // 16lc-midword-fix X6: NEW
+  await check('Wire 16lc-midword-fix (M4 made to bite): the last resort never splits a letter (a grapheme) over two lines, whatever it is made of: on a network switch names of 16 to 40 accented letters written as letter + combining accent, of 10 to 22 flags (two code points each), of 9 to 15 family emoji (seven code points joined) and a Korean name with its syllables decomposed each break their lines only between whole letters, the lines joined are the name (M4 used precomposed accents, which have no mark to split, so it could never fail; a split by code point fails here)', async () => {
+    const out = [], want = [];
+    try {
+      await restore(); await _cMWire('advanced'); _wireAdvAddDevice('switch', 4); await wait(300);
+      const W = wireAdvanced.devices[wireAdvanced.devices.length - 1], nid = 'device:' + W.id, seg = new Intl.Segmenter(undefined, { granularity: 'grapheme' });
+      const names = [];
+      for (let n = 16; n <= 40; n += 4) names.push('e\u0301'.repeat(n));
+      for (const n of [10, 16, 22]) names.push('\u{1F1FA}\u{1F1F8}\u{1F1E9}\u{1F1EA}'.repeat(n / 2 | 0));
+      for (const n of [9, 12, 15]) names.push('\u{1F469}‍\u{1F469}‍\u{1F467}‍\u{1F466}'.repeat(n));
+      names.push('한국어_네트워크_스위치_무대_왼쪽_랙'.normalize('NFD'));
+      _wireSetZoom(1);
+      for (const nm of names) { W.name = nm; _wireRender(); await wait(200);
+        const sh = _mwSh(document, nid), parts = _mwParts(sh), cuts = new Set(Array.from(seg.segment(nm), x => x.index)); let at = 0, inside = 0;
+        parts.slice(0, -1).forEach(p => { at += p.length; if (!cuts.has(at)) inside++; });
+        out.push([parts.join('') === nm, sh.textContent === nm, parts.length > 1, inside]); want.push([true, true, true, 0]); }
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { _wireSetZoom(1); } catch (e) {} await restore(); }
+    return is(out, want, 'each name (accents 16-40, flags 10-22, family emoji 9-15, decomposed Korean) [lines joined = name, text = name, more than one line, line breaks inside a letter]');
+  });
+  // ── 16lc-onlyword (Omar 2026-10-04, shown that in the last resort, drawn at the bar's full size, other long words of the same name split
+  //    or get cut, BLACKMAGIC CORE_SW_01_STAGE_LEFT_RACK_A on a network switch reading "BLACKMAGI / C / CORE_SW..." and MICROCONVERTER
+  //    BIDIRECTIONAL "MICROCON / VERTER / BIDIRECTI...": "Split only the word that can't fit — Make the name a bit smaller so the other
+  //    words stay whole, and split only the word that can't fit even at the smallest size"; for a word with a hyphen that fits a line,
+  //    "Keep the word whole"). Only the last resort changes: its pieces (a word; a word wider than the line at 11 px, its parts after each
+  //    hyphen) wider than the line even at 11 px are UNFITTABLE, the others FITTABLE; the size is the bar's own size (18 / 15 px) when every
+  //    fittable piece fits a line there, else the largest size in 0.5 px steps down to 11 px at which every fittable piece fits a line
+  //    whole; at that size the layout is as before, so only an unfittable piece is split mid-word. A name with no fittable piece, every name
+  //    that does not reach the last resort, a converter and the picture box's own words are drawn byte for byte as before. O1, O2, O4, O5
+  //    and O6 FAIL on the 16lc-midword-fix page (r16lg/fix, b296c5bc) and PASS after; O3 and O7 pin what must NOT change and pass on both
+  //    (Help's sentence: M6, renamed in place). Helpers prefixed _oq (never a page name); they use 16lc-names' (_nm*), 16lc-midword's (_mw*) and 16ld-tools' (_tx*).
+  const _oqCS = 'CORE_SW_01_STAGE_LEFT_RACK_A', _oqBM = 'BLACKMAGIC CORE_SW_01_STAGE_LEFT_RACK_A', _oqMC = 'MICROCONVERTER BIDIRECTIONAL';
+  const _oqMX = 'MICROCONVERTER CORE_SW_01_STAGE_LEFT_A', _oqHY = 'MD-HX_AJA CORE_SW_01_STAGE_LEFT_RACK_A', _oqRB = 'LEFT rack-b CORE_SW_01_STAGE_LEFT_RACK_A';
+  const _oqR105 = 'VIDEOHUB_40X40_12G_MAIN_ENGINEERING_RACK_BALLROOM_A_VIDEOHUB_40X40_12G_MAIN_ENGINEERING_RACK_BALLROOM_B_C';
+  const _oqRW = 'VIDEOHUB_40X40_12G_MAIN_ENGINEERING_RACK_BALLROOM ' + _oqR105, _oqMW = 'MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMW ' + _oqR105;
+  /* Simple's Generic Router keeps 40 letters (_slbSetTitle): eleven and twenty of the widest letter there is (U+FDFD), 32 in all */
+  const _oqSF = '\uFDFD'.repeat(11) + ' ' + '\uFDFD'.repeat(20);
+  /* the width of t drawn in a name block's own face, weight and capitals at px with ls em of letter spacing (a hidden span beside it, the
+     zoom taken out), to show that a size is the LARGEST at which a word fits its line */
+  const _oqW = (sh, t, px, ls) => { const cs = getComputedStyle(sh), m = document.createElement('span'); m.style.cssText = 'position:absolute;visibility:hidden;white-space:pre;left:0;top:0;padding:0;margin:0;border:0;font-family:' + cs.fontFamily + ';font-weight:' + cs.fontWeight + ';text-transform:' + cs.textTransform + ';font-size:' + px + 'px;letter-spacing:' + ls + 'em';
+    m.textContent = t; sh.parentNode.appendChild(m); const k = sh.getBoundingClientRect().width / (sh.offsetWidth || 1), w = m.getBoundingClientRect().width / k; m.remove(); return w; };
+  /* [the word fits the room less its pixel of air at px, it does not at px + 0.5] (the room from the block's own fitting mark, on screen) */
+  const _oqLargest = (root, nid, word, px) => { const sh = _mwSh(root, nid); if (!sh) return 'no name ' + nid; const p = String(sh.getAttribute('data-wtl-fit') || '').split('|'), R = +p[0] - 1, ls = +p[3];
+    return [_oqW(sh, word, px, ls) <= R, _oqW(sh, word, px + 0.5, ls) > R]; };
+  // 16lc-onlyword O1: NEW
+  await check('Wire 16lc-onlyword (Omar 2026-10-04: "Split only the word that can\'t fit — Make the name a bit smaller so the other words stay whole, and split only the word that can\'t fit even at the smallest size"): a network switch named BLACKMAGIC CORE_SW_01_STAGE_LEFT_RACK_A (CORE_SW_01_STAGE_LEFT_RACK_A too wide for its line even at 11 px, BLACKMAGIC not) is drawn at 13 px, the largest size at which BLACKMAGIC fits its line whole: BLACKMAGIC whole on line 1, only CORE_SW_01_STAGE_LEFT_RACK_A split mid-word (CORE_SW_01 / _STAGE_LEFT_RACK_A, line 2 filled to the last letter that fits, the rest on the third cut with ...), the block\'s text exactly the name, the tooltip the whole name, beside the pencil, centred, clear of the picture box, the picture box\'s own words as before (it was BLACKMAGI / C / CORE_SW... at 15 px); the same after it is typed in its name box (the change) and at 75 % zoom', async () => {
+    const out = {}, want = {};
+    try {
+      await restore(); await _cMWire('advanced'); _wireAdvAddDevice('switch', 4); await wait(300);
+      const W = wireAdvanced.devices[wireAdvanced.devices.length - 1], nid = 'device:' + W.id;
+      W.name = _oqBM; _wireSetZoom(1); _wireRender(); await wait(400);
+      const N = { text: _oqBM, lines: ['BLACKMAGIC', 'CORE_SW_01', '_STAGE_LEFT_RACK_A'], breaks: ['word', 'MID-WORD'], font: '13px', cut: true, beside: true, centred: true, clear: true, tip: _oqBM, bar: 88,
+        parts: ['BLACKMAGIC ', 'CORE_SW_01', '_STAGE_LEFT_RACK_A'], over: [false, false, true], ending: 'ellipsis', ws: 'nowrap', filled: [true] };
+      out.drawn = _mwRead(document, nid); want.drawn = N;
+      out.largest = _oqLargest(document, nid, 'BLACKMAGIC', 13); want.largest = [true, true];
+      out.textIsName = _mwSh(document, nid).textContent === _oqBM; want.textIsName = true;
+      out.box = $$('.wtl-pic text.wtl-auto-t', _txNode(nid)).map(e => e.textContent); want.box = ['BLACKMAGIC', 'CORE_SW_01_STAGE_LEF…'];   /* the picture box's own words (_wtlLines), as on the 16lc-midword-fix page */
+      W.name = 'SWITCH A'; _wireRender(); await wait(300);
+      const inp = $('.wire-router-title input', _txNode(nid)); inp.focus(); inp.value = _oqBM; fire(inp, 'change'); await wait(400);
+      { const a = document.activeElement; if (a && a.blur) a.blur(); } await wait(300);
+      out.renamed = [W.name, _mwRead(document, nid)]; want.renamed = [_oqBM, N];
+      _wireSetZoom(0.75); _wireRender(); await wait(400);
+      out.zoom75 = _mwRead(document, nid); want.zoom75 = N;
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { _wireSetZoom(1); } catch (e) {} await restore(); }
+    return is(out, want, 'the switch\'s name [the text, its lines as drawn, the breaks, the size, cut, beside the pencil (centred), the block centred, clear of the picture, the tooltip, the bar, its lines as written, each drawn line overflowing, the line ending, white-space, each mid-word line filled] as drawn / BLACKMAGIC [fits at 13 px, not at 13.5 px] / the block\'s text is the name / the picture box\'s words / typed in its name box [stored, the name] / at 75 %');
+  });
+  // 16lc-onlyword O2: NEW
+  await check('Wire 16lc-onlyword: a network switch named MICROCONVERTER BIDIRECTIONAL (MICROCONVERTER too wide for its line even at 11 px, BIDIRECTIONAL not) is drawn at 11 px, the largest size at which BIDIRECTIONAL fits its line whole: only MICROCONVERTER is split mid-word (MICROCONVER / TER, line 1 filled to the last letter that fits) and BIDIRECTIONAL is whole on the third line, nothing cut, the block\'s text and the tooltip the whole name (it was MICROCON / VERTER / BIDIRECTI... at 15 px); on the light Wire sheet, where MICROCONVERTER fits a line at 12 px, it prints as before (MICROCONVERTER / BIDIRECTIONAL at 12 px, never mid-word)', async () => {
+    const out = {}, want = {};
+    try {
+      await restore(); await _cMWire('advanced'); _wireAdvAddDevice('switch', 4); await wait(300);
+      const W = wireAdvanced.devices[wireAdvanced.devices.length - 1], nid = 'device:' + W.id;
+      W.name = _oqMC; _wireSetZoom(1); _wireRender(); await wait(400);
+      out.drawn = _mwRead(document, nid);
+      want.drawn = { text: _oqMC, lines: ['MICROCONVER', 'TER', 'BIDIRECTIONAL'], breaks: ['MID-WORD', 'word'], font: '11px', cut: false, beside: true, centred: true, clear: true, tip: _oqMC, bar: 88,
+        parts: ['MICROCONVER', 'TER ', 'BIDIRECTIONAL'], over: [false, false, false], ending: 'ellipsis', ws: 'nowrap', filled: [true] };
+      out.largest = _oqLargest(document, nid, 'BIDIRECTIONAL', 11); want.largest = [true, true];
+      out.textIsName = _mwSh(document, nid).textContent === _oqMC; want.textIsName = true;
+      out.sheet = _nmLaid(_nmSheet(), b => { const r = _mwRead(b, nid); return typeof r === 'string' ? r : [r.text, r.lines, r.breaks, r.font, r.cut, r.parts, $$('[data-wtl-fit]', b).length]; });
+      want.sheet = [_oqMC, ['MICROCONVERTER', 'BIDIRECTIONAL'], ['word'], '12px', false, ['MICROCONVERTER ', 'BIDIRECTIONAL'], 0];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { _wireSetZoom(1); } catch (e) {} await restore(); }
+    return is(out, want, 'the switch\'s name [the text, its lines as drawn, the breaks, the size, cut, beside the pencil (centred), the block centred, clear of the picture, the tooltip, the bar, its lines as written, each drawn line overflowing, the line ending, white-space, each mid-word line filled] / BIDIRECTIONAL [fits at 11 px, not at 11.5 px] / the block\'s text is the name / on the light Wire sheet [text, lines, breaks, size, cut, lines as written, fitting marks printed]');
+  });
+  // 16lc-onlyword O3: NEW
+  await check('Wire 16lc-onlyword: a name with no piece that fits a line at 11 px, other than pieces that fit at the bar\'s own size, is drawn BYTE FOR BYTE as before (the bar\'s own size, the same lines): on a network switch CORE_SW_01_STAGE_LEFT_RACK_A alone (CORE_SW_ / 01_STAGE_ / LEFT_RACK_A at 15 px) and rack-b CORE_SW_01_STAGE_LEFT_RACK_A (rack-b fits at 15 px: rack-b / CORE_SW_ / 01_STAGE_LEFT_RACK_A), on a 10 x 10 router the 105-letter name with no space (three lines at 18 px); each name block\'s HTML is the 16lc-midword-fix markup exactly (its style, its fitting mark, its lines); on the light Wire sheet CORE_SW_01_STAGE_LEFT_RACK_A (CORE_SW_01_S / TAGE_LEFT_RA / CK_A at 15 px) and the router\'s name likewise, with no fitting mark', async () => {
+    const out = {}, want = {};
+    try {
+      await restore(); await _cMWire('advanced'); _wireAdvAddDevice('switch', 4); _wireAdvAddDevice('switch', 4); const r0 = wireAdvanced.routers.length; _wireAdvAddRouter(10); await wait(300);
+      const D = wireAdvanced.devices, [A, B] = D.slice(D.length - 2), R = wireAdvanced.routers[r0], a = 'device:' + A.id, b = 'device:' + B.id, r = 'router:' + R.id;
+      A.name = _oqCS; B.name = 'rack-b ' + _oqCS; R.title = _oqR105; _wireSetZoom(1); _wireRender(); await wait(400);
+      const sw = t => '109|145|15|0.12|' + _mwInk(t), rt = t => '629|665|18|0.18|' + _mwInk(t);
+      out.screen = [(_mwSh(document, a) || {}).outerHTML, (_mwSh(document, b) || {}).outerHTML, (_mwSh(document, r) || {}).outerHTML];
+      want.screen = [_mwLinesHTML(['CORE_SW_', '01_STAGE_', 'LEFT_RACK_A'], 15, 0.12, _mwInk(A), sw(A)), _mwLinesHTML(['rack-b ', 'CORE_SW_', '01_STAGE_LEFT_RACK_A'], 15, 0.12, _mwInk(B), sw(B)),
+        _mwLinesHTML(['VIDEOHUB_40X40_12G_MAIN_ENGINEERING_RACK_B', 'ALLROOM_A_VIDEOHUB_40X40_12G_MAIN_ENGINEER', 'ING_RACK_BALLROOM_B_C'], 18, 0.18, _mwInk(R), rt(R))];
+      out.sheet = _nmLaid(_nmSheet(), x => [(_mwSh(x, a) || {}).outerHTML, (_mwSh(x, r) || {}).outerHTML, $$('[data-wtl-fit]', x).length]);
+      want.sheet = [_mwLinesHTML(['CORE_SW_01_S', 'TAGE_LEFT_RA', 'CK_A'], 15, 0.12, _mwInk(A), null),
+        _mwLinesHTML(['VIDEOHUB_40X40_12G_MAIN_ENGINEERING_RACK_BAL', 'LROOM_A_VIDEOHUB_40X40_12G_MAIN_ENGINEERING_', 'RACK_BALLROOM_B_C'], 18, 0.18, _mwInk(R), null), 0];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { _wireSetZoom(1); } catch (e) {} await restore(); }
+    return is(out, want, 'each name block\'s HTML on screen (the switch: CORE_SW_01_STAGE_LEFT_RACK_A / rack-b CORE_SW_01_STAGE_LEFT_RACK_A; the 10 x 10 router: the 105-letter name) / on the light Wire sheet (CORE_SW_01_STAGE_LEFT_RACK_A, the router) [and the fitting marks printed]');
+  });
+  // 16lc-onlyword O4: NEW
+  await check('Wire 16lc-onlyword (Omar 2026-10-04, for a word with a hyphen that fits a line in the last resort: "Keep the word whole"): on a network switch MD-HX_AJA CORE_SW_01_STAGE_LEFT_RACK_A is drawn at 14.5 px, the largest size at which MD-HX_AJA fits its line whole: MD-HX_AJA whole on line 1 (it was MD- / HX_AJA at 15 px), only CORE_SW_01_STAGE_LEFT_RACK_A split mid-word, line 2 filled, the rest on the third cut with ...; LEFT rack-b CORE_SW_01_STAGE_LEFT_RACK_A keeps the bar\'s 15 px (rack-b fits there) and rack-b moves whole to line 2 (never LEFT RACK- / B); the block\'s text and the tooltip the whole name', async () => {
+    const out = {}, want = {};
+    try {
+      await restore(); await _cMWire('advanced'); _wireAdvAddDevice('switch', 4); _wireAdvAddDevice('switch', 4); await wait(300);
+      const D = wireAdvanced.devices, [A, B] = D.slice(D.length - 2), a = 'device:' + A.id, b = 'device:' + B.id;
+      A.name = _oqHY; B.name = _oqRB; _wireSetZoom(1); _wireRender(); await wait(400);
+      const f = (nid, nm) => { const r = _mwRead(document, nid); return typeof r === 'string' ? r : [r.lines, r.breaks, r.font, r.cut, r.parts, r.over, r.filled, r.text === nm, r.tip === nm]; };
+      out.hyphen = f(a, _oqHY); want.hyphen = [['MD-HX_AJA', 'CORE_SW_0', '1_STAGE_LEFT_RACK_A'], ['word', 'MID-WORD'], '14.5px', true, ['MD-HX_AJA ', 'CORE_SW_0', '1_STAGE_LEFT_RACK_A'], [false, false, true], [true], true, true];
+      out.largest = _oqLargest(document, a, 'MD-HX_AJA', 14.5); want.largest = [true, true];
+      out.rackb = f(b, _oqRB); want.rackb = [['LEFT', 'rack-b', 'CORE_SW_01_STAGE_LEFT_RACK_A'], ['word', 'word'], '15px', true, ['LEFT ', 'rack-b ', 'CORE_SW_01_STAGE_LEFT_RACK_A'], [false, false, true], [], true, true];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { _wireSetZoom(1); } catch (e) {} await restore(); }
+    return is(out, want, 'on the switch MD-HX_AJA CORE_SW_01_STAGE_LEFT_RACK_A / LEFT rack-b CORE_SW_01_STAGE_LEFT_RACK_A [lines as drawn, breaks, size, cut, lines as written, each line past the block, each mid-word line filled, text = name, tooltip = name] / MD-HX_AJA [fits at 14.5 px, not at 15 px]');
+  });
+  // 16lc-onlyword O5: NEW
+  await check('Wire 16lc-onlyword: on paper the rule is fitted again to the paper room (no pencil there, so more room): the light and the dark Wire sheet and the Look Book\'s Advanced Wire page print MICROCONVERTER CORE_SW_01_STAGE_LEFT_A on a network switch at 12 px with MICROCONVERTER whole on line 1 and only CORE_SW_01_STAGE_LEFT_A split mid-word, whole (on screen, where both words are too wide even at 11 px, it stays at 15 px exactly as before; on paper it was MICROCONVER / TER / CORE_SW... at 15 px), BLACKMAGIC CORE_SW_01_STAGE_LEFT_RACK_A at the bar\'s 15 px as before (BLACKMAGIC fits there; 13 px on screen), and a 10 x 10 router named a 49-letter word and the 105-letter word at 16 px (15 px on screen), the first word whole; the Look Book\'s Simple Wire page prints the Generic Router named eleven and twenty of the widest letter (U+FDFD; the router keeps 40 letters) at 16.5 px (16 px on screen; both were 18 px, the first word split), the first word whole; nothing cut there, the printed text exactly the name, no fitting mark printed', async () => {
+    const out = {}, want = {};
+    try {
+      await restore(); await _cMWire('advanced'); _wireAdvAddDevice('switch', 4); _wireAdvAddDevice('switch', 4); const r0 = wireAdvanced.routers.length; _wireAdvAddRouter(10); await wait(300);
+      const D = wireAdvanced.devices, [A, B] = D.slice(D.length - 2), R = wireAdvanced.routers[r0], a = 'device:' + A.id, b = 'device:' + B.id, r = 'router:' + R.id;
+      A.name = _oqMX; B.name = _oqBM; R.title = _oqRW; _wireSetZoom(1); _wireRender(); await wait(400);
+      const read = root => { const f = (nid, nm) => { const x = _mwRead(root, nid), sh = _mwSh(root, nid); return typeof x === 'string' ? x : [x.lines, x.breaks, x.font, x.cut, x.parts, sh.textContent === nm]; };
+        return { mx: f(a, _oqMX), bm: f(b, _oqBM), rt: f(r, _oqRW), marks: root === document ? 'screen' : $$('[data-wtl-fit]', root).length }; };
+      out.screen = read(document);
+      want.screen = { mx: [['MICROCON', 'VERTER', 'CORE_SW_01_STAGE_LEFT_A'], ['MID-WORD', 'word'], '15px', true, ['MICROCON', 'VERTER ', 'CORE_SW_01_STAGE_LEFT_A'], true],
+        bm: [['BLACKMAGIC', 'CORE_SW_01', '_STAGE_LEFT_RACK_A'], ['word', 'MID-WORD'], '13px', true, ['BLACKMAGIC ', 'CORE_SW_01', '_STAGE_LEFT_RACK_A'], true],
+        rt: [['VIDEOHUB_40X40_12G_MAIN_ENGINEERING_RACK_BALLROOM', 'VIDEOHUB_40X40_12G_MAIN_ENGINEERING_RACK_BALLROOM', '_A_VIDEOHUB_40X40_12G_MAIN_ENGINEERING_RACK_BALLROOM_B_C'], ['word', 'MID-WORD'], '15px', true,
+          ['VIDEOHUB_40X40_12G_MAIN_ENGINEERING_RACK_BALLROOM ', 'VIDEOHUB_40X40_12G_MAIN_ENGINEERING_RACK_BALLROOM', '_A_VIDEOHUB_40X40_12G_MAIN_ENGINEERING_RACK_BALLROOM_B_C'], true], marks: 'screen' };
+      const P = { mx: [['MICROCONVERTER', 'CORE_SW_01_STA', 'GE_LEFT_A'], ['word', 'MID-WORD'], '12px', false, ['MICROCONVERTER ', 'CORE_SW_01_STA', 'GE_LEFT_A'], true],
+        bm: [['BLACKMAGIC', 'CORE_SW_01_S', 'TAGE_LEFT_RACK_A'], ['word', 'MID-WORD'], '15px', true, ['BLACKMAGIC ', 'CORE_SW_01_S', 'TAGE_LEFT_RACK_A'], true],
+        rt: [['VIDEOHUB_40X40_12G_MAIN_ENGINEERING_RACK_BALLROOM', 'VIDEOHUB_40X40_12G_MAIN_ENGINEERING_RACK_BALLROOM', '_A_VIDEOHUB_40X40_12G_MAIN_ENGINEERING_RACK_BALLROOM_B_C'], ['word', 'MID-WORD'], '16px', true,
+          ['VIDEOHUB_40X40_12G_MAIN_ENGINEERING_RACK_BALLROOM ', 'VIDEOHUB_40X40_12G_MAIN_ENGINEERING_RACK_BALLROOM', '_A_VIDEOHUB_40X40_12G_MAIN_ENGINEERING_RACK_BALLROOM_B_C'], true], marks: 0 };
+      out.sheet = _nmLaid(_nmSheet(), read); want.sheet = P;
+      out.dark = _nmLaid(_wireExportSheetList('dark').join('').replace(/<\?xml[^>]*>/g, ''), read); want.dark = P;
+      { const h = await _nmBookAdv(); out.book = h ? _nmLaid(h, read) : 'no Wire page'; want.book = P; }
+      await restore(); await _lbOpen(); _wireSetZoom(1); _slbSetTitle(_oqSF); await wait(300); _wireRender(); await wait(400);
+      { const x = _mwRead(document, 'hub'); out.simple = typeof x === 'string' ? x : [x.lines[0], x.breaks, x.font, x.text === _oqSF]; }
+      want.simple = ['\uFDFD'.repeat(11), ['word', 'MID-WORD'], '16px', true];
+      { const doc = new DOMParser().parseFromString(await _qfLookBook(false), 'text/html'), w = $('#pdf-wire', doc);
+        out.simpleBook = w ? _nmLaid(w.outerHTML, x => { const y = _mwRead(x, 'hub'), sh = _mwSh(x, 'hub'); return typeof y === 'string' ? y : [y.lines[0], y.breaks, y.font, sh.textContent === _oqSF, $$('[data-wtl-fit]', x).length]; }) : 'no Wire page'; }
+      want.simpleBook = ['\uFDFD'.repeat(11), ['word', 'MID-WORD'], '16.5px', true, 0];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { _wireSetZoom(1); } catch (e) {} await restore(); }
+    return is(out, want, 'each name [lines as drawn, breaks, size, cut, lines as written, the text is the name; fitting marks printed] (the switch MICROCONVERTER CORE_SW_01_STAGE_LEFT_A, the switch BLACKMAGIC CORE_SW..., the router 49 + 105 letters) on screen / on the light Wire sheet / on the dark Wire sheet / on the Look Book\'s Advanced Wire page / Simple\'s Generic Router (11 + 20 x U+FDFD) on screen [line 1, breaks, size, text = name] / on the Look Book\'s Simple Wire page [and its fitting marks]');
+  });
+  // 16lc-onlyword O6: NEW
+  await check('Wire 16lc-onlyword: a 10 x 10 router renamed IN PLACE in its name box (the focus kept, 16ju) is fitted again each time: a 49-letter word and the 105-letter word at 15 px, the first word whole on line 1 and only the 105-letter word split mid-word; then the 105-letter word alone at the bar\'s 18 px as before; then a 40-letter word and the 105-letter word at 13.5 px, the first word whole; then NETGEAR M4250-26G4F on one line (the 16ld-fix2 block); each time the name stored, the block\'s text exactly the name and its lines joined the name', async () => {
+    const out = {}, want = {};
+    try {
+      await restore(); await _cMWire('advanced'); const r0 = wireAdvanced.routers.length; _wireAdvAddRouter(10); await wait(300);
+      const R = wireAdvanced.routers[r0], rid = 'router:' + R.id; _wireSetZoom(1); _wireRender(); await wait(300);
+      const inp = $('.wire-router-title input', _txNode(rid)); inp.focus();
+      const step = async v => { inp.value = v; fire(inp, 'change'); await wait(400); const r = _mwRead(document, rid), sh = _mwSh(document, rid);
+        return [R.title, document.activeElement === inp && inp.isConnected, typeof r === 'string' ? r : [r.lines.length, r.lines[0], r.breaks, r.font, sh.textContent === v, r.parts.join('') === v, r.tip === v], (sh.getAttribute('style') || '').slice(0, 20)]; };
+      out.inPlace = [await step(_oqRW), await step(_oqR105), await step(_oqMW), await step(_nmNG)];
+      want.inPlace = [[_oqRW, true, [3, 'VIDEOHUB_40X40_12G_MAIN_ENGINEERING_RACK_BALLROOM', ['word', 'MID-WORD'], '15px', true, true, true], 'display:block;overfl'],
+        [_oqR105, true, [3, 'VIDEOHUB_40X40_12G_MAIN_ENGINEERING_RACK_B', ['MID-WORD', 'MID-WORD'], '18px', true, true, true], 'display:block;overfl'],
+        [_oqMW, true, [3, 'MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMW', ['word', 'MID-WORD'], '13.5px', true, true, true], 'display:block;overfl'],
+        [_nmNG, true, [1, _nmNG, [], '18px', true, true, true], 'display:-webkit-box;']];
+      inp.blur(); await wait(300);
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { _wireSetZoom(1); } catch (e) {} await restore(); }
+    return is(out, want, 'the router renamed in place four times [stored, the focus kept, its name (lines, line 1, breaks, size, text = name, lines joined = name, tooltip), its style]');
+  });
+  // 16lc-onlyword O7: NEW
+  await check('Wire 16lc-onlyword: a CONVERTER is unchanged: named BLACKMAGIC CORE_SW_01_STAGE_LEFT_RACK_A or MICROCONVERTER BIDIRECTIONAL its name block is the 16ld-fix2 block byte for byte (the 2-line clamp, broken anywhere by the browser, 15 px), no fitting mark, on screen and on the light Wire sheet, and its picture box\'s words as before', async () => {
+    const out = {}, want = {};
+    try {
+      await restore(); await _cMWire('advanced'); _wireAdvAddDevice('converter', 2, 2); _wireAdvAddDevice('converter', 2, 2); await wait(300);
+      const D = wireAdvanced.devices, [C, E] = D.slice(D.length - 2), c = 'device:' + C.id, e = 'device:' + E.id;
+      C.name = _oqBM; E.name = _oqMC; _wireSetZoom(1); _wireRender(); await wait(400);
+      const conv = (root, nid, nm) => { const sh = _mwSh(root, nid), r = _nmRead(root, nid); return [sh ? sh.outerHTML : 'none', typeof r === 'string' ? r : [r.text, r.font, r.bar, r.tip], $$('[data-wtl-fit]', $$('g.wire-node', root).find(x => x.getAttribute('data-node-id') === nid)).length]; };
+      out.screen = [conv(document, c), conv(document, e)];
+      want.screen = [[_mwOneHTML(_oqBM, 15, 0.12, _mwInk(C), null), [_oqBM, '15px', 44, _oqBM], 0], [_mwOneHTML(_oqMC, 15, 0.12, _mwInk(E), null), [_oqMC, '15px', 44, _oqMC], 0]];
+      out.sheet = _nmLaid(_nmSheet(), x => [conv(x, c), conv(x, e)]); want.sheet = want.screen;
+      out.box = [$$('.wtl-pic text.wtl-auto-t', _txNode(c)).map(t => t.textContent), $$('.wtl-pic text.wtl-auto-t', _txNode(e)).map(t => t.textContent)];
+      want.box = [['BLACKMAGIC', 'CORE_SW_0…'], ['MICROCONV…', 'BIDIRECTI…']];   /* as on the 16lc-midword-fix page */
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { _wireSetZoom(1); } catch (e) {} await restore(); }
+    return is(out, want, 'each converter (BLACKMAGIC CORE_SW..., MICROCONVERTER BIDIRECTIONAL) [its name block\'s HTML, its name (text, size, bar, tooltip), fitting marks] on screen / on the light Wire sheet / its picture box\'s words');
+  });
+  // ── 16lc-onlyword-fix (the attackers of 16lc-onlyword, 2026-10-04, each case reproduced by real input before it was fixed): (A) under
+  //    Help > Accessibility 90 % / 115 % (the body's zoom; the drawing is not fitted again when the size changes) a fittable emoji or
+  //    Japanese word drawn at the last resort's new smaller size ran past its block and was cut with ... (the size was chosen at 100 % only;
+  //    Chrome draws emoji up to 5 % wider and Japanese at 15-17 px 2 % wider under the zoom): a size is now taken only when every fittable
+  //    piece also fits its line as drawn at 90 % and 115 %; on paper (drawn at 100 %) only the 100 % measure counts. (B) the size search
+  //    measured every piece of the whole name (a pasted 40,000-letter router name redrew about a third slower): each distinct word and piece
+  //    is measured once, the size found the same. OF1 and OF3 FAIL on the 16lc-onlyword page (r16li/build, 90d4b7fd) and PASS after; OF2
+  //    pins what must NOT change (paper fitted at 100 %) and passes on both. Helpers prefixed _of (never a page name); they use 16lc-names'
+  //    (_nm*), 16lc-midword's (_mw*), 16lc-onlyword's (_oq*) and 16ld-tools' (_tx*).
+  const _ofTVw = '📺📺📺📺📺📺📺', _ofTV = _ofTVw + ' CORE_SW_01_STAGE_LEFT_RA';
+  const _ofJ33 = 'ス整映明音ジ本テ予像調響照番ー備ス整映明音ジ本テ予像調響照番ー備ス', _ofJP = _ofJ33 + ' ' + '照'.repeat(70);
+  const _ofP8w = '📺📺📺📺📺📺📺📺', _ofP8 = _ofP8w + ' CORE_SW_01_STAGE_LEFT_R', _ofSPw = '📺'.repeat(27), _ofSP = _ofSPw + ' ' + '﷽'.repeat(20);
+  /* the width of t drawn in a name block's face, weight and capitals at px with ls em of letter spacing under the zoom z (a Help >
+     Accessibility size), in the block's px: a hidden span outside the body with that zoom, removed after */
+  const _ofWz = (sh, t, px, ls, z) => { const cs = getComputedStyle(sh), b = document.createElement('div'), r = document.createElement('div'), m = document.createElement('span');
+    b.style.cssText = 'position:fixed;left:0;top:0;visibility:hidden;padding:0;margin:0;border:0;zoom:' + z; r.style.cssText = 'display:block;width:1000px;height:0;padding:0;margin:0;border:0';
+    m.style.cssText = 'white-space:pre;padding:0;margin:0;border:0;line-height:1;font-style:normal;font-family:' + cs.fontFamily + ';font-weight:' + cs.fontWeight + ';text-transform:' + cs.textTransform + ';font-size:' + px + 'px;letter-spacing:' + ls + 'em';
+    m.textContent = t; b.appendChild(r); b.appendChild(m); document.documentElement.appendChild(b); const w = m.getBoundingClientRect().width / ((r.getBoundingClientRect().width / 1000) || 1); b.remove(); return w; };
+  /* [word fits the room less its pixel of air at px at every size of Z, it does not at px + 0.5 at one of them]; room: 'screen' / 'paper'
+     (the block's fitting mark) or a number of px */
+  const _ofLargestZ = (sh, room, word, px, Z) => { if (!sh) return 'no name'; const fit = String(sh.getAttribute('data-wtl-fit') || '').split('|'), R = (room === 'screen' ? +fit[0] : room === 'paper' ? +fit[1] : +room) - 1, ls = fit.length >= 5 ? +fit[3] : 0.12;
+    const ok = f => Z.every(z => _ofWz(sh, word, f, ls, z) <= R); return [ok(px), !ok(px + 0.5)]; };
+  /* each <br> part of a name block drawn inside the block (its drawn extent, Range rects, in the block's px, past its width by 0.5 px at most) */
+  const _ofIn = sh => { if (!sh) return 'no name'; const sb = sh.getBoundingClientRect(), k = sb.width / (sh.offsetWidth || 1), W = sb.width / k, out = []; let seg = [];
+    const flush = () => { if (!seg.length) { out.push(true); return; } const g = document.createRange(); g.setStartBefore(seg[0]); g.setEndAfter(seg[seg.length - 1]); const rs = [...g.getClientRects()].filter(q => q.width > 0); out.push(!rs.length || (Math.max(...rs.map(q => q.right)) - sb.left) / k <= W + 0.5); seg = []; };
+    [...sh.childNodes].forEach(c => { if (c.nodeName === 'BR') flush(); else seg.push(c); }); flush(); return out; };
+  /* the elements the page left right under <html> besides <head> and <body> (the zoom measure's hidden span must be gone) */
+  const _ofStray = () => [...document.documentElement.children].filter(e => e !== document.head && e !== document.body).length;
+  // 16lc-onlyword-fix OF1: NEW
+  await check('Wire 16lc-onlyword-fix (A, the UI attacker 2026-10-04: at Help > Accessibility 115 % a network switch named 📺📺📺📺📺📺📺 CORE_SW_01_STAGE_LEFT_RA read "📺📺📺📺📺📺..."): a fittable word stays whole at EVERY Help > Accessibility size: that switch is drawn at 11 px, the largest size at which 📺📺📺📺📺📺📺 fits its line at 100 %, 90 % and 115 % (at 11.5 px it ran past at 90 % and 115 %), the emoji word whole on line 1 and only CORE_SW_01_STAGE_LEFT_RA split; a 10 x 10 router named 33 Japanese letters and 70 x 照 is drawn at 16 px (at 16.5 px its first word ran past at 115 %), the first word whole on line 1; at 115 % and at 90 % every line of the switch and the router\'s first line stay inside their block; the block\'s text and the tooltip the name; no measuring span left; Help > Accessibility put back', async () => {
+    const out = {}, want = {}, A0 = (() => { try { return localStorage.getItem(_A11Y_KEY); } catch (e) { return null; } })(), Z0 = document.body.style.zoom;
+    try {
+      await restore(); await _cMWire('advanced'); _wireAdvAddDevice('switch', 4); const r0 = wireAdvanced.routers.length; _wireAdvAddRouter(10); await wait(300);
+      const W = wireAdvanced.devices[wireAdvanced.devices.length - 1], R = wireAdvanced.routers[r0], a = 'device:' + W.id, r = 'router:' + R.id;
+      W.name = _ofTV; R.title = _ofJP; _wireSetZoom(1); _wireRender(); await wait(400);
+      const rd = (nid, nm) => { const x = _mwRead(document, nid), sh = _mwSh(document, nid); return typeof x === 'string' ? x : [x.lines.length, x.lines[0], x.breaks, x.font, sh.textContent === nm, x.tip === nm]; };
+      out.drawn = [rd(a, _ofTV), rd(r, _ofJP)];
+      want.drawn = [[3, _ofTVw, ['word', 'MID-WORD'], '11px', true, true], [3, _ofJ33, ['word', 'MID-WORD'], '16px', true, true]];
+      out.largest = [_ofLargestZ(_mwSh(document, a), 'screen', _ofTVw, 11, [1, 0.9, 1.15]), _ofLargestZ(_mwSh(document, r), 'screen', _ofJ33, 16, [1, 0.9, 1.15])]; want.largest = [[true, true], [true, true]];
+      for (const sc of [1.15, 0.9]) { setA11yScale(sc); await wait(300); const s = _ofIn(_mwSh(document, a)), t = _ofIn(_mwSh(document, r)); out['at' + sc] = [s, Array.isArray(t) ? t[0] : t]; want['at' + sc] = [[true, true, true], true]; }
+      out.stray = _ofStray(); want.stray = 0;
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { setA11yScale(1); try { if (A0 === null) localStorage.removeItem(_A11Y_KEY); else localStorage.setItem(_A11Y_KEY, A0); } catch (e) {} document.body.style.zoom = Z0; if (typeof _a11yReflectActive === 'function') _a11yReflectActive(); } catch (e) {} try { _wireSetZoom(1); } catch (e) {} await restore(); }
+    return is(out, want, 'each name (the switch 📺 x 7 CORE_SW_01_STAGE_LEFT_RA, the router 33 Japanese letters and 70 x 照) [lines, line 1, breaks, size, text = name, tooltip = name] / the first word [fits its line at the size at 100 %, 90 % and 115 %, not at 0.5 px more at one of them] / at 115 % and at 90 % [each line of the switch inside its block, the router\'s first line inside its block] / measuring spans left under <html>');
+  });
+  // 16lc-onlyword-fix OF2: NEW
+  await check('Wire 16lc-onlyword-fix: on paper (drawn at 100 %, where there is no Help > Accessibility size) only the 100 % measure counts: a network switch named 📺📺📺📺📺📺📺📺 CORE_SW_01_STAGE_LEFT_R (on screen both words too wide even at 11 px: the bar\'s 15 px as before) prints at 13 px on the light and the dark Wire sheet and on the Look Book\'s Advanced Wire page, the largest size at which 📺 x 8 fits the paper line at 100 % (it would not at 115 %), the emoji word whole on line 1; Simple\'s Generic Router named 27 x 📺 and 20 x U+FDFD (a name from a file, longer than the 40 letters its box takes) prints at the bar\'s 18 px on the Look Book\'s Simple Wire page, the emoji word whole there; the text the name, no fitting mark printed', async () => {
+    const out = {}, want = {};
+    try {
+      await restore(); await _cMWire('advanced'); _wireAdvAddDevice('switch', 4); await wait(300);
+      const W = wireAdvanced.devices[wireAdvanced.devices.length - 1], a = 'device:' + W.id;
+      W.name = _ofP8; _wireSetZoom(1); _wireRender(); await wait(400);
+      { const x = _mwRead(document, a); out.screen = typeof x === 'string' ? x : [x.font, x.lines.length]; want.screen = ['15px', 3]; }
+      const paper = _mwSh(document, a);
+      const read = root => { const x = _mwRead(root, a), sh = _mwSh(root, a); return typeof x === 'string' ? x : [x.lines, x.breaks, x.font, sh.textContent === _ofP8, $$('[data-wtl-fit]', root).length]; };
+      const P = [[_ofP8w, 'CORE_SW_01_ST', 'AGE_LEFT_R'], ['word', 'MID-WORD'], '13px', true, 0];
+      out.sheet = _nmLaid(_nmSheet(), read); want.sheet = P;
+      out.dark = _nmLaid(_wireExportSheetList('dark').join('').replace(/<\?xml[^>]*>/g, ''), read); want.dark = P;
+      { const h = await _nmBookAdv(); out.book = h ? _nmLaid(h, read) : 'no Wire page'; want.book = P; }
+      out.largest100 = _ofLargestZ(paper, 'paper', _ofP8w, 13, [1]); want.largest100 = [true, true];
+      out.not115 = _ofLargestZ(paper, 'paper', _ofP8w, 13, [1.15])[0]; want.not115 = false;
+      await restore(); await _lbOpen(); _wireSetZoom(1); _slbMw().title = _ofSP; await wait(300); _wireRender(); await wait(400);   /* as a file can hold it (the box takes 40 letters) */
+      { const doc = new DOMParser().parseFromString(await _qfLookBook(false), 'text/html'), w = $('#pdf-wire', doc);
+        out.simpleBook = w ? _nmLaid(w.outerHTML, x => { const y = _mwRead(x, 'hub'), sh = _mwSh(x, 'hub'); return typeof y === 'string' ? y : [y.lines[0], y.breaks, y.font, sh.textContent === _ofSP, $$('[data-wtl-fit]', x).length]; }) : 'no Wire page'; }
+      want.simpleBook = [_ofSPw, ['word', 'MID-WORD'], '18px', true, 0];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { _wireSetZoom(1); } catch (e) {} await restore(); }
+    return is(out, want, 'the switch 📺 x 8 CORE_SW_01_STAGE_LEFT_R on screen [size, lines] / on the light Wire sheet, the dark one, the Look Book\'s Advanced Wire page [lines, breaks, size, text = name, fitting marks printed] / 📺 x 8 [fits the paper line at 13 px at 100 %, not at 13.5] / [it fits there at 115 %] / Simple\'s Generic Router 27 x 📺 + 20 x U+FDFD on the Look Book\'s Simple Wire page [line 1, breaks, size, text = name, fitting marks]');
+  });
+  // 16lc-onlyword-fix OF3: NEW
+  await check('Wire 16lc-onlyword-fix (B, the code attacker 2026-10-04: a pasted 40,000-letter router name redrew about a third slower than on the 16lc-midword-fix page): the last resort\'s size search measures each distinct word and piece once: for the 105-letter word, A-A-A-... and 47 x W (40,000 letters) on a 10 x 10 router _wtlNmSize gives 11 px as before with at most 100 measures (the 16lc-onlyword page: tens of thousands), and the name is fitted at 11 px, three lines, its lines joined the name', async () => {
+    const out = {}, want = {};
+    try {
+      const Wd = 'W'.repeat(47), mid = 40000 - _oqR105.length - Wd.length - 2, nm = _oqR105 + ' ' + 'A-'.repeat(Math.ceil(mid / 2)).slice(0, mid) + ' ' + Wd, words = nm.split(/\s+/);
+      const orig = window._wtlNmX; let n = 0, f = null; window._wtlNmX = function () { n++; return orig.apply(this, arguments); };
+      try { f = _wtlNmSize(words, 628, 18, 0.18); } finally { window._wtlNmX = orig; }
+      out.size = [nm.length, f, n <= 100, window._wtlNmX === orig]; want.size = [40000, 11, true, true];
+      const F = _wtlNmFit(nm, 629, 18, 0.18); out.fit = [F.fs, F.mid, F.lines.length, F.lines.join('') === nm]; want.fit = [11, true, 3, true];
+    } catch (e) { return 'threw: ' + e.message; }
+    return is(out, want, 'the 40,000-letter name [its length, _wtlNmSize\'s size, at most 100 measures, the measure put back] / _wtlNmFit [size, last resort, lines, lines joined = name]');
   });
   try { _fsPauseAll(); } catch (e) {} $$('video').forEach(v => { try { v.muted = true; v.pause(); } catch (e) {} });
   return { checks };

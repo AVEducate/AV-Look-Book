@@ -2537,7 +2537,7 @@
    "ok": true
   },
   {
-   "name": "Wire 16lc-names: a word too wide for its line is never broken mid-word: on a network switch BLACKMAGIC SWITCH is drawn smaller (13 px) so BLACKMAGIC fits its line whole (BLACKMAGIC / SWITCH); on a 10 x 10 router a 51-letter word with no space or hyphen is drawn on one line at 14.5 px; on Simple's Generic Router a 40-letter word likewise (13.5 px); nothing cut; only a word too wide even at 11 px (MICROCONVERTER BIDIRECTIONAL on the switch) is cut with ... at 11 px on its own line, the other word whole, the tooltip the whole name",
+   "name": "Wire 16lc-names: a word too wide for its line is drawn smaller rather than broken mid-word while it fits a line at 11 px: on a network switch BLACKMAGIC SWITCH is drawn smaller (13 px) so BLACKMAGIC fits its line whole (BLACKMAGIC / SWITCH); on a 10 x 10 router a 51-letter word with no space or hyphen is drawn on one line at 14.5 px; on Simple's Generic Router a 40-letter word likewise (13.5 px); nothing cut; only a word too wide even at 11 px (MICROCONVERTER BIDIRECTIONAL on the switch) goes to the last resort (16lc-midword, Omar 2026-10-02: \"Break mid-word as a last resort\"; 16lc-onlyword, Omar 2026-10-04: \"Split only the word that can't fit\"): 11 px, the largest size at which BIDIRECTIONAL fits its line whole, only MICROCONVERTER broken mid-word (MICROCONVER / TER), BIDIRECTIONAL whole on the third, nothing cut, the tooltip the whole name",
    "ok": true
   },
   {
@@ -2550,6 +2550,94 @@
   },
   {
    "name": "Help 16lc-names: Help > Wire > Tool headers says that a long name wraps onto a second line, and on every tool but a converter onto a third, breaking only between words (a word too long for the line breaks after its hyphens, or is drawn smaller), and that one longer still ends in ... and shows in full when you point at it",
+   "ok": true
+  },
+  {
+   "name": "Wire 16lc-midword (Omar 2026-10-02, shown CORE_SW_01_STAGE_LEFT_RACK_A on a network switch in small letters on ONE line with the other two lines empty: \"Break mid-word as a last resort — only when a word can't fit even at the smallest size, split it anywhere onto the empty lines, the way v0.8.1 did.\"): that name (one word wider than the line even at 11 px) shows at the bar's own 15 px on THREE lines broken mid-word (CORE_SW_ / 01_STAGE_ / LEFT_RACK_A), the first two each filled to the last letter that fits, the rest on the third cut with ... (only the third overflows), the block's text exactly the name, the tooltip the whole name, beside the pencil, centred, clear of the picture box, the picture box's own words as before; the same after it is typed in its name box (the change) and at 75 % zoom",
+   "ok": true
+  },
+  {
+   "name": "Wire 16lc-midword: on paper the rule is fitted again to the paper room (the 16lc-names breaks first, the mid-word last resort only when a piece is too wide there even at 11 px), so a name with no space shows whole on paper whenever it can: the light and the dark Wire sheet and the Look Book's Advanced Wire page print CORE_SW_01_STAGE_LEFT_RACK_A whole on the network switch at 15 px on three lines broken mid-word (CORE_SW_01_S / TAGE_LEFT_RA / CK_A; on screen cut on its third line), NETGEAR_M4250-26G4F (mid-word at 15 px on screen) with the 16lc-names breaks at 12.5 px (NETGEAR_M4250- / 26G4F) and MICROCONVERTER BIDIRECTIONAL (on screen at 11 px, only MICROCONVERTER mid-word: 16lc-onlyword) between its words at 12 px; nothing cut there, the printed text exactly the name, no fitting mark printed",
+   "ok": true
+  },
+  {
+   "name": "Wire 16lc-midword: every name the 16lc-names rule fits, and every name whose words all fit a line at 11 px but need more than three lines, is drawn BYTE FOR BYTE as before (no mid-word break), on screen and on paper: on a network switch NETGEAR M4250-26G4F (three lines at 15 px), BLACKMAGIC SWITCH (13 px), SWITCH A (one line, the 16ld-fix2 block), FEED STANDARDS DANTE ENGINEERING CONSOLE and BLACKMAGIC SMART VIDEOHUB 40X40 RACK B (too long for three lines even at 11 px, every word fits: three lines at 11 px by words, cut with ...), on a 10 x 10 router the 107-letter spaced name and on an 8 x 2 switcher the 110-letter one (three lines at 18 px, between words): each name block's HTML is the 16lc-names markup exactly (its style, its fitting mark, its lines); on the light Wire sheet NETGEAR M4250-26G4F (NETGEAR / M4250-26G4F at 15 px), FEED STANDARDS DANTE ENGINEERING CONSOLE (three lines at 11 px, whole) and the router's name likewise, with no fitting mark",
+   "ok": true
+  },
+  {
+   "name": "Wire 16lc-midword: the name block's text stays EXACTLY the whole name when the last resort draws it (no letter or space added or lost; lines joined by <br>, three at most, a letter never split from its accent): CORE_SW_01_STAGE_LEFT_RACK_A, a name with double spaces, a Japanese name, MICROCONVERTER BIDIRECTIONAL (at 11 px, 16lc-onlyword; the others at the bar's 15 px) and twenty accented letters on a network switch; and a 10 x 10 router renamed IN PLACE in its name box (the focus kept, 16ju) is fitted again each time: a 105-letter name with no space three lines at 18 px broken mid-word and whole, then NETGEAR M4250-26G4F on one line (the 16ld-fix2 block), then a 105-letter spaced name three lines between words, then a 303-letter name of short words cut at 11 px on three lines by words (no mid-word break)",
+   "ok": true
+  },
+  {
+   "name": "Wire 16lc-midword: a CONVERTER is unchanged: named CORE_SW_01_STAGE_LEFT_RACK_A its name block is the 16ld-fix2 block byte for byte (the 2-line clamp, broken anywhere by the browser, 15 px), no fitting mark, on screen and on the light Wire sheet, and its picture box's words as before; the network switch beside it with the same name breaks it mid-word on three lines at 15 px",
+   "ok": true
+  },
+  {
+   "name": "Help 16lc-midword: Help > Wire > Tool headers still says a long name wraps onto a second line, and on every tool but a converter onto a third, breaking only between words, that a word too long for the line breaks after its hyphens or is drawn smaller, and now that only a word too long even at the smallest size is split mid-word, at the largest size that keeps the other words whole; one longer still ends in ... and shows in full when you point at it",
+   "ok": true
+  },
+  {
+   "name": "Wire 16lc-midword-fix (D1): in the last resort a line that breaks at a no-break space (Option+Space) or a full-width space (a Japanese IME) keeps that space in the name but does not draw it at the end of the line, so lines 1 and 2 are never cut: on a network switch a Japanese name with a full-width space reads its first word whole on line 1 (it was cut with ..., 113 px in 109), LED B AUDIO LEFT + no-break space + A_NETGEAR_A_AUDIO_CORE reads LED B / AUDIO LEFT / A_NETGEAR... (line 2 was cut), MAINSTAGE + no-break space + CORE_SW_01_STAGE_LEFT_RACK reads MAINSTAGE / CORE_SW_ / 01_STAGE... (line 1 was cut); only the third line ends in ..., the block's text and the tooltip are the whole name; on the light Wire sheet the Japanese name prints whole and the others keep lines 1 and 2 whole",
+   "ok": true
+  },
+  {
+   "name": "Wire 16lc-midword-fix (D2): a name with ss written as one letter (the German sharp s, which the bar's capitals draw as SS, two letters and two letter spacings) is measured as drawn in the last resort, so no line runs past its block and each line broken mid-word is filled to the last letter that fits: on a network switch KONGRE(sharp s)_SAAL_CORE_SW (line 1 ran 0.6 px past and was cut), a 10 x 10 router with a long German name with four sharp s (line 1 ran 7.5 px past and lost ER); on the light Wire sheet SCHLO(sharp s)HOF_BUHNE_LINKS_A prints whole on three lines (it printed SCHLOSSHOF... / ...: the _B lost) and the router KONGRESSZENTRUM_GRO(sharp s)ER_SAAL_... on two lines whole (it lost DE); and a name of short words with one German word wider than the switch line even at 11 px as drawn (it was taken as fitting, its line cut at 11 px) goes to the last resort",
+   "ok": true
+  },
+  {
+   "name": "Wire 16lc-midword-fix (D3): a word that fits the line at 11 px as drawn never goes to the last resort, whatever its letters: on a network switch SCENE_COTE_A with its accents written as second characters (as macOS file names give them) is drawn byte for byte as the 16lc-names page draws it, whole at 11 px, the same as the name typed with composed accents (it was SCENE_COT / E_A at 15 px), and so are twelve such E-acute; a 10 x 10 router named a 63-letter French name with such accents, 36 emoji, or an Arabic name of 104 letters is drawn whole at 11 px on one line byte for byte as on the 16lc-names page (each was broken mid-word at 18 px)",
+   "ok": true
+  },
+  {
+   "name": "Wire 16lc-midword-fix (D4): an Arabic name in the last resort fills each line broken mid-word to the last letter that fits (the browser does not space joined Arabic letters, the measure now does not either): on a network switch an Arabic name of 26 letters with no space is drawn at 15 px on two lines, the first filled (it broke a letter or more early), nothing past the block, the block's text and tooltip the whole name",
+   "ok": true
+  },
+  {
+   "name": "Wire 16lc-midword-fix (D5): the last resort stops when two lines are full, so a pasted 40,000-letter router name with no space is fitted in well under half a second (it took about 2.4 s, every redraw): on a 10 x 10 router it shows at 18 px on three lines, lines 1 and 2 filled and whole, the rest on the third cut with ..., the block's text exactly the name",
+   "ok": true
+  },
+  {
+   "name": "Wire 16lc-midword-fix (M4 made to bite): the last resort never splits a letter (a grapheme) over two lines, whatever it is made of: on a network switch names of 16 to 40 accented letters written as letter + combining accent, of 10 to 22 flags (two code points each), of 9 to 15 family emoji (seven code points joined) and a Korean name with its syllables decomposed each break their lines only between whole letters, the lines joined are the name (M4 used precomposed accents, which have no mark to split, so it could never fail; a split by code point fails here)",
+   "ok": true
+  },
+  {
+   "name": "Wire 16lc-onlyword (Omar 2026-10-04: \"Split only the word that can't fit — Make the name a bit smaller so the other words stay whole, and split only the word that can't fit even at the smallest size\"): a network switch named BLACKMAGIC CORE_SW_01_STAGE_LEFT_RACK_A (CORE_SW_01_STAGE_LEFT_RACK_A too wide for its line even at 11 px, BLACKMAGIC not) is drawn at 13 px, the largest size at which BLACKMAGIC fits its line whole: BLACKMAGIC whole on line 1, only CORE_SW_01_STAGE_LEFT_RACK_A split mid-word (CORE_SW_01 / _STAGE_LEFT_RACK_A, line 2 filled to the last letter that fits, the rest on the third cut with ...), the block's text exactly the name, the tooltip the whole name, beside the pencil, centred, clear of the picture box, the picture box's own words as before (it was BLACKMAGI / C / CORE_SW... at 15 px); the same after it is typed in its name box (the change) and at 75 % zoom",
+   "ok": true
+  },
+  {
+   "name": "Wire 16lc-onlyword: a network switch named MICROCONVERTER BIDIRECTIONAL (MICROCONVERTER too wide for its line even at 11 px, BIDIRECTIONAL not) is drawn at 11 px, the largest size at which BIDIRECTIONAL fits its line whole: only MICROCONVERTER is split mid-word (MICROCONVER / TER, line 1 filled to the last letter that fits) and BIDIRECTIONAL is whole on the third line, nothing cut, the block's text and the tooltip the whole name (it was MICROCON / VERTER / BIDIRECTI... at 15 px); on the light Wire sheet, where MICROCONVERTER fits a line at 12 px, it prints as before (MICROCONVERTER / BIDIRECTIONAL at 12 px, never mid-word)",
+   "ok": true
+  },
+  {
+   "name": "Wire 16lc-onlyword: a name with no piece that fits a line at 11 px, other than pieces that fit at the bar's own size, is drawn BYTE FOR BYTE as before (the bar's own size, the same lines): on a network switch CORE_SW_01_STAGE_LEFT_RACK_A alone (CORE_SW_ / 01_STAGE_ / LEFT_RACK_A at 15 px) and rack-b CORE_SW_01_STAGE_LEFT_RACK_A (rack-b fits at 15 px: rack-b / CORE_SW_ / 01_STAGE_LEFT_RACK_A), on a 10 x 10 router the 105-letter name with no space (three lines at 18 px); each name block's HTML is the 16lc-midword-fix markup exactly (its style, its fitting mark, its lines); on the light Wire sheet CORE_SW_01_STAGE_LEFT_RACK_A (CORE_SW_01_S / TAGE_LEFT_RA / CK_A at 15 px) and the router's name likewise, with no fitting mark",
+   "ok": true
+  },
+  {
+   "name": "Wire 16lc-onlyword (Omar 2026-10-04, for a word with a hyphen that fits a line in the last resort: \"Keep the word whole\"): on a network switch MD-HX_AJA CORE_SW_01_STAGE_LEFT_RACK_A is drawn at 14.5 px, the largest size at which MD-HX_AJA fits its line whole: MD-HX_AJA whole on line 1 (it was MD- / HX_AJA at 15 px), only CORE_SW_01_STAGE_LEFT_RACK_A split mid-word, line 2 filled, the rest on the third cut with ...; LEFT rack-b CORE_SW_01_STAGE_LEFT_RACK_A keeps the bar's 15 px (rack-b fits there) and rack-b moves whole to line 2 (never LEFT RACK- / B); the block's text and the tooltip the whole name",
+   "ok": true
+  },
+  {
+   "name": "Wire 16lc-onlyword: on paper the rule is fitted again to the paper room (no pencil there, so more room): the light and the dark Wire sheet and the Look Book's Advanced Wire page print MICROCONVERTER CORE_SW_01_STAGE_LEFT_A on a network switch at 12 px with MICROCONVERTER whole on line 1 and only CORE_SW_01_STAGE_LEFT_A split mid-word, whole (on screen, where both words are too wide even at 11 px, it stays at 15 px exactly as before; on paper it was MICROCONVER / TER / CORE_SW... at 15 px), BLACKMAGIC CORE_SW_01_STAGE_LEFT_RACK_A at the bar's 15 px as before (BLACKMAGIC fits there; 13 px on screen), and a 10 x 10 router named a 49-letter word and the 105-letter word at 16 px (15 px on screen), the first word whole; the Look Book's Simple Wire page prints the Generic Router named eleven and twenty of the widest letter (U+FDFD; the router keeps 40 letters) at 16.5 px (16 px on screen; both were 18 px, the first word split), the first word whole; nothing cut there, the printed text exactly the name, no fitting mark printed",
+   "ok": true
+  },
+  {
+   "name": "Wire 16lc-onlyword: a 10 x 10 router renamed IN PLACE in its name box (the focus kept, 16ju) is fitted again each time: a 49-letter word and the 105-letter word at 15 px, the first word whole on line 1 and only the 105-letter word split mid-word; then the 105-letter word alone at the bar's 18 px as before; then a 40-letter word and the 105-letter word at 13.5 px, the first word whole; then NETGEAR M4250-26G4F on one line (the 16ld-fix2 block); each time the name stored, the block's text exactly the name and its lines joined the name",
+   "ok": true
+  },
+  {
+   "name": "Wire 16lc-onlyword: a CONVERTER is unchanged: named BLACKMAGIC CORE_SW_01_STAGE_LEFT_RACK_A or MICROCONVERTER BIDIRECTIONAL its name block is the 16ld-fix2 block byte for byte (the 2-line clamp, broken anywhere by the browser, 15 px), no fitting mark, on screen and on the light Wire sheet, and its picture box's words as before",
+   "ok": true
+  },
+  {
+   "name": "Wire 16lc-onlyword-fix (A, the UI attacker 2026-10-04: at Help > Accessibility 115 % a network switch named 📺📺📺📺📺📺📺 CORE_SW_01_STAGE_LEFT_RA read \"📺📺📺📺📺📺...\"): a fittable word stays whole at EVERY Help > Accessibility size: that switch is drawn at 11 px, the largest size at which 📺📺📺📺📺📺📺 fits its line at 100 %, 90 % and 115 % (at 11.5 px it ran past at 90 % and 115 %), the emoji word whole on line 1 and only CORE_SW_01_STAGE_LEFT_RA split; a 10 x 10 router named 33 Japanese letters and 70 x 照 is drawn at 16 px (at 16.5 px its first word ran past at 115 %), the first word whole on line 1; at 115 % and at 90 % every line of the switch and the router's first line stay inside their block; the block's text and the tooltip the name; no measuring span left; Help > Accessibility put back",
+   "ok": true
+  },
+  {
+   "name": "Wire 16lc-onlyword-fix: on paper (drawn at 100 %, where there is no Help > Accessibility size) only the 100 % measure counts: a network switch named 📺📺📺📺📺📺📺📺 CORE_SW_01_STAGE_LEFT_R (on screen both words too wide even at 11 px: the bar's 15 px as before) prints at 13 px on the light and the dark Wire sheet and on the Look Book's Advanced Wire page, the largest size at which 📺 x 8 fits the paper line at 100 % (it would not at 115 %), the emoji word whole on line 1; Simple's Generic Router named 27 x 📺 and 20 x U+FDFD (a name from a file, longer than the 40 letters its box takes) prints at the bar's 18 px on the Look Book's Simple Wire page, the emoji word whole there; the text the name, no fitting mark printed",
+   "ok": true
+  },
+  {
+   "name": "Wire 16lc-onlyword-fix (B, the code attacker 2026-10-04: a pasted 40,000-letter router name redrew about a third slower than on the 16lc-midword-fix page): the last resort's size search measures each distinct word and piece once: for the 105-letter word, A-A-A-... and 47 x W (40,000 letters) on a 10 x 10 router _wtlNmSize gives 11 px as before with at most 100 measures (the 16lc-onlyword page: tens of thousands), and the name is fitted at 11 px, three lines, its lines joined the name",
    "ok": true
   }
  ],
