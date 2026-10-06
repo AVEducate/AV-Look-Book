@@ -937,6 +937,26 @@ anchor on the function name and replace the first occurrence after it, never all
   mid-word-filled line (only an unfittable word) and a line packed with several fittable words keep the 100 % layout and can still
   run one letter past at 90 / 115 % (rule 4, as on the base page); the words of an EMPTY picture box on paper. Checks: new OF1-OF3
   (OF2 pins paper at 100 %). The phone is frozen.
+- **16lc-onlyword-fix2** (the verifier of 16lc-onlyword-fix, 2026-10-05; Omar chose to fix both before v0.8.2; on top of
+  16lc-onlyword-fix, not released; search `16lc-onlyword-fix2`; both reproduced by real input first, both only with Japanese or
+  emoji names at Help > Accessibility). (D1, a regression of 16lc-onlyword-fix) `_wtlNmZoomOK` measured each fittable PIECE at 90 % /
+  115 %, but the smaller size it chose let `_wtlNmMid` pack two fittable pieces on one line at 100 %, and that LINE overflowed at
+  115 %: a 10x10 router '照' x 31 + '1 🎤 ' + 'Q' x 120 at 16.5 px ('照…1 🎤 / QQQ / QQQ…') ran 9.19 px past its bar and hid "1🎤"
+  (16lc-onlyword: 17 px, every word whole). Now every line of the layout at the size that holds a fittable piece must show whole at
+  90 % and 115 % too (`_wtlNmZoomLines`: the 100 % layout's lines that hold a fittable piece, found by their places in the name; a
+  line of only an unfittable word's letters and a last line cut with ... at 100 % are not counted). This also answers 16lc-onlyword-fix's
+  question about a line packed with several fittable words: such a name (emoji words at a router's 18 px that ran past at 90 %) is now
+  drawn smaller until the line shows whole. (D2) the limit was R (the line less its pixel of air), not what shows: '照明調整卓AB
+  CORE_SW_01_STAGE_LEFT_RACK_A' on a network switch, whole at 90 / 100 / 115 % at the bar's 15 px, was drawn at 14.5 px. The block
+  under the zoom is not the room either: the tile's 1 px borders are drawn a whole device pixel wide, so the block is about 0.28 px
+  wider than the room at 115 % and 0.2 px narrower at 90 % on a 1x screen (with the room as the limit, '🎤🎤🎤🎤AB照
+  CORE_SW_01_STAGE_LEFT_RACK_A' took 13 px and lost "B照" at 90 %). The limit is now the block as drawn: the room inside 1 px borders
+  laid out in the same hidden zoomed box (never wider than the real block: the bar's other widths only widen it). A name whose every
+  fittable word shows whole at 90 / 100 / 115 % at the bar's own size stays at it; '照明調整卓本J' / '本1' still go to 14.5 px. The
+  100 % fit keeps its pixel of air; printable ASCII and pieces / lines under 0.8 of the line are not measured (a Latin name is fitted
+  exactly as before); paper is unchanged (`_wtlNmPap`). Speed: a line that is one piece is measured once, and `_wtlNmFit` draws the
+  layout the line check made at the size found (`_wtlNmZL`, consumed at once) instead of laying the name out again. Checks: new OG1
+  (D1), OG2 (D2), OG3 (pins the block as drawn). The phone is frozen.
 - Declined by the owner, do not resurface: mask shapes, anchor points, hardware profiles, canvas/WebGL renderer,
   interpolation filter toggles, upscale-factor notes, per-layer "sharp pixels", any licence mention.
 

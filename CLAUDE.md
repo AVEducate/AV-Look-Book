@@ -214,10 +214,12 @@ letterSpacing), a no-break / full-width space ending a line is not drawn (`_wtlN
 piece fits a line there, else at the largest size (down to 11 px) at which every piece that fits a line at 11 px fits whole
 (`_wtlNmSize`), so only a piece too wide even at 11 px is split. 16lc-onlyword-fix: that size also keeps every such piece inside
 its line at Help > Accessibility 90 % / 115 % (`_wtlNmZoomOK`, a hidden span with that zoom; not on paper, `_wtlNmPap`).
+16lc-onlyword-fix2: and every line holding such a piece (`_wtlNmZoomLines`), each inside the block as drawn at that size (the tile's
+1 px borders snap to whole device pixels: a 1 px-bordered replica in the same hidden box, not the room).
 Details: HANDBOOK section 5
 (`16ky-r3`, `16kz-answers`, `16kz-refresh`, `16kz-fix`, `16la-wire-mv`, `16la-ip`, `16la-colour-mv`, `16la-fix`, `16lb-simple`,
 `16lc-fixes`, `16ld-port`, `16ld-tools`, `16ld-fix`, `16ld-fix2`, `16lc-picsize`, `16lc-fix`, `16lc-names`, `16lc-midword`,
-`16lc-midword-fix`, `16lc-onlyword`, `16lc-onlyword-fix`).
+`16lc-midword-fix`, `16lc-onlyword`, `16lc-onlyword-fix`, `16lc-onlyword-fix2`).
 
 **Layer strip + ghost view (round 16ks)** — `_ls*` block in front of `_rcPresetRow`: `_lsStripHTML(p)` fills the header's old flex:1 spacer,
 `_lsTopTag(p,s)` prefixes `.screen-res`, `_lsGhost` is editor-only view state (class `lb-ghost` on the live DOM of `#canvas-area` / `#fs-canvas`,

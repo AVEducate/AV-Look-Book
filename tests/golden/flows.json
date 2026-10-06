@@ -2639,6 +2639,18 @@
   {
    "name": "Wire 16lc-onlyword-fix (B, the code attacker 2026-10-04: a pasted 40,000-letter router name redrew about a third slower than on the 16lc-midword-fix page): the last resort's size search measures each distinct word and piece once: for the 105-letter word, A-A-A-... and 47 x W (40,000 letters) on a 10 x 10 router _wtlNmSize gives 11 px as before with at most 100 measures (the 16lc-onlyword page: tens of thousands), and the name is fitted at 11 px, three lines, its lines joined the name",
    "ok": true
+  },
+  {
+   "name": "Wire 16lc-onlyword-fix2 (D1, the verifier 2026-10-05: at Help > Accessibility 115 % a 10x10 router named 照 x 31 + \"1 🎤 \" + Q x 120, drawn at 16.5 px as \"照…1 🎤 / QQQ / QQQ…\", ran 9.19 px past its bar and hid \"1🎤\"): every LINE that holds a fittable word shows whole at 90 % and 115 %, not only each word: that router is drawn at 17 px as 照…1 / 🎤 / QQQ…; 照 x 34 + \"1 📺 \" + Q x 120 at 15.5 px as 照…1 / 📺 / QQQ…; 🎤 x 18 + \"1 💡💡💡💡💡💡 \" + Q x 120 at 17.5 px (at its bar's 18 px the two emoji words share line 1, which ran past at 90 %: each word alone fits there); at 115 % and at 90 % every line holding one of their fittable words inside its block; the block's text and the tooltip the name; no measuring element left; Help > Accessibility put back",
+   "ok": true
+  },
+  {
+   "name": "Wire 16lc-onlyword-fix2 (D2, the verifier 2026-10-05: names that show every fittable word whole at 90 %, 100 % and 115 % at the bar's own size were drawn half a pixel smaller: the zoom check's limit was the line less its pixel of air, not what shows): a network switch named 照明調整卓AB CORE_SW_01_STAGE_LEFT_RACK_A is drawn at the bar's 15 px (照明調整卓AB whole on line 1 at 100 %, 115 % and 90 %); a 10x10 router named 27 emoji + II and Q x 120 at the bar's 18 px (its emoji word whole on line 1 at 90 % and 115 %); 照明調整卓本J / 照明調整卓本1 CORE_SW_01_STAGE_LEFT_RACK_A, which the bar's 15 px cuts at 115 %, still at 14.5 px, whole at 115 % and 90 %; the text and the tooltip the name; Help > Accessibility put back",
+   "ok": true
+  },
+  {
+   "name": "Wire 16lc-onlyword-fix2 (D2): the limit is the block AS DRAWN at the Help > Accessibility size, not the room: the tile's 1 px borders are drawn a whole device pixel wide, so at 90 % the block is about 0.2 px narrower than the room on a 1x screen; a network switch named 🎤🎤🎤🎤AB照 CORE_SW_01_STAGE_LEFT_RACK_A is drawn at 12.5 px (as on the 16lc-onlyword-fix page; with the room as the limit it took 13 px and at 90 % its first word ran 0.05 px past and lost \"B照\"): its first word whole on line 1 at 100 %, 115 % and 90 %, and in a hidden copy of its block 0.5 px larger it runs past at 90 % or 115 % (the largest size that shows whole); the text the name; no measuring element left; Help > Accessibility put back",
+   "ok": true
   }
  ],
  "pageErrors": []

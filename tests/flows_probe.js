@@ -12435,6 +12435,85 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
     } catch (e) { return 'threw: ' + e.message; }
     return is(out, want, 'the 40,000-letter name [its length, _wtlNmSize\'s size, at most 100 measures, the measure put back] / _wtlNmFit [size, last resort, lines, lines joined = name]');
   });
+  // ── 16lc-onlyword-fix2 (the verifier of 16lc-onlyword-fix, 2026-10-05; Omar chose to fix both before v0.8.2; each case reproduced by
+  //    real input before it was fixed). (D1) the zoom check measured each fittable PIECE at 90 % / 115 %, but the smaller size it chose
+  //    packed two fittable pieces on one line at 100 % and that LINE ran past its block at 115 % (a 10x10 router '照' x 31 + '1 🎤 ' + 'Q' x
+  //    120 at 16.5 px hid "1🎤"): every line that holds a fittable piece must now show whole at 90 % and 115 % too. (D2) its limit was R
+  //    (the line less its pixel of air), not what shows: '照明調整卓AB CORE_SW_01_STAGE_LEFT_RACK_A', whole at 90 / 100 / 115 % at the
+  //    bar's 15 px, was drawn at 14.5 px: the limit is now the block as drawn at that size. OG1 and OG2 FAIL on the 16lc-onlyword-fix page
+  //    (r16li/fix, 756b6d7f) and PASS after. Helpers prefixed _og (never a page name); they use 16lc-midword's (_mw*) and 16lc-onlyword-fix's
+  //    (_of*) helpers.
+  const _ogQ = 'Q'.repeat(120), _ogCS = 'CORE_SW_01_STAGE_LEFT_RACK_A';
+  const _ogA = '照'.repeat(31) + '1', _ogRA = _ogA + ' 🎤 ' + _ogQ, _ogB = '照'.repeat(34) + '1', _ogRB = _ogB + ' 📺 ' + _ogQ;
+  const _ogC = '🎤'.repeat(18) + '1 💡💡💡💡💡💡', _ogRC = _ogC + ' ' + _ogQ;
+  const _ogEm = '🎤📺🎧🎛️😀✅🎬🎤📺🎧🎛️😀✅🎬🎤📺🎧🎛️😀✅🎬🎤📺🎧II', _ogREm = _ogEm + ' ' + _ogQ;
+  const _ogJab = '照明調整卓AB ' + _ogCS, _ogJbj = '照明調整卓本J ' + _ogCS, _ogJb1 = '照明調整卓本1 ' + _ogCS;
+  /* how far each <br> part of a name block runs past the block (its last drawn letter's right edge, Range rects, in the block's own px;
+     <= 0 inside), at the Help > Accessibility size in force */
+  const _ogPast = sh => { if (!sh) return 'no name'; const sb = sh.getBoundingClientRect(), k = sb.width / (sh.offsetWidth || 1), out = []; let seg = []; const rg = document.createRange();
+    const flush = () => { let right = -1e9; seg.forEach(c => { const ns = c.nodeType === 3 ? [c] : (() => { const a = []; let n; const w = document.createTreeWalker(c, NodeFilter.SHOW_TEXT); while ((n = w.nextNode())) a.push(n); return a; })();
+      ns.forEach(n => { for (let i = 0; i < n.data.length; i++) { if (/\s/.test(n.data[i])) continue; rg.setStart(n, i); rg.setEnd(n, i + 1); const q = [...rg.getClientRects()].find(z => z.width > 0); if (q) right = Math.max(right, q.right); } }); });
+      out.push((right - sb.right) / k); seg = []; };
+    [...sh.childNodes].forEach(c => { if (c.nodeName === 'BR') flush(); else seg.push(c); }); flush(); return out; };
+  /* [the first n parts of a block are inside it (no more than 0.01 px past)] */
+  const _ogIn = (sh, n) => { const p = _ogPast(sh); return typeof p === 'string' ? p : p.slice(0, n).map(x => x <= 0.01); };
+  /* the Help > Accessibility size put back after a check (the stored choice, the body's zoom, the options' marks) */
+  const _ogA11y = () => { const A0 = (() => { try { return localStorage.getItem(_A11Y_KEY); } catch (e) { return null; } })(), Z0 = document.body.style.zoom;
+    return () => { try { setA11yScale(1); try { if (A0 === null) localStorage.removeItem(_A11Y_KEY); else localStorage.setItem(_A11Y_KEY, A0); } catch (e) {} document.body.style.zoom = Z0; if (typeof _a11yReflectActive === 'function') _a11yReflectActive(); } catch (e) {} }; };
+  // 16lc-onlyword-fix2 OG1: NEW
+  await check('Wire 16lc-onlyword-fix2 (D1, the verifier 2026-10-05: at Help > Accessibility 115 % a 10x10 router named 照 x 31 + "1 🎤 " + Q x 120, drawn at 16.5 px as "照…1 🎤 / QQQ / QQQ…", ran 9.19 px past its bar and hid "1🎤"): every LINE that holds a fittable word shows whole at 90 % and 115 %, not only each word: that router is drawn at 17 px as 照…1 / 🎤 / QQQ…; 照 x 34 + "1 📺 " + Q x 120 at 15.5 px as 照…1 / 📺 / QQQ…; 🎤 x 18 + "1 💡💡💡💡💡💡 " + Q x 120 at 17.5 px (at its bar\'s 18 px the two emoji words share line 1, which ran past at 90 %: each word alone fits there); at 115 % and at 90 % every line holding one of their fittable words inside its block; the block\'s text and the tooltip the name; no measuring element left; Help > Accessibility put back', async () => {
+    const out = {}, want = {}, back = _ogA11y();
+    try {
+      await restore(); await _cMWire('advanced'); const r0 = wireAdvanced.routers.length; _wireAdvAddRouter(10); _wireAdvAddRouter(10); _wireAdvAddRouter(10); await wait(300);
+      const RS = wireAdvanced.routers.slice(r0), ids = RS.map(r => 'router:' + r.id), N = [_ogRA, _ogRB, _ogRC];
+      RS.forEach((r, i) => { r.title = N[i]; }); _wireSetZoom(1); _wireRender(); await wait(400);
+      const rd = (nid, nm, two) => { const x = _mwRead(document, nid), sh = _mwSh(document, nid); return typeof x === 'string' ? x : [x.font, x.lines.length, x.lines[0], two ? x.lines[1] : 'Q fill', x.breaks, sh.textContent === nm, x.tip === nm]; };
+      out.drawn = [rd(ids[0], N[0], true), rd(ids[1], N[1], true), rd(ids[2], N[2], false)];
+      want.drawn = [['17px', 3, _ogA, '🎤', ['word', 'word'], true, true], ['15.5px', 3, _ogB, '📺', ['word', 'word'], true, true], ['17.5px', 3, _ogC, 'Q fill', ['word', 'MID-WORD'], true, true]];
+      for (const sc of [1.15, 0.9]) { setA11yScale(sc); await wait(300); out['at' + sc] = [_ogIn(_mwSh(document, ids[0]), 2), _ogIn(_mwSh(document, ids[1]), 2), _ogIn(_mwSh(document, ids[2]), 1)]; want['at' + sc] = [[true, true], [true, true], [true]]; }
+      setA11yScale(1); await wait(200);
+      out.stray = _ofStray(); want.stray = 0;
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { back(); try { _wireSetZoom(1); } catch (e) {} await restore(); }
+    return is(out, want, 'each router (照 x 31 + "1 🎤 " + Q x 120, 照 x 34 + "1 📺 " + Q x 120, 🎤 x 18 + "1 💡 x 6 " + Q x 120) [size, lines, line 1, line 2, breaks, text = name, tooltip = name] / at 115 % and at 90 % [its lines holding a fittable word inside the block] / measuring elements left under <html>');
+  });
+  // 16lc-onlyword-fix2 OG2: NEW
+  await check('Wire 16lc-onlyword-fix2 (D2, the verifier 2026-10-05: names that show every fittable word whole at 90 %, 100 % and 115 % at the bar\'s own size were drawn half a pixel smaller: the zoom check\'s limit was the line less its pixel of air, not what shows): a network switch named 照明調整卓AB CORE_SW_01_STAGE_LEFT_RACK_A is drawn at the bar\'s 15 px (照明調整卓AB whole on line 1 at 100 %, 115 % and 90 %); a 10x10 router named 27 emoji + II and Q x 120 at the bar\'s 18 px (its emoji word whole on line 1 at 90 % and 115 %); 照明調整卓本J / 照明調整卓本1 CORE_SW_01_STAGE_LEFT_RACK_A, which the bar\'s 15 px cuts at 115 %, still at 14.5 px, whole at 115 % and 90 %; the text and the tooltip the name; Help > Accessibility put back', async () => {
+    const out = {}, want = {}, back = _ogA11y();
+    try {
+      await restore(); await _cMWire('advanced'); _wireAdvAddDevice('switch', 4); _wireAdvAddDevice('switch', 4); _wireAdvAddDevice('switch', 4); const r0 = wireAdvanced.routers.length; _wireAdvAddRouter(10); await wait(300);
+      const SW = wireAdvanced.devices.slice(-3), ids = SW.map(d => 'device:' + d.id).concat(['router:' + wireAdvanced.routers[r0].id]), N = [_ogJab, _ogJbj, _ogJb1, _ogREm];
+      SW.forEach((d, i) => { d.name = N[i]; }); wireAdvanced.routers[r0].title = _ogREm; _wireSetZoom(1); _wireRender(); await wait(400);
+      const rd = (nid, nm) => { const x = _mwRead(document, nid), sh = _mwSh(document, nid); return typeof x === 'string' ? x : [x.font, x.lines[0], sh.textContent === nm, x.tip === nm]; };
+      out.drawn = ids.map((d, i) => rd(d, N[i]));
+      want.drawn = [['15px', '照明調整卓AB', true, true], ['14.5px', '照明調整卓本J', true, true], ['14.5px', '照明調整卓本1', true, true], ['18px', _ogEm, true, true]];
+      out.at1 = ids.map(d => _ogIn(_mwSh(document, d), 1)[0]); want.at1 = [true, true, true, true];
+      for (const sc of [1.15, 0.9]) { setA11yScale(sc); await wait(300); out['at' + sc] = ids.map(d => _ogIn(_mwSh(document, d), 1)[0]); want['at' + sc] = [true, true, true, true]; }
+      setA11yScale(1); await wait(200);
+      out.stray = _ofStray(); want.stray = 0;
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { back(); try { _wireSetZoom(1); } catch (e) {} await restore(); }
+    return is(out, want, 'the switches 照明調整卓AB / 本J / 本1 CORE_SW_01_STAGE_LEFT_RACK_A and the router 27 emoji + II + Q x 120 [size, line 1, text = name, tooltip = name] / [line 1 inside its block] at 100 %, at 115 %, at 90 % / measuring elements left under <html>');
+  });
+  // 16lc-onlyword-fix2 OG3: NEW
+  await check('Wire 16lc-onlyword-fix2 (D2): the limit is the block AS DRAWN at the Help > Accessibility size, not the room: the tile\'s 1 px borders are drawn a whole device pixel wide, so at 90 % the block is about 0.2 px narrower than the room on a 1x screen; a network switch named 🎤🎤🎤🎤AB照 CORE_SW_01_STAGE_LEFT_RACK_A is drawn at 12.5 px (as on the 16lc-onlyword-fix page; with the room as the limit it took 13 px and at 90 % its first word ran 0.05 px past and lost "B照"): its first word whole on line 1 at 100 %, 115 % and 90 %, and in a hidden copy of its block 0.5 px larger it runs past at 90 % or 115 % (the largest size that shows whole); the text the name; no measuring element left; Help > Accessibility put back', async () => {
+    const out = {}, want = {}, back = _ogA11y(), nm = '🎤🎤🎤🎤AB照 ' + _ogCS, w1 = '🎤🎤🎤🎤AB照';
+    try {
+      await restore(); await _cMWire('advanced'); _wireAdvAddDevice('switch', 4); await wait(300);
+      const d = wireAdvanced.devices[wireAdvanced.devices.length - 1], a = 'device:' + d.id; d.name = nm; _wireSetZoom(1); _wireRender(); await wait(400);
+      { const x = _mwRead(document, a), sh = _mwSh(document, a); out.drawn = typeof x === 'string' ? x : [window.devicePixelRatio === 1 ? x.font : '12.5px (a 1x screen)', x.lines[0], sh.textContent === nm, x.tip === nm]; want.drawn = ['12.5px', w1, true, true]; }
+      const f = parseFloat(getComputedStyle(_mwSh(document, a)).fontSize), up = [];
+      out.at1 = _ogIn(_mwSh(document, a), 1)[0]; want.at1 = true;
+      for (const sc of [1.15, 0.9]) { setA11yScale(sc); await wait(300); const sh = _mwSh(document, a); out['at' + sc] = _ogIn(sh, 1)[0]; want['at' + sc] = true;
+        const c = sh.cloneNode(false); c.removeAttribute('data-wtl-fit'); c.setAttribute('style', _wtlNmStyle(f + 0.5, 0.12, '#000', true) + ';position:absolute;left:0;top:0;visibility:hidden;pointer-events:none'); c.textContent = w1; sh.parentNode.appendChild(c);
+        try { up.push(_ogPast(c)[0] > 0.005); } finally { c.remove(); } }
+      setA11yScale(1); await wait(200);
+      out.largest = up.some(Boolean); want.largest = true;
+      out.stray = _ofStray(); want.stray = 0;
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { back(); try { _wireSetZoom(1); } catch (e) {} await restore(); }
+    return is(out, want, 'the switch 🎤🎤🎤🎤AB照 CORE_SW_01_STAGE_LEFT_RACK_A [size, line 1, text = name, tooltip = name] / [line 1 inside its block] at 100 %, 115 %, 90 % / [its first word 0.5 px larger runs past its block at 115 % or 90 %] / measuring elements left under <html>');
+  });
   try { _fsPauseAll(); } catch (e) {} $$('video').forEach(v => { try { v.muted = true; v.pause(); } catch (e) {} });
   return { checks };
 })
