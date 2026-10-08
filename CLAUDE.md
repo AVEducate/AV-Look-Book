@@ -219,7 +219,43 @@ its line at Help > Accessibility 90 % / 115 % (`_wtlNmZoomOK`, a hidden span wit
 Details: HANDBOOK section 5
 (`16ky-r3`, `16kz-answers`, `16kz-refresh`, `16kz-fix`, `16la-wire-mv`, `16la-ip`, `16la-colour-mv`, `16la-fix`, `16lb-simple`,
 `16lc-fixes`, `16ld-port`, `16ld-tools`, `16ld-fix`, `16ld-fix2`, `16lc-picsize`, `16lc-fix`, `16lc-names`, `16lc-midword`,
-`16lc-midword-fix`, `16lc-onlyword`, `16lc-onlyword-fix`, `16lc-onlyword-fix2`).
+`16lc-midword-fix`, `16lc-onlyword`, `16lc-onlyword-fix`, `16lc-onlyword-fix2`, `16lc-vpcards`, `16lc-vpvideo`, `16lc-vpaux`, `16lc-vpfinish`, `16lc-vpcards-fix`, `16lc-vpcards-fix2`, `16lc-vpcards-fix3`, `16lc-vpcards-fix4`).
+
+**One card (16lc-vpcards, 2026-10-06)** — the I/O Patch > Simple card (`_iogCardHTML` + `_iogSrcObj` / `_iogOutObj`) is also the card of
+Wire's left panel (desktop; the phone keeps Wire's own) and of the Video Presets > Advanced left panel (Wire > Simple's sections:
+`_fsPanelHTML`), at Wire's size, built by `_lbcSrcCard` / `_lbcOutCard` (only the drag differs). Its controls are the I/O Patch's
+own handlers (scoped to `#wire-panel-left .iog-card` / `#fs-left-panel .iog-card` too), so a change on any page is the same change;
+`_sysRender` / `_wireRender` ask the open Wire / Video Presets page to redraw (`_lbcAfterSys` / `_lbcAfterWire`). Its CSS is copied at
+run time for both panels (`_lbcCloneCss`): never add `#fs-left-panel` / `#wire-panel-left` card rules to the stylesheet by hand, and
+never a `#wire-overlay` part for them. Each Video Presets section ends with I/O's add card (`_fsLbcAdd` -> `_iogAddItem`); a new AUX is
+on in every preset from every add. Details: HANDBOOK section 5 (`16lc-vpcards`).
+
+**Files are sources (16lc-vpvideo, 2026-10-06)** — the Video tab's cards are Option C on the same frame (`_fsMediaCardHTML`, class `vc`;
+a click on the picture plays it, on Video Presets > Advanced only). A video / picture file is a source on every page: its cover is the
+picture of its I/O / Wire card and Wire tile (`_lbvCover`, via `_iogCardHTML` and `_wireSrcThumb`), Wire's panel lists it
+(`_lbvWireNames`), and a drop on the Wire drawing makes it a show source. Every rename of a file must go through `_lbvMoveFile` (the
+stored copy is keyed by name). Simple's content lists also show the I/O Patch's own sources (`_lbvIoItems`). Details: HANDBOOK section 5
+(`16lc-vpvideo`).
+
+**Names and AUX boxes (16lc-vpaux, 2026-10-06)** — a destination or AUX / DSM renamed from any place is renamed in every preset: every
+global rename must also call `_lbxOwnNamesGo(kind,id)` (an older show's `p.screenName` / `p.dsmName` stay until then; never write a new
+per-preset name on desktop). An AUX box fills with its content's picture or colour (`_lbxAuxFill`), however the content was set. The
+band pill's click waits out the double-click window (`_lbxPill`); the two remove-globally buttons ask with the I/O trash's window
+(`_lbxDelBody`). Desktop only (`_lbcOn`). Details: HANDBOOK section 5 (`16lc-vpaux`).
+
+**Step D answers (16lc-vpfinish, 2026-10-07)** — never write a rule ending in `body.lbn-measuring ... *` (it restyles the whole page per
+nudge). Wire > Advanced hand-made cards are I/O cards with the kinds `wcsrc` / `wcdst` / `wcaux` (`_lbfWcCard`; every I/O setter hands
+them to `_lbfWc*`). An opened show has no per-preset names (`_lbfOneName`). Files sorted after every source in `_srcNameOrder` until 16lc-vpcards-fix4 switched that off (the order first seen again). A panel
+card's name line goes through `_lbfFitCard` (a long word shrinks; only one too long even at the smallest size breaks, after _ or - first).
+Desktop only (`_lbcOn`). Details: HANDBOOK section 5 (`16lc-vpfinish`).
+
+**Fix round (16lc-vpcards-fix, 2026-10-07)** — SWITCHED OFF by 16lc-vpcards-fix4 (2026-10-08, `_lbnOff()` returns true): numbers are set by
+order again exactly as in the v0.8.2 candidate, nothing is kept (no `ioNums` saved, read or pinned), opening writes no number and makes no B
+(the I/O Patch draw makes it, right under its A) and the number box is not typed in; read `_lbnSrcMap` / `_srcNameOrder` (S), `_bdNo` (D),
+`_lbnOutNo('aux', d)` (A), never a list index of your own. While it was on (16lc-vpcards-fix to -fix3): S / D / A numbers were show data
+(`ioNums`), a number handed out was pinned (`_lbnPin`), opening kept every number (`_lbnOpen`; 16lc-vpcards-fix3: the automatic B made
+first) and a session B took the first free number after its A (`_lbnAutoB`). Card names show as typed; a name the app makes is in capitals. A file's sources[] entry
+is born with the file's colour. Desktop only (`_lbcOn`). Details: HANDBOOK section 5 (`16lc-vpcards-fix`).
 
 **Layer strip + ghost view (round 16ks)** — `_ls*` block in front of `_rcPresetRow`: `_lsStripHTML(p)` fills the header's old flex:1 spacer,
 `_lsTopTag(p,s)` prefixes `.screen-res`, `_lsGhost` is editor-only view state (class `lb-ghost` on the live DOM of `#canvas-area` / `#fs-canvas`,

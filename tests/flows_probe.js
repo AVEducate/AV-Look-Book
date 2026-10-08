@@ -388,13 +388,17 @@
     $('#sp-show-shape').click(); await wait(200); const steps = vpUndoLen() - n; doUndo(); await wait(250); const back = getShowMode(p.id, s.id); closeScreenPanel(); await restore();
     return is([idle, untouched, steps, back], [0, true, 1, 'show'], 'steps for the lit mode / nothing written / steps for Remove Labels / mode after undo');
   });
-  await check('Simple: Add AUX (+), the AUX panel Apply and Remove AUX Globally are each one undo step', async () => {
+  // 16lc-vpaux RA1: REPLACES the check named in its header (reason in the block)
+  // 16lc-vpaux: RENAMED in place. Why: Omar 2026-10-06 (16lc-vpaux): AUX name "Rename everywhere" (a destination too: renamed anywhere, renamed in every preset);
+  //   AUX box "Always fill"; the band pill's double-click and the two remove-globally confirms (r16lm SPEC C). Here: Remove AUX Globally asks first now (the I/O Patch trash's window, C3); the check reads that it asked and presses its Delete.
+  //   What it pins (one step each for +, Apply and Remove, each undone) is unchanged.
+  await check('Simple: Add AUX (+), the AUX panel Apply and Remove AUX Globally are each one undo step (16lc-vpaux: Remove AUX Globally asks first in the I/O Patch trash\'s window; its Delete is the step)', async () => {
     const out = []; let n = vpUndoLen(); const c0 = dsms.length; actions.addDSM(); await wait(250); out.push(vpUndoLen() - n, dsms.length - c0); doUndo(); await wait(250); out.push(dsms.length - c0);
     const p = presets[0], dm = dsms[0]; selDSM = { pid: p.id, dsmId: dm.id }; openDSMPanel(fakeEv, p.id, dm.id); await wait(350); n = vpUndoLen();
     $('#dsmp-name').value = 'RECORD 1'; $('#dsmp-apply').click(); await wait(250); out.push(vpUndoLen() - n, getDSMName(p.id, dm.id)); doUndo(); await wait(250); out.push(getDSMName(p.id, dm.id) !== 'RECORD 1');
-    const dm2 = dsms[0]; openDSMPanel(fakeEv, p.id, dm2.id); await wait(350); n = vpUndoLen(); const c1 = dsms.length; $('#dsmp-remove').click(); await wait(250); okDialogs(); await wait(200); out.push(vpUndoLen() - n, c1 - dsms.length); doUndo(); await wait(250); out.push(dsms.length === c1);
+    const dm2 = dsms[0]; openDSMPanel(fakeEv, p.id, dm2.id); await wait(350); n = vpUndoLen(); const c1 = dsms.length; $('#dsmp-remove').click(); await wait(250); okDialogs(); const _asked = !!$('#sys-confirm-overlay'); { const _g = $('#sys-confirm-go'); if (_g) _g.click(); } await wait(200); out.push(_asked, vpUndoLen() - n, c1 - dsms.length);   /* 16lc-vpaux: it asks first; Delete in the confirm window */ doUndo(); await wait(250); out.push(dsms.length === c1);
     selDSM = null; await restore();
-    return is(out, [1, 1, 0, 1, 'RECORD 1', true, 1, 1, true], '+ steps, added, undone / Apply steps, name, undone / Remove steps, removed, undone');
+    return is(out, [1, 1, 0, 1, 'RECORD 1', true, true, 1, 1, true], '+ steps, added, undone / Apply steps, name, undone / Remove asked first, steps, removed, undone');
   });
   await check('Simple: a dragged table row or preset tile lands where the drop line shows, a drop on the near half changes nothing, and Undo puts the order back', async () => {
     const names = () => screens.map(s => s.name).join('|'), pn = () => presets.map(p => p.code).join('|'); const o = names(), po = pn(); const out = [];
@@ -421,15 +425,19 @@
     const kept = (screens[0].notes || '') === old; await restore();
     return is([wasOpen, pickerOpen, panelOpen, kept], [true, false, true, true], 'picker was open / picker after Escape / panel after Escape / note untouched after Escape');
   });
-  await check('Simple: a table note or P# edit is one undo step, a per-preset destination name shows on that preset\'s canvas, and the blend window shows all four digits of a resolution', async () => {
+  // 16lc-vpaux RA2: REPLACES the check named in its header (reason in the block)
+  // 16lc-vpaux: RENAMED in place. Why: Omar 2026-10-06 (16lc-vpaux): AUX name "Rename everywhere" (a destination too: renamed anywhere, renamed in every preset);
+  //   AUX box "Always fill"; the band pill's double-click and the two remove-globally confirms (r16lm SPEC C). Here: the table's NAME box renames the destination in every preset from any row (C1, "Rename everywhere"); P03's row used to
+  //   save a name for P03 only. The first preset's canvas now reads PANEL WALL too.
+  await check('Simple: a table note or P# edit is one undo step, a destination name typed on a later preset\'s row shows on that preset\'s canvas and on every other (16lc-vpaux: renamed in every preset), and the blend window shows all four digits of a resolution', async () => {
     const out = []; let n = vpUndoLen(); const note = $('#tbody input[name="t-d-notes"]'); note.focus(); note.value = 'NEW NOTE'; note.blur(); await wait(250); out.push(vpUndoLen() - n, screens[0].notes);
     const others = $$('#tbody input[name="t-d-notes"]').filter(i => i.id.endsWith('-' + screens[0].id)).map(i => i.value); out.push(others.every(v => v === 'NEW NOTE'));
     const q = presets[2], s = screens[1]; homeSetScreenName(q.id, s.id, 'PANEL WALL'); render(); await wait(300);
-    out.push(($('.preset-row[data-pid="' + q.id + '"] .screen-box[data-sid="' + s.id + '"] .screen-inner > .screen-lbl') || {}).textContent, ($('.preset-row[data-pid="' + presets[0].id + '"] .screen-box[data-sid="' + s.id + '"] .screen-inner > .screen-lbl') || {}).textContent === s.name);
+    out.push(($('.preset-row[data-pid="' + q.id + '"] .screen-box[data-sid="' + s.id + '"] .screen-inner > .screen-lbl') || {}).textContent, ($('.preset-row[data-pid="' + presets[0].id + '"] .screen-box[data-sid="' + s.id + '"] .screen-inner > .screen-lbl') || {}).textContent === 'PANEL WALL');   /* 16lc-vpaux: the first preset reads it too */
     const p = presets[0]; initStripPositions(p.id); setPosition(p, screens[1].id, 1720, 0); const wasB = document.body.classList.contains('adv-hide-blend'); document.body.classList.remove('adv-hide-blend'); render(); await wait(250);
     openBlendPopup(p.id, screens[0].id, screens[1].id); await wait(250); const cut = $$('.blend-popup input[onchange*="setDestResFromPopup"]').filter(i => i.scrollWidth > i.clientWidth + 1).length; closeBlendPopup(); document.body.classList.toggle('adv-hide-blend', wasB);
     out.push(cut); await restore();
-    return is(out, [1, 'NEW NOTE', true, 'PANEL WALL', true, 0], 'note undo steps, note / every row of that destination follows / per-preset name on its canvas, first preset keeps the global name / resolution fields cut off');
+    return is(out, [1, 'NEW NOTE', true, 'PANEL WALL', true, 0], 'note undo steps, note / every row of that destination follows / the name on its canvas, the first preset\'s canvas reads it too / resolution fields cut off');
   });
 
   // ── Dead Space: 16 PPI default and the stacked read-out (round 16kr, dead-space, owner report 2026-09-21) ───────────
@@ -2409,11 +2417,16 @@
   const _adPreset = () => { const p = presets.find(x => dsms.some(d => getDSMOn(x.id, d.id))) || presets[0]; return { p, d: dsms.filter(x => getDSMOn(p.id, x.id))[0] || null }; };
   const _adLayers = sid => presets.map(p => ((p.layers || {})[sid] || {})[1] || null);
 
-  await check('Advanced: a source dropped on an AUX box sets what that AUX shows in THIS preset — one undo step, Undo and Redo go both ways, the other presets keep theirs', async () => {
+  // 16lc-vpcards R1: REPLACES the check named in its header (reason in the block)
+  // 16lc-vpcards: RENAMED in place. Why: Omar 2026-10-05 / 06 (16lc-vpcards): "Video Preset Advance Cards are wrong, I/O Patch Cards are correct"; one card everywhere:
+  //   the I/O Patch card is also the card of Wire's left panel and of the Video Presets > Advanced left panel, at Wire's size, and a new
+  //   AUX is on in every preset from every add. Here: the source card it drags was the old .fs-src card; the Advanced panel now draws the I/O Patch card
+  //   (.iog-card, still data-src and draggable with fs-src:NAME). What it pins is unchanged.
+  await check('Advanced: a source dropped on an AUX box sets what that AUX shows in THIS preset — one undo step, Undo and Redo go both ways, the other presets keep theirs (16lc-vpcards: dragged from the I/O Patch card the Advanced panel now draws)', async () => {
     const { p, d } = _adPreset(); if (!d) { await _adHome(); return 'no AUX is switched on in any preset'; }
     await _adOpen(p.id);
     const was = getDSMContent(p.id, d.id) || '';
-    const card = $$('#fs-source-list .fs-src[data-src]').find(c => c.dataset.src && c.dataset.src !== was);
+    const card = $$('#fs-source-list .iog-card[data-src]').find(c => c.dataset.src && c.dataset.src !== was);   /* 16lc-vpcards: the source card is the I/O Patch card (data-src, draggable) */
     const box = $('#fs-canvas .dsm-box');
     if (!card || !box) { await _adHome(); return 'no source card or no AUX box on the Advanced page'; }
     const name = card.dataset.src, others = presets.filter(x => x.id !== p.id).map(x => getDSMContent(x.id, d.id) || ''), u0 = _undoStack.length;
@@ -2428,24 +2441,34 @@
       'content after the drop / undo steps / the box shows the name / the other presets / after Undo / after Redo');
   });
 
-  await check('Advanced: an AUX box lights up while a source is dragged over it, like a layer or a BG, and dropping the name it already shows writes nothing and records no undo step', async () => {
+  // 16lc-vpcards R2: REPLACES the check named in its header (reason in the block)
+  // 16lc-vpcards: RENAMED in place. Why: Omar 2026-10-05 / 06 (16lc-vpcards): "Video Preset Advance Cards are wrong, I/O Patch Cards are correct"; one card everywhere:
+  //   the I/O Patch card is also the card of Wire's left panel and of the Video Presets > Advanced left panel, at Wire's size, and a new
+  //   AUX is on in every preset from every add. Here: the source cards it drags were the old .fs-src cards; the Advanced panel now draws the I/O Patch
+  //   card (.iog-card, data-src, draggable). What it pins is unchanged.
+  await check('Advanced: an AUX box lights up while a source is dragged over it, like a layer or a BG, and dropping the name it already shows writes nothing and records no undo step (16lc-vpcards: dragged from the I/O Patch card the Advanced panel now draws)', async () => {
     const { p, d } = _adPreset(); if (!d) { await _adHome(); return 'no AUX is switched on in any preset'; }
     await _adOpen(p.id);
     const was = getDSMContent(p.id, d.id) || '';
-    const card = $$('#fs-source-list .fs-src[data-src]').find(c => c.dataset.src && c.dataset.src !== was);
+    const card = $$('#fs-source-list .iog-card[data-src]').find(c => c.dataset.src && c.dataset.src !== was);   /* 16lc-vpcards: the I/O Patch card */
     const box = $('#fs-canvas .dsm-box');
     if (!card || !box) { await _adHome(); return 'no source card or no AUX box on the Advanced page'; }
     const hot1 = await _adDrag(card, box);
     const cold = !$('#fs-canvas .dsm-box').classList.contains('fs-drop-hot');
     const u1 = _undoStack.length, first = getDSMContent(p.id, d.id);
-    const hot2 = await _adDrag($$('#fs-source-list .fs-src[data-src]').find(c => c.dataset.src === first), $('#fs-canvas .dsm-box'));
+    const hot2 = await _adDrag($$('#fs-source-list .iog-card[data-src]').find(c => c.dataset.src === first), $('#fs-canvas .dsm-box'));
     const idle = _undoStack.length - u1, same = getDSMContent(p.id, d.id);
     await _adHome();
     return is([hot1, cold, hot2, same === first, idle], [true, true, true, true, 0],
       'lit while over it / the light goes out after the drop / lit again on the second drag / the content stands / undo steps for a drop that changes nothing');
   });
 
-  await check('Advanced: an AUX switched off in this preset has no box to drop on (the Simple table has no cell for it either) and keeps what it showed; the one that is on takes the drop', async () => {
+  // 16lc-vpcards R3: REPLACES the check named in its header (reason in the block)
+  // 16lc-vpcards: RENAMED in place. Why: Omar 2026-10-05 / 06 (16lc-vpcards): "Video Preset Advance Cards are wrong, I/O Patch Cards are correct"; one card everywhere:
+  //   the I/O Patch card is also the card of Wire's left panel and of the Video Presets > Advanced left panel, at Wire's size, and a new
+  //   AUX is on in every preset from every add. Here: the source card it drags was the old .fs-src card; the Advanced panel now draws the I/O Patch card.
+  //   What it pins is unchanged.
+  await check('Advanced: an AUX switched off in this preset has no box to drop on (the Simple table has no cell for it either) and keeps what it showed; the one that is on takes the drop (16lc-vpcards: dragged from the I/O Patch card the Advanced panel now draws)', async () => {
     const { p, d } = _adPreset(); if (!d) { await _adHome(); return 'no AUX is switched on in any preset'; }
     await _adOpen(p.id);
     const boxes0 = $$('#fs-canvas .dsm-box').length, u0 = _undoStack.length;
@@ -2455,7 +2478,7 @@
     const cellsOff = $$('#tbody input').filter(i => (i.getAttribute('onblur') || '').indexOf("setDSMContent('" + p.id + "','" + d.id + "'") === 0).length;
     while (_undoStack.length > u0) { doUndo(); await wait(300); }
     await wait(300);
-    const card = $$('#fs-source-list .fs-src[data-src]').find(c => c.dataset.src && c.dataset.src !== kept), box = $('#fs-canvas .dsm-box');
+    const card = $$('#fs-source-list .iog-card[data-src]').find(c => c.dataset.src && c.dataset.src !== kept), box = $('#fs-canvas .dsm-box');   /* 16lc-vpcards: the I/O Patch card */
     if (!card || !box) { await _adHome(); return 'the AUX box did not come back'; }
     await _adDrag(card, box);
     const landed = getDSMContent(p.id, d.id);
@@ -2550,7 +2573,12 @@
   const _cfSwatch = async (pid, sid, n, label) => { await _cfPanel(pid, sid, n); const sw = $('#layer-panel .lp-color-swatch[data-label="' + label + '"]'); if (!sw) return null; sw.click(); await wait(350); return ($('#cp-hex') || {}).value || ''; };
   const _cfSetColour = async (pid, sid, n, label, hex) => { const shown = await _cfSwatch(pid, sid, n, label); if (shown === null) return null; cpSetFromHex(hex); cpApply(); await wait(400); return shown; };
 
-  await check('Simple: a colour given to a built-in content type reaches EVERY place that draws it — the table cell, the canvas chip, the layer panel dot, its ✎ swatch, the AUX list and the Advanced source rail', async () => {
+  // 16lc-vpcards R4: REPLACES the check named in its header (reason in the block)
+  // 16lc-vpcards: RENAMED in place. Why: Omar 2026-10-05 / 06 (16lc-vpcards): "Video Preset Advance Cards are wrong, I/O Patch Cards are correct"; one card everywhere:
+  //   the I/O Patch card is also the card of Wire's left panel and of the Video Presets > Advanced left panel, at Wire's size, and a new
+  //   AUX is on in every preset from every add. Here: Omar chose the card colour "Cable colour, like Wire/I/O": the Advanced card no longer paints the
+  //   content colour (the layers on the tile still do); the check now pins that the card shows the source's cable colour. The other places unchanged.
+  await check('Simple: a colour given to a built-in content type reaches EVERY place that draws it — the table cell, the canvas chip, the layer panel dot, its ✎ swatch and the AUX list; the Video Presets > Advanced card shows the cable colour instead, as on Wire and the I/O Patch (16lc-vpcards)', async () => {
     const f = firstLayer(); if (!f) { await _cfHome(); return 'no layer in the show'; }
     pushUndo(); setL(f.pid, f.sid, 1, 'PGM'); scheduleRender(); await wait(250);
     const shown = await _cfSetColour(f.pid, f.sid, 1, 'PGM', '#123456');
@@ -2575,11 +2603,11 @@
     }
     // the Advanced page's source rail
     openFullscreen(f.pid); await wait(800); _fsSetSrcTab('images'); await wait(500);
-    const card = $$('#fs-source-list .fs-src[data-src]').find(c => c.dataset.src === 'PGM');
-    const railC = card ? getComputedStyle($('.fs-src-thumb', card)).backgroundColor : '(no PGM card in the rail)';
+    const card = $$('#fs-source-list .iog-card[data-src]').find(c => c.dataset.src === 'PGM'), cable = _cfRgb(_wireGetSourceMeta('PGM').wireColor);   /* 16lc-vpcards (Omar: card colour "Cable colour, like Wire/I/O"): the I/O Patch card in its cable colour */
+    const railC = card ? (getComputedStyle($('.wire-thumb-auto', card)).backgroundColor === cable ? 'the cable colour' : getComputedStyle($('.wire-thumb-auto', card)).backgroundColor) : '(no PGM card in the rail)';
     const out = is([findContent('PGM').c, cellC, chipC, dotC, swC, auxC, auxWrites, railC],
-      ['#123456', want, want, want, want, want, '#123456', want],
-      'the colour in force / the table cell / the canvas chip / the layer panel dot / its ✎ swatch / the AUX list dot / what the AUX row would write / the Advanced rail card');
+      ['#123456', want, want, want, want, want, '#123456', 'the cable colour'],
+      'the colour in force / the table cell / the canvas chip / the layer panel dot / its ✎ swatch / the AUX list dot / what the AUX row would write / the Advanced card (its cable colour)');
     await _cfHome(); return out;
   });
 
@@ -3697,11 +3725,15 @@
     _lfxSnap = null; while (_undoStack.length > b0) { doUndo(); await wait(250); } _fsClearLayer(); await wait(200); mute();
     return is(got, ['bg note', '#123abc'], 'notes / colour tag');
   });
-  await check('Advanced: a Video card has a remove button; Remove asks first, empties every layer and BG that used the file with their clip settings, and one Undo brings it all back', async () => {
+  // 16lc-vpvideo RV1: REPLACES the check named in its header (reason in the block)
+  // 16lc-vpvideo: RENAMED in place. Why: Omar 2026-10-05 / 06 (16lc-vpvideo): the VIDEO tab cards are "Option C"; files and the I/O Patch's own sources are sources
+  //   everywhere ("Show them everywhere ... when you are not in video preset, advancer it should not play out just show the cover image"). Here: the Video card is the Option C card now (.vc) and its trash sits in the shuffle square (.vc-trash),
+  //   not the old corner x (.fs-src-x on .fs-src-media). What it pins is unchanged.
+  await check('Advanced: a Video card has a remove button; Remove asks first, empties every layer and BG that used the file with their clip settings, and one Undo brings it all back (16lc-vpvideo: the trash in the Option C card\'s shuffle square)', async () => {
     const name = clipOk ? 'TEST CLIP' : 'TEST 4x3'; const b0 = _undoStack.length; pushUndo();
     homeSetL(A.pid, A.sid, 2, name); _fsAssignBg(A.pid, screens[1].id, name); setLayerMedia(A.pid, A.sid, 2, { hue: 20 }); _fsClearLayer(); _fsSetSrcTab('video'); await wait(400); mute();
     const back0 = async () => { while (_undoStack.length > b0) { doUndo(); await wait(250); } _fsSetSrcTab('images'); _fsClearLayer(); await wait(300); mute(); };
-    const card = $$('#fs-source-list .fs-src-media').find(c => c.dataset.src === name); const x = card && card.querySelector('.fs-src-x'); if (!x) { await back0(); return 'no remove button on the Video card'; }
+    const card = $$('#fs-source-list .vc').find(c => c.dataset.src === name); const x = card && card.querySelector('.vc-trash'); if (!x) { await back0(); return 'no remove button on the Video card'; }   /* 16lc-vpvideo: the Option C card, its trash in the shuffle square */
     const u0 = _undoStack.length; x.click(); await wait(350); const asked = /Remove/.test(dialogText()) && /2 places/.test(dialogText()); okDialogs(); await wait(600);
     const p = () => presets.find(q => q.id === A.pid); const gone = [customLibrary.some(c => c.l === name), getL(A.pid, A.sid, 2), (p().bgNames || {})[screens[1].id] || null, !!((p().layerMedia || {})[A.sid] || {})[2], _undoStack.length - u0];
     doUndo(); await wait(700); mute(); const back = [customLibrary.some(c => c.l === name), getL(A.pid, A.sid, 2), (p().bgNames || {})[screens[1].id], !clipOk || !!_fsMediaUrl(name)];
@@ -4230,15 +4262,25 @@
     return is([!!$('#wire-diagram svg'), cards, rows >= n], [true, n, true], 'svg / cards / rows');
   });
   await check('Wire Simple: the switcher columns read # Source ID # Destination ID', () => is($$('#wire-diagram .wire-switcher-grid .r-hdr').map(e => e.textContent.trim()), ['#', 'Source', 'ID', '#', 'Destination', 'ID'], 'headers'));
-  await check('Wire: renaming a source from its card reaches every preset, the I/O list and the diagram', async () => {
+  // 16lc-vpcards R5: REPLACES the check named in its header (reason in the block)
+  // 16lc-vpcards: RENAMED in place. Why: Omar 2026-10-05 / 06 (16lc-vpcards): "Video Preset Advance Cards are wrong, I/O Patch Cards are correct"; one card everywhere:
+  //   the I/O Patch card is also the card of Wire's left panel and of the Video Presets > Advanced left panel, at Wire's size, and a new
+  //   AUX is on in every preset from every add. Here: Wire's card is the I/O Patch card now: its pencil puts the cursor in the card's name box (the old
+  //   .wire-src-rename box is gone). What it pins is unchanged.
+  await check('Wire: renaming a source from its card reaches every preset, the I/O list and the diagram (16lc-vpcards: typed in the name box of the card, the I/O Patch card)', async () => {
     const old = srcNames()[0]; const uses = n => { let c = 0; presets.forEach(p => { Object.values(p.layers || {}).forEach(l => Object.values(l || {}).forEach(v => { if (v === n) c++; })); Object.values(p.bgNames || {}).forEach(v => { if (v === n) c++; }); Object.values(p.dsmContent || {}).forEach(v => { if (v === n) c++; }); }); return c; };
-    const before = uses(old); const pen = $$('#wire-sources-panel .wire-src-pen').find(b => b.closest('.wire-source-name').textContent.trim() === old); if (!pen) return 'no rename pencil on ' + old;
-    pen.click(); await wait(200); const inp = $('#wire-sources-panel .wire-src-rename'); inp.value = 'RENAMED SRC'; inp.dispatchEvent(new Event('blur')); await wait(600);
+    const before = uses(old); const card = $$('#wire-panel-left .iog-card').find(k => k.dataset.iogKey === 'src:' + old), pen = card && $('.wire-src-pen', card); if (!pen) return 'no rename pencil on ' + old;
+    pen.click(); await wait(200); const inp = $('.sys-name-input', card); inp.value = 'RENAMED SRC'; fire(inp, 'input'); inp.blur(); await wait(600);   /* 16lc-vpcards: the pencil puts the cursor in the card's name box */
     const out = is([uses(old), uses('RENAMED SRC'), srcNames().includes('RENAMED SRC'), $$('#wire-diagram .r-static').some(e => e.textContent.trim() === 'RENAMED SRC')], [0, before, true, true], 'rename'); await restore(); openWireMode(); await wait(400); wireSettings.wireView = 'simple'; _wireRender(); await wait(400); return out;
   });
-  await check('Wire: a duplicate source name is refused', async () => {
-    const n = srcNames(); const pen = $$('#wire-sources-panel .wire-src-pen').find(b => b.closest('.wire-source-name').textContent.trim() === n[0]); pen.click(); await wait(200);
-    const inp = $('#wire-sources-panel .wire-src-rename'); inp.value = n[1]; inp.dispatchEvent(new Event('blur')); await wait(400); const t = dialogText(); okDialogs(); await wait(200);
+  // 16lc-vpcards R6: REPLACES the check named in its header (reason in the block)
+  // 16lc-vpcards: RENAMED in place. Why: Omar 2026-10-05 / 06 (16lc-vpcards): "Video Preset Advance Cards are wrong, I/O Patch Cards are correct"; one card everywhere:
+  //   the I/O Patch card is also the card of Wire's left panel and of the Video Presets > Advanced left panel, at Wire's size, and a new
+  //   AUX is on in every preset from every add. Here: Wire's card is the I/O Patch card now (its name box, the I/O Patch's "Name in use" refusal).
+  //   What it pins is unchanged.
+  await check('Wire: a duplicate source name is refused (16lc-vpcards: typed in the name box of the card, the I/O Patch card)', async () => {
+    const n = srcNames(); const card = $$('#wire-panel-left .iog-card').find(k => k.dataset.iogKey === 'src:' + n[0]); $('.wire-src-pen', card).click(); await wait(200);   /* 16lc-vpcards: the card's name box */
+    const inp = $('.sys-name-input', card); inp.value = n[1]; fire(inp, 'input'); inp.blur(); await wait(400); const t = dialogText(); okDialogs(); await wait(200);
     return /Name in use/i.test(t) && srcNames()[0] === n[0] ? true : 'dialog said: ' + t;
   });
   await check('Wire: pinch (ctrl + wheel) zooms about the cursor, a plain wheel does not zoom', async () => {
@@ -4279,9 +4321,14 @@
     await wsOpen(); _wireSelectPreset(presets[0].id); await wait(200); wsEsc(); await wait(200); if (_wireState.activePreset !== null || !wsWireUp()) bad.push('cascade: the first Esc did not just clear the preset filter'); wsEsc(); await wait(250); if (wsWireUp()) bad.push('cascade: the second Esc did not leave Wire');
     await wsOpen(); return bad.length ? bad.join(' | ') : true;
   });
-  await check('Wire: Esc in the rename field or a resolution field cancels the typing and leaves the Wire page open', async () => {
-    await wsOpen(); const n = srcNames(); const pen = $$('#wire-sources-panel .wire-src-pen')[0]; pen.click(); await wait(200);
-    const inp = $('#wire-sources-panel .wire-src-rename'); inp.value = 'ESC TEST NAME'; wsEsc(inp); await wait(350); const a = [wsWireUp(), srcNames()[0] === n[0]];
+  // 16lc-vpcards R7: REPLACES the check named in its header (reason in the block)
+  // 16lc-vpcards: RENAMED in place. Why: Omar 2026-10-05 / 06 (16lc-vpcards): "Video Preset Advance Cards are wrong, I/O Patch Cards are correct"; one card everywhere:
+  //   the I/O Patch card is also the card of Wire's left panel and of the Video Presets > Advanced left panel, at Wire's size, and a new
+  //   AUX is on in every preset from every add. Here: Wire's card is the I/O Patch card now: the rename is typed in its name box (Escape puts the old name
+  //   back, the 16ks-esc rule). What it pins is unchanged.
+  await check('Wire: Esc in the rename field or a resolution field cancels the typing and leaves the Wire page open (16lc-vpcards: the name box of the card, the I/O Patch card)', async () => {
+    await wsOpen(); const n = srcNames(); const card = $$('#wire-panel-left .iog-card').find(k => k.dataset.iogKey === 'src:' + n[0]); $('.wire-src-pen', card).click(); await wait(200);   /* 16lc-vpcards: the card's name box */
+    const inp = $('.sys-name-input', card); inp.value = 'ESC TEST NAME'; fire(inp, 'input'); wsEsc(inp); await wait(350); const a = [wsWireUp(), srcNames()[0] === n[0]];
     await wsOpen(); const res = $('#wire-sources-panel .wire-source-res'); const was = res.value; res.focus(); res.value = '999x999'; wsEsc(res); await wait(350);
     const meta = _wireGetSourceMeta(srcNames()[0]); const out = is([a, wsWireUp(), meta.resolution === was], [[true, true], true, true], 'rename [Wire open, name kept] / Wire open after Esc in resolution / old resolution kept');
     await restore(); await wsOpen(); return out;
@@ -4325,10 +4372,14 @@
     const steps = _undoStack.length - u0, named = _wireHubName(); doUndo(); await wait(350); const back = _wireHubName(); await restore(); await wsOpen();
     return is([named, steps, back], ['E2 MAIN', 1, ''], 'name / undo steps / name after undo');
   });
-  await check('Wire Simple: a source that was dragged keeps its place (and its cable route) when it is renamed', async () => {
+  // 16lc-vpcards R8: REPLACES the check named in its header (reason in the block)
+  // 16lc-vpcards: RENAMED in place. Why: Omar 2026-10-05 / 06 (16lc-vpcards): "Video Preset Advance Cards are wrong, I/O Patch Cards are correct"; one card everywhere:
+  //   the I/O Patch card is also the card of Wire's left panel and of the Video Presets > Advanced left panel, at Wire's size, and a new
+  //   AUX is on in every preset from every add. Here: Wire's card is the I/O Patch card now: the rename is typed in its name box. What it pins is unchanged.
+  await check('Wire Simple: a source that was dragged keeps its place (and its cable route) when it is renamed (16lc-vpcards: in the name box of the card, the I/O Patch card)', async () => {
     await wsOpen(); const old = srcNames()[0]; pushUndo(); wireLayout['src:' + old] = { x: -120, y: -60 }; _wireSetEdgeOffset('simple:src:' + old + '→hin:0', 22); _wireRender(); await wait(250);
-    const pen = $$('#wire-sources-panel .wire-src-pen').find(b => b.closest('.wire-source-name').textContent.trim() === old); pen.click(); await wait(200);
-    const inp = $('#wire-sources-panel .wire-src-rename'); inp.value = 'MOVED AND RENAMED'; inp.dispatchEvent(new Event('blur')); await wait(600);
+    const card = $$('#wire-panel-left .iog-card').find(k => k.dataset.iogKey === 'src:' + old); $('.wire-src-pen', card).click(); await wait(200);   /* 16lc-vpcards: the card's name box */
+    const inp = $('.sys-name-input', card); inp.value = 'MOVED AND RENAMED'; fire(inp, 'input'); inp.blur(); await wait(600);
     const g = $$('#wire-diagram .wire-node').find(n => n.getAttribute('data-node-id') === 'src:MOVED AND RENAMED'); const rc = g ? g.querySelector('rect') : null;
     const out = is([rc ? [+rc.getAttribute('x'), +rc.getAttribute('y')] : null, _wireGetEdgeOffset('simple:src:MOVED AND RENAMED→hin:0'), Object.keys(wireLayout).includes('src:' + old)], [[-120, -60], 22, false], 'node place / cable offset / old key left behind');
     await restore(); await wsOpen(); return out;
@@ -4606,8 +4657,14 @@
   //   no custom card; the check read the custom cards of EVERY pane and expected three lists. It now reads the three panes that
   //   take custom cards (Sources, Destinations, AUX / DSM); the same cards are expected. PASSES on both pages; without this
   //   change it fails on 16la-colour-mv (a fourth, empty list).
-  await check('Wire Advanced: a custom card made on one page is offered on every page, and the tile stays on the page it was dropped on (16la-colour-mv (R): read in the three panes that take custom cards; the Multiviewers pane after them has none)', async () => {
-    const named = () => [...document.querySelectorAll('#wire-sources-panel .wire-pane:not(.wire-pane-mv)')].map(p => [...p.querySelectorAll('.wire-custom-card .wire-custom-name')].map(i => i.value));
+  // 16lc-vpfinish RD4: REPLACES the check named in its header (reason in the block)
+  // 16lc-vpfinish: RENAMED in place. Why: Omar (r16lm SPEC, the answers to steps A and C and to the picture pack, 2026-10-06 / 07, 16lc-vpfinish): "Speed: fix it"; the
+  //   panel stops at card width; Wire Advanced hand-made cards are the I/O card; Destination Properties gets a Name box; the table's x asks;
+  //   older shows' names cleaned up on open; long names shrink to fit; files after the sources, in capitals, own colours; + ADD VIDEO at
+  //   a file card's size; + ADD SOURCE named after its number. Here: Wire Advanced's hand-made cards are the I/O Patch card now (Omar: "I/O standard card too"): its name box is the card's
+  //   .sys-name-input (renamed when it is left) on a .lbf-wc card, not .wire-custom-name on .wire-custom-card. What it pins is unchanged.
+  await check('Wire Advanced: a custom card made on one page is offered on every page, and the tile stays on the page it was dropped on (16la-colour-mv (R): read in the three panes that take custom cards; the Multiviewers pane after them has none; 16lc-vpfinish: read on the I/O Patch card a hand-made card is)', async () => {
+    const named = () => [...document.querySelectorAll('#wire-sources-panel .wire-pane:not(.wire-pane-mv)')].map(p => [...p.querySelectorAll('.lbf-wc .sys-name-input')].map(i => i.value));   /* 16lc-vpfinish: the I/O card */
     const spare = await _waSpare(); const first = wireAdvanced._pages[0].id;
     _wireAdvAddCustomSource(); const cs = wireAdvanced.customSources[wireAdvanced.customSources.length - 1]; _wireAdvSetCustomField('src', cs.id, 'name', 'WA LIB SRC');
     _wireAdvAddCustomDest();   const cd = wireAdvanced.customDests[wireAdvanced.customDests.length - 1];     _wireAdvSetCustomField('dst', cd.id, 'name', 'WA LIB DEST');
@@ -4652,7 +4709,13 @@
 
 
   // 28b — a Cable Type on custom destinations and custom AUX
-  await check('Wire Advanced: a custom destination and a custom AUX carry a Cable Type — on the card, on the tile, on the cable, in the key and on the printed sheet', async () => {
+  // 16lc-vpfinish RD5: REPLACES the check named in its header (reason in the block)
+  // 16lc-vpfinish: RENAMED in place. Why: Omar (r16lm SPEC, the answers to steps A and C and to the picture pack, 2026-10-06 / 07, 16lc-vpfinish): "Speed: fix it"; the
+  //   panel stops at card width; Wire Advanced hand-made cards are the I/O card; Destination Properties gets a Name box; the table's x asks;
+  //   older shows' names cleaned up on open; long names shrink to fit; files after the sources, in capitals, own colours; + ADD VIDEO at
+  //   a file card's size; + ADD SOURCE named after its number. Here: Wire Advanced's hand-made cards are the I/O Patch card now (Omar: "I/O standard card too"): its name box is the card's
+  //   .sys-name-input (renamed when it is left) on a .lbf-wc card, not .wire-custom-name on .wire-custom-card. What it pins is unchanged.
+  await check('Wire Advanced: a custom destination and a custom AUX carry a Cable Type — on the card, on the tile, on the cable, in the key and on the printed sheet (16lc-vpfinish: picked on the I/O Patch card a hand-made card is)', async () => {
     const spare = await _waSpare();
     _wireAdvAddCustomSource(); const cs = wireAdvanced.customSources[wireAdvanced.customSources.length - 1]; _wireAdvSetCustomField('src', cs.id, 'name', 'WA FEED');
     _wireAdvAddCustomDest();   const cd = wireAdvanced.customDests[wireAdvanced.customDests.length - 1];     _wireAdvSetCustomField('dst', cd.id, 'name', 'WA DECK');
@@ -4660,7 +4723,7 @@
     _wireRender(); await wait(350);
     // the button on the card, and a real pick from the shared connector list
     const pane = i => [...document.querySelectorAll('#wire-sources-panel .wire-pane')][i];
-    const cableBtn = (i, name) => { const c = [...pane(i).querySelectorAll('.wire-custom-card')].find(x => { const n = x.querySelector('.wire-custom-name'); return n && n.value === name; }); return c ? c.querySelector('.wire-cable-btn') : null; };
+    const cableBtn = (i, name) => { const c = [...pane(i).querySelectorAll('.lbf-wc')].find(x => { const n = x.querySelector('.sys-name-input'); return n && n.value === name; }); return c ? c.querySelector('.wire-cable-btn') : null; };   /* 16lc-vpfinish: the I/O card */
     const pick = async (i, name, type) => {
       const b = cableBtn(i, name); if (!b) return 'no Cable Type button on the ' + name + ' card';
       _sysOpenDropdown(b); await wait(250);
@@ -4718,7 +4781,13 @@
   // 16la-colour-mv: RENAMED in place. Why: as A5: the Multiviewers pane (R) takes no custom card, and the check read every pane
   //   and expected three lists. It now reads the three panes that take custom cards; the same library is expected. PASSES on
   //   both pages; without this change it fails on 16la-colour-mv (a fourth, empty list).
-  await check('Wire Advanced: a show saved with a custom list per page opens as ONE library, its tiles follow, the merge is not an edit and the next save holds the new shape (16la-colour-mv (R): read in the three panes that take custom cards)', async () => {
+  // 16lc-vpfinish RD6: REPLACES the check named in its header (reason in the block)
+  // 16lc-vpfinish: RENAMED in place. Why: Omar (r16lm SPEC, the answers to steps A and C and to the picture pack, 2026-10-06 / 07, 16lc-vpfinish): "Speed: fix it"; the
+  //   panel stops at card width; Wire Advanced hand-made cards are the I/O card; Destination Properties gets a Name box; the table's x asks;
+  //   older shows' names cleaned up on open; long names shrink to fit; files after the sources, in capitals, own colours; + ADD VIDEO at
+  //   a file card's size; + ADD SOURCE named after its number. Here: Wire Advanced's hand-made cards are the I/O Patch card now (Omar: "I/O standard card too"): its name box is the card's
+  //   .sys-name-input (renamed when it is left) on a .lbf-wc card, not .wire-custom-name on .wire-custom-card. What it pins is unchanged.
+  await check('Wire Advanced: a show saved with a custom list per page opens as ONE library, its tiles follow, the merge is not an edit and the next save holds the new shape (16la-colour-mv (R): read in the three panes that take custom cards; 16lc-vpfinish: on the I/O Patch card a hand-made card is)', async () => {
     const keep = JSON.stringify(getProjectState());
     const s = JSON.parse(keep);
     const encA = { id: 'csA', name: 'WA OLD ENC', resolution: '1920x1080', wireColor: '#b78fff' };
@@ -4743,7 +4812,7 @@
     _applyProjectText(JSON.stringify(s)); await wait(900); okDialogs();
     const undo0 = eval('_undoStack').length, dirty0 = !!eval('_isDirty');
     openWireMode(); await wait(500); wireSettings.wireView = 'advanced'; _wireRender(); await wait(500); okDialogs();
-    const lib = [...document.querySelectorAll('#wire-sources-panel .wire-pane:not(.wire-pane-mv)')].map(p => [...p.querySelectorAll('.wire-custom-card .wire-custom-name')].map(i => i.value));
+    const lib = [...document.querySelectorAll('#wire-sources-panel .wire-pane:not(.wire-pane-mv)')].map(p => [...p.querySelectorAll('.lbf-wc .sys-name-input')].map(i => i.value));   /* 16lc-vpfinish: the I/O card */
     const clean = [dirty0, !!eval('_isDirty'), eval('_undoStack').length - undo0];
     const wa = getProjectState().wireAdvanced, pd = wa._pageData || {};
     const perPage = Object.keys(pd).filter(k => ['customSources', 'customDests', 'customDsms'].some(c => c in (pd[k] || {})));
@@ -4808,7 +4877,13 @@
   });
 
   // fix-2 — a rename from another page reaches the tile, and the x can still take it
-  await check('Wire Advanced: renaming a custom source card from another page renames its tile on that page, and the card\'s x still removes it', async () => {
+  // 16lc-vpfinish RD7: REPLACES the check named in its header (reason in the block)
+  // 16lc-vpfinish: RENAMED in place. Why: Omar (r16lm SPEC, the answers to steps A and C and to the picture pack, 2026-10-06 / 07, 16lc-vpfinish): "Speed: fix it"; the
+  //   panel stops at card width; Wire Advanced hand-made cards are the I/O card; Destination Properties gets a Name box; the table's x asks;
+  //   older shows' names cleaned up on open; long names shrink to fit; files after the sources, in capitals, own colours; + ADD VIDEO at
+  //   a file card's size; + ADD SOURCE named after its number. Here: Wire Advanced's hand-made cards are the I/O Patch card now (Omar: "I/O standard card too"): the name box is .sys-name-input on a
+  //   .lbf-wc card and the corner x is the card's trash, which asks first in the I/O Patch window (the check presses its Delete).
+  await check('Wire Advanced: renaming a custom source card from another page renames its tile on that page, and the card\'s trash still removes it (16lc-vpfinish: the I/O Patch card, its trash asks first)', async () => {
     const spare = await _waSpare(); const first = wireAdvanced._pages[0].id, tab0 = wireAdvanced._activePageId;
     _wireAdvAddCustomSource(); const cs = wireAdvanced.customSources[wireAdvanced.customSources.length - 1];
     _wireAdvSetCustomField('src', cs.id, 'name', 'WA REN ENC');
@@ -4816,16 +4891,16 @@
     _wireRender(); await wait(300);
     // rename it from PAGE 1, through the card's own name box (its real onchange), not from the page the tile is on
     _wireSwitchPage(first); await wait(350);
-    const box = [...document.querySelectorAll('#wire-sources-panel .wire-custom-card .wire-custom-name')].find(i => i.value === 'WA REN ENC');
+    const box = [...document.querySelectorAll('#wire-sources-panel .lbf-wc .sys-name-input')].find(i => i.value === 'WA REN ENC');   /* 16lc-vpfinish: the I/O card's name box (renamed when it is left) */
     if (!box) { await _waHome(); return 'page 1 does not offer the card'; }
     box.focus(); box.value = 'WA REN ENC 9'; box.dispatchEvent(new Event('change', { bubbles: true })); box.blur(); await wait(350);
     const tiles = () => [wireAdvanced].concat(Object.keys(wireAdvanced._pageData || {}).filter(k => k !== wireAdvanced._activePageId).map(k => wireAdvanced._pageData[k]))
       .reduce((a, p) => a.concat((p.sources || []).filter(s => s && /^WA REN ENC/.test(s.name)).map(s => s.name)), []);
     const followed = tiles();
     // the x on page 1 takes the tile off the page it was dropped on
-    const card = [...document.querySelectorAll('#wire-sources-panel .wire-custom-card')].find(c => { const n = c.querySelector('.wire-custom-name'); return n && n.value === 'WA REN ENC 9'; });
-    const del = card ? card.querySelector('.wire-card-delete') : null;
-    if (del) del.click(); else _wireAdvDeleteCustom('src', cs.id);
+    const card = [...document.querySelectorAll('#wire-sources-panel .lbf-wc')].find(c => { const n = c.querySelector('.sys-name-input'); return n && n.value === 'WA REN ENC 9'; });
+    const del = card ? card.querySelector('.sys-icon-btn.del') : null;   /* 16lc-vpfinish: the I/O card's trash; it asks first, Delete is the step */
+    if (del) { del.click(); await wait(300); const g = $('#sys-confirm-go'); if (g) g.click(); } else _wireAdvDeleteCustom('src', cs.id);
     await wait(300);
     const left = tiles();
     const cards = (wireAdvanced.customSources || []).filter(c => /^WA REN ENC/.test(c.name || '')).length;
@@ -4836,7 +4911,13 @@
   });
 
   // fix-3 — the Cable Colour Code is the key of the page being drawn
-  await check('Wire Advanced: the Cable Colour Code and the printed sheet list only the custom cards with a tile on the page being drawn', async () => {
+  // 16lc-vpfinish RD8: REPLACES the check named in its header (reason in the block)
+  // 16lc-vpfinish: RENAMED in place. Why: Omar (r16lm SPEC, the answers to steps A and C and to the picture pack, 2026-10-06 / 07, 16lc-vpfinish): "Speed: fix it"; the
+  //   panel stops at card width; Wire Advanced hand-made cards are the I/O card; Destination Properties gets a Name box; the table's x asks;
+  //   older shows' names cleaned up on open; long names shrink to fit; files after the sources, in capitals, own colours; + ADD VIDEO at
+  //   a file card's size; + ADD SOURCE named after its number. Here: Wire Advanced's hand-made cards are the I/O Patch card now (Omar: "I/O standard card too"): its name box is the card's
+  //   .sys-name-input (renamed when it is left) on a .lbf-wc card, not .wire-custom-name on .wire-custom-card. What it pins is unchanged.
+  await check('Wire Advanced: the Cable Colour Code and the printed sheet list only the custom cards with a tile on the page being drawn (16lc-vpfinish: picked on the I/O Patch card a hand-made card is)', async () => {
     const first = wireAdvanced._pages[0].id;
     const key = () => JSON.stringify(_wireCableTypesInUse().map(r => [r.spec.type, r.sources]));
     _wireSwitchPage(first); await wait(300);
@@ -4847,7 +4928,7 @@
     _wireRender(); await wait(300);
     // real picks from the shared connector list, on the cards themselves
     const pick = async (name, type) => {
-      const c = [...document.querySelectorAll('#wire-sources-panel .wire-custom-card')].find(x => { const n = x.querySelector('.wire-custom-name'); return n && n.value === name; });
+      const c = [...document.querySelectorAll('#wire-sources-panel .lbf-wc')].find(x => { const n = x.querySelector('.sys-name-input'); return n && n.value === name; });   /* 16lc-vpfinish: the I/O card */
       const b = c ? c.querySelector('.wire-cable-btn') : null; if (!b) return 'no Cable Type button on the ' + name + ' card';
       _sysOpenDropdown(b); await wait(250);
       const it = $$('.sys-dd .sys-dd-item').find(x => x.textContent.trim().indexOf(type) === 0); if (!it) { _sysCloseMenu(); return 'the cable list did not offer ' + type; }
@@ -4870,11 +4951,17 @@
   });
 
   // fix-4 — one library, so one name per custom destination / AUX
-  await check('Wire Advanced: a second custom destination or AUX given a name that is taken is numbered, the way custom sources are', async () => {
+  // 16lc-vpfinish RD9: REPLACES the check named in its header (reason in the block)
+  // 16lc-vpfinish: RENAMED in place. Why: Omar (r16lm SPEC, the answers to steps A and C and to the picture pack, 2026-10-06 / 07, 16lc-vpfinish): "Speed: fix it"; the
+  //   panel stops at card width; Wire Advanced hand-made cards are the I/O card; Destination Properties gets a Name box; the table's x asks;
+  //   older shows' names cleaned up on open; long names shrink to fit; files after the sources, in capitals, own colours; + ADD VIDEO at
+  //   a file card's size; + ADD SOURCE named after its number. Here: Wire Advanced's hand-made cards are the I/O Patch card now (Omar: "I/O standard card too"): its name box is the card's
+  //   .sys-name-input (renamed when it is left) on a .lbf-wc card, not .wire-custom-name on .wire-custom-card. What it pins is unchanged.
+  await check('Wire Advanced: a second custom destination or AUX given a name that is taken is numbered, the way custom sources are (16lc-vpfinish: typed in the I/O Patch card a hand-made card is)', async () => {
     const spare = await _waSpare();
     const nameLast = (paneIdx, text) => {
       const p = [...document.querySelectorAll('#wire-sources-panel .wire-pane')][paneIdx]; if (!p) return 'no pane ' + paneIdx;
-      const n = [...p.querySelectorAll('.wire-custom-card .wire-custom-name')]; const el = n[n.length - 1]; if (!el) return 'no card on pane ' + paneIdx;
+      const n = [...p.querySelectorAll('.lbf-wc .sys-name-input')]; const el = n[n.length - 1]; if (!el) return 'no card on pane ' + paneIdx;   /* 16lc-vpfinish: the I/O card (renamed when it is left) */
       el.focus(); el.value = text; el.dispatchEvent(new Event('change', { bubbles: true })); el.blur(); return true;
     };
     _wireAdvAddCustomDest(); const d1 = wireAdvanced.customDests[wireAdvanced.customDests.length - 1];
@@ -5747,7 +5834,12 @@ await check('Help: the Preflight check entry names one check per export — the 
 //    would fail on the fixed page. Swap the whole check for this one — the only change is that one list entry, which
 //    now asks for the true half of the same sentence. Everything else in it is unchanged.
 
-await check('Help says what the app does: the layer chip takes two clicks, the section is Mask in pixels, the AUX window has no Type, destination names are typed in the table, and Send / Report a bug / the Wire zoom keys are listed', async () => {
+// 16lc-vpfinish RD3: REPLACES the check named in its header (reason in the block)
+// 16lc-vpfinish: RENAMED in place. Why: Omar (r16lm SPEC, the answers to steps A and C and to the picture pack, 2026-10-06 / 07, 16lc-vpfinish): "Speed: fix it"; the
+  //   panel stops at card width; Wire Advanced hand-made cards are the I/O card; Destination Properties gets a Name box; the table's x asks;
+  //   older shows' names cleaned up on open; long names shrink to fit; files after the sources, in capitals, own colours; + ADD VIDEO at
+  //   a file card's size; + ADD SOURCE named after its number. Here: Destination Properties has a Name box now (Omar: "Destination Properties gets a Name box"); Help says so instead of "no Name field".
+await check('Help says what the app does: the layer chip takes two clicks, the section is Mask in pixels, the AUX window has no Type, destination names are typed in the table or Destination Properties (16lc-vpfinish: its Name box), and Send / Report a bug / the Wire zoom keys are listed', async () => {
   actions.help(); await wait(400);
   const box = $$('[id*="help"]').filter(vis).sort((a, b) => b.textContent.length - a.textContent.length)[0];
   const t = (box ? box.textContent : '').replace(/\s+/g, ' ');
@@ -5763,7 +5855,7 @@ await check('Help says what the app does: the layer chip takes two clicks, the s
     'click the picked chip again to open Layer Properties',
     "Trims the layer's edges in pixels",
     'There is no Type field in the panel',
-    'Destination Properties has no Name field',
+    'Destination Properties has a Name box that renames the destination in every preset',   /* 16lc-vpfinish */
     'Typed in the Destination Combinations table on the first preset',
     'Pinch / Ctrl + scroll wheel',
     'Report a bug',
@@ -5862,7 +5954,19 @@ await check('Help says what the app does: the layer chip takes two clicks, the s
   // 16kz-refresh Q1: REPLACES the check named in its header (reason in the block)
   // 16kz-refresh: RENAMED in place. Why: Omar's R3 ("all recommended"): every I/O Excel tab has a Refresh column right after
   //   Resolution. The rows this check reads carry it (empty: no refresh rate is set); everything else is unchanged.
-  await check('I/O Patch Excel: the Video I-O tab lists an I/O-only destination after the AUX rows and before the multiviewer (unchanged, decision 32); on the Simple card grid (16ky) its card is the last of the Destinations section (IO), before the AUX / DSM section; the page-1 tab is unchanged; 16kz-refresh: the Video I-O row carries the Refresh column after Resolution (empty, no rate set)', async () => {
+  // 16lc-vpcards-fix RF1: REPLACES the check named in its header (reason in the block)
+  // 16lc-vpcards-fix: RENAMED in place. Why: Omar (r16lm SPEC section E, 2026-10-07, 16lc-vpcards-fix): names show as typed on every card, new names in capitals; numbers
+  //   assigned automatically, typed on any card's number box (a taken one refused, the change everywhere); the main session (14:05): opening
+  //   an older show renumbers nothing. Here: page 1 of the I/O Patch's Advanced view is the show, so a row that stands for a show AUX now prints its show number (AUX 1, AUX 2,
+  //   the number its card shows) on page 1's sheet instead of Destination 4 / 5 (Omar, E2: "change happen everyone"; the main session: "every
+  //   place ... shows the same number for the same thing"). What it pins (the Video I-O order, the I/O-only row) is unchanged.
+  // 16lc-vpcards-fix4 RH1: REPLACES the check named in its header (reason in the block)
+  // 16lc-vpcards-fix4: RENAMED in place. Why: the main session (r16lm SPEC section H, 2026-10-08 00:35; Omar: "the number change should not rearrange anything, if that will
+  //   be any issue then it should be skipped complete for now"): numbers by order exactly as in the v0.8.2 candidate (r16lj/fix), the
+  //   number box shown, not typed in, nothing kept or saved. Here: 16lc-vpcards-fix (RF1) made page 1's sheet print a show AUX as AUX 1 / AUX 2 (E2: page 1 shows the show's numbers). SPEC H1 switches
+  //   that off: page 1's rows are numbered by their place on the page again, as in the v0.8.2 candidate (r16lj/fix), so the AUX rows read
+  //   Destination 4 / 5 on the sheet. The expectations are r16lj/fix's again. What it pins (the Video I-O order, the I/O-only row) is unchanged.
+  await check('I/O Patch Excel: the Video I-O tab lists an I/O-only destination after the AUX rows and before the multiviewer (unchanged, decision 32); on the Simple card grid (16ky) its card is the last of the Destinations section (IO), before the AUX / DSM section; the page-1 tab is unchanged; 16kz-refresh: the Video I-O row carries the Refresh column after Resolution (empty, no rate set); 16lc-vpcards-fix4: the page-1 sheet prints a show AUX by its row on the page again (Destination 4 / 5), as the v0.8.2 candidate', async () => {
     await restore(); await ioOpenSimple(); _ioSetView('advanced'); await wait(700); okDialogs();
     _ioAdvAdd('dst'); await wait(300); const nm = $$('#io-adv .sys-name-input[data-sys-kind="adv-dst"]').pop(); if (!nm) { closeSystem(); await restore(); return 'no new destination row on page 1'; }
     nm.focus(); nm.value = 'IO EXCEL TEST'; nm.blur(); await wait(400); _ioSetView('simple'); await wait(500); okDialogs();
@@ -6583,13 +6687,21 @@ await check('Help says what the app does: the layer chip takes two clicks, the s
     hideMoveSymbol(); doSelect(null, null); _fsSetPropTab(tab); closeFullscreen(); await wait(400); await restore();
     return is(out, ['◀on ▶on', 1, true, '', '◀on ▶grey'], 'Simple row pick / one arrow pair / on the row\'s destination / after un-pick / Advanced row pick (last destination)');
   });
-  await check('move arrows: a swap carries everything stored per destination in every preset, the table order follows, Undo and Redo are exact and a save + reload keeps it (pins existing behaviour)', async () => {
+  // 16lc-vpfinish RD12: REPLACES the check named in its header (reason in the block)
+  // 16lc-vpfinish: RENAMED in place. Why: Omar (r16lm SPEC, the answers to steps A and C and to the picture pack, 2026-10-06 / 07, 16lc-vpfinish): "Speed: fix it"; the
+  //   panel stops at card width; Wire Advanced hand-made cards are the I/O card; Destination Properties gets a Name box; the table's x asks;
+  //   older shows' names cleaned up on open; long names shrink to fit; files after the sources, in capitals, own colours; + ADD VIDEO at
+  //   a file card's size; + ADD SOURCE named after its number. Here: an older show's own preset names are cleaned up as a show opens (Omar: "Older shows: clean up names on open"); the check's setup
+  //   gives P03 a name of its own, so after the save + reload P03 reads the main name: the reload is compared without the presets' own
+  //   names, and they must be gone. What it pins (the swap carries every per-destination value, Undo / Redo exact) is unchanged.
+  await check('move arrows: a swap carries everything stored per destination in every preset, the table order follows, Undo and Redo are exact and a save + reload keeps it (pins existing behaviour; 16lc-vpfinish: a preset\'s own name goes as the show opens again)', async () => {
     await restore(); const p1 = presets[1], sid = screens[1].id; toggleAOI(p1.id, sid); setAOI(p1.id, sid, { x: 100, y: 100, w: 800, h: 600 }); setScreenName(presets[2].id, sid, 'ZZ OVERRIDE'); presets[3].hiddenScreens = presets[3].hiddenScreens || {}; presets[3].hiddenScreens[screens[0].id] = true; render(); await wait(300);
     const sig = () => { const o = {}; presets.forEach(p => screens.forEach(s => { const r = {}; Object.keys(p).forEach(k => { const v = p[k]; if (k !== 'positions' && v && typeof v === 'object' && !Array.isArray(v) && Object.prototype.hasOwnProperty.call(v, s.id)) r[k] = v[s.id]; }); o[p.id + s.id] = r; })); return JSON.stringify(Object.keys(o).sort().map(k => [k, o[k]])); };
     const g0 = sig(), s0 = _mvShow(), names = screens.map(s => s.name); await _mvPick(presets[0].id, sid); await _mvPress('◀'); const s1 = _mvShow();
     const rows = $$('#tbody tr[data-pid="' + presets[0].id + '"]').map(r => screens.find(s => s.id === r.dataset.sid).name);
     const kept = sig() === g0; doUndo(); await wait(400); const undone = _mvShow() === s0; doRedo(); await wait(400); const redone = _mvShow() === s1;
-    const saved = JSON.stringify(getProjectState()); _applyProjectText(saved); await wait(700); okDialogs(); const reloaded = JSON.stringify(getProjectState().screens) + JSON.stringify(getProjectState().presets) === JSON.stringify(JSON.parse(saved).screens) + JSON.stringify(JSON.parse(saved).presets);
+    const saved = JSON.stringify(getProjectState()); _applyProjectText(saved); await wait(700); okDialogs(); const _own = ps => JSON.stringify(ps.map(p => Object.assign({}, p, { screenName: undefined, dsmName: undefined })));   /* 16lc-vpfinish: an opened show has no preset names of its own */
+    const reloaded = JSON.stringify(getProjectState().screens) + _own(getProjectState().presets) === JSON.stringify(JSON.parse(saved).screens) + _own(JSON.parse(saved).presets) && !getProjectState().presets.some(p => Object.keys(p.screenName || {}).length);
     hideMoveSymbol(); doSelect(null, null); await restore();
     return is([kept, rows, undone, redone, reloaded], [true, [names[1], names[0], names[2]], true, true, true], 'per-destination data untouched / table rows / undo / redo / save + reload');
   });
@@ -7085,7 +7197,12 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
   //   Clear" is no longer true, and the attacker was right that the old block failed on 16kv only through a call no user could
   //   reach. The revised block opens the picker through the phone's own opener and clicks its Clear (the phone check Q taps the
   //   same rows on a phone); the rest (Quick Setup, the Wire card, Destination Properties) is the builder's, unchanged.
-  await check('menus 16kw: the shared resolution picker puts its optional — Clear — SECOND, right under Custom, and marks it when the value is empty; the phone\'s I/O cards ask for it (mbIoOpenRes: + Custom resolution…, — Clear —, Used in this show; the source card marks its own size; Clear empties a source\'s resolution, a destination keeps its size as on the desktop); where it is used without one it reads as before, Custom first and no Clear (Quick Setup and the Wire card, 37 rows); the Destination Combinations table opens no resolution menu (Destination Properties keeps its Width / Height boxes)', async () => {
+  // 16lc-vpcards R9: REPLACES the check named in its header (reason in the block)
+  // 16lc-vpcards: RENAMED in place. Why: Omar 2026-10-05 / 06 (16lc-vpcards): "Video Preset Advance Cards are wrong, I/O Patch Cards are correct"; one card everywhere:
+  //   the I/O Patch card is also the card of Wire's left panel and of the Video Presets > Advanced left panel, at Wire's size, and a new
+  //   AUX is on in every preset from every add. Here: Omar chose "one menu everywhere": the Wire card's resolution menu is the I/O Patch card's (Custom
+  //   resolution…, — Clear —, Used in this show, the list). The phone, an empty value and Quick Setup unchanged.
+  await check('menus 16kw: the shared resolution picker puts its optional — Clear — SECOND, right under Custom, and marks it when the value is empty; the phone\'s I/O cards ask for it (mbIoOpenRes: + Custom resolution…, — Clear —, Used in this show; the source card marks its own size; Clear empties a source\'s resolution, a destination keeps its size as on the desktop); where it is used without one it reads as before, Custom first and no Clear (Quick Setup, 37 rows; 16lc-vpcards: the Wire card opens the menu of the I/O Patch card instead: Custom resolution…, — Clear —, Used in this show); the Destination Combinations table opens no resolution menu (Destination Properties keeps its Width / Height boxes)', async () => {
     const rowsOf = () => $$('.shared-res-dd > *').map(c => (c.classList.contains('sys-dd-group') ? '## ' : '') + (($('.item-text', c) || c).textContent || '').trim() + (c.classList.contains('selected') ? ' *' : ''));
     const out = {};
     await restore(); await ioOpenSimple();
@@ -7104,14 +7221,14 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
     btn.click(); await wait(200); const q = rowsOf().map(x => x.replace(/ \*$/, '')); closeSharedResPicker(); closeQS(); await wait(300);
     out.qs = [q.slice(0, 3), q.filter(x => !/^## /.test(x)).length, q.some(x => /Clear/.test(x))];
     openWireMode(); await wait(700); okDialogs();
-    const wb = $('#wire-sources-panel .wire-res-dropdown-btn'); if (wb) { wb.click(); await wait(200); } const w = rowsOf().map(x => x.replace(/ \*$/, '')); closeSharedResPicker(); closeWireMode(); await wait(300);
-    out.wire = [w.slice(0, 3), w.filter(x => !/^## /.test(x)).length, w.some(x => /Clear/.test(x))];
+    const wb = $('#wire-sources-panel .wire-res-dropdown-btn'); if (wb) { wb.click(); await wait(200); } const wd = $('body > .sys-dd'), w = wd ? [...wd.children].map(c => (c.classList.contains('sys-dd-group') ? '## ' : '') + ((($('.item-text', c) || c).textContent) || '').trim()) : [];   /* 16lc-vpcards: the I/O Patch card's menu */
+    out.wire = [w.slice(0, 3), !!$('.shared-res-dd'), w.some(x => /Clear/.test(x))]; try { _sysCloseMenu(); } catch (e) {} closeSharedResPicker(); closeWireMode(); await wait(300);
     const p = presets[0], s0 = screens[0]; openScreenPanel(fakeEv, p.id, s0.id); await wait(400); const pop = $('#screen-panel');
     out.table = [!!(pop && $('#sp-w', pop) && $('#sp-h', pop)), !!$('.shared-res-dd')]; try { closeScreenPanel(); } catch (e) {} await wait(200);
     await restore();
     return is(out, { src: [['+ Custom resolution…', '— Clear —', '## Used in this show', '1920×1080 *'], 1, ''], dst: [['+ Custom resolution…', '— Clear —', '## Used in this show', '1920×1080 *'], true], empty: ['+ Custom resolution…', '— Clear — *'],
-      qs: [['+ Custom resolution…', '## Used in this show', '1920×1080'], 37, false], wire: [['Custom', '## Used in this show', '1920×1080'], 37, false], table: [true, false] },
-      'the phone opener on PPT A [first rows (* = marked), Clear rows, resolution after Clear] / on LEFT LED [first rows, size kept after Clear] / an empty value [first rows] / Quick Setup [first rows, rows, a Clear] / a Wire card / Destination Properties [Width + Height boxes, a resolution menu open]');
+      qs: [['+ Custom resolution…', '## Used in this show', '1920×1080'], 37, false], wire: [['Custom resolution…', '— Clear —', '## Used in this show'], false, true], table: [true, false] },
+      'the phone opener on PPT A [first rows (* = marked), Clear rows, resolution after Clear] / on LEFT LED [first rows, size kept after Clear] / an empty value [first rows] / Quick Setup [first rows, rows, a Clear] / a Wire card [first rows, the shared picker open, a Clear] / Destination Properties [Width + Height boxes, a resolution menu open]');
   });
   // 16kw-menus E: NEW
   await check('Type 16kw: Type › — Clear — empties the type like Clear empties a connector: a source (type and customType, a typed type too), a destination (deviceType and customType), each ONE undo step that Undo takes back, Save lit; the chip reads — Set machine — / — Set device —; the Excel Type cell is empty; save + reload keeps it empty', async () => {
@@ -7395,15 +7512,21 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
   const _r2Btn = (kind, id) => $$('#wire-overlay .wire-cable-btn[data-sys-kind="' + kind + '"]').find(b => b.dataset.sysId === String(id) && b.getBoundingClientRect().width > 0) || null;
   const _r2Rows = async b => { if (!b) return 'no button'; _sysOpenDropdown(b); await wait(150); const r = _kwRows(); _sysCloseMenu(); await wait(60); return r; };
   const _r2Ask = async (b, text) => { if (!b) return 'no button'; _sysOpenDropdown(b); await wait(150); const it = $$('.sys-dd .sys-dd-item').find(i => /^Custom…$/.test((($('.item-text', i) || i).textContent || '').trim())); if (!it) { _sysCloseMenu(); return 'no Custom… in the Cable Type menu'; }
-    it.click(); await wait(150); const box = $('.wire-conn-ask .sys-type-input'); if (!box) return 'no box on the card'; const seen = [document.activeElement === box, box.value, box.placeholder]; if (text !== undefined) { tfType(box, text); await wait(450); } return seen; };
+    it.click(); await wait(150); const box = $('.wire-conn-ask .sys-type-input, #wire-panel-left .iog-card .sys-conn-ask .sys-type-input'); if (!box) return 'no box on the card';   /* 16lc-vpcards: ADAPTED, a Wire source / destination / AUX card is the I/O Patch card and opens its own box (_sysConnAsk); the Wire-only objects keep theirs */ const seen = [document.activeElement === box, box.value, box.placeholder]; if (text !== undefined) { tfType(box, text); await wait(450); } return seen; };
   const _r2WireAdv = async () => { openWireMode(); await wait(500); okDialogs(); _wireSwitchToAdvanced(); await wait(400); okDialogs(); await wait(600); okDialogs(); };   /* what the Advanced tab does: page 1 = the show */
-  await check('Wire 16kw-r2: every Cable Type menu reads like the I/O Patch Connector menu: Custom… first, — Clear — second, then the connector list in its order with its headings, the current value marked: the source, destination, AUX and DSM cards in Simple, a source card in Advanced, the custom source, destination and AUX cards, a source tile\'s output point (Details) and a converter\'s port', async () => {
+  // 16lc-vpfinish RD13: REPLACES the check named in its header (reason in the block)
+  // 16lc-vpfinish: RENAMED in place. Why: Omar (r16lm SPEC, the answers to steps A and C and to the picture pack, 2026-10-06 / 07, 16lc-vpfinish): "Speed: fix it"; the
+  //   panel stops at card width; Wire Advanced hand-made cards are the I/O card; Destination Properties gets a Name box; the table's x asks;
+  //   older shows' names cleaned up on open; long names shrink to fit; files after the sources, in capitals, own colours; + ADD VIDEO at
+  //   a file card's size; + ADD SOURCE named after its number. Here: Wire Advanced's hand-made cards are the I/O Patch card now (Omar: "I/O standard card too"): their Cable Type buttons carry the
+  //   kinds wcsrc / wcdst / wcaux (the I/O Patch's setters hand those to the card's own data), not wcustom / wcustomd / wcustomm. What it pins is unchanged.
+  await check('Wire 16kw-r2: every Cable Type menu reads like the I/O Patch Connector menu: Custom… first, — Clear — second, then the connector list in its order with its headings, the current value marked: the source, destination, AUX and DSM cards in Simple, a source card in Advanced, the custom source, destination and AUX cards (16lc-vpfinish: the I/O Patch card, kinds wcsrc / wcdst / wcaux), a source tile\'s output point (Details) and a converter\'s port', async () => {
     await restore(); openWireMode(); await wait(700); okDialogs(); const out = {};
     out.simple = [await _r2Rows(_r2Btn('src', 'PPT A')), await _r2Rows(_r2Btn('dest', screens[0].id)), await _r2Rows(_r2Btn('aux', (dsms.find(d => d.name === 'AUX 1') || {}).id)), await _r2Rows(_r2Btn('aux', (dsms.find(d => d.name === 'DSM 1') || {}).id))];
     await _r2WireAdv(); out.advSrc = await _r2Rows(_r2Btn('src', 'CAM 1'));
     _wireAdvAddCustomSource(); _wireAdvAddCustomDest(); _wireAdvAddCustomDsm(); _wireAdvAddDevice('converter', 1, 1); await wait(400);
     const last = a => (wireAdvanced[a] || [])[(wireAdvanced[a] || []).length - 1] || {};
-    out.custom = [await _r2Rows(_r2Btn('wcustom', last('customSources').id)), await _r2Rows(_r2Btn('wcustomd', last('customDests').id)), await _r2Rows(_r2Btn('wcustomm', last('customDsms').id))];
+    out.custom = [await _r2Rows(_r2Btn('wcsrc', last('customSources').id)), await _r2Rows(_r2Btn('wcdst', last('customDests').id)), await _r2Rows(_r2Btn('wcaux', last('customDsms').id))];   /* 16lc-vpfinish: the I/O card's kinds */
     const dv = last('devices'); out.port = await _r2Rows(_r2Btn('wdev', dv.id + ':in:0'));
     const inst = (wireAdvanced.sources || [])[0]; if (inst) { _wireState.selectedNodes = new Set(['asrc:' + inst.id]); _wireRender(); await wait(400); }
     out.point = inst ? await _r2Rows(_r2Btn('wsp', inst.id + ':0')) : 'no source tile on page 1';
@@ -7413,18 +7536,23 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
       'Cable Type menus in order (## = a heading, * = the marked row): Simple cards PPT A / LEFT LED / AUX 1 / DSM 1, Advanced source card CAM 1, custom source / destination / AUX cards, converter port, output point (it inherits: — Clear — marked)');
   });
   // 16kw-r2 W: NEW
-  await check('Wire 16kw-r2: Cable Type › Custom… on a source, destination or AUX card types the connector RIGHT ON THE CARD, the way Connector › Custom… does in the I/O Patch: the button becomes a box in its place (focused, "Type name…", the typed connector it holds already); LEMO + Enter is stored as typed (the show\'s connectorType), ONE undo step, Save lit, remembered and offered after — Clear — in every Cable Type and Connector menu, the card reads it, its cable draws grey with the grey arrowhead, the tile turns grey, the key has its "Custom · no colour code" row; it FOLLOWS to the I/O Patch (white pill) and a connector typed in the I/O Patch shows on the Wire card; Undo takes it back; Escape and an empty box write nothing; a built-in\'s name in any spelling picks the built-in', async () => {
+  // 16lc-vpcards R10: REPLACES the check named in its header (reason in the block)
+  // 16lc-vpcards: RENAMED in place. Why: Omar 2026-10-05 / 06 (16lc-vpcards): "Video Preset Advance Cards are wrong, I/O Patch Cards are correct"; one card everywhere:
+  //   the I/O Patch card is also the card of Wire's left panel and of the Video Presets > Advanced left panel, at Wire's size, and a new
+  //   AUX is on in every preset from every add. Here: Wire's card is the I/O Patch card now: Custom… opens the I/O Patch card's own box (.sys-conn-ask,
+  //   _sysConnAsk) where Wire's own box (.wire-conn-ask) was. Every result it pins is unchanged.
+  await check('Wire 16kw-r2: Cable Type › Custom… on a source, destination or AUX card types the connector RIGHT ON THE CARD, the way Connector › Custom… does in the I/O Patch: the button becomes a box in its place (focused, "Type name…", the typed connector it holds already); LEMO + Enter is stored as typed (the show\'s connectorType), ONE undo step, Save lit, remembered and offered after — Clear — in every Cable Type and Connector menu, the card reads it, its cable draws grey with the grey arrowhead, the tile turns grey, the key has its "Custom · no colour code" row; it FOLLOWS to the I/O Patch (white pill) and a connector typed in the I/O Patch shows on the Wire card; Undo takes it back; Escape and an empty box write nothing; a built-in\'s name in any spelling picks the built-in (16lc-vpcards: the box is the I/O Patch card one, the card being the I/O Patch card)', async () => {
     await restore(); openWireMode(); await wait(700); okDialogs(); const out = {}; const u0 = _undoStack.length; const d0 = !!_isDirty;
     out.ask = await _r2Ask(_r2Btn('src', 'PPT A')); out.nothingYet = [(_sysGetSourceMeta('PPT A') || {}).connectorType, _undoStack.length - u0];
-    const box = $('.wire-conn-ask .sys-type-input'); if (box) { tfType(box, 'LEMO'); await wait(450); }
+    const box = $('#wire-panel-left .iog-card .sys-conn-ask .sys-type-input'); if (box) { tfType(box, 'LEMO'); await wait(450); }   /* 16lc-vpcards: the I/O Patch card's own box (_sysConnAsk) */
     const b = _r2Btn('src', 'PPT A'), e = $$('#wire-diagram path.wire-edge').find(p => p.dataset.from === 'src:PPT A');
-    out.stored = [(_sysGetSourceMeta('PPT A') || {}).connectorType, (_sysGetSourceMeta('PPT A') || {}).wireColor, _undoStack.length - u0, !!_isDirty && !d0, (customTypes.connectors || []).slice(), !$('.wire-conn-ask'), b ? [b.textContent.trim(), b.classList.contains('custom')] : null,
+    out.stored = [(_sysGetSourceMeta('PPT A') || {}).connectorType, (_sysGetSourceMeta('PPT A') || {}).wireColor, _undoStack.length - u0, !!_isDirty && !d0, (customTypes.connectors || []).slice(), !$('#wire-panel-left .sys-conn-ask'), b ? [b.textContent.trim(), b.classList.contains('custom')] : null,
       e ? [/156,\s*163,\s*175/.test(e.getAttribute('stroke') || ''), e.getAttribute('marker-end')] : null, $$('.wire-cable-key-row').map(r => r.textContent.replace(/\s+/g, ' ').trim()).filter(t => /^LEMO/.test(t))];
     out.offered = (await _r2Rows(_r2Btn('dest', screens[1].id)) || []).slice(0, 4); out.marked = (await _r2Rows(_r2Btn('src', 'PPT A')) || []).slice(0, 4);
-    out.prefill = await _r2Ask(_r2Btn('src', 'PPT A')); const b2 = $('.wire-conn-ask .sys-type-input'); if (b2) { b2.value = 'junk'; fire(b2, 'input'); ioEsc(b2); await wait(450); }
-    out.escape = [(_sysGetSourceMeta('PPT A') || {}).connectorType, _undoStack.length - u0, !$('.wire-conn-ask'), ((_r2Btn('src', 'PPT A') || {}).textContent || '').trim()];
-    await _r2Ask(_r2Btn('src', 'CAM 1')); const b3 = $('.wire-conn-ask .sys-type-input'); if (b3) { b3.blur(); await wait(450); }
-    out.empty = [(_sysGetSourceMeta('CAM 1') || {}).connectorType, _undoStack.length - u0, !$('.wire-conn-ask')];
+    out.prefill = await _r2Ask(_r2Btn('src', 'PPT A')); const b2 = $('#wire-panel-left .iog-card .sys-conn-ask .sys-type-input'); if (b2) { b2.value = 'junk'; fire(b2, 'input'); ioEsc(b2); await wait(450); }
+    out.escape = [(_sysGetSourceMeta('PPT A') || {}).connectorType, _undoStack.length - u0, !$('#wire-panel-left .sys-conn-ask'), ((_r2Btn('src', 'PPT A') || {}).textContent || '').trim()];
+    await _r2Ask(_r2Btn('src', 'CAM 1')); const b3 = $('#wire-panel-left .iog-card .sys-conn-ask .sys-type-input'); if (b3) { b3.blur(); await wait(450); }
+    out.empty = [(_sysGetSourceMeta('CAM 1') || {}).connectorType, _undoStack.length - u0, !$('#wire-panel-left .sys-conn-ask')];
     await _r2Ask(_r2Btn('dest', screens[0].id), 'opticalCON'); await _r2Ask(_r2Btn('aux', (dsms.find(d => d.name === 'AUX 1') || {}).id), 'hdmi 2.1');
     out.cards = [screens[0].connectorType, (dsms.find(d => d.name === 'AUX 1') || {}).connectorType, (customTypes.connectors || []).slice(), ((_r2Btn('dest', screens[0].id) || {}).textContent || '').trim()];
     closeWireMode(); await wait(300); await ioOpenSimple();
@@ -7440,15 +7568,21 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
       'the box on PPT A [focused, text, placeholder] / before typing [connector, undo steps] / after LEMO + Enter [stored, tile colour, undo steps, Save lit, remembered, box gone, card (text, custom), cable (grey, arrowhead), key row] / LEFT LED card menu / PPT A card menu / the box on a LEMO card / Escape [stored, undo steps, box gone, card] / an empty box / typed on LEFT LED and AUX 1 ("hdmi 2.1") [LEFT LED, AUX 1, remembered, LEFT LED card] / in the I/O Patch [PPT A pill (text, white class, colour), LEFT LED pill] / typed in the I/O Patch on CAM 2, its Wire card [text, custom] / Undo [CAM 2, its card, steps]');
   });
   // 16kw-r2 X: NEW
-  await check('Wire 16kw-r2: Custom… on the Wire-only objects stores the typed connector where each already keeps its cable type, one undo step each: a custom source card (its connectorType; its tile colour turns grey, as a pick does), a custom destination and a custom AUX card (connectorType), a source tile\'s output point (portConns of the tile), a converter\'s port (its conn); the output point\'s cable draws grey with the grey arrowhead', async () => {
+  // 16lc-vpfinish RD14: REPLACES the check named in its header (reason in the block)
+  // 16lc-vpfinish: RENAMED in place. Why: Omar (r16lm SPEC, the answers to steps A and C and to the picture pack, 2026-10-06 / 07, 16lc-vpfinish): "Speed: fix it"; the
+  //   panel stops at card width; Wire Advanced hand-made cards are the I/O card; Destination Properties gets a Name box; the table's x asks;
+  //   older shows' names cleaned up on open; long names shrink to fit; files after the sources, in capitals, own colours; + ADD VIDEO at
+  //   a file card's size; + ADD SOURCE named after its number. Here: Wire Advanced's hand-made cards are the I/O Patch card now (Omar: "I/O standard card too"): their Cable Type buttons carry the
+  //   kinds wcsrc / wcdst / wcaux (the I/O Patch's setters hand those to the card's own data), not wcustom / wcustomd / wcustomm. What it pins is unchanged.
+  await check('Wire 16kw-r2: Custom… on the Wire-only objects stores the typed connector where each already keeps its cable type, one undo step each: a custom source card (16lc-vpfinish: the I/O Patch card, its own box; its connectorType; its tile colour turns grey, as a pick does), a custom destination and a custom AUX card (connectorType), a source tile\'s output point (portConns of the tile), a converter\'s port (its conn); the output point\'s cable draws grey with the grey arrowhead', async () => {
     await restore(); await _r2WireAdv(); const out = {};
     _wireAdvAddCustomSource(); _wireAdvAddCustomDest(); _wireAdvAddCustomDsm(); _wireAdvAddDevice('converter', 1, 1); await wait(400);
     const last = a => (wireAdvanced[a] || [])[(wireAdvanced[a] || []).length - 1] || {};
     const step = async (kind, id, text, read) => { const u = _undoStack.length; const seen = await _r2Ask(_r2Btn(kind, id), text); return [Array.isArray(seen) ? seen[0] : seen, read(), _undoStack.length - u]; };
     const cs = last('customSources'), cd = last('customDests'), cm = last('customDsms'), dv = last('devices');
-    out.src = await step('wcustom', cs.id, 'LEMO', () => { const x = wireAdvanced.customSources.find(o => o.id === cs.id) || {}; return [x.connectorType, x.wireColor]; });
-    out.dst = await step('wcustomd', cd.id, 'AJA Ki Pro', () => (wireAdvanced.customDests.find(o => o.id === cd.id) || {}).connectorType);
-    out.dsm = await step('wcustomm', cm.id, 'XLR', () => (wireAdvanced.customDsms.find(o => o.id === cm.id) || {}).connectorType);
+    out.src = await step('wcsrc', cs.id, 'LEMO',   /* 16lc-vpfinish: the I/O card's kinds */ () => { const x = wireAdvanced.customSources.find(o => o.id === cs.id) || {}; return [x.connectorType, x.wireColor]; });
+    out.dst = await step('wcdst', cd.id, 'AJA Ki Pro', () => (wireAdvanced.customDests.find(o => o.id === cd.id) || {}).connectorType);
+    out.dsm = await step('wcaux', cm.id, 'XLR', () => (wireAdvanced.customDsms.find(o => o.id === cm.id) || {}).connectorType);
     out.port = await step('wdev', dv.id + ':in:0', 'HD-BNC', () => { const d = (wireAdvanced.devices || []).find(o => o.id === dv.id); return d && d.ins[0] ? d.ins[0].conn : null; });
     const inst = (wireAdvanced.sources || [])[0]; if (inst) { _wireState.selectedNodes = new Set(['asrc:' + inst.id]); _wireRender(); await wait(400); }
     out.point = inst ? await step('wsp', inst.id + ':0', 'Neutrik', () => { const s = (wireAdvanced.sources || []).find(o => o.id === inst.id) || {}; return (s.portConns || [])[0]; }) : 'no source tile on page 1';
@@ -7570,7 +7704,12 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
   // 16kx-r3 XC: REPLACES the check named in its header (reason in the block)
   // 16kx-r3: RENAMED in place. Why: Omar's answer 1 ("no number count drops by one"): a destination's default name is its number, and the screen after the backdrop
   //   is destination 2, so Quick Setup builds it as Destination 02 (was Destination 03). Everything else is unchanged.
-  await check('Backdrop 16kx-backdrop (16kx-r3: the screen after the backdrop is destination 2, so its default name is Destination 02, Omar "no number count drops by one"): in a NEW show, Quick Setup\'s Backdrop switch beside Destination 2\'s resolution names the row BACKDROP and swaps the resolution for Length and Height in feet and inches (10\' × 5\' 6" from 1920×1080 at 192 px per foot, the nearest half foot, 16kx-r2); 20\' 6" and "12 6" typed build a 3936 × 2400 px backdrop named BACKDROP between two 1920×1080 screens; the preview, the top-bar canvas and the Pre-Export Check leave it out (3840 × 1080, no canvas or resolution warning)', async () => {
+  // 16lc-vpcards-fix RF2: REPLACES the check named in its header (reason in the block)
+  // 16lc-vpcards-fix: RENAMED in place. Why: Omar (r16lm SPEC section E, 2026-10-07, 16lc-vpcards-fix): names show as typed on every card, new names in capitals; numbers
+  //   assigned automatically, typed on any card's number box (a taken one refused, the change everywhere); the main session (14:05): opening
+  //   an older show renumbers nothing. Here: a new destination's default name is in capitals now (Omar, E1: "the system default should be to capitalize but user can do it however
+  //   they want"): Quick Setup builds DESTINATION 01 / DESTINATION 02. What it pins (the backdrop, its number rule) is unchanged.
+  await check('Backdrop 16kx-backdrop (16kx-r3: the screen after the backdrop is destination 2, so its default name is DESTINATION 02 (16lc-vpcards-fix: new names in capitals), Omar "no number count drops by one"): in a NEW show, Quick Setup\'s Backdrop switch beside Destination 2\'s resolution names the row BACKDROP and swaps the resolution for Length and Height in feet and inches (10\' × 5\' 6" from 1920×1080 at 192 px per foot, the nearest half foot, 16kx-r2); 20\' 6" and "12 6" typed build a 3936 × 2400 px backdrop named BACKDROP between two 1920×1080 screens; the preview, the top-bar canvas and the Pre-Export Check leave it out (3840 × 1080, no canvas or resolution warning)', async () => {
     await restore(); newShow(); await wait(400); okDialogs(); await wait(500); if (!_qsUp()) openQS(); await wait(300);
     $('#qs-show').value = 'Backdrop gate'; qsAdjust('screens', -1); await wait(200);
     const hdr = $('#qs-sr-1 .qs-screen-hdr'); if (hdr) hdr.click(); await wait(200);
@@ -7585,7 +7724,7 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
     await restore();
     return is({ beside, name0, r1, r2, built, cv, warn: v.warnings.filter(w => /Canvas size|Destination "/.test(w)), drawn },
       { beside: true, name0: '', r1: { name: 'BACKDROP', pressed: 'true', resHidden: true, type: 'text', L: '10\'', H: '5\' 6"', lbl: 'BACKDROP · 10\' × 5\' 6"', preview: '3840 × 1080 px' }, r2: { name: 'BACKDROP', pressed: 'true', resHidden: true, type: 'text', L: '20\' 6"', H: '12\' 6"', lbl: 'BACKDROP · 20\' 6" × 12\' 6"', preview: '3840 × 1080 px' },
-        built: [['Destination 01', '', 1920, 1080, undefined, undefined], ['BACKDROP', 'Backdrop', 3936, 2400, 246, 150], ['Destination 02', '', 1920, 1080, undefined, undefined]], cv: ['3840', '1080', '3840 × 1080 px'], warn: [], drawn: [true, 'BACKDROP · 20\' 6" × 12\' 6"'] },
+        built: [['DESTINATION 01', '', 1920, 1080, undefined, undefined], ['BACKDROP', 'Backdrop', 3936, 2400, 246, 150], ['DESTINATION 02', '', 1920, 1080, undefined, undefined]], cv: ['3840', '1080', '3840 × 1080 px'], warn: [], drawn: [true, 'BACKDROP · 20\' 6" × 12\' 6"'] },
       'the switch beside the resolution / the name box before / the row after the switch [name, switch, resolution hidden, box type, Length, Height, header, preview] / after 20\' 6" and 12 6 / the built show [name, Type, px, inches] / canvas [W, H, the bottom-bar pill] / Pre-Export canvas and resolution warnings / the canvas box');
   });
   // 16kx-backdrop D: NEW
@@ -7796,9 +7935,14 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
       [true, true, true, true, true, true, true, true, true, true, true], 'Quick Reference [a Backdrop row, scenic, where it is made, the Type menu, feet, one picture, no layers, Undo, left out, greyed] / Glossary');
   });
   // 16kx-r2 Q1: NEW
-  await check('Backdrop 16kx-r2: AUTO-NAME (Omar\'s answer 1): a destination that becomes a backdrop is named BACKDROP, the next one BACKDROP 2, then BACKDROP 3 …, never a name the show already uses (DSM 1 renamed BACKDROP 2 makes RIGHT LED BACKDROP 3); a preset\'s own name for it goes (P03 reads BACKDROP too); the rename is inside the conversion\'s ONE undo step (one Undo gives RIGHT LED its name and Type back); made a screen again it keeps the name BACKDROP; Quick Setup\'s Backdrop switch writes the next free name into the row\'s Destination Name box', async () => {
+  // 16lc-vpaux RA3: REPLACES the check named in its header (reason in the block)
+  // 16lc-vpaux: RENAMED in place. Why: Omar 2026-10-06 (16lc-vpaux): AUX name "Rename everywhere" (a destination too: renamed anywhere, renamed in every preset);
+  //   AUX box "Always fill"; the band pill's double-click and the two remove-globally confirms (r16lm SPEC C). Here: the Video Presets table's NAME box no longer saves a name for one preset (C1: it renames CENTER LED everywhere, so the check
+  //   found no CENTER LED to convert). P03's own name is now set the way an older show holds it (setScreenName, the app's own
+  //   per-preset setter); what it pins (a conversion takes a preset's own name away, the auto-names, one Undo step) is unchanged.
+  await check('Backdrop 16kx-r2: AUTO-NAME (Omar\'s answer 1): a destination that becomes a backdrop is named BACKDROP, the next one BACKDROP 2, then BACKDROP 3 …, never a name the show already uses (DSM 1 renamed BACKDROP 2 makes RIGHT LED BACKDROP 3); a preset\'s own name for it goes (P03 reads BACKDROP too); the rename is inside the conversion\'s ONE undo step (one Undo gives RIGHT LED its name and Type back); made a screen again it keeps the name BACKDROP; Quick Setup\'s Backdrop switch writes the next free name into the row\'s Destination Name box (16lc-vpaux: P03\'s own name is made as an older show holds it)', async () => {
     await restore(); const cid = _bxS('CENTER LED').id, rid = _bxS('RIGHT LED').id, p3 = presets[2]; const dsm = dsms.find(d => d.name === 'DSM 1');
-    homeSetScreenName(p3.id, cid, 'CENTER IMAG'); await wait(200); const own = getScreenName(p3.id, cid);
+    setScreenName(p3.id, cid, 'CENTER IMAG'); render(); await wait(200);   /* 16lc-vpaux: the table renames everywhere now; P03's own name, as an older show holds it */ const own = getScreenName(p3.id, cid);
     const u0 = _undoStack.length; await _bxMk('CENTER LED'); const c = screens.find(x => x.id === cid); const first = [c.name, c.deviceType, getScreenName(p3.id, cid), _undoStack.length - u0];
     _sysSetMeta('aux', dsm.id, 'name', 'BACKDROP 2'); await wait(200);
     const u1 = _undoStack.length; await _bxMk('RIGHT LED'); const r = screens.find(x => x.id === rid); const second = [r.name, r.deviceType, _undoStack.length - u1];
@@ -7912,7 +8056,12 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
   // 16kx-r3 XR1: REPLACES the check named in its header (reason in the block)
   // 16kx-r3: RENAMED in place. Why: Omar's answer 1: a destination's default name is its number, and with row 3 a backdrop the fourth row is destination 3,
   //   so it is built as Destination 03 (was Destination 04). The mis-click expectations are unchanged.
-  await check('Backdrop 16kx-r2fix: a MIS-CLICK on the Backdrop switch changes nothing: in Edit Show Info CENTER LED\'s switch pressed on (the name box reads BACKDROP, 10\' × 5\' 6") and off again gives the row back CENTER LED and 1920×1080; Update Show then writes nothing (no undo step, Wire and the I/O Patch untouched) and neither Advanced asks "Simple changed"; in a new show Destination 2, and the All Destinations row with Set default for all on, switched on and off build Destination 01-04 at 1920×1080; Destination 2 and 3 switched on (BACKDROP, BACKDROP 2) and Destination 2 off again leave Destination 3 the only backdrop, named BACKDROP, and the screen after it is built as Destination 03, its number without the backdrop (16kx-r3, Omar "no number count drops by one")', async () => {
+  // 16lc-vpcards-fix RF3: REPLACES the check named in its header (reason in the block)
+  // 16lc-vpcards-fix: RENAMED in place. Why: Omar (r16lm SPEC section E, 2026-10-07, 16lc-vpcards-fix): names show as typed on every card, new names in capitals; numbers
+  //   assigned automatically, typed on any card's number box (a taken one refused, the change everywhere); the main session (14:05): opening
+  //   an older show renumbers nothing. Here: Quick Setup's default destination names are in capitals now (Omar, E1); what it pins (a mis-click changes nothing, the backdrop's
+  //   number rule) is unchanged.
+  await check('Backdrop 16kx-r2fix: a MIS-CLICK on the Backdrop switch changes nothing: in Edit Show Info CENTER LED\'s switch pressed on (the name box reads BACKDROP, 10\' × 5\' 6") and off again gives the row back CENTER LED and 1920×1080; Update Show then writes nothing (no undo step, Wire and the I/O Patch untouched) and neither Advanced asks "Simple changed"; in a new show Destination 2, and the All Destinations row with Set default for all on, switched on and off build Destination 01-04 at 1920×1080; Destination 2 and 3 switched on (BACKDROP, BACKDROP 2) and Destination 2 off again leave Destination 3 the only backdrop, named BACKDROP, and the screen after it is built as Destination 03, its number without the backdrop (16kx-r3, Omar "no number count drops by one"); 16lc-vpcards-fix: the default names in capitals (DESTINATION 01-04)', async () => {
     await restore(); await _r2WireAdv(); closeWireMode(); await wait(300); await _fxIoAsks();
     const snapW = JSON.stringify(wireAdvanced), snapI = JSON.stringify(ioAdvanced.pages), u0 = _undoStack.length;
     actions.editShowInfo(); await wait(500); await _fxOpenRow(1);
@@ -7926,9 +8075,9 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
       const nm = [0, 1, 2, 3].map(i => ($('#qs-sn-' + i) || {}).value); $('#qs-confirm-btn').click(); await wait(900); okDialogs(); return [nm, screens.map(s => [s.name, s.deviceType || '', s.w, s.h])]; };
     const d2 = await built([[1, 2]]), d0 = await built([[0, 2]]), two = await built([[1, 1], [2, 1], [1, 1]]);
     await restore();
-    const four = [['Destination 01', '', 1920, 1080], ['Destination 02', '', 1920, 1080], ['Destination 03', '', 1920, 1080], ['Destination 04', '', 1920, 1080]];
+    const four = [['DESTINATION 01', '', 1920, 1080], ['DESTINATION 02', '', 1920, 1080], ['DESTINATION 03', '', 1920, 1080], ['DESTINATION 04', '', 1920, 1080]];
     return is({ on, off, esi, ioAsk, wireAsk, d2, d0, two }, { on: ['BACKDROP', 'BACKDROP · 10\' × 5\' 6"'], off: ['CENTER LED', '1920×1080', 'false'], esi: [[['LEFT LED', 'LED', 1920, 1080], ['CENTER LED', 'LED', 1920, 1080], ['RIGHT LED', 'LED', 1920, 1080]], 0, true, true, null], ioAsk: false, wireAsk: false,
-      d2: [['', '', '', ''], four], d0: [['', '', '', ''], four], two: [['', '', 'BACKDROP', ''], [['Destination 01', '', 1920, 1080], ['Destination 02', '', 1920, 1080], ['BACKDROP', 'Backdrop', 1920, 1056], ['Destination 03', '', 1920, 1080]]] },
+      d2: [['', '', '', ''], four], d0: [['', '', '', ''], four], two: [['', '', 'BACKDROP', ''], [['DESTINATION 01', '', 1920, 1080], ['DESTINATION 02', '', 1920, 1080], ['BACKDROP', 'Backdrop', 1920, 1056], ['DESTINATION 03', '', 1920, 1080]]] },
       'Edit Show Info, switch on [name box, header] / off again [name box, header, switch] / Update Show [destinations, undo steps, Wire unchanged, I/O Patch unchanged, question] / I/O Advanced asks / Wire Advanced asks / new show, Destination 2 on-off [name boxes, built] / All Destinations on-off (Set default for all) / Destination 2 and 3 on, 2 off');
   });
   // 16kx-r2fix R2: NEW
@@ -8185,7 +8334,18 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
   //   added: the Tab order of a card (Cable Type, then Reset and Delete: no Type and no notes between) and the Connector ›
   //   Custom… box left for the card's resolution box (the grid's own refocus: the box keeps the focus, its text selected).
   //   FAILS on 16ky (Type and notes sit between Cable Type and Reset), PASSES on 16ky-r2.
-  await check('I/O 16ky-r2 (was 16ky F; a card has no Type now): keyboard: every control on a card and in a section title is reached with Tab (a real button or box, or tabindex 0 with a role); on a card Tab goes from the Cable Type menu straight to Reset and Delete (no Type, no notes between); the Cable Type menu opened from the keys (Enter on the button is its click) walks with ↓ from the marked row, Enter picks the lit row (ONE undo step) and the focus is back on the same card\'s Cable Type after the redraw; Alt+↓ on the S0 Connector opens its menu and Escape closes it; Enter on the picture opens the file picker path (the upload); leaving the Cable Type › Custom… box for the card\'s resolution box keeps the keyboard there, its text selected (one undo step)', async () => {
+  // 16lc-vpcards-fix RF6: REPLACES the check named in its header (reason in the block)
+  // 16lc-vpcards-fix: RENAMED in place. Why: Omar (r16lm SPEC section E, 2026-10-07, 16lc-vpcards-fix): names show as typed on every card, new names in capitals; numbers
+  //   assigned automatically, typed on any card's number box (a taken one refused, the change everywhere); the main session (14:05): opening
+  //   an older show renumbers nothing. Here: the number box of a source, destination or AUX card is a key now (Omar, E2: "user can click on the S1, SX and change it"): Tab reaches it
+  //   after the trash, so a card's last three keys are Reset, the trash and the number. What it pins (every control reached, the menus, the keys) is unchanged.
+  // 16lc-vpcards-fix4 RH2: REPLACES the check named in its header (reason in the block)
+  // 16lc-vpcards-fix4: RENAMED in place. Why: the main session (r16lm SPEC section H, 2026-10-08 00:35; Omar: "the number change should not rearrange anything, if that will
+  //   be any issue then it should be skipped complete for now"): numbers by order exactly as in the v0.8.2 candidate (r16lj/fix), the
+  //   number box shown, not typed in, nothing kept or saved. Here: 16lc-vpcards-fix (RF6) made the number box a key (E2: a click / Enter / Space types a number). SPEC H1: the number box is shown, not
+  //   typed in, so it is not a key again and a card's last three keys are the Cable Type, Reset and the trash, as in the v0.8.2 candidate. The
+  //   expectations are r16lj/fix's again; what it pins (every control reached, the menus, the keys) is unchanged.
+  await check('I/O 16ky-r2 (was 16ky F; a card has no Type now): keyboard: every control on a card and in a section title is reached with Tab (a real button or box, or tabindex 0 with a role); on a card Tab goes from the Cable Type menu straight to Reset and Delete (no Type, no notes between); the Cable Type menu opened from the keys (Enter on the button is its click) walks with ↓ from the marked row, Enter picks the lit row (ONE undo step) and the focus is back on the same card\'s Cable Type after the redraw; Alt+↓ on the S0 Connector opens its menu and Escape closes it; Enter on the picture opens the file picker path (the upload); leaving the Cable Type › Custom… box for the card\'s resolution box keeps the keyboard there, its text selected (one undo step); 16lc-vpcards-fix4: the number box is not a key again (shown, not typed in): a card ends on the Cable Type, Reset and the trash', async () => {
     await restore(); await ioOpenSimple(); const out = {};
     const g = $('#io-grid'); if (!g) { closeSystem(); return 'no card grid'; }
     const ctl = $$('#io-grid .iog-card button, #io-grid .iog-card input, #io-grid .iog-card [role="button"], #io-grid .iog-hd button, #io-grid .iog-hd [role="button"], #io-grid .iog-add');
@@ -8258,7 +8418,18 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
   // 16la-wire-mv: RENAMED in place. Why: Omar 2026-09-29 (N): a click (or Enter / Space) on a multiviewer's picture shows the
   //   next of its four pictures, so the picture is a control Tab reaches, after the Cable Type menu (the card is mirrored, 16kz-refresh).
   //   The multiviewer card's expected keys gain "picture" there; every other card, the grey lines and the bars are unchanged.
-  await check('I/O 16ky-r2: a Simple card is the name, the resolution and the cable type (Omar 2026-09-27: "this should stay simple just name resolution and cable type"): with a Type and a note stored on every kind of item, no card has a Type (chip, box or menu) or a notes box and none shows those words; a card\'s keys run left to right: on a source card the picture, colour swatch and shuffle, the name and its pencil, the name library, the resolution box and its menu, the Cable Type menu; on a destination or AUX / DSM card (mirrored, 16kz-refresh: its picture on the right) the name, the name library, the resolution box and its menu, the Cable Type menu, then the picture, the shuffle and the colour swatch; on a multiviewer card (16la-wire-mv (N): its picture is a button that shows the next picture) the name, the name library, the resolution box and its menu, the Cable Type menu, then the picture; then Reset and Delete on the grey line, which keeps the red pill when the cable cannot carry the size and the number (S1, D1, IO, MV1) at its right end; the S0 / D0 bars set the Connector and the Resolution only', async () => {
+  // 16lc-vpcards-fix RF7: REPLACES the check named in its header (reason in the block)
+  // 16lc-vpcards-fix: RENAMED in place. Why: Omar (r16lm SPEC section E, 2026-10-07, 16lc-vpcards-fix): names show as typed on every card, new names in capitals; numbers
+  //   assigned automatically, typed on any card's number box (a taken one refused, the change everywhere); the main session (14:05): opening
+  //   an older show renumbers nothing. Here: the number of a source, destination or AUX card is a key now (Omar, E2): the keys of those cards end in it; the I/O-only and the
+  //   multiviewer cards keep a plain number. What it pins (no Type or notes on a card, the grey line, the S0 / D0 bars) is unchanged.
+  // 16lc-vpcards-fix4 RH3: REPLACES the check named in its header (reason in the block)
+  // 16lc-vpcards-fix4: RENAMED in place. Why: the main session (r16lm SPEC section H, 2026-10-08 00:35; Omar: "the number change should not rearrange anything, if that will
+  //   be any issue then it should be skipped complete for now"): numbers by order exactly as in the v0.8.2 candidate (r16lj/fix), the
+  //   number box shown, not typed in, nothing kept or saved. Here: 16lc-vpcards-fix (RF7) added the number box to the keys of a source / destination / AUX card (E2). SPEC H1: the number box is shown,
+  //   not typed in, so the keys of those cards end where they did in the v0.8.2 candidate. The expectations are r16lj/fix's again; what it
+  //   pins (no Type or notes on a card, the grey line, the S0 / D0 bars) is unchanged.
+  await check('I/O 16ky-r2: a Simple card is the name, the resolution and the cable type (Omar 2026-09-27: "this should stay simple just name resolution and cable type"): with a Type and a note stored on every kind of item, no card has a Type (chip, box or menu) or a notes box and none shows those words; a card\'s keys run left to right: on a source card the picture, colour swatch and shuffle, the name and its pencil, the name library, the resolution box and its menu, the Cable Type menu; on a destination or AUX / DSM card (mirrored, 16kz-refresh: its picture on the right) the name, the name library, the resolution box and its menu, the Cable Type menu, then the picture, the shuffle and the colour swatch; on a multiviewer card (16la-wire-mv (N): its picture is a button that shows the next picture) the name, the name library, the resolution box and its menu, the Cable Type menu, then the picture; then Reset and Delete on the grey line, which keeps the red pill when the cable cannot carry the size and the number (S1, D1, IO, MV1) at its right end; the S0 / D0 bars set the Connector and the Resolution only; 16lc-vpcards-fix4: the number of a card is not a key again (shown, not typed in)', async () => {
     await restore(); _kzStock(); await ioOpenSimple(); const out = {};
     const g = $('#io-grid'); if (!g) { closeSystem(); await restore(); return 'no card grid'; }
     out.typeOrNotes = $$(_kzTN).length;
@@ -8629,7 +8800,12 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
   const _x3W = (f, t) => wireAdvanced.wires.push({ id: 'w' + Math.random().toString(36).slice(2, 9), fromId: f, toId: t });
   const _x3Qs = async row => { actions.editShowInfo(); await wait(500); const h = $('#qs-sr-' + row + ' .qs-screen-hdr'); if (h && !$('#qs-sr-body-' + row).classList.contains('open')) h.click(); await wait(200); };
   // 16kx-r3 K1: NEW
-  await check('Backdrop 16kx-r3: NO NUMBER (Omar: "no number count drops by one"): with CENTER LED a backdrop (LEFT LED | BACKDROP | RIGHT LED), RIGHT LED is destination 2 EVERYWHERE and the backdrop has no number: the I/O Patch cards (D1 LEFT LED, D2 RIGHT LED), Remove Destination, the I/O Excel (the Video I-O tab and the page-1 tab: Destination 1, 2), the Look Book (its I/O page Destination 1, 2; the breakdown Destination 01, Backdrop, Destination 02 under "2 screens"; the layer strip D01, D02; the cover\'s Destinations 2), the Advanced page (its list D01, BD (the backdrop, no number), D02; RIGHT LED\'s crumb D02; "2 screens"), the bottom bar\'s DESTINATIONS 2, Edit Show Info\'s rows (All Destinations, Backdrop, Destination 2) and the next destination\'s name, Destination 03', async () => {
+  // 16lc-vpcards-fix RF8: REPLACES the check named in its header (reason in the block)
+  // 16lc-vpcards-fix: RENAMED in place. Why: Omar (r16lm SPEC section E, 2026-10-07, 16lc-vpcards-fix): names show as typed on every card, new names in capitals; numbers
+  //   assigned automatically, typed on any card's number box (a taken one refused, the change everywhere); the main session (14:05): opening
+  //   an older show renumbers nothing. Here: a new destination's default name is in capitals now (Omar, E1: "the system default should be to capitalize"): Edit Show Info's
+  //   default reads DESTINATION 02 and the next destination DESTINATION 03. What it pins (no number for a backdrop) is unchanged.
+  await check('Backdrop 16kx-r3: NO NUMBER (Omar: "no number count drops by one"): with CENTER LED a backdrop (LEFT LED | BACKDROP | RIGHT LED), RIGHT LED is destination 2 EVERYWHERE and the backdrop has no number: the I/O Patch cards (D1 LEFT LED, D2 RIGHT LED), Remove Destination, the I/O Excel (the Video I-O tab and the page-1 tab: Destination 1, 2), the Look Book (its I/O page Destination 1, 2; the breakdown Destination 01, Backdrop, Destination 02 under "2 screens"; the layer strip D01, D02; the cover\'s Destinations 2), the Advanced page (its list D01, BD (the backdrop, no number), D02; RIGHT LED\'s crumb D02; "2 screens"), the bottom bar\'s DESTINATIONS 2, Edit Show Info\'s rows (All Destinations, Backdrop, Destination 2) and the next destination\'s name, Destination 03; 16lc-vpcards-fix: in capitals, DESTINATION 02 / 03', async () => {
     await restore(); const q = await _bxMk('CENTER LED'); const bd = _x3Bd(); if (!bd) { await restore(); return 'no backdrop: ' + q; }
     const rid = _bxS('RIGHT LED').id, p0 = presets[0]; const out = {};
     await ioOpenSimple(); out.grid = _r3DNums();
@@ -8648,7 +8824,7 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
     await restore();
     return is(out, { grid: ['D1 LEFT LED', 'D2 RIGHT LED'], remove: ['Destination 1 LEFT LED', 'Destination 2 RIGHT LED'], excel: [['Destination 1 LEFT LED', 'Destination 2 RIGHT LED'], ['Destination 1 LEFT LED', 'Destination 2 RIGHT LED']],
       book: { io: ['Destination 1 LEFT LED', 'Destination 2 RIGHT LED'], breakdown: ['Destination 01', 'Backdrop', 'Destination 02'], count: '2 screens', strip: ['D01', 'D02'], cover: '2' },
-      adv: ['2 screens', ['D01', 'BD', 'D02'], 'D02'], bar: '2', qs: ['All Destinations', 'Backdrop', 'Destination 2', 'Destination 02'], next: 'Destination 03' },
+      adv: ['2 screens', ['D01', 'BD', 'D02'], 'D02'], bar: '2', qs: ['All Destinations', 'Backdrop', 'Destination 2', 'DESTINATION 02'], next: 'DESTINATION 03' },
       'I/O Patch cards / Remove Destination / I/O Excel [Video I-O tab, page-1 tab] / Look Book [I/O page, breakdown slots, breakdown count, layer strip, cover] / Advanced [header count, list chips, RIGHT LED\'s crumb] / bottom bar DESTINATIONS / Edit Show Info [row labels, RIGHT LED\'s default name] / + Destination\'s name');
   });
   // 16kx-r3 J1: NEW
@@ -8731,15 +8907,20 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
       'undo steps of the two copies / the destinations after [name, Type, size] / a screen copied [undo steps, "LEFT LED Copy"]');
   });
   // 16kx-r3 O1: NEW
-  await check('Backdrop 16kx-r3: "Turn into a backdrop?" ALWAYS ASKS and says plainly what happens: for a destination with NO content (Destination 04, just added) it asks (Cancel: nothing, no undo step) with "…becomes a backdrop: a set piece shown only in the Video Presets. It is renamed BACKDROP and sized in feet (10\' × 5\' 6"). It leaves the I/O Patch and Wire, with what fed it there (its cables, a converter that fed only it, its switcher output). Undo brings it back." and no content line; yes is ONE undo step; for CENTER LED it adds "Its 3 layers and 5 backgrounds in 5 presets will be removed."; Edit Show Info\'s Update Show asks in the same words', async () => {
+  // 16lc-vpcards-fix RF9: REPLACES the check named in its header (reason in the block)
+  // 16lc-vpcards-fix: RENAMED in place. Why: Omar (r16lm SPEC section E, 2026-10-07, 16lc-vpcards-fix): names show as typed on every card, new names in capitals; numbers
+  //   assigned automatically, typed on any card's number box (a taken one refused, the change everywhere); the main session (14:05): opening
+  //   an older show renumbers nothing. Here: a new destination's default name is in capitals now (Omar, E1): the question names DESTINATION 04. What it pins (it always asks, in
+  //   the same words) is unchanged.
+  await check('Backdrop 16kx-r3: "Turn into a backdrop?" ALWAYS ASKS and says plainly what happens: for a destination with NO content (Destination 04, just added) it asks (Cancel: nothing, no undo step) with "…becomes a backdrop: a set piece shown only in the Video Presets. It is renamed BACKDROP and sized in feet (10\' × 5\' 6"). It leaves the I/O Patch and Wire, with what fed it there (its cables, a converter that fed only it, its switcher output). Undo brings it back." and no content line; yes is ONE undo step; for CENTER LED it adds "Its 3 layers and 5 backgrounds in 5 presets will be removed."; Edit Show Info\'s Update Show asks in the same words; 16lc-vpcards-fix: the new destination is DESTINATION 04', async () => {
     await restore(); const u0 = _undoStack.length; _sysAddDestination(); await wait(300); const nd = screens[screens.length - 1]; const out = { added: [nd.name, _bdContent(nd.id).presets] };
-    const lines = t => typeof t === 'string' ? [/"(Destination 04|CENTER LED)" becomes a backdrop: a set piece shown only in the Video Presets\./.test(t), /It is renamed BACKDROP and sized in feet \(10' × 5' 6"\)\./.test(t), /It leaves the I\/O Patch and Wire, with what fed it there \(its cables, a converter that fed only it, its switcher output\)\./.test(t), /Undo brings it back\./.test(t), (t.match(/Its 3 layers and 5 backgrounds in 5 presets will be removed\./) || []).length] : t;
+    const lines = t => typeof t === 'string' ? [/"(DESTINATION 04|CENTER LED)" becomes a backdrop: a set piece shown only in the Video Presets\./.test(t), /It is renamed BACKDROP and sized in feet \(10' × 5' 6"\)\./.test(t), /It leaves the I\/O Patch and Wire, with what fed it there \(its cables, a converter that fed only it, its switcher output\)\./.test(t), /Undo brings it back\./.test(t), (t.match(/Its 3 layers and 5 backgrounds in 5 presets will be removed\./) || []).length] : t;
     let u = _undoStack.length; out.cancel = [lines(await _bxMk(nd.name, false)), (screens.find(s => s.id === nd.id) || {}).deviceType || '', _undoStack.length - u];
     u = _undoStack.length; out.yes = [lines(await _bxMk(nd.name, true)), (screens.find(s => s.id === nd.id) || {}).name, _undoStack.length - u];
     await restore(); out.content = lines(await _bxMk('CENTER LED', false));
     await restore(); const e = await _r2Edit(1, true); out.esi = lines(e.q);
     await restore();
-    return is(out, { added: ['Destination 04', 0], cancel: [[true, true, true, true, 0], '', 0], yes: [[true, true, true, true, 0], 'BACKDROP', 1], content: [true, true, true, true, 1], esi: [true, true, true, true, 1] },
+    return is(out, { added: ['DESTINATION 04', 0], cancel: [[true, true, true, true, 0], '', 0], yes: [[true, true, true, true, 0], 'BACKDROP', 1], content: [true, true, true, true, 1], esi: [true, true, true, true, 1] },
       '+ Add destination [name, presets with content] / its Type menu › Backdrop, Cancel [the question: names it and says Video Presets only, renamed BACKDROP and its feet, leaves the I/O Patch and Wire with what fed it, Undo, the content line; Type, undo steps] / yes [the question, name, undo steps] / CENTER LED\'s question / Edit Show Info\'s question');
   });
   // 16kx-r3 H4: NEW
@@ -8759,7 +8940,12 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
   const _r4fQs3 = async () => { await _fxNew(); for (let i = 0; i < 6 && +$('#qs-screens-val').textContent !== 3; i++) { qsAdjust('screens', +$('#qs-screens-val').textContent > 3 ? -1 : 1); await wait(150); } };   /* a new show's Quick Setup, 3 destinations */
   const _r4fBuild = async () => { $('#qs-confirm-btn').click(); await wait(900); okDialogs(); await wait(300); };
   // 16ky-r4fix A1: NEW
-  await check('Names 16ky-r4fix: a new or unnamed destination NEVER takes a name the show already has (the round-4 attack: Destination 01 | BACKDROP | Destination 03 plus a new screen made a second "Destination 03"): its name is its number counted without the backdrop, or the next free one, so ADD > Destination offers Destination 04, the I/O Patch + Add destination card adds Destination 04 (one undo step) and Edit Show Info\'s new row reads and is built Destination 04; a Quick Setup backdrop row whose name box is emptied is built BACKDROP (not Destination 01 beside a Destination 01); a show with no taken name reads as before (General Session: + Destination offers Destination 04)', async () => {
+  // 16lc-vpcards-fix RF10: REPLACES the check named in its header (reason in the block)
+  // 16lc-vpcards-fix: RENAMED in place. Why: Omar (r16lm SPEC section E, 2026-10-07, 16lc-vpcards-fix): names show as typed on every card, new names in capitals; numbers
+  //   assigned automatically, typed on any card's number box (a taken one refused, the change everywhere); the main session (14:05): opening
+  //   an older show renumbers nothing. Here: a new destination's default name is in capitals now (Omar, E1): DESTINATION 01 / 03 / 04. What it pins (never a name the show has,
+  //   the number counted without the backdrop) is unchanged.
+  await check('Names 16ky-r4fix: a new or unnamed destination NEVER takes a name the show already has (the round-4 attack: Destination 01 | BACKDROP | Destination 03 plus a new screen made a second "Destination 03"): its name is its number counted without the backdrop, or the next free one, so ADD > Destination offers Destination 04, the I/O Patch + Add destination card adds Destination 04 (one undo step) and Edit Show Info\'s new row reads and is built Destination 04; a Quick Setup backdrop row whose name box is emptied is built BACKDROP (not Destination 01 beside a Destination 01); a show with no taken name reads as before (General Session: + Destination offers Destination 04); 16lc-vpcards-fix: the default names in capitals (DESTINATION 04)', async () => {
     const out = {};
     await _r4fQs3(); await _r4fBuild();
     actions.editShowInfo(); await wait(500); await _fxOpenRow(1); if (!$('#qs-bd-1')) { closeQS(); await restore(); return 'no Backdrop switch'; }
@@ -8773,15 +8959,19 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
     out.qs = [nb.placeholder]; await _r4fBuild(); out.qs.push(_r4fNm());
     await restore(); openModal(); await wait(300); out.gs = ($('#ms-n') || {}).value; try { closeModal(); } catch (e) {} await wait(200);
     await restore();
-    return is(out, { show: ['Destination 01', 'BACKDROP [bd]', 'Destination 03'], modal: 'Destination 04', grid: [['D1 Destination 01', 'D2 Destination 03', 'D3 Destination 04'], 1],
-      esi: ['Destination 04', 'Destination 04'], dup: [], qs: ['BACKDROP', ['BACKDROP [bd]', 'Destination 01', 'Destination 02']], gs: 'Destination 04' },
+    return is(out, { show: ['DESTINATION 01', 'BACKDROP [bd]', 'DESTINATION 03'], modal: 'DESTINATION 04', grid: [['D1 DESTINATION 01', 'D2 DESTINATION 03', 'D3 DESTINATION 04'], 1],
+      esi: ['DESTINATION 04', 'DESTINATION 04'], dup: [], qs: ['BACKDROP', ['BACKDROP [bd]', 'DESTINATION 01', 'DESTINATION 02']], gs: 'DESTINATION 04' },
       'the show [after Edit Show Info] / ADD > Destination\'s name / + Add destination [cards, undo steps] / Edit Show Info\'s new row [placeholder, built] / duplicate names / Quick Setup backdrop row emptied [placeholder, built] / General Session + Destination');
   });
   // 16ky-r4fix A2: NEW
   // 16kz-answers R6: REPLACES the check named in its header (reason in the block)
   // 16kz-answers: RENAMED in place. Why: Omar's answer 14 ("yes"): Quick Setup's first row switched to Backdrop reads Backdrop, and the first
   //   SCREEN row reads All Destinations. Only the name and the second state's two labels changed (the aria-labels and defaults are the same).
-  await check('Quick Setup 16ky-r4fix: what a screen reader reads follows the row\'s own label (the round-4 attack: the row labelled Destination 2 said "Pick resolution for destination 3"): with 3 destinations and Destination 2\'s Backdrop switch on, the rows read All Destinations / Backdrop / Destination 2, their resolution buttons say destination 1 / backdrop / destination 2, the backdrop row\'s Length, Height and picture say backdrop, and the name boxes\' defaults are Destination 01 / BACKDROP / Destination 02; with the first row switched on too, it reads Backdrop and the last row reads All Destinations and says destination 1 (Destination 01) (16kz-answers, Omar\'s answer 14)', async () => {
+  // 16lc-vpcards-fix RF11: REPLACES the check named in its header (reason in the block)
+  // 16lc-vpcards-fix: RENAMED in place. Why: Omar (r16lm SPEC section E, 2026-10-07, 16lc-vpcards-fix): names show as typed on every card, new names in capitals; numbers
+  //   assigned automatically, typed on any card's number box (a taken one refused, the change everywhere); the main session (14:05): opening
+  //   an older show renumbers nothing. Here: Quick Setup's default destination names are in capitals now (Omar, E1); what a screen reader reads is unchanged.
+  await check('Quick Setup 16ky-r4fix: what a screen reader reads follows the row\'s own label (the round-4 attack: the row labelled Destination 2 said "Pick resolution for destination 3"): with 3 destinations and Destination 2\'s Backdrop switch on, the rows read All Destinations / Backdrop / Destination 2, their resolution buttons say destination 1 / backdrop / destination 2, the backdrop row\'s Length, Height and picture say backdrop, and the name boxes\' defaults are Destination 01 / BACKDROP / Destination 02; with the first row switched on too, it reads Backdrop and the last row reads All Destinations and says destination 1 (Destination 01) (16kz-answers, Omar\'s answer 14); 16lc-vpcards-fix: the name boxes\' defaults in capitals', async () => {
     await _r4fQs3(); await _fxOpenRow(1); if (!$('#qs-bd-1')) { closeQS(); await restore(); return 'no Backdrop switch'; }
     const read = () => [0, 1, 2].map(i => [(($('#qs-sr-no-' + i) || {}).textContent || '').trim(), ($('#qs-res-' + i) || { getAttribute: () => null }).getAttribute('aria-label'),
       $$('#qs-bdctl-' + i + ' [aria-label]').map(e => e.getAttribute('aria-label').replace(/^.*, /, '')).join('|'), ($('#qs-sn-' + i) || {}).placeholder]);
@@ -8789,8 +8979,8 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
     $('#qs-bd-0').click(); await wait(250); const two = read();
     try { closeQS(); } catch (e) {} await wait(200); await restore();
     return is({ one, two }, {
-      one: [['All Destinations', 'Pick resolution for destination 1', '', 'Destination 01'], ['Backdrop', 'Pick resolution for backdrop', 'backdrop|backdrop|backdrop', 'BACKDROP'], ['Destination 2', 'Pick resolution for destination 2', '', 'Destination 02']],
-      two: [['Backdrop', 'Pick resolution for backdrop', 'backdrop|backdrop|backdrop', 'BACKDROP 2'], ['Backdrop', 'Pick resolution for backdrop', 'backdrop|backdrop|backdrop', 'BACKDROP'], ['All Destinations', 'Pick resolution for destination 1', '', 'Destination 01']] },
+      one: [['All Destinations', 'Pick resolution for destination 1', '', 'DESTINATION 01'], ['Backdrop', 'Pick resolution for backdrop', 'backdrop|backdrop|backdrop', 'BACKDROP'], ['Destination 2', 'Pick resolution for destination 2', '', 'DESTINATION 02']],
+      two: [['Backdrop', 'Pick resolution for backdrop', 'backdrop|backdrop|backdrop', 'BACKDROP 2'], ['Backdrop', 'Pick resolution for backdrop', 'backdrop|backdrop|backdrop', 'BACKDROP'], ['All Destinations', 'Pick resolution for destination 1', '', 'DESTINATION 01']] },
       'Quick Setup rows [label, resolution button\'s aria-label, the backdrop controls\' aria-labels (their end), the name box\'s default]: Destination 2 on / the first row on too');
   });
   // ── 16kz-answers (Omar 2026-09-28 ~10:15, his answers to the questions left after 16ky). Appended at the END of the probe (after
@@ -8882,7 +9072,11 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
       'each [Name in use said, the name after, undo steps]: P01 CENTER LED "Left LED" / P02 CENTER LED "RIGHT LED" / P02 CENTER LED "STAGE" / P01 LEFT LED "stage" / AUX Properties [said, P01 name, its name] / LEFT LED "backdrop" with CENTER LED a backdrop / an old show with two LEFT LED [cards, names] / its second one "RIGHT LED" / names after');
   });
   // 16kz-answers Z5: NEW
-  await check('Quick Setup 16kz-answers (C): Edit Show Info and Quick Setup refuse a name another output has (Omar\'s answer 8): in Edit Show Info CENTER LED\'s row typed "LEFT LED" and RIGHT LED\'s typed "aux 1" say Name in use and go back to their names; "STAGE R" is taken; a row given "STAGE R" without leaving its box is refused by Update Show (the window stays open, nothing changes); a show that already has two LEFT LED still updates; in a new show two rows typed "CAM WALL" are refused by Build My Show until one is changed', async () => {
+  // 16lc-vpcards-fix RF12: REPLACES the check named in its header (reason in the block)
+  // 16lc-vpcards-fix: RENAMED in place. Why: Omar (r16lm SPEC section E, 2026-10-07, 16lc-vpcards-fix): names show as typed on every card, new names in capitals; numbers
+  //   assigned automatically, typed on any card's number box (a taken one refused, the change everywhere); the main session (14:05): opening
+  //   an older show renumbers nothing. Here: Quick Setup's default destination name is in capitals now (Omar, E1); what it pins (a used name refused) is unchanged.
+  await check('Quick Setup 16kz-answers (C): Edit Show Info and Quick Setup refuse a name another output has (Omar\'s answer 8): in Edit Show Info CENTER LED\'s row typed "LEFT LED" and RIGHT LED\'s typed "aux 1" say Name in use and go back to their names; "STAGE R" is taken; a row given "STAGE R" without leaving its box is refused by Update Show (the window stays open, nothing changes); a show that already has two LEFT LED still updates; in a new show two rows typed "CAM WALL" are refused by Build My Show until one is changed; 16lc-vpcards-fix: the third row\'s default DESTINATION 03', async () => {
     await restore(); await _kzEsi(); const out = {};
     const typ = async (i, v) => { await _fxOpenRow(i); const b = $('#qs-sn-' + i); if (!b) return 'no row ' + i; b.focus(); b.value = v; fire(b, 'input'); fire(b, 'change'); await wait(250); const t = _kzAlert(); await wait(100); return [_kzInUse(t, v), b.value, _qsScreenNames[i]]; };
     out.left = await typ(1, 'LEFT LED'); out.aux = await typ(2, 'aux 1'); out.free = await typ(2, 'STAGE R');
@@ -8895,7 +9089,7 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
     { const b = $('#qs-sn-1'); b.value = 'CAM WALL 2'; fire(b, 'input'); $('#qs-confirm-btn').click(); await wait(900); okDialogs(); await wait(300); out.built = screens.map(s => s.name); }
     await restore();
     return is(out, { left: [true, 'CENTER LED', 'CENTER LED'], aux: [true, 'RIGHT LED', 'RIGHT LED'], free: [false, 'STAGE R', 'STAGE R'], update: [true, 'flex', ['LEFT LED', 'CENTER LED', 'RIGHT LED']],
-      oldDup: [null, 'none', ['LEFT LED', 'CENTER LED', 'LEFT LED']], build: [true, 'flex', 0], built: ['CAM WALL', 'CAM WALL 2', 'Destination 03'] },
+      oldDup: [null, 'none', ['LEFT LED', 'CENTER LED', 'LEFT LED']], build: [true, 'flex', 0], built: ['CAM WALL', 'CAM WALL 2', 'DESTINATION 03'] },
       'Edit Show Info, each [Name in use said, the box, the row\'s name]: CENTER LED "LEFT LED" / RIGHT LED "aux 1" / RIGHT LED "STAGE R" / Update Show with CENTER LED "STAGE R" [refused, the window, the show] / an old show with two LEFT LED, Update Show [alert, the window, the show] / a new show, two rows "CAM WALL" [refused, the window, screens built] / one changed to "CAM WALL 2" [built]');
   });
   // 16kz-answers Z6: NEW
@@ -8911,12 +9105,24 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
     return is(out, { card: [['AUX5'], 1], presets: [['AUX5'], 1], esi: ['AUX5'], taken: ['AUX6'] }, '+ Add AUX card [added, undo steps] / Video Presets + AUX [added, steps] / Edit Show Info AUX + 1 [added] / with a destination named AUX5 [added]');
   });
   // 16kz-answers Z7: NEW
-  await check('I/O 16kz-answers (E): the Remove Source window numbers the I/O-only sources the way their cards do (Omar\'s answer 10): with two sources added on the patch (Source 9 and Source 10, cards S12 and S13 after the eleven preset sources) the window lists S12 Source 9 and S13 Source 10, the numbers on their cards (not S1, S2)', async () => {
+  // 16lc-vpfinish RD17: REPLACES the check named in its header (reason in the block)
+  // 16lc-vpfinish: RENAMED in place. Why: Omar (r16lm SPEC, the answers to steps A and C and to the picture pack, 2026-10-06 / 07, 16lc-vpfinish): "Speed: fix it"; the
+  //   panel stops at card width; Wire Advanced hand-made cards are the I/O card; Destination Properties gets a Name box; the table's x asks;
+  //   older shows' names cleaned up on open; long names shrink to fit; files after the sources, in capitals, own colours; + ADD VIDEO at
+  //   a file card's size; + ADD SOURCE named after its number. Here: + Add source names the new source after its S number (Omar: "+ ADD SOURCE names the new source after its S number"): the two
+  //   sources are Source 12 and Source 13 now (they were Source 9 and Source 10, numbered S12 and S13). What it pins (the window's numbers
+  //   are the cards' numbers) is unchanged.
+  // 16lc-vpcards-fix RF13: REPLACES the check named in its header (reason in the block)
+  // 16lc-vpcards-fix: RENAMED in place. Why: Omar (r16lm SPEC section E, 2026-10-07, 16lc-vpcards-fix): names show as typed on every card, new names in capitals; numbers
+  //   assigned automatically, typed on any card's number box (a taken one refused, the change everywhere); the main session (14:05): opening
+  //   an older show renumbers nothing. Here: + Add source names the source in capitals now (Omar, E1): SOURCE 12 / SOURCE 13. What it pins (the window's numbers are the cards')
+  //   is unchanged.
+  await check('I/O 16kz-answers (E): the Remove Source window numbers the I/O-only sources the way their cards do (Omar\'s answer 10): with two sources added on the patch (16lc-vpfinish: named after their numbers, Source 12 and Source 13, cards S12 and S13 after the eleven preset sources) the window lists S12 Source 12 and S13 Source 13, the numbers on their cards (not S1, S2); 16lc-vpcards-fix: named in capitals, SOURCE 12 / SOURCE 13', async () => {
     await restore(); await ioOpenSimple(); _sysAddSource(); await wait(200); _sysAddSource(); await wait(300);
-    const cards = $$('#io-grid [data-iog-sec="src"] .iog-card').map(c => ((($('.iog-num', c) || {}).textContent || '') + ' ' + (($('.sys-name-input', c) || {}).value || '')).trim()).filter(x => /^S\d+ Source (9|10)$/.test(x));
+    const cards = $$('#io-grid [data-iog-sec="src"] .iog-card').map(c => ((($('.iog-num', c) || {}).textContent || '') + ' ' + (($('.sys-name-input', c) || {}).value || '')).trim()).filter(x => /^S\d+ SOURCE (12|13)$/.test(x));   /* 16lc-vpfinish: + Add source names the source after its number */
     _sysOpenRemoveSourceModal(); await wait(300); const win = $$('#sys-remove-overlay .sys-src-picker-item').map(i => (($('.picker-icon', i) || {}).textContent || '') + ' ' + (($('.picker-name', i) || {}).textContent || ''));
     try { _sysCloseRemoveSourceModal(); } catch (e) {} closeSystem(); await restore();
-    return is({ cards, win }, { cards: ['S12 Source 9', 'S13 Source 10'], win: ['S12 Source 9', 'S13 Source 10'] }, 'the two cards [number, name] / the Remove Source window [number, name]');
+    return is({ cards, win }, { cards: ['S12 SOURCE 12', 'S13 SOURCE 13'], win: ['S12 SOURCE 12', 'S13 SOURCE 13'] }, 'the two cards [number, name] / the Remove Source window [number, name]');
   });
   // 16kz-answers Z8: NEW
   // 16kz-refresh Q8: REPLACES the check named in its header (reason in the block)
@@ -8942,7 +9148,11 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
       'the show after Edit Show Info / LEFT LED\'s Type menu, last row / a click on it [a question, the menu still open, its Type] / the question\'s door [said, its Type] / Edit Show Info LEFT LED\'s switch [aria-disabled, the reason] / a click [said, made a backdrop] / a new show with one row [switch aria-disabled] / two rows, the first a backdrop [made, the second\'s switch aria-disabled] / taken down to one row [said at the −, the window, the count, screens built]');
   });
   // 16kz-answers Z9: NEW
-  await check('Quick Setup 16kz-answers (G): the first row switched to Backdrop reads Backdrop and the first SCREEN row reads All Destinations (Omar\'s answer 14): with 3 rows and row 1\'s switch on, the rows read Backdrop / All Destinations (sets default for all) / Destination 2; 1280×720 picked for the All Destinations row becomes the next row\'s too and the summary\'s base; switched back, row 1 reads All Destinations again with the note; built with the switch on, the two screens are 1280×720', async () => {
+  // 16lc-vpcards-fix RF14: REPLACES the check named in its header (reason in the block)
+  // 16lc-vpcards-fix: RENAMED in place. Why: Omar (r16lm SPEC section E, 2026-10-07, 16lc-vpcards-fix): names show as typed on every card, new names in capitals; numbers
+  //   assigned automatically, typed on any card's number box (a taken one refused, the change everywhere); the main session (14:05): opening
+  //   an older show renumbers nothing. Here: Quick Setup's default destination names are in capitals now (Omar, E1); what it pins (the row labels, the resolutions) is unchanged.
+  await check('Quick Setup 16kz-answers (G): the first row switched to Backdrop reads Backdrop and the first SCREEN row reads All Destinations (Omar\'s answer 14): with 3 rows and row 1\'s switch on, the rows read Backdrop / All Destinations (sets default for all) / Destination 2; 1280×720 picked for the All Destinations row becomes the next row\'s too and the summary\'s base; switched back, row 1 reads All Destinations again with the note; built with the switch on, the two screens are 1280×720; 16lc-vpcards-fix: built with the default names in capitals', async () => {
     await restore(); await _fxNew(); for (let i = 0; i < 6 && +$('#qs-screens-val').textContent !== 3; i++) { qsAdjust('screens', +$('#qs-screens-val').textContent > 3 ? -1 : 1); await wait(120); }
     const out = { before: _kzQsLbl() };
     $('#qs-bd-0').click(); await wait(250); out.on = _kzQsLbl(); out.aria = [0, 1, 2].map(i => ($('#qs-res-' + i) || { getAttribute: () => null }).getAttribute('aria-label'));
@@ -8951,7 +9161,7 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
     $('#qs-bd-0').click(); await wait(250); $('#qs-confirm-btn').click(); await wait(900); okDialogs(); await wait(300); out.built = screens.map(s => s.name + ' ' + s.w + 'x' + s.h + (s.deviceType === 'Backdrop' ? ' [bd]' : ''));
     await restore();
     return is(out, { before: ['All Destinations +default', 'Destination 2', 'Destination 3'], on: ['Backdrop', 'All Destinations +default', 'Destination 2'], aria: ['Pick resolution for backdrop', 'Pick resolution for destination 1', 'Pick resolution for destination 2'],
-      res: ['1280x720', '1280x720', '2 screens · 1 backdrop · 720p HD base'], off: ['All Destinations +default', 'Destination 2', 'Destination 3'], built: ['BACKDROP 1920x1056 [bd]', 'Destination 01 1280x720', 'Destination 02 1280x720'] },
+      res: ['1280x720', '1280x720', '2 screens · 1 backdrop · 720p HD base'], off: ['All Destinations +default', 'Destination 2', 'Destination 3'], built: ['BACKDROP 1920x1056 [bd]', 'DESTINATION 01 1280x720', 'DESTINATION 02 1280x720'] },
       'the rows [label, the default note] before / row 1 a backdrop / the resolution buttons\' aria-labels / after 1280×720 on the All Destinations row [row 2, row 3, the summary] / switched back / built');
   });
   // ── 16kz-refresh (Omar 2026-09-28 ~10:35, "12 and 13 do the recommended … refresh, and all recommended", and his card mockup
@@ -9153,7 +9363,30 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
       'with a rate [each case red?] / with no rate, what differs from the old rule / a page-2 row 3840×2160 on 6G-SDI [no rate: red (as before), 30: red, 60: red, its tooltip] / LEFT LED on 3G-SDI, its Simple card [120: red, 60: red]');
   });
   // 16kz-refresh Y12: NEW
-  await check('Cards 16kz-refresh (K): a destination, AUX / DSM, I/O-only destination and multiviewer card is MIRRORED (Omar\'s mockup: "Source should have images on the Left and Destination images on the right"): on the I/O Patch Simple grid its picture is on the RIGHT and the name / resolution / cable type column on the LEFT, the random-colour button before the colour bar, the markup in that order (Tab reads it left to right), the grey line unchanged at the foot, the picture itself not flipped; a source card keeps its picture on the LEFT; Wire\'s side-panel cards (Simple, and Advanced with a hand-made destination) the same (the + Add cards: Y13)', async () => {
+  // 16lc-vpcards R11: REPLACES the check named in its header (reason in the block)
+  // 16lc-vpcards: RENAMED in place. Why: Omar 2026-10-05 / 06 (16lc-vpcards): "Video Preset Advance Cards are wrong, I/O Patch Cards are correct"; one card everywhere:
+  //   the I/O Patch card is also the card of Wire's left panel and of the Video Presets > Advanced left panel, at Wire's size, and a new
+  //   AUX is on in every preset from every add. Here: Wire's side-panel cards are the I/O Patch card now (card V2), so they end with its grey line
+  //   (iog-foot). Sides, colour rows and the hand-made card unchanged.
+  // 16lc-vpfinish RD10: REPLACES the check named in its header (reason in the block)
+  // 16lc-vpfinish: RENAMED in place. Why: Omar (r16lm SPEC, the answers to steps A and C and to the picture pack, 2026-10-06 / 07, 16lc-vpfinish): "Speed: fix it"; the
+  //   panel stops at card width; Wire Advanced hand-made cards are the I/O card; Destination Properties gets a Name box; the table's x asks;
+  //   older shows' names cleaned up on open; long names shrink to fit; files after the sources, in capitals, own colours; + ADD VIDEO at
+  //   a file card's size; + ADD SOURCE named after its number. Here: Wire Advanced's hand-made destination card is the I/O Patch card now (Omar: "I/O standard card too"): mirrored like every
+  //   destination card (info, picture column, the grey line with Reset, the trash and C1), no corner x. The rest is unchanged.
+  // 16lc-vpcards-fix RF18: REPLACES the check named in its header (reason in the block)
+  // 16lc-vpcards-fix: RENAMED in place. Why: Omar (r16lm SPEC section E, 2026-10-07, 16lc-vpcards-fix): names show as typed on every card, new names in capitals; numbers
+  //   assigned automatically, typed on any card's number box (a taken one refused, the change everywhere); the main session (14:05): opening
+  //   an older show renumbers nothing. Here: the number box of a destination card is a key now (Omar, E2: "user can click on the S1, SX and change it"): the card's Tab order ends
+  //   on it, after Reset and the trash. What it pins (the mirrored card, its markup and colour row in that order, the grey line, Wire's cards)
+  //   is unchanged.
+  // 16lc-vpcards-fix4 RH4: REPLACES the check named in its header (reason in the block)
+  // 16lc-vpcards-fix4: RENAMED in place. Why: the main session (r16lm SPEC section H, 2026-10-08 00:35; Omar: "the number change should not rearrange anything, if that will
+  //   be any issue then it should be skipped complete for now"): numbers by order exactly as in the v0.8.2 candidate (r16lj/fix), the
+  //   number box shown, not typed in, nothing kept or saved. Here: 16lc-vpcards-fix (RF18) ended a destination card's Tab order on its number box (E2). SPEC H1: the number box is shown, not typed in,
+  //   so the Tab order ends on the trash again, as in the v0.8.2 candidate. The expectations are r16lj/fix's again; what it pins (the
+  //   mirrored card, its markup and colour row, the grey line, Wire's cards) is unchanged.
+  await check('Cards 16kz-refresh (K): a destination, AUX / DSM, I/O-only destination and multiviewer card is MIRRORED (16lc-vpfinish: a hand-made Wire Advanced destination card is the I/O card too, mirrored the same way; Omar\'s mockup: "Source should have images on the Left and Destination images on the right"): on the I/O Patch Simple grid its picture is on the RIGHT and the name / resolution / cable type column on the LEFT, the random-colour button before the colour bar, the markup in that order (Tab reads it left to right), the grey line unchanged at the foot, the picture itself not flipped; a source card keeps its picture on the LEFT; Wire\'s side-panel cards (Simple, and Advanced with a hand-made destination) the same, with the grey line of the I/O Patch card (16lc-vpcards) (the + Add cards: Y13); 16lc-vpcards-fix4: Tab ends on the trash again (the number box is shown, not typed in)', async () => {
     await restore(); const out = {};
     try {
       await ioOpenSimple(); _sysWithUndo(() => { if (!Array.isArray(ioDests)) ioDests = []; ioDests.push({ id: 'rz-io', name: 'IO ONLY', w: 1920, h: 1080, connectorType: '', deviceType: '', notes: '' }); }); _sysRender(); await wait(300);
@@ -9170,14 +9403,14 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
       const pane = i => $$('#wire-sources-panel .wire-pane')[i];
       out.wire = [0, 1, 2].map(i => [...new Set($$('.wire-source-card', pane(i)).map(k => side(k) + ':' + kids(k) + ':' + ($('.wire-color-row', k) ? [...$('.wire-color-row', k).children].filter(x => getComputedStyle(x).display !== 'none').map(x => String(x.className).split(' ')[0]).join('+') : '')))]);
       wireSettings.wireView = 'advanced'; _wireAdvAddCustomDest(); _wireRender(); await wait(400);
-      const cd = $$('.wire-source-card.wire-custom-card', pane(1)).pop();
-      out.custom = cd ? [side(cd), kids(cd), getComputedStyle($('.wire-card-delete', cd)).right] : 'no hand-made destination card';
+      const cd = $$('.wire-source-card.lbf-wc', pane(1)).pop();   /* 16lc-vpfinish: the I/O card */
+      out.custom = cd ? [side(cd), kids(cd), $('.wire-card-delete', cd) ? 'corner x' : 'no corner x'] : 'no hand-made destination card';
       closeWireMode(); await wait(300);
     } finally { await restore(); }
     return is(out, { grid: ['aux:R:wire-source-info,wire-thumb-col,iog-foot', 'dest:R:wire-source-info,wire-thumb-col,iog-foot', 'iodest:R:wire-source-info,wire-thumb-col,iog-foot', 'mv:R:wire-source-info,wire-thumb-col,iog-foot', 'src:L:wire-thumb-col,wire-source-info,iog-foot'],
       row: ['wire-color-shuffle', 'wire-color-swatch'], tab: ['sys-name-input', 'sys-name-chev', 'wire-source-res', 'wire-res-dropdown-btn', 'wire-cable-btn', 'wire-thumb', 'wire-color-shuffle', 'wire-color-swatch', 'sys-icon-btn', 'sys-icon-btn'], flat: true, foot: ['iog-acts', 'iog-num'],
-      wire: [['L:wire-thumb-col,wire-source-info:wire-color-swatch+wire-color-shuffle'], ['R:wire-source-info,wire-thumb-col:wire-color-shuffle+wire-color-swatch'], ['R:wire-source-info,wire-thumb-col:wire-color-shuffle+wire-color-swatch']],
-      custom: ['R', 'wire-card-delete,wire-source-info,wire-thumb', '4px'] },   /* its × stays in the top-right corner */
+      wire: [['L:wire-thumb-col,wire-source-info,iog-foot:wire-color-swatch+wire-color-shuffle'], ['R:wire-source-info,wire-thumb-col,iog-foot:wire-color-shuffle+wire-color-swatch'], ['R:wire-source-info,wire-thumb-col,iog-foot:wire-color-shuffle+wire-color-swatch']],   /* 16lc-vpcards: Wire's cards are the I/O Patch card, its grey line (Reset, trash, number) last */
+      custom: ['R', 'wire-source-info,wire-thumb-col,iog-foot', 'no corner x'] },   /* 16lc-vpfinish: the I/O card, mirrored; its trash is in the grey line */
       'the grid\'s cards [kind:picture side:children] / a destination card\'s colour row / its Tab order / not flipped / its grey line / Wire\'s panes, Simple [sources, destinations, AUX / DSM: picture side, children, colour row] / a hand-made Wire destination card [picture side, children, its × still 4 px from the right]');
   });
   // 16kz-refresh Y13: NEW
@@ -9211,7 +9444,13 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
       'the + Add cards [children, the picture box\'s side, apart] / [+ Add cards with iog-add-mirror, a CSS rule for it] / a click on + Add destination [added, undo steps] / Enter on + Add AUX [added, undo steps, its name]');
   });
   // 16kz-refresh Y14: NEW
-  await check('Backdrop 16kz-refresh (L1): the only screen left is never deleted (Omar 2026-09-28 ~18:50, "all recommended"): with CENTER LED and RIGHT LED backdrops (Edit Show Info), the trash on LEFT LED\'s I/O Patch card, Remove (Destinations) > LEFT LED, the Video Presets table\'s ✕ (P01\'s first row) and Destination Properties\' Remove Globally each say "A show needs at least one screen", ask nothing and delete nothing (no undo step); Undo and Redo never restore a step with no screen (one an older build could have left: refused, the show keeps LEFT LED) and a normal Undo still works; with LEFT LED and CENTER LED backdrops Edit Show Info\'s − (it would take RIGHT LED) is refused and the list keeps its 3 rows', async () => {
+  // 16lc-vpfinish RD18: REPLACES the check named in its header (reason in the block)
+  // 16lc-vpfinish: RENAMED in place. Why: Omar (r16lm SPEC, the answers to steps A and C and to the picture pack, 2026-10-06 / 07, 16lc-vpfinish): "Speed: fix it"; the
+  //   panel stops at card width; Wire Advanced hand-made cards are the I/O card; Destination Properties gets a Name box; the table's x asks;
+  //   older shows' names cleaned up on open; long names shrink to fit; files after the sources, in capitals, own colours; + ADD VIDEO at
+  //   a file card's size; + ADD SOURCE named after its number. Here: the Video Presets table's x asks first now (Omar: the table's x "asks first"); its button calls _lbxRemoveDest, which refuses the
+  //   only screen left with the same words and no question. The check finds the button by its new click action; what it pins is unchanged.
+  await check('Backdrop 16kz-refresh (L1): the only screen left is never deleted (Omar 2026-09-28 ~18:50, "all recommended"): with CENTER LED and RIGHT LED backdrops (Edit Show Info), the trash on LEFT LED\'s I/O Patch card, Remove (Destinations) > LEFT LED, the Video Presets table\'s ✕ (P01\'s first row; 16lc-vpfinish: it asks first, never for the only screen left) and Destination Properties\' Remove Globally each say "A show needs at least one screen", ask nothing and delete nothing (no undo step); Undo and Redo never restore a step with no screen (one an older build could have left: refused, the show keeps LEFT LED) and a normal Undo still works; with LEFT LED and CENTER LED backdrops Edit Show Info\'s − (it would take RIGHT LED) is refused and the list keeps its 3 rows', async () => {
     await restore(); const out = {}; const nm = s => s.name + (s.deviceType === 'Backdrop' ? ' [bd]' : '');
     try {
       await _kzEsi(); for (const i of [1, 2]) { await _fxOpenRow(i); const t = $('#qs-bd-' + i); if (t && t.getAttribute('aria-pressed') !== 'true') t.click(); await wait(200); }
@@ -9223,7 +9462,7 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
       out.card = await step(async () => { const b = $('#io-grid .iog-card .sys-icon-btn.del[data-sys-id="' + L.id + '"]'); if (b) b.click(); });
       out.remove = await step(async () => { _iogRmDest(); await wait(300); const it = $('#sys-rmdest-overlay .sys-src-picker-item[data-rm-name="LEFT LED"]'); if (it) it.click(); try { _sysCloseRemoveDestModal(); } catch (e) {} });
       closeSystem(); await wait(300);
-      out.table = await step(async () => { renderTable(); const b = $('button.t-del[onclick="deleteScreen(\'' + L.id + '\')"]'); if (b) b.click(); });
+      out.table = await step(async () => { renderTable(); const b = $('button.t-del[onclick="_lbxRemoveDest(\'' + L.id + '\')"]');   /* 16lc-vpfinish: the table's x asks first (16lc-vpaux's _lbxRemoveDest) */ if (b) b.click(); });
       out.props = await step(async () => { const box = $('.screen-box[data-sid="' + L.id + '"]'); openScreenPanel({ target: box, currentTarget: box, stopPropagation() {}, preventDefault() {} }, presets[0].id, L.id); await wait(250); const r = $('#sp-remove'); if (r) r.click(); });
       try { closeScreenPanel(); } catch (e) {}
       const fake = JSON.parse(_snapshot()); fake.screens.forEach(s => { s.deviceType = 'Backdrop'; }); const fk = JSON.stringify(fake);
@@ -9242,7 +9481,11 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
       'the show after Edit Show Info / each delete of LEFT LED [said, a question asked, the show unchanged, undo steps]: the card\'s trash, Remove, the table\'s ✕, Destination Properties / Undo onto a step with no screen [said, unchanged, the step kept] / Redo the same / a normal Undo / with RIGHT LED the only screen / Edit Show Info\'s − [said, the count, the rows]');
   });
   // 16kz-refresh Y15: NEW
-  await check('Destinations 16kz-refresh (L2): ADD › Destination refuses a name another output already has (Omar 2026-09-28 ~18:50, "all recommended"; the 16kz-answers rule: trimmed, any capitals): "left led" (a destination), " dsm 1 " (a DSM), "mv 1" (a multiviewer), "backdrop" (a backdrop) and "stage" (P02\'s own name for CENTER LED) each say Name in use (by Enter or the Add button), the window stays open with its own name back in the box, nothing is added and no undo step is recorded; a free name (STAGE LEFT) is added in one undo step', async () => {
+  // 16lc-vpcards-fix RF15: REPLACES the check named in its header (reason in the block)
+  // 16lc-vpcards-fix: RENAMED in place. Why: Omar (r16lm SPEC section E, 2026-10-07, 16lc-vpcards-fix): names show as typed on every card, new names in capitals; numbers
+  //   assigned automatically, typed on any card's number box (a taken one refused, the change everywhere); the main session (14:05): opening
+  //   an older show renumbers nothing. Here: ADD › Destination's default name is in capitals now (Omar, E1); what it pins (a used name refused) is unchanged.
+  await check('Destinations 16kz-refresh (L2): ADD › Destination refuses a name another output already has (Omar 2026-09-28 ~18:50, "all recommended"; the 16kz-answers rule: trimmed, any capitals): "left led" (a destination), " dsm 1 " (a DSM), "mv 1" (a multiviewer), "backdrop" (a backdrop) and "stage" (P02\'s own name for CENTER LED) each say Name in use (by Enter or the Add button), the window stays open with its own name back in the box, nothing is added and no undo step is recorded; a free name (STAGE LEFT) is added in one undo step; 16lc-vpcards-fix: its own default DESTINATION 03', async () => {
     await restore(); const out = {};
     try {
       pushUndo(); _bdConvert(screens.find(s => s.name === 'RIGHT LED')); const cl = screens.find(s => s.name === 'CENTER LED'); if (!presets[1]) return 'no P02';
@@ -9256,26 +9499,37 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
       out.free = await tryN('STAGE LEFT', 'enter'); out.last = screens[screens.length - 1].name;
     } finally { try { closeModal(); } catch (e) {} okDialogs(); await restore(); }
     const R = w => [w, true, true, 0, 0];
-    return is(out, { def: 'Destination 03', tries: [R('a destination in this show'), R('a DSM output in this show'), R('a multiviewer in this show'), R('a backdrop in this show'), R('the name of a destination in P02')], free: ['no alert', false, false, 1, 1], last: 'STAGE LEFT' },
+    return is(out, { def: 'DESTINATION 03', tries: [R('a destination in this show'), R('a DSM output in this show'), R('a multiviewer in this show'), R('a backdrop in this show'), R('the name of a destination in P02')], free: ['no alert', false, false, 1, 1], last: 'STAGE LEFT' },
       'the window\'s own name / each used name [what has it, the window open, its own name back, added, undo steps] / STAGE LEFT / the new destination');
   });
   // 16kz-refresh Y16: NEW
-  await check('Wire 16kz-refresh (L4): Wire Advanced\'s hand-made destination / AUX cards refuse a SHOW output\'s name (Omar 2026-09-28 ~18:50, "all recommended"): a hand-made destination card renamed "left led" or "AUX 1" and a hand-made AUX card renamed "mv 1" say Name in use and keep their names (no undo step); two hand-made destination cards both named STAGE are numbered apart as before (STAGE, STAGE 2); a new hand-made card is never given a show output\'s name (with CENTER LED named New Destination, + gives New Destination 2)', async () => {
+  // 16lc-vpfinish RD11: REPLACES the check named in its header (reason in the block)
+  // 16lc-vpfinish: RENAMED in place. Why: Omar (r16lm SPEC, the answers to steps A and C and to the picture pack, 2026-10-06 / 07, 16lc-vpfinish): "Speed: fix it"; the
+  //   panel stops at card width; Wire Advanced hand-made cards are the I/O card; Destination Properties gets a Name box; the table's x asks;
+  //   older shows' names cleaned up on open; long names shrink to fit; files after the sources, in capitals, own colours; + ADD VIDEO at
+  //   a file card's size; + ADD SOURCE named after its number. Here: Wire Advanced's hand-made cards are the I/O Patch card now (Omar: "I/O standard card too"): its name box is the card's
+  //   .sys-name-input (renamed when it is left) on a .lbf-wc card, not .wire-custom-name on .wire-custom-card. What it pins is unchanged.
+  // 16lc-vpcards-fix RF16: REPLACES the check named in its header (reason in the block)
+  // 16lc-vpcards-fix: RENAMED in place. Why: Omar (r16lm SPEC section E, 2026-10-07, 16lc-vpcards-fix): names show as typed on every card, new names in capitals; numbers
+  //   assigned automatically, typed on any card's number box (a taken one refused, the change everywhere); the main session (14:05): opening
+  //   an older show renumbers nothing. Here: a hand-made card's default name is in capitals now (Omar, E1: NEW DESTINATION, NEW AUX/DSM); what it pins (a show output's name refused)
+  //   is unchanged.
+  await check('Wire 16kz-refresh (L4): Wire Advanced\'s hand-made destination / AUX cards refuse a SHOW output\'s name (16lc-vpfinish: typed in the I/O Patch card they are now; Omar 2026-09-28 ~18:50, "all recommended"): a hand-made destination card renamed "left led" or "AUX 1" and a hand-made AUX card renamed "mv 1" say Name in use and keep their names (no undo step); two hand-made destination cards both named STAGE are numbered apart as before (STAGE, STAGE 2); a new hand-made card is never given a show output\'s name (with CENTER LED named New Destination, + gives New Destination 2); 16lc-vpcards-fix: the new cards named in capitals', async () => {
     await restore(); const out = {};
     try {
       openWireMode(); await wait(400); okDialogs(); wireSettings.wireView = 'advanced'; _wireRender(); await wait(300); okDialogs();
       _wireAdvAddCustomDest(); _wireAdvAddCustomDest(); _wireAdvAddCustomDsm(); _wireRender(); await wait(300);
       out.made = [wireAdvanced.customDests.map(c => c.name), wireAdvanced.customDsms.map(c => c.name)];
       const pane = i => $$('#wire-sources-panel .wire-pane')[i];
-      const box = (i, k) => { const c = $$('.wire-source-card.wire-custom-card', pane(i))[k]; return c ? $('.wire-custom-name', c) : null; };
-      const ren = async (i, k, n) => { const b = box(i, k); if (!b) return 'no card ' + i + '/' + k; const was = b.value, u0 = _undoStack.length; b.value = n; b.dispatchEvent(new Event('change', { bubbles: true })); await wait(300);
+      const box = (i, k) => { const c = $$('.wire-source-card.lbf-wc', pane(i))[k]; return c ? $('.sys-name-input', c) : null; };   /* 16lc-vpfinish: the I/O card */
+      const ren = async (i, k, n) => { const b = box(i, k); if (!b) return 'no card ' + i + '/' + k; const was = b.value, u0 = _undoStack.length; b.focus(); b.value = n; b.blur(); await wait(300);   /* 16lc-vpfinish: the I/O card's name box renames when it is left */
         const t = dlgOpen() ? dialogText() : ''; okDialogs(); await wait(100); const b2 = box(i, k); return [/Name in use/.test(t), !!b2 && b2.value === was, _undoStack.length - u0]; };
       out.ren = [await ren(1, 0, 'left led'), await ren(1, 1, 'AUX 1'), await ren(2, 0, 'mv 1')];
       out.after = [wireAdvanced.customDests.map(c => c.name), wireAdvanced.customDsms.map(c => c.name)];
       await ren(1, 0, 'STAGE'); await ren(1, 1, 'STAGE'); out.two = wireAdvanced.customDests.map(c => c.name);
       screens.find(s => s.name === 'CENTER LED').name = 'New Destination'; _wireAdvAddCustomDest(); out.newName = wireAdvanced.customDests[wireAdvanced.customDests.length - 1].name;
     } finally { try { closeWireMode(); } catch (e) {} okDialogs(); await wait(200); await restore(); }
-    return is(out, { made: [['New Destination', 'New Destination 2'], ['New AUX/DSM']], ren: [[true, true, 0], [true, true, 0], [true, true, 0]], after: [['New Destination', 'New Destination 2'], ['New AUX/DSM']], two: ['STAGE', 'STAGE 2'], newName: 'New Destination 2' },
+    return is(out, { made: [['NEW DESTINATION', 'NEW DESTINATION 2'], ['NEW AUX/DSM']], ren: [[true, true, 0], [true, true, 0], [true, true, 0]], after: [['NEW DESTINATION', 'NEW DESTINATION 2'], ['NEW AUX/DSM']], two: ['STAGE', 'STAGE 2'], newName: 'NEW DESTINATION 2' },
       'the hand-made cards made / each rename into a show output\'s name [Name in use, the card keeps its name, undo steps] / the cards after / two cards typed STAGE / a new card with CENTER LED named New Destination');
   });
   // ── 16kz-fix (the fixer's round after the two attacks on 16kz-refresh). Appended at the END of the probe (after 16kz-refresh's
@@ -9615,7 +9869,13 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
       'NDI on PPT A [picked, connector, note] steps, Save / Undo / Redo / Dante on PPT B / ST-2110 on PLAYBACK skips .10 (a destination note) and .15 (a 16el IP) / a note holding 10.0.0.7 / Fiber, SFP, HDMI 1.4 and their notes / HDMI 2.0 then NDI again / an empty note / Custom… typed "dante" on CAM 1 [a box, connector, note] steps, Save / Custom… typed "ndi" on LOWER 3RD, which has its own Wire IP / 192.168.0.x all taken / the user edits it / a show opened with NDI rows and no address [source notes, destination notes, Save lit]');
   });
   // 16la-ip P2: NEW
-  await check('I/O 16la-ip (P): every path that sets a connector gives the note its address, one count for the show: the Simple Set for all rows give each row its OWN next address in card order in ONE undo step (S0 Dante: the 11 source cards .1 … .50; D0 NDI: the 3 destinations .55, .60, .65 and an I/O-only destination .70; A0 Ethernet: DSM 1 .75, AUX 1 .80; M0 ST-2110: MV 1 .85) and Undo takes a whole Set for all back; on Advanced page 1 a show source\'s row picked to NDI writes the address in the item\'s own note (the Look Book\'s and Excel\'s note) and page 1\'s Set for all gives each of its rows its own; a hand-made row on page 2 and page 2\'s Set for all do the same on their own rows; in Wire a source card, a destination card, a custom source (no note: its own IP, 16el\'s) and a source tile\'s output point do it too; the I/O Excel prints the address in the Notes column', async () => {
+  // 16lc-vpfinish RD16: REPLACES the check named in its header (reason in the block)
+  // 16lc-vpfinish: RENAMED in place. Why: Omar (r16lm SPEC, the answers to steps A and C and to the picture pack, 2026-10-06 / 07, 16lc-vpfinish): "Speed: fix it"; the
+  //   panel stops at card width; Wire Advanced hand-made cards are the I/O card; Destination Properties gets a Name box; the table's x asks;
+  //   older shows' names cleaned up on open; long names shrink to fit; files after the sources, in capitals, own colours; + ADD VIDEO at
+  //   a file card's size; + ADD SOURCE named after its number. Here: Wire Advanced's hand-made cards are the I/O Patch card now (Omar: "I/O standard card too"): their Cable Type buttons carry the
+  //   kinds wcsrc / wcdst / wcaux (the I/O Patch's setters hand those to the card's own data), not wcustom / wcustomd / wcustomm. What it pins is unchanged.
+  await check('I/O 16la-ip (P): every path that sets a connector gives the note its address, one count for the show (16lc-vpfinish: a hand-made Wire card picked on the I/O Patch card it is now): the Simple Set for all rows give each row its OWN next address in card order in ONE undo step (S0 Dante: the 11 source cards .1 … .50; D0 NDI: the 3 destinations .55, .60, .65 and an I/O-only destination .70; A0 Ethernet: DSM 1 .75, AUX 1 .80; M0 ST-2110: MV 1 .85) and Undo takes a whole Set for all back; on Advanced page 1 a show source\'s row picked to NDI writes the address in the item\'s own note (the Look Book\'s and Excel\'s note) and page 1\'s Set for all gives each of its rows its own; a hand-made row on page 2 and page 2\'s Set for all do the same on their own rows; in Wire a source card, a destination card, a custom source (no note: its own IP, 16el\'s) and a source tile\'s output point do it too; the I/O Excel prints the address in the Notes column', async () => {
     await restore(); const out = {};
     try {
       await ioOpenSimple();
@@ -9647,7 +9907,7 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
       out.wireDst = await _pPStep(async () => [await _pPPick(wBtn('dest', screens[0].id), /^Ethernet/), screens[0].notes]);
       await _pPWire('advanced');
       _wireAdvAddCustomSource(); const cs = wireAdvanced.customSources[wireAdvanced.customSources.length - 1]; _wireRender(); await wait(300);
-      out.custom = await _pPStep(async () => [await _pPPick(wBtn('wcustom', cs.id), /^Dante/), cs.ip || '', cs.notes === undefined]);
+      out.custom = await _pPStep(async () => [await _pPPick(wBtn('wcsrc', cs.id), /^Dante/)   /* 16lc-vpfinish: the I/O card's kind */, cs.ip || '', cs.notes === undefined]);
       wireAdvanced.sources.push({ id: 'pPsrc', name: 'CAM 2', x: 80, y: 1400, outC: 3, portLabels: true }); _wireRender(); await wait(400);   /* 3 named points: each has its Cable Type button on the tile */
       out.point = await _pPStep(async () => [await _pPPick(wBtn('wsp', 'pPsrc:0'), /^Ethernet/), _pPNote('CAM 2'), _pPConn('CAM 2')]);
     } finally { try { closeWireMode(); } catch (e) {} try { closeSystem(); } catch (e) {} await wait(250); await restore(); }
@@ -9912,7 +10172,11 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
       'dropped [the Simple list, the tile] steps, Save / the Cable Colour Code lists its cable / tiles that moved / the router\'s place kept / the router [before, after, its new last output] / the tile where it was dropped / its cable [from, ends on its left edge] / the tile [picture x, its picture, never cut, the card\'s columns, name, border] / dropped again [in the list, the router, where] steps, Save / renamed OPS MV [tile, output row] / the Simple sheet [its picture, its name, its router row] / the Look Book\'s Simple Wire page [its picture, the router row] / Reset layout [placed, drawn] / Delete [list, tile, router] steps, Save / Undo');
   });
   // 16la-colour-mv C5: NEW
-  await check('I/O 16la-colour-mv (S1 + T): the I/O Patch Simple "+ Add …" cards are dim, EMPTY WIREFRAMES of their section\'s card (Omar 2026-09-29, his add_card_outline_mockup.png: "the wire look or outline of that same look"): in all four sections every add card is one control (role button, Tab reaches it, its name "Add source" / "Add destination" / "Add AUX" / "Add multiviewer", everything inside hidden from a screen reader, nothing inside focusable or clickable: a click on its picture box lands on the card); it has the real card\'s size and layout (the picture box 110 × 62 on the LEFT for a source, on the RIGHT for a destination, AUX or multiviewer, exactly where the card beside it has its picture; two boxes where the resolution and cable type sit; an empty colour bar and shuffle square under the picture except on a multiviewer\'s; the bottom line with Reset, trash and an empty number chip; "+ Add source" with a pencil where the name sits); the big + box and the long description are gone (the description is the tooltip); a click and Enter still add one (one undo step); an empty section shows only its row of add cards, with no note (Help › Add & remove says so)', async () => {
+  // 16lc-vpvideo RV2: REPLACES the check named in its header (reason in the block)
+  // 16lc-vpvideo: RENAMED in place. Why: Omar 2026-10-05 / 06 (16lc-vpvideo): the VIDEO tab cards are "Option C"; files and the I/O Patch's own sources are sources
+  //   everywhere ("Show them everywhere ... when you are not in video preset, advancer it should not play out just show the cover image"). Here: Omar drops the 16jh rule ("the presets never see them"): + Add source's tooltip (its description)
+  //   now says Wire and Video Presets list the source and a preset can use it. What it pins is unchanged.
+  await check('I/O 16la-colour-mv (S1 + T): the I/O Patch Simple "+ Add …" cards are dim, EMPTY WIREFRAMES of their section\'s card (Omar 2026-09-29, his add_card_outline_mockup.png: "the wire look or outline of that same look"): in all four sections every add card is one control (role button, Tab reaches it, its name "Add source" / "Add destination" / "Add AUX" / "Add multiviewer", everything inside hidden from a screen reader, nothing inside focusable or clickable: a click on its picture box lands on the card); it has the real card\'s size and layout (the picture box 110 × 62 on the LEFT for a source, on the RIGHT for a destination, AUX or multiviewer, exactly where the card beside it has its picture; two boxes where the resolution and cable type sit; an empty colour bar and shuffle square under the picture except on a multiviewer\'s; the bottom line with Reset, trash and an empty number chip; "+ Add source" with a pencil where the name sits); the big + box and the long description are gone (the description is the tooltip); a click and Enter still add one (one undo step); an empty section shows only its row of add cards, with no note (Help › Add & remove says so; 16lc-vpvideo: + Add source\'s tooltip says Video Presets list the source too)', async () => {
     await restore(); const out = {}; const S4 = ['src', 'dst', 'aux', 'mv'];
     const rel = (c, e) => { if (!e) return null; const a = c.getBoundingClientRect(), b = e.getBoundingClientRect(); return [Math.round(b.left - a.left), Math.round(b.top - a.top), Math.round(b.width), Math.round(b.height)]; };
     try {
@@ -9936,7 +10200,7 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
         out.help = [/Each \+ Add card is drawn as an empty outline of its section’s card/.test(row), /an empty section shows only its row of them/.test(row)]; }
     } finally { try { closeSystem(); } catch (e) {} await restore(); }
     const L = (name, kids, crow, pen, tip) => ['button', 0, name, kids, true, 0, true, '110x62', true, true, crow, '2+1', '+ ' + name, pen, true, tip];
-    return is(out, { look: [L('Add source', 'iog-wf-col,iog-wf-info,iog-wf-foot', true, true, 'an I/O-only source: Wire sees it, the presets do not'), L('Add destination', 'iog-wf-info,iog-wf-col,iog-wf-foot', true, false, 'a 1920×1080 destination at the end of the canvas'),
+    return is(out, { look: [L('Add source', 'iog-wf-col,iog-wf-info,iog-wf-foot', true, true, 'an I/O-only source: Wire and Video Presets list it too, and a preset can use it'), L('Add destination', 'iog-wf-info,iog-wf-col,iog-wf-foot', true, false, 'a 1920×1080 destination at the end of the canvas'),
       L('Add AUX', 'iog-wf-info,iog-wf-col,iog-wf-foot', true, false, 'a 1920×1080 AUX output'), L('Add multiviewer', 'iog-wf-info,iog-wf-col,iog-wf-foot', false, false, 'an operator monitor, not on the canvas')],
       gone: [0, 0, 0], rules: true, click: [1, 1, true], enter: [1, 1, true], empty: ['++++', 0, false, '000'], help: [true, true] },
       'each section\'s first add card [role, tab index, name, its parts in order, all hidden from a screen reader, focusable / clickable things inside, the picture box where the card beside it has its picture, its size, a click on it lands on the card, the two boxes where the resolution and cable type sit, colour bar + shuffle, icons + chip, the label, a pencil, the card\'s width, the tooltip\'s description] / [+ boxes, descriptions, old add-card classes] left / the hover + focus rule / a click on + Add destination\'s picture box [added] steps, Save / Enter on + Add AUX / no AUX [the section, notes, the old note\'s words, notes in the other sections] / Help › Add & remove');
@@ -9984,7 +10248,13 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
       'the router [in 1 PPT A, in 2 CAM 1 point 2 (its 16el IP), in 3 CAM 2 point 1 (its typed port label), in 4 PLAYBACK (a long address), out 1 CENTER LED, out 2 CENTER LED\'s backup input: value, data-ip-auto, tooltip, whole in its cell] / the switcher [in 1 CAM 2 point 2, out 1 AUX 1] / stored IDs [router in 2, in 3, out 2, switcher in 1, an IP written into the routers] / a typed ID [cell, undo steps] / cleared / the exported sheet / the Look Book\'s Advanced Wire page');
   });
   // 16la-fix F2: NEW
-  await check('Wire 16la-fix (U3): Wire Advanced\'s HAND-MADE destination and AUX cards get an IP like a hand-made source (Omar 2026-09-29 ~22:10: "get an IP box like hand-drawn sources have … and a router / switcher row or a network switch port cabled to one shows that IP"): NDI picked on a hand-made destination card gives it the show\'s next free address as its own IP (customDests[].ip) in the same ONE undo step with Save lit, Dante on a hand-made AUX the next one (customDsms[].ip); a pick away from IP keeps it; their tiles show it (the source tile\'s IP line), a router output cabled to the destination and a network switch port cabled to the AUX show it; selected, the destination\'s tile has Details\' IP box (the source\'s box: its address, its hint); an address typed there is its IP in ONE undo step (cell and tile follow), Undo takes it back; cleared, the box suggests the next free address and Enter stores it; the numbering counts both addresses; on a non-IP cable there is no box; the exported Advanced sheet prints the tile\'s IP', async () => {
+  // 16lc-vpfinish RD15: REPLACES the check named in its header (reason in the block)
+  // 16lc-vpfinish: RENAMED in place. Why: Omar (r16lm SPEC, the answers to steps A and C and to the picture pack, 2026-10-06 / 07, 16lc-vpfinish): "Speed: fix it"; the
+  //   panel stops at card width; Wire Advanced hand-made cards are the I/O card; Destination Properties gets a Name box; the table's x asks;
+  //   older shows' names cleaned up on open; long names shrink to fit; files after the sources, in capitals, own colours; + ADD VIDEO at
+  //   a file card's size; + ADD SOURCE named after its number. Here: Wire Advanced's hand-made cards are the I/O Patch card now (Omar: "I/O standard card too"): their Cable Type buttons carry the
+  //   kinds wcsrc / wcdst / wcaux (the I/O Patch's setters hand those to the card's own data), not wcustom / wcustomd / wcustomm. What it pins is unchanged.
+  await check('Wire 16la-fix (U3): Wire Advanced\'s HAND-MADE destination and AUX cards get an IP like a hand-made source (16lc-vpfinish: picked on the I/O Patch card they are now; Omar 2026-09-29 ~22:10: "get an IP box like hand-drawn sources have … and a router / switcher row or a network switch port cabled to one shows that IP"): NDI picked on a hand-made destination card gives it the show\'s next free address as its own IP (customDests[].ip) in the same ONE undo step with Save lit, Dante on a hand-made AUX the next one (customDsms[].ip); a pick away from IP keeps it; their tiles show it (the source tile\'s IP line), a router output cabled to the destination and a network switch port cabled to the AUX show it; selected, the destination\'s tile has Details\' IP box (the source\'s box: its address, its hint); an address typed there is its IP in ONE undo step (cell and tile follow), Undo takes it back; cleared, the box suggests the next free address and Enter stores it; the numbering counts both addresses; on a non-IP cable there is no box; the exported Advanced sheet prints the tile\'s IP', async () => {
     await restore(); const out = {};
     try {
       await _pPWire('advanced');
@@ -9993,8 +10263,8 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
       const CD = () => wireAdvanced.customDests.find(d => d.id === cdId) || {}, CM = () => wireAdvanced.customDsms.find(d => d.id === cmId) || {};   /* read again after every step: Undo puts back a copy */
       _wireRender(); await wait(400);
       const btn = (kind, id) => $$('#wire-sources-panel .wire-cable-btn').find(b => b.dataset.sysKind === kind && b.dataset.sysId === id);
-      { const u0 = _undoStack.length; const r = await _fxPick(btn('wcustomd', cdId), /^NDI$/); out.destNdi = [r, CD().connectorType, CD().ip || '', _undoStack.length - u0, _kySaveLit()]; }
-      { const u0 = _undoStack.length; const r = await _fxPick(btn('wcustomm', cmId), /^Dante$/); out.auxDante = [r, CM().connectorType, CM().ip || '', _undoStack.length - u0]; }
+      { const u0 = _undoStack.length; const r = await _fxPick(btn('wcdst', cdId), /^NDI$/);   /* 16lc-vpfinish: the I/O card's kinds */ out.destNdi = [r, CD().connectorType, CD().ip || '', _undoStack.length - u0, _kySaveLit()]; }
+      { const u0 = _undoStack.length; const r = await _fxPick(btn('wcaux', cmId), /^Dante$/); out.auxDante = [r, CM().connectorType, CM().ip || '', _undoStack.length - u0]; }
       _wireAdvAddRouter(10); const r = wireAdvanced.routers[wireAdvanced.routers.length - 1];
       _wireAdvAddDevice('switch', 4); const ns = wireAdvanced.devices[wireAdvanced.devices.length - 1];
       wireAdvanced.dests.push({ id: 'fxg', refId: cdId, x: 2600, y: 1500 }); wireAdvanced.dsms.push({ id: 'fxh', refId: cmId, x: 2600, y: 1800 });
@@ -10014,7 +10284,7 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
       { const b = $('#wire-overlay .wire-ip-input'); const u0 = _undoStack.length; if (b) { b.focus(); b.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true })); } await wait(400); out.enter = [CD().ip, _undoStack.length - u0]; }
       out.next = _ipNextFree();
       { const svg = _wireBuildAdvancedExportSvg('light', {}); out.sheet = [/class="wire-adv-ip"[^>]*>192\.168\.0\.1</.test(svg), /class="wire-adv-ip"[^>]*>192\.168\.0\.5</.test(svg)]; }
-      { const r2 = await _fxPick(btn('wcustomd', cdId), /^HDMI 2\.0$/); pick('adst:fxg'); await wait(400); out.hdmi = [r2, CD().connectorType, CD().ip, ipBox()]; }
+      { const r2 = await _fxPick(btn('wcdst', cdId), /^HDMI 2\.0$/); pick('adst:fxg'); await wait(400); out.hdmi = [r2, CD().connectorType, CD().ip, ipBox()]; }
     } finally { try { closeWireMode(); } catch (e) {} await wait(300); await restore(); }
     return is(out, { destNdi: ['ok', 'NDI', '192.168.0.1', 1, true], auxDante: ['ok', 'Dante', '192.168.0.5', 1],
       placed: [['192.168.0.1', '192.168.0.1'], ['192.168.0.5', '192.168.0.5', 'Port 2'], '192.168.0.1', '192.168.0.5'],
@@ -10331,14 +10601,18 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
       'before [lanes, CAM 2 in the 12G-SDI key, DSM 1 in the HDMI key] / after DSM 1 off and CAM 2\'s cable deleted [the same] / Details of CAM 1 / of CAM 2 (a free point) / of the router');
   });
   // 16lb-simple S11: NEW
-  await check('Wire 16lb-simple: a source renamed from its card keeps what Simple knows of it: its router row (LOGO swapped onto row 1 stays on row 1 as LOGO 2), its taken-off state (CAM 2 off stays off as CAM X) and its cable\'s shape; the router\'s cell reads the new name', async () => {
+  // 16lc-vpcards R12: REPLACES the check named in its header (reason in the block)
+  // 16lc-vpcards: RENAMED in place. Why: Omar 2026-10-05 / 06 (16lc-vpcards): "Video Preset Advance Cards are wrong, I/O Patch Cards are correct"; one card everywhere:
+  //   the I/O Patch card is also the card of Wire's left panel and of the Video Presets > Advanced left panel, at Wire's size, and a new
+  //   AUX is on in every preset from every add. Here: Wire's card is the I/O Patch card now: the rename is typed in its name box. What it pins is unchanged.
+  await check('Wire 16lb-simple: a source renamed from its card keeps what Simple knows of it: its router row (LOGO swapped onto row 1 stays on row 1 as LOGO 2), its taken-off state (CAM 2 off stays off as CAM X) and its cable\'s shape; the router\'s cell reads the new name (16lc-vpcards: typed in the name box of the card, the I/O Patch card)', async () => {
     const out = {};
     try {
       await _lbOpen();
       _lbSel(['src:CAM 2']); _cMDel(); await wait(400);
       await _lbDrag(_lbRow('in', 0), _lbRow('in', 4));
       _wireSetEdgeRoute('simple:src:LOGO→hin:0', [400, 500, 440]); _wireRender(); await wait(200);
-      const ren = async (old, nn) => { const pen = $$('#wire-sources-panel .wire-src-pen').find(b => b.closest('.wire-source-name').textContent.trim() === old); if (!pen) return 'no pencil on ' + old; pen.click(); await wait(200); const inp = $('#wire-sources-panel .wire-src-rename'); inp.value = nn; inp.dispatchEvent(new Event('blur')); await wait(500); return true; };
+      const ren = async (old, nn) => { const card = $$('#wire-panel-left .iog-card').find(k => k.dataset.iogKey === 'src:' + old), pen = card && $('.wire-src-pen', card); if (!pen) return 'no pencil on ' + old; pen.click(); await wait(200); const inp = $('.sys-name-input', card); inp.value = nn; fire(inp, 'input'); inp.blur(); await wait(500); return true; };   /* 16lc-vpcards: the card's name box */
       out.r1 = await ren('LOGO', 'LOGO 2'); out.r2 = await ren('CAM 2', 'CAM X');
       out.after = [_lbRows()[0][0], _lbRows()[3], !!(wireSettings.simple.routes && wireSettings.simple.routes['simple:src:LOGO 2→hin:0']), _lbCells()[2][0], !!_lbTile('src:CAM X')];
     } finally { try { closeWireMode(); } catch (e) {} await restore(); }
@@ -12513,6 +12787,989 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
     } catch (e) { return 'threw: ' + e.message; }
     finally { back(); try { _wireSetZoom(1); } catch (e) {} await restore(); }
     return is(out, want, 'the switch 🎤🎤🎤🎤AB照 CORE_SW_01_STAGE_LEFT_RACK_A [size, line 1, text = name, tooltip = name] / [line 1 inside its block] at 100 %, 115 %, 90 % / [its first word 0.5 px larger runs past its block at 115 % or 90 %] / measuring elements left under <html>');
+  });
+  // ── 16lc-vpcards (Omar 2026-10-05 / 06, r16lm SPEC A): ONE card everywhere. "Video Preset Advance Cards are wrong, I/O Patch Cards are
+  //    correct ... in sizing of the box in Wire should be the same sizing in Video Preset Advance ... if Source 1 (input 01) is millumin A
+  //    everything that happens to the card anywhere on the program needs to match up everywhere else"; destination / AUX cards "Left panel,
+  //    like Wire"; add card "Same as I/O Patch"; new AUX "ON in every preset"; card "V2: + reset, trash, S1 number". The I/O Patch > Simple
+  //    card is the card of Wire's left panel and of the Video Presets > Advanced left panel (Wire > Simple's sections), at Wire's size.
+  //    VC1-VC6, VC8, VC9 and VC10 FAIL on the 16lc-onlyword-fix2 page (r16lj/fix, 5d10c4f7) and PASS after; VC7 pins the drag, which must not
+  //    change, and passes on both. Helpers prefixed _vc (never a page name).
+  const _vcAdv = async () => { try { closeWireMode(); } catch (e) {} try { closeSystem(); } catch (e) {} if (!eval('fsPresetId')) { openFullscreen(presets[0].id); await wait(900); }
+    try { if (typeof _fsPanelCollapse === 'object' && _fsPanelCollapse && _fsPanelCollapse.left) { _fsPanelCollapse.left = false; _fsApplyPanelCollapse(); } if (typeof _fsPanesOpen === 'object' && _fsPanesOpen) { _fsPanesOpen.src = _fsPanesOpen.dst = _fsPanesOpen.aux = true; } } catch (e) {}   /* whatever an earlier check left: the panel open, every section open (in memory only) */
+    if (typeof _fsSrcTab !== 'undefined' && _fsSrcTab !== 'images') _fsSetSrcTab('images');   /* the Images tab, whatever an earlier check left */
+    _fsRenderSources(true); await wait(200); };
+  const _vcCard = (scope, k) => $$(scope + ' .iog-card').find(c => c.dataset.iogKey === k) || null;
+  const _vcRead = c => c ? { num: ($('.iog-num', c) || {}).textContent || '', name: ($('.sys-name-input', c) || {}).value || '', res: ($('.wire-source-res', c) || {}).value || '', conn: (($('.wire-cable-btn-label', c) || {}).textContent || '').trim(), swatch: ($('.wire-color-swatch', c) || {}).value || '', img: !!$('.wire-thumb img', c) } : 'no card';
+  const _vcNums = scope => $$(scope + ' .iog-card').filter(c => /^(src|dest|aux):/.test(c.dataset.iogKey)).map(c => c.dataset.iogKey + '=' + (($('.iog-num', c) || {}).textContent || ''));
+  const _vcPick = async (trigger, re) => { trigger.click(); await wait(250); const m = $('body > .sys-dd'); if (!m) return 'no menu'; const it = $$('.sys-dd-item', m).find(e => re.test((($('.item-text', e) || e).textContent || '').trim())); if (!it) { _sysCloseMenu(); return 'no ' + re; } it.click(); await wait(400); return true; };
+  // 16lc-vpcards VC1: NEW
+  await check('Video Presets 16lc-vpcards VC1 (Omar 2026-10-05: "Video Preset Advance Cards are wrong, I/O Patch Cards are correct"; destination / AUX cards "Left panel, like Wire"): the Video Presets > Advanced left panel is Wire > Simple\'s: ALL SOURCES / ALL DESTINATIONS / AUX / DSM with Wire\'s headers (blue / orange / amber strip, double chevron, count; the panel button on the first only), the IMAGES | VIDEO switch under ALL SOURCES, no old "+" and dot, no Multiviewers; every source, destination and AUX / DSM is the I/O Patch card (V2) with the I/O Patch\'s own number; each section ends with its + Add outline card', async () => {
+    const out = {}, want = {};
+    try {
+      await restore(); await ioOpenSimple(); const io = new Set(_vcNums('#io-grid')); closeSystem(); await wait(300);
+      await _vcAdv();
+      const panes = $$('#fs-source-list > .wire-pane'), nSrc = _fsSourceNames().filter(n => !_fsMediaItem(n)).length;
+      out.sections = panes.map(p => { const h = $('.wire-pane-hdr', p); return h ? [(($('.wire-pane-title', h) || {}).textContent || '').trim(), ((($('.wire-pane-strip', h) || {}).className) || '').replace('wire-pane-strip', '').trim(), !!$('.wire-pane-title svg polyline', h), (($('.wire-pane-count', h) || {}).textContent || '').trim()] : 'no header'; });
+      want.sections = [['All Sources', 'blue', true, String(nSrc)], ['All Destinations', 'orange', true, String(_bdNoBd(screens).length)], ['AUX / DSM', 'amber', true, String(dsms.length)]];
+      out.panelButton = panes.map(p => !!$('.wire-pane-hdr .wire-panel-inline-toggle', p)); want.panelButton = [true, false, false];
+      out.tabs = !!(panes[0] && $('.wire-pane-body > #fs-src-tabs .lb-seg-btn[data-tab="video"]', panes[0])); want.tabs = true;
+      out.gone = [!!$('#fs-left-panel .fs-add-btn'), !!$('#fs-left-panel .fs-dot'), /multiviewer/i.test($('#fs-source-list').textContent), !!$('#fs-source-list .fs-src:not(.fs-src-media)')]; want.gone = [false, false, false, false];
+      const mine = _vcNums('#fs-left-panel');
+      out.cards = [mine.length, mine.filter(x => !io.has(x)), $$('#fs-source-list .iog-card').every(c => $('.sys-name-input', c) && $('.sys-name-chev', c) && $('.sys-icon-btn.reset', c) && $('.sys-icon-btn.del', c) && $('.iog-num', c) && $('.wire-thumb', c) && $('.wire-color-shuffle', c) && $('.wire-source-res', c) && $('.wire-cable-btn', c))];
+      want.cards = [nSrc + _bdNoBd(screens).length + dsms.length, [], true];
+      out.adds = panes.map(p => { const b = $('.wire-pane-body', p), z = b && b.lastElementChild; return z ? [z.classList.contains('iog-add'), z.classList.contains('iog-wf'), z.dataset.iogAdd || ''] : 'empty'; });
+      want.adds = [[true, true, 'src'], [true, true, 'dst'], [true, true, 'aux']];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { if (eval('fsPresetId')) closeFullscreen(); } catch (e) {} await restore(); }
+    return is(out, want, 'Advanced left panel [three sections: title, strip, double chevron, count] / [panel button on the first only] / [IMAGES | VIDEO under ALL SOURCES] / [old + / dot / Multiviewers / old card left] / [cards, numbers not as on the I/O Patch, every card the I/O card with name box, ▾, Reset, trash, number, picture, shuffle, resolution, cable] / [each section ends with its + Add outline card]');
+  });
+  // 16lc-vpcards VC2: NEW
+  await check('Video Presets 16lc-vpcards VC2 ("if Source 1 (input 01) is millumin A everything that happens to the card anywhere on the program needs to match up everywhere else"): a source card on Video Presets > Advanced changes the same source as the I/O Patch card does: the shuffle, a typed resolution, a connector picked from its menu and a rename in its name box are one Undo step each and light Save, and Wire > Simple and the I/O Patch show the same card (name, resolution, connector, colour, number)', async () => {
+    const out = {}, want = {};
+    try {
+      await restore(); await _vcAdv();
+      const n0 = _fsSourceNames().filter(n => !_fsMediaItem(n))[0], k0 = 'src:' + n0, steps = [];
+      const st = () => [_undoStack.length, !!document.querySelector('button.save-dirty') || !!_isDirty];
+      let c = _vcCard('#fs-left-panel', k0), u = _undoStack.length; const col0 = _wireGetSourceMeta(n0).wireColor;
+      $('.wire-color-shuffle', c).click(); await wait(400); steps.push(['shuffle', _undoStack.length - u, _wireGetSourceMeta(n0).wireColor !== col0]);
+      c = _vcCard('#fs-left-panel', k0); u = _undoStack.length; const r = $('.wire-source-res', c); r.focus(); r.value = '1280x720'; r.dispatchEvent(new Event('change', { bubbles: true })); r.blur(); await wait(500);
+      steps.push(['resolution', _undoStack.length - u, (_sysGetSourceMeta(n0) || {}).resolution]);
+      c = _vcCard('#fs-left-panel', k0); u = _undoStack.length; const p = await _vcPick($('.wire-cable-btn', c), /^NDI$/); steps.push(['connector', p, _undoStack.length - u, (_sysGetSourceMeta(n0) || {}).connectorType]);
+      c = _vcCard('#fs-left-panel', k0); u = _undoStack.length; const i = $('.sys-name-input', c); i.focus(); i.value = 'VC SOURCE'; i.blur(); await wait(600);
+      steps.push(['rename', _undoStack.length - u, _sysDiscoverSources().includes('VC SOURCE'), _sysDiscoverSources().includes(n0)]);
+      out.steps = steps; want.steps = [['shuffle', 1, true], ['resolution', 1, '1280x720'], ['connector', true, 1, 'NDI'], ['rename', 1, true, false]];
+      out.lit = st()[1]; want.lit = true;
+      _fsRenderSources(); await wait(200);
+      const vp = _vcRead(_vcCard('#fs-left-panel', 'src:VC SOURCE'));
+      await _cMWire('simple'); const wi = _vcRead(_vcCard('#wire-panel-left', 'src:VC SOURCE')); closeWireMode(); await wait(300);
+      await ioOpenSimple(); const io = _vcRead(_vcCard('#io-grid', 'src:VC SOURCE')); closeSystem(); await wait(300);
+      out.same = [vp, wi]; want.same = [io, io];
+      out.io = typeof io === 'string' ? io : [io.name, io.res, io.conn, io.swatch === (_wireGetSourceMeta('VC SOURCE').wireColor || '').toLowerCase()]; want.io = ['VC SOURCE', '1280x720', 'NDI', true];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { _sysCloseMenu(); } catch (e) {} try { if (eval('fsPresetId')) closeFullscreen(); } catch (e) {} try { closeWireMode(); } catch (e) {} try { closeSystem(); } catch (e) {} await restore(); }
+    return is(out, want, 'a Video Presets source card [shuffle, typed resolution, connector menu, rename: Undo steps and results] / [Save lit] / [the card on Video Presets and on Wire = the I/O Patch card] / [the I/O Patch card: name, resolution, connector, the cable colour]');
+  });
+  // 16lc-vpcards VC3: NEW
+  await check('Video Presets 16lc-vpcards VC3 ("in sizing of the box in Wire should be the same sizing in Video Preset Advance"): every part of a source, a destination and an AUX / DSM card computes the same styles on Video Presets > Advanced as on Wire > Simple (box, padding, margins, borders, colours, fonts, the parts\' sizes); only a destination / AUX card\'s cursor differs (they drag only on Wire)', async () => {
+    const out = {}, want = {};
+    const P = ['display', 'position', 'width', 'height', 'box-sizing', 'padding-top', 'padding-right', 'padding-bottom', 'padding-left', 'margin-top', 'margin-right', 'margin-left', 'border-top-width', 'border-left-width', 'border-top-style', 'border-top-color', 'border-top-left-radius', 'background-color', 'background-image', 'color', 'font-family', 'font-size', 'font-weight', 'letter-spacing', 'line-height', 'text-transform', 'gap', 'justify-content', 'align-items', 'flex-direction', 'flex-wrap', 'white-space', 'opacity', 'transform', 'box-shadow', 'text-shadow'];
+    const dump = c => { const o = []; const w = (e, path) => { const s = getComputedStyle(e); o.push(path + ' ' + P.map(p => s.getPropertyValue(p)).join('|')); [...e.children].forEach((k, i) => w(k, path + '/' + k.tagName + i)); }; w(c, 'card'); return o; };
+    try {
+      await restore(); await _vcAdv();
+      const ks = ['src:' + _fsSourceNames().filter(n => !_fsMediaItem(n))[0], 'dest:' + _bdNoBd(screens)[0].id, 'aux:' + dsms[0].id];
+      const vp = ks.map(k => { const c = _vcCard('#fs-left-panel', k); return c ? dump(c) : null; });
+      await _cMWire('simple'); const wi = ks.map(k => { const c = _vcCard('#wire-panel-left', k); return c ? dump(c) : null; }); closeWireMode(); await wait(300);
+      out.found = [vp.map(x => !!x), wi.map(x => !!x)]; want.found = [[true, true, true], [true, true, true]];
+      out.diff = ks.map((k, i) => (vp[i] && wi[i]) ? vp[i].filter((l, j) => l !== wi[i][j]).length + (vp[i].length === wi[i].length ? 0 : 1000) : 'missing'); want.diff = [0, 0, 0];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { if (eval('fsPresetId')) closeFullscreen(); } catch (e) {} try { closeWireMode(); } catch (e) {} await restore(); }
+    return is(out, want, '[the source / destination / AUX card on Video Presets and on Wire] / [parts whose computed styles differ]');
+  });
+  // 16lc-vpcards VC4: NEW
+  // 16lc-vpcards-fix RF17: REPLACES the check named in its header (reason in the block)
+  // 16lc-vpcards-fix: RENAMED in place. Why: Omar (r16lm SPEC section E, 2026-10-07, 16lc-vpcards-fix): names show as typed on every card, new names in capitals; numbers
+  //   assigned automatically, typed on any card's number box (a taken one refused, the change everywhere); the main session (14:05): opening
+  //   an older show renumbers nothing. Here: the add cards name the new source and destination in capitals now (Omar, E1: "the system default should be to capitalize"): SOURCE N,
+  //   DESTINATION N. What it pins (one Undo step each, listed, the AUX on in every preset) is unchanged.
+  await check('Video Presets 16lc-vpcards VC4 (add card "Same as I/O Patch"; new AUX "ON in every preset"): the + Add card at the end of each Video Presets > Advanced section adds at once, one Undo step each: Source N (in the show, its card listed), Destination N (on the canvas and listed), AUX N (on in every preset and listed); on the Video tab the + Add card is there too; 16lc-vpcards-fix: named in capitals (SOURCE N, DESTINATION N)', async () => {
+    const out = {}, want = {};
+    try {
+      await restore(); await _vcAdv();
+      const add = async sec => { const u = _undoStack.length; const b = $('#fs-source-list [data-iog-sec="' + sec + '"] .iog-add'); if (!b) return 'no add card'; b.click(); await wait(500); okDialogs(); return _undoStack.length - u; };
+      const s0 = sources.length, d0 = screens.length, a0 = dsms.length;
+      out.src = [await add('src'), sources.length - s0, /^SOURCE \d+$/.test((sources[sources.length - 1] || {}).name || ''), !!_vcCard('#fs-left-panel', 'src:' + ((sources[sources.length - 1] || {}).name))];
+      out.dst = [await add('dst'), screens.length - d0, /^DESTINATION/.test((screens[screens.length - 1] || {}).name || ''), !!_vcCard('#fs-left-panel', 'dest:' + ((screens[screens.length - 1] || {}).id))];
+      out.aux = [await add('aux'), dsms.length - a0, presets.every(p => getDSMOn(p.id, (dsms[dsms.length - 1] || {}).id)), !!_vcCard('#fs-left-panel', 'aux:' + ((dsms[dsms.length - 1] || {}).id))];
+      want.src = [1, 1, true, true]; want.dst = [1, 1, true, true]; want.aux = [1, 1, true, true];
+      _fsSetSrcTab('video'); await wait(300); out.video = !!$('#fs-source-list [data-iog-sec="src"] .iog-add[onclick*="_fsLbcAdd"]'); want.video = true; _fsSetSrcTab('images'); await wait(200);
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { _fsSetSrcTab('images'); } catch (e) {} try { if (eval('fsPresetId')) closeFullscreen(); } catch (e) {} await restore(); }
+    return is(out, want, '+ Add [source: Undo steps, sources added, named Source N, its card] / [destination: the same, named Destination N] / [AUX: the same, on in every preset] / [Video tab add card]');
+  });
+  // 16lc-vpcards VC5: NEW
+  await check('I/O Patch 16lc-vpcards VC5 (Omar 2026-10-06: "New AUX: ON in every preset", from every add): the I/O Patch\'s + Add AUX makes an AUX that is on in every preset (it was off in every preset), as the band\'s + does, one Undo step', async () => {
+    const out = {}, want = {};
+    try {
+      await restore(); await ioOpenSimple(); const n0 = dsms.length, u = _undoStack.length;
+      const b = $('#io-grid [data-iog-add="aux"]'); if (!b) return 'no + Add AUX card'; b.click(); await wait(500); okDialogs();
+      const d = dsms[dsms.length - 1];
+      out.add = [dsms.length - n0, _undoStack.length - u, presets.map(p => getDSMOn(p.id, d.id))]; want.add = [1, 1, presets.map(() => true)];
+      closeSystem(); await wait(300);
+      const u2 = _undoStack.length; actions.addDSM(); await wait(300); const e = dsms[dsms.length - 1];
+      out.band = [_undoStack.length - u2, presets.map(p => getDSMOn(p.id, e.id))]; want.band = [1, presets.map(() => true)];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { closeSystem(); } catch (e) {} await restore(); }
+    return is(out, want, '[I/O + Add AUX: AUX added, Undo steps, on per preset] / [the band +: Undo steps, on per preset]');
+  });
+  // 16lc-vpcards VC6: NEW
+  await check('Wire 16lc-vpcards VC6 (card "V2: + reset, trash, S1 number": Wire\'s own cards get the same so Wire and Video Presets stay identical; "Resolution menu = I/O\'s everywhere"): every Wire > Simple left-panel card of a source, destination and AUX / DSM is the I/O Patch card (name box and its ▾ name list, Reset, trash, number) and still drags onto the drawing (its old drag start); its resolution ▾ reads "Custom resolution…", "— Clear —" (greyed on an output), then the list', async () => {
+    const out = {}, want = {};
+    try {
+      await restore(); await _cMWire('simple');
+      const cs = $$('#wire-panel-left .iog-card');
+      out.cards = [cs.length, cs.length === _wireBuildAllSourceNames().length + _bdNoBd(screens).length + dsms.length, cs.every(c => $('.sys-name-input', c) && $('.sys-name-chev', c) && $('.sys-icon-btn.reset', c) && $('.sys-icon-btn.del', c) && $('.iog-num', c))];
+      want.cards = [cs.length, true, true];
+      out.drag = ['src', 'dest', 'aux'].map(k => { const c = cs.find(x => x.dataset.iogKey.indexOf(k + ':') === 0); return c ? [c.getAttribute('draggable'), ((c.getAttribute('ondragstart') || '').match(/^_wireAdv\w*DragStart/) || [''])[0]] : 'no ' + k; });
+      want.drag = [['true', '_wireAdvDragStart'], ['true', '_wireAdvDestDragStart'], ['true', '_wireAdvDsmDragStart']];
+      const menu = async c => { $('.wire-res-dropdown-btn', c).click(); await wait(250); const m = $('body > .sys-dd'); const r = m ? $$('.sys-dd-item', m).slice(0, 2).map(e => ((($('.item-text', e) || e).textContent) || '').trim() + (e.classList.contains('disabled') ? ' (greyed)' : '')) : 'no menu'; _sysCloseMenu(); await wait(150); return r; };
+      out.menus = [await menu(cs.find(x => /^src:/.test(x.dataset.iogKey))), await menu(cs.find(x => /^dest:/.test(x.dataset.iogKey)))];
+      want.menus = [['Custom resolution…', '— Clear —'], ['Custom resolution…', '— Clear — (greyed)']];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { _sysCloseMenu(); } catch (e) {} try { closeWireMode(); } catch (e) {} await restore(); }
+    return is(out, want, 'Wire left panel [cards, one per source / destination / AUX, each the I/O card] / [drag: draggable, its drag start per kind] / [resolution menu, first two rows: source, destination]');
+  });
+  // 16lc-vpcards VC7: NEW (pins what must NOT change: passes on both pages)
+  await check('Video Presets 16lc-vpcards VC7 (kept exactly): a Video Presets > Advanced source card still drags (its data "fs-src:NAME"): onto a Layers row it fills that layer (the drop outline first, one Undo step, the layer picked), onto an AUX box it sets what that AUX shows in this preset (one Undo step), onto the empty canvas nothing happens', async () => {
+    const out = {}, want = {};
+    try {
+      await restore(); await _vcAdv(); const p = presets.find(x => x.id === eval('fsPresetId')), nm = _fsSourceNames().filter(n => !_fsMediaItem(n))[1];
+      const card = $$('#fs-source-list [data-src][draggable="true"]').find(e => e.dataset.src === nm); if (!card) return 'no draggable card for ' + nm;
+      const drag = async (tgt, label) => { const dt = new DataTransfer(), u = _undoStack.length; card.dispatchEvent(new DragEvent('dragstart', { bubbles: true, cancelable: true, dataTransfer: dt }));
+        tgt.dispatchEvent(new DragEvent('dragover', { bubbles: true, cancelable: true, dataTransfer: dt })); const hot = tgt.classList.contains('fs-drop-hot');
+        tgt.dispatchEvent(new DragEvent('drop', { bubbles: true, cancelable: true, dataTransfer: dt })); card.dispatchEvent(new DragEvent('dragend', { bubbles: true, dataTransfer: dt })); await wait(400);
+        return [label, dt.getData('text/plain'), hot, _undoStack.length - u]; };
+      _fsSetPropTab('layers'); doSelect(p.id, _bdNoBd(screens)[0].id); renderFullscreen(); await wait(400);
+      const row = $('.fs-lrow[data-n="1"]'); out.layer = row ? await drag(row, 'L1') : 'no L1 row'; out.layerSet = [getL(p.id, _bdNoBd(screens)[0].id, 1), selLayer ? selLayer.n : null];
+      want.layer = ['L1', 'fs-src:' + nm, true, 1]; want.layerSet = [nm, 1];
+      const ax = $$('#fs-canvas .dsm-box').find(e => e.getBoundingClientRect().width > 0); out.aux = ax ? await drag(ax, 'AUX') : 'no AUX box'; out.auxSet = Object.values(p.dsmContent || {}).includes(nm);
+      want.aux = ['AUX', 'fs-src:' + nm, true, 1]; want.auxSet = true;
+      const before = JSON.stringify([p.layers, p.bgNames, p.dsmContent]); out.empty = await drag($('#fs-canvas'), 'canvas'); out.emptySame = JSON.stringify([p.layers, p.bgNames, p.dsmContent]) === before;
+      want.empty = ['canvas', 'fs-src:' + nm, false, 0]; want.emptySame = true;
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { if (eval('fsPresetId')) closeFullscreen(); } catch (e) {} await restore(); }
+    return is(out, want, 'a source card dragged [onto L1: its data, the drop outline, Undo steps; the layer and the pick] / [onto an AUX box; what it shows] / [onto the empty canvas: refused, nothing changed]');
+  });
+  // 16lc-vpcards VC8: NEW
+  await check('Video Presets 16lc-vpcards VC8 (kept: "Escape leaving Advanced when nothing is open (a card menu / field closes first)"): with a card\'s resolution menu open on Video Presets > Advanced, Escape closes the menu and the page stays; the next Escape, with nothing open, leaves Advanced', async () => {
+    const out = {}, want = {};
+    try {
+      await restore(); await _vcAdv();
+      const c = $('#fs-source-list .iog-card'), b = c && $('.wire-res-dropdown-btn', c); if (!b) return 'no card resolution ▾';
+      b.click(); await wait(300); out.open = [!!_sysActiveMenu, !!$('body > .sys-dd')];
+      _stKey('Escape'); await wait(300); out.first = [!!_sysActiveMenu, !!eval('fsPresetId')];
+      _stKey('Escape'); await wait(400); out.second = !!eval('fsPresetId');
+      want.open = [true, true]; want.first = [false, true]; want.second = false;
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { _sysCloseMenu(); } catch (e) {} try { if (eval('fsPresetId')) closeFullscreen(); } catch (e) {} await restore(); }
+    return is(out, want, '[menu open] / [after Escape: menu open, still on Advanced] / [after a second Escape: still on Advanced]');
+  });
+  // 16lc-vpcards VC9: NEW
+  await check('Help 16lc-vpcards VC9: Help > Video Presets says the left panel holds the cards (All Sources, All Destinations, AUX / DSM; the I/O Patch\'s card at Wire\'s size, a change shows everywhere, the + Add card adds at once, an AUX on in every preset) and no longer "Press + to import video files"; I/O Patch\'s + Add AUX is on in every preset; Wire\'s cards are the I/O Patch\'s with the I/O resolution menu', async () => {
+    let tx = '';
+    try { openHelp(); await wait(400); tx = ($('#help-overlay') || {}).textContent || ''; } catch (e) { return 'threw: ' + e.message; } finally { try { closeHelp(); } catch (e) {} await wait(200); }
+    tx = tx.replace(/\s+/g, ' ');
+    return is([/The cards \(left\)/.test(tx), /the cards on the left \(All Sources, All Destinations, AUX \/ DSM\)/.test(tx), /Each card is the I\/O Patch’s card at Wire’s size/.test(tx), /The \+ Add card at the end of each list adds one at once \(Source N, Destination N, AUX N, on in every preset\)/.test(tx), /Press \+ to import video files/.test(tx),
+      /\+ Add AUX \(named with its number, or the next free one: AUX5 when AUX4 is taken; on in every preset, as the band’s \+\)/.test(tx), /The cards on the left are the I\/O Patch’s cards at Wire’s size/.test(tx), /the resolution ▾ reads Custom resolution…, — Clear —/.test(tx)],
+      [true, true, true, true, false, true, true, true], 'Help [Video Presets: the cards heading / the pill line / the card / the add cards / the old "Press +" gone] / [I/O + Add AUX on] / [Wire\'s cards / their resolution menu]');
+  });
+  // 16lc-vpcards VC10: NEW
+  await check('Video Presets 16lc-vpcards VC10 (kept: "the collapsed strip and their memory stay"): the panel button in the ALL SOURCES header folds the Video Presets > Advanced left panel to its 38 px strip, the strip\'s button brings it back at its width; a section header folds and unfolds its section; none of it is a change (no Undo step, Save not lit)', async () => {
+    const out = {}, want = {};
+    const L0 = (() => { try { return [localStorage.getItem('lb_fs_panels'), localStorage.getItem('lb_fs_panes')]; } catch (e) { return [null, null]; } })();
+    try {
+      await restore(); await _vcAdv(); const u = _undoStack.length, P = $('#fs-left-panel'), w0 = P.getBoundingClientRect().width;
+      const t = $('#fs-source-list .wire-pane-hdr .wire-panel-inline-toggle'); if (!t) return 'no panel button in the ALL SOURCES header'; t.click(); await wait(500);
+      out.folded = [P.classList.contains('fs-collapsed'), Math.round(P.getBoundingClientRect().width), vis($('#fs-panel-tog-left')), vis($('#fs-source-list'))];
+      $('#fs-panel-tog-left').click(); await wait(500);
+      out.back = [P.classList.contains('fs-collapsed'), Math.round(P.getBoundingClientRect().width) === Math.round(w0), vis($('#fs-source-list')), vis($('#fs-panel-tog-left'))];
+      const h = $$('#fs-source-list .wire-pane-hdr')[1]; h.click(); await wait(300); const h2 = $$('#fs-source-list .wire-pane-hdr')[1];
+      out.section = [h2.classList.contains('collapsed'), vis(h2.nextElementSibling)]; h2.click(); await wait(300); const h3 = $$('#fs-source-list .wire-pane-hdr')[1]; out.section.push(h3.classList.contains('collapsed'), vis(h3.nextElementSibling));
+      out.change = [_undoStack.length - u, !!document.querySelector('button.save-dirty')];
+      want.folded = [true, 38, true, false]; want.back = [false, true, true, false]; want.section = [true, false, false, true]; want.change = [0, false];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { if (L0[0] === null) localStorage.removeItem('lb_fs_panels'); else localStorage.setItem('lb_fs_panels', L0[0]); if (L0[1] === null) localStorage.removeItem('lb_fs_panes'); else localStorage.setItem('lb_fs_panes', L0[1]); } catch (e) {} try { if (typeof _fsPanelCollapse === 'object') { _fsPanelCollapse.left = false; _fsApplyPanelCollapse(); } if (typeof _fsPanesOpen === 'object') { _fsPanesOpen.src = _fsPanesOpen.dst = _fsPanesOpen.aux = true; } } catch (e) {} try { if (eval('fsPresetId')) closeFullscreen(); } catch (e) {} await restore(); }
+    return is(out, want, '[folded: collapsed, width, the strip button shown, the cards hidden] / [back: collapsed, the same width, cards shown, strip button hidden] / [ALL DESTINATIONS header: folds, its body hidden; unfolds, shown] / [Undo steps, Save lit]');
+  });
+  // ── 16lc-vpvideo (Omar 2026-10-05 / 06, r16lm SPEC B): the VIDEO tab cards are "Option C" (the source card's frame, a video job in every
+  //    slot), and files and the I/O Patch's own sources are sources everywhere: "Show them everywhere, it should be this, but when you are
+  //    not in video preset, advancer it should not play out just show the cover image. still work to drag and drop anywhere like normal."
+  //    VV1-VV7 FAIL on the 16lc-vpcards page (r16lm/A, 6861459e) and PASS after. Helpers prefixed _vv (never a page name). The test files are
+  //    made in the page: a short clip (MediaRecorder, kept for the run), a picture, and a clip whose file is not in this app.
+  let _vvClip = null;
+  const _vvMk = async () => {
+    const cv = document.createElement('canvas'); cv.width = 320; cv.height = 180; const g = cv.getContext('2d'); g.fillStyle = '#5a3df0'; g.fillRect(0, 0, 320, 180);
+    const img = cv.toDataURL('image/jpeg', .6);
+    if (!_vvClip) { try { const rec = new MediaRecorder(cv.captureStream(30), { mimeType: 'video/webm' }); const ch = []; rec.ondataavailable = e => { if (e.data.size) ch.push(e.data); };
+      rec.start(100); const iv = setInterval(() => { g.fillStyle = '#2dd4bf'; g.fillRect(Math.random() * 260, 40, 60, 90); }, 40); await wait(800); clearInterval(iv); rec.stop(); await new Promise(r => rec.onstop = r); _vvClip = new Blob(ch, { type: 'video/webm' }); } catch (e) { _vvClip = null; } }
+    const pic = await new Promise(r => cv.toBlob(r, 'image/png'));
+    customLibrary.push({ l: 'VV CLIP', kind: 'video', c: '#334455', img, media: { w: 320, h: 180, dur: 2.4, fps: 30, type: 'video/webm', size: _vvClip ? _vvClip.size : 1, fileName: 'vv_clip.webm', hasAudio: false } });
+    customLibrary.push({ l: 'VV PIC', kind: 'image', c: '#445566', img, media: { w: 320, h: 180, type: 'image/png', size: pic.size, fileName: 'vv_pic.png' } });
+    customLibrary.push({ l: 'VV GONE', kind: 'video', c: '#556677', img, media: { w: 1226, h: 416, dur: 30, fps: 29.97, type: 'video/mp4', size: 12345, fileName: 'vv_gone.mp4' } });
+    if (_vvClip) _fsAttachBlob('VV CLIP', _vvClip); _fsAttachBlob('VV PIC', pic);
+    return img;
+  };
+  const _vvCard = n => $$('#fs-source-list .vc').find(e => e.dataset.src === n) || null;
+  const _vvT = (c, s) => c ? (($(s, c) || {}).textContent || '').trim() : null;
+  const _vvBack = async () => { try { _sysCloseMenu(); } catch (e) {} try { if (typeof _fsSrcTab !== 'undefined' && _fsSrcTab !== 'images') _fsSetSrcTab('images'); } catch (e) {} try { if (eval('fsPresetId')) closeFullscreen(); } catch (e) {} try { closeWireMode(); } catch (e) {} try { closeSystem(); } catch (e) {}
+    $$('video').forEach(v => { try { v.muted = true; v.pause(); } catch (e) {} }); ['VV RENAMED', 'VV IO NAME'].forEach(k => { try { _mdbDel(k); } catch (e) {} }); await restore(); };
+  // 16lc-vpvideo VV1: NEW
+  await check('Video Presets 16lc-vpvideo VV1 (Omar 2026-10-06: the VIDEO tab cards = "Option C"): a file on the Video tab is the source card\'s frame (236 px, no number row) with a video job in each slot: the frame rate, VIDEO / IMAGE and the length on the picture, the sound (NO AUDIO here) in the colour bar, the trash in the shuffle square, the name box + pencil (no name list), the size and the file type in the two boxes; a file missing from this app is a dashed card with RELINK that does not drag; a card drags as fs-src:NAME', async () => {
+    const out = {}, want = {};
+    try {
+      await restore(); await _vvMk(); await _vcAdv(); _fsSetSrcTab('video'); await wait(400); mute();
+      const rd = n => { const c = _vvCard(n); if (!c) return 'no Option C card'; return [c.classList.contains('wire-source-card') && c.classList.contains('iog-card'), Math.round(c.getBoundingClientRect().width), c.getAttribute('draggable'), _vvT(c, '.vc-tr'), _vvT(c, '.vc-kind'), _vvT(c, '.vc-br'), $$('.vc-wave rect', c).length, _vvT(c, '.vc-bar-na'), !!$('.wire-color-row .wire-color-shuffle.vc-trash', c), !!$('.iog-foot', c), !!$('.sys-name-input', c) && !!$('.iog-pen', c) && !$('.sys-name-chev', c), _vvT(c, '.wire-res-row .vc-ro-t'), _vvT(c, '.vc-file'), !!$('.vc-file .lb-ico-' + (n === 'VV PIC' ? 'pic' : 'film'), c), c.classList.contains('vc-missing'), _vvT(c, '.vc-relink'), getComputedStyle(c).borderTopStyle]; };
+      out.clip = rd('VV CLIP'); want.clip = [true, 236, 'true', '30 fps', 'Video', '00:02', 0, 'No audio', true, false, true, '320x180', 'WEBM', true, false, '', 'solid'];
+      out.pic = rd('VV PIC'); want.pic = [true, 236, 'true', '', 'Image', '', 0, '', true, false, true, '320x180', 'PNG', true, false, '', 'solid'];
+      out.gone = rd('VV GONE'); want.gone = [true, 236, 'false', '29.97 fps', 'Video', '00:30', 0, 'No audio', true, false, true, '1226x416', 'MP4', true, true, 'Relink', 'dashed'];
+      const c = _vvCard('VV CLIP'); let drag = null;
+      if (c) { const dt = new DataTransfer(); c.dispatchEvent(new DragEvent('dragstart', { bubbles: true, cancelable: true, dataTransfer: dt })); drag = dt.getData('text/plain'); c.dispatchEvent(new DragEvent('dragend', { bubbles: true })); _fsClearDropHot(); }
+      out.drag = drag; want.drag = 'fs-src:VV CLIP';
+      out.old = $$('#fs-source-list .fs-src-media').length; want.old = 0;
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { await _vvBack(); }
+    return is(out, want, '[clip / picture / missing clip: the source card frame, width, draggable, fps, tag, length, waveform bars, NO AUDIO, trash in the shuffle square, number row, name box + pencil without a name list, size, type, its icon, missing, RELINK, border] / [drag data] / [old file cards left]');
+  });
+  // 16lc-vpvideo VV2: NEW
+  await check('Video Presets 16lc-vpvideo VV2 (Option C: "every slot does a video job"): a click on a clip\'s picture plays it in the picture (the corner square shows pause, the length reads 00:00 / 00:02, the colour bar fills, the VIDEO tag hides), a second click pauses it and the card reads as before; a picture file\'s picture is not a button; playing is not a change', async () => {
+    const out = {}, want = {};
+    try {
+      await restore(); await _vvMk(); await _vcAdv(); _fsSetSrcTab('video'); await wait(400);
+      const c = _vvCard('VV CLIP'), pic = c && $('.vc-pic', c); if (!pic) return 'no Option C card for the clip';
+      const u0 = _undoStack.length; pic.click(); await wait(900); mute(); const v = $('video.fs-prev', pic);
+      out.play = [!!v && !v.paused, c.classList.contains('vc-playing'), / \/ 00:02$/.test(_vvT(c, '.vc-br')), !!$('.wire-thumb-upload-hint .lb-ico-pause', c), !!$('.vc-bar-fill', c), getComputedStyle($('.vc-kind', c)).display];
+      want.play = [true, true, true, true, true, 'none'];
+      pic.click(); await wait(350);
+      out.pause = [!!v && v.paused, c.classList.contains('vc-playing'), _vvT(c, '.vc-br'), !!$('.wire-thumb-upload-hint .lb-ico-play', c), !!$('.vc-bar-fill', c)]; want.pause = [true, false, '00:02', true, false];
+      out.picture = [($('.vc-pic', _vvCard('VV PIC')) || {}).getAttribute?.('role') || null, $$('.vc-pic video', _vvCard('VV PIC')).length]; want.picture = [null, 0];
+      out.change = _undoStack.length - u0; want.change = 0;
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { await _vvBack(); }
+    return is(out, want, '[playing: plays, card marked, length chip, pause square, bar fill, VIDEO tag hidden] / [paused: paused, mark off, length, play square, no fill] / [picture file: picture role, videos] / [Undo steps]');
+  });
+  // 16lc-vpvideo VV3: NEW
+  await check('Video Presets 16lc-vpvideo VV3 ("renaming must keep the stored file working"): a clip renamed in its Video card\'s name box keeps its file (the same URL) and its place on the layer, one Undo step, and Undo finds the file again; renamed from its I/O Patch card it keeps the file too, stored under the new name', async () => {
+    const out = {}, want = {};
+    try {
+      await restore(); await _vvMk(); if (!_vvClip) return 'no test clip (MediaRecorder)';
+      const p = presets[0], s = screens.find(x => !_bdIs(x)) || screens[0]; pushUndo(); homeSetL(p.id, s.id, 2, 'VV CLIP'); await wait(200);
+      const url0 = _fsMediaUrl('VV CLIP');
+      await _vcAdv(); _fsSetSrcTab('video'); await wait(400);
+      const c = _vvCard('VV CLIP'), i = c && $('.sys-name-input', c); if (!i) return 'no name box on the Video card';
+      const u0 = _undoStack.length; i.focus(); i.value = 'VV RENAMED'; i.blur(); await wait(700);
+      const c2 = _vvCard('VV RENAMED');
+      out.card = [_undoStack.length - u0, !!_fsMediaItem('VV RENAMED'), !_fsMediaItem('VV CLIP'), _fsMediaUrl('VV RENAMED') === url0, getL(p.id, s.id, 2), !!c2 && !c2.classList.contains('vc-missing')];
+      want.card = [1, true, true, true, 'VV RENAMED', true];
+      doUndo(); await wait(600);
+      out.undo = [!!_fsMediaItem('VV CLIP'), !!_fsMediaUrl('VV CLIP'), getL(p.id, s.id, 2), !!_vvCard('VV CLIP') && !_vvCard('VV CLIP').classList.contains('vc-missing')]; want.undo = [true, true, 'VV CLIP', true];
+      _fsSetSrcTab('images'); closeFullscreen(); await wait(300);
+      await ioOpenSimple(); const ic = $$('#io-grid .iog-card').find(k => k.dataset.iogKey === 'src:VV CLIP'), ii = ic && $('.sys-name-input', ic); if (!ii) return 'no I/O Patch card for the clip';
+      ii.focus(); ii.value = 'VV IO NAME'; ii.blur(); await wait(700);
+      let stored = null; for (let k = 0; k < 10 && !stored; k++) { stored = await _mdbGet('VV IO NAME'); if (!stored) await wait(200); }
+      out.io = [!!_fsMediaUrl('VV IO NAME'), getL(p.id, s.id, 2), !!stored && stored.size === _vvClip.size]; want.io = [true, 'VV IO NAME', true];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { await _vvBack(); }
+    return is(out, want, '[Video card rename: Undo steps, new name, old gone, the same file URL, the layer, card linked] / [after Undo: old name, file, layer, card linked] / [I/O Patch rename: file, layer, stored under the new name]');
+  });
+  // 16lc-vpvideo VV4: NEW
+  await check('Wire / I/O Patch 16lc-vpvideo VV4 ("Show them everywhere ... just show the cover image. still work to drag and drop anywhere like normal"): a clip and a picture are listed on Wire\'s left panel with their cover (draggable), their I/O Patch cards show the cover (no remove: it is the file\'s own), nothing plays there; a file dropped on Wire > Simple becomes a show source with its tile (its cover), one Undo step', async () => {
+    const out = {}, want = {};
+    try {
+      await restore(); await _vvMk(); await _cMWire('simple');
+      const wc = n => $$('#wire-panel-left .iog-card').find(k => k.dataset.iogKey === 'src:' + n);
+      out.wire = ['VV CLIP', 'VV PIC'].map(n => { const k = wc(n), im = k && $('.wire-thumb img', k); return [!!k, !!im && im.getAttribute('src') === _fsMediaItem(n).img, k ? k.getAttribute('draggable') : null]; }); want.wire = [[true, true, 'true'], [true, true, 'true']];
+      const u0 = _undoStack.length; const ok = _slbDropCard('src', 'VV CLIP', 300, 300); await wait(300); _wireRender(); await wait(400);
+      out.drop = [ok, _undoStack.length - u0, sources.some(x => x && x.name === 'VV CLIP'), !!_slbState().all['src:VV CLIP'], $$('#wire-diagram image.wire-adv-thumb').some(im => im.getAttribute('href') === _fsMediaItem('VV CLIP').img)];
+      want.drop = [true, 1, true, true, true];
+      closeWireMode(); await wait(300); await ioOpenSimple();
+      out.io = ['VV CLIP', 'VV PIC'].map(n => { const k = $$('#io-grid .iog-card').find(x => x.dataset.iogKey === 'src:' + n), im = k && $('.wire-thumb img', k); return [!!im && im.getAttribute('src') === _fsMediaItem(n).img, !!k && !!$('.wire-thumb-clear', k)]; }); want.io = [[true, false], [true, false]];
+      out.playing = $$('video').filter(v => !v.paused).length; want.playing = 0;
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { await _vvBack(); }
+    return is(out, want, '[Wire panel: listed, cover, draggable] / [dropped on Wire Simple: taken, Undo steps, a show source, on the drawing, its tile shows the cover] / [I/O Patch cards: cover, remove button] / [videos playing]');
+  });
+  // 16lc-vpvideo VV5: NEW
+  await check('Video Presets 16lc-vpvideo VV5 (Omar drops 16jh "the presets never see them"): a source made with + Add source on the I/O Patch is in Simple\'s lists (the layer panel, without a remove × or colour swatch; AUX PROPERTIES) and picking it fills the layer, one Undo step; a file\'s row shows its cover', async () => {
+    const out = {}, want = {};
+    try {
+      await restore(); await _vvMk(); _sysAddSource(); await wait(200); const io = sources[sources.length - 1].name; closeSystem(); await wait(200);
+      const p = presets[0], s = screens.find(x => !_bdIs(x)) || screens[0], n = 4;
+      openLayerPanelSimple(fakeEv, p.id, s.id, n); await wait(400);
+      const rows = $$('#layer-panel .lp-content-list > div'), row = l => rows.find(r => r.dataset.label === l);
+      out.io = [!!row(io), !!row(io) && !$('.lp-del', row(io)), !!row(io) && getComputedStyle($('.lp-color-swatch', row(io))).display]; want.io = [true, true, 'none'];
+      out.files = ['VV CLIP', 'VV PIC'].map(l => !!row(l) && /url\(/.test(getComputedStyle(row(l).firstElementChild).backgroundImage)); want.files = [true, true];
+      const u0 = _undoStack.length; if (row(io)) row(io).click(); await wait(400);
+      out.pick = [getL(p.id, s.id, n), _undoStack.length - u0]; want.pick = [io, 1];
+      try { closeLayerPanel(); } catch (e) {}
+      openDSMPanel(fakeEv, p.id, dsms[0].id); await wait(300);
+      out.aux = $$('#dsm-panel div[onclick*="dsmPanelContent"]').some(r => (r.textContent || '').replace(/^\s*✓\s*/, '').trim() === io); want.aux = true;
+      const dp = $('#dsm-panel'); if (dp) dp.remove();
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { closeLayerPanel(); } catch (e) {} const dp = $('#dsm-panel'); if (dp) dp.remove(); await _vvBack(); }
+    return is(out, want, '[the I/O-made source in the layer panel: listed, no ×, swatch hidden] / [the files\' rows show their cover] / [picked: the layer, Undo steps] / [in AUX PROPERTIES]');
+  });
+  // 16lc-vpvideo VV6: NEW
+  await check('I/O Patch 16lc-vpvideo VV6: an I/O-only source a preset uses is a preset source: its card\'s trash asks first, the Remove picker leaves it out and the Look Book\'s I/O Sources page lists it; one no preset uses still goes straight away (one Undo step)', async () => {
+    const out = {}, want = {};
+    try {
+      await restore(); await ioOpenSimple(); _sysAddSource(); await wait(200); const io = sources[sources.length - 1].name; _sysAddSource(); await wait(200); const io2 = sources[sources.length - 1].name;
+      const p = presets[0], s = screens.find(x => !_bdIs(x)) || screens[0]; pushUndo(); setL(p.id, s.id, 4, io); _sysRender(); await wait(400);
+      closeSystem(); await wait(300);
+      const html = await userLookBook(), i0 = html.indexOf('data-title="Sources"'), i1 = i0 >= 0 ? html.indexOf('class="io-doc"', i0 + 10) : -1, part = i0 >= 0 ? html.slice(i0, i1 > 0 ? i1 : undefined) : '';
+      out.lookBook = [part.includes('<td class="io-name-cell">' + io + '</td>'), part.includes('<td class="io-name-cell">' + io2 + '</td>')]; want.lookBook = [true, false];
+      await ioOpenSimple();
+      const del = n => { const k = $$('#io-grid .iog-card').find(x => x.dataset.iogKey === 'src:' + n); return k && $('.sys-icon-btn.del', k); };
+      const u0 = _undoStack.length; del(io).click(); await wait(350);
+      out.asks = [!!_kbConfirmText(), sources.some(x => x && x.name === io), _undoStack.length - u0]; want.asks = [true, true, 0];
+      try { _sysCloseConfirmModal(false); } catch (e) {} await wait(200);
+      _sysOpenRemoveSourceModal(); await wait(300); const names = $$('#sys-remove-overlay .sys-src-picker-item').map(i => (($('.picker-name', i) || {}).textContent || '').trim()); try { _sysCloseRemoveSourceModal(); } catch (e) {}
+      out.picker = [names.includes(io), names.includes(io2)]; want.picker = [false, true];
+      const u1 = _undoStack.length; del(io2).click(); await wait(350);
+      out.straight = [!_kbConfirmText(), sources.some(x => x && x.name === io2), _undoStack.length - u1]; want.straight = [true, false, 1];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { _sysCloseConfirmModal(false); } catch (e) {} await _vvBack(); }
+    return is(out, want, '[Look Book I/O Sources page: lists the one a preset uses, the unused I/O-only one] / [used by a preset: trash asks, still there, Undo steps] / [Remove picker: lists the used one, lists the unused one] / [unused: no ask, gone, Undo steps]');
+  });
+  // 16lc-vpvideo VV7: NEW
+  await check('Help 16lc-vpvideo VV7: Help says what the Video tab cards do (play on the picture, sound in the colour bar, trash, rename keeps the file, RELINK), that a file is a source on every page with its cover, and that + Add source on the I/O Patch reaches Video Presets; the old "the presets never do" is gone', async () => {
+    let tx = '';
+    try { openHelp(); await wait(400); tx = ($('#help-overlay') || {}).textContent || ''; } catch (e) { return 'threw: ' + e.message; } finally { try { closeHelp(); } catch (e) {} await wait(200); }
+    tx = tx.replace(/\s+/g, ' ');
+    return is([/A card on the Video tab is the source card with a video job in each slot/.test(tx), /click RELINK on its picture to pick the file again/.test(tx), /A file is a source on every page: Wire, the I\/O Patch and Simple’s lists show its cover/.test(tx),
+      /Add Source adds an I\/O-only source: Wire, the Advanced patch and Video Presets \(Simple’s content lists and Advanced’s All Sources\) list it, and any preset can use it/.test(tx), /the presets never do/.test(tx), /an I\/O-only row no preset uses goes straight away/.test(tx)],
+      [true, true, true, true, false, true], 'Help [Video card / RELINK / files everywhere / I/O + Add source reaches Video Presets / the old "presets never do" / the trash of an I/O-only row]');
+  });
+  // ── 16lc-vpaux (Omar 2026-10-05 / 06, r16lm SPEC C): AUX name "Rename everywhere", AUX box "Always fill", the pill double-click fix and
+  //    the two remove-globally confirms. VA1-VA8 FAIL on the 16lc-vpvideo page (r16lm/B, b9d79f09) and PASS after. Helpers prefixed _va
+  //    (never a page name).
+  const _vaRen = async (key, nm) => { await ioOpenSimple(); const c = $$('#io-grid .iog-card').find(x => x.dataset.iogKey === key); const i = c && $('.sys-name-input', c); if (!i) { closeSystem(); await wait(300); return 'no card ' + key; }
+    const r = await _kzType(i, nm); closeSystem(); await wait(300); return Array.isArray(r) ? r[2] : r; };   /* typed on the I/O Patch card and left: its undo steps */
+  const _vaHex = c => { const m = /^#([0-9a-f]{6})$/i.exec(String(c || '').trim()); if (!m) return String(c); const n = parseInt(m[1], 16); return 'rgb(' + (n >> 16 & 255) + ', ' + (n >> 8 & 255) + ', ' + (n & 255) + ')'; };
+  const _vaBox = (pid, id, root) => { const r = root || $('.preset-row[data-pid="' + pid + '"]'); return r ? $$('.dsm-box', r).find(e => (e.getAttribute('onclick') || '').includes("dsmId:'" + id + "'")) || null : null; };
+  const _vaPill = (pid, id, root) => { const r = root || $('.preset-row[data-pid="' + pid + '"]'); return r ? $$('.dsm-toggle', r).find(e => (e.getAttribute('onclick') || '').includes("'" + id + "')")) || null : null; };
+  const _vaSys = () => { const m = $('#sys-confirm-overlay'); return m ? { title: ($('h3', m) || {}).textContent.trim(), body: ($('.confirm-msg', m) || {}).textContent.replace(/\s+/g, ' ').trim() } : null; };
+  const _vaSysCancel = async () => { const m = $('#sys-confirm-overlay'); const c = m && $$('.sys-modal-btn', m).find(e => /cancel/i.test(e.textContent)); if (c) c.click(); await wait(300); };
+  const _vaBack = async () => { try { _sysCloseMenu(); } catch (e) {} try { if (typeof _sysCloseConfirmModal === 'function' && $('#sys-confirm-overlay')) _sysCloseConfirmModal(false); } catch (e) {} try { if (eval('fsPresetId')) closeFullscreen(); } catch (e) {} try { closeWireMode(); } catch (e) {} try { closeSystem(); } catch (e) {}
+    ['dsm-panel', 'screen-panel'].forEach(i => { const e = document.getElementById(i); if (e) e.remove(); }); await restore(); };
+  // 16lc-vpaux VA1: NEW
+  await check('Video Presets 16lc-vpaux VA1 (Omar 2026-10-06, AUX name: "Rename everywhere"): AUX PROPERTIES\' Name box, opened on P03, reads "Name · all presets" and renames DSM 1 in every preset and on every page the I/O Patch\'s way: STAGE MON in all five presets, on its I/O Patch card and in the Look Book, no preset keeps a name of its own; one Undo step; Undo gives DSM 1 back everywhere', async () => {
+    await restore(); const p3 = presets[2], d = dsms.find(x => x.name === 'DSM 1'); if (!d) return 'no DSM 1';
+    openDSMPanel(fakeEv, p3.id, d.id); await wait(350); const pn = $('#dsm-panel'); if (!pn) return 'AUX PROPERTIES did not open';
+    const label = (($$('div', pn).find(e => /^Name/.test((e.textContent || '').trim()) && e.children.length <= 3) || {}).textContent || '').replace(/\s+/g, ' ').trim();
+    const n0 = vpUndoLen(); $('#dsmp-name').value = 'STAGE MON'; $('#dsmp-apply').click(); await wait(400);
+    const steps = vpUndoLen() - n0, names = [...new Set(presets.map(p => getDSMName(p.id, d.id)))], own = presets.filter(p => p.dsmName && p.dsmName[d.id]).length;
+    await ioOpenSimple(); const card = $$('#io-grid .iog-card').find(c => c.dataset.iogKey === 'aux:' + d.id); const io = card ? ($('.sys-name-input', card) || {}).value : null; closeSystem(); await wait(300);
+    const lb = (await userLookBook()).replace(/<[^>]+>/g, ' '); const inLb = lb.includes('STAGE MON'), oldLb = /\bDSM 1\b/.test(lb);
+    doUndo(); await wait(300); const back = [...new Set(presets.map(p => getDSMName(p.id, d.id)))];
+    await _vaBack();
+    return is({ label, steps, names, own, io, inLb, oldLb, back }, { label: 'Name · all presets', steps: 1, names: ['STAGE MON'], own: 0, io: 'STAGE MON', inLb: true, oldLb: false, back: ['DSM 1'] },
+      'the Name header / undo steps / its name in every preset / presets with a name of their own / its I/O Patch card / in the Look Book / DSM 1 left in the Look Book / after Undo');
+  });
+  // 16lc-vpaux VA2: NEW
+  // 16lc-vpfinish RD1: REPLACES the check named in its header (reason in the block)
+  // 16lc-vpfinish: RENAMED in place. Why: Omar (r16lm SPEC, the answers to steps A and C and to the picture pack, 2026-10-06 / 07, 16lc-vpfinish): "Speed: fix it"; the
+  //   panel stops at card width; Wire Advanced hand-made cards are the I/O card; Destination Properties gets a Name box; the table's x asks;
+  //   older shows' names cleaned up on open; long names shrink to fit; files after the sources, in capitals, own colours; + ADD VIDEO at
+  //   a file card's size; + ADD SOURCE named after its number. Here: an older show's own preset names are gone as it opens (Omar: "Older shows: clean up names on open"): DSM 1 and CENTER LED are
+  //   read in every preset from the start. What it pins (a rename anywhere is one step and renames in every preset, the Look Book) is unchanged.
+  await check('Video Presets 16lc-vpaux VA2 (Omar 2026-10-06: "Rename everywhere"; 16lc-vpfinish, Omar 2026-10-07: older shows are cleaned up as they open): an older show where P03 calls DSM 1 "P03 MON" and P02 calls CENTER LED "P02 CENTER" opens, saves and opens again with DSM 1 and CENTER LED in every preset; renaming AUX 1 on its I/O Patch card leaves them; renaming DSM 1 on its I/O Patch card makes PODIUM its name in every preset (P03\'s own name goes, one Undo step), and CENTER LED renamed STAGE there takes P02\'s; the Look Book prints only the new names', async () => {
+    await restore(); const st = JSON.parse(BASE); const d1 = st.dsms.find(x => x.name === 'DSM 1'), a1 = st.dsms.find(x => x.name === 'AUX 1'), ctr = st.screens.find(x => x.name === 'CENTER LED');
+    if (!d1 || !a1 || !ctr) return 'the example changed';
+    st.presets[2].dsmName = { [d1.id]: 'P03 MON' }; st.presets[1].screenName = { [ctr.id]: 'P02 CENTER' };
+    _applyProjectText(JSON.stringify(st)); await wait(700); okDialogs();
+    const two = () => [getDSMName(presets[2].id, d1.id), getScreenName(presets[1].id, ctr.id)];
+    const opened = two(); _applyProjectText(JSON.stringify(getProjectState())); await wait(700); okDialogs(); const reopened = two();
+    const a = await _vaRen('aux:' + a1.id, 'CUE MON'); const afterOther = two();
+    const b = await _vaRen('aux:' + d1.id, 'PODIUM'); const dsmAll = [...new Set(presets.map(p => getDSMName(p.id, d1.id)))];
+    const c = await _vaRen('dest:' + ctr.id, 'STAGE'); const ctrAll = [...new Set(presets.map(p => getScreenName(p.id, ctr.id)))];
+    const lb = (await userLookBook()).replace(/<[^>]+>/g, ' '); const lbOld = ['P03 MON', 'P02 CENTER'].filter(n => lb.includes(n)), lbNew = ['PODIUM', 'STAGE', 'CUE MON'].filter(n => lb.includes(n));
+    await _vaBack();
+    return is({ opened, reopened, a, afterOther, b, dsmAll, c, ctrAll, lbOld, lbNew }, { opened: ['DSM 1', 'CENTER LED'], reopened: ['DSM 1', 'CENTER LED'], a: 1, afterOther: ['DSM 1', 'CENTER LED'], b: 1, dsmAll: ['PODIUM'], c: 1, ctrAll: ['STAGE'], lbOld: [], lbNew: ['PODIUM', 'STAGE', 'CUE MON'] },
+      'opened [P03 DSM 1, P02 CENTER LED] / saved + opened again / AUX 1 renamed: steps / after it / DSM 1 renamed: steps / its name in every preset / CENTER LED renamed: steps / its name in every preset / old names in the Look Book / new names in the Look Book');
+  });
+  // 16lc-vpaux VA3: NEW
+  // 16lc-vpfinish RD19: REPLACES the check named in its header (reason in the block)
+  // 16lc-vpfinish: RENAMED in place. Why: Omar (r16lm SPEC, the answers to steps A and C and to the picture pack, 2026-10-06 / 07, 16lc-vpfinish): "Speed: fix it"; the
+  //   panel stops at card width; Wire Advanced hand-made cards are the I/O card; Destination Properties gets a Name box; the table's x asks;
+  //   older shows' names cleaned up on open; long names shrink to fit; files after the sources, in capitals, own colours; + ADD VIDEO at
+  //   a file card's size; + ADD SOURCE named after its number. Here: an older show's own preset names are cleaned up as the show opens (Omar: "Older shows: clean up names on open"), so P05 reads
+  //   LEFT LED as soon as the show is open. What it pins (the table renames in every preset, an emptied box renames nothing, Edit Show
+  //   Info renames in every preset) is unchanged.
+  await check('Video Presets 16lc-vpaux VA3 (Omar 2026-10-06: "Rename everywhere", destinations too): the Video Presets table\'s NAME box on P04\'s row renames RIGHT LED in every preset (P01\'s canvas reads STAGE RIGHT too), one Undo step, its tip says so; an emptied box on P02\'s row renames nothing (no step); a destination renamed in Edit Show Info takes a preset\'s own name away (P05 called LEFT LED "P05 LEFT"; 16lc-vpfinish: gone already as the show opens)', async () => {
+    await restore(); const p1 = presets[0], p2 = presets[1], p4 = presets[3], p5 = presets[4]; const R = screens.find(s => s.name === 'RIGHT LED'), L = screens.find(s => s.name === 'LEFT LED'), C = screens.find(s => s.name === 'CENTER LED');
+    renderTable(); await wait(200); const el = $('#tsn-' + R.id + '-' + p4.id); if (!el) { await _vaBack(); return 'no NAME box on P04\'s row'; }
+    const tip = el.getAttribute('title') || ''; const n0 = vpUndoLen(); el.focus(); el.value = 'STAGE RIGHT'; el.blur(); await wait(300); renderTable(); render(); await wait(300);
+    const steps = vpUndoLen() - n0, all = [...new Set(presets.map(p => getScreenName(p.id, R.id)))], p1Label = (($('.preset-row[data-pid="' + p1.id + '"] .screen-box[data-sid="' + R.id + '"] .screen-inner > .screen-lbl') || {}).textContent || '');
+    const e2 = $('#tsn-' + C.id + '-' + p2.id); const n1 = vpUndoLen(); if (e2) { e2.focus(); e2.value = ''; e2.blur(); await wait(300); renderTable(); await wait(150); } const empty = [vpUndoLen() - n1, [...new Set(presets.map(p => getScreenName(p.id, C.id)))]];
+    await restore(); const st = JSON.parse(BASE); st.presets[4].screenName = { [L.id]: 'P05 LEFT' }; _applyProjectText(JSON.stringify(st)); await wait(700); okDialogs();
+    const was = getScreenName(presets[4].id, L.id);
+    actions.editShowInfo(); await wait(500); const i = screens.findIndex(s => s.id === L.id); const nb = $('#qs-sn-' + i); let esi = 'no name box';
+    if (nb) { nb.focus(); nb.value = 'LEFT WALL'; fire(nb, 'input'); fire(nb, 'change'); await wait(150); const go = $('#qs-confirm-btn'); if (go) go.click(); await wait(900); okDialogs(); await wait(300); esi = [...new Set(presets.map(p => getScreenName(p.id, L.id)))]; } else { try { closeQS(); } catch (e) {} }
+    await _vaBack();
+    return is({ steps, all, p1Label, tip: /every preset/.test(tip), empty, was, esi }, { steps: 1, all: ['STAGE RIGHT'], p1Label: 'STAGE RIGHT', tip: true, empty: [0, ['CENTER LED']], was: 'LEFT LED', esi: ['LEFT WALL'] },
+      'P04\'s row: undo steps / RIGHT LED in every preset / P01\'s canvas label / the tip says every preset / an emptied box [steps, names] / P05\'s own name before / after Edit Show Info renamed LEFT LED');
+  });
+  // 16lc-vpaux VA4: NEW
+  await check('Video Presets 16lc-vpaux VA4 (Omar 2026-10-06, AUX box: "Always fill"): an AUX box fills with its content\'s colour (or picture) however the content was set, the way a destination fills with its BG - the Simple table\'s cell (AUX 1 on P02 = LOGO), a drop on the Advanced page (DSM 1 on P02 = a picture) - on Simple, on the Advanced tile and in the Look Book (the box and its AUX / DSM chip); an AUX with no content stays dark', async () => {
+    await restore(); const p2 = presets[1]; const a1 = dsms.find(x => x.name === 'AUX 1'), d1 = dsms.find(x => x.name === 'DSM 1'); if (!a1 || !d1) return 'the example changed';
+    const cv = document.createElement('canvas'); cv.width = 64; cv.height = 36; const g = cv.getContext('2d'); g.fillStyle = '#c03080'; g.fillRect(0, 0, 64, 36); const img = cv.toDataURL('image/png');
+    customLibrary.push({ l: 'VA PIC', c: '#c03080', img });
+    renderTable(); await wait(200); const cell = $('#tbody tr[data-pid="' + p2.id + '"] input[ondblclick*="' + a1.id + '"]'); if (!cell) { await _vaBack(); return 'no AUX 1 cell on P02'; }
+    cell.focus(); cell.value = 'LOGO'; cell.blur(); await wait(300);
+    _fsAssignAux(p2.id, d1.id, 'VA PIC'); await wait(300); render(); await wait(300);   /* what a drop on the Advanced AUX box calls */
+    const logo = _vaHex(findContent('LOGO').c);
+    const rd = e => e ? { bg: getComputedStyle(e).backgroundColor, img: getComputedStyle(e).backgroundImage !== 'none' } : null;
+    const simple = [rd(_vaBox(p2.id, a1.id)), rd(_vaBox(p2.id, d1.id))];
+    openFullscreen(p2.id); await wait(900); const fsc = $('#fs-canvas'); const adv = [rd(_vaBox(p2.id, a1.id, fsc)), rd(_vaBox(p2.id, d1.id, fsc))]; closeFullscreen(); await wait(500);
+    const lc = String(findContent('LOGO').c), lb = await userLookBook();
+    const lbBox = new RegExp('class="dsm-box[^"]*" style="[^"]*background:' + lc + '[;"]', 'i').test(lb), lbPic = /class="dsm-box[^"]*" style="[^"]*background:url\(/.test(lb), lbChip = lb.includes('class="aux-chip" style="border-left-color:' + lc + '"');
+    setDSMContent(presets[0].id, a1.id, ''); render(); await wait(300); const eb = _vaBox(presets[0].id, a1.id); const empties = eb ? [getComputedStyle(eb).backgroundColor] : ['no box'];
+    await _vaBack();
+    return is({ simple, adv, empties: [...new Set(empties)], lbBox, lbPic, lbChip }, { simple: [{ bg: logo, img: false }, { bg: 'rgb(192, 48, 128)', img: true }], adv: [{ bg: logo, img: false }, { bg: 'rgb(192, 48, 128)', img: true }], empties: ['rgb(26, 26, 26)'], lbBox: true, lbPic: true, lbChip: true },
+      'Simple [AUX 1 = LOGO from the table, DSM 1 = a picture dropped] / the Advanced tile / boxes with no content / the Look Book box in LOGO\'s colour / the Look Book box with the picture / the Look Book chip in LOGO\'s colour');
+  });
+  // 16lc-vpaux VA5: NEW
+  await check('Video Presets 16lc-vpaux VA5 (C3): a double-click on an AUX pill in the DSM | AUX band opens AUX PROPERTIES and leaves the AUX as it was (DSM 1 stays ON, no Undo step); a single click switches it once the double-click window has passed (one step); a click without a click count (Enter / Space) switches at once', async () => {
+    await restore(); const p1 = presets[0], d1 = dsms.find(x => x.name === 'DSM 1'); render(); await wait(300);
+    const pill = () => _vaPill(p1.id, d1.id); if (!pill()) { await _vaBack(); return 'no DSM 1 pill'; }
+    const ev = (t, n) => new MouseEvent(t, { bubbles: true, cancelable: true, detail: n, view: window });
+    const n0 = vpUndoLen(); pill().dispatchEvent(ev('click', 1)); await wait(100); pill().dispatchEvent(ev('click', 2)); pill().dispatchEvent(ev('dblclick', 2)); await wait(700);
+    const dbl = [!!$('#dsm-panel'), getDSMOn(p1.id, d1.id), vpUndoLen() - n0]; const dp = $('#dsm-panel'); if (dp) dp.remove(); await wait(200);
+    const n1 = vpUndoLen(); pill().dispatchEvent(ev('click', 1)); await wait(120); const early = getDSMOn(p1.id, d1.id); await wait(600); const single = [early, getDSMOn(p1.id, d1.id), vpUndoLen() - n1, !!$('#dsm-panel')];
+    const n2 = vpUndoLen(); pill().click(); await wait(30); const key = [getDSMOn(p1.id, d1.id), vpUndoLen() - n2];
+    await _vaBack();
+    return is({ dbl, single, key }, { dbl: [true, true, 0], single: [true, false, 1, false], key: [true, 1] },
+      'a double-click [AUX PROPERTIES open, DSM 1 on, undo steps] / a single click [on after 120 ms, after 720 ms, steps, a window] / a click with no count [on at once, steps]');
+  });
+  // 16lc-vpaux VA6: NEW
+  await check('Video Presets 16lc-vpaux VA6 (C3): Destination Properties\' "Remove Globally, All Presets" and AUX PROPERTIES\' "Remove AUX Globally" ask first in the I/O Patch trash\'s window, with its words; Cancel changes nothing (no step); Delete removes it (one step) and Undo brings it back', async () => {
+    await restore(); const p1 = presets[0], C = screens.find(s => s.name === 'CENTER LED'), a1 = dsms.find(x => x.name === 'AUX 1');
+    await ioOpenSimple(); const tr = (id) => $('#io-grid .iog-card .sys-icon-btn.del[data-sys-id="' + id + '"]'); let ioD = null, ioA = null;
+    if (tr(C.id)) { tr(C.id).click(); await wait(300); ioD = _vaSys(); await _vaSysCancel(); } if (tr(a1.id)) { tr(a1.id).click(); await wait(300); ioA = _vaSys(); await _vaSysCancel(); } closeSystem(); await wait(300);
+    const flow = async (open, btn, read) => { const v0 = read(), n0 = vpUndoLen(); open(); await wait(350); const b = $(btn); if (!b) return 'no ' + btn; b.click(); await wait(350); const ask = _vaSys();
+      if (!ask) return ['nothing asked', read() === v0 ? 'kept' : 'removed at once']; await _vaSysCancel(); const cancel = [read() === v0, vpUndoLen() - n0, !!$('#sys-confirm-overlay')];
+      open(); await wait(350); $(btn).click(); await wait(350); const g = $('#sys-confirm-go'); if (g) g.click(); await wait(400); const del = [read() !== v0, vpUndoLen() - n0];
+      doUndo(); await wait(400); return { ask, cancel, del, undo: read() === v0 }; };
+    const dest = await flow(() => openScreenPanel(Object.assign({}, fakeEv), p1.id, C.id), '#screen-panel #sp-remove', () => screens.map(s => s.name).join('|'));
+    const aux = await flow(() => openDSMPanel(Object.assign({}, fakeEv), p1.id, a1.id), '#dsm-panel #dsmp-remove', () => dsms.map(d => d.name).join('|'));
+    await _vaBack();
+    return is({ dest, aux }, { dest: { ask: ioD, cancel: [true, 0, false], del: [true, 1], undo: true }, aux: { ask: ioA, cancel: [true, 0, false], del: [true, 1], undo: true } },
+      'Destination Properties / AUX PROPERTIES: [the window (= the I/O Patch trash\'s), Cancel: kept / steps / window left, Delete: gone / steps, Undo brings it back]');
+  });
+  // 16lc-vpaux VA7: NEW
+  await check('Video Presets 16lc-vpaux VA7 (C3): on Video Presets > Advanced, Escape on a confirm window (a card\'s trash, Remove Globally) closes the window, not the page, and removes nothing', async () => {
+    await restore(); await _vcAdv(); if (!eval('fsPresetId')) { await _vaBack(); return 'Advanced did not open'; }
+    const C = screens.find(s => s.name === 'CENTER LED'); const names = () => screens.map(s => s.name).join('|'); const n0 = names(), u0 = vpUndoLen();
+    const esc = () => document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', code: 'Escape', bubbles: true, cancelable: true }));
+    const tr = $('#fs-left-panel .iog-card .sys-icon-btn.del[data-sys-id="' + C.id + '"]'); let card = 'no trash on the card';
+    if (tr) { tr.click(); await wait(300); const asked = !!$('#sys-confirm-overlay'); esc(); await wait(500); card = [asked, !!$('#sys-confirm-overlay'), !!eval('fsPresetId'), names() === n0, vpUndoLen() - u0]; }
+    if (!eval('fsPresetId')) await _vcAdv();
+    openScreenPanel(Object.assign({}, fakeEv), presets[0].id, C.id); await wait(350); const b = $('#screen-panel #sp-remove'); let props = 'no Remove Globally';
+    if (b) { b.click(); await wait(350); const asked = !!$('#sys-confirm-overlay'); esc(); await wait(500); props = [asked, !!$('#sys-confirm-overlay'), !!eval('fsPresetId'), names() === n0, vpUndoLen() - u0]; }
+    await _vaBack();
+    return is({ card, props }, { card: [true, false, true, true, 0], props: [true, false, true, true, 0] }, 'the card\'s trash / Destination Properties\' Remove Globally: [asked, still asking after Escape, still on Advanced, nothing removed, steps]');
+  });
+  // 16lc-vpaux VA8: NEW
+  // 16lc-vpfinish RD2: REPLACES the check named in its header (reason in the block)
+  // 16lc-vpfinish: RENAMED in place. Why: Omar (r16lm SPEC, the answers to steps A and C and to the picture pack, 2026-10-06 / 07, 16lc-vpfinish): "Speed: fix it"; the
+  //   panel stops at card width; Wire Advanced hand-made cards are the I/O card; Destination Properties gets a Name box; the table's x asks;
+  //   older shows' names cleaned up on open; long names shrink to fit; files after the sources, in capitals, own colours; + ADD VIDEO at
+  //   a file card's size; + ADD SOURCE named after its number. Here: Help now says an older show's own preset names are cleaned up as it opens (the old "stays until renamed" lines went with it).
+  await check('Help 16lc-vpaux VA8: Help says an AUX / DSM or destination renamed anywhere is renamed in every preset (16lc-vpfinish: an older show opens with one name in every preset), the AUX box fills with its content\'s colour or picture, and both Remove Globally ask first; the old "for that preset only" lines are gone', async () => {
+    actions.help(); await wait(400); const box = $$('[id*="help"]').filter(vis).sort((a, b) => b.textContent.length - a.textContent.length)[0]; const t = (box ? box.textContent : '').replace(/\s+/g, ' '); closeHelp(); await wait(200);
+    const must = ['renames the DSM in every preset and on every page', 'an older show whose presets gave it names of their own opens with its main name in every preset', 'Its box under the preset fills with that content', 'Remove AUX Globally asks first, like the I/O Patch trash',
+      'each renames the destination in every preset and on every page', 'opens with its main name in every preset, as part of opening: nothing to undo, nothing to save', 'its Remove Globally asks first, like the I/O Patch trash', 'Each DSM has a name and a resolution (the same in every preset) and an on / off state per preset'].filter(s => !t.includes(s));
+    const gone = ['The Name box and the content it carries are for that preset only', 'it saves for that preset only, other presets keep their own names', 'Destination Names, Per Preset', 'Each DSM has a name, resolution, and on/off state per preset'].filter(s => t.includes(s));
+    return is([must, gone, t.length > 500], [[], [], true], 'true lines missing / stale lines still there / Help was read');
+  });
+  // ── 16lc-vpfinish (Omar's answers to step A's questions, 2026-10-06 ~17:00, and to step C's questions and the picture pack, 2026-10-06 night /
+  //    10-07, r16lm SPEC): the measuring rule tightened (speed), the Advanced panel stops at card width (the widest stays 360), Wire > Advanced
+  //    hand-made cards are the I/O standard card, Destination Properties' Name box, the table's x asks, older shows' preset names cleaned up on
+  //    open, long one-word names shrink to fit, files numbered after the sources, in capitals, each its own cable colour, + ADD VIDEO at a file
+  //    card's size, + ADD SOURCE named after its number. VD1-VD11 FAIL on the 16lc-vpaux page (r16lm/C, 301c10cb) and PASS after. Helpers
+  //    prefixed _vd (never a page name).
+  const _vdSys = () => { const m = $('#sys-confirm-overlay'); return m ? { title: ($('h3', m) || {}).textContent.trim(), body: ($('.confirm-msg', m) || {}).textContent.replace(/\s+/g, ' ').trim() } : null; };
+  const _vdSysCancel = async () => { const m = $('#sys-confirm-overlay'); const c = m && $$('.sys-modal-btn', m).find(e => /cancel/i.test(e.textContent)); if (c) c.click(); await wait(300); };
+  const _vdBack = async () => { try { _sysCloseMenu(); } catch (e) {} try { if (typeof _sysCloseConfirmModal === 'function' && $('#sys-confirm-overlay')) _sysCloseConfirmModal(false); } catch (e) {} try { if (eval('fsPresetId')) closeFullscreen(); } catch (e) {} try { closeWireMode(); } catch (e) {} try { closeSystem(); } catch (e) {}
+    ['dsm-panel', 'screen-panel'].forEach(i => { const e = document.getElementById(i); if (e) e.remove(); }); try { if (typeof _fsSrcTab !== 'undefined' && _fsSrcTab !== 'images') _fsSetSrcTab('images'); } catch (e) {} await restore(); };
+  const _vdLines = el => el ? new Set([...el.getClientRects()].filter(r => r.width > 0).map(r => Math.round(r.top))).size : -1;
+  const _vdPng = async (name, hex) => { const c = document.createElement('canvas'); c.width = 160; c.height = 90; const g = c.getContext('2d'); g.fillStyle = hex; g.fillRect(0, 0, 160, 90); const b = await new Promise(r => c.toBlob(r, 'image/png')); return new File([b], name, { type: 'image/png' }); };
+  const _vdMenu = async trigger => { if (!trigger) return 'no control'; trigger.click(); await wait(300); const m = $('body > .sys-dd'); if (!m) return 'no menu'; const items = $$('.sys-dd-item', m).slice(0, 2).map(e => ((($('.item-text', e) || e).textContent) || '').trim() + (e.classList.contains('disabled') ? ' [off]' : '')); return items; };
+  // 16lc-vpfinish VD1: NEW
+  await check('Video Presets 16lc-vpfinish VD1 (Omar 2026-10-06: "Speed: fix it"): the 16kt-fix measuring class takes the transitions off only the parts that animate a length (the preset header, its name / code boxes and its action buttons); a layer box keeps its colour transition while it is on, and no stylesheet rule ends in "body.lbn-measuring ... *" (that restyled the whole page twice per nudge)', async () => {
+    await restore(); await _vcAdv();
+    const h = $('#fs-canvas .preset-header'); if (!h) { await _vdBack(); return 'no Advanced tile'; }
+    const zero = e => !!e && getComputedStyle(e).transitionDuration.split(',').every(x => parseFloat(x) === 0);
+    const lbox0 = $('.lb-lbox', h) ? getComputedStyle($('.lb-lbox', h)).transitionDuration : 'no layer box';
+    document.body.classList.add('lbn-measuring');
+    const on = [zero(h), zero($('.p-name', h)), zero($('.p-code', h)), zero($('.del-btn', h))], lbox1 = $('.lb-lbox', h) ? getComputedStyle($('.lb-lbox', h)).transitionDuration : 'no layer box';
+    document.body.classList.remove('lbn-measuring');
+    const star = []; for (const sh of document.styleSheets) { let rs; try { rs = sh.cssRules; } catch (e) { continue; } if (!rs) continue; for (const r of rs) if (r.selectorText && /lbn-measuring/.test(r.selectorText) && r.selectorText.split(',').some(p => /\*\s*$/.test(p.trim()))) star.push(r.selectorText.replace(/\s+/g, ' ').slice(0, 90)); }
+    await _vdBack();
+    return is({ on, lboxKeeps: lbox1 === lbox0 && parseFloat(lbox0) > 0, star }, { on: [true, true, true, true], lboxKeeps: true, star: [] }, 'while measuring: header / name / code / buttons without transition; a layer box keeps its own; rules ending in *');
+  });
+  // 16lc-vpfinish VD2: NEW
+  await check('Video Presets 16lc-vpfinish VD2 (Omar 2026-10-06: "Narrow panel: the panel stops at card width"; "Max width: leave the resize handle at 360 px"): the Advanced left panel\'s edge drags it no narrower than its cards need (262 px, its min-width too), so its list never scrolls sideways or cuts a card, and no wider than 360', async () => {
+    await restore(); await _vcAdv();
+    const p = $('#fs-left-panel'), l = $('#fs-source-list'), w0 = p.offsetWidth;
+    const drag = dx => { fsPanelResizeStart({ preventDefault() {}, clientX: 600 }, 'left'); window.dispatchEvent(new MouseEvent('mousemove', { clientX: 600 + dx, bubbles: true })); window.dispatchEvent(new MouseEvent('mouseup', { clientX: 600 + dx, bubbles: true })); return p.offsetWidth; };
+    const nar = drag(-220), sideways = l.scrollWidth > l.clientWidth + 0.5, cut = $$('.iog-card, .iog-add', l).filter(e => e.getClientRects().length && e.getBoundingClientRect().right > l.getBoundingClientRect().left + l.clientWidth + 0.5).length;
+    const wid = drag(400), back = drag(-400), minCss = getComputedStyle(p).minWidth;
+    p.style.width = w0 + 'px';
+    await _vdBack();
+    return is({ nar, sideways, cut, wid, back, minCss }, { nar: 262, sideways: false, cut: 0, wid: 360, back: 262, minCss: '262px' }, 'dragged 220 narrower / list scrolls sideways / cards cut / 400 wider / 400 narrower again / its min-width');
+  });
+  // 16lc-vpfinish VD3: NEW
+  await check('Wire 16lc-vpfinish VD3 (Omar 2026-10-06: "Wire > Advanced hand-made custom cards: I/O standard card too"): a hand-made source, destination and AUX card of Wire > Advanced is the I/O Patch card (name box with its name list, Reset, trash, number C1, no corner x); its resolution menu reads Custom resolution..., — Clear — (greyed on an output) first; a pick there is one Undo step; its trash asks first in the I/O Patch window (Cancel keeps it)', async () => {
+    await restore(); openWireMode(); await wait(600); _wireSwitchToAdvanced(); await wait(500); okDialogs(); await wait(500);
+    _wireAdvAddCustomSource(); _wireAdvAddCustomDest(); _wireAdvAddCustomDsm(); await wait(600);
+    const last = k => (wireAdvanced[k] || []).slice(-1)[0] || {}, cs = last('customSources'), cd = last('customDests'), cm = last('customDsms');
+    const card = (k, id) => $$('#wire-panel-left .iog-card').find(c => c.dataset.iogKey === k + ':' + id) || null;
+    const cards = [card('wcsrc', cs.id), card('wcdst', cd.id), card('wcaux', cm.id)];
+    const shape = cards.map(c => c ? [!!$('.sys-name-chev', c), !!$('.sys-icon-btn.reset', c), !!$('.sys-icon-btn.del', c), ($('.iog-num', c) || {}).textContent || '', !!$('.wire-card-delete', c)] : 'not the I/O card');
+    const menus = []; for (const c of cards) { menus.push(c ? await _vdMenu($('.wire-res-dropdown-btn', c)) : 'no card'); try { _sysCloseMenu(); } catch (e) {} await wait(150); }
+    let pick = 'no card', asked = null, kept = null;
+    const c1 = card('wcdst', cd.id);
+    if (c1) { const n0 = vpUndoLen(); $('.wire-res-dropdown-btn', c1).click(); await wait(300); const it = $$('body > .sys-dd .sys-dd-item').find(e => /^3840\s*[x×]\s*2160/.test((($('.item-text', e) || e).textContent || '').trim())); if (it) { it.click(); await wait(500); } pick = [vpUndoLen() - n0, cd.w + 'x' + cd.h]; }
+    const c2 = card('wcdst', cd.id);
+    if (c2) { $('.sys-icon-btn.del', c2) ? $('.sys-icon-btn.del', c2).click() : null; await wait(300); asked = !!_vdSys(); await _vdSysCancel(); kept = (wireAdvanced.customDests || []).some(x => x.id === cd.id); }
+    await _vdBack();
+    return is({ shape, menus, pick, asked, kept }, { shape: [[true, true, true, 'C1', false], [true, true, true, 'C1', false], [true, true, true, 'C1', false]], menus: [['Custom resolution…', '— Clear —'], ['Custom resolution…', '— Clear — [off]'], ['Custom resolution…', '— Clear — [off]']], pick: [1, '3840x2160'], asked: true, kept: true },
+      'cards [name list, Reset, trash, number, corner x] / resolution menus (first two) / the destination\'s 3840x2160 pick [steps, its size] / the trash asked / Cancel kept it');
+  });
+  // 16lc-vpfinish VD4: NEW
+  await check('Video Presets 16lc-vpfinish VD4 (Omar 2026-10-07: "Destination Properties gets a Name box"): Destination Properties, opened on P02, has a Name box (all presets) that renames CENTER LED in every preset and on its I/O Patch card, one Undo step with the Apply; Undo gives CENTER LED back; a name another output has is refused (Name in use) and renames nothing', async () => {
+    await restore(); const p2 = presets[1], C = screens.find(s => s.name === 'CENTER LED'); if (!C) return 'no CENTER LED';
+    openScreenPanel(Object.assign({}, fakeEv), p2.id, C.id); await wait(350);
+    const nb = $('#screen-panel #sp-name'); if (!nb) { await _vdBack(); return 'Destination Properties has no Name box'; }
+    const label = nb.getAttribute('aria-label'), n0 = vpUndoLen(); nb.value = 'MAIN WALL'; $('#screen-panel #sp-apply').click(); await wait(450);
+    const steps = vpUndoLen() - n0, names = [...new Set(presets.map(p => getScreenName(p.id, C.id)))];
+    await ioOpenSimple(); const card = $$('#io-grid .iog-card').find(c => c.dataset.iogKey === 'dest:' + C.id); const io = card ? ($('.sys-name-input', card) || {}).value : null; closeSystem(); await wait(300);
+    doUndo(); await wait(300); const back = [...new Set(presets.map(p => getScreenName(p.id, C.id)))];
+    openScreenPanel(Object.assign({}, fakeEv), presets[2].id, C.id); await wait(350); $('#screen-panel #sp-name').value = 'LEFT LED'; $('#screen-panel #sp-apply').click(); await wait(450);
+    const refused = [dlgOpen() && /in use/i.test(($('#dlg-overlay') || {}).textContent || ''), [...new Set(presets.map(p => getScreenName(p.id, C.id)))]]; okDialogs(); await wait(200); const sp = $('#screen-panel'); if (sp) sp.remove();
+    await _vdBack();
+    return is({ label, steps, names, io, back, refused }, { label: 'Destination name (all presets)', steps: 1, names: ['MAIN WALL'], io: 'MAIN WALL', back: ['CENTER LED'], refused: [true, ['CENTER LED']] }, 'the Name box / Apply steps / its name in every preset / its I/O Patch card / after Undo / another output\'s name [Name in use, names]');
+  });
+  // 16lc-vpfinish VD5: NEW
+  await check('Video Presets 16lc-vpfinish VD5 (Omar 2026-10-07: the table\'s x "asks first"): the x on a destination\'s first row of the Video Presets table asks in the I/O Patch trash\'s window; Cancel changes nothing (no step); Delete removes it in one step and Undo brings it back', async () => {
+    await restore(); if (typeof renderTable === 'function') renderTable(); await wait(200);
+    const read = () => screens.map(s => s.name).join('|'), v0 = read(), n0 = vpUndoLen();
+    const x = () => $$('.t-del')[1] || $('.t-del'); if (!x()) { await _vdBack(); return 'no x in the table'; }
+    x().click(); await wait(350); const ask = _vdSys(); if (!ask) { const now = read(); await _vdBack(); return 'nothing asked; ' + (now === v0 ? 'kept' : 'removed at once'); }
+    await _vdSysCancel(); const cancel = [read() === v0, vpUndoLen() - n0, !!$('#sys-confirm-overlay')];
+    x().click(); await wait(350); const g = $('#sys-confirm-go'); if (g) g.click(); await wait(400); const del = [read() !== v0, vpUndoLen() - n0];
+    doUndo(); await wait(400); const undo = read() === v0;
+    await _vdBack();
+    return is({ title: ask.title, cancel, del, undo }, { title: 'Delete Destination', cancel: [true, 0, false], del: [true, 1], undo: true }, 'the window / Cancel [kept, steps, window left] / Delete [gone, steps] / Undo');
+  });
+  // 16lc-vpfinish VD6: NEW
+  await check('Video Presets 16lc-vpfinish VD6 (Omar 2026-10-07: "Older shows: clean up names on open"): a show where P03 calls DSM 1 "P03 MON" and P02 calls CENTER LED "P02 CENTER" opens with DSM 1 and CENTER LED in every preset, no preset keeps a name of its own, no Undo step, the show is clean (no Save light); the Look Book prints only the main names', async () => {
+    await restore(); const st = JSON.parse(BASE); const d1 = st.dsms.find(x => x.name === 'DSM 1'), ctr = st.screens.find(x => x.name === 'CENTER LED');
+    if (!d1 || !ctr) return 'the example changed';
+    st.presets[2].dsmName = { [d1.id]: 'P03 MON' }; st.presets[1].screenName = { [ctr.id]: 'P02 CENTER' };
+    _applyProjectText(JSON.stringify(st)); await wait(700); okDialogs(); await wait(150);
+    const names = [[...new Set(presets.map(p => getDSMName(p.id, d1.id)))], [...new Set(presets.map(p => getScreenName(p.id, ctr.id)))]];
+    const own = presets.filter(p => Object.keys(p.dsmName || {}).length || Object.keys(p.screenName || {}).length).length, undo = vpUndoLen(), lit = !!$('.save-dirty'), dirty = !!_isDirty;
+    const lb = (await userLookBook()).replace(/<[^>]+>/g, ' '); const lbOld = ['P03 MON', 'P02 CENTER'].filter(n => lb.includes(n));
+    await _vdBack();
+    return is({ names, own, undo, lit, dirty, lbOld }, { names: [['DSM 1'], ['CENTER LED']], own: 0, undo: 0, lit: false, dirty: false, lbOld: [] }, 'names in every preset [DSM 1, CENTER LED] / presets with a name of their own / Undo steps / Save lit / unsaved / old names in the Look Book');
+  });
+  // 16lc-vpfinish VD7: NEW
+  await check('Video Presets 16lc-vpfinish VD7 (Omar 2026-10-07: long one-word names "shrink to fit", never CONFIDENC / E): a destination named CONFIDENCE keeps its word on one line on its Video Presets > Advanced card and its Wire card, drawn smaller than 11 px; a short name keeps 11 px', async () => {
+    await restore(); const C = screens.find(s => s.name === 'CENTER LED'), L = screens.find(s => s.name === 'LEFT LED'); if (!C || !L) return 'the example changed';
+    _sysWithUndo(() => _sysSetMeta('dest', C.id, 'name', 'CONFIDENCE')); await _vcAdv();
+    const read = scope => { const c = _vcCard(scope, 'dest:' + C.id), s = _vcCard(scope, 'dest:' + L.id), t = c && $('.iog-name-text', c), u = s && $('.iog-name-text', s); return t && u ? [_vdLines(t), parseFloat(getComputedStyle(t).fontSize) < 11, getComputedStyle(u).fontSize] : 'no card'; };
+    const vp = read('#fs-left-panel'); try { closeFullscreen(); } catch (e) {} await wait(300);
+    openWireMode(); await wait(700); const wire = read('#wire-panel-left');
+    await _vdBack();
+    return is({ vp, wire }, { vp: [1, true, '11px'], wire: [1, true, '11px'] }, 'Video Presets / Wire: [lines of CONFIDENCE, drawn smaller, LEFT LED\'s size]');
+  });
+  // 16lc-vpfinish VD8: NEW
+  // 16lc-vpcards-fix4 RH8: REPLACES the check named in its header (reason in the block)
+  // 16lc-vpcards-fix4: RENAMED in place. Why: the main session (r16lm SPEC section H, 2026-10-08 00:35; Omar: "the number change should not rearrange anything, if that will
+  //   be any issue then it should be skipped complete for now"): numbers by order exactly as in the v0.8.2 candidate (r16lj/fix), the
+  //   number box shown, not typed in, nothing kept or saved. Here: 16lc-vpfinish (VD8, D9) pinned the imported files AFTER every source. SPEC H1 switches D9 off: "imported files numbered exactly where
+  //   r16lj/fix numbers them", in the order first seen (the library's items first, so a new file comes right after them). It now pins the
+  //   two files together, every other source in its order, and that the order is the order first seen; capitals, colours, the Video tab
+  //   card's name case and + ADD VIDEO's size are unchanged.
+  await check('Video Presets 16lc-vpfinish VD8 (Omar 2026-10-07: "the system default should be to capitalize but user can do it however they want"; "Each imported file gets its own cable colour"; "+ ADD VIDEO" at "the file cards\' size, no bottom row"; 16lc-vpcards-fix4, SPEC H1: files numbered by order, as the v0.8.2 candidate): two imported pictures are named in capitals, take their places together in the order first seen (the other sources keep their order), each has its own cable colour; the Video tab card shows a name as typed; + ADD VIDEO is a file card\'s size with no bottom row', async () => {
+    await restore(); const order0 = _srcNameOrder().slice(), m0 = customLibrary.filter(c => c && c.kind).length;
+    await _fsImportFiles([await _vdPng('walk in loop.png', '#3a6ea5'), await _vdPng('vd pic.png', '#a53a6e')]);
+    for (let i = 0; i < 40 && customLibrary.filter(c => c && c.kind).length < m0 + 2; i++) await wait(150);
+    const files = customLibrary.filter(c => c && c.kind).slice(m0).map(c => c.l), order1 = _srcNameOrder();
+    const i0 = order1.indexOf(files[0]), after = order1.slice(i0, i0 + files.length), moved = order1.filter(n => !files.includes(n)).filter((n, i) => order0[i] !== n), raw = order1.join('|') === _srcNameOrderRaw().join('|');   /* 16lc-vpcards-fix4 (H1): the order first seen (D9 off) */
+    const cols = files.map(n => String(_wireGetSourceMeta(n).wireColor || '').toLowerCase());
+    await _vcAdv(); _fsSetSrcTab('video'); await wait(300);
+    const vc = files.map(n => $$('#fs-left-panel .vc').find(e => e.dataset.src === n)), g = $('#fs-left-panel [data-iog-sec="src"] .iog-add');
+    const tt = vc[0] ? getComputedStyle($('.iog-name-text', vc[0])).textTransform : 'no card';
+    const size = g && vc[1] ? [Math.round(g.getBoundingClientRect().height) === Math.round(vc[1].getBoundingClientRect().height), g.getBoundingClientRect().width, !!$('.iog-wf-foot', g)] : 'no card';
+    await _vdBack();
+    return is({ files, after, moved, raw, colours: [cols.length, new Set(cols).size, cols.every(c => /^#[0-9a-f]{6}$/.test(c))], tt, size }, { files: ['WALK IN LOOP', 'VD PIC'], after: ['WALK IN LOOP', 'VD PIC'], moved: [], raw: true, colours: [2, 2, true], tt: 'none', size: [true, 236, false] },
+      'the imported names / the two together in the source order / sources that moved / the order is the order first seen / [cable colours, different ones, all set] / the Video tab card\'s name case / + ADD VIDEO [height of the one-line file card, width, bottom row]');
+  });
+  // 16lc-vpfinish VD9: NEW
+  // 16lc-vpcards-fix RF4: REPLACES the check named in its header (reason in the block)
+  // 16lc-vpcards-fix: RENAMED in place. Why: Omar (r16lm SPEC section E, 2026-10-07, 16lc-vpcards-fix): names show as typed on every card, new names in capitals; numbers
+  //   assigned automatically, typed on any card's number box (a taken one refused, the change everywhere); the main session (14:05): opening
+  //   an older show renumbers nothing. Here: + ADD SOURCE names the new source in capitals now (Omar, E1: "the system default should be to capitalize"): SOURCE 12 at S12. What
+  //   it pins (named after its number, one Undo step) is unchanged.
+  await check('Video Presets 16lc-vpfinish VD9 (Omar 2026-10-07: "+ ADD SOURCE names the new source after its S number"): + Add source on the I/O Patch and + ADD SOURCE on Video Presets > Advanced each name the new source SOURCE N where SN is its number (General Session: SOURCE 12 at S12, then SOURCE 13 at S13; 16lc-vpcards-fix: in capitals), one Undo step each', async () => {
+    await restore(); await ioOpenSimple();
+    const newest = scope => { const a = $$(scope + ' .iog-card').filter(c => /^src:/.test(c.dataset.iogKey)); const c = a[a.length - 1]; return c ? [($('.sys-name-input', c) || {}).value, ($('.iog-num', c) || {}).textContent] : 'no card'; };
+    const n0 = vpUndoLen(); _iogAdd('src'); await wait(400); const io = newest('#io-grid'), s1 = vpUndoLen() - n0; closeSystem(); await wait(300);
+    await _vcAdv(); const n1 = vpUndoLen(); _fsLbcAdd('src'); await wait(400); const vp = newest('#fs-left-panel [data-iog-sec="src"]'), s2 = vpUndoLen() - n1;
+    await _vdBack();
+    const okName = x => Array.isArray(x) && x[0] === 'SOURCE ' + String(x[1]).replace(/^S/, '');
+    return is({ io: okName(io) ? 'named after its number' : io, vp: okName(vp) ? 'named after its number' : vp, steps: [s1, s2] }, { io: 'named after its number', vp: 'named after its number', steps: [1, 1] }, 'I/O Patch [name, number] / Advanced [name, number] / steps');
+  });
+  // 16lc-vpfinish VD10: NEW
+  await check('Video Presets 16lc-vpfinish VD10 (Omar 2026-10-07): Destination Properties and AUX PROPERTIES never show a preset\'s own name once a show is open: an older show\'s P03 own AUX name and P02 own destination name are gone from the windows and the Simple tiles, and a save writes no preset names', async () => {
+    await restore(); const st = JSON.parse(BASE); const d1 = st.dsms.find(x => x.name === 'DSM 1'), ctr = st.screens.find(x => x.name === 'CENTER LED'); if (!d1 || !ctr) return 'the example changed';
+    st.presets[2].dsmName = { [d1.id]: 'P03 MON' }; st.presets[1].screenName = { [ctr.id]: 'P02 CENTER' };
+    _applyProjectText(JSON.stringify(st)); await wait(700); okDialogs(); await wait(150);
+    openDSMPanel(Object.assign({}, fakeEv), presets[2].id, d1.id); await wait(350); const auxBox = ($('#dsmp-name') || {}).value; const dp = $('#dsm-panel'); if (dp) dp.remove();
+    openScreenPanel(Object.assign({}, fakeEv), presets[1].id, ctr.id); await wait(350); const meta = (($('#screen-panel .pm-meta') || {}).textContent || '').trim(); const sp = $('#screen-panel'); if (sp) sp.remove();
+    render(); await wait(300); const tile = (($('.preset-row[data-pid="' + presets[1].id + '"] .screen-box[data-sid="' + ctr.id + '"] .screen-lbl') || {}).textContent || '').trim();
+    const saved = JSON.parse(JSON.stringify(getProjectState())); const own = saved.presets.filter(p => Object.keys(p.dsmName || {}).length || Object.keys(p.screenName || {}).length).length;
+    await _vdBack();
+    return is({ auxBox, meta, tile, own }, { auxBox: 'DSM 1', meta: 'CENTER LED', tile: 'CENTER LED', own: 0 }, 'AUX PROPERTIES on P03 / Destination Properties on P02 / P02\'s tile / presets with own names in what Save writes');
+  });
+  // 16lc-vpfinish VD11: NEW
+  // 16lc-vpcards-fix RF5: REPLACES the check named in its header (reason in the block)
+  // 16lc-vpcards-fix: RENAMED in place. Why: Omar (r16lm SPEC section E, 2026-10-07, 16lc-vpcards-fix): names show as typed on every card, new names in capitals; numbers
+  //   assigned automatically, typed on any card's number box (a taken one refused, the change everywhere); the main session (14:05): opening
+  //   an older show renumbers nothing. Here: Help says + ADD SOURCE's name is in capitals and that a file keeps its colour on every page (the attack round showed it did not);
+  //   the rest of what it reads is unchanged.
+  // 16lc-vpcards-fix4 RH9: REPLACES the check named in its header (reason in the block)
+  // 16lc-vpcards-fix4: RENAMED in place. Why: the main session (r16lm SPEC section H, 2026-10-08 00:35; Omar: "the number change should not rearrange anything, if that will
+  //   be any issue then it should be skipped complete for now"): numbers by order exactly as in the v0.8.2 candidate (r16lj/fix), the
+  //   number box shown, not typed in, nothing kept or saved. Here: 16lc-vpfinish (VD11) read Help's line that a new file is numbered after all the show's sources (D9). SPEC H3: that wording goes; Help
+  //   says a file takes its number by the show's order. The rest of what it reads is unchanged.
+  await check('Help 16lc-vpfinish VD11: Help says Destination Properties has a Name box, the table\'s x asks, an older show opens with one name in every preset, + Add source is named after its number (in capitals since 16lc-vpcards-fix), a new file is named in capitals with its own colour and numbered by the show\'s order (16lc-vpcards-fix4), + ADD VIDEO is a file card\'s outline, long names are drawn smaller, the panel stops at its cards, and Wire Advanced\'s hand-made cards are the I/O card; the old lines are gone', async () => {
+    actions.help(); await wait(400); const box = $$('[id*="help"]').filter(vis).sort((a, b) => b.textContent.length - a.textContent.length)[0]; const t = (box ? box.textContent : '').replace(/\s+/g, ' '); closeHelp(); await wait(200);
+    const must = ['Destination Properties has a Name box that renames the destination in every preset and on every page', 'and so does the ✕ on the destination', 'opens with its main name in every preset, as part of opening: nothing to undo, nothing to save', 'an older show whose presets gave it names of their own opens with its main name in every preset',
+      'in Destination Properties’ Name box', 'named after its number, in capitals: SOURCE 12 when it lands at S12, or the next free number', 'On the Video tab the + Add card is the outline of a file card', 'A new file is named after its file in capitals (WALK IN LOOP), gets a cable colour of its own, which it keeps on every page, and takes its number by the show’s order, like every source', 'the card shows the name as you type it',
+      'a word too long for its line is drawn smaller', 'The panel drags as wide as 360 px and no narrower than its cards', 'hand-made cards (the + in a section’s title) are that card too, numbered C1, C2'].filter(s => !t.includes(s));
+    const gone = ['Destination Properties has no Name field', 'in an older show stays', 'If no override is set for a preset', 'is numbered after all the show'].filter(s => t.includes(s));
+    return is([must, gone, t.length > 500], [[], [], true], 'true lines missing / stale lines still there / Help was read');
+  });
+  // ── 16lc-vpcards-fix (r16lm SPEC section E, Omar 2026-10-07 ~11:30: names "as typed" on every card, new names in capitals; S / D / A numbers
+  //    assigned automatically, typed on any card's number box, a taken number refused, a number set kept; the main session's clarification,
+  //    14:05: opening an older show renumbers nothing; and the attack round on 16lc-vpfinish: a source made with + ADD SOURCE keeps its number,
+  //    a file keeps its cable colour, long one-word names, the badge, the AUX box's tag, the focus after a drop, always-shown scroll bars, a
+  //    hand-made Wire source's name). VF1-VF13 FAIL on the 16lc-vpfinish page (r16lm/D, 2fcda1ef) and PASS after. Helpers prefixed _vf.
+  const _vfChip = (scope, key) => { const c = _vcCard(scope, key); return c ? $('.iog-num', c) : null; };
+  const _vfType = async (chip, v) => { if (!chip) return 'no number box'; chip.click(); await wait(200); const inp = $('input.lbn-num-in', chip); if (!inp) return 'the number box takes no typing'; inp.value = String(v); inp.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true })); await wait(500); return true; };
+  const _vfBack = async () => { try { _sysCloseMenu(); } catch (e) {} okDialogs(); try { if (eval('fsPresetId')) closeFullscreen(); } catch (e) {} try { closeWireMode(); } catch (e) {} try { closeSystem(); } catch (e) {} const st = $('#vf-sb'); if (st) st.remove(); await restore(); };
+  const _vfLbSlots = html => { const d = document.createElement('div'); d.innerHTML = html; const o = {}; $$('td.slot-src, td.slot-dst, td.slot-aux', d).forEach(td => { const n = ($('.io-name-cell', td.parentElement) || {}).textContent; if (n) o[n] = td.textContent.trim(); }); return o; };
+  // 16lc-vpcards-fix VF1: NEW
+  // 16lc-vpcards-fix4 RH5: REPLACES the check named in its header (reason in the block)
+  // 16lc-vpcards-fix4: RENAMED in place. Why: the main session (r16lm SPEC section H, 2026-10-08 00:35; Omar: "the number change should not rearrange anything, if that will
+  //   be any issue then it should be skipped complete for now"): numbers by order exactly as in the v0.8.2 candidate (r16lj/fix), the
+  //   number box shown, not typed in, nothing kept or saved. Here: 16lc-vpcards-fix (VF1) pinned that an older show's numbers are KEPT with the show (ioNums in what Save writes). SPEC H1: numbers are set
+  //   by order and nothing is kept or saved ("Nothing may be written into a saved show that r16lj/fix would not write"). The numbers it reads
+  //   (the file S1, the order the old build gave, no Undo step, no Save light) are r16lj/fix's and unchanged; it now pins that Save carries
+  //   no ioNums.
+  await check('I/O Patch 16lc-vpcards-fix VF1 (main session 2026-10-07: "opening an older show must NOT renumber anything it already shows"): a show saved before this build with a picture file among its sources (first in the library: the old build numbered it S1) opens with the file still S1 and every source on the number it had (the order first seen, as the v0.8.2 candidate numbers it); 16lc-vpcards-fix4: nothing is kept (Save carries no ioNums), no Undo step, no Save light', async () => {
+    await restore(); const st = JSON.parse(BASE); delete st.ioNums;
+    st.customLibrary = [{ l: 'OLD CLIP', c: '#3a6ea5', kind: 'image', img: null, media: { w: 1920, h: 1080, type: 'image/png' } }].concat(st.customLibrary || []);
+    const p0 = st.presets[0]; const s0 = st.screens.find(s => !(s.backdrop)); p0.layers = p0.layers || {}; p0.layers[s0.id] = Object.assign({}, p0.layers[s0.id] || {}); p0.layers[s0.id]['3'] = 'OLD CLIP';
+    _applyProjectText(JSON.stringify(st)); await wait(700); okDialogs(); await wait(150);
+    const raw = _srcNameOrderRaw(), order = _srcNameOrder(), undo = vpUndoLen(), lit = !!$('.save-dirty');
+    await ioOpenSimple(); const cards = $$('#io-grid .iog-card').filter(c => /^src:/.test(c.dataset.iogKey)).slice(0, 3).map(c => c.dataset.iogKey.slice(4) + '=' + ($('.iog-num', c) || {}).textContent); closeSystem(); await wait(200);
+    const saved = getProjectState(); const kept = !Object.prototype.hasOwnProperty.call(saved, 'ioNums');   /* 16lc-vpcards-fix4 (H1): nothing kept, as in the v0.8.2 candidate */
+    await _vfBack();
+    return is({ first: order[0], same: order.join('|') === raw.join('|'), cards, undo, lit, kept }, { first: 'OLD CLIP', same: true, cards: ['OLD CLIP=S1', raw[1] + '=S2', raw[2] + '=S3'], undo: 0, lit: false, kept: true }, 'the first source / the order the old build gave / the first three I/O cards / Undo steps / Save lit / Save carries no ioNums');
+  });
+  // 16lc-vpcards-fix VF2: REMOVED by 16lc-vpcards-fix4. Why: it typed 30 in PPT A's number box and pinned S30 everywhere (E2: typed numbers). SPEC H1: the number box is shown, NOT editable (no
+  //   click / Enter / Space editing): there is nothing to type. VH2 pins the read-only box.
+  // 16lc-vpcards-fix VF3: REMOVED by 16lc-vpcards-fix4. Why: it pinned the "Number in use" warning for a taken number (E2). SPEC H1: no typing, "no warning window".
+  // 16lc-vpcards-fix VF4: REMOVED by 16lc-vpcards-fix4. Why: it typed D7 / A5 on Wire and Video Presets cards and pinned them after a save and reopen (E2: typed and kept numbers). SPEC H1: no
+  //   typing, nothing kept; D / A numbers are the places in their lists (VH2 pins the read-only box).
+  // 16lc-vpcards-fix VF5: NEW
+  // 16lc-vpcards-fix4 RH6: REPLACES the check named in its header (reason in the block)
+  // 16lc-vpcards-fix4: RENAMED in place. Why: the main session (r16lm SPEC section H, 2026-10-08 00:35; Omar: "the number change should not rearrange anything, if that will
+  //   be any issue then it should be skipped complete for now"): numbers by order exactly as in the v0.8.2 candidate (r16lj/fix), the
+  //   number box shown, not typed in, nothing kept or saved. Here: 16lc-vpcards-fix (VF5, the attack round's F1) pinned + ADD SOURCE's number KEPT once a preset uses it. SPEC H1 switches the kept
+  //   numbers off ("the stored-number writes (fix F1/F3 ...)"): its number follows the order first seen, as the v0.8.2 candidate numbers a
+  //   name a preset uses. What stays: SOURCE 12 at S12, in capitals; it now pins that every card shows the order's number and nothing is kept.
+  await check('Video Presets 16lc-vpcards-fix VF5 (the attack round\'s F1; Omar 2026-10-07: new names "default to capitals"): + ADD SOURCE on Video Presets > Advanced makes SOURCE 12 at S12, in capitals; 16lc-vpcards-fix4: once P01 uses it on a layer its number is its place in the order first seen (as the v0.8.2 candidate numbers a name first seen in a preset), every card shows the order\'s number and nothing is kept', async () => {
+    await restore(); await _vcAdv(); const ord0 = _srcNameOrder().slice(); _fsLbcAdd('src'); await wait(400);
+    const nw = _srcNameOrder().filter(n => !ord0.includes(n))[0] || null; const before = nw ? (_vfChip('#fs-left-panel', 'src:' + nw) || {}).textContent : null;
+    if (nw) { const p = presets[0], s = screens.find(x => !_bdIs(x)); pushUndo(); setL(p.id, s.id, 3, nw); render(); await wait(300); }
+    _fsRenderSources(true); await wait(200);
+    const ord1 = _srcNameOrderRaw(), after = nw ? (_vfChip('#fs-left-panel', 'src:' + nw) || {}).textContent === 'S' + (ord1.indexOf(nw) + 1) : null, moved = ord1.filter(n => { const c = _vfChip('#fs-left-panel', 'src:' + n); return n !== nw && c && c.textContent !== 'S' + (ord1.indexOf(n) + 1); }).length, kept = Object.prototype.hasOwnProperty.call(getProjectState(), 'ioNums');   /* 16lc-vpcards-fix4 (H1): numbers by order, nothing kept */
+    await _vfBack();
+    return is({ nw, before, after, moved, kept }, { nw: 'SOURCE 12', before: 'S12', after: true, moved: 0, kept: false }, 'the new source / its number / once P01 uses it, its number is its place in the order / cards not on their place in the order / Save carries ioNums');
+  });
+  // 16lc-vpcards-fix VF6: NEW
+  await check('I/O Patch 16lc-vpcards-fix VF6 (Omar 2026-10-07: "names show exactly as typed on EVERY card", "new names default to capitals"): a source renamed Ppt Mixed reads Ppt Mixed on its I/O Patch, Wire and Video Presets cards (the picture keeps its capitals); + Add destination makes DESTINATION 04; Wire > Advanced\'s hand-made cards are NEW SOURCE / NEW DESTINATION / NEW AUX/DSM', async () => {
+    await restore(); _sysWithUndo(() => _sysApplyGlobalRename('PPT A', 'Ppt Mixed'));
+    const read = scope => { const c = _vcCard(scope, 'src:Ppt Mixed'); const t = c && $('.iog-name-text', c); return t ? t.innerText : 'no card'; };
+    await ioOpenSimple(); const io = read('#io-grid'); const d0 = screens.length; _iogAdd('dst'); await wait(400); const dn = screens.length > d0 ? screens[screens.length - 1].name : 'none'; closeSystem(); await wait(200);
+    openWireMode(); await wait(700); const wire = read('#wire-panel-left'); _wireSwitchToAdvanced(); await wait(500); okDialogs(); await wait(400);
+    _wireAdvAddCustomSource(); _wireAdvAddCustomDest(); _wireAdvAddCustomDsm(); await wait(400);
+    const wc = ['customSources', 'customDests', 'customDsms'].map(k => ((wireAdvanced[k] || []).slice(-1)[0] || {}).name); closeWireMode(); await wait(200);
+    await _vcAdv(); const vp = read('#fs-left-panel');
+    await _vfBack();
+    return is({ io, wire, vp, dn, wc }, { io: 'Ppt Mixed', wire: 'Ppt Mixed', vp: 'Ppt Mixed', dn: 'DESTINATION 04', wc: ['NEW SOURCE', 'NEW DESTINATION', 'NEW AUX/DSM'] }, 'I/O / Wire / Video Presets cards / + Add destination\'s name / the hand-made cards\' names');
+  });
+  // 16lc-vpcards-fix VF7: NEW
+  await check('Video Presets 16lc-vpcards-fix VF7 (the attack round\'s F2; Omar: long one-word names "shrink to fit", never CONFIDENC / E): an AUX named TELEPROMPTERS keeps its word on one line on its Video Presets > Advanced card and its Wire card, drawn at 7 px or more', async () => {
+    await restore(); const D1 = dsms.find(d => d.name === 'DSM 1'); if (!D1) return 'the example changed';
+    _sysWithUndo(() => _sysSetMeta('aux', D1.id, 'name', 'TELEPROMPTERS')); await _vcAdv();
+    const read = scope => { const c = _vcCard(scope, 'aux:' + D1.id), t = c && $('.iog-name-text', c); return t ? [_vdLines(t), parseFloat(getComputedStyle(t).fontSize) >= 7] : 'no card'; };
+    const vp = read('#fs-left-panel'); try { closeFullscreen(); } catch (e) {} await wait(300);
+    openWireMode(); await wait(700); const wire = read('#wire-panel-left');
+    await _vfBack();
+    return is({ vp, wire }, { vp: [1, true], wire: [1, true] }, 'Video Presets / Wire: [lines, 7 px or more]');
+  });
+  // 16lc-vpcards-fix VF8: NEW
+  await check('Wire 16lc-vpcards-fix VF8 (the attack round\'s F4): a hand-made destination or AUX card of Wire > Advanced carries no Dest / AUX/DSM badge over its automatic name picture (as the show\'s cards look); a show destination with an uploaded picture keeps its badge', async () => {
+    await restore(); const L = screens.find(s => s.name === 'LEFT LED'); if (!L) return 'the example changed';
+    openWireMode(); await wait(700); _wireSwitchToAdvanced(); await wait(500); okDialogs(); await wait(400); _wireAdvAddCustomDest(); _wireAdvAddCustomDsm(); await wait(400);
+    const cd = (wireAdvanced.customDests || []).slice(-1)[0], cm = (wireAdvanced.customDsms || []).slice(-1)[0];
+    const badge = k => { const c = _vcCard('#wire-panel-left', k); return c ? !!$('.wire-thumb .wire-thumb-badge', c) : 'no card'; };
+    const hand = [badge('wcdst:' + cd.id), badge('wcaux:' + cm.id)];
+    wireThumbnails['dst:' + L.id] = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII='; _wireRender(); await wait(300);
+    const uploaded = badge('dest:' + L.id);
+    await _vfBack();
+    return is({ hand, uploaded }, { hand: [false, false], uploaded: true }, 'hand-made [destination, AUX] badge / a show destination with a picture');
+  });
+  // 16lc-vpcards-fix VF9: NEW
+  await check('Video Presets 16lc-vpcards-fix VF9 (the attack round\'s F5): an AUX box with content draws its name and its content\'s name on a black tag, as a destination box does (a picture, a clip or a light colour behind them stays readable): on Simple and in the Look Book; an empty AUX box has no tag', async () => {
+    await restore(); render(); await wait(300);
+    const filled = $$('.preset-row .dsm-box').filter(vis).filter(b => (b.firstElementChild.innerText || '').split('\n').length > 1).map(b => getComputedStyle(b.firstElementChild).backgroundColor);
+    const d = document.createElement('div'); d.innerHTML = await userLookBook(); const lb = $$('.dsm-box', d).filter(b => (b.firstElementChild && b.firstElementChild.children.length > 1)).map(b => (b.firstElementChild.getAttribute('style') || '').includes('background:rgba(0,0,0,.75)'));
+    await _vfBack();
+    return is({ filled: [filled.length > 0, filled.every(c => c === 'rgba(0, 0, 0, 0.75)')], lb: [lb.length > 0, lb.every(Boolean)] }, { filled: [true, true], lb: [true, true] }, 'Simple: [AUX boxes with content, all on a black tag] / Look Book: [the same]');
+  });
+  // 16lc-vpcards-fix VF10: NEW
+  await check('Wire 16lc-vpcards-fix VF10 (the attack round on 16lc-vpfinish D12, Omar: "Each imported file gets its own cable colour"): three imported pictures keep the colours they got at import once a preset uses them and Wire > Simple draws them, and after a resolution is typed on one\'s I/O Patch card (one Undo step); Undo keeps them (three files, so one new colour that happens to match cannot hide the change)', async () => {
+    await restore(); const m0 = customLibrary.filter(c => c && c.kind).length;
+    await _fsImportFiles([await _vdPng('vf clip a.png', '#3a6ea5'), await _vdPng('vf clip b.png', '#a53a6e'), await _vdPng('vf clip c.png', '#6ea53a')]); for (let i = 0; i < 60 && customLibrary.filter(c => c && c.kind).length < m0 + 3; i++) await wait(150);
+    const fl = customLibrary.filter(c => c && c.kind).slice(m0); if (fl.length !== 3) return 'imported ' + fl.length + ' files';
+    const ns = fl.map(f => f.l), c0 = fl.map(f => String(f.wireColor || '').toLowerCase()).join(' ');
+    const col = () => ns.map(n => String(_wireGetSourceMeta(n).wireColor || '').toLowerCase()).join(' ');
+    const p = presets[0], ss = screens.filter(x => !_bdIs(x)); pushUndo(); ns.forEach((n, i) => setL(p.id, ss[i % ss.length].id, 3 + Math.floor(i / ss.length), n)); render(); await wait(200);
+    openWireMode(); await wait(800); const c1 = col(); closeWireMode(); await wait(200);
+    await ioOpenSimple(); const card = _vcCard('#io-grid', 'src:' + ns[0]); const box = card && $('.wire-source-res', card); let steps = 'no card';
+    if (box) { const n0 = vpUndoLen(); box.focus(); box.value = '1280x720'; box.dispatchEvent(new Event('change', { bubbles: true })); await wait(400); steps = vpUndoLen() - n0; }
+    const c2 = col(); closeSystem(); await wait(200);
+    doUndo(); await wait(300); const c3 = col();
+    await _vfBack();
+    return is({ set: c0.split(' ').every(c => /^#[0-9a-f]{6}$/.test(c)), drawn: c1 === c0, typed: c2 === c0, steps, undo: c3 === c0 }, { set: true, drawn: true, typed: true, steps: 1, undo: true }, 'colours at import / the same after Wire Simple drew them (' + c0 + ' -> ' + c1 + ') / the same after a resolution was typed / Undo steps of that edit / the same after Undo');
+  });
+  // 16lc-vpcards-fix VF11: NEW
+  await check('Video Presets 16lc-vpcards-fix VF11 (the attack round\'s F6): a source card\'s drag lets go of the focus its picture took, so after the drop Enter / Space act on the tile, not on the card\'s picture upload', async () => {
+    await restore(); await _vcAdv(); const c = _vcCard('#fs-left-panel', 'src:PPT A'); if (!c) { await _vfBack(); return 'no card'; }
+    const pic = $('.wire-thumb', c); pic.focus(); const had = document.activeElement === pic;
+    const dt = new DataTransfer(); c.dispatchEvent(new DragEvent('dragstart', { bubbles: true, dataTransfer: dt })); c.dispatchEvent(new DragEvent('dragend', { bubbles: true, dataTransfer: dt })); await wait(150);
+    const kept = c.contains(document.activeElement);
+    await _vfBack();
+    return is({ had, kept }, { had: true, kept: false }, 'the picture had the focus / the focus still in the card after the drag');
+  });
+  // 16lc-vpcards-fix VF12: NEW
+  await check('Video Presets 16lc-vpcards-fix VF12 (the attack round: always-shown scroll bars): with the lists drawing a 15 px scroll bar, Video Presets > Advanced\'s panel and Wire\'s panel widen by it: no card is cut, nothing scrolls sideways', async () => {
+    await restore(); const st = document.createElement('style'); st.id = 'vf-sb'; st.textContent = '#fs-source-list::-webkit-scrollbar,#wire-sources-panel::-webkit-scrollbar{width:15px;background:#222}'; document.head.appendChild(st);
+    const sideways = l => !!l && [l.scrollWidth > l.clientWidth + 0.5, $$('.iog-card', l).filter(e => e.getClientRects().length && e.getBoundingClientRect().right > l.getBoundingClientRect().left + l.clientWidth + 0.5).length];
+    await _vcAdv(); _fsRenderSources(true); await wait(300); const vp = [Math.max(0, $('#fs-source-list').offsetWidth - $('#fs-source-list').clientWidth) > 0].concat(sideways($('#fs-source-list'))); try { closeFullscreen(); } catch (e) {} await wait(200);
+    openWireMode(); await wait(700); _wireRender(); await wait(300); const w = $('#wire-sources-panel'); const wire = [Math.max(0, w.offsetWidth - w.clientWidth) > 0].concat(sideways(w));
+    const lw = $('#wire-panel-left'); lw.style.width = '';
+    await _vfBack();
+    return is({ vp, wire }, { vp: [true, false, 0], wire: [true, false, 0] }, 'Video Presets / Wire: [a scroll bar drawn, scrolls sideways, cards cut]');
+  });
+  // 16lc-vpcards-fix VF13: NEW
+  await check('Wire 16lc-vpcards-fix VF13 (the attack round on 16lc-vpfinish D4, the I/O standard card): a hand-made Wire > Advanced source renamed "ppt a" (PPT A in another case) is refused (Name in use), as the I/O Patch card refuses it', async () => {
+    await restore(); openWireMode(); await wait(700); _wireSwitchToAdvanced(); await wait(500); okDialogs(); await wait(400); _wireAdvAddCustomSource(); await wait(400);
+    const cs = (wireAdvanced.customSources || []).slice(-1)[0]; const n0 = cs.name; const c = _vcCard('#wire-panel-left', 'wcsrc:' + cs.id); const inp = c && $('.sys-name-input', c);
+    if (inp) { inp.focus(); inp.value = 'ppt a'; inp.blur(); await wait(400); }
+    const warn = dlgOpen() && /Name in use/i.test(($('#dlg-overlay') || {}).textContent || ''); okDialogs(); await wait(200);
+    const name = ((wireAdvanced.customSources || []).find(x => x.id === cs.id) || {}).name;
+    await _vfBack();
+    return is({ warn, name }, { warn: true, name: n0 }, 'the warning / its name');
+  });
+  // 16lc-vpcards-fix VF14: NEW
+  // 16lc-vpcards-fix4 RH7: REPLACES the check named in its header (reason in the block)
+  // 16lc-vpcards-fix4: RENAMED in place. Why: the main session (r16lm SPEC section H, 2026-10-08 00:35; Omar: "the number change should not rearrange anything, if that will
+  //   be any issue then it should be skipped complete for now"): numbers by order exactly as in the v0.8.2 candidate (r16lj/fix), the
+  //   number box shown, not typed in, nothing kept or saved. Here: 16lc-vpcards-fix (VF14) and 16lc-vpcards-fix3 pinned Help's typed-number lines (click the number and type another, a taken one not
+  //   allowed, opening keeps every number, + ADD SOURCE keeps its number, the B at the next free number). SPEC H3: Help drops the editable-number
+  //   and files-after-sources wording and says the number box is shown, set by order. It now pins those lines and that the old ones are gone.
+  await check('Help 16lc-vpcards-fix VF14: Help says names show as typed and new names come in capitals, + ADD SOURCE is SOURCE 12, a long word shrinks down to 7 px before it breaks, a file keeps its colour; 16lc-vpcards-fix4: the numbers are set by the show\'s order and the number box is not typed in; the typed-number, kept-number and files-after-the-sources lines and the old lines are gone', async () => {
+    actions.help(); await wait(400); const box = $$('[id*="help"]').filter(vis).sort((a, b) => b.textContent.length - a.textContent.length)[0]; const t = (box ? box.textContent : '').replace(/\s+/g, ' '); closeHelp(); await wait(200);
+    const must = ['Every card shows a name as you typed it; a new name comes in capitals', 'down to 7 px; only a word too long even then breaks, after its _ or - first', 'in capitals: SOURCE 12 when it lands at S12, or the next free number',
+      'which it keeps on every page', 'set by the show’s order (the order of this page; a PBP B or GFX B the app makes sits right under its A)', 'the S1 / D1 / A1 number (set by the show’s order; it is not typed in)', 'takes its number by the show’s order, like every source'].filter(s => !t.includes(s));
+    const gone = ['named after its number: Source 12 when it lands at S12', 'so a source’s number never moves', 'A name breaks only between words; a word too long for its line is drawn smaller. The panel',
+      'Click a card’s number and type another one', 'a number another one already has is not allowed', 'Opening a show keeps every number it had', 'a click on its number types another one', '(click it and type another one)', 'or the next free number; it keeps that number', 'numbered after all the show’s sources', 'takes the next free number after it'].filter(s => t.includes(s));
+    return is([must, gone, t.length > 500], [[], [], true], 'true lines missing / stale lines still there / Help was read');
+  });
+  // ── 16lc-vpcards-fix2 (r16lm SPEC section F1 / F1b, Omar 2026-10-07 ~18:00 / ~18:50): EVERY × in the Layer panel's "Other library
+  //    items" list (Video Presets > Simple: a layer's ▾ in the table) asks first, in the window of the trash on a file's card. VX1 / VX2 FAIL
+  //    on the 16lc-vpcards-fix page (r16lm/fix, 3a42663f: the × removes at once) and PASS after. Helpers prefixed _x2.
+  const _x2Win = () => dlgOpen() ? { title: (($('#dlg-box h3') || {}).textContent || '').trim(), body: (($('#dlg-box .dlg-body') || {}).textContent || ''), buttons: $$('#dlg-box .dlg-foot button').map(b => b.textContent.trim()), destructive: $('#dlg-box').classList.contains('v-destructive') } : null;
+  const _x2Uses = n => { const u = []; presets.forEach(p => { Object.keys(p.layers || {}).forEach(sid => { const L = p.layers[sid] || {}; Object.keys(L).forEach(k => { if (L[k] === n) u.push(p.code + ' ' + sid + ' L' + k); }); }); Object.keys(p.bgNames || {}).forEach(sid => { if (p.bgNames[sid] === n) u.push(p.code + ' ' + sid + ' BG'); }); Object.keys(p.dsmContent || {}).forEach(d => { if (p.dsmContent[d] === n) u.push(p.code + ' ' + d + ' AUX'); }); }); return u.sort(); };
+  const _x2Item = n => { const c = customLibrary.find(x => x && x.l === n); return c ? (c.kind || 'name') : null; };
+  const _x2Shut = () => { if (dlgOpen()) { const c = $('#dlg-cancel'); if (c) c.click(); } };
+  const _x2X = async (pid, sid, n, label) => {   /* the table's layer ▾, then the × beside LABEL in the list */
+    try { closeLayerPanel(); } catch (e) {} await wait(150);
+    const chev = $('#tbody .home-field-chev[data-home-field="layer"][data-home-pid="' + pid + '"][data-home-sid="' + sid + '"][data-home-n="' + n + '"]'); if (!chev) return 'no layer ▾ in the table';
+    chev.click(); await wait(450); if (!$('#layer-panel')) return 'the ▾ opened no layer panel';
+    const x = $$('#layer-panel .lp-content-list .lp-del').find(e => e.dataset.label === label); if (!x) return 'no × beside ' + label + ' in the list';
+    x.click(); await wait(450); return true;
+  };
+  // 16lc-vpcards-fix2 VX1: NEW
+  await check('Video Presets 16lc-vpcards-fix2 VX1 (Omar 2026-10-07: "the × next to an imported file in a Video Presets > Simple layer dropdown asks first, with the same confirm as a card\'s trash can"): the × beside a picture in a layer\'s ▾ list opens the window of the trash on the file\'s card (the same title, words and buttons); Cancel changes nothing (no Undo step); Remove takes it out of the whole show (its layer, BG and AUX, the library) in one Undo step; one Undo brings it all back', async () => {
+    const out = {}, want = {};
+    try {
+      await restore(); await _vvMk();
+      const p = presets[0], s = screens.find(x => !_bdIs(x)) || screens[0], d = dsms[0];
+      setL(p.id, s.id, 3, 'VV PIC'); p.bgNames = p.bgNames || {}; p.bgNames[s.id] = 'VV PIC'; p.dsmContent = p.dsmContent || {}; p.dsmContent[d.id] = 'VV PIC'; scheduleRender(); await wait(500);
+      const u0 = vpUndoLen(), uses0 = _x2Uses('VV PIC');
+      _fsRemoveMediaAsk('VV PIC'); await wait(250); const trash = _x2Win(); _x2Shut(); await wait(300);   /* the window the trash on the file's card opens (its button calls this) */
+      out.trash = [!!trash, trash && trash.title, uses0.length, vpUndoLen() - u0]; want.trash = [true, 'Remove picture', 3, 0];
+      out.x = await _x2X(p.id, s.id, 3, 'VV PIC'); want.x = true;
+      out.win = _x2Win(); want.win = trash;
+      out.asked = [_x2Item('VV PIC'), _x2Uses('VV PIC').length, vpUndoLen() - u0, !!$('#layer-panel')]; want.asked = ['image', 3, 0, false];
+      _x2Shut(); await wait(400);
+      out.cancel = [dlgOpen(), _x2Item('VV PIC'), JSON.stringify(_x2Uses('VV PIC')) === JSON.stringify(uses0), vpUndoLen() - u0]; want.cancel = [false, 'image', true, 0];
+      out.x2 = await _x2X(p.id, s.id, 3, 'VV PIC'); want.x2 = true;
+      const b = dlgOpen() && $('#dlg-confirm'); if (b) b.click(); await wait(600);
+      out.remove = [dlgOpen(), _x2Item('VV PIC'), _x2Uses('VV PIC').length, vpUndoLen() - u0]; want.remove = [false, null, 0, 1];
+      doUndo(); await wait(600);
+      out.undo = [_x2Item('VV PIC'), JSON.stringify(_x2Uses('VV PIC')) === JSON.stringify(uses0), vpUndoLen() - u0]; want.undo = ['image', true, 0];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { closeLayerPanel(); } catch (e) {} _x2Shut(); await _vvBack(); }
+    return is(out, want, '[the card trash\'s window: opened, title, the file\'s uses, Undo steps] / the × pressed / its window (= the trash\'s) / [after the ×: the file, its uses, Undo steps, the layer panel open] / [Cancel: a window left, the file, its uses unchanged, Undo steps] / the × again / [Remove: a window left, the file, its uses, Undo steps] / [one Undo: the file, its uses back, Undo steps]');
+  });
+  // 16lc-vpcards-fix2 VX2: NEW
+  await check('Video Presets 16lc-vpcards-fix2 VX2 (Omar 2026-10-07: "the × next to a TYPED name in the same Video Presets > Simple layer dropdown asks first too ... Every × in that list asks first, the same way"): the × beside a typed name asks in the trash\'s window with the same words pattern (Remove name, the layers it is on, the AUX box that keeps it, Undo brings it back); Cancel changes nothing; Remove takes it out of the list and empties those layers in every preset (the AUX keeps it, as before) in one Undo step; one Undo brings it back', async () => {
+    const out = {}, want = {};
+    try {
+      await restore();
+      const nm = 'VX TYPED', s = screens.find(x => !_bdIs(x)) || screens[0], p0 = presets[0], p1 = presets[1] || presets[0], d = dsms[0];
+      customLibrary.push({ l: nm, c: '#6b7280' }); setL(p0.id, s.id, 3, nm); setL(p1.id, s.id, 4, nm); p0.dsmContent = p0.dsmContent || {}; p0.dsmContent[d.id] = nm; scheduleRender(); await wait(500);
+      const u0 = vpUndoLen(), uses0 = _x2Uses(nm), dn = p => getScreenName(p.id, s.id);
+      out.x = await _x2X(p0.id, s.id, 3, nm); want.x = true;
+      out.win = _x2Win();
+      want.win = { title: 'Remove name', body: 'Remove “' + nm + '” from the library?\n\nIt is used in 2 places: ' + p0.code + ' ' + dn(p0) + ' L3, ' + p1.code + ' ' + dn(p1) + ' L4.\nThose will be emptied.\nThis background or AUX box keeps it: ' + p0.code + ' ' + d.name + '.\n\nUndo brings it back.', buttons: ['Cancel', 'Remove'], destructive: true };
+      out.asked = [_x2Item(nm), uses0.length, vpUndoLen() - u0, !!$('#layer-panel')]; want.asked = ['name', 3, 0, false];
+      _x2Shut(); await wait(400);
+      out.cancel = [dlgOpen(), _x2Item(nm), JSON.stringify(_x2Uses(nm)) === JSON.stringify(uses0), vpUndoLen() - u0]; want.cancel = [false, 'name', true, 0];
+      out.x2 = await _x2X(p1.id, s.id, 4, nm); want.x2 = true;
+      const b = dlgOpen() && $('#dlg-confirm'); if (b) b.click(); await wait(600);
+      out.remove = [dlgOpen(), _x2Item(nm), _x2Uses(nm), vpUndoLen() - u0]; want.remove = [false, null, [p0.code + ' ' + d.id + ' AUX'], 1];
+      doUndo(); await wait(600);
+      out.undo = [_x2Item(nm), JSON.stringify(_x2Uses(nm)) === JSON.stringify(uses0), vpUndoLen() - u0]; want.undo = ['name', true, 0];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { closeLayerPanel(); } catch (e) {} _x2Shut(); await restore(); }
+    return is(out, want, 'the × pressed / its window / [after the ×: the name, its uses, Undo steps, the layer panel open] / [Cancel: a window left, the name, its uses unchanged, Undo steps] / the × again / [Remove: a window left, the name, what still uses it, Undo steps] / [one Undo: the name, its uses back, Undo steps]');
+  });
+  // 16lc-vpcards-fix3 VG1: REMOVED by 16lc-vpcards-fix4. Why: it pinned the numbers WRITTEN as an older show opens (ioNums) and its auto B
+  //   made at open (G1). SPEC H1 switches G1 off: opening writes nothing and the I/O Patch draw makes the B, as in r16lj/fix. VH3 pins
+  //   the same show the v0.8.2 candidate's way.
+  // 16lc-vpcards-fix3 VG2: REMOVED by 16lc-vpcards-fix4. Why: it pinned a session B at the first free number after the files (G2).
+  //   SPEC H1: "an auto PBP B / GFX B right under its A", every source after it one number on, as in r16lj/fix. VH4 pins that.
+  // ── 16lc-vpcards-fix4 (r16lm SPEC section H, the main session 2026-10-08 00:35; Omar's standing instruction: "the number change should
+  //    not rearrange anything, if that will be any issue then it should be skipped complete for now"): the number features are switched
+  //    off and every number is set by order EXACTLY as in the v0.8.2 candidate (r16lj/fix); the number box stays on every card, shown, not
+  //    typed in; nothing is kept or saved. 16lc-vpcards-fix3's VG1 / VG2 are REMOVED (they pinned the numbers kept at open and the B pinned
+  //    at the next free number); VH3 / VH4 pin the same shows the v0.8.2 candidate's way. VH1-VH4 FAIL on the 16lc-vpcards-fix3 page
+  //    (r16lm/fix3, fea0ac80) and PASS after. Helpers prefixed _vh.
+  const _vhCards = (scope, kind) => $$(scope + ' .iog-card').filter(c => (c.dataset.iogKey || '').indexOf((kind || 'src') + ':') === 0).map(c => c.dataset.iogKey.slice((kind || 'src').length + 1) + '=' + (($('.iog-num', c) || {}).textContent || ''));
+  const _vhOrder = () => _srcNameOrder().map((n, i) => n + '=S' + (i + 1));
+  const _vhSaved = () => { const k = _AUTO_SAVE_KEY; let prev = null; try { prev = localStorage.getItem(k); } catch (e) {} let draft = null; try { _writeAutoSaveNow(); draft = JSON.parse(localStorage.getItem(k) || 'null'); } catch (e) {} try { if (prev === null) localStorage.removeItem(k); else localStorage.setItem(k, prev); } catch (e) {}
+    return [Object.prototype.hasOwnProperty.call(getProjectState(), 'ioNums'), !!draft && Object.prototype.hasOwnProperty.call(draft, 'ioNums')]; };
+  // 16lc-vpcards-fix4 VH1: NEW
+  await check('I/O Patch 16lc-vpcards-fix4 VH1 (SPEC H1: numbers "by order on every page", "imported files numbered exactly where r16lj/fix numbers them"; "Nothing may be written into a saved show that r16lj/fix would not write"): in a show whose library is VH ONE, whose P01 uses VH TWO and VH THREE and whose I/O Patch made VH IO, two pictures imported take their places in the order first seen, right after the library (S2 / S3), and VH TWO, VH THREE, VH IO each take the next number (S4-S6), on the I/O Patch, Wire and Video Presets cards (Wire lists the ones it shows with the same numbers); Save and the browser draft carry no ioNums', async () => {
+    const out = {}, want = {};
+    try {
+      await restore(); const st = JSON.parse(BASE); delete st.ioNums; delete st.ioAdvanced; if (st.wireSettings) delete st.wireSettings.simple;
+      st.customLibrary = [{ l: 'VH ONE', c: '#3a6ea5' }];
+      st.presets.forEach(p => { p.layers = {}; p.bgNames = {}; p.dsmContent = {}; });
+      const s0 = st.screens.find(s => !(s.backdrop)); st.presets[0].layers[s0.id] = { '1': 'VH TWO', '2': 'VH THREE' };
+      st.sources = [{ name: 'VH IO', connectorType: '', resolution: '', notes: '', type: 'PC', ioOnly: true }];
+      _applyProjectText(JSON.stringify(st)); await wait(700); okDialogs(); await wait(150);
+      const m0 = customLibrary.filter(c => c && c.kind).length;
+      await _fsImportFiles([await _vdPng('vh pic a.png', '#3a6ea5'), await _vdPng('vh pic b.png', '#a53a6e')]);
+      for (let i = 0; i < 40 && customLibrary.filter(c => c && c.kind).length < m0 + 2; i++) await wait(150);
+      const all = ['VH ONE=S1', 'VH PIC A=S2', 'VH PIC B=S3', 'VH TWO=S4', 'VH THREE=S5', 'VH IO=S6'];
+      out.order = _vhOrder(); want.order = all;
+      await ioOpenSimple(); out.io = _vhCards('#io-grid'); closeSystem(); await wait(250); want.io = all;
+      openWireMode(); await wait(700); out.wire = _vhCards('#wire-panel-left'); try { closeWireMode(); } catch (e) {} await wait(250); want.wire = all.slice(1);   /* Wire lists no library name that nothing uses (VH ONE), as before; the numbers are the I/O Patch's */
+      await _vcAdv(); out.vp = _vhCards('#fs-left-panel'); try { closeFullscreen(); } catch (e) {} await wait(250); want.vp = ['VH ONE=S1', 'VH TWO=S4', 'VH THREE=S5', 'VH IO=S6'];   /* the pictures are on the Video tab */
+      out.saved = _vhSaved(); want.saved = [false, false];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { await _vdBack(); }
+    return is(out, want, 'the order / the I/O Patch cards / Wire\'s cards / Video Presets\' Images cards / [Save carries ioNums, the draft carries ioNums]');
+  });
+  // 16lc-vpcards-fix4 VH2: NEW
+  await check('Cards 16lc-vpcards-fix4 VH2 (SPEC H1: the number box "stays VISIBLE on every card but is NOT editable (no click / Enter / Space editing, no warning window)"): on the I/O Patch, Wire Simple, Wire Advanced (its hand-made cards too) and Video Presets > Advanced every source, destination and AUX / DSM card shows its S / D / A number (C1 on a hand-made card) in a plain box: no key stop, no button role, no click handler; a click on it opens no typing box and no window and makes no Undo step', async () => {
+    const out = {}, want = {};
+    const look = scope => { const cs = $$(scope + ' .iog-card').filter(c => /^(src|dest|aux|wcsrc|wcdst|wcaux):/.test(c.dataset.iogKey || '')); const bad = []; let shown = 0;
+      cs.forEach(c => { const n = $('.iog-num', c); if (!n) { bad.push(c.dataset.iogKey.split(':')[0] + ' no box'); return; }
+        if (/^[SDAC]\d+$/.test((n.textContent || '').trim()) && n.getBoundingClientRect().width > 0) shown++; else bad.push(c.dataset.iogKey.split(':')[0] + ' shows ' + n.textContent);
+        if (n.hasAttribute('tabindex') || n.hasAttribute('role') || n.hasAttribute('onclick') || n.hasAttribute('onkeydown') || n.classList.contains('lbn-num')) bad.push(c.dataset.iogKey.split(':')[0] + ' editable'); });
+      return [[...new Set(cs.map(c => c.dataset.iogKey.split(':')[0]))].sort().join(' '), shown === cs.length && shown > 0, [...new Set(bad)]]; };
+    const poke = async scope => { const c = $$(scope + ' .iog-card').find(c => /^(src|dest|aux):/.test(c.dataset.iogKey || '')); const n = c && $('.iog-num', c); if (!n) return 'no number box'; const k = c.dataset.iogKey, t0 = n.textContent, u0 = vpUndoLen();
+      n.click(); await wait(250); const c2 = $$(scope + ' .iog-card').find(x => x.dataset.iogKey === k); const r = [!!$('input.lbn-num-in'), dlgOpen(), vpUndoLen() - u0, ((c2 && $('.iog-num', c2)) || {}).textContent === t0]; okDialogs(); try { if (document.activeElement && document.activeElement.blur) document.activeElement.blur(); } catch (e) {} await wait(150); return r; };
+    try {
+      await restore();
+      await ioOpenSimple(); out.io = look('#io-grid'); out.ioClick = await poke('#io-grid'); closeSystem(); await wait(250);
+      openWireMode(); await wait(700); out.wire = look('#wire-panel-left'); out.wireClick = await poke('#wire-panel-left');
+      _wireSwitchToAdvanced(); await wait(500); okDialogs(); await wait(400); _wireAdvAddCustomSource(); _wireAdvAddCustomDest(); _wireAdvAddCustomDsm(); await wait(600);
+      out.wireAdv = look('#wire-panel-left'); try { closeWireMode(); } catch (e) {} await wait(250);
+      await _vcAdv(); out.vp = look('#fs-left-panel'); out.vpClick = await poke('#fs-left-panel'); try { closeFullscreen(); } catch (e) {} await wait(250);
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { await _vdBack(); }
+    want.io = ['aux dest src', true, []]; want.ioClick = [false, false, 0, true];
+    want.wire = ['aux dest src', true, []]; want.wireClick = [false, false, 0, true];
+    want.wireAdv = ['aux dest src wcaux wcdst wcsrc', true, []];
+    want.vp = ['aux dest src', true, []]; want.vpClick = [false, false, 0, true];
+    return is(out, want, '[kinds, every number shown, problems] and a click on a number [a typing box, a window, Undo steps, the number kept] on the I/O Patch / Wire Simple / Wire Advanced / Video Presets > Advanced');
+  });
+  // 16lc-vpcards-fix4 VH3: NEW (REPLACES 16lc-vpcards-fix3 VG1, removed: it pinned the numbers written at open and the B made at open)
+  await check('I/O Patch 16lc-vpcards-fix4 VH3 (SPEC H1: "Opening any show gives the same numbers as r16lj/fix"): a show saved before 16lc-vpcards-fix whose GFX A has no saved GFX B, with a show source the library lacks, opens as the v0.8.2 candidate opens it: nothing is written (no ioNums, no B yet, no Undo step, no Save light), the numbers are the order first seen (Wire Simple\'s router in that order before any I/O Patch visit); the I/O Patch draw then makes GFX B right under GFX A and files that source after the library\'s own names, exactly the v0.8.2 numbers (VJ ONE S1, VJ ORPHAN S2, GFX A S3, GFX B S4, VJ TWO S5, VJ THREE S6) on the I/O Patch, Video Presets and the Look Book, with no Undo step and no Save light', async () => {
+    const out = {}, want = {};
+    try {
+      await restore(); const st = JSON.parse(BASE); delete st.ioNums; delete st.ioAdvanced; if (st.wireSettings) delete st.wireSettings.simple;
+      st.customLibrary = [{ l: 'VJ ONE', c: '#3a6ea5' }];
+      st.presets.forEach(p => { p.layers = {}; p.bgNames = {}; p.dsmContent = {}; });
+      const s0 = st.screens.find(s => !(s.backdrop)); st.presets[0].layers[s0.id] = { '1': 'GFX A', '2': 'VJ TWO', '3': 'VJ THREE', '4': 'VJ ONE' };
+      st.sources = [{ name: 'VJ ORPHAN', connectorType: '12G-SDI' }];
+      _applyProjectText(JSON.stringify(st)); await wait(700); okDialogs(); await wait(150);
+      out.open = [vpUndoLen(), !!$('.save-dirty'), !!sources.find(x => x && x.name === 'GFX B'), _vhSaved()[0]]; want.open = [0, false, false, false];
+      out.first = _vhOrder(); want.first = ['VJ ONE=S1', 'GFX A=S2', 'VJ TWO=S3', 'VJ THREE=S4', 'VJ ORPHAN=S5'];
+      out.router = _slbState().ins.filter(Boolean); want.router = ['src:VJ ONE', 'src:GFX A', 'src:VJ TWO', 'src:VJ THREE', 'src:VJ ORPHAN'];
+      await ioOpenSimple(); out.io = _vhCards('#io-grid'); closeSystem(); await wait(250);
+      const exp = ['VJ ONE=S1', 'VJ ORPHAN=S2', 'GFX A=S3', 'GFX B=S4', 'VJ TWO=S5', 'VJ THREE=S6']; want.io = exp;
+      out.after = [vpUndoLen(), !!$('.save-dirty'), !!sources.find(x => x && x.name === 'GFX B' && x.autoB === 'GFX A'), _vhSaved()[0]]; want.after = [0, false, true, false];
+      await _vcAdv(); out.vp = _vhCards('#fs-left-panel').filter(x => /^(GFX [AB]|VJ ORPHAN)=/.test(x)); try { closeFullscreen(); } catch (e) {} await wait(250);
+      want.vp = ['VJ ORPHAN=S2', 'GFX A=S3', 'GFX B=S4'];
+      const lb = _vfLbSlots(await userLookBook()); out.lb = [lb['VJ ONE'], lb['VJ ORPHAN'], lb['GFX A'], lb['VJ TWO']]; want.lb = ['Source 1', 'Source 2', 'Source 3', 'Source 5'];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { await _vfBack(); }
+    return is(out, want, '[Undo steps, Save lit, GFX B made, Save carries ioNums] at open / the numbers at open / Wire Simple\'s router inputs before the I/O Patch / the I/O Patch cards / [Undo steps, Save lit, GFX B made by the draw, Save carries ioNums] after the I/O Patch draw / Video Presets\' cards / the Look Book\'s I/O Reference');
+  });
+  // 16lc-vpcards-fix4 VH4: NEW (REPLACES 16lc-vpcards-fix3 VG2, removed: it pinned the B at the next free number after the files)
+  await check('I/O Patch 16lc-vpcards-fix4 VH4 (SPEC H1: "an auto PBP B / GFX B right under its A"): with three files imported (numbered where the order puts them, right after the library), a source renamed GFX A gets its GFX B on the next I/O Patch draw right under GFX A (its number + 1) and every source after GFX A, the files included, takes the next number, as in the v0.8.2 candidate; the draw adds no Undo step and nothing is kept; page 1 rebuilt from Simple puts GFX B right under GFX A as its backup, its type reads Backup of GFX A, and Wire Advanced\'s tile built from page 1 lists it right after GFX A', async () => {
+    const out = {}, want = {};
+    try {
+      await restore(); await _vvMk(); await wait(200);
+      const o0 = _srcNameOrder().slice(), m0 = {}; o0.forEach((n, i) => { m0[n] = i + 1; });
+      const media = new Set(customLibrary.filter(c => c && c.kind).map(c => c.l)), a0 = o0.find(n => !media.has(n) && !/^(PBP|GFX)\s+[AB]$/i.test(n)), nA = m0[a0];
+      out.files = o0.filter(n => media.has(n)).map(n => m0[n] < o0.length - 1); want.files = [true, true, true];   /* the files are not after every source */
+      _sysHandleSourceRename(a0, 'GFX A', null); await wait(300); const u0 = vpUndoLen();
+      await ioOpenSimple(); await wait(200); closeSystem(); await wait(250);
+      const o1 = _srcNameOrder(), m1 = {}; o1.forEach((n, i) => { m1[n] = i + 1; });
+      out.b = [m1['GFX A'], m1['GFX B'], !!sources.find(x => x && x.name === 'GFX B' && x.autoB === 'GFX A')]; want.b = [nA, nA + 1, true];
+      out.moved = o0.filter(n => n !== a0).filter(n => m1[n] !== (m0[n] > nA ? m0[n] + 1 : m0[n])).map(n => n + ' ' + m0[n] + '->' + m1[n]); want.moved = [];
+      out.steps = vpUndoLen() - u0; want.steps = 0;
+      out.kept = _vhSaved()[0]; want.kept = false;
+      openSystem(); await wait(400); _ioSetView('advanced'); await wait(700); okDialogs(); await wait(400);   /* page 1: Rebuild from Simple, as the question offers */
+      const rows = (ioAdvanced.pages[0].sources || []).filter(r => r && r.name), ia = rows.findIndex(r => r.name === 'GFX A'), ib = rows.findIndex(r => r.name === 'GFX B');
+      out.page1 = [ia >= 0, ib === ia + 1, !!(rows[ib] && rows[ia] && rows[ib].backupOf === rows[ia].id)]; want.page1 = [true, true, true];
+      out.type = _ioBkTypeText('GFX B', '').indexOf('Backup of GFX A') >= 0; want.type = true;
+      _ioSetView('simple'); await wait(300); closeSystem(); await wait(200);
+      openWireMode(); await wait(700); if (!(wireSettings && wireSettings.wireView === 'advanced')) { _wireSwitchToAdvanced(); await wait(700); } okDialogs(); await wait(300);
+      const n0 = (wireAdvanced.routers || []).length; _wireAdvAddPatchTile(0); await wait(400);
+      const t = (wireAdvanced.routers || [])[n0], ins = t ? (t.inputs || []).map(i => i.name) : [];
+      out.tile = [!!t, ins.indexOf('GFX B') === ins.indexOf('GFX A') + 1 && ins.indexOf('GFX A') >= 0]; want.tile = [true, true];
+      try { closeWireMode(); } catch (e) {}
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { await _vvBack(); }
+    return is(out, want, 'files [not after every source] / [GFX A\'s number, GFX B\'s number, made] / numbers not as the order gives them / Undo steps of the draw / Save carries ioNums / [page 1: GFX A there, GFX B right under it, its backup] / Backup of GFX A / [the page tile made, GFX B right after GFX A]');
   });
   try { _fsPauseAll(); } catch (e) {} $$('video').forEach(v => { try { v.muted = true; v.pause(); } catch (e) {} });
   return { checks };

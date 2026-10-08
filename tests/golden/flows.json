@@ -117,7 +117,7 @@
    "ok": true
   },
   {
-   "name": "Simple: Add AUX (+), the AUX panel Apply and Remove AUX Globally are each one undo step",
+   "name": "Simple: Add AUX (+), the AUX panel Apply and Remove AUX Globally are each one undo step (16lc-vpaux: Remove AUX Globally asks first in the I/O Patch trash's window; its Delete is the step)",
    "ok": true
   },
   {
@@ -133,7 +133,7 @@
    "ok": true
   },
   {
-   "name": "Simple: a table note or P# edit is one undo step, a per-preset destination name shows on that preset's canvas, and the blend window shows all four digits of a resolution",
+   "name": "Simple: a table note or P# edit is one undo step, a destination name typed on a later preset's row shows on that preset's canvas and on every other (16lc-vpaux: renamed in every preset), and the blend window shows all four digits of a resolution",
    "ok": true
   },
   {
@@ -609,15 +609,15 @@
    "ok": true
   },
   {
-   "name": "Advanced: a source dropped on an AUX box sets what that AUX shows in THIS preset — one undo step, Undo and Redo go both ways, the other presets keep theirs",
+   "name": "Advanced: a source dropped on an AUX box sets what that AUX shows in THIS preset — one undo step, Undo and Redo go both ways, the other presets keep theirs (16lc-vpcards: dragged from the I/O Patch card the Advanced panel now draws)",
    "ok": true
   },
   {
-   "name": "Advanced: an AUX box lights up while a source is dragged over it, like a layer or a BG, and dropping the name it already shows writes nothing and records no undo step",
+   "name": "Advanced: an AUX box lights up while a source is dragged over it, like a layer or a BG, and dropping the name it already shows writes nothing and records no undo step (16lc-vpcards: dragged from the I/O Patch card the Advanced panel now draws)",
    "ok": true
   },
   {
-   "name": "Advanced: an AUX switched off in this preset has no box to drop on (the Simple table has no cell for it either) and keeps what it showed; the one that is on takes the drop",
+   "name": "Advanced: an AUX switched off in this preset has no box to drop on (the Simple table has no cell for it either) and keeps what it showed; the one that is on takes the drop (16lc-vpcards: dragged from the I/O Patch card the Advanced panel now draws)",
    "ok": true
   },
   {
@@ -637,7 +637,7 @@
    "ok": true
   },
   {
-   "name": "Simple: a colour given to a built-in content type reaches EVERY place that draws it — the table cell, the canvas chip, the layer panel dot, its ✎ swatch, the AUX list and the Advanced source rail",
+   "name": "Simple: a colour given to a built-in content type reaches EVERY place that draws it — the table cell, the canvas chip, the layer panel dot, its ✎ swatch and the AUX list; the Video Presets > Advanced card shows the cable colour instead, as on Wire and the I/O Patch (16lc-vpcards)",
    "ok": true
   },
   {
@@ -793,7 +793,7 @@
    "ok": true
   },
   {
-   "name": "Advanced: a Video card has a remove button; Remove asks first, empties every layer and BG that used the file with their clip settings, and one Undo brings it all back",
+   "name": "Advanced: a Video card has a remove button; Remove asks first, empties every layer and BG that used the file with their clip settings, and one Undo brings it all back (16lc-vpvideo: the trash in the Option C card's shuffle square)",
    "ok": true
   },
   {
@@ -997,11 +997,11 @@
    "ok": true
   },
   {
-   "name": "Wire: renaming a source from its card reaches every preset, the I/O list and the diagram",
+   "name": "Wire: renaming a source from its card reaches every preset, the I/O list and the diagram (16lc-vpcards: typed in the name box of the card, the I/O Patch card)",
    "ok": true
   },
   {
-   "name": "Wire: a duplicate source name is refused",
+   "name": "Wire: a duplicate source name is refused (16lc-vpcards: typed in the name box of the card, the I/O Patch card)",
    "ok": true
   },
   {
@@ -1025,7 +1025,7 @@
    "ok": true
   },
   {
-   "name": "Wire: Esc in the rename field or a resolution field cancels the typing and leaves the Wire page open",
+   "name": "Wire: Esc in the rename field or a resolution field cancels the typing and leaves the Wire page open (16lc-vpcards: the name box of the card, the I/O Patch card)",
    "ok": true
   },
   {
@@ -1049,7 +1049,7 @@
    "ok": true
   },
   {
-   "name": "Wire Simple: a source that was dragged keeps its place (and its cable route) when it is renamed",
+   "name": "Wire Simple: a source that was dragged keeps its place (and its cable route) when it is renamed (16lc-vpcards: in the name box of the card, the I/O Patch card)",
    "ok": true
   },
   {
@@ -1185,7 +1185,7 @@
    "ok": true
   },
   {
-   "name": "Wire Advanced: a custom card made on one page is offered on every page, and the tile stays on the page it was dropped on (16la-colour-mv (R): read in the three panes that take custom cards; the Multiviewers pane after them has none)",
+   "name": "Wire Advanced: a custom card made on one page is offered on every page, and the tile stays on the page it was dropped on (16la-colour-mv (R): read in the three panes that take custom cards; the Multiviewers pane after them has none; 16lc-vpfinish: read on the I/O Patch card a hand-made card is)",
    "ok": true
   },
   {
@@ -1193,11 +1193,11 @@
    "ok": true
   },
   {
-   "name": "Wire Advanced: a custom destination and a custom AUX carry a Cable Type — on the card, on the tile, on the cable, in the key and on the printed sheet",
+   "name": "Wire Advanced: a custom destination and a custom AUX carry a Cable Type — on the card, on the tile, on the cable, in the key and on the printed sheet (16lc-vpfinish: picked on the I/O Patch card a hand-made card is)",
    "ok": true
   },
   {
-   "name": "Wire Advanced: a show saved with a custom list per page opens as ONE library, its tiles follow, the merge is not an edit and the next save holds the new shape (16la-colour-mv (R): read in the three panes that take custom cards)",
+   "name": "Wire Advanced: a show saved with a custom list per page opens as ONE library, its tiles follow, the merge is not an edit and the next save holds the new shape (16la-colour-mv (R): read in the three panes that take custom cards; 16lc-vpfinish: on the I/O Patch card a hand-made card is)",
    "ok": true
   },
   {
@@ -1205,15 +1205,15 @@
    "ok": true
   },
   {
-   "name": "Wire Advanced: renaming a custom source card from another page renames its tile on that page, and the card's x still removes it",
+   "name": "Wire Advanced: renaming a custom source card from another page renames its tile on that page, and the card's trash still removes it (16lc-vpfinish: the I/O Patch card, its trash asks first)",
    "ok": true
   },
   {
-   "name": "Wire Advanced: the Cable Colour Code and the printed sheet list only the custom cards with a tile on the page being drawn",
+   "name": "Wire Advanced: the Cable Colour Code and the printed sheet list only the custom cards with a tile on the page being drawn (16lc-vpfinish: picked on the I/O Patch card a hand-made card is)",
    "ok": true
   },
   {
-   "name": "Wire Advanced: a second custom destination or AUX given a name that is taken is numbered, the way custom sources are",
+   "name": "Wire Advanced: a second custom destination or AUX given a name that is taken is numbered, the way custom sources are (16lc-vpfinish: typed in the I/O Patch card a hand-made card is)",
    "ok": true
   },
   {
@@ -1421,7 +1421,7 @@
    "ok": true
   },
   {
-   "name": "Help says what the app does: the layer chip takes two clicks, the section is Mask in pixels, the AUX window has no Type, destination names are typed in the table, and Send / Report a bug / the Wire zoom keys are listed",
+   "name": "Help says what the app does: the layer chip takes two clicks, the section is Mask in pixels, the AUX window has no Type, destination names are typed in the table or Destination Properties (16lc-vpfinish: its Name box), and Send / Report a bug / the Wire zoom keys are listed",
    "ok": true
   },
   {
@@ -1449,7 +1449,7 @@
    "ok": true
   },
   {
-   "name": "I/O Patch Excel: the Video I-O tab lists an I/O-only destination after the AUX rows and before the multiviewer (unchanged, decision 32); on the Simple card grid (16ky) its card is the last of the Destinations section (IO), before the AUX / DSM section; the page-1 tab is unchanged; 16kz-refresh: the Video I-O row carries the Refresh column after Resolution (empty, no rate set)",
+   "name": "I/O Patch Excel: the Video I-O tab lists an I/O-only destination after the AUX rows and before the multiviewer (unchanged, decision 32); on the Simple card grid (16ky) its card is the last of the Destinations section (IO), before the AUX / DSM section; the page-1 tab is unchanged; 16kz-refresh: the Video I-O row carries the Refresh column after Resolution (empty, no rate set); 16lc-vpcards-fix4: the page-1 sheet prints a show AUX by its row on the page again (Destination 4 / 5), as the v0.8.2 candidate",
    "ok": true
   },
   {
@@ -1665,7 +1665,7 @@
    "ok": true
   },
   {
-   "name": "move arrows: a swap carries everything stored per destination in every preset, the table order follows, Undo and Redo are exact and a save + reload keeps it (pins existing behaviour)",
+   "name": "move arrows: a swap carries everything stored per destination in every preset, the table order follows, Undo and Redo are exact and a save + reload keeps it (pins existing behaviour; 16lc-vpfinish: a preset's own name goes as the show opens again)",
    "ok": true
   },
   {
@@ -1833,7 +1833,7 @@
    "ok": true
   },
   {
-   "name": "menus 16kw: the shared resolution picker puts its optional — Clear — SECOND, right under Custom, and marks it when the value is empty; the phone's I/O cards ask for it (mbIoOpenRes: + Custom resolution…, — Clear —, Used in this show; the source card marks its own size; Clear empties a source's resolution, a destination keeps its size as on the desktop); where it is used without one it reads as before, Custom first and no Clear (Quick Setup and the Wire card, 37 rows); the Destination Combinations table opens no resolution menu (Destination Properties keeps its Width / Height boxes)",
+   "name": "menus 16kw: the shared resolution picker puts its optional — Clear — SECOND, right under Custom, and marks it when the value is empty; the phone's I/O cards ask for it (mbIoOpenRes: + Custom resolution…, — Clear —, Used in this show; the source card marks its own size; Clear empties a source's resolution, a destination keeps its size as on the desktop); where it is used without one it reads as before, Custom first and no Clear (Quick Setup, 37 rows; 16lc-vpcards: the Wire card opens the menu of the I/O Patch card instead: Custom resolution…, — Clear —, Used in this show); the Destination Combinations table opens no resolution menu (Destination Properties keeps its Width / Height boxes)",
    "ok": true
   },
   {
@@ -1885,15 +1885,15 @@
    "ok": true
   },
   {
-   "name": "Wire 16kw-r2: every Cable Type menu reads like the I/O Patch Connector menu: Custom… first, — Clear — second, then the connector list in its order with its headings, the current value marked: the source, destination, AUX and DSM cards in Simple, a source card in Advanced, the custom source, destination and AUX cards, a source tile's output point (Details) and a converter's port",
+   "name": "Wire 16kw-r2: every Cable Type menu reads like the I/O Patch Connector menu: Custom… first, — Clear — second, then the connector list in its order with its headings, the current value marked: the source, destination, AUX and DSM cards in Simple, a source card in Advanced, the custom source, destination and AUX cards (16lc-vpfinish: the I/O Patch card, kinds wcsrc / wcdst / wcaux), a source tile's output point (Details) and a converter's port",
    "ok": true
   },
   {
-   "name": "Wire 16kw-r2: Cable Type › Custom… on a source, destination or AUX card types the connector RIGHT ON THE CARD, the way Connector › Custom… does in the I/O Patch: the button becomes a box in its place (focused, \"Type name…\", the typed connector it holds already); LEMO + Enter is stored as typed (the show's connectorType), ONE undo step, Save lit, remembered and offered after — Clear — in every Cable Type and Connector menu, the card reads it, its cable draws grey with the grey arrowhead, the tile turns grey, the key has its \"Custom · no colour code\" row; it FOLLOWS to the I/O Patch (white pill) and a connector typed in the I/O Patch shows on the Wire card; Undo takes it back; Escape and an empty box write nothing; a built-in's name in any spelling picks the built-in",
+   "name": "Wire 16kw-r2: Cable Type › Custom… on a source, destination or AUX card types the connector RIGHT ON THE CARD, the way Connector › Custom… does in the I/O Patch: the button becomes a box in its place (focused, \"Type name…\", the typed connector it holds already); LEMO + Enter is stored as typed (the show's connectorType), ONE undo step, Save lit, remembered and offered after — Clear — in every Cable Type and Connector menu, the card reads it, its cable draws grey with the grey arrowhead, the tile turns grey, the key has its \"Custom · no colour code\" row; it FOLLOWS to the I/O Patch (white pill) and a connector typed in the I/O Patch shows on the Wire card; Undo takes it back; Escape and an empty box write nothing; a built-in's name in any spelling picks the built-in (16lc-vpcards: the box is the I/O Patch card one, the card being the I/O Patch card)",
    "ok": true
   },
   {
-   "name": "Wire 16kw-r2: Custom… on the Wire-only objects stores the typed connector where each already keeps its cable type, one undo step each: a custom source card (its connectorType; its tile colour turns grey, as a pick does), a custom destination and a custom AUX card (connectorType), a source tile's output point (portConns of the tile), a converter's port (its conn); the output point's cable draws grey with the grey arrowhead",
+   "name": "Wire 16kw-r2: Custom… on the Wire-only objects stores the typed connector where each already keeps its cable type, one undo step each: a custom source card (16lc-vpfinish: the I/O Patch card, its own box; its connectorType; its tile colour turns grey, as a pick does), a custom destination and a custom AUX card (connectorType), a source tile's output point (portConns of the tile), a converter's port (its conn); the output point's cable draws grey with the grey arrowhead",
    "ok": true
   },
   {
@@ -1917,7 +1917,7 @@
    "ok": true
   },
   {
-   "name": "Backdrop 16kx-backdrop (16kx-r3: the screen after the backdrop is destination 2, so its default name is Destination 02, Omar \"no number count drops by one\"): in a NEW show, Quick Setup's Backdrop switch beside Destination 2's resolution names the row BACKDROP and swaps the resolution for Length and Height in feet and inches (10' × 5' 6\" from 1920×1080 at 192 px per foot, the nearest half foot, 16kx-r2); 20' 6\" and \"12 6\" typed build a 3936 × 2400 px backdrop named BACKDROP between two 1920×1080 screens; the preview, the top-bar canvas and the Pre-Export Check leave it out (3840 × 1080, no canvas or resolution warning)",
+   "name": "Backdrop 16kx-backdrop (16kx-r3: the screen after the backdrop is destination 2, so its default name is DESTINATION 02 (16lc-vpcards-fix: new names in capitals), Omar \"no number count drops by one\"): in a NEW show, Quick Setup's Backdrop switch beside Destination 2's resolution names the row BACKDROP and swaps the resolution for Length and Height in feet and inches (10' × 5' 6\" from 1920×1080 at 192 px per foot, the nearest half foot, 16kx-r2); 20' 6\" and \"12 6\" typed build a 3936 × 2400 px backdrop named BACKDROP between two 1920×1080 screens; the preview, the top-bar canvas and the Pre-Export Check leave it out (3840 × 1080, no canvas or resolution warning)",
    "ok": true
   },
   {
@@ -1965,7 +1965,7 @@
    "ok": true
   },
   {
-   "name": "Backdrop 16kx-r2: AUTO-NAME (Omar's answer 1): a destination that becomes a backdrop is named BACKDROP, the next one BACKDROP 2, then BACKDROP 3 …, never a name the show already uses (DSM 1 renamed BACKDROP 2 makes RIGHT LED BACKDROP 3); a preset's own name for it goes (P03 reads BACKDROP too); the rename is inside the conversion's ONE undo step (one Undo gives RIGHT LED its name and Type back); made a screen again it keeps the name BACKDROP; Quick Setup's Backdrop switch writes the next free name into the row's Destination Name box",
+   "name": "Backdrop 16kx-r2: AUTO-NAME (Omar's answer 1): a destination that becomes a backdrop is named BACKDROP, the next one BACKDROP 2, then BACKDROP 3 …, never a name the show already uses (DSM 1 renamed BACKDROP 2 makes RIGHT LED BACKDROP 3); a preset's own name for it goes (P03 reads BACKDROP too); the rename is inside the conversion's ONE undo step (one Undo gives RIGHT LED its name and Type back); made a screen again it keeps the name BACKDROP; Quick Setup's Backdrop switch writes the next free name into the row's Destination Name box (16lc-vpaux: P03's own name is made as an older show holds it)",
    "ok": true
   },
   {
@@ -1989,7 +1989,7 @@
    "ok": true
   },
   {
-   "name": "Backdrop 16kx-r2fix: a MIS-CLICK on the Backdrop switch changes nothing: in Edit Show Info CENTER LED's switch pressed on (the name box reads BACKDROP, 10' × 5' 6\") and off again gives the row back CENTER LED and 1920×1080; Update Show then writes nothing (no undo step, Wire and the I/O Patch untouched) and neither Advanced asks \"Simple changed\"; in a new show Destination 2, and the All Destinations row with Set default for all on, switched on and off build Destination 01-04 at 1920×1080; Destination 2 and 3 switched on (BACKDROP, BACKDROP 2) and Destination 2 off again leave Destination 3 the only backdrop, named BACKDROP, and the screen after it is built as Destination 03, its number without the backdrop (16kx-r3, Omar \"no number count drops by one\")",
+   "name": "Backdrop 16kx-r2fix: a MIS-CLICK on the Backdrop switch changes nothing: in Edit Show Info CENTER LED's switch pressed on (the name box reads BACKDROP, 10' × 5' 6\") and off again gives the row back CENTER LED and 1920×1080; Update Show then writes nothing (no undo step, Wire and the I/O Patch untouched) and neither Advanced asks \"Simple changed\"; in a new show Destination 2, and the All Destinations row with Set default for all on, switched on and off build Destination 01-04 at 1920×1080; Destination 2 and 3 switched on (BACKDROP, BACKDROP 2) and Destination 2 off again leave Destination 3 the only backdrop, named BACKDROP, and the screen after it is built as Destination 03, its number without the backdrop (16kx-r3, Omar \"no number count drops by one\"); 16lc-vpcards-fix: the default names in capitals (DESTINATION 01-04)",
    "ok": true
   },
   {
@@ -2041,7 +2041,7 @@
    "ok": true
   },
   {
-   "name": "I/O 16ky-r2 (was 16ky F; a card has no Type now): keyboard: every control on a card and in a section title is reached with Tab (a real button or box, or tabindex 0 with a role); on a card Tab goes from the Cable Type menu straight to Reset and Delete (no Type, no notes between); the Cable Type menu opened from the keys (Enter on the button is its click) walks with ↓ from the marked row, Enter picks the lit row (ONE undo step) and the focus is back on the same card's Cable Type after the redraw; Alt+↓ on the S0 Connector opens its menu and Escape closes it; Enter on the picture opens the file picker path (the upload); leaving the Cable Type › Custom… box for the card's resolution box keeps the keyboard there, its text selected (one undo step)",
+   "name": "I/O 16ky-r2 (was 16ky F; a card has no Type now): keyboard: every control on a card and in a section title is reached with Tab (a real button or box, or tabindex 0 with a role); on a card Tab goes from the Cable Type menu straight to Reset and Delete (no Type, no notes between); the Cable Type menu opened from the keys (Enter on the button is its click) walks with ↓ from the marked row, Enter picks the lit row (ONE undo step) and the focus is back on the same card's Cable Type after the redraw; Alt+↓ on the S0 Connector opens its menu and Escape closes it; Enter on the picture opens the file picker path (the upload); leaving the Cable Type › Custom… box for the card's resolution box keeps the keyboard there, its text selected (one undo step); 16lc-vpcards-fix4: the number box is not a key again (shown, not typed in): a card ends on the Cable Type, Reset and the trash",
    "ok": true
   },
   {
@@ -2049,7 +2049,7 @@
    "ok": true
   },
   {
-   "name": "I/O 16ky-r2: a Simple card is the name, the resolution and the cable type (Omar 2026-09-27: \"this should stay simple just name resolution and cable type\"): with a Type and a note stored on every kind of item, no card has a Type (chip, box or menu) or a notes box and none shows those words; a card's keys run left to right: on a source card the picture, colour swatch and shuffle, the name and its pencil, the name library, the resolution box and its menu, the Cable Type menu; on a destination or AUX / DSM card (mirrored, 16kz-refresh: its picture on the right) the name, the name library, the resolution box and its menu, the Cable Type menu, then the picture, the shuffle and the colour swatch; on a multiviewer card (16la-wire-mv (N): its picture is a button that shows the next picture) the name, the name library, the resolution box and its menu, the Cable Type menu, then the picture; then Reset and Delete on the grey line, which keeps the red pill when the cable cannot carry the size and the number (S1, D1, IO, MV1) at its right end; the S0 / D0 bars set the Connector and the Resolution only",
+   "name": "I/O 16ky-r2: a Simple card is the name, the resolution and the cable type (Omar 2026-09-27: \"this should stay simple just name resolution and cable type\"): with a Type and a note stored on every kind of item, no card has a Type (chip, box or menu) or a notes box and none shows those words; a card's keys run left to right: on a source card the picture, colour swatch and shuffle, the name and its pencil, the name library, the resolution box and its menu, the Cable Type menu; on a destination or AUX / DSM card (mirrored, 16kz-refresh: its picture on the right) the name, the name library, the resolution box and its menu, the Cable Type menu, then the picture, the shuffle and the colour swatch; on a multiviewer card (16la-wire-mv (N): its picture is a button that shows the next picture) the name, the name library, the resolution box and its menu, the Cable Type menu, then the picture; then Reset and Delete on the grey line, which keeps the red pill when the cable cannot carry the size and the number (S1, D1, IO, MV1) at its right end; the S0 / D0 bars set the Connector and the Resolution only; 16lc-vpcards-fix4: the number of a card is not a key again (shown, not typed in)",
    "ok": true
   },
   {
@@ -2105,7 +2105,7 @@
    "ok": true
   },
   {
-   "name": "Backdrop 16kx-r3: NO NUMBER (Omar: \"no number count drops by one\"): with CENTER LED a backdrop (LEFT LED | BACKDROP | RIGHT LED), RIGHT LED is destination 2 EVERYWHERE and the backdrop has no number: the I/O Patch cards (D1 LEFT LED, D2 RIGHT LED), Remove Destination, the I/O Excel (the Video I-O tab and the page-1 tab: Destination 1, 2), the Look Book (its I/O page Destination 1, 2; the breakdown Destination 01, Backdrop, Destination 02 under \"2 screens\"; the layer strip D01, D02; the cover's Destinations 2), the Advanced page (its list D01, BD (the backdrop, no number), D02; RIGHT LED's crumb D02; \"2 screens\"), the bottom bar's DESTINATIONS 2, Edit Show Info's rows (All Destinations, Backdrop, Destination 2) and the next destination's name, Destination 03",
+   "name": "Backdrop 16kx-r3: NO NUMBER (Omar: \"no number count drops by one\"): with CENTER LED a backdrop (LEFT LED | BACKDROP | RIGHT LED), RIGHT LED is destination 2 EVERYWHERE and the backdrop has no number: the I/O Patch cards (D1 LEFT LED, D2 RIGHT LED), Remove Destination, the I/O Excel (the Video I-O tab and the page-1 tab: Destination 1, 2), the Look Book (its I/O page Destination 1, 2; the breakdown Destination 01, Backdrop, Destination 02 under \"2 screens\"; the layer strip D01, D02; the cover's Destinations 2), the Advanced page (its list D01, BD (the backdrop, no number), D02; RIGHT LED's crumb D02; \"2 screens\"), the bottom bar's DESTINATIONS 2, Edit Show Info's rows (All Destinations, Backdrop, Destination 2) and the next destination's name, Destination 03; 16lc-vpcards-fix: in capitals, DESTINATION 02 / 03",
    "ok": true
   },
   {
@@ -2125,7 +2125,7 @@
    "ok": true
   },
   {
-   "name": "Backdrop 16kx-r3: \"Turn into a backdrop?\" ALWAYS ASKS and says plainly what happens: for a destination with NO content (Destination 04, just added) it asks (Cancel: nothing, no undo step) with \"…becomes a backdrop: a set piece shown only in the Video Presets. It is renamed BACKDROP and sized in feet (10' × 5' 6\"). It leaves the I/O Patch and Wire, with what fed it there (its cables, a converter that fed only it, its switcher output). Undo brings it back.\" and no content line; yes is ONE undo step; for CENTER LED it adds \"Its 3 layers and 5 backgrounds in 5 presets will be removed.\"; Edit Show Info's Update Show asks in the same words",
+   "name": "Backdrop 16kx-r3: \"Turn into a backdrop?\" ALWAYS ASKS and says plainly what happens: for a destination with NO content (Destination 04, just added) it asks (Cancel: nothing, no undo step) with \"…becomes a backdrop: a set piece shown only in the Video Presets. It is renamed BACKDROP and sized in feet (10' × 5' 6\"). It leaves the I/O Patch and Wire, with what fed it there (its cables, a converter that fed only it, its switcher output). Undo brings it back.\" and no content line; yes is ONE undo step; for CENTER LED it adds \"Its 3 layers and 5 backgrounds in 5 presets will be removed.\"; Edit Show Info's Update Show asks in the same words; 16lc-vpcards-fix: the new destination is DESTINATION 04",
    "ok": true
   },
   {
@@ -2133,11 +2133,11 @@
    "ok": true
   },
   {
-   "name": "Names 16ky-r4fix: a new or unnamed destination NEVER takes a name the show already has (the round-4 attack: Destination 01 | BACKDROP | Destination 03 plus a new screen made a second \"Destination 03\"): its name is its number counted without the backdrop, or the next free one, so ADD > Destination offers Destination 04, the I/O Patch + Add destination card adds Destination 04 (one undo step) and Edit Show Info's new row reads and is built Destination 04; a Quick Setup backdrop row whose name box is emptied is built BACKDROP (not Destination 01 beside a Destination 01); a show with no taken name reads as before (General Session: + Destination offers Destination 04)",
+   "name": "Names 16ky-r4fix: a new or unnamed destination NEVER takes a name the show already has (the round-4 attack: Destination 01 | BACKDROP | Destination 03 plus a new screen made a second \"Destination 03\"): its name is its number counted without the backdrop, or the next free one, so ADD > Destination offers Destination 04, the I/O Patch + Add destination card adds Destination 04 (one undo step) and Edit Show Info's new row reads and is built Destination 04; a Quick Setup backdrop row whose name box is emptied is built BACKDROP (not Destination 01 beside a Destination 01); a show with no taken name reads as before (General Session: + Destination offers Destination 04); 16lc-vpcards-fix: the default names in capitals (DESTINATION 04)",
    "ok": true
   },
   {
-   "name": "Quick Setup 16ky-r4fix: what a screen reader reads follows the row's own label (the round-4 attack: the row labelled Destination 2 said \"Pick resolution for destination 3\"): with 3 destinations and Destination 2's Backdrop switch on, the rows read All Destinations / Backdrop / Destination 2, their resolution buttons say destination 1 / backdrop / destination 2, the backdrop row's Length, Height and picture say backdrop, and the name boxes' defaults are Destination 01 / BACKDROP / Destination 02; with the first row switched on too, it reads Backdrop and the last row reads All Destinations and says destination 1 (Destination 01) (16kz-answers, Omar's answer 14)",
+   "name": "Quick Setup 16ky-r4fix: what a screen reader reads follows the row's own label (the round-4 attack: the row labelled Destination 2 said \"Pick resolution for destination 3\"): with 3 destinations and Destination 2's Backdrop switch on, the rows read All Destinations / Backdrop / Destination 2, their resolution buttons say destination 1 / backdrop / destination 2, the backdrop row's Length, Height and picture say backdrop, and the name boxes' defaults are Destination 01 / BACKDROP / Destination 02; with the first row switched on too, it reads Backdrop and the last row reads All Destinations and says destination 1 (Destination 01) (16kz-answers, Omar's answer 14); 16lc-vpcards-fix: the name boxes' defaults in capitals",
    "ok": true
   },
   {
@@ -2157,7 +2157,7 @@
    "ok": true
   },
   {
-   "name": "Quick Setup 16kz-answers (C): Edit Show Info and Quick Setup refuse a name another output has (Omar's answer 8): in Edit Show Info CENTER LED's row typed \"LEFT LED\" and RIGHT LED's typed \"aux 1\" say Name in use and go back to their names; \"STAGE R\" is taken; a row given \"STAGE R\" without leaving its box is refused by Update Show (the window stays open, nothing changes); a show that already has two LEFT LED still updates; in a new show two rows typed \"CAM WALL\" are refused by Build My Show until one is changed",
+   "name": "Quick Setup 16kz-answers (C): Edit Show Info and Quick Setup refuse a name another output has (Omar's answer 8): in Edit Show Info CENTER LED's row typed \"LEFT LED\" and RIGHT LED's typed \"aux 1\" say Name in use and go back to their names; \"STAGE R\" is taken; a row given \"STAGE R\" without leaving its box is refused by Update Show (the window stays open, nothing changes); a show that already has two LEFT LED still updates; in a new show two rows typed \"CAM WALL\" are refused by Build My Show until one is changed; 16lc-vpcards-fix: the third row's default DESTINATION 03",
    "ok": true
   },
   {
@@ -2165,7 +2165,7 @@
    "ok": true
   },
   {
-   "name": "I/O 16kz-answers (E): the Remove Source window numbers the I/O-only sources the way their cards do (Omar's answer 10): with two sources added on the patch (Source 9 and Source 10, cards S12 and S13 after the eleven preset sources) the window lists S12 Source 9 and S13 Source 10, the numbers on their cards (not S1, S2)",
+   "name": "I/O 16kz-answers (E): the Remove Source window numbers the I/O-only sources the way their cards do (Omar's answer 10): with two sources added on the patch (16lc-vpfinish: named after their numbers, Source 12 and Source 13, cards S12 and S13 after the eleven preset sources) the window lists S12 Source 12 and S13 Source 13, the numbers on their cards (not S1, S2); 16lc-vpcards-fix: named in capitals, SOURCE 12 / SOURCE 13",
    "ok": true
   },
   {
@@ -2173,7 +2173,7 @@
    "ok": true
   },
   {
-   "name": "Quick Setup 16kz-answers (G): the first row switched to Backdrop reads Backdrop and the first SCREEN row reads All Destinations (Omar's answer 14): with 3 rows and row 1's switch on, the rows read Backdrop / All Destinations (sets default for all) / Destination 2; 1280×720 picked for the All Destinations row becomes the next row's too and the summary's base; switched back, row 1 reads All Destinations again with the note; built with the switch on, the two screens are 1280×720",
+   "name": "Quick Setup 16kz-answers (G): the first row switched to Backdrop reads Backdrop and the first SCREEN row reads All Destinations (Omar's answer 14): with 3 rows and row 1's switch on, the rows read Backdrop / All Destinations (sets default for all) / Destination 2; 1280×720 picked for the All Destinations row becomes the next row's too and the summary's base; switched back, row 1 reads All Destinations again with the note; built with the switch on, the two screens are 1280×720; 16lc-vpcards-fix: built with the default names in capitals",
    "ok": true
   },
   {
@@ -2221,7 +2221,7 @@
    "ok": true
   },
   {
-   "name": "Cards 16kz-refresh (K): a destination, AUX / DSM, I/O-only destination and multiviewer card is MIRRORED (Omar's mockup: \"Source should have images on the Left and Destination images on the right\"): on the I/O Patch Simple grid its picture is on the RIGHT and the name / resolution / cable type column on the LEFT, the random-colour button before the colour bar, the markup in that order (Tab reads it left to right), the grey line unchanged at the foot, the picture itself not flipped; a source card keeps its picture on the LEFT; Wire's side-panel cards (Simple, and Advanced with a hand-made destination) the same (the + Add cards: Y13)",
+   "name": "Cards 16kz-refresh (K): a destination, AUX / DSM, I/O-only destination and multiviewer card is MIRRORED (16lc-vpfinish: a hand-made Wire Advanced destination card is the I/O card too, mirrored the same way; Omar's mockup: \"Source should have images on the Left and Destination images on the right\"): on the I/O Patch Simple grid its picture is on the RIGHT and the name / resolution / cable type column on the LEFT, the random-colour button before the colour bar, the markup in that order (Tab reads it left to right), the grey line unchanged at the foot, the picture itself not flipped; a source card keeps its picture on the LEFT; Wire's side-panel cards (Simple, and Advanced with a hand-made destination) the same, with the grey line of the I/O Patch card (16lc-vpcards) (the + Add cards: Y13); 16lc-vpcards-fix4: Tab ends on the trash again (the number box is shown, not typed in)",
    "ok": true
   },
   {
@@ -2229,15 +2229,15 @@
    "ok": true
   },
   {
-   "name": "Backdrop 16kz-refresh (L1): the only screen left is never deleted (Omar 2026-09-28 ~18:50, \"all recommended\"): with CENTER LED and RIGHT LED backdrops (Edit Show Info), the trash on LEFT LED's I/O Patch card, Remove (Destinations) > LEFT LED, the Video Presets table's ✕ (P01's first row) and Destination Properties' Remove Globally each say \"A show needs at least one screen\", ask nothing and delete nothing (no undo step); Undo and Redo never restore a step with no screen (one an older build could have left: refused, the show keeps LEFT LED) and a normal Undo still works; with LEFT LED and CENTER LED backdrops Edit Show Info's − (it would take RIGHT LED) is refused and the list keeps its 3 rows",
+   "name": "Backdrop 16kz-refresh (L1): the only screen left is never deleted (Omar 2026-09-28 ~18:50, \"all recommended\"): with CENTER LED and RIGHT LED backdrops (Edit Show Info), the trash on LEFT LED's I/O Patch card, Remove (Destinations) > LEFT LED, the Video Presets table's ✕ (P01's first row; 16lc-vpfinish: it asks first, never for the only screen left) and Destination Properties' Remove Globally each say \"A show needs at least one screen\", ask nothing and delete nothing (no undo step); Undo and Redo never restore a step with no screen (one an older build could have left: refused, the show keeps LEFT LED) and a normal Undo still works; with LEFT LED and CENTER LED backdrops Edit Show Info's − (it would take RIGHT LED) is refused and the list keeps its 3 rows",
    "ok": true
   },
   {
-   "name": "Destinations 16kz-refresh (L2): ADD › Destination refuses a name another output already has (Omar 2026-09-28 ~18:50, \"all recommended\"; the 16kz-answers rule: trimmed, any capitals): \"left led\" (a destination), \" dsm 1 \" (a DSM), \"mv 1\" (a multiviewer), \"backdrop\" (a backdrop) and \"stage\" (P02's own name for CENTER LED) each say Name in use (by Enter or the Add button), the window stays open with its own name back in the box, nothing is added and no undo step is recorded; a free name (STAGE LEFT) is added in one undo step",
+   "name": "Destinations 16kz-refresh (L2): ADD › Destination refuses a name another output already has (Omar 2026-09-28 ~18:50, \"all recommended\"; the 16kz-answers rule: trimmed, any capitals): \"left led\" (a destination), \" dsm 1 \" (a DSM), \"mv 1\" (a multiviewer), \"backdrop\" (a backdrop) and \"stage\" (P02's own name for CENTER LED) each say Name in use (by Enter or the Add button), the window stays open with its own name back in the box, nothing is added and no undo step is recorded; a free name (STAGE LEFT) is added in one undo step; 16lc-vpcards-fix: its own default DESTINATION 03",
    "ok": true
   },
   {
-   "name": "Wire 16kz-refresh (L4): Wire Advanced's hand-made destination / AUX cards refuse a SHOW output's name (Omar 2026-09-28 ~18:50, \"all recommended\"): a hand-made destination card renamed \"left led\" or \"AUX 1\" and a hand-made AUX card renamed \"mv 1\" say Name in use and keep their names (no undo step); two hand-made destination cards both named STAGE are numbered apart as before (STAGE, STAGE 2); a new hand-made card is never given a show output's name (with CENTER LED named New Destination, + gives New Destination 2)",
+   "name": "Wire 16kz-refresh (L4): Wire Advanced's hand-made destination / AUX cards refuse a SHOW output's name (16lc-vpfinish: typed in the I/O Patch card they are now; Omar 2026-09-28 ~18:50, \"all recommended\"): a hand-made destination card renamed \"left led\" or \"AUX 1\" and a hand-made AUX card renamed \"mv 1\" say Name in use and keep their names (no undo step); two hand-made destination cards both named STAGE are numbered apart as before (STAGE, STAGE 2); a new hand-made card is never given a show output's name (with CENTER LED named New Destination, + gives New Destination 2); 16lc-vpcards-fix: the new cards named in capitals",
    "ok": true
   },
   {
@@ -2281,7 +2281,7 @@
    "ok": true
   },
   {
-   "name": "I/O 16la-ip (P): every path that sets a connector gives the note its address, one count for the show: the Simple Set for all rows give each row its OWN next address in card order in ONE undo step (S0 Dante: the 11 source cards .1 … .50; D0 NDI: the 3 destinations .55, .60, .65 and an I/O-only destination .70; A0 Ethernet: DSM 1 .75, AUX 1 .80; M0 ST-2110: MV 1 .85) and Undo takes a whole Set for all back; on Advanced page 1 a show source's row picked to NDI writes the address in the item's own note (the Look Book's and Excel's note) and page 1's Set for all gives each of its rows its own; a hand-made row on page 2 and page 2's Set for all do the same on their own rows; in Wire a source card, a destination card, a custom source (no note: its own IP, 16el's) and a source tile's output point do it too; the I/O Excel prints the address in the Notes column",
+   "name": "I/O 16la-ip (P): every path that sets a connector gives the note its address, one count for the show (16lc-vpfinish: a hand-made Wire card picked on the I/O Patch card it is now): the Simple Set for all rows give each row its OWN next address in card order in ONE undo step (S0 Dante: the 11 source cards .1 … .50; D0 NDI: the 3 destinations .55, .60, .65 and an I/O-only destination .70; A0 Ethernet: DSM 1 .75, AUX 1 .80; M0 ST-2110: MV 1 .85) and Undo takes a whole Set for all back; on Advanced page 1 a show source's row picked to NDI writes the address in the item's own note (the Look Book's and Excel's note) and page 1's Set for all gives each of its rows its own; a hand-made row on page 2 and page 2's Set for all do the same on their own rows; in Wire a source card, a destination card, a custom source (no note: its own IP, 16el's) and a source tile's output point do it too; the I/O Excel prints the address in the Notes column",
    "ok": true
   },
   {
@@ -2305,7 +2305,7 @@
    "ok": true
   },
   {
-   "name": "I/O 16la-colour-mv (S1 + T): the I/O Patch Simple \"+ Add …\" cards are dim, EMPTY WIREFRAMES of their section's card (Omar 2026-09-29, his add_card_outline_mockup.png: \"the wire look or outline of that same look\"): in all four sections every add card is one control (role button, Tab reaches it, its name \"Add source\" / \"Add destination\" / \"Add AUX\" / \"Add multiviewer\", everything inside hidden from a screen reader, nothing inside focusable or clickable: a click on its picture box lands on the card); it has the real card's size and layout (the picture box 110 × 62 on the LEFT for a source, on the RIGHT for a destination, AUX or multiviewer, exactly where the card beside it has its picture; two boxes where the resolution and cable type sit; an empty colour bar and shuffle square under the picture except on a multiviewer's; the bottom line with Reset, trash and an empty number chip; \"+ Add source\" with a pencil where the name sits); the big + box and the long description are gone (the description is the tooltip); a click and Enter still add one (one undo step); an empty section shows only its row of add cards, with no note (Help › Add & remove says so)",
+   "name": "I/O 16la-colour-mv (S1 + T): the I/O Patch Simple \"+ Add …\" cards are dim, EMPTY WIREFRAMES of their section's card (Omar 2026-09-29, his add_card_outline_mockup.png: \"the wire look or outline of that same look\"): in all four sections every add card is one control (role button, Tab reaches it, its name \"Add source\" / \"Add destination\" / \"Add AUX\" / \"Add multiviewer\", everything inside hidden from a screen reader, nothing inside focusable or clickable: a click on its picture box lands on the card); it has the real card's size and layout (the picture box 110 × 62 on the LEFT for a source, on the RIGHT for a destination, AUX or multiviewer, exactly where the card beside it has its picture; two boxes where the resolution and cable type sit; an empty colour bar and shuffle square under the picture except on a multiviewer's; the bottom line with Reset, trash and an empty number chip; \"+ Add source\" with a pencil where the name sits); the big + box and the long description are gone (the description is the tooltip); a click and Enter still add one (one undo step); an empty section shows only its row of add cards, with no note (Help › Add & remove says so; 16lc-vpvideo: + Add source's tooltip says Video Presets list the source too)",
    "ok": true
   },
   {
@@ -2313,7 +2313,7 @@
    "ok": true
   },
   {
-   "name": "Wire 16la-fix (U3): Wire Advanced's HAND-MADE destination and AUX cards get an IP like a hand-made source (Omar 2026-09-29 ~22:10: \"get an IP box like hand-drawn sources have … and a router / switcher row or a network switch port cabled to one shows that IP\"): NDI picked on a hand-made destination card gives it the show's next free address as its own IP (customDests[].ip) in the same ONE undo step with Save lit, Dante on a hand-made AUX the next one (customDsms[].ip); a pick away from IP keeps it; their tiles show it (the source tile's IP line), a router output cabled to the destination and a network switch port cabled to the AUX show it; selected, the destination's tile has Details' IP box (the source's box: its address, its hint); an address typed there is its IP in ONE undo step (cell and tile follow), Undo takes it back; cleared, the box suggests the next free address and Enter stores it; the numbering counts both addresses; on a non-IP cable there is no box; the exported Advanced sheet prints the tile's IP",
+   "name": "Wire 16la-fix (U3): Wire Advanced's HAND-MADE destination and AUX cards get an IP like a hand-made source (16lc-vpfinish: picked on the I/O Patch card they are now; Omar 2026-09-29 ~22:10: \"get an IP box like hand-drawn sources have … and a router / switcher row or a network switch port cabled to one shows that IP\"): NDI picked on a hand-made destination card gives it the show's next free address as its own IP (customDests[].ip) in the same ONE undo step with Save lit, Dante on a hand-made AUX the next one (customDsms[].ip); a pick away from IP keeps it; their tiles show it (the source tile's IP line), a router output cabled to the destination and a network switch port cabled to the AUX show it; selected, the destination's tile has Details' IP box (the source's box: its address, its hint); an address typed there is its IP in ONE undo step (cell and tile follow), Undo takes it back; cleared, the box suggests the next free address and Enter stores it; the numbering counts both addresses; on a non-IP cable there is no box; the exported Advanced sheet prints the tile's IP",
    "ok": true
   },
   {
@@ -2369,7 +2369,7 @@
    "ok": true
   },
   {
-   "name": "Wire 16lb-simple: a source renamed from its card keeps what Simple knows of it: its router row (LOGO swapped onto row 1 stays on row 1 as LOGO 2), its taken-off state (CAM 2 off stays off as CAM X) and its cable's shape; the router's cell reads the new name",
+   "name": "Wire 16lb-simple: a source renamed from its card keeps what Simple knows of it: its router row (LOGO swapped onto row 1 stays on row 1 as LOGO 2), its taken-off state (CAM 2 off stays off as CAM X) and its cable's shape; the router's cell reads the new name (16lc-vpcards: typed in the name box of the card, the I/O Patch card)",
    "ok": true
   },
   {
@@ -2650,6 +2650,218 @@
   },
   {
    "name": "Wire 16lc-onlyword-fix2 (D2): the limit is the block AS DRAWN at the Help > Accessibility size, not the room: the tile's 1 px borders are drawn a whole device pixel wide, so at 90 % the block is about 0.2 px narrower than the room on a 1x screen; a network switch named 🎤🎤🎤🎤AB照 CORE_SW_01_STAGE_LEFT_RACK_A is drawn at 12.5 px (as on the 16lc-onlyword-fix page; with the room as the limit it took 13 px and at 90 % its first word ran 0.05 px past and lost \"B照\"): its first word whole on line 1 at 100 %, 115 % and 90 %, and in a hidden copy of its block 0.5 px larger it runs past at 90 % or 115 % (the largest size that shows whole); the text the name; no measuring element left; Help > Accessibility put back",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16lc-vpcards VC1 (Omar 2026-10-05: \"Video Preset Advance Cards are wrong, I/O Patch Cards are correct\"; destination / AUX cards \"Left panel, like Wire\"): the Video Presets > Advanced left panel is Wire > Simple's: ALL SOURCES / ALL DESTINATIONS / AUX / DSM with Wire's headers (blue / orange / amber strip, double chevron, count; the panel button on the first only), the IMAGES | VIDEO switch under ALL SOURCES, no old \"+\" and dot, no Multiviewers; every source, destination and AUX / DSM is the I/O Patch card (V2) with the I/O Patch's own number; each section ends with its + Add outline card",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16lc-vpcards VC2 (\"if Source 1 (input 01) is millumin A everything that happens to the card anywhere on the program needs to match up everywhere else\"): a source card on Video Presets > Advanced changes the same source as the I/O Patch card does: the shuffle, a typed resolution, a connector picked from its menu and a rename in its name box are one Undo step each and light Save, and Wire > Simple and the I/O Patch show the same card (name, resolution, connector, colour, number)",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16lc-vpcards VC3 (\"in sizing of the box in Wire should be the same sizing in Video Preset Advance\"): every part of a source, a destination and an AUX / DSM card computes the same styles on Video Presets > Advanced as on Wire > Simple (box, padding, margins, borders, colours, fonts, the parts' sizes); only a destination / AUX card's cursor differs (they drag only on Wire)",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16lc-vpcards VC4 (add card \"Same as I/O Patch\"; new AUX \"ON in every preset\"): the + Add card at the end of each Video Presets > Advanced section adds at once, one Undo step each: Source N (in the show, its card listed), Destination N (on the canvas and listed), AUX N (on in every preset and listed); on the Video tab the + Add card is there too; 16lc-vpcards-fix: named in capitals (SOURCE N, DESTINATION N)",
+   "ok": true
+  },
+  {
+   "name": "I/O Patch 16lc-vpcards VC5 (Omar 2026-10-06: \"New AUX: ON in every preset\", from every add): the I/O Patch's + Add AUX makes an AUX that is on in every preset (it was off in every preset), as the band's + does, one Undo step",
+   "ok": true
+  },
+  {
+   "name": "Wire 16lc-vpcards VC6 (card \"V2: + reset, trash, S1 number\": Wire's own cards get the same so Wire and Video Presets stay identical; \"Resolution menu = I/O's everywhere\"): every Wire > Simple left-panel card of a source, destination and AUX / DSM is the I/O Patch card (name box and its ▾ name list, Reset, trash, number) and still drags onto the drawing (its old drag start); its resolution ▾ reads \"Custom resolution…\", \"— Clear —\" (greyed on an output), then the list",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16lc-vpcards VC7 (kept exactly): a Video Presets > Advanced source card still drags (its data \"fs-src:NAME\"): onto a Layers row it fills that layer (the drop outline first, one Undo step, the layer picked), onto an AUX box it sets what that AUX shows in this preset (one Undo step), onto the empty canvas nothing happens",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16lc-vpcards VC8 (kept: \"Escape leaving Advanced when nothing is open (a card menu / field closes first)\"): with a card's resolution menu open on Video Presets > Advanced, Escape closes the menu and the page stays; the next Escape, with nothing open, leaves Advanced",
+   "ok": true
+  },
+  {
+   "name": "Help 16lc-vpcards VC9: Help > Video Presets says the left panel holds the cards (All Sources, All Destinations, AUX / DSM; the I/O Patch's card at Wire's size, a change shows everywhere, the + Add card adds at once, an AUX on in every preset) and no longer \"Press + to import video files\"; I/O Patch's + Add AUX is on in every preset; Wire's cards are the I/O Patch's with the I/O resolution menu",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16lc-vpcards VC10 (kept: \"the collapsed strip and their memory stay\"): the panel button in the ALL SOURCES header folds the Video Presets > Advanced left panel to its 38 px strip, the strip's button brings it back at its width; a section header folds and unfolds its section; none of it is a change (no Undo step, Save not lit)",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16lc-vpvideo VV1 (Omar 2026-10-06: the VIDEO tab cards = \"Option C\"): a file on the Video tab is the source card's frame (236 px, no number row) with a video job in each slot: the frame rate, VIDEO / IMAGE and the length on the picture, the sound (NO AUDIO here) in the colour bar, the trash in the shuffle square, the name box + pencil (no name list), the size and the file type in the two boxes; a file missing from this app is a dashed card with RELINK that does not drag; a card drags as fs-src:NAME",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16lc-vpvideo VV2 (Option C: \"every slot does a video job\"): a click on a clip's picture plays it in the picture (the corner square shows pause, the length reads 00:00 / 00:02, the colour bar fills, the VIDEO tag hides), a second click pauses it and the card reads as before; a picture file's picture is not a button; playing is not a change",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16lc-vpvideo VV3 (\"renaming must keep the stored file working\"): a clip renamed in its Video card's name box keeps its file (the same URL) and its place on the layer, one Undo step, and Undo finds the file again; renamed from its I/O Patch card it keeps the file too, stored under the new name",
+   "ok": true
+  },
+  {
+   "name": "Wire / I/O Patch 16lc-vpvideo VV4 (\"Show them everywhere ... just show the cover image. still work to drag and drop anywhere like normal\"): a clip and a picture are listed on Wire's left panel with their cover (draggable), their I/O Patch cards show the cover (no remove: it is the file's own), nothing plays there; a file dropped on Wire > Simple becomes a show source with its tile (its cover), one Undo step",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16lc-vpvideo VV5 (Omar drops 16jh \"the presets never see them\"): a source made with + Add source on the I/O Patch is in Simple's lists (the layer panel, without a remove × or colour swatch; AUX PROPERTIES) and picking it fills the layer, one Undo step; a file's row shows its cover",
+   "ok": true
+  },
+  {
+   "name": "I/O Patch 16lc-vpvideo VV6: an I/O-only source a preset uses is a preset source: its card's trash asks first, the Remove picker leaves it out and the Look Book's I/O Sources page lists it; one no preset uses still goes straight away (one Undo step)",
+   "ok": true
+  },
+  {
+   "name": "Help 16lc-vpvideo VV7: Help says what the Video tab cards do (play on the picture, sound in the colour bar, trash, rename keeps the file, RELINK), that a file is a source on every page with its cover, and that + Add source on the I/O Patch reaches Video Presets; the old \"the presets never do\" is gone",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16lc-vpaux VA1 (Omar 2026-10-06, AUX name: \"Rename everywhere\"): AUX PROPERTIES' Name box, opened on P03, reads \"Name · all presets\" and renames DSM 1 in every preset and on every page the I/O Patch's way: STAGE MON in all five presets, on its I/O Patch card and in the Look Book, no preset keeps a name of its own; one Undo step; Undo gives DSM 1 back everywhere",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16lc-vpaux VA2 (Omar 2026-10-06: \"Rename everywhere\"; 16lc-vpfinish, Omar 2026-10-07: older shows are cleaned up as they open): an older show where P03 calls DSM 1 \"P03 MON\" and P02 calls CENTER LED \"P02 CENTER\" opens, saves and opens again with DSM 1 and CENTER LED in every preset; renaming AUX 1 on its I/O Patch card leaves them; renaming DSM 1 on its I/O Patch card makes PODIUM its name in every preset (P03's own name goes, one Undo step), and CENTER LED renamed STAGE there takes P02's; the Look Book prints only the new names",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16lc-vpaux VA3 (Omar 2026-10-06: \"Rename everywhere\", destinations too): the Video Presets table's NAME box on P04's row renames RIGHT LED in every preset (P01's canvas reads STAGE RIGHT too), one Undo step, its tip says so; an emptied box on P02's row renames nothing (no step); a destination renamed in Edit Show Info takes a preset's own name away (P05 called LEFT LED \"P05 LEFT\"; 16lc-vpfinish: gone already as the show opens)",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16lc-vpaux VA4 (Omar 2026-10-06, AUX box: \"Always fill\"): an AUX box fills with its content's colour (or picture) however the content was set, the way a destination fills with its BG - the Simple table's cell (AUX 1 on P02 = LOGO), a drop on the Advanced page (DSM 1 on P02 = a picture) - on Simple, on the Advanced tile and in the Look Book (the box and its AUX / DSM chip); an AUX with no content stays dark",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16lc-vpaux VA5 (C3): a double-click on an AUX pill in the DSM | AUX band opens AUX PROPERTIES and leaves the AUX as it was (DSM 1 stays ON, no Undo step); a single click switches it once the double-click window has passed (one step); a click without a click count (Enter / Space) switches at once",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16lc-vpaux VA6 (C3): Destination Properties' \"Remove Globally, All Presets\" and AUX PROPERTIES' \"Remove AUX Globally\" ask first in the I/O Patch trash's window, with its words; Cancel changes nothing (no step); Delete removes it (one step) and Undo brings it back",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16lc-vpaux VA7 (C3): on Video Presets > Advanced, Escape on a confirm window (a card's trash, Remove Globally) closes the window, not the page, and removes nothing",
+   "ok": true
+  },
+  {
+   "name": "Help 16lc-vpaux VA8: Help says an AUX / DSM or destination renamed anywhere is renamed in every preset (16lc-vpfinish: an older show opens with one name in every preset), the AUX box fills with its content's colour or picture, and both Remove Globally ask first; the old \"for that preset only\" lines are gone",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16lc-vpfinish VD1 (Omar 2026-10-06: \"Speed: fix it\"): the 16kt-fix measuring class takes the transitions off only the parts that animate a length (the preset header, its name / code boxes and its action buttons); a layer box keeps its colour transition while it is on, and no stylesheet rule ends in \"body.lbn-measuring ... *\" (that restyled the whole page twice per nudge)",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16lc-vpfinish VD2 (Omar 2026-10-06: \"Narrow panel: the panel stops at card width\"; \"Max width: leave the resize handle at 360 px\"): the Advanced left panel's edge drags it no narrower than its cards need (262 px, its min-width too), so its list never scrolls sideways or cuts a card, and no wider than 360",
+   "ok": true
+  },
+  {
+   "name": "Wire 16lc-vpfinish VD3 (Omar 2026-10-06: \"Wire > Advanced hand-made custom cards: I/O standard card too\"): a hand-made source, destination and AUX card of Wire > Advanced is the I/O Patch card (name box with its name list, Reset, trash, number C1, no corner x); its resolution menu reads Custom resolution..., — Clear — (greyed on an output) first; a pick there is one Undo step; its trash asks first in the I/O Patch window (Cancel keeps it)",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16lc-vpfinish VD4 (Omar 2026-10-07: \"Destination Properties gets a Name box\"): Destination Properties, opened on P02, has a Name box (all presets) that renames CENTER LED in every preset and on its I/O Patch card, one Undo step with the Apply; Undo gives CENTER LED back; a name another output has is refused (Name in use) and renames nothing",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16lc-vpfinish VD5 (Omar 2026-10-07: the table's x \"asks first\"): the x on a destination's first row of the Video Presets table asks in the I/O Patch trash's window; Cancel changes nothing (no step); Delete removes it in one step and Undo brings it back",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16lc-vpfinish VD6 (Omar 2026-10-07: \"Older shows: clean up names on open\"): a show where P03 calls DSM 1 \"P03 MON\" and P02 calls CENTER LED \"P02 CENTER\" opens with DSM 1 and CENTER LED in every preset, no preset keeps a name of its own, no Undo step, the show is clean (no Save light); the Look Book prints only the main names",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16lc-vpfinish VD7 (Omar 2026-10-07: long one-word names \"shrink to fit\", never CONFIDENC / E): a destination named CONFIDENCE keeps its word on one line on its Video Presets > Advanced card and its Wire card, drawn smaller than 11 px; a short name keeps 11 px",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16lc-vpfinish VD8 (Omar 2026-10-07: \"the system default should be to capitalize but user can do it however they want\"; \"Each imported file gets its own cable colour\"; \"+ ADD VIDEO\" at \"the file cards' size, no bottom row\"; 16lc-vpcards-fix4, SPEC H1: files numbered by order, as the v0.8.2 candidate): two imported pictures are named in capitals, take their places together in the order first seen (the other sources keep their order), each has its own cable colour; the Video tab card shows a name as typed; + ADD VIDEO is a file card's size with no bottom row",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16lc-vpfinish VD9 (Omar 2026-10-07: \"+ ADD SOURCE names the new source after its S number\"): + Add source on the I/O Patch and + ADD SOURCE on Video Presets > Advanced each name the new source SOURCE N where SN is its number (General Session: SOURCE 12 at S12, then SOURCE 13 at S13; 16lc-vpcards-fix: in capitals), one Undo step each",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16lc-vpfinish VD10 (Omar 2026-10-07): Destination Properties and AUX PROPERTIES never show a preset's own name once a show is open: an older show's P03 own AUX name and P02 own destination name are gone from the windows and the Simple tiles, and a save writes no preset names",
+   "ok": true
+  },
+  {
+   "name": "Help 16lc-vpfinish VD11: Help says Destination Properties has a Name box, the table's x asks, an older show opens with one name in every preset, + Add source is named after its number (in capitals since 16lc-vpcards-fix), a new file is named in capitals with its own colour and numbered by the show's order (16lc-vpcards-fix4), + ADD VIDEO is a file card's outline, long names are drawn smaller, the panel stops at its cards, and Wire Advanced's hand-made cards are the I/O card; the old lines are gone",
+   "ok": true
+  },
+  {
+   "name": "I/O Patch 16lc-vpcards-fix VF1 (main session 2026-10-07: \"opening an older show must NOT renumber anything it already shows\"): a show saved before this build with a picture file among its sources (first in the library: the old build numbered it S1) opens with the file still S1 and every source on the number it had (the order first seen, as the v0.8.2 candidate numbers it); 16lc-vpcards-fix4: nothing is kept (Save carries no ioNums), no Undo step, no Save light",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16lc-vpcards-fix VF5 (the attack round's F1; Omar 2026-10-07: new names \"default to capitals\"): + ADD SOURCE on Video Presets > Advanced makes SOURCE 12 at S12, in capitals; 16lc-vpcards-fix4: once P01 uses it on a layer its number is its place in the order first seen (as the v0.8.2 candidate numbers a name first seen in a preset), every card shows the order's number and nothing is kept",
+   "ok": true
+  },
+  {
+   "name": "I/O Patch 16lc-vpcards-fix VF6 (Omar 2026-10-07: \"names show exactly as typed on EVERY card\", \"new names default to capitals\"): a source renamed Ppt Mixed reads Ppt Mixed on its I/O Patch, Wire and Video Presets cards (the picture keeps its capitals); + Add destination makes DESTINATION 04; Wire > Advanced's hand-made cards are NEW SOURCE / NEW DESTINATION / NEW AUX/DSM",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16lc-vpcards-fix VF7 (the attack round's F2; Omar: long one-word names \"shrink to fit\", never CONFIDENC / E): an AUX named TELEPROMPTERS keeps its word on one line on its Video Presets > Advanced card and its Wire card, drawn at 7 px or more",
+   "ok": true
+  },
+  {
+   "name": "Wire 16lc-vpcards-fix VF8 (the attack round's F4): a hand-made destination or AUX card of Wire > Advanced carries no Dest / AUX/DSM badge over its automatic name picture (as the show's cards look); a show destination with an uploaded picture keeps its badge",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16lc-vpcards-fix VF9 (the attack round's F5): an AUX box with content draws its name and its content's name on a black tag, as a destination box does (a picture, a clip or a light colour behind them stays readable): on Simple and in the Look Book; an empty AUX box has no tag",
+   "ok": true
+  },
+  {
+   "name": "Wire 16lc-vpcards-fix VF10 (the attack round on 16lc-vpfinish D12, Omar: \"Each imported file gets its own cable colour\"): three imported pictures keep the colours they got at import once a preset uses them and Wire > Simple draws them, and after a resolution is typed on one's I/O Patch card (one Undo step); Undo keeps them (three files, so one new colour that happens to match cannot hide the change)",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16lc-vpcards-fix VF11 (the attack round's F6): a source card's drag lets go of the focus its picture took, so after the drop Enter / Space act on the tile, not on the card's picture upload",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16lc-vpcards-fix VF12 (the attack round: always-shown scroll bars): with the lists drawing a 15 px scroll bar, Video Presets > Advanced's panel and Wire's panel widen by it: no card is cut, nothing scrolls sideways",
+   "ok": true
+  },
+  {
+   "name": "Wire 16lc-vpcards-fix VF13 (the attack round on 16lc-vpfinish D4, the I/O standard card): a hand-made Wire > Advanced source renamed \"ppt a\" (PPT A in another case) is refused (Name in use), as the I/O Patch card refuses it",
+   "ok": true
+  },
+  {
+   "name": "Help 16lc-vpcards-fix VF14: Help says names show as typed and new names come in capitals, + ADD SOURCE is SOURCE 12, a long word shrinks down to 7 px before it breaks, a file keeps its colour; 16lc-vpcards-fix4: the numbers are set by the show's order and the number box is not typed in; the typed-number, kept-number and files-after-the-sources lines and the old lines are gone",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16lc-vpcards-fix2 VX1 (Omar 2026-10-07: \"the × next to an imported file in a Video Presets > Simple layer dropdown asks first, with the same confirm as a card's trash can\"): the × beside a picture in a layer's ▾ list opens the window of the trash on the file's card (the same title, words and buttons); Cancel changes nothing (no Undo step); Remove takes it out of the whole show (its layer, BG and AUX, the library) in one Undo step; one Undo brings it all back",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16lc-vpcards-fix2 VX2 (Omar 2026-10-07: \"the × next to a TYPED name in the same Video Presets > Simple layer dropdown asks first too ... Every × in that list asks first, the same way\"): the × beside a typed name asks in the trash's window with the same words pattern (Remove name, the layers it is on, the AUX box that keeps it, Undo brings it back); Cancel changes nothing; Remove takes it out of the list and empties those layers in every preset (the AUX keeps it, as before) in one Undo step; one Undo brings it back",
+   "ok": true
+  },
+  {
+   "name": "I/O Patch 16lc-vpcards-fix4 VH1 (SPEC H1: numbers \"by order on every page\", \"imported files numbered exactly where r16lj/fix numbers them\"; \"Nothing may be written into a saved show that r16lj/fix would not write\"): in a show whose library is VH ONE, whose P01 uses VH TWO and VH THREE and whose I/O Patch made VH IO, two pictures imported take their places in the order first seen, right after the library (S2 / S3), and VH TWO, VH THREE, VH IO each take the next number (S4-S6), on the I/O Patch, Wire and Video Presets cards (Wire lists the ones it shows with the same numbers); Save and the browser draft carry no ioNums",
+   "ok": true
+  },
+  {
+   "name": "Cards 16lc-vpcards-fix4 VH2 (SPEC H1: the number box \"stays VISIBLE on every card but is NOT editable (no click / Enter / Space editing, no warning window)\"): on the I/O Patch, Wire Simple, Wire Advanced (its hand-made cards too) and Video Presets > Advanced every source, destination and AUX / DSM card shows its S / D / A number (C1 on a hand-made card) in a plain box: no key stop, no button role, no click handler; a click on it opens no typing box and no window and makes no Undo step",
+   "ok": true
+  },
+  {
+   "name": "I/O Patch 16lc-vpcards-fix4 VH3 (SPEC H1: \"Opening any show gives the same numbers as r16lj/fix\"): a show saved before 16lc-vpcards-fix whose GFX A has no saved GFX B, with a show source the library lacks, opens as the v0.8.2 candidate opens it: nothing is written (no ioNums, no B yet, no Undo step, no Save light), the numbers are the order first seen (Wire Simple's router in that order before any I/O Patch visit); the I/O Patch draw then makes GFX B right under GFX A and files that source after the library's own names, exactly the v0.8.2 numbers (VJ ONE S1, VJ ORPHAN S2, GFX A S3, GFX B S4, VJ TWO S5, VJ THREE S6) on the I/O Patch, Video Presets and the Look Book, with no Undo step and no Save light",
+   "ok": true
+  },
+  {
+   "name": "I/O Patch 16lc-vpcards-fix4 VH4 (SPEC H1: \"an auto PBP B / GFX B right under its A\"): with three files imported (numbered where the order puts them, right after the library), a source renamed GFX A gets its GFX B on the next I/O Patch draw right under GFX A (its number + 1) and every source after GFX A, the files included, takes the next number, as in the v0.8.2 candidate; the draw adds no Undo step and nothing is kept; page 1 rebuilt from Simple puts GFX B right under GFX A as its backup, its type reads Backup of GFX A, and Wire Advanced's tile built from page 1 lists it right after GFX A",
    "ok": true
   }
  ],

@@ -957,6 +957,165 @@ anchor on the function name and replace the first occurrence after it, never all
   exactly as before); paper is unchanged (`_wtlNmPap`). Speed: a line that is one piece is measured once, and `_wtlNmFit` draws the
   layout the line check made at the size found (`_wtlNmZL`, consumed at once) instead of laying the name out again. Checks: new OG1
   (D1), OG2 (D2), OG3 (pins the block as drawn). The phone is frozen.
+- **16lc-vpcards** (owner, 2026-10-05 / 06, r16lm SPEC A, on top of 16lc-onlyword-fix2, not released; search `16lc-vpcards`). Omar:
+  "Video Preset Advance Cards are wrong, I/O Patch Cards are correct ... in sizing of the box in Wire should be the same sizing in
+  Video Preset Advance ... if Source 1 (input 01) is millumin A everything that happens to the card anywhere on the program needs to
+  match up everywhere else"; card colour = the cable colour; destination / AUX cards "Left panel, like Wire"; add card "Same as I/O
+  Patch"; new AUX "ON in every preset"; card "V2: + reset, trash, S1 number". ONE CARD: the I/O Patch card (`_iogCardHTML`, with the
+  card object `_iogSrcObj` / `_iogOutObj` factored out of `_iogRender`, whose markup is unchanged) is the card of Wire's left panel
+  (Simple and Advanced, desktop; the phone keeps `_wireSourceCardHTML_panel` & co: frozen) and of the Video Presets > Advanced left
+  panel, at Wire's size (mockup V2): `_lbcSrcCard` / `_lbcOutCard` add only the drag (`c.rootAttrs`: Wire's old drag starts; a Video
+  Presets SOURCE card `data-src` + `_fsSrcDragStart`, destination / AUX cards do not drag there). Every control is the I/O Patch's:
+  its delegated handlers (name menu, name box, Reset / trash, Enter) and keyboard (menu walk, Enter / Space on a picture or an add card)
+  also answer on `#wire-panel-left .iog-card` / `#fs-left-panel .iog-card`; `_sysOpenDropdown` gives their menus the I/O card's classes;
+  "used in this show" (Resolution) and the destination name menu read the panel the menu came from (`trigger`). Redraws: an I/O
+  edit ends in `_sysRender`, which now asks the open Wire / Video Presets page to redraw (`_lbcAfterSys`, next tick, scheduleRender);
+  a Wire card function (picture, colour) ends in `_wireRender`, which redraws the Video Presets panel (`_lbcAfterWire`). The panel
+  (`_fsRenderSources` / `_fsPanelHTML`) is redrawn only when its markup changed, keeps the focus (`_iogSpot` / `_iogRefocus`), lets a
+  press inside it finish first (`_lbcLater`) and keeps the DOM during a drag (`_fsDragNow`); a press in a card's box never drags the
+  card (`_lbcFieldDown`). LAYOUT: Wire > Simple's section headers (`_fsPaneHdr`), ALL SOURCES (IMAGES | VIDEO under it), ALL
+  DESTINATIONS (no backdrop), AUX / DSM, no Multiviewers; the old header is only the collapsed strip; sections open / closed per machine
+  (`lb_fs_panes`, not in the show). Each section ends with I/O's wireframe add card (`_iogAddHTML(sec, cls, o)`, o = { fn, label, tip }):
+  `_fsLbcAdd` makes the I/O Patch's own add (`_iogAddItem`, factored out of `_iogAdd`); the Video tab's opens the file picker. A new AUX
+  is on in every preset from every add (`_sysAddAUX` now does what `addDSM` does). LOOK: no stylesheet rule added; `_lbcCloneCss`
+  copies, at run time, the `#io-grid .iog-*` card rules and the `#wire-overlay .wire-*` card / pane rules for `#fs-left-panel` AND
+  `#wire-panel-left` (the same copy, same order, so a Video Presets card computes Wire's styles), then `_LBC_FIT` (the mockup's fit
+  rules) and `_LBC_FS`; a selector naming blend / overlap / dead- / aoi / :root or a Look Book canvas name is never copied, and none
+  starts with #wire-overlay (the Wire export and the Look Book never see these). The Video tab's file cards are unchanged (their round
+  is 16lc-vpvideo). Checks: new VC1-VC10 (VC7 pins the drag). The phone is frozen.
+- **16lc-vpvideo** (owner, 2026-10-05 / 06, r16lm SPEC B, on top of 16lc-vpcards, not released; search `16lc-vpvideo`). Omar: VIDEO
+  tab "we still want to see that video information" -> Option C; "Show them everywhere, it should be this, but when you are not in
+  video preset, advancer it should not play out just show the cover image. still work to drag and drop anywhere like normal." VIDEO
+  TAB CARD (`_fsMediaCardHTML`, Option C): the V2 card frame (`wire-source-card iog-card iog-k-src vc vc-c`, data-iog-key src:NAME, no
+  `iog-foot`) with a video job per slot: cover picture, a click = `_lbvPlay` (a `video.fs-prev` in the picture, one at a time, Video
+  Presets only; `_lbvTick` counts the length chip and fills the colour bar); chips fps / VIDEO-IMAGE / length; the colour bar = the
+  waveform from `media.peaks` (`_lbvWave`) or NO AUDIO; the shuffle square = the trash (`_fsRemoveMediaAsk`, today's confirm); the I/O
+  name cell without the name list (its delegated handlers rename through `_sysHandleSourceRename`); read-only size / type boxes; a missing
+  file = `vc-missing` (dashed, RELINK, not draggable; the picture calls `_fsPickMedia(name)`). Styles: `_lbvCss()` appended by
+  `_lbcCloneCss` (no stylesheet rule). A RENAME KEEPS THE FILE: `_sysApplyGlobalRename` and `_fsRenameContent` call `_lbvMoveFile` (the
+  same object URL, so a layer playing it keeps playing; `_mdbPut(new)`, the old key kept for Undo / reopen); `_fsMediaUrl` falls back to
+  `_lbvFind` (the blob in memory with the item's size / type / file name) after an Undone rename; `_fsAttachBlob` revokes only an
+  unshared URL (`_lbvShared`). FILES EVERYWHERE (desktop, `_lbcOn`): `_lbvCover` = a file's cover as the picture of its I/O card
+  (`_iogCardHTML`, no remove ×) and of its Wire tiles / I/O Advanced minis (`_wireSrcThumb`); Wire's left panel lists every file
+  (`_lbvWireNames`; `_wireBuildAllSourceNames`, the drawing and its fingerprint are unchanged); a file dropped on Wire Simple
+  (`_slbDropCard`) or Advanced (`_wireAdvDrop`) that Wire does not draw yet gets a sources[] entry with the colour its card showed
+  (`_lbvShowSource`) in the drop's Undo step. I/O-ONLY SOURCES EVERYWHERE (Omar drops 16jh): Simple's layer panel list and AUX
+  PROPERTIES list sources[] names that are not library / built-in items (`_lbvIoItems`; no × / ✎ on those rows; a file's dot shows its
+  cover, `_lbvBg`); an I/O-only source a preset uses (`_lbvInPresets`) is a preset source: `_sysRowDelete` asks, the Remove picker leaves
+  it out, the Look Book's I/O Sources page lists it. Checks: new VV1-VV7; renamed RV1 (the Video card's trash is `.vc-trash`), RV2 (the +
+  Add source tooltip). Not changed: the relink still makes no Undo step and keeps the old size info. The phone is frozen.
+- **16lc-vpaux** (owner, 2026-10-05 / 06, r16lm SPEC C, on top of 16lc-vpvideo, not released; search `16lc-vpaux`). Omar: AUX name
+  "Rename everywhere", AUX box "Always fill". C1 RENAME EVERYWHERE: `_lbxOwnNamesGo(kind,id)` drops every preset's own name
+  (`p.screenName` / `p.dsmName`) for that output; called by `_sysSetMeta` dest / aux 'name' when the name changes (every card name box and
+  name menu: I/O, Wire, Video Presets), by AUX PROPERTIES' Apply (now `_lbxAuxRename` = `_sysSetMeta('aux')` + the drop; its header reads
+  "Name · all presets"), by `homeSetScreenName` (the table's NAME box renames globally from ANY preset row; an emptied box renames
+  nothing) and by Edit Show Info. An older show's own preset names (ORGILL P07 'dsm3') stay until that output is renamed. Destination
+  Properties still has no Name box. C2 ALWAYS FILL: `renderDSMVisual` fills the box with `_lbxAuxFill(label, findContent(label))` (the
+  content's `img` or its colour; no content = #1a1a1a), so a drop or a table cell fills like AUX PROPERTIES did; the stored `dsmColor` is
+  no longer read for the fill; the Look Book's aux chips take the same colour. C3: the band pill's click goes through `_lbxPill` (a
+  detail-1 click waits `_LBX_DBL` 300 ms; a detail-2 click cancels it, or puts back a toggle that already ran and pops its Undo step,
+  and opens AUX PROPERTIES; detail 0 = Enter / Space switches at once); Destination Properties' and the backdrop window's Remove Globally
+  (`_lbxRemoveDest`) and AUX PROPERTIES' Remove AUX Globally (`_lbxRemoveAux`) ask in `_sysConfirmModal` with the I/O trash's words
+  (`_lbxDelBody`, read by `_sysRowDelete` too); the only screen left is refused before any question; `_fsEscProbe` counts
+  `body > .sys-modal-overlay`, so Escape on a confirm over Advanced closes only the confirm. Every change is desktop only (`_lbcOn`):
+  the phone (its AUX panel is the same window) keeps per-preset names, its old fill and immediate removes. Checks: new VA1-VA8; renamed
+  RA1 (Remove AUX Globally asks), RA2 (the table's name on a later row shows on every preset). The Look Book snapshots of the three
+  examples were regenerated on purpose (their AUX boxes fill and their chips take the colour). The phone is frozen.
+- **16lc-vpfinish** (owner, 2026-10-06 / 07, r16lm SPEC: the answers to steps A and C and to the picture pack, on top of 16lc-vpaux, not
+  released; search `16lc-vpfinish`). D1 SPEED: the 16kt-fix rule `body.lbn-measuring ... .preset-header *` is now `.preset-header`,
+  `.p-name`, `.p-code`, `.del-btn` (the parts that animate a length); the `*` restyled the whole page at each toggle (twice per nudge).
+  D2 the Advanced left panel's narrowest = `_lbfPanelMin()` (262 + the list's scroll bar; inline min-width 262); D3 the widest stays 360.
+  D4 Wire > Advanced hand-made cards = `_lbfWcCard(kind,item,i)`: `_iogCardHTML` with the kinds `wcsrc` / `wcdst` / `wcaux`, class
+  `lbf-wc`, number C1..; `_sysSetMeta`, `_sysHandlePick`, `_sysRowReset`, `_sysRowDelete` and the delegated name blur hand those kinds to
+  `_lbfWcSet` / `_lbfWcPick` / `_lbfWcReset` / `_lbfWcDelete` / `_lbfWcNameBox` (their own data, one Undo step each; Reset and the trash
+  ask); `_sysResClearOff` greys an output's Clear. D5 Destination Properties' `#sp-name` (Apply: `_sysSetMeta('dest',..,'name')`). D6 the
+  table's x calls `_lbxRemoveDest` (asks). D7 `_lbfOneName()` empties every preset's `screenName` / `dsmName` in `_applyProjectText` and the
+  draft restore, before the clean baseline (no Undo step, no Save light). D8 `_lbfFitStyle` / `_lbfFitCard`: the panel cards' name line
+  breaks only between words; a word too long for 76 px is drawn smaller (down to 8 px); one too long even then breaks after _ - / .
+  first (<wbr>); 16lc-vpvideo's overflow-wrap:anywhere rule is normal. D9 `_srcNameOrder()` ends in `_lbfFilesLast` (files after every
+  other source; `_srcNameOrderRaw()` keeps the first-seen order for the two page-1 fingerprints, `_lbfRawOrder`, so an older show with
+  files is not "Simple changed since page 1 was built" by this build). D10 + ADD VIDEO = `_lbfAddVideoHTML()` (236 x 114, no foot;
+  `_lbfCss()` run-time rules). D11 an imported file's name is upper-cased (`_lbfUniqueFile`, case-insensitive), the Video card shows
+  names as typed. D12 `_lbfFreeCable()` gives a file a free palette colour (`it.wireColor`), `_wireGetSourceMeta` falls back to it
+  (assigned on first draw for older files, `_lbNotAChange`). D13
+  `_sysAddSource` names the source `_lbfNewSourceName()` (Source N at SN). Desktop only (`_lbcOn`). Checks: new VD1-VD11; renamed in
+  place RD1-RD19 (merge_probe.py RENAMES: VA2 / the move-arrows reload (older names cleaned on open), VA8 / the Help checks, and every
+  check reading a hand-made Wire card by its old markup or its old kinds wcustom / wcustomd / wcustomm). The example snapshots did not
+  change. The phone is frozen.
+- **16lc-vpcards-fix** (owner, 2026-10-07, r16lm SPEC section E and the main session's 14:05 clarification, plus the attack round on
+  16lc-vpfinish; on top of 16lc-vpfinish, not released; search `16lc-vpcards-fix`). NUMBERS (E2): `ioNums` = { src: {name: n}, dst: {id: n},
+  aux: {id: n} } is show data (getProjectState, the browser draft, `_snapshot`, `_lbRestoreData`, the Escape put-back, a new show); the
+  numbers it keeps never move, `_lbnSrcMap()` / `_lbnOutMap(k)` give the rest around them (a source: the lowest free number in first-seen
+  order; a file: after every source; a destination / AUX: the lowest free in its list). `_srcNameOrder()` is the S number order (the phone:
+  first seen), `_bdNo` the D number, `_lbnOutNo('aux',d)` the A number; every list (I/O grid, Wire / Video Presets panels, the I/O Excel, the
+  Look Book's I/O Reference, the Remove windows) reads them. Opening (`_applyProjectText`, the draft restore: `_lbnOpen(had)` before the
+  clean baseline) keeps every S number: a file without `ioNums` (older build) pins `_srcNameOrderRaw()` order, a file of this build pins
+  what it showed; a file's colour is set there too. `_sysAddSource` pins the number it is named after (`_lbfNewSource()`: SOURCE n).
+  The number box (`_lbnChipHTML`, `numEd` on `_iogSrcObj` / `_iogOutObj` only, so hand-made C1 cards stay plain) types a number:
+  `_lbnCommit` refuses a taken one (Number in use), `_lbnSet` = one Undo step: Wire Simple frozen + materialized as drawn, every number
+  of that kind pinned, a source's cable moved onto IN n when free (`_lbnMoveRow`). Renames carry the number (`_ioAdvRenameTwin('src')`).
+  Page 1 of the I/O Advanced view labels a row that stands for a show item with its S / D / A number (`_lbnRowLab` / `_lbnRowSlot`: the
+  page, the backup window, its Excel sheet); the two page-1 fingerprints read the number order. NAMES (E1): the I/O card's name rules are
+  text-transform none (Wire / Video Presets copy them); new names in capitals (SOURCE n, DESTINATION nn via `_r4fDestName`, NEW SOURCE /
+  NEW DESTINATION / NEW AUX/DSM, a backup-window row). ATTACK ROUND: a file's sources[] entry is made with its own colour
+  (`_lbnFileCol` in `_sysSetSourceMeta`, `_wireGetSourceColor`, `_wireSetSourceField`), so an I/O box edit is one Undo step again; long
+  one-word names shrink down to 7 px (`_lbfFitStyle0` FLOOR) before the 8 px break; a destination / AUX card's badge only on an uploaded
+  picture; an AUX box with content draws its names on a black tag (also the Look Book); `_lbkDragBlur` on the card drags; `_lbgSbFit`
+  widens the panels by an always-shown scroll bar; `_lbwSrcClash` refuses a show source's name on a hand-made Wire source. Checks: new
+  VF1-VF14; renamed in place RF1-RF18 (merge_probe_fix.py RENAMES). Example snapshots: the three Look Books differ only by the AUX
+  boxes' black tag. The phone is frozen.
+- **16lc-vpcards-fix2** (owner, 2026-10-07, r16lm SPEC section F1 / F1b; on top of 16lc-vpcards-fix, not released; search
+  `16lc-vpcards-fix2`). Every × in the Layer panel's Other library items list (openLayerPanelWithMode > wireEvents, `.lp-del`) asks
+  first on the desktop (`_lbcOn`): it closes the panel, then a file (`_fsMediaItem`) goes to `_fsRemoveMediaAsk` (the Video tab card
+  trash's own window; Remove = `_fsRemoveMedia`: layers, BGs, AUX, clip settings, the stored copy, one Undo step, `_fsTrash` gives the
+  file back) and a typed name to `_lpNameRemoveAsk` (the same showConfirm window, destructive, "Remove name": the layers
+  `deleteCustomLabel` empties, any BG / AUX that keeps the name; Remove = `deleteCustomLabel`, unchanged, one Undo step). Cancel /
+  Escape change nothing. The phone keeps the old at-once ×. Checks: new VX1 (the file ×: the card trash's window, Cancel, Remove, Undo)
+  and VX2 (the typed-name ×); nothing renamed; snapshots unchanged. Known and NOT changed (a question for the owner): a file's
+  sources[] entry (written once Wire / the I/O Patch has shown it) outlives `_fsRemoveMedia`, so after a removal the file's name stays
+  a plain source on Wire / the I/O Patch; the card trash did that before this build too.
+- **16lc-vpcards-fix3** (owner, 2026-10-07 ~20:00, r16lm SPEC section G: "the number change should not rearrange anything"; on top of
+  16lc-vpcards-fix2, not released; search `16lc-vpcards-fix3`). The automatic B partner (16jh) and the S numbers. The previous build
+  numbered a show in the order its I/O Patch DREW it, and that draw writes two things first: `_sysEnsureAutoPairs` (a PBP A / GFX A
+  without its B gets it; `_srcNameOrderRaw` puts an autoB / pairOf right under its A) and `_sysSyncAllSourcesToCustomLibrary` (a show
+  source the library lacks, not I/O-only, not built in, is filed after the library's own names). G1: `_lbnOpen(had)` for a show
+  without ioNums first runs `_lbnOldShowDraw()` (the same `_sysEnsureAutoPairs` with `_lbnOpening` set: no number, no autosave, no
+  compare; before the clean baseline) and pins in `_lbnOldOrder(raw)` order (the filing counted by reading the library as the draw would
+  leave it, `customLibrary` swapped back at once; nothing written). G2: `_sysEnsureAutoPairs`' push goes through `_lbnAutoB(a, b, push)`
+  inside its `_lbNotAChange` write: `_lbnFreezeAll('src')`, then the B is pinned at the first number after its A no live source has
+  (never above its A; past 999 automatic), so nothing moves, a session file (numbered after the sources, unpinned) included. G3: no
+  pairing place reads the B's place in the number order (page rows by name / backupOf: `_ioAdvEnsureAutoPairs`, `_ioBkAutoPair`,
+  `_ioBkPlaceUnder`; P/B, the Backup window, `_ioBkTypeText`, `_wireAdvAddPatchTile` read the page rows / names), proved by real
+  input with GFX B at S11 under GFX A S5: no fallback. Help: one sentence in the I/O Patch Numbers paragraph. Known: Wire Simple's
+  router (unfrozen) numbers its inputs by place among the sources ON the drawing, and a file no preset uses is not drawn, so in the
+  session a B numbered after such a file sits one input early until the file is used (the same as any source after an unused file in
+  every build: F_old's PPT A is S4 on IN 3); the Look Book's I/O Reference prints the S number (an older show's Look Book counted the
+  printed rows, so with an I/O-only B it said Source 2 where its own I/O Patch said S3). Wire Simple seen BEFORE the first I/O Patch
+  visit already shows the B (the previous build showed it only after that visit). Checks: new VG1 (an older show: the numbers, the
+  router before the I/O Patch, the cards, the Look Book, Save, no Undo / Save light) and VG2 (a session B: next free after its A,
+  nothing moved, page 1 / Backup of / the Wire page tile); nothing renamed; snapshots unchanged.
+- **16lc-vpcards-fix4** (main session 2026-10-08 00:35, r16lm SPEC section H; Omar's standing instruction: "the number change should
+  not rearrange anything, if that will be any issue then it should be skipped complete for now"; on top of 16lc-vpcards-fix3, not
+  released; search `16lc-vpcards-fix4`). The number features are SWITCHED OFF, numbering is the v0.8.2 candidate's (r16lj/fix) again.
+  Why (the fix3 verifier, r16lm/fix3/verify): a B made with the I/O Patch on its Advanced view comes in as a page-1 twin
+  (`_ioAdvEnsureAutoPairs` + `_ioAdvSyncPage1ToSimple`, `_sysRender` returns before `_sysEnsureAutoPairs`), unpinned, so a session file
+  moved and later the B itself; ORGILL's Advanced page 1 / its Excel sheet were not the previous build's; deleting an older show's auto B
+  left Wire Simple's (positional) router out of step with the kept S numbers. One switch, `_lbnOff()` (the fix4 block, returns true),
+  gates every place the number code decides: `_srcNameOrder` = `_srcNameOrderRaw` (D9 off; `_srcNameOrderRaw` is r16lj/fix's
+  `_srcNameOrder` byte for byte); `_lbnPins` {} and `_lbnPin` a no-op (no ioNums read or written: F1 / F3 / G2 pins, `_lbnFreezeAll`);
+  `_lbnSrcMap` = the place in that order; `_lbnOutMap` / `_lbnOutNo` / `_bdNo` = the place in the list (r16lj/fix's counts);
+  `_lbnSortOut` keeps the list order; `_lbnNextOut` = r16lj/fix's count + 1; `_lbnRowNo` null (page 1 rows, the backup window and page
+  1's sheet keep their row numbers); `_lbnChipHTML` draws the plain box (no tabindex / role / handlers), `_lbnEdit` / `_lbnSet` return;
+  `_lbnOpen` writes no number and makes no B (G1 off: the I/O Patch draw makes it, as before), only a file's colour
+  (`_lbnFileColsOpen`); `_lbnAutoB` just pushes; `_lbnMoveSrc` returns; `_lbfNewSource` names + ADD SOURCE after the place it lands
+  (the end of the order: SOURCE n = raw length + 1). getProjectState and the browser draft carry no ioNums (an ioNums a file carries is
+  not read). Kept (H2): the number box shown on every card; the Look Book's I/O Reference prints `_lbnSrcNo` (now the order number:
+  r16lj/fix printed a running count of the printed rows, so an older show with an unprinted I/O-only B differs there, OCV2 LOGO Source
+  3 vs 2); everything else of r16lm. The code of the number features stays behind the switch for a later round. Help: the I/O Patch
+  Numbers paragraph, the + Add source lines, the Video Presets number box and file lines, Wire's card line. Checks: removed VF2, VF3,
+  VF4 (typed numbers), VG1, VG2 (fix3's open / session B numbering); renamed RH1-RH4 (the fix round's RF1 / RF6 / RF7 / RF18 back to
+  r16lj/fix's expectations), RH5-RH9 (VF1, VF5, VF14, VD8, VD11); new VH1-VH4 (files by order + no ioNums saved, the read-only number
+  box on every card kind and page, an older show opened as r16lj/fix, a session B right under its A); snapshots unchanged.
 - Declined by the owner, do not resurface: mask shapes, anchor points, hardware profiles, canvas/WebGL renderer,
   interpolation filter toggles, upscale-factor notes, per-layer "sharp pixels", any licence mention.
 
