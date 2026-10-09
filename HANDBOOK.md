@@ -79,7 +79,7 @@ anchor on the function name and replace the first occurrence after it, never all
   on their own; editing P01 afterwards does not reach back. Destination name / colour edited on P01 = show-wide; on any
   other preset = that preset's override. The four Modifier switches (AOI Overlays, Blend Zones, Dead Space, Free Position)
   are NOT per preset and not in the show file: one view setting for the whole program on this computer
-  (`localStorage lookbook_adv_settings`, since 2026-06-02). The owner believes they follow P01 per preset: that would be a
+  (`localStorage lookbook_adv_settings`, since 2026-06-02; kept between launches since 16lh-mods). The owner believes they follow P01 per preset: that would be a
   NEW feature (decision pending), say so before building anything on that assumption.
 - **Why Simple and Advanced exist** (owner, 2026-09-21; keep every change inside this idea). Simple is PRE-BUILT from the
   Video Presets page, for smaller shows and for a show caller or producer who does not know the hardware. Advanced is for
@@ -153,8 +153,9 @@ anchor on the function name and replace the first occurrence after it, never all
   (`.lb-cal-whole`) applies only under `(pointer: coarse) and (hover: none)`: a narrow mouse window is `is-mobile` too and keeps typing.
 - **The Modifiers menu** (AOI Overlays, Blend Zones, Dead Space, Free Position, Fit Canvas) opens from the MODIFIERS button
   on each preset tile only. The status-bar button that also opened it is now a greyed-out **Educator** placeholder
-  (`#tb-educator`, disabled) for a future build. The switches are one session-wide view state: not per preset, not in the
-  show file, all OFF at every launch (`loadAdvSettings`, a deliberate 2026-06-02 decision).
+  (`#tb-educator`, disabled) for a future build. The switches are one view state for the whole app on this computer: not per
+  preset, not in the show file, kept between launches and through New Show / opening a show (16lh-mods, Omar 2026-10-08 "Remember all
+  Modifiers"; until then `loadAdvSettings` turned them all OFF at every launch, a 2026-06-02 decision). The phone still starts them off.
 - **Dead Space feet: 16 PPI by default, 1 foot = 192 px** (owner 2026-09-21: the most common LED tile is 192 px per foot;
   it was 96 PPI / 1152 px). `_PPI`, the `setA11yPPI` fallback, `resetA11y` and the Help text all say 16 / 192. A PPI the
   user stored (`localStorage lookbook_a11y_settings`, `s.ppi`) is KEPT by `_loadPPI`: never migrate it. The left / right
@@ -184,6 +185,32 @@ anchor on the function name and replace the first occurrence after it, never all
   px at rungs 0-4 (the 660 floor is `renderFullscreen`'s `tileW = max(640, fs-viewport.clientWidth - 52)` plus the
   tile's padding). `fsFitScreen` then re-fits. On Simple the row is min-width driven and does not move at all.
   The patch is CSS + `_lbnSync` only — `_rcPresetRow` is byte-for-byte unchanged, so no export or preset card can drift.
+- **16lh-fit** (r16lp F1, Omar 2026-10-08: "the whole point in Video Preset is i can see what the whole preset looks like ... i always want
+  to ideally see the full preset in view"; his answer "Whole preset in view"; on top of the v0.8.3 page ab6a9a0d; search `16lh-fit`).
+  Simple's `vMetrics()` returns `sc = min(scByW, scByH)`: scByW is 16iq's `(aw-56)/canvasW` (the canvas fills the width), scByH makes ONE
+  tile (header + canvas + AUX band + AUX pills) fit `#canvas-area`'s visible height less its padding and a tile's 12 px bottom margin
+  (so one tile never scrolls). It REVERSES 16iq (2026-09-15, "fill left to right") where the two conflict, and brings back the
+  2026-06-15 intent with REAL heights instead of the old 96 px / 1.55 guess: `_wpfMeasure` reads every tile just drawn: a = row height -
+  canvas height - AUX boxes (what does not scale: header, borders, paddings, the pills, the band's gaps), k = AUX boxes / sc (the boxes
+  are half a destination, so they scale; one wrapped line = its tallest box); the tallest tile decides. `renderCanvas` → `_wpfDraw`
+  draws, measures and draws again until the scale settles (a few passes at most, before paint); `_wpfFit.lim` remembers per area the
+  smallest scale that ran over and the largest that fitted (the AUX band can wrap onto one more line than the model at a boundary, more
+  so under the 80 px canvas-width floor) and tries half way between them, so the result always fits when any tried scale fitted and
+  does not flicker between draws. The scale never goes under a 40 px tall canvas (the canvas box's own floor): a page too short even
+  for that (in the gate's 1440 x 813 page, the panel at 480 px leaves 92 px for a 136 px header + pills) scrolls as before.
+  `vMetrics` then returns EXACTLY the drawn scale (`_wpfFit.drawn`, keyed by area width / height and canvas size): the destination drag
+  (sc passed at mousedown), `startResize`'s `_vmLock` and the layer drag (the box's drawn size) all map the pointer as before. A narrower
+  canvas sits centred by inline `margin-left` on `.screens-visual` and `.dsm-visual-row`, and the tile keeps its 16iq width (inline
+  `min-width`), so the header, `_lbnSync`'s ladder and the Actions place are exactly as before. While `_vmLock` or `_homeDragSafety` is
+  held the centring is frozen (a canvas that grows during the drag grows to the right, the handle stays under the pointer); one re-fit
+  follows the release. A ResizeObserver on `#canvas-area` (`_wpfWatch`) re-fits when the area changes size without a draw: the table
+  panel animates its height 0.2 s after Collapse / Expand and a splitter drag (the old `render()` calls read the height mid-animation).
+  A re-fit at another scale keeps the tile that was at the top of a scrolled area at the top (`lastSc`; the tiles now change height
+  with the area, so the same scrollTop would show another preset).
+  Not changed: the Advanced page (16ir `fsFitScreen`), the phone (`is-mobile` keeps 16iq exactly; frozen), the Look Book (its own `sc`),
+  `_rcPresetRow`, renderDSMVisual. Known and left alone (not 16lh-fit): a FAST splitter drag released at once snaps back, because
+  `startPanelResize`'s up() snaps on `offsetHeight` read mid-animation (v0.8.3 does the same). Help: the Canvas row says how a tile is
+  sized. Checks: new F1-1 .. F1-4. Snapshots unchanged.
 - **The layer strip and its ghost view (round 16ks, owner decision 10).** Every preset header (`_rcPresetRow`, so Simple and the Advanced tile)
   carries one pill between Notes and Actions: BG, L1 … Ln (`getLayerNums`, the table's L columns) for the destination picked in THAT preset
   (`_lsPicked`: `selLayer`, else an open `#layer-panel`, else `sel`). Amber = assigned, grey = empty, slow pulse = the box the user is on. A filled Ln
@@ -295,10 +322,11 @@ anchor on the function name and replace the first occurrence after it, never all
   The gear menu on a preset tile is **Modifiers** (renamed 2026-09-21; the status-bar copy of it became the greyed-out Educator placeholder the same day). Code names keep `adv` on
   purpose: `toggleAdvancedMenu`, `closeAdvancedMenu`, `actions.advancedMenu`, `toggleAdvFeature`, `#adv-menu`, `#tb-adv`,
   `.adv-item`, `data-adv`, `adv-hide-*`, `adv-free-position`, `lookbook_adv_settings`. The four switches are body classes:
-  one state for every preset, per computer session (cleared on every page load and on New Show), never in the show file,
-  no undo step. Fit Canvas is the only item that edits the show (one undo step; tile = that preset, Advanced page = the
+  one state for every preset on this computer (kept between launches and through New Show since 16lh-mods; the phone clears it on
+  every load and on New Show as before), never in the show file, no undo step. Fit Canvas is the only item that edits the show (one undo step; tile = that preset, Advanced page = the
   open preset, status bar = every preset).
-- Exports list the BG like a layer (`BG: name (detail)`); a BG whose picture is a library clip resolves to that clip.
+- Exports list the BG like a layer (`BG: name (detail)`); a BG whose picture is a library clip resolves to that clip. A BG WITHOUT a name
+  prints what the app shows (16lh-bgtxt): `Image` for a picture, `Color #rrggbb` for a colour, the dash when none (`_bgPrintName`).
 - I/O PATCH NOTES ARE PER ROW (owner decision 30, 2026-09-22). A source row shows and edits `sources[].notes` (`_sysGetSourceMeta` /
   `_sysSetSourceMeta`), a destination row `screens[].notes`, an AUX row `dsms[].notes`, in the Simple patch, the Video I-O Excel tab and
   the Look Book's Sources page alike (Advanced page 1 always held the source's own note). The old rule that a source which is a BG
@@ -1180,6 +1208,49 @@ anchor on the function name and replace the first occurrence after it, never all
   and older checks turn members through it, and D4's pause / resume still handles a member turned elsewhere (the phone, a show).
   Every real way to change the combined state while the window is open (Undo, the pop-up, a canvas press) closes the window first; the
   sync is a safety net. Help: the One combined screen row says Rotation is off. Checks: new VR1. Snapshots unchanged.
+- **16lh-mods** (r16lp F2, 2026-10-08, on top of the v0.8.3 page ab6a9a0d; search `16lh-mods`). Omar: "when i use blend mode ... and
+  leave the program and come back ... the blend zone is tunred off ? why is that?"; his answer "Remember all Modifiers". The four
+  Modifiers switches (AOI Overlays, Blend Zones, Dead Space, Free Position) stay the way the user left them, on this computer:
+  `loadAdvSettings` puts `localStorage lookbook_adv_settings` back at load (before the first draw) through `_advApply` (body classes,
+  `_advReflectMenu`, `_advReflectBtn`), and New Show no longer clears it; this replaces the 2026-06-02 rule "a fresh start every time
+  the app launches". Still NOT in the show file, never an Undo step, never the Save light. The menu ticks and a flip read this window's
+  body classes (`_advNow` via `_advCur`), and a `storage` listener applies a flip made in another window (the desktop show windows
+  share one localStorage), so every open window and the next launch agree. The phone (is-mobile, frozen) keeps the old rule exactly
+  (all off at every load and on New Show, the key cleared, its menu reading the key); `_advPhone` repeats initMobileShell's phone test
+  because `detectMobile` runs after `loadAdvSettings` at load, so a desktop browser window 768 px wide or less at load counts as the phone
+  and forgets the switches as before. `_advReflectBtn` still marks `#tb-adv`, gone since 16kq: there is no toolbar mark, only the menu
+  tick. Texts: the MODIFIERS tooltip and Help (Turn it on row). Checks: new F2-1 .. F2-5 (an iframe of the page = the restarted app /
+  a second window). Snapshots unchanged.
+- **16lh-bgtxt** (r16lp F3, 2026-10-08, on top of the v0.8.3 page ab6a9a0d; search `16lh-bgtxt`). Omar: "the back ground image i
+  added ... the look book didnt show any BG information was use, yet the visuals did" (his "Test Blend": PJ 1's BG an uploaded JPEG
+  put straight on the destination, `screen.bg`, no library item, no name). The printed Look Book and the cue-sheet Excel printed only
+  `getBgName` (a NAME), so a picture or a colour without one printed `BG —` / `BG: —` while the canvas, the table ("IMG Image") and the
+  layer strip showed it. Now every BG print goes through `_bgPrintName(p,s)` (after `_bgExportInfo`) = the layer strip's
+  `_lsBgInfo(p,s)` label when it has one: the name, else `Image` (own picture or `screen.bg`), else `Color #rrggbb` (own colour, or the
+  destination's colour when not #1a1a1a), else '' and the caller's dash. Places: the cue-sheet cell's first line (`_doExportExcel`),
+  the Destination Breakdown column's BG row (`breakdownColsHtml`), Show Combinations' `BG:` line, and `breakdownRows` (built, not
+  printed). A blended slave keeps `Blended with <master>` (Excel, Breakdown); its Show Combinations cell is EXACTLY as before
+  (`getBgName`, its own BG is hidden). Not changed: `getBgName` (sources, the pre-export check, Send, the smoke layout read the NAME),
+  `_bgExportInfo` (name / detail / css), the CSV exporter (no button), Wire / I/O exports, the phone. Known: `_lsBgInfo` puts a
+  picture before a colour, the canvas an own colour before `screen.bg` (Kenny B P02 PJ 2: dark colour shown, "Image" in the table,
+  the strip and now the exports; asked). Checks: new F3-1, F3-2. Snapshots unchanged (every example BG is named).
+- **16lh-fix** (r16lp fix step, 2026-10-09, on top of the combined page 9fb34568 = v0.8.3 + 16lh-fit + 16lh-mods + 16lh-bgtxt;
+  search `16lh-fix`). The attacks on the combined page found: D1 (NEW, from 16lh-fit) on a fitted Simple tile a Free Position drag
+  that made the canvas taller re-scaled the tile on every mouse move while the button was held (`_wpfFit.drawn` is keyed by the
+  canvas size, so a taller canvas worked out a new, smaller scale): the box left the pointer (204 / 127 px on a 4 x 1920 show at
+  2000 x 1087), the tile and its header shrank or widened past the area, the tile jumped on release. v0.8.3 never changed the scale
+  for a taller canvas. Now `_wpfScale` returns, while a destination drag is held, the scale the tile was drawn with when the press
+  began (`_wpfHoldSc`, kept in `_wpfFit.hold` with that drag's `_homeDragSafety` object, dropped by the first draw with no drag
+  held), and `_wpfCentre` keeps the tile's width under it (`_wpfHoldOn`) also when the canvas filled the width (a canvas narrowed
+  at the kept scale leaves room at its right instead of re-scaling under the pointer, which v0.8.3 did). Only a canvas grown wider
+  than the tile's room (its 16iq width less the centring) shrinks the scale, as 16iq did. One re-fit follows the release. The
+  corner handle (`_vmLock`) is unchanged. D2 (pre-existing) `_rcScreenBox`'s BG tag put the BG name into the HTML unescaped (also
+  in the Look Book's canvas pictures, Advanced and the phone, which all draw `_rcScreenBox`): text in < > vanished and markup in a
+  name ran; now `_esc(bgn)`. D3 (pre-existing) the table's BG / Color cell put its tooltip (it holds the BG name) unescaped into
+  title / aria-label and the swatch's 3-letter label into the button: a " in a name spilled attribute text into the cell; now
+  `_esc`. Not changed: D4 (pre-existing) a Look Book export writes the Wire metadata (`sources`) and the undo safety net records it
+  as a step, so the first Cmd+Z after an export does nothing visible (reported, left for its own round). Checks: new 16lh-fix D1,
+  D2, D3. Snapshots unchanged (the examples' BG names hold no character `_esc` changes).
 - Declined by the owner, do not resurface: mask shapes, anchor points, hardware profiles, canvas/WebGL renderer,
   interpolation filter toggles, upscale-factor notes, per-layer "sharp pixels", any licence mention.
 

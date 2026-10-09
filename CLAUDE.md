@@ -83,6 +83,8 @@ or a mutation manually poking the DOM).
   point for `p.positions[sid]`; accepts `(p,sid,x,y)` or `(p,sid,{x,y})`).
 - Getters resolve per-preset override → global: `getScreenName`, `getDSMName`,
   `getDSMType`, etc. Resolution stays global per DSM; only name/type override.
+- What an export PRINTS for a destination's BG is `_bgPrintName(p,s)` (16lh-bgtxt: the name, else Image, else Color #rrggbb, the
+  layer strip's `_lsBgInfo` label), never `getBgName` alone: that one is the NAME (sources, checks).
 - Persistence: `getProjectState()` (`.avlb`, **schema v3**) → `saveProject` /
   `loadProjectFile`→`_loadProjectFileOnLoad`; autosave (30s) + undo/redo
   (`pushUndo`/`doUndo`/`doRedo`, JSON snapshots of DATA: Undo / Redo never write VIEW state (Simple / Advanced,
@@ -96,7 +98,9 @@ or a mutation manually poking the DOM).
 - The view calls `actions.X(...)`; each action does `[pushUndo if needed] →
   data setter/mutator → scheduleRender()`. One place to find/change an operation.
   Covers toolbar, preset-row, DSM toolbar, screen-panel show-mode, Modifiers-menu
-  toggles (`toggleAdvFeature`; the menu read "Advanced" on screen until 2026-09-21, code names keep `adv`), DSM-panel content. (Layer-properties panel buttons are wired via
+  toggles (`toggleAdvFeature`; the menu read "Advanced" on screen until 2026-09-21, code names keep `adv`; the four switches are
+  remembered on this computer between launches since 16lh-mods: `loadAdvSettings` / `_advApply`, never in the show file, the phone
+  still starts them off), DSM-panel content. (Layer-properties panel buttons are wired via
   `addEventListener` in `wireEvents` — already decoupled; a valid alternative.)
 - Redraw is ONE batched path: **`scheduleRender()`** (rAF-coalesced) calls
   `render()` and resyncs whichever overlay is open (`_sysRefreshIfOpen` +
@@ -231,7 +235,7 @@ its line at Help > Accessibility 90 % / 115 % (`_wtlNmZoomOK`, a hidden span wit
 Details: HANDBOOK section 5
 (`16ky-r3`, `16kz-answers`, `16kz-refresh`, `16kz-fix`, `16la-wire-mv`, `16la-ip`, `16la-colour-mv`, `16la-fix`, `16lb-simple`,
 `16lc-fixes`, `16ld-port`, `16ld-tools`, `16ld-fix`, `16ld-fix2`, `16lc-picsize`, `16lc-fix`, `16lc-names`, `16lc-midword`,
-`16lc-midword-fix`, `16lc-onlyword`, `16lc-onlyword-fix`, `16lc-onlyword-fix2`, `16lc-vpcards`, `16lc-vpvideo`, `16lc-vpaux`, `16lc-vpfinish`, `16lc-vpcards-fix`, `16lc-vpcards-fix2`, `16lc-vpcards-fix3`, `16lc-vpcards-fix4`, `16lg-blend`, `16lg-blend-fix`, `16lg-blend-fix2`).
+`16lc-midword-fix`, `16lc-onlyword`, `16lc-onlyword-fix`, `16lc-onlyword-fix2`, `16lc-vpcards`, `16lc-vpvideo`, `16lc-vpaux`, `16lc-vpfinish`, `16lc-vpcards-fix`, `16lc-vpcards-fix2`, `16lc-vpcards-fix3`, `16lc-vpcards-fix4`, `16lg-blend`, `16lg-blend-fix`, `16lg-blend-fix2`, `16lh-fit`, `16lh-mods`, `16lh-bgtxt`, `16lh-fix`).
 
 **One card (16lc-vpcards, 2026-10-06)** — the I/O Patch > Simple card (`_iogCardHTML` + `_iogSrcObj` / `_iogOutObj`) is also the card of
 Wire's left panel (desktop; the phone keeps Wire's own) and of the Video Presets > Advanced left panel (Wire > Simple's sections:
@@ -299,6 +303,13 @@ Never add a time-based "ignore clicks for N ms": the phone gate taps the dialog'
 
 **VIEW layer — `render*` assemblers + `_rc/_rf/_fs/_lp` helpers + HTML templates**
 - `renderCanvas()` → `_rcChip`/`_rcAoiOverlay`/`_rcScreenBox`/`_rcOverlapVis`/`_rcDeadVis`
+  Simple's scale (16lh-fit): `vMetrics()` → `_wpfScale` = min(width fit, height fit from the tiles' MEASURED heights); `renderCanvas` →
+  `_wpfDraw` draws, measures, draws again until it settles, then `vMetrics` returns exactly the drawn scale. Anything that sizes or
+  maps the Simple canvas must take its scale from `vMetrics()` (never recompute `(aw-56)/canvasW`) and must not resize `#canvas-area`
+  from inside it (the ResizeObserver `_wpfWatch` re-fits on its size). HANDBOOK › 16lh-fit.
+  16lh-fix: a held destination drag keeps the scale and the tile width it began with (`_wpfHoldSc` / `_wpfHoldOn`, keyed by the
+  drag's `_homeDragSafety` object); only a canvas grown wider than the tile's room shrinks it. Every name drawn into HTML or an
+  attribute goes through `_esc` (the canvas BG tag `_rcScreenBox` bgBadge and the table's BG cell did not). HANDBOOK › 16lh-fix.
 - Move arrows (`_renderMoveSymbol`, blend-arrows 2026-09-21): a `.move-symbol` overlay inside the PICKED `.screen-box`. For a blend
   group (the block from `_lbMvBlocks`) the ◀ lives in its OWN `.move-symbol` overlay inside the group's left-most box and the ▶
   inside the right-most box (never offset out of the picked box: a destination removed from the preset is a ghost box that

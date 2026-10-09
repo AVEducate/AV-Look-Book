@@ -4141,6 +4141,124 @@
     toggleAdvFeature('blend'); if (was) toggleAdvFeature('blend'); closeAdvancedMenu(); await wait(150);
     return is(out, [true, true, true, true, 0, true, true, true], 'menu closes on a pick / tick shows from another tile / blend view on / no status-bar Modifiers button / undo steps / dirty unchanged / show unchanged / kept in this browser only');
   });
+  // ═══ 16lh-mods (r16lp F2, Omar 2026-10-08 "Remember all Modifiers"): NEW CHECKS F2-1 … F2-5 ═════════════════════════════════
+  // An app restart is a fresh page of the app: a hidden 1440 x 900 iframe of this same page (same origin, so it shares this page's
+  // localStorage, as the next launch of the desktop app shares its data folder). Every stored key is put back exactly afterwards (the
+  // restarted page may answer this page's draft question or write its own), and this page's switches go back the way they were.
+  const F2F = ['aoi', 'blend', 'dead', 'freePos'];
+  const f2Cls = D => { const c = D.body.classList; return F2F.map(f => f === 'freePos' ? c.contains('adv-free-position') : !c.contains('adv-hide-' + f)); };
+  const f2Ticks = D => F2F.map(f => { const i = D.querySelector('#adv-menu .adv-item[data-adv="' + f + '"]'); return !!i && i.classList.contains('on') && ((i.querySelector('.chk') || {}).textContent === '✓'); });
+  const f2Store = () => { const o = {}; for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); o[k] = localStorage.getItem(k); } return o; };
+  const f2PutBack = o => { try { localStorage.clear(); Object.keys(o).forEach(k => localStorage.setItem(k, o[k])); } catch (e) {} };
+  /* the user's way in document D: the first preset tile's MODIFIERS, the tick looked at, the switch clicked only when it is not as wanted */
+  const f2Menu = async (D, f, on) => {
+    const b = [...D.querySelectorAll('#canvas-area .preset-row button[onclick^="toggleAdvancedMenu"]')].find(x => x.getBoundingClientRect().width > 0); if (!b) return false;
+    b.click(); await wait(150); const it = D.querySelector('#adv-menu.open .adv-item[data-adv="' + f + '"]'); if (!it) return false;
+    if (it.classList.contains('on') !== on) it.click(); else D.defaultView.closeAdvancedMenu(); await wait(150); return true; };
+  const f2Set = async (D, want) => { for (let i = 0; i < 4; i++) if (!(await f2Menu(D, F2F[i], want[i]))) return false; return true; };
+  /* this page put back EXACTLY after a check: every stored key as it was, the four body classes as they were, the menu ticks redrawn
+     (not through the menu: on the v0.8.3 page the ticks read the stored value, so a menu walk after the stored value was put back could
+     leave a class on, and the checks after these would then run with a switch on) */
+  const f2Back = (keep, was) => { f2PutBack(keep); const c = document.body.classList;
+    F2F.forEach((f, i) => { if (f === 'freePos') c.toggle('adv-free-position', was[i]); else c.toggle('adv-hide-' + f, !was[i]); });
+    closeAdvancedMenu(); _advReflectMenu(); _advReflectBtn(); scheduleRender(); };
+  /* the restarted app: a new page of the app, loaded and settled; its "Restore Draft?" (this page's draft) answered Start fresh */
+  const f2Boot = async () => {
+    const fr = document.createElement('iframe'); fr.setAttribute('aria-hidden', 'true'); fr.tabIndex = -1;
+    fr.style.cssText = 'position:fixed;left:-30000px;top:0;width:1440px;height:900px;border:0;pointer-events:none';
+    fr.src = location.pathname + '?f2restart=' + Date.now(); document.body.appendChild(fr);
+    let w = null; for (let i = 0; i < 300 && !w; i++) { await wait(100); try { const x = fr.contentWindow; if (x && x.document.readyState === 'complete' && typeof x.lbOpenExample === 'function') w = x; } catch (e) {} }
+    if (!w) { fr.remove(); return null; }
+    await wait(700); const d = w.document, o = d.getElementById('dlg-overlay');
+    if (o && o.classList.contains('show') && /restore draft/i.test(o.textContent || '')) { d.getElementById('dlg-cancel').click(); await wait(400); }
+    return { fr, w, d }; };
+  /* Town Hall in the restarted app, from its empty page: the link, the card, its note answered */
+  const f2Open = async r => { const d = r.d;
+    const link = [...d.querySelectorAll('a,button,span,div')].filter(x => x.children.length === 0 && /or open an example show/i.test(x.textContent || '') && x.getBoundingClientRect().width > 0)[0];
+    if (link) { link.click(); await wait(500); }
+    const card = [...d.querySelectorAll('#qs-examples .qs-ex')].find(e => /Town Hall/.test(e.textContent)); if (!card) return false; card.click(); await wait(1600);
+    for (let i = 0; i < 3; i++) { const o = d.getElementById('dlg-overlay'); if (!(o && o.classList.contains('show'))) break; d.getElementById('dlg-confirm').click(); await wait(300); }
+    return !!d.querySelector('#canvas-area .preset-row .screen-box'); };
+  await check('Modifiers 16lh-mods F2-1 (Omar 2026-10-08 "Remember all Modifiers"): every switch comes back the way it was left after an app restart, in the restarted app\'s body classes and its menu ticks: all four on, a mix (AOI Overlays + Dead Space on, Blend Zones + Free Position off) and all off', async () => {
+    const was = f2Cls(document), keep = f2Store(), out = [], WANT = [[true, true, true, true], [true, false, true, false], [false, false, false, false]];
+    try {
+      await restore();
+      for (const want of WANT) {
+        if (!(await f2Set(document, want))) return 'the MODIFIERS menu could not be reached';
+        const here = f2Cls(document), k = f2Store(); const r = await f2Boot(); if (!r) return 'the restarted app did not load';
+        out.push([here, f2Cls(r.d), f2Ticks(r.d)]); r.fr.remove(); f2PutBack(k); await wait(150);
+      }
+    } finally { await restore(); f2Back(keep, was); await wait(200); }
+    return is(out, WANT.map(x => [x, x, x]), 'per restart: this page / the restarted app\'s classes / its ticks (AOI, Blend, Dead, Free)');
+  });
+  await check('Modifiers 16lh-mods F2-2: in the restarted app the switches that came back drive what reads them and touch nothing in the show (Town Hall opened there): all four on = a Free Position drag moves OVERFLOW right and down, its gap read-out shows, a picked destination shows its AOI button; Blend Zones alone = the drag moves it sideways only, no read-out, no AOI button; all off = the drag does nothing; the show opens clean with no Undo step and the same positions and canvas each time', async () => {
+    const was = f2Cls(document), keep = f2Store(), out = [];
+    try {
+      await restore();
+      for (const want of [[true, true, true, true], [false, true, false, false], [false, false, false, false]]) {
+        if (!(await f2Set(document, want))) return 'the MODIFIERS menu could not be reached';
+        const k = f2Store(); const r = await f2Boot(); if (!r) return 'the restarted app did not load';
+        try {
+          if (!(await f2Open(r))) return 'Town Hall did not open in the restarted app';
+          /* the restarted app's own globals (let / const ones are not window properties): read through its own eval */
+          const w = r.w, d = r.d, E = x => w.eval(x), sid = n => E('(screens.find(s => s.name === ' + JSON.stringify(n) + ') || {}).id'), pos = n => E('Object.assign({}, presets[0].positions[' + JSON.stringify(sid(n)) + '])');
+          const file = [!!E('_isDirty'), E('_undoStack.length'), E('JSON.stringify(presets.map(p => p.positions || null))'), d.getElementById('cv-w').value + 'x' + d.getElementById('cv-h').value];
+          const box = n => d.querySelector('#canvas-area .preset-row .screen-box[data-sid="' + sid(n) + '"]');
+          const ev = (el, type, x, y) => el.dispatchEvent(new w.MouseEvent(type, { bubbles: true, cancelable: true, clientX: x, clientY: y, button: 0, buttons: (type === 'mouseup' || type === 'click') ? 0 : 1, view: w }));
+          const b = box('OVERFLOW'); if (!b) return 'no OVERFLOW box in the restarted app';
+          const rc = b.getBoundingClientRect(), x0 = rc.left + rc.width / 2, y0 = rc.top + rc.height * 0.7, p0 = pos('OVERFLOW');
+          ev(b, 'mousedown', x0, y0); for (let i = 1; i <= 6; i++) { ev(w, 'mousemove', x0 + i * 10, y0 + i * 8); await wait(30); } ev(w, 'mouseup', x0 + 60, y0 + 48); await wait(450);
+          for (let i = 0; i < 3; i++) { const o = d.getElementById('dlg-overlay'); if (!(o && o.classList.contains('show'))) break; d.getElementById('dlg-cancel').click(); await wait(300); }
+          const p1 = pos('OVERFLOW'); const moved = [p1.x > p0.x, p1.y > p0.y];
+          const dv = d.querySelector('#canvas-area .preset-row .dead-vis'); const readout = !!dv && w.getComputedStyle(dv).display !== 'none';
+          const m = box('MAIN LED'); const mr = m.getBoundingClientRect(); ['mousedown', 'mouseup', 'click'].forEach(t => ev(m, t, mr.left + 30, mr.bottom - 20)); await wait(350);
+          const aa = d.querySelector('#canvas-area .screen-box.sel .aoi-actions'); const aoiBtn = !!aa && w.getComputedStyle(aa).display !== 'none';
+          out.push([moved, readout, aoiBtn, file]);
+        } finally { r.fr.remove(); f2PutBack(k); await wait(150); }
+      }
+    } finally { await restore(); f2Back(keep, was); await wait(200); }
+    const files = out.map(o => JSON.stringify(o[3])); const same = files.every(f => f === files[0]) && out[0][3][0] === false && out[0][3][1] === 0;
+    return is([out.map(o => o.slice(0, 3)), same], [[[[true, true], true, true], [[true, false], false, false], [[false, false], false, false]], true], 'per restart (all on / Blend Zones only / all off): [moved right, moved down] / gap read-out / AOI button; the show the same, clean and with no Undo step each time');
+  });
+  await check('Modifiers 16lh-mods F2-3: New Show, an example, a show file and a restored draft keep the switches in the same window (before: New Show turned every switch off): with AOI Overlays + Blend Zones on, New (answered) opens Quick Setup with both still on, ticked and kept on this computer, and Town Hall from Quick Setup, a show file (Load) and Restore Draft keep them too', async () => {
+    const KEY = 'avlb_autosave'; const was = f2Cls(document), keep = f2Store(), want = [true, true, false, false], out = [];
+    const now = () => [f2Cls(document), f2Ticks(document), JSON.stringify(Object.keys(JSON.parse(localStorage.getItem('lookbook_adv_settings') || '{}')).sort())];
+    try {
+      await restore(); if (!(await f2Set(document, want))) return 'the MODIFIERS menu could not be reached';
+      newShow(); await wait(450); okDialogs(); await wait(700); out.push(['New', _qsUp()].concat(now()));
+      const card = $$('#qs-examples .qs-ex').find(e => /Town Hall/.test(e.textContent)); if (!card) return 'no Town Hall card in Quick Setup';
+      card.click(); await wait(1600); okDialogs(); await wait(300); out.push(['example', $('#show-name').value].concat(now()));
+      loadProjectFile({ files: [new File([JSON.stringify(Object.assign(JSON.parse(BASE), { showName: 'F2 FILE' }))], 'f2.avlb', { type: 'application/json' })], value: '' }); await wait(1000); okDialogs(); await wait(400); okDialogs();
+      out.push(['file', $('#show-name').value].concat(now()));
+      const st = JSON.parse(BASE); st.showName = 'F2 DRAFT'; st._savedAt = Date.now(); localStorage.setItem(KEY, JSON.stringify(st));
+      restoreAutoSave(); await wait(300); if (dlgOpen() && /Restore Draft/i.test(dialogText())) $('#dlg-confirm').click(); await wait(900);
+      out.push(['draft', $('#show-name').value].concat(now()));
+    } finally { await restore(); f2Back(keep, was); await wait(200); }
+    const T = [true, true, false, false], S = '["aoi","blend"]';
+    return is(out, [['New', true, T, T, S], ['example', 'Town Hall', T, T, S], ['file', 'F2 FILE', T, T, S], ['draft', 'F2 DRAFT', T, T, S]], 'after New / an example / a file / Restore Draft: [what, Quick Setup up or the show name, classes, ticks, kept on this computer]');
+  });
+  await check('Modifiers 16lh-mods F2-4: the MODIFIERS tooltip and Help (Preset tile › Modifiers › Turn it on) say a switch stays the way you left it on this computer and is not saved in the show; neither says it starts off', async () => {
+    await restore(); const b = $$('#canvas-area .preset-row button[onclick^="toggleAdvancedMenu"]')[0]; const tip = b ? (b.getAttribute('title') || '') : '';
+    const h = (($('#help-overlay') || {}).textContent || '').replace(/\s+/g, ' '); const i = h.indexOf('to switch on blend zones'); const seg = i < 0 ? '' : h.slice(i, i + 360);
+    return is([!!b, /stays the way you left it on this computer/.test(tip), /not saved in the show/.test(tip), /starts off/.test(tip), i >= 0, /stays the way you left it on this computer: closing the app, New Show and opening a show keep it\. It is not saved in the show\./.test(seg), /starts off/.test(seg)],
+      [true, true, true, false, true, true, false], 'tile button / tooltip: stays as left, not saved, starts off / Help row found / Help: stays as left + not saved / Help: starts off');
+  });
+  await check('Modifiers 16lh-mods F2-5: a switch flipped in another window of the app (the desktop app\'s show windows share this computer\'s settings) is followed here at once: Blend Zones off and Free Position on in a second window show the same on this page (its body classes and its menu ticks), and flipping them back there brings this page back', async () => {
+    const was = f2Cls(document), keep = f2Store(), out = [];
+    try {
+      await restore(); if (!(await f2Set(document, [false, true, false, false]))) return 'the MODIFIERS menu could not be reached';
+      const r = await f2Boot(); if (!r) return 'the second window did not load';
+      try {
+        if (!(await f2Open(r))) return 'Town Hall did not open in the second window';
+        if (!(await f2Menu(r.d, 'blend', false)) || !(await f2Menu(r.d, 'freePos', true))) return 'the second window\'s MODIFIERS menu could not be reached'; await wait(300);
+        out.push([f2Cls(r.d), f2Cls(document), f2Ticks(document)]);
+        await f2Menu(r.d, 'blend', true); await f2Menu(r.d, 'freePos', false); await wait(300);
+        out.push([f2Cls(r.d), f2Cls(document), f2Ticks(document)]);
+      } finally { r.fr.remove(); }
+    } finally { await restore(); f2Back(keep, was); await wait(200); }
+    const A = [false, false, false, true], Bk = [false, true, false, false];
+    return is(out, [[A, A, A], [Bk, Bk, Bk]], 'after each pair of flips in the second window: its classes / this page\'s classes / this page\'s ticks');
+  });
   await check('Destination drag ends when the mouse-up is lost (the button was released outside the window)', async () => {
     const was = cvAdv('freePos', true);
     await cvLay([0, 0], [1920, 0], [3840, 0]);
@@ -14054,6 +14172,266 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
     } catch (e) { return 'threw: ' + e.message; }
     finally { try { closeScreenPanel(); } catch (e) {} await restore(); }
     return is(out, want, 'the entry on / D1 window [rotation box, copy, paste, reset greyed; the tooltip] / D2 window / refused [after paste + reset, typed D1, typed D2, setRotationSmart, entry on, Undo steps] / OFF window / OFF [turned 180, Undo steps, entry, back] / ON [entry, window] / D3 [window, turned, D1 entry, back] / Break Blend [entry, D1 window, D2 window, turned, back] / P02 combined, P01 apart [P02 entry, P01 entry, P01 box greyed, tip names P02, typed 90 on P01, P02 rotation] / Help');
+  });
+  // ── 16lh-fit (r16lp F1, Omar 2026-10-08 ~22:50: "i always want to ideally see the full preset in view"; his answer: "Whole preset in view"):
+  //    F1-1 .. F1-4 FAIL on the v0.8.3 page (ab6a9a0d) and PASS after. Helpers prefixed _whp. The table panel is moved by its grip (mousedown,
+  //    window mousemove, a hold for its 0.2 s height animation, mouseup) and folded by its Collapse button; it is left expanded at 220 px.
+  const _whpGeo = () => { const a = $('#canvas-area'), cs = getComputedStyle(a), room = a.clientHeight - parseFloat(cs.paddingTop) - parseFloat(cs.paddingBottom);
+    const rows = $$(':scope > .preset-row', a).filter(r => r.offsetHeight > 0 && $(':scope > .screens-visual', r)); const r0 = rows[0]; if (!r0) return null;
+    const cw = parseInt($('#cv-w').value) || 1, aw = a.clientWidth, rr = r0.getBoundingClientRect(), rcs = getComputedStyle(r0), sv = $(':scope > .screens-visual', r0), inner = sv.firstElementChild, s = sv.getBoundingClientRect(), band = $(':scope > .dsm-visual-row', r0);
+    const L = s.left - (rr.left + parseFloat(rcs.borderLeftWidth)), R = (rr.right - parseFloat(rcs.borderRightWidth)) - s.right, maxH = Math.max(...rows.map(r => r.offsetHeight));
+    return { room, maxH, fits: maxH <= room, fills: Math.abs(inner.offsetWidth - (aw - 56)) <= 1, tight: maxH >= room - 20, centred: Math.abs(L - R) <= 1.01, tile: Math.abs(r0.offsetWidth - (aw - 32)) <= 1,
+      band: band ? Math.abs(band.getBoundingClientRect().left - s.left) <= 0.6 : true, scOk: Math.abs(vMetrics().sc * cw - inner.offsetWidth) <= 1.01, canvasH: inner.offsetHeight, k: inner.offsetWidth / cw }; };
+  const _whpSettle = async () => { await wait(300); for (let i = 0; i < 3; i++) { await new Promise(r => { let n = 0; const f = () => { if (++n >= 8) r(); else requestAnimationFrame(f); }; requestAnimationFrame(f); }); await wait(100); } };   /* frames for the panel's 0.2 s animation, the re-fit after it and the queued draw */
+  const _whpOk = g => g ? [g.fits, g.fills || g.tight, g.centred, g.tile, g.band, g.scOk] : null;
+  const _whpPanel = async h => { const p = $('#table-panel'); if (p.classList.contains('collapsed')) { $('#collapse-btn').click(); await _whpSettle(); }
+    const gr = $('#table-grip'), r = gr.getBoundingClientRect(), x = r.left + 60, y = r.top + r.height / 2, dy = p.offsetHeight - h;
+    cvMouse(gr, 'mousedown', x, y); for (let i = 1; i <= 8; i++) { cvMouse(window, 'mousemove', x, y + dy * i / 8); await wait(30); } await wait(400); cvMouse(window, 'mouseup', x, y + dy); await _whpSettle(); return p.offsetHeight; };
+  const _whpReset = async () => { try { await _whpPanel(220); } catch (e) {} };
+  const _whpBox = (pid, sid) => { const t = $('#canvas-area .preset-row[data-pid="' + pid + '"]'); return t ? $('.screen-box[data-sid="' + sid + '"]', t) : null; };
+  // 16lh-fit F1-1: NEW
+  await check('Video Presets 16lh-fit F1-1 (Omar 2026-10-08: "i always want to ideally see the full preset in view", his answer "Whole preset in view"): Simple sizes a preset tile so its header, canvas and AUX band fit the visible area without scrolling: with the Destination Combinations panel dragged by its grip to 300 px and to 120 px, collapsed and expanded by its button and dragged back to 220 px, every tile fits; the canvas fills the width when that fits, otherwise it uses the height (within 20 px) and sits centred (equal space left and right) in a tile as wide as the area, the AUX band under it; it is drawn at the scale vMetrics gives the drags', async () => {
+    const out = {}, want = {}, okv = [true, true, true, true, true, true];
+    try {
+      await restore(); await wait(200);
+      out.h300 = [await _whpPanel(300)].concat(_whpOk(_whpGeo())); want.h300 = [300].concat(okv);
+      out.h120 = [await _whpPanel(120)].concat(_whpOk(_whpGeo())); want.h120 = [120].concat(okv);
+      $('#collapse-btn').click(); await _whpSettle(); out.collapsed = [$('#table-panel').classList.contains('collapsed')].concat(_whpOk(_whpGeo())); want.collapsed = [true].concat(okv);
+      $('#collapse-btn').click(); await _whpSettle(); out.expanded = [$('#table-panel').classList.contains('collapsed')].concat(_whpOk(_whpGeo())); want.expanded = [false].concat(okv);
+      out.h220 = [await _whpPanel(220)].concat(_whpOk(_whpGeo())); want.h220 = [220].concat(okv);
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { await _whpReset(); await restore(); }
+    return is(out, want, 'panel height (or collapsed), then [every tile fits the visible area, the canvas fills the width or uses the height, centred, the tile as wide as the area, the AUX band under the canvas, the drawn scale = vMetrics] at 300 / 120 / collapsed / expanded (120) / 220');
+  });
+  // 16lh-fit F1-2: NEW
+  await check('Video Presets 16lh-fit F1-2 (SPEC F1: "Nothing else about the row changes (positions, layers, blend overlay, drag, zoom handles, resize lock)"): at the new scale (the panel at 220 px, the canvas shrunk to the height and centred) a destination drag (Blend Zones) keeps the box under the pointer while held and moves it pointer px / scale; a layer chip moved by the pointer lands where it is let go; the corner handle tracks the pointer while held and the width grows pointer px / scale; the red % marker of a blend made by a drag is on top where it is drawn and its double-click opens the blend options', async () => {
+    const out = {}, want = {}; const was = cvAdv('blend', true), wasF = cvAdv('freePos', false);
+    try {
+      await restore(); await _whpPanel(220);
+      const g = _whpGeo(); out.fit = g ? [g.fits, g.tight, !g.fills, g.centred, g.scOk] : null; want.fit = [true, true, true, true, true];
+      const pid = presets[0].id, a = screens[0].id, c = screens[1].id, d = screens[2].id, sw = parseInt(screens[0].w);
+      await cvLay([0, 0], [sw, 0], [2 * sw, 0]); await wait(150);
+      // the destination drag: D3 90 px to the right, held, released
+      let box = _whpBox(pid, d), r = box.getBoundingClientRect(), k = _whpGeo().k, x0 = r.left + r.width / 2, y0 = r.top + r.height * 0.9, l0 = r.left, px0 = presets[0].positions[d].x;
+      cvMouse(box, 'mousedown', x0, y0); for (let i = 1; i <= 6; i++) { cvMouse(window, 'mousemove', x0 + 15 * i, y0, { shiftKey: true }); await wait(30); }
+      out.destHeld = Math.abs(_whpBox(pid, d).getBoundingClientRect().left - (l0 + 90)) <= 1.5; want.destHeld = true;
+      cvMouse(window, 'mouseup', x0 + 90, y0); await wait(400); okDialogs();
+      out.destMoved = Math.abs((presets[0].positions[d].x - px0) * k - 90) <= 1; want.destMoved = true;   /* within one screen pixel (the pointer moves in whole pixels) */
+      // a layer chip of D1 moved 24 / 16 px (Shift: no snap)
+      setL(pid, a, 1, 'GFX 1'); setLayerSize(pid, a, 1, 0.5, 0.5, 0.25, 0.25); render(); await wait(200);
+      const chip = $('.layer-chip[data-lid="1"]', _whpBox(pid, a)); r = chip.getBoundingClientRect(); const cx = r.left + r.width / 2, cy = r.top + r.height / 2, cl = r.left, ct = r.top;
+      cvMouse(chip, 'mousedown', cx, cy, { shiftKey: true }); for (let i = 1; i <= 4; i++) { cvMouse(window, 'mousemove', cx + 6 * i, cy + 4 * i, { shiftKey: true }); await wait(30); }
+      cvMouse(window, 'mouseup', cx + 24, cy + 16, { shiftKey: true }); await wait(400);
+      const rc = $('.layer-chip[data-lid="1"]', _whpBox(pid, a)).getBoundingClientRect(); out.layer = [Math.abs(rc.left - (cl + 24)) <= 1.5, Math.abs(rc.top - (ct + 16)) <= 1.5]; want.layer = [true, true];
+      // the corner handle of D2 (picked first by a click): 40 px to the right, held, released
+      box = _whpBox(pid, c); r = box.getBoundingClientRect(); cvMouse(box, 'mousedown', r.left + r.width * 0.5, r.top + r.height * 0.9); cvMouse(window, 'mouseup', r.left + r.width * 0.5, r.top + r.height * 0.9);
+      box.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, clientX: r.left + r.width * 0.5, clientY: r.top + r.height * 0.9 })); await wait(300);
+      box = _whpBox(pid, c); const rh = box && $('.rh-br', box); out.handle = !!rh && getComputedStyle(rh).display !== 'none'; want.handle = true;
+      if (rh) {
+        k = _whpGeo().k; const hr = rh.getBoundingClientRect(), hx = hr.left + hr.width / 2, hy = hr.top + hr.height / 2, w0 = parseInt(screens[1].w), right0 = box.getBoundingClientRect().right;   /* the scale as drawn now */
+        cvMouse(rh, 'mousedown', hx, hy); for (let i = 1; i <= 5; i++) { cvMouse(window, 'mousemove', hx + 8 * i, hy); await wait(30); }
+        out.handleHeld = Math.abs(_whpBox(pid, c).getBoundingClientRect().right - (right0 + 40)) <= 1.5; want.handleHeld = true;
+        cvMouse(window, 'mouseup', hx + 40, hy); await wait(400); okDialogs();
+        out.handleSize = Math.abs((parseInt(screens[1].w) - w0) * k - 40) <= 1; want.handleSize = true;
+      }
+      // a blend made by a drag (D2 200 px clear of D1, dragged 500 px of canvas left: 300 px over D1), its red % marker double-clicked where it is drawn
+      await restore(); await _whpPanel(220); await cvLay([0, 0], [sw + 200, 0], [2 * sw + 800, 0]); await wait(150);
+      box = _whpBox(pid, c); r = box.getBoundingClientRect(); k = _whpGeo().k; const bx = r.left + r.width / 2, by = r.top + r.height * 0.9;
+      cvMouse(box, 'mousedown', bx, by); for (let i = 1; i <= 6; i++) { cvMouse(window, 'mousemove', bx - 500 * k * i / 6, by, { shiftKey: true }); await wait(30); }
+      cvMouse(window, 'mouseup', bx - 500 * k, by); await wait(450); okDialogs(); await _whpSettle();
+      out.blend = Math.abs((sw - presets[0].positions[c].x) - 300) * k <= 1; want.blend = true;
+      const mk = $$('#canvas-area .preset-row[data-pid="' + pid + '"] .blend-label[data-guide]').pop();
+      let top = false; if (mk) { const mr = mk.getBoundingClientRect(), t = document.elementFromPoint(mr.left + mr.width / 2, mr.top + mr.height / 2); top = !!t && (t === mk || mk.contains(t)); if (top) t.dispatchEvent(new MouseEvent('dblclick', { bubbles: true, cancelable: true, clientX: mr.left + mr.width / 2, clientY: mr.top + mr.height / 2 })); }
+      await wait(300); const pop = $('#blend-popup'), pr = pop && pop.getBoundingClientRect();
+      out.marker = [!!mk, top, !!pop, !!pr && pr.left >= 0 && pr.top >= 0 && pr.right <= innerWidth && pr.bottom <= innerHeight]; want.marker = [true, true, true, true];
+      if (typeof closeBlendPopup === 'function') { try { closeBlendPopup(); } catch (e) {} } else if (pop) pop.remove();
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { cvAdv('freePos', wasF); cvAdv('blend', was); await _whpReset(); await restore(); }
+    return is(out, want, 'at 220 px [fits, uses the height, narrower than the width, centred, drawn scale = vMetrics] / D3 under the pointer while held / D3 moved pointer px / scale / the layer chip where it was let go [x, y] / D2 corner handle shown / the handle under the pointer while held / the width grew pointer px / scale / the blend made by the drag (300 px) / the red % marker [there, on top where drawn, its double-click opens the blend options, inside the window]');
+  });
+  // 16lh-fit F1-3: NEW
+  await check('Video Presets 16lh-fit F1-3 (SPEC F1: "A show with no AUX: the canvas may use that room"): with the panel at 220 px, every AUX removed by the AUX toolbar\'s - button gives the canvas the band\'s room: it is drawn taller, the tile still fits and uses the height, centred', async () => {
+    const out = {}, want = {};
+    try {
+      await restore(); await _whpPanel(220); const g1 = _whpGeo();
+      for (let i = 0; i < 6 && dsms.length; i++) { const b = $$('#canvas-area .preset-row .dsm-toolbar button').find(x => /actions\.removeDSM/.test(x.getAttribute('onclick') || '')); if (!b) break; b.click(); await wait(300); okDialogs(); await wait(300); }
+      await _whpSettle(); const g2 = _whpGeo();
+      out.aux = dsms.length; want.aux = 0;
+      out.room = g1 && g2 ? [g2.canvasH > g1.canvasH + 20, g2.fits, g2.tight || g2.fills, g2.centred, g2.scOk] : null; want.room = [true, true, true, true, true];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { await _whpReset(); await restore(); }
+    return is(out, want, 'AUX left / [the canvas taller than with the AUX band, fits, uses the height, centred, drawn scale = vMetrics]');
+  });
+  // 16lh-fit F1-4: NEW
+  await check('Help 16lh-fit F1-4: Video Presets Help\'s Canvas row says a Simple tile is sized so its header, canvas and AUX band are in view at once (fills the width when that fits, else shrinks to the height, centred, fits again when the window or the panel changes size)', async () => {
+    const t = (document.body.textContent || '').replace(/\s+/g, ' ');
+    const need = ['On Simple a preset tile is sized so its header, its canvas and its AUX band are all in view at once', 'the canvas fills the width when that fits, otherwise it shrinks to the height of the page and sits centred', 'It fits again when the window or the Destination Combinations panel changes size'].filter(s => !t.includes(s));
+    return is(need, [], 'Help lines missing');
+  });
+  // ── 16lh-bgtxt (r16lp F3, Omar 2026-10-08: "the look book didnt show any BG information was use, yet the visuals did"):
+  //    F3-1 / F3-2 FAIL on the v0.8.3 page (ab6a9a0d: a BG without a name prints a dash in the Look Book and the cue-sheet Excel) and
+  //    PASS after: the name, else Image for a picture, else Color #rrggbb, as the table and the layer strip say. Helpers prefixed _f3.
+  const _f3T = e => ((e && e.textContent) || '').replace(/\s+/g, ' ').trim();
+  const _f3Anyway = async () => { for (let i = 0; i < 3; i++) { const p = $('#validation-panel'); const b = (p && vis(p)) ? $$('button', p).find(x => /export anyway/i.test(x.textContent)) : null; if (!b) break; b.click(); await wait(450); } };
+  const _f3Look = async () => {   /* the toolbar's LOOK BOOK, Export Anyway on the check, Export PDF in its window: the book's html is kept instead of a print tab */
+    const real = exportPDF; let html = null; window.exportPDF = function () { html = real(true); return html; };
+    try { const b = $$('[onclick="actions.exportLookBook()"]').find(vis); if (!b) return 'no LOOK BOOK button'; b.click(); await wait(450); okDialogs(); await _f3Anyway(); await wait(300);
+      const go = $$('[onclick="_pdfConfirmExport()"]').find(vis); if (!go) return 'no Export PDF button'; go.click(); await wait(450); }
+    finally { window.exportPDF = real; }
+    if (!html) return 'no Look Book';
+    const d = new DOMParser().parseFromString(html, 'text/html');
+    return { bd: $$('.preset-doc', d).flatMap(pd => $$('.bd-col', pd).map(c => pd.dataset.code + ' ' + _f3T($('.bd-dest', c)) + ' | ' + _f3T($$('.bd-row', c).find(r => /^BG\b/.test(_f3T(r)))))),
+      sm: $$('.summary-table', d).filter(t => $('th.screen-col', t)).flatMap(t => $$('tbody tr', t).map(tr => [_f3T($('.code', tr))].concat($$('td.cell', tr).map(td => _f3T($('.bg', td) || td))).join(' | '))) };
+  };
+  const _f3Xl = async () => {   /* the toolbar's EXCEL, Export Anyway: the downloaded workbook read back, each destination cell's first line */
+    const real = window.dl; let blob = null; window.dl = function (b, n) { blob = b; return real(b, n); };
+    try { const b = $$('[onclick="actions.exportExcel()"]').find(vis); if (!b) return 'no EXCEL button'; b.click(); await wait(450); okDialogs(); await _f3Anyway(); await wait(300); }
+    finally { window.dl = real; }
+    if (!blob) return 'no workbook';
+    const wb = await xlRead(blob);
+    return presets.map((p, i) => [p.code].concat(screens.map((s, j) => ((wb.cell(2, String.fromCharCode(69 + j) + (7 + i)) || {}).text || '').split('\n')[0])).join(' | '));
+  };
+  const _f3Sw = (p, s) => $('.home-field-bg[data-pid="' + p.id + '"][data-sid="' + s.id + '"] .home-bg-swatch');
+  const _f3Colour = async (p, s, hex) => {   /* the BG swatch, the colour window's BG name box emptied, a hex typed, Apply */
+    const w = _f3Sw(p, s); if (!w) throw new Error('no BG swatch'); w.click(); await wait(300);
+    const n = $('#cp-name'); if (n) { n.value = ''; fire(n, 'input'); } const h = $('#cp-hex'); h.value = hex; fire(h, 'input');
+    $('#cp-apply').click(); await wait(400); okDialogs(); render(); await wait(200); };
+  const _f3Picture = async (p, s) => {   /* the BG swatch, the colour window's Image button, a picture given to the page's own file input */
+    const w = _f3Sw(p, s); if (!w) throw new Error('no BG swatch'); w.click(); await wait(300);
+    const cv = document.createElement('canvas'); cv.width = 64; cv.height = 36; const g = cv.getContext('2d'); g.fillStyle = '#6e3a5c'; g.fillRect(0, 0, 64, 36); g.fillStyle = '#ffd400'; g.fillRect(8, 8, 24, 12);
+    const blob = await new Promise(r => cv.toBlob(r, 'image/png')); const realClick = HTMLInputElement.prototype.click;
+    HTMLInputElement.prototype.click = function () { if (this.type !== 'file') return realClick.call(this); const dt = new DataTransfer(); dt.items.add(new File([blob], 'bg.png', { type: 'image/png' })); this.files = dt.files; this.dispatchEvent(new Event('change')); };
+    try { const b = $$('#color-pop button').find(x => /Image/.test(x.textContent)); if (!b) throw new Error('no Image button'); b.click(); await wait(800); } finally { HTMLInputElement.prototype.click = realClick; }
+    okDialogs(); render(); await wait(200); };
+  // 16lh-bgtxt F3-1: NEW
+  await check('Look Book + Excel 16lh-bgtxt F3-1 (Omar 2026-10-08: "the back ground image i added ... the look book didnt show any BG information was use, yet the visuals did"): his "Test Blend" opened (PJ 1 + PJ 2 one combined 3240x1080 screen; PJ 1\'s BG a picture put straight on the destination, NO name; PJ 2 nothing, on P02 its own colour, hidden by the blend): the table says Image, and the Look Book (toolbar LOOK BOOK, Export Anyway, Export PDF) now prints "BG Image" in each preset\'s Destination Breakdown and "BG: Image" in Show Combinations, the cue-sheet Excel (toolbar EXCEL, Export Anyway) "BG: Image"; PJ 2 keeps "Blended with PJ 1" (Breakdown, Excel) and its Show Combinations cell as before ("BG: —", its own colour is hidden)', async () => {
+    const out = {}, want = {};
+    try {
+      if (typeof fsPresetId !== 'undefined' && fsPresetId) { closeFullscreen(); await wait(500); }
+      const st = JSON.parse(BASE), cv = document.createElement('canvas'); cv.width = 64; cv.height = 36; const g = cv.getContext('2d'); g.fillStyle = '#3a6e4a'; g.fillRect(0, 0, 64, 36); g.fillStyle = '#ffd400'; g.fillRect(8, 8, 24, 12);
+      const a = st.screens[0], c = st.screens[1];
+      Object.assign(a, { name: 'PJ 1', w: 1920, h: 1080, color: '#1a1a1a', bg: cv.toDataURL('image/jpeg', 0.85) }); Object.assign(c, { name: 'PJ 2', w: 1920, h: 1080, color: '#1a1a1a' }); delete c.bg;
+      st.screens = [a, c]; st.canvasW = '3240'; st.canvasH = '1080'; st.showName = 'Test Blend';
+      st.presets = st.presets.slice(0, 2).map(p => ({ id: p.id, code: p.code, name: p.name, layers: {}, active: {}, positions: { [a.id]: { x: 0, y: 0 }, [c.id]: { x: 1320, y: 0 } }, dsmOn: p.dsmOn || {}, dsmContent: p.dsmContent || {}, combo: { [a.id]: { on: true, ids: [a.id, c.id] } } }));
+      st.presets[1].colors = { [c.id]: '#c0392b' };
+      _applyProjectText(JSON.stringify(st)); await wait(900); okDialogs(); render(); await wait(400);
+      out.opened = presets.map(p => { const f = _cbFind(p, c.id); return [p.code, !!(f && f.role === 's'), _f3T($('.home-field-bg[data-pid="' + p.id + '"][data-sid="' + a.id + '"] .home-bg-text')), getBgName(p.id, a.id)]; });
+      want.opened = [['P01', true, 'Image', ''], ['P02', true, 'Image', '']];
+      const lb = await _f3Look(); out.breakdown = lb.bd || lb; out.summary = lb.sm || lb;
+      want.breakdown = ['P01 PJ 1 | BG Image', 'P01 PJ 2 | BG Blended with PJ 1', 'P02 PJ 1 | BG Image', 'P02 PJ 2 | BG Blended with PJ 1'];
+      want.summary = ['P01 | BG: Image | BG: —', 'P02 | BG: Image | BG: —'];
+      out.excel = await _f3Xl(); want.excel = ['P01 | BG: Image | Blended with PJ 1', 'P02 | BG: Image | Blended with PJ 1'];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { await restore(); }
+    return is(out, want, 'opened [preset, PJ 2 a slave, the table\'s BG text, the BG name] / Look Book Destination Breakdown / Show Combinations / cue-sheet Excel');
+  });
+  // 16lh-bgtxt F3-2: NEW
+  await check('Look Book + Excel 16lh-bgtxt F3-2: BGs without a name made by hand print what the app shows, a named BG as before: on P01 CENTER LED the BG name emptied and a picture put on the destination (BG swatch, Image; the presets that follow P01 show it too), on P02 LEFT LED a picture of its own (BG swatch, Image), on P02 RIGHT LED the name emptied and a colour applied (#2980b9): the table and the layer strip say Image / Color, and the Look Book\'s Destination Breakdown and Show Combinations and the cue-sheet Excel now print Image and Color #2980b9 where they printed a dash; every other line (the named LOGO / PLAYBACK BGs) is exactly what it was before the edits', async () => {
+    const out = {}, want = {};
+    try {
+      if (typeof fsPresetId !== 'undefined' && fsPresetId) { closeFullscreen(); await wait(500); }
+      await restore(); render(); await wait(300);
+      const [p1, p2, p3, p4] = presets, [L, C, R] = screens;
+      const lb0 = await _f3Look(), xl0 = await _f3Xl();
+      if (typeof lb0 === 'string' || typeof xl0 === 'string') return 'before the edits: ' + lb0 + ' / ' + xl0;
+      await _f3Colour(p1, C, '#334455'); await _f3Picture(p1, C); await _f3Picture(p2, L); await _f3Colour(p2, R, '#2980b9');
+      const cell = (p, s) => _f3T($('.home-field-bg[data-pid="' + p.id + '"][data-sid="' + s.id + '"] .home-bg-text')), strip = (p, s) => { const i = _lsBgInfo(p, s); return i.has ? i.label : '-'; };
+      out.app = [[p1, C], [p3, C], [p2, L], [p2, R]].map(([p, s]) => [cell(p, s), strip(p, s), getBgName(p.id, s.id)]);
+      want.app = [['Image', 'Image', ''], ['Image', 'Image', ''], ['Image', 'Image', ''], ['Color', 'Color #2980b9', '']];
+      const lb1 = await _f3Look(), xl1 = await _f3Xl();
+      const word = { [p1.code + ' ' + C.name]: 'Image', [p3.code + ' ' + C.name]: 'Image', [p4.code + ' ' + C.name]: 'Image', [p2.code + ' ' + L.name]: 'Image', [p2.code + ' ' + R.name]: 'Color #2980b9' };
+      const worded = l => { const f = l.split(' | '); return f.map((v, j) => (j && word[f[0] + ' ' + screens[j - 1].name]) ? 'BG: ' + word[f[0] + ' ' + screens[j - 1].name] : v).join(' | '); };
+      want.breakdown = lb0.bd.map(l => { const k = l.split(' | ')[0]; return word[k] ? k + ' | BG ' + word[k] : l; }); out.breakdown = lb1.bd || lb1;
+      want.summary = lb0.sm.map(worded); out.summary = lb1.sm || lb1;
+      want.excel = xl0.map(worded); out.excel = xl1;
+      out.named = [lb0.bd.filter(l => / \| BG (LOGO|PLAYBACK)$/.test(l)).length > 8, want.breakdown.filter(l => / \| BG —$/.test(l)).length];   /* the example's BGs are named: no dash before, none expected after */
+      want.named = [true, 0];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { closeColorPop(); } catch (e) {} await restore(); }
+    return is(out, want, 'the app shows [table text, layer strip, BG name] for P01 CENTER LED, P03 CENTER LED, P02 LEFT LED, P02 RIGHT LED / Look Book Destination Breakdown / Show Combinations / cue-sheet Excel (each = the export made before the edits with the edited BGs worded) / [named lines before, dashes expected]');
+  });
+  // ── 16lh-fix (r16lp fix step, 2026-10-09: the defects the attacks found on the combined page 9fb34568):
+  //    D1 FAILS on the combined page (a Free Position drag that makes the canvas taller re-scales the fitted tile while held) and PASSES
+  //    after; D2 / D3 FAIL on the combined page and on v0.8.3 alike (pre-existing: a BG name put into the HTML unescaped) and PASS after.
+  //    Helpers prefixed _lhf; they reuse the 16lh-fit (_whp*) and 16lh-bgtxt (_f3*) helpers above.
+  const _lhfShape = pid => { const t = $('#canvas-area .preset-row[data-pid="' + pid + '"]'), h = t && t.firstElementChild.getBoundingClientRect(); return t ? [t.offsetWidth, Math.round(h.left), Math.round(h.width), Math.round(vMetrics().sc * 1e5)] : null; };
+  const _lhfDrag = async (pid, sid, dx, dy) => {   /* press 3/4 down the box, 10 moves (Shift: no snap), release: [the grabbed point within 2 px of the pointer at every move, the tile / its header / the scale unchanged while held, the move = pointer px / scale] */
+    const box = _whpBox(pid, sid), r = box.getBoundingClientRect(), x0 = r.left + r.width / 2, y0 = r.top + r.height * 0.75, k = vMetrics().sc;
+    const p0 = Object.assign({}, presets.find(p => p.id === pid).positions[sid]), s0 = JSON.stringify(_lhfShape(pid)); let worst = 0, same = true;
+    cvMouse(box, 'mousedown', x0, y0);
+    for (let i = 1; i <= 10; i++) { const x = x0 + dx * i / 10, y = y0 + dy * i / 10; cvMouse(window, 'mousemove', x, y, { shiftKey: true }); await wait(30);
+      const q = _whpBox(pid, sid).getBoundingClientRect(); worst = Math.max(worst, Math.abs(q.left + q.width / 2 - x), Math.abs(q.top + q.height * 0.75 - y)); if (JSON.stringify(_lhfShape(pid)) !== s0) same = false; }
+    cvMouse(window, 'mouseup', x0 + dx, y0 + dy, { shiftKey: true }); await wait(400); okDialogs(); await _whpSettle();
+    const p1 = presets.find(p => p.id === pid).positions[sid];
+    return [worst <= 2, same, Math.abs((p1.x - p0.x) * k - dx) <= 1.5 && Math.abs((p1.y - p0.y) * k - dy) <= 1.5];
+  };
+  const _lhfName = '75" TV <L> LOOP <i data-lhf="1">x</i>';
+  const _lhfBgName = async (p, s, name, hex) => {   /* the table's BG swatch, the colour window: the BG name typed, a hex, Apply */
+    const w = _f3Sw(p, s); if (!w) throw new Error('no BG swatch'); w.click(); await wait(300);
+    const n = $('#cp-name'); n.value = name; fire(n, 'input'); const h = $('#cp-hex'); h.value = hex; fire(h, 'input');
+    $('#cp-apply').click(); await wait(400); okDialogs(); render(); await wait(200); };
+  const _lhfLook = async () => {   /* the toolbar's LOOK BOOK, Export Anyway on the check, Export PDF in its window: the book's html kept instead of a print tab */
+    const real = exportPDF; let html = null; window.exportPDF = function () { html = real(true); return html; };
+    try { const b = $$('[onclick="actions.exportLookBook()"]').find(vis); if (!b) return 'no LOOK BOOK button'; b.click(); await wait(450); okDialogs(); await _f3Anyway(); await wait(300);
+      const go = $$('[onclick="_pdfConfirmExport()"]').find(vis); if (!go) return 'no Export PDF button'; go.click(); await wait(450); }
+    finally { window.exportPDF = real; }
+    return html || 'no Look Book'; };
+  // 16lh-fix D1: NEW
+  await check('Video Presets 16lh-fix D1 (r16lp layout attack 2026-10-09: on a fitted tile a Free Position drag that made the canvas taller re-scaled the tile while the button was held, so the box left the pointer, the header shrank and the tile jumped on release): with Free Position on and the panel at 220 px, P01 CENTER LED dragged 120 px down (the canvas grows taller) stays under the pointer at every move, the tile, its header and the scale do not change until the release, and it moves pointer px / scale; after the release the tile is fitted again (fits, centred, drawn scale = vMetrics); dragged back up to the top the same; with RIGHT LED far to the right (the canvas fills the width) RIGHT LED dragged 100 px left (the canvas narrows) the same', async () => {
+    const out = {}, want = {}; const was = cvAdv('freePos', true);
+    try {
+      if (typeof fsPresetId !== 'undefined' && fsPresetId) { closeFullscreen(); await wait(500); }
+      await restore(); await _whpPanel(220);
+      const pid = presets[0].id, c = screens[1].id, r = screens[2].id, sw = parseInt(screens[0].w);
+      await cvLay([0, 0], [sw, 0], [2 * sw, 0]); await wait(150);
+      out.down = await _lhfDrag(pid, c, 0, 120); want.down = [true, true, true];
+      const g = _whpGeo(); out.refit = g ? [g.fits, g.centred, g.scOk] : null; want.refit = [true, true, true];
+      out.up = await _lhfDrag(pid, c, 0, -Math.round(presets[0].positions[c].y * vMetrics().sc)); want.up = [true, true, true];
+      out.top = presets[0].positions[c].y * vMetrics().sc <= 1; want.top = true;
+      await cvLay([0, 0], [sw, 0], [8 * sw, 0]); await wait(150); await _whpSettle();
+      const g2 = _whpGeo(); out.wide = g2 ? g2.fills : null; want.wide = true;
+      out.left = await _lhfDrag(pid, r, -100, 0); want.left = [true, true, true];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { cvAdv('freePos', was); await _whpReset(); await restore(); }
+    return is(out, want, 'CENTER LED 120 px down [under the pointer while held, the tile + header + scale unchanged while held, moved pointer px / scale] / after the release [fits, centred, drawn scale = vMetrics] / back up to the top [same three] / at the top / RIGHT LED far right: the canvas fills the width / RIGHT LED 100 px left [same three]');
+  });
+  // 16lh-fix D2: NEW
+  await check('Video Presets + Look Book 16lh-fix D2 (r16lp exports attack 2026-10-09, the same on v0.8.3: markup in a BG name ran): a BG name is shown as typed, never read as HTML, in the canvas BG tag and in the Look Book\'s canvas picture: P02 CENTER LED given the BG name 75" TV <L> LOOP <i data-lhf="1">x</i> in the colour window (BG swatch, the name, a hex, Apply): the live canvas tag reads exactly that name and holds no element made from it; the Look Book (toolbar LOOK BOOK, Export Anyway, Export PDF) the same in P02\'s canvas picture, and its Destination Breakdown line names it as before', async () => {
+    const out = {}, want = {};
+    try {
+      if (typeof fsPresetId !== 'undefined' && fsPresetId) { closeFullscreen(); await wait(500); }
+      await restore(); render(); await wait(300);
+      const p2 = presets[1], C = screens[1];
+      await _lhfBgName(p2, C, _lhfName, '#2266aa');
+      out.stored = getBgName(p2.id, C.id) === _lhfName; want.stored = true;
+      const tag = $('#canvas-area .preset-row[data-pid="' + p2.id + '"] .screen-box[data-sid="' + C.id + '"] .bg-tag');
+      out.canvas = tag ? [tag.textContent === _lhfName, $$('*', tag).length] : null; want.canvas = [true, 1];
+      out.marks = $$('[data-lhf]').length; want.marks = 0;
+      const html = await _lhfLook(); if (typeof html !== 'string' || html.indexOf('preset-doc') < 0) return 'no Look Book: ' + String(html).slice(0, 80);
+      const d = new DOMParser().parseFromString(html, 'text/html'), pd = $$('.preset-doc', d).find(x => x.dataset.code === p2.code);
+      out.lookbook = pd ? $$('.pp-livecanvas .bg-tag', pd).filter(t => /^75"/.test(t.textContent)).map(t => [t.textContent === _lhfName, $$('*', t).length]) : null; want.lookbook = [[true, 1]];
+      out.lbMarks = $$('[data-lhf]', d).length; want.lbMarks = 0;
+      out.breakdown = pd ? $$('.bd-col', pd).map(x => x.textContent).filter(t => /CENTER LED/.test(t)).map(t => t.indexOf(_lhfName) >= 0) : null; want.breakdown = [true];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { closeColorPop(); } catch (e) {} await restore(); }
+    return is(out, want, 'stored / live canvas tag [reads the name, elements in it] / elements made from the name in the app / Look Book P02 canvas picture tag [reads the name, elements in it] / elements made from the name in the Look Book / its Destination Breakdown line names it');
+  });
+  // 16lh-fix D3: NEW
+  await check('Video Presets 16lh-fix D3 (r16lp exports attack 2026-10-09, the same on v0.8.3: a double quote in a BG name filled the cell with attribute text): the table\'s BG / Color cell of P02 CENTER LED given the BG name 75" TV <L> LOOP <i data-lhf="1">x</i> (colour window, Apply): the swatch\'s tooltip and aria-label and the name\'s tooltip read "BG: " + the name + the usual hint (the name whole, nothing cut off at the double quote), the swatch shows the name\'s first 3 letters and the cell the name, one swatch and one name, no element made from the name', async () => {
+    const out = {}, want = {};
+    try {
+      if (typeof fsPresetId !== 'undefined' && fsPresetId) { closeFullscreen(); await wait(500); }
+      await restore(); render(); await wait(300);
+      const p2 = presets[1], C = screens[1];
+      await _lhfBgName(p2, C, _lhfName, '#2266aa');
+      const cell = $('.home-field-bg[data-pid="' + p2.id + '"][data-sid="' + C.id + '"]'), sw = cell && $('.home-bg-swatch', cell), tx = cell && $('.home-bg-text', cell);
+      const tip = 'BG: ' + _lhfName + ', click swatch for color editor, ▾ for library';
+      out.cell = cell ? [!!sw && sw.getAttribute('title') === tip, !!sw && sw.getAttribute('aria-label') === tip, sw ? sw.textContent : null, !!tx && tx.getAttribute('title') === tip, tx ? tx.textContent === _lhfName : null,
+        $$('.home-bg-swatch', cell).length, $$('.home-bg-text', cell).length, $$('[data-lhf]', cell).length] : null;
+      want.cell = [true, true, '75"', true, true, 1, 1, 0];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { closeColorPop(); } catch (e) {} await restore(); }
+    return is(out, want, 'the BG cell [swatch tooltip, swatch aria-label, swatch label, name tooltip, name text, swatches, names, elements made from the name]');
   });
   try { _fsPauseAll(); } catch (e) {} $$('video').forEach(v => { try { v.muted = true; v.pause(); } catch (e) {} });
   return { checks };

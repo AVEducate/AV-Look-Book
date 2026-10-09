@@ -961,6 +961,26 @@
    "ok": true
   },
   {
+   "name": "Modifiers 16lh-mods F2-1 (Omar 2026-10-08 \"Remember all Modifiers\"): every switch comes back the way it was left after an app restart, in the restarted app's body classes and its menu ticks: all four on, a mix (AOI Overlays + Dead Space on, Blend Zones + Free Position off) and all off",
+   "ok": true
+  },
+  {
+   "name": "Modifiers 16lh-mods F2-2: in the restarted app the switches that came back drive what reads them and touch nothing in the show (Town Hall opened there): all four on = a Free Position drag moves OVERFLOW right and down, its gap read-out shows, a picked destination shows its AOI button; Blend Zones alone = the drag moves it sideways only, no read-out, no AOI button; all off = the drag does nothing; the show opens clean with no Undo step and the same positions and canvas each time",
+   "ok": true
+  },
+  {
+   "name": "Modifiers 16lh-mods F2-3: New Show, an example, a show file and a restored draft keep the switches in the same window (before: New Show turned every switch off): with AOI Overlays + Blend Zones on, New (answered) opens Quick Setup with both still on, ticked and kept on this computer, and Town Hall from Quick Setup, a show file (Load) and Restore Draft keep them too",
+   "ok": true
+  },
+  {
+   "name": "Modifiers 16lh-mods F2-4: the MODIFIERS tooltip and Help (Preset tile › Modifiers › Turn it on) say a switch stays the way you left it on this computer and is not saved in the show; neither says it starts off",
+   "ok": true
+  },
+  {
+   "name": "Modifiers 16lh-mods F2-5: a switch flipped in another window of the app (the desktop app's show windows share this computer's settings) is followed here at once: Blend Zones off and Free Position on in a second window show the same on this page (its body classes and its menu ticks), and flipping them back there brings this page back",
+   "ok": true
+  },
+  {
    "name": "Destination drag ends when the mouse-up is lost (the button was released outside the window)",
    "ok": true
   },
@@ -2914,6 +2934,42 @@
   },
   {
    "name": "Video Presets 16lg-blend-fix2 VR1 (Omar 2026-10-08, R1: \"disable this possibility when a blend has merged two destinations\"): while D1 + D2 are ONE combined screen (600 px), Destination Properties greys Rotation on both (box, Paste, Reset; Copy stays; the app tooltip \"Rotation is off while this destination is blended into one combined screen\"); a typed 90 + Apply on D1 or D2, a rotation Paste of 90, a Reset and setRotationSmart change nothing (still combined, no Undo step); switched OFF, D1 turns 180 in one Undo step and back; ON greys it again; Break Blend frees it; D3 (no blend) turns; on the first preset D1 is refused while P02 has it combined (the tooltip names P02); Help says so",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16lh-fit F1-1 (Omar 2026-10-08: \"i always want to ideally see the full preset in view\", his answer \"Whole preset in view\"): Simple sizes a preset tile so its header, canvas and AUX band fit the visible area without scrolling: with the Destination Combinations panel dragged by its grip to 300 px and to 120 px, collapsed and expanded by its button and dragged back to 220 px, every tile fits; the canvas fills the width when that fits, otherwise it uses the height (within 20 px) and sits centred (equal space left and right) in a tile as wide as the area, the AUX band under it; it is drawn at the scale vMetrics gives the drags",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16lh-fit F1-2 (SPEC F1: \"Nothing else about the row changes (positions, layers, blend overlay, drag, zoom handles, resize lock)\"): at the new scale (the panel at 220 px, the canvas shrunk to the height and centred) a destination drag (Blend Zones) keeps the box under the pointer while held and moves it pointer px / scale; a layer chip moved by the pointer lands where it is let go; the corner handle tracks the pointer while held and the width grows pointer px / scale; the red % marker of a blend made by a drag is on top where it is drawn and its double-click opens the blend options",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16lh-fit F1-3 (SPEC F1: \"A show with no AUX: the canvas may use that room\"): with the panel at 220 px, every AUX removed by the AUX toolbar's - button gives the canvas the band's room: it is drawn taller, the tile still fits and uses the height, centred",
+   "ok": true
+  },
+  {
+   "name": "Help 16lh-fit F1-4: Video Presets Help's Canvas row says a Simple tile is sized so its header, canvas and AUX band are in view at once (fills the width when that fits, else shrinks to the height, centred, fits again when the window or the panel changes size)",
+   "ok": true
+  },
+  {
+   "name": "Look Book + Excel 16lh-bgtxt F3-1 (Omar 2026-10-08: \"the back ground image i added ... the look book didnt show any BG information was use, yet the visuals did\"): his \"Test Blend\" opened (PJ 1 + PJ 2 one combined 3240x1080 screen; PJ 1's BG a picture put straight on the destination, NO name; PJ 2 nothing, on P02 its own colour, hidden by the blend): the table says Image, and the Look Book (toolbar LOOK BOOK, Export Anyway, Export PDF) now prints \"BG Image\" in each preset's Destination Breakdown and \"BG: Image\" in Show Combinations, the cue-sheet Excel (toolbar EXCEL, Export Anyway) \"BG: Image\"; PJ 2 keeps \"Blended with PJ 1\" (Breakdown, Excel) and its Show Combinations cell as before (\"BG: —\", its own colour is hidden)",
+   "ok": true
+  },
+  {
+   "name": "Look Book + Excel 16lh-bgtxt F3-2: BGs without a name made by hand print what the app shows, a named BG as before: on P01 CENTER LED the BG name emptied and a picture put on the destination (BG swatch, Image; the presets that follow P01 show it too), on P02 LEFT LED a picture of its own (BG swatch, Image), on P02 RIGHT LED the name emptied and a colour applied (#2980b9): the table and the layer strip say Image / Color, and the Look Book's Destination Breakdown and Show Combinations and the cue-sheet Excel now print Image and Color #2980b9 where they printed a dash; every other line (the named LOGO / PLAYBACK BGs) is exactly what it was before the edits",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16lh-fix D1 (r16lp layout attack 2026-10-09: on a fitted tile a Free Position drag that made the canvas taller re-scaled the tile while the button was held, so the box left the pointer, the header shrank and the tile jumped on release): with Free Position on and the panel at 220 px, P01 CENTER LED dragged 120 px down (the canvas grows taller) stays under the pointer at every move, the tile, its header and the scale do not change until the release, and it moves pointer px / scale; after the release the tile is fitted again (fits, centred, drawn scale = vMetrics); dragged back up to the top the same; with RIGHT LED far to the right (the canvas fills the width) RIGHT LED dragged 100 px left (the canvas narrows) the same",
+   "ok": true
+  },
+  {
+   "name": "Video Presets + Look Book 16lh-fix D2 (r16lp exports attack 2026-10-09, the same on v0.8.3: markup in a BG name ran): a BG name is shown as typed, never read as HTML, in the canvas BG tag and in the Look Book's canvas picture: P02 CENTER LED given the BG name 75\" TV <L> LOOP <i data-lhf=\"1\">x</i> in the colour window (BG swatch, the name, a hex, Apply): the live canvas tag reads exactly that name and holds no element made from it; the Look Book (toolbar LOOK BOOK, Export Anyway, Export PDF) the same in P02's canvas picture, and its Destination Breakdown line names it as before",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16lh-fix D3 (r16lp exports attack 2026-10-09, the same on v0.8.3: a double quote in a BG name filled the cell with attribute text): the table's BG / Color cell of P02 CENTER LED given the BG name 75\" TV <L> LOOP <i data-lhf=\"1\">x</i> (colour window, Apply): the swatch's tooltip and aria-label and the name's tooltip read \"BG: \" + the name + the usual hint (the name whole, nothing cut off at the double quote), the swatch shows the name's first 3 letters and the cell the name, one swatch and one name, no element made from the name",
    "ok": true
   }
  ],
