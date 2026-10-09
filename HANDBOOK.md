@@ -1116,6 +1116,70 @@ anchor on the function name and replace the first occurrence after it, never all
   VF4 (typed numbers), VG1, VG2 (fix3's open / session B numbering); renamed RH1-RH4 (the fix round's RF1 / RF6 / RF7 / RF18 back to
   r16lj/fix's expectations), RH5-RH9 (VF1, VF5, VF14, VD8, VD11); new VH1-VH4 (files by order + no ioNums saved, the read-only number
   box on every card kind and page, an older show opened as r16lj/fix, a session B right under its A); snapshots unchanged.
+- **16lg-blend** (Omar 2026-10-07 / 08, r16lo SPEC rules 1-9, needed the same day for a client; on top of the v0.8.2 page 7689b432;
+  search `16lg-blend`). A blend group is ONE COMBINED SCREEN. Omar: "PJ 1 and PJ 2 are one image now ... the first destination now
+  becomes the master the second one should grey out ... BG should look like one solid image across both screens, and Layers should sit
+  on top of everything ... clicking on the red line can still bring the pop up"; answers 2026-10-08: the slave's own BG / layers hidden
+  and kept, its table row greyed, the Look Book the same as the app. One block of helpers (`_cb*`, before `_rcOverlapVis`):
+  `_cbGroups(p)` = the EDGE blend groups of a preset (union-find over overlapping boxes, hidden destinations and backdrops left out; a
+  group with a containment pair = a full stack such as ORGILL P04 / P05, or with a rotated member, is NOT one); master = first in
+  `screens` order. Stored per preset: `p.combo[<master id>] = {on, ids[, keep]}` (saved / undone / pasted with the preset; `addPreset`
+  inherits it). `_cbNorm()` runs at the top of `render()` / `renderFullscreen()`: a group with no entry (matched by its master, else by a
+  shared member, so a reorder or a deleted master keeps it) is NEW = made with this build = `{on:true}`; an entry whose group is gone
+  goes and its master's layers are clamped back inside it (`_cbClampOwn`). `_cbOpen()` (= `_cbNorm(true)`) runs in `_applyProjectText`
+  and the draft restore BEFORE the clean baseline: every edge group the opened show has gets `{on:false}` (an older show opens exactly
+  as before: no Save light, no Undo step). `_cbFind(p,sid)` -> {g, role 'm' / 's'} for a combined member, null otherwise (null on the
+  phone, `_cbLive`: the phone draws and keeps everything as before). LAYERS: the master's `{wf,hf,xf,yf}` stay fractions of the
+  MASTER's own size from its own corner; `_cbBox(pid,sid)` widens `_layerPosBounds` to the combined rectangle (x0..x1 in master
+  fractions, 0..1 for everyone else, so every clamp follows: drag, nudge, corner resize, layer window, reclamp) and `_cbMaxF` lets
+  `setLayerSize` / the corner resize / the two reclamps / the layer window go up to the combined size; a layer keeps its place on
+  screen when its group combines (no conversion), its pixel size when the blend amount changes. DRAWING (`_rcScreenBox`, so Simple,
+  the Advanced tile, the preset cards, Display and the Look Book are one picture): the master's `.screen-inner` is transparent and
+  holds `.cb-sl` / `.cb-bg` slices of the master BG laid over the combined rectangle (`_cbSlicesHTML`, one slice when the members fill
+  the rectangle; `_cbBgCss` = the same BG priority as before with the media geometry taken over the rectangle); a slave's box and inner
+  are transparent (the master's slices, drawn earlier in the DOM, show through) with no chips and no BG tag; the master's chips go in a
+  zero-size `.cb-lay` (z 7) inside the master's box (same frame as `.screen-inner`, so every chip handler is unchanged and above every
+  later box and the hatch, z 6). The red % chip has a double-click to `openBlendPopup` on every blend; inside a combined group it is
+  drawn in its own `.overlap-vis[data-cb-mark]` at z 8 (above the layers; the PX box stays under them: a layer over the zone covers it,
+  Omar's "on top of the blend zone information"). The blend pop-up gets the switch `#blend-popup-cb` (`_cbSwitchHTML` / `_cbToggle`:
+  one Undo step; off stores the combined layer places in `keep` and clamps, on puts back each one still where off left it). Advanced
+  mounts a combined master's BG clip once in its single `.cb-bg` (`_cbMountBg`); a drop on a slave's box sets the master's BG
+  (`_fsDropTarget`). TABLE: a slave row `cb-slave`, opacity .62, BG cell BLENDED, the layer cells one `lbbd-td` cell BLENDED WITH <master>
+  · ONE COMBINED SCREEN (`_cbTableBg` / `_cbTableLayers`, the backdrop's classes: no stylesheet rule added, the CSS trap). Advanced's
+  Layers list: `_cbFsRow`. Look Book: the slave's breakdown column
+  (`_cbBreakdownCol`), Layer Resolutions leave it out, the master's slot line its combined size (`_cbResTxt`); the cue-sheet Excel: a slave's cell
+  "Blended with <master>" (style 19), the master's "Combined screen W x H (...)". Wire / I/O Patch unchanged (separate outputs).
+  Help: a "One combined screen" row. Not done (said so): the BG media's live
+  crop refit while typing in Advanced uses the master's own box until the release redraws it. Checks: RB1 renamed (the top / bottom
+  check reads the % chip where it is now drawn); new VB1-VB7. Snapshots unchanged (the examples have no blend).
+- **16lg-blend-fix** (r16lo fix step, 2026-10-08, on top of the 16lg-blend page a78ae22d; search `16lg-blend-fix`). Omar's answer A1 and
+  the attack's findings. A1: a new layer on a combined master starts centred on the WHOLE combined screen (`_lbPlaceNewLayer` centres
+  on `_cbBox`; every way a layer gets its first content goes through `setL`; the same arithmetic as before for everyone else). D1:
+  `startHomeScreenDrag` HOLDS the combined screens once the press moves (`_cbHold`; `'dlg'` while its Create Blend Zone? question is
+  open, let go by `_cbNorm` once that window is closed): `_cbNorm` does nothing while held, `_cbOnG` draws a group combined only under
+  its own master's entry, the drop renders once. A destination passing over a combined screen and dropped back (or Cancel / Escape on
+  the question) changes nothing; before, every mousemove re-keyed the entry and clamped the master's layers. D4: `_cbGroups` keeps a
+  group with a turned member (`rot`): drawn as separate screens, no switch (`_cbGroupOf` null); its entry is paused
+  `{on:false, rot:1, keep}` by `_cbPause` (the switch OFF's keep, layers clamped into the master) and resumed by `_cbResume` (the switch
+  ON, kept places back for layers not moved since) when the member is turned back; OFF stays OFF; `_cbToggle` uses the same helpers.
+  D5: `_cbSelDrop` (top of `render` / `renderFullscreen`) drops a pick on a slave's hidden layer (no window is closed: PJ 2's
+  Destination Properties stays as it is, Omar 2026-10-08). D6: the layer window's X / Y on a combined master count from the combined
+  screen's top-left corner (`_cbOrg`: shown = stored - corner, typed + corner; storage unchanged). A2 (flows probe only): `combo` is
+  counted in `_PR_DEST` (Reset Destinations un-blends, so the entry goes; the page leaves it to `_cbNorm`, which also clamps). Help: the
+  One combined screen row says where a new layer starts. Checks: new VF1-VF5. Snapshots unchanged.
+- **16lg-blend-fix2** (r16lo R1, 2026-10-08, on top of the 16lg-blend-fix page ac735485; search `16lg-blend-fix2`). Omar: "disable this
+  possibility when a blend has merged two destinations". While a destination is a member (master or slave) of ONE combined screen
+  (switched on), its Rotation cannot be changed. The only live rotation control is Destination Properties (`#sp-rot`, its copy / paste
+  / reset tools, Apply / Enter; Simple and Advanced open the same window). `_cbRotLock(pid,sid)` returns the preset where turning sid
+  would turn a member of a combined screen (pid itself; on the FIRST preset also every preset without its own `rotations[sid]`, since
+  a P01 rotation is show-wide), null otherwise (always null on the phone). `_cbRotSync(pop)` (window build, top of `render` /
+  `renderFullscreen`) greys the row with inline styles: box disabled, Paste / Reset disabled, Copy live, the row's title = the app
+  tooltip (`_CB_ROT_OFF` + how to free it; the other preset's code when it is one). Refused underneath: the Apply skips a disabled box,
+  `_spTool` refuses a rotation paste / reset, `setRotationSmart` returns before any Undo step or question, and the dead 16hu code
+  (`fsStartRotate`, `fsPasteProp` / `fsResetProp` 'rot') is guarded too. `setRotation` (the data setter) is NOT guarded: the probe's VF3
+  and older checks turn members through it, and D4's pause / resume still handles a member turned elsewhere (the phone, a show).
+  Every real way to change the combined state while the window is open (Undo, the pop-up, a canvas press) closes the window first; the
+  sync is a safety net. Help: the One combined screen row says Rotation is off. Checks: new VR1. Snapshots unchanged.
 - Declined by the owner, do not resurface: mask shapes, anchor points, hardware profiles, canvas/WebGL renderer,
   interpolation filter toggles, upscale-factor notes, per-layer "sharp pixels", any licence mention.
 

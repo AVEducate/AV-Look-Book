@@ -1428,7 +1428,10 @@
   const _prCancel = () => { if (dlgOpen()) { const c = $('#dlg-cancel') || $('#dlg-confirm'); if (c) c.click(); } };
   const _prSort = v => Array.isArray(v) ? v.map(_prSort) : (v && typeof v === 'object') ? Object.keys(v).sort().reduce((o, k) => (o[k] = _prSort(v[k]), o), {}) : v;
   const _prJ = v => JSON.stringify(_prSort(v));
-  const _PR_DEST = ['positions', 'rotations', 'aoi', 'hiddenScreens', 'screenName', 'edidNotes', 'showMode'];
+  // 16lg-blend-fix (A2): combo (16lg-blend, one combined screen per blend group, keyed by the positions) is destination data: Reset
+  //   Destinations un-blends, so the page's un-blend takes the entry away (and puts the master's layers back inside it, SPEC rule 5).
+  //   It used to fall in the 'code, name, notes' bucket. Counted here, a combo left behind by Reset Destinations fails the destinations group.
+  const _PR_DEST = ['positions', 'rotations', 'aoi', 'hiddenScreens', 'screenName', 'edidNotes', 'showMode', 'combo'];
   const _PR_LAY = ['layers', 'active', 'layerSizes', 'crops', 'layerFx', 'layerMedia', 'colors', 'bgs', 'bgNames', 'opacities', 'bgColors', 'layerCount'];
   const _PR_AUX = ['dsmOn', 'dsmContent', 'dsmColor', 'dsmName', 'dsmType'];
   const _prPick = (p, keys) => { const o = {}; keys.forEach(k => { if (p[k] !== undefined) o[k] = p[k]; }); return _prJ(o); };
@@ -3989,11 +3992,17 @@
   const cvLay = async (a, c, r) => { const p = presets[0]; setPosition(p, screens[0].id, a[0], a[1]); setPosition(p, screens[1].id, c[0], c[1]); setPosition(p, screens[2].id, r[0], r[1]); render(); await wait(200); };
   const cvMouse = (el, type, x, y, o) => el.dispatchEvent(new MouseEvent(type, Object.assign({ bubbles: true, cancelable: true, clientX: x, clientY: y, button: 0, buttons: type === 'mouseup' ? 0 : 1 }, o || {})));
 
-  await check('Blend Zones: a top / bottom overlap reads on height (100 px of 1080 = 9%), and a typed PX moves the lower destination in one undo step', async () => {
+  // 16lg-blend RB1: REPLACES the check named in its header (reason in the block)
+  // 16lg-blend: RENAMED in place. Why: r16lo SPEC (Omar 2026-10-07 / 08: "when doing blends the combined screen should allow layers to move between both screen ...
+  //   clicking on the red line can still bring the pop up"): a blend group is ONE combined screen. Here: the blend this check makes is now one combined screen at once (rule 2), and inside a combined screen the red % chip is drawn in
+  //   its own overlap layer above the layers (rule 6: "clicking on the red line can still bring the pop up"), so it is no longer inside the
+  //   hatch's box; the chip is read where it is drawn (the canvas's last % chip, as the % chip check below reads it). What it pins (9 %
+  //   read on height, a typed PX moves the lower destination in one Undo step, Undo puts it back) is unchanged.
+  await check('Blend Zones: a top / bottom overlap reads on height (100 px of 1080 = 9%), and a typed PX moves the lower destination in one undo step; 16lg-blend: the blend is one combined screen, its % chip read where it is drawn (above the layers)', async () => {
     const was = cvAdv('blend', true);
     await cvLay([0, 0], [0, 980], [3840, 0]);
     const ov = $('#canvas-area .overlap-vis'); if (!ov) { cvAdv('blend', was); await restore(); return 'no overlap drawn'; }
-    const inp = $('input', ov), chip = $$('.blend-label', ov).pop();
+    const inp = $('input', ov), chip = $$('#canvas-area .blend-label[data-guide]').pop();   /* 16lg-blend (RB1): inside a combined screen the % chip has its own overlap layer, above the layers */
     const shown = [inp.value, parseInt(chip.textContent)];
     const u0 = _undoStack.length; inp.value = '216'; fire(inp, 'change'); await wait(250);
     const moved = presets[0].positions[screens[1].id], steps = _undoStack.length - u0;
@@ -13770,6 +13779,281 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
     } catch (e) { return 'threw: ' + e.message; }
     finally { await _vvBack(); }
     return is(out, want, 'files [not after every source] / [GFX A\'s number, GFX B\'s number, made] / numbers not as the order gives them / Undo steps of the draw / Save carries ioNums / [page 1: GFX A there, GFX B right under it, its backup] / Backup of GFX A / [the page tile made, GFX B right after GFX A]');
+  });
+  // ── 16lg-blend (r16lo SPEC rules 1-9; Omar 2026-10-07 / 08: "when doing blends the combined screen should allow layers to move between
+  //    both screen ... the first destination now becomes the master the second one should grey out on the bottom excel sheet ... BG
+  //    should look like one solid image across both screens ... clicking on the red line can still bring the pop up"): an edge blend group
+  //    is ONE combined screen. VB1-VB6 FAIL on the v0.8.2 page (7689b432) and PASS after. Helpers prefixed _vb.
+  const _vbRow = (pid, sid) => $$('#tbody tr[data-pid="' + pid + '"][data-sid="' + sid + '"]')[0] || null;
+  const _vbBox = (pid, sid, root) => { const t = $((root || '#canvas-area') + ' .preset-row[data-pid="' + pid + '"]'); return t ? $('.screen-box[data-sid="' + sid + '"]', t) : null; };
+  const _vbEntry = (pid, sid) => { const p = presets.find(x => x.id === pid), e = p && p.combo && p.combo[sid]; return e ? [e.on, (e.ids || []).join('|')] : null; };
+  const _vbXf = (pid, sid, n) => { const r = getLayerSize(pid, sid, n); return r ? +(+r.xf).toFixed(5) : null; };
+  // 16lg-blend VB1: NEW
+  await check('Video Presets 16lg-blend VB1 (rules 1-5, Omar: "PJ 1 and PJ 2 are one image now ... the first destination now becomes the master the second one should grey out"): a blend made now (D2 600 px over D1) is ONE combined screen at once: D1, first in the list, is the master; its BG is one picture over the whole 3240 x 1080 (one slice), its layers are drawn once above both boxes and may cross the blend zone (L1 at 1140..2100); D2\'s own BG and layers are hidden and kept, its table row greyed "Blended with" D1 with no layer box', async () => {
+    const out = {}, want = {};
+    try {
+      const pid = presets[0].id, a = screens[0].id, c = screens[1].id;
+      setL(pid, a, 1, 'GFX 1'); setL(pid, c, 1, 'CAM 2');   /* a layer on each */ 
+      const keep = JSON.stringify([(presets[0].layers || {})[c], (presets[0].layerSizes || {})[c], (presets[0].bgs || {})[c] ? 1 : 0]);
+      await cvLay([0, 0], [1320, 0], [4000, 0]);
+      out.entry = _vbEntry(pid, a); want.entry = [true, a + '|' + c];
+      const r = _vbRow(pid, c), m = _vbRow(pid, a);
+      out.slaveRow = r ? [r.classList.contains('cb-slave'), /Blended with/i.test(r.textContent), $$('.home-field-layer input', r).length, /Blended/i.test(($('.home-field-bg', r) || {}).textContent || '')] : null; want.slaveRow = [true, true, 0, true];
+      out.masterRow = m ? [m.classList.contains('cb-slave'), $$('.home-field-layer input', m).length > 0] : null; want.masterRow = [false, true];
+      const bA = _vbBox(pid, a), bC = _vbBox(pid, c), bg = bA ? $('.cb-sl .cb-bg', bA) : null;
+      out.draw = bA && bC ? [$$('.cb-sl', bA).length, $$('.cb-lay .layer-chip', bA).length > 0, $$('.screen-inner .layer-chip', bA).length, $$('.layer-chip', bC).length, getComputedStyle(bC).backgroundColor] : null; want.draw = [1, true, 0, 0, 'rgba(0, 0, 0, 0)'];
+      out.wide = bg ? Math.abs(parseFloat(bg.style.width) / parseFloat(bA.style.width) * 1920 - 3240) <= 3 : null; want.wide = true;
+      setLayerSize(pid, a, 1, 0.5, 0.5, 0.59375, 0.25); render(); await wait(150);
+      const ls = getLayerSize(pid, a, 1); out.cross = [_vbXf(pid, a, 1), Math.round(ls.xf * 1920), Math.round((ls.xf + ls.wf) * 1920)]; want.cross = [0.59375, 1140, 2100];
+      out.kept = JSON.stringify([(presets[0].layers || {})[c], (presets[0].layerSizes || {})[c], (presets[0].bgs || {})[c] ? 1 : 0]) === keep; want.kept = true;
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { await restore(); }
+    return is(out, want, 'the entry [on, members] / D2\'s row [greyed, Blended with, layer boxes, BG cell] / D1\'s row [greyed, layer boxes] / drawing [D1 slices, layers over both, layers inside D1\'s box, D2\'s chips, D2\'s box colour] / the BG slice 3240 wide / L1 [xf, left, right] / D2\'s own layers and BG kept');
+  });
+  // 16lg-blend VB2: NEW
+  await check('Video Presets 16lg-blend VB2 (rule 6 and the switch, Omar: "clicking on the red line can still bring the pop up to change thing"): a double-click on the red % marker opens the blend options with "One combined screen" on; off gives D2 its own layers back, puts D1\'s L1 back inside D1 and is one Undo step; on again brings L1 back over the zone; Undo and Redo step through it', async () => {
+    const out = {}, want = {}; const was = cvAdv('blend', true);
+    try {
+      const pid = presets[0].id, a = screens[0].id, c = screens[1].id;
+      setL(pid, a, 1, 'GFX 1'); setL(pid, c, 1, 'CAM 2');   /* a layer on each */ 
+      await cvLay([0, 0], [1320, 0], [4000, 0]);
+      setLayerSize(pid, a, 1, 0.5, 0.5, 0.59375, 0.25); render(); await wait(150);
+      const mk = $$('#canvas-area .preset-row[data-pid="' + pid + '"] .blend-label[data-guide]').pop();
+      if (mk) mk.dispatchEvent(new MouseEvent('dblclick', { bubbles: true, cancelable: true })); await wait(250);
+      const sw = () => { const b = $('#blend-popup-cb'); return b ? b.getAttribute('aria-checked') : null; };
+      out.popup = [!!$('#blend-popup'), sw()]; want.popup = [true, 'true'];
+      const u0 = vpUndoLen(); if ($('#blend-popup-cb')) $('#blend-popup-cb').click(); await wait(350);
+      const st = () => { const r = _vbRow(pid, c), b = _vbBox(pid, c); return [(_vbEntry(pid, a) || [])[0], _vbXf(pid, a, 1), b ? $$('.layer-chip', b).length > 0 : null, r ? r.classList.contains('cb-slave') : null]; };
+      out.off = st().concat([sw(), vpUndoLen() - u0]); want.off = [false, 0.5, true, false, 'false', 1];
+      if ($('#blend-popup-cb')) $('#blend-popup-cb').click(); await wait(350);
+      out.on = st().concat([sw()]); want.on = [true, 0.59375, false, true, 'true'];
+      closeBlendPopup(); doUndo(); await wait(300); out.undo = st(); want.undo = [false, 0.5, true, false];
+      doRedo(); await wait(300); out.redo = st(); want.redo = [true, 0.59375, false, true];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { closeBlendPopup(); cvAdv('blend', was); await restore(); }
+    return is(out, want, 'the pop-up from the red % [open, switch] / off [on, L1 xf, D2 chips, D2 greyed, switch, Undo steps] / on again / Undo / Redo');
+  });
+  // 16lg-blend VB3: NEW
+  await check('Video Presets 16lg-blend VB3 (rule 2): a show saved before this build with a blend opens EXACTLY as before: the blend stays two screens (D2 keeps its own layers, its row is not greyed), clean, no Undo step; the switch in the blend options turns it into one combined screen (one Undo step)', async () => {
+    const out = {}, want = {}; const was = cvAdv('blend', true);
+    try {
+      const pid = presets[0].id, a = screens[0].id, c = screens[1].id;
+      const old = JSON.parse(BASE); const q = old.presets[0].positions || (old.presets[0].positions = {});
+      q[a] = { x: 0, y: 0 }; q[c] = { x: 1320, y: 0 }; q[screens[2].id] = { x: 4000, y: 0 }; old.presets.forEach(p => { delete p.combo; }); const ly = old.presets[0].layers || (old.presets[0].layers = {}); ly[a] = Object.assign({}, ly[a], { 1: 'GFX 1' }); ly[c] = Object.assign({}, ly[c], { 1: 'CAM 2' });
+      _applyProjectText(JSON.stringify(old)); await wait(800); okDialogs(); await wait(200);
+      const r = _vbRow(pid, c), b = _vbBox(pid, c);
+      out.opened = [_vbEntry(pid, a), r ? r.classList.contains('cb-slave') : null, b ? $$('.screen-inner .layer-chip', b).length > 0 : null, !!_isDirty, vpUndoLen()];
+      want.opened = [[false, a + '|' + c], false, true, false, 0];
+      const h = $('#canvas-area .preset-row[data-pid="' + pid + '"] .overlap-hatch'); if (h) h.dispatchEvent(new MouseEvent('dblclick', { bubbles: true, cancelable: true })); await wait(250);
+      const sw = $('#blend-popup-cb'); out.sw = sw ? sw.getAttribute('aria-checked') : null; want.sw = 'false';
+      if (sw) sw.click(); await wait(350);
+      const r2 = _vbRow(pid, c); out.on = [(_vbEntry(pid, a) || [])[0], r2 ? r2.classList.contains('cb-slave') : null, vpUndoLen()]; want.on = [true, true, 1];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { closeBlendPopup(); cvAdv('blend', was); await restore(); }
+    return is(out, want, 'opened [entry, D2 greyed, D2 chips in its box, Save lit, Undo steps] / the switch / switched on [on, D2 greyed, Undo steps]');
+  });
+  // 16lg-blend VB4: NEW
+  await check('Video Presets 16lg-blend VB4 (rules 1, 3, 9): a top / bottom blend (D2 200 px under D1) is one 1920 x 1960 screen; three in a row (600 px each) are one 4560 x 1080 screen with D1 the master and D2 / D3 greyed; destinations STACKED at one place (ORGILL\'s P04 / P05) are not a blend group: no entry, no greyed row, each draws its own layers, as before', async () => {
+    const out = {}, want = {};
+    try {
+      const pid = presets[0].id, a = screens[0].id, c = screens[1].id, d = screens[2].id;
+      setL(pid, a, 1, 'GFX 1'); setL(pid, c, 1, 'CAM 2');   /* a layer on each */ 
+      await cvLay([0, 0], [0, 880], [4000, 0]);
+      let g = _cbGroups(presets[0]); out.tb = [g.length, g[0] ? g[0].rect.w + 'x' + g[0].rect.h : null, (_vbEntry(pid, a) || [])[0]]; want.tb = [1, '1920x1960', true];
+      await cvLay([0, 0], [1320, 0], [2640, 0]);
+      g = _cbGroups(presets[0]); out.three = [g.length, g[0] ? g[0].master === a : null, g[0] ? g[0].rect.w + 'x' + g[0].rect.h : null, [c, d].map(s => { const r = _vbRow(pid, s); return r ? r.classList.contains('cb-slave') : null; })];
+      want.three = [1, true, '4560x1080', [true, true]];
+      await cvLay([0, 0], [0, 0], [4000, 0]);
+      const b = _vbBox(pid, c), r = _vbRow(pid, c);
+      out.stack = [_cbGroups(presets[0]).length, presets[0].combo || null, r ? r.classList.contains('cb-slave') : null, b ? $$('.screen-inner .layer-chip', b).length > 0 : null];
+      want.stack = [0, null, false, true];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { await restore(); }
+    return is(out, want, 'top / bottom [groups, size, on] / three [groups, D1 master, size, D2 / D3 greyed] / stacked [groups, entries, D2 greyed, D2 draws its own layers]');
+  });
+  // 16lg-blend VB5: NEW
+  await check('Video Presets 16lg-blend VB5 (rule 8, "the Look Book same as the app"): the combined screen is the same picture on the Advanced tile, its preset card and the printed Look Book (the master\'s BG slice and layers over both boxes); the Look Book\'s Destination Breakdown reads D2 "Blended with" D1 and its Layer Resolutions leave D2 out; Advanced\'s Layers list greys D2 the same way', async () => {
+    const out = {}, want = {};
+    try {
+      const pid = presets[0].id, a = screens[0].id, c = screens[1].id, nA = screens[0].name;
+      setL(pid, a, 1, 'GFX 1'); setL(pid, c, 1, 'CAM 2');   /* a layer on each */ 
+      await cvLay([0, 0], [1320, 0], [4000, 0]);
+      const html = await userLookBook();
+      out.lb = [/class="cb-sl"/.test(html), /class="cb-lay"/.test(html), (html.match(/Blended with/g) || []).length > 0, new RegExp('Blended with ' + nA.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).test(html)]; want.lb = [true, true, true, true];
+      openFullscreen(pid); await wait(900); okDialogs();
+      const bA = _vbBox(pid, a, '#fs-canvas'); out.adv = bA ? [$$('.cb-sl', bA).length, $$('.cb-lay .layer-chip', bA).length > 0] : null; want.adv = [1, true];
+      const card = $$('#fs-preset-list .fs-pcard')[0]; out.card = card ? [$$('.cb-sl', card).length, $$('.cb-lay .layer-chip', card).length > 0] : null; want.card = [1, true];
+      if (typeof _fsSetPropTab === 'function') _fsSetPropTab('layers'); selLayer = null; renderFsPanel(true); await wait(200);
+      out.list = $$('#fs-toolbar .fs-drow').map(x => /Blended with/.test(x.textContent)); want.list = [false, true, false];
+      if (typeof _fsSetPropTab === 'function') _fsSetPropTab('preset');
+      closeFullscreen(); await wait(400);
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { if (fsPresetId) closeFullscreen(); } catch (e) {} await restore(); }
+    return is(out, want, 'Look Book [slice, layers over both, Blended with, Blended with D1] / Advanced tile [slices, layers] / preset card [slices, layers] / Layers list [D1, D2, D3 read Blended with]');
+  });
+  // 16lg-blend VB6: NEW
+  await check('Video Presets 16lg-blend VB6 (rule 2: "saved / undone / copied with + Preset like positions"): the combined state is in what Save writes and comes back after a reload (clean); + Preset copies it; Undo of the blend takes the combined screen away with it and Redo brings both back; Break Blend gives D2 its own layers back and puts D1\'s layers back inside D1', async () => {
+    const out = {}, want = {};
+    try {
+      const pid = presets[0].id, a = screens[0].id, c = screens[1].id;
+      setL(pid, a, 1, 'GFX 1'); setL(pid, c, 1, 'CAM 2');   /* a layer on each */ 
+      const u0 = vpUndoLen(); pushUndo(); await cvLay([0, 0], [1320, 0], [4000, 0]);
+      setLayerSize(pid, a, 1, 0.5, 0.5, 0.59375, 0.25); render(); await wait(150);
+      const saved = JSON.parse(JSON.stringify(getProjectState()));
+      out.saved = !!(saved.presets[0].combo && saved.presets[0].combo[a] && saved.presets[0].combo[a].on); want.saved = true;
+      addPreset(); await wait(300); const p2 = presets[presets.length - 1];
+      out.copied = JSON.stringify(p2.combo || null) === JSON.stringify(presets[0].combo || null) && !!p2.combo; want.copied = true;
+      doUndo(); await wait(300);   /* + Preset back out */
+      doUndo(); await wait(300); out.undo = [presets[0].combo || null, (presets[0].positions[c] || {}).x]; want.undo = [null, 1920];
+      doRedo(); await wait(300); out.redo = [(_vbEntry(pid, a) || [])[0], (presets[0].positions[c] || {}).x]; want.redo = [true, 1320];
+      _applyProjectText(JSON.stringify(saved)); await wait(800); okDialogs(); await wait(200);
+      out.reload = [_vbEntry(presets[0].id, a), _vbXf(presets[0].id, a, 1), !!_isDirty]; want.reload = [[true, a + '|' + c], 0.59375, false];
+      breakBlend(presets[0].id, a, c); await wait(300);
+      const b = _vbBox(presets[0].id, c);
+      out.broken = [presets[0].combo || null, _vbXf(presets[0].id, a, 1), b ? $$('.screen-inner .layer-chip', b).length > 0 : null]; want.broken = [null, 0.5, true];
+      doUndo(); await wait(300); out.undoBreak = [(_vbEntry(presets[0].id, a) || [])[0], _vbXf(presets[0].id, a, 1)]; want.undoBreak = [true, 0.59375];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { await restore(); }
+    return is(out, want, 'Save carries it / + Preset copies it / Undo of the blend [entries, D2 x] / Redo [on, D2 x] / after a reload [entry, L1 xf, Save lit] / Break Blend [entries, L1 xf, D2 draws its own layers] / Undo of Break Blend [on, L1 xf]');
+  });
+  // 16lg-blend VB7: NEW
+  await check('Help 16lg-blend VB7: Video Presets Help has the One combined screen row (the master, one picture, layers anywhere, Blended with, the red %, the switch, older shows, stacks)', async () => {
+    const t = (document.body.textContent || '').replace(/\s+/g, ' ');
+    const need = ['One combined screenA blend is one combined screen', 'the group’s first destination in the destination list (D1 before D2) is the master', 'Double-click the blend zone or its red % for the blend options', 'a show from an earlier version opens exactly as it was', 'Destinations stacked at the same place are not a blend'].filter(s => !t.includes(s));
+    return is(need, [], 'Help lines missing');
+  });
+  // ── 16lg-blend-fix (r16lo fix step, 2026-10-08: Omar's answer A1 and the attack's findings D1 / D4 / D5 / D6 on the 16lg-blend page):
+  //    VF1-VF5 FAIL on the 16lg-blend page (a78ae22d) and PASS after. Helpers prefixed _vf; the 16lg-blend _vb helpers are reused.
+  const _vfLs = (pid, sid, n) => { const r = getLayerSize(pid, sid, n); return r ? [+(+r.wf).toFixed(5), +(+r.hf).toFixed(5), +(+r.xf).toFixed(5), +(+r.yf).toFixed(5)] : null; };
+  const _vfPx = (pid, sid, n) => { const p = presets.find(x => x.id === pid), s = screens.find(x => x.id === sid), r = getLayerSize(pid, sid, n), q = (p.positions || {})[sid] || { x: 0, y: 0 }, w = parseInt(s.w), h = parseInt(s.h); return r ? [Math.round(q.x + r.xf * w), Math.round(q.x + (r.xf + r.wf) * w), Math.round(q.y + r.yf * h), Math.round(q.y + (r.yf + r.hf) * h)] : null; };
+  // 16lg-blend-fix VF1: NEW
+  await check('Video Presets 16lg-blend-fix VF1 (Omar A1, 2026-10-08: "a new layer added to a combined master starts centred on the WHOLE combined screen ... from every way a layer is added"): on D1, the master of D1 + D2 (600 px, 3240 x 1080), a new layer from the table or any other way starts at half D1\'s size centred on the whole combined screen (1140..2100 x 270..810); switched off, a new layer starts on D1\'s own centre; a destination in no blend (D3) as before', async () => {
+    const out = {}, want = {};
+    try {
+      const pid = presets[0].id, a = screens[0].id, d = screens[2].id, sw = parseInt(screens[0].w), sh = parseInt(screens[0].h);
+      await cvLay([0, 0], [sw - 600, 0], [2 * sw + 1000, 0]);
+      [3, 4].forEach(n => { setL(pid, a, n, null); setL(pid, d, n, null); }); render(); await wait(150);
+      out.entry = (_vbEntry(pid, a) || [null])[0]; want.entry = true;
+      homeSetL(pid, a, 3, 'CAM 2'); setL(pid, a, 4, 'GFX 1'); setL(pid, d, 3, 'CAM 2'); render(); await wait(150);
+      const W = 2 * sw - 600, cx = [Math.round((W - sw / 2) / 2), Math.round((W + sw / 2) / 2), Math.round(sh / 4), Math.round(sh * 3 / 4)];
+      out.table = _vfPx(pid, a, 3); want.table = cx;
+      out.other = _vfPx(pid, a, 4); want.other = cx;
+      out.plain = _vfLs(pid, d, 3); want.plain = [0.5, 0.5, 0.25, 0.25];
+      _cbToggle(pid, a); await wait(300); setL(pid, a, 4, null); setL(pid, a, 4, 'GFX 1'); render(); await wait(150);
+      out.off = [(_vbEntry(pid, a) || [null])[0], _vfLs(pid, a, 4)]; want.off = [false, [0.5, 0.5, 0.25, 0.25]];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { await restore(); }
+    return is(out, want, 'the entry on / L3 from the table [left, right, top, bottom] / L4 set another way / D3 (no blend) [wf, hf, xf, yf] / switched off [on, L4 wf, hf, xf, yf]');
+  });
+  // 16lg-blend-fix VF2: NEW
+  await check('Video Presets 16lg-blend-fix VF2 (attack D1): a destination dragged over a combined screen and back in ONE drag (Blend Zones) leaves it as it was: D1 pressed, dragged 700 px into D2 (the master of D2 + D3, its L1 over the zone, L2 inside D3) and back, released: the entry stays under D2 the whole time (D1 never its master) and L1 / L2 stay where they were', async () => {
+    const out = {}, want = {}; const was = cvAdv('blend', true), wasF = cvAdv('freePos', false);
+    try {
+      const pid = presets[0].id, a = screens[0].id, c = screens[1].id, sw = parseInt(screens[1].w);
+      await cvLay([0, 0], [sw + 480, 0], [2 * sw + 480 - 600, 0]);
+      setL(pid, c, 1, 'GFX 1'); setL(pid, c, 2, 'GFX 2'); setLayerSize(pid, c, 1, 0.5, 0.5, 0.59375, 0.25); setLayerSize(pid, c, 2, 0.5, 0.5, 1.1, 0.1); render(); await wait(200);
+      const e0 = JSON.stringify(_vbEntry(pid, c)), l0 = JSON.stringify([_vfLs(pid, c, 1), _vfLs(pid, c, 2)]);
+      const now = () => [presets[0].positions[a].x + parseInt(screens[0].w) > presets[0].positions[c].x, JSON.stringify(_vbEntry(pid, c)) === e0, _vbEntry(pid, a), JSON.stringify([_vfLs(pid, c, 1), _vfLs(pid, c, 2)]) === l0];
+      out.before = [(_vbEntry(pid, c) || [null])[0], _vbEntry(pid, a)]; want.before = [true, null];
+      const box = _vbBox(pid, a); if (!box) return 'no D1 box on the canvas';
+      const r = box.getBoundingClientRect(), k = r.width / parseInt(screens[0].w), x0 = r.left + r.width / 2, y0 = r.top + r.height * 0.85;
+      cvMouse(box, 'mousedown', x0, y0);
+      for (let i = 1; i <= 6; i++) { cvMouse(window, 'mousemove', x0 + 700 * k * i / 6, y0, { shiftKey: true }); await wait(30); }
+      out.held = now(); want.held = [true, true, null, true];
+      for (let i = 1; i <= 6; i++) { cvMouse(window, 'mousemove', x0 + 700 * k * (6 - i) / 6, y0, { shiftKey: true }); await wait(30); }
+      cvMouse(window, 'mouseup', x0, y0); await wait(350); okDialogs();
+      out.after = now().concat([presets[0].positions[a].x]); want.after = [false, true, null, true, 0];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { cvAdv('freePos', wasF); cvAdv('blend', was); await restore(); }
+    return is(out, want, 'before [D2 entry on, an entry under D1] / held 700 px in [D1 over D2, D2 entry unchanged, an entry under D1, D2 layers unchanged] / released back where it began [.., D1 x]');
+  });
+  // 16lg-blend-fix VF3: NEW
+  await check('Video Presets 16lg-blend-fix VF3 (attack D4): a member of a combined screen turned (Rotation 180) and back: turned, the screens are separate (D2 not greyed) and D1\'s layers back inside D1; turned back, one combined screen again with L1 over the zone and L2 inside D2 where they were; switched OFF first, it stays OFF through a turn and back', async () => {
+    const out = {}, want = {};
+    try {
+      const pid = presets[0].id, a = screens[0].id, c = screens[1].id, sw = parseInt(screens[0].w);
+      await cvLay([0, 0], [sw - 600, 0], [2 * sw + 1000, 0]);
+      setL(pid, a, 1, 'GFX 1'); setL(pid, a, 2, 'GFX 2'); setLayerSize(pid, a, 1, 0.5, 0.5, 0.59375, 0.25); setLayerSize(pid, a, 2, 0.5, 0.5, 1.15, 0.03); render(); await wait(200);
+      const st = () => { const r = _vbRow(pid, c); return [(_vbEntry(pid, a) || [null])[0], _vbXf(pid, a, 1), _vbXf(pid, a, 2), r ? r.classList.contains('cb-slave') : null]; };
+      out.start = st(); want.start = [true, 0.59375, 1.15, true];
+      setRotation(pid, c, 180); render(); await wait(200); out.turned = st(); want.turned = [false, 0.5, 0.5, false];
+      setRotation(pid, c, 0); render(); await wait(200); out.back = st(); want.back = [true, 0.59375, 1.15, true];
+      _cbToggle(pid, a); await wait(300); out.off = st(); want.off = [false, 0.5, 0.5, false];
+      setRotation(pid, c, 180); render(); await wait(200); setRotation(pid, c, 0); render(); await wait(200); out.offBack = st(); want.offBack = [false, 0.5, 0.5, false];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { await restore(); }
+    return is(out, want, 'start [on, L1 xf, L2 xf, D2 greyed] / turned 180 / turned back / switched OFF / OFF, turned and back');
+  });
+  // 16lg-blend-fix VF4: NEW
+  await check('Video Presets 16lg-blend-fix VF4 (attack D5): a slave\'s layer picked while One combined screen is OFF is no longer picked once it is switched ON (its layers are hidden): the arrow keys then change nothing and record no Undo step', async () => {
+    const out = {}, want = {};
+    try {
+      const pid = presets[0].id, a = screens[0].id, c = screens[1].id, sw = parseInt(screens[0].w);
+      await cvLay([0, 0], [sw - 600, 0], [2 * sw + 1000, 0]);
+      setL(pid, c, 1, 'CAM 2'); setLayerSize(pid, c, 1, 0.5, 0.5, 0.25, 0.25); render(); await wait(150);
+      if (typeof doSelect === 'function') doSelect(null, null);
+      _cbToggle(pid, a); await wait(300);
+      selLayer = { pid: pid, sid: c, n: 1 }; render(); await wait(150);
+      out.off = [(_vbEntry(pid, a) || [null])[0], !!(selLayer && selLayer.sid === c)]; want.off = [false, true];
+      _cbToggle(pid, a); await wait(300);
+      out.on = [(_vbEntry(pid, a) || [null])[0], selLayer ? selLayer.sid : null]; want.on = [true, null];
+      const u0 = vpUndoLen(); document.body.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', shiftKey: true, bubbles: true, cancelable: true })); await wait(250);
+      out.keys = [_vbXf(pid, c, 1), vpUndoLen() - u0]; want.keys = [0.25, 0];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { selLayer = null; await restore(); }
+    return is(out, want, 'OFF [on, D2 L1 picked] / ON [on, the pick] / Shift+Right [D2 L1 xf, Undo steps]');
+  });
+  // 16lg-blend-fix VF5: NEW
+  await check('Video Presets 16lg-blend-fix VF5 (attack D6; SPEC rule 5 "combined-screen space"): the layer window\'s X on a combined master counts from the combined screen\'s top-left corner: D1, the master, placed to the RIGHT of D2 (D2 at 0, D1 at 1320): L1 at the combined screen\'s left edge reads X 0; a typed X 960 puts it 960 px from that edge; the window\'s words say "measured from its top-left corner"', async () => {
+    const out = {}, want = {};
+    try {
+      const pid = presets[0].id, a = screens[0].id, sw = parseInt(screens[0].w);
+      await cvLay([sw - 600, 0], [0, 0], [2 * sw + 1000, 0]);
+      setL(pid, a, 1, 'GFX 1'); setLayerSize(pid, a, 1, 0.5, 0.5, -(sw - 600) / sw, 0.25); render(); await wait(200);
+      out.entry = (_vbEntry(pid, a) || [null])[0]; want.entry = true;
+      openLayerPanel(fakeEv, pid, a, 1, true); await wait(450); const pop = $('#layer-panel'); if (!pop) return 'the layer window did not open';
+      const xi = $('input.lfx-inp.lfx-geo[data-dim="x"]', pop), hint = $$('.lfx-hint', pop).map(e => e.textContent).join(' | ');
+      out.read = [xi ? xi.value : null, /measured from its top-left corner/.test(hint)]; want.read = ['0', true];
+      if (xi) { xi.value = '960'; fire(xi, 'input'); fire(xi, 'change'); await wait(300); }
+      const r = getLayerSize(pid, a, 1), q = presets[0].positions[a];
+      out.typed = r ? Math.round(q.x + r.xf * sw) : null; want.typed = 960;
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { closeLayerPanel(); } catch (e) {} await restore(); }
+    return is(out, want, 'the entry on / X read at the combined left edge, the words / typed X 960 -> canvas left');
+  });
+  // ── 16lg-blend-fix2 (r16lo R1, Omar 2026-10-08 ~14:10: "disable this possibility when a blend has merged two destinations"):
+  //    VR1 FAILS on the 16lg-blend-fix page (ac735485) and PASSES after. Helpers prefixed _vr; the 16lg-blend _vb helpers are reused.
+  const _vrRow = () => { const pop = $('#screen-panel'); if (!pop) return null; const r = $('#sp-rot', pop), w = r.parentElement, t = k => { const e = $('[data-sp-key="rot"][data-sp-tool="' + k + '"]', pop); return e ? e.disabled : null; }; return [r.disabled, t('copy'), t('paste'), t('reset'), /^Rotation is off while this destination is blended into one combined screen/.test(w.getAttribute('title') || w.dataset.tip || '')]; };
+  const _vrOpen = async (pid, sid) => { openScreenPanel(fakeEv, pid, sid); await wait(350); const r = _vrRow(); closeScreenPanel(); return r; };
+  const _vrTyped = async (pid, sid, v) => { openScreenPanel(fakeEv, pid, sid); await wait(350); const pop = $('#screen-panel'); if (!pop) return 'no window'; $('#sp-rot', pop).value = String(v); $('#sp-apply', pop).click(); await wait(350); okDialogs(); await wait(150); return getRotation(pid, sid); };
+  // 16lg-blend-fix2 VR1: NEW
+  await check('Video Presets 16lg-blend-fix2 VR1 (Omar 2026-10-08, R1: "disable this possibility when a blend has merged two destinations"): while D1 + D2 are ONE combined screen (600 px), Destination Properties greys Rotation on both (box, Paste, Reset; Copy stays; the app tooltip "Rotation is off while this destination is blended into one combined screen"); a typed 90 + Apply on D1 or D2, a rotation Paste of 90, a Reset and setRotationSmart change nothing (still combined, no Undo step); switched OFF, D1 turns 180 in one Undo step and back; ON greys it again; Break Blend frees it; D3 (no blend) turns; on the first preset D1 is refused while P02 has it combined (the tooltip names P02); Help says so', async () => {
+    const out = {}, want = {}, free = [false, false, false, false, false], off = [true, false, true, true, true];
+    try {
+      const pid = presets[0].id, q = presets[1], a = screens[0].id, c = screens[1].id, d = screens[2].id, sw = parseInt(screens[0].w);
+      await cvLay([0, 0], [sw - 600, 0], [2 * sw + 1000, 0]);
+      out.start = (_vbEntry(pid, a) || [null])[0]; want.start = true;
+      out.d1 = await _vrOpen(pid, a); want.d1 = off;
+      out.d2 = await _vrOpen(pid, c); want.d2 = off;
+      const n0 = vpUndoLen(); _spClip.rot = 90;
+      openScreenPanel(fakeEv, pid, a); await wait(350); if ($('#screen-panel')) { _spTool('paste', 'rot'); await wait(200); okDialogs(); _spTool('reset', 'rot'); await wait(200); okDialogs(); } closeScreenPanel();
+      const pasted = getRotation(pid, a);
+      out.refused = [pasted, await _vrTyped(pid, a, 90), await _vrTyped(pid, c, 90), (setRotationSmart(pid, a, 180), okDialogs(), getRotation(pid, a)), (_vbEntry(pid, a) || [null])[0], vpUndoLen() - n0]; want.refused = [0, 0, 0, 0, true, 0];
+      _cbToggle(pid, a); await wait(300);
+      out.off = await _vrOpen(pid, a); want.off = free;
+      const n1 = vpUndoLen(); out.offTurn = [await _vrTyped(pid, a, 180), vpUndoLen() - n1, (_vbEntry(pid, a) || [null])[0], await _vrTyped(pid, a, 0)]; want.offTurn = [180, 1, false, 0];
+      _cbToggle(pid, a); await wait(300); out.on = [(_vbEntry(pid, a) || [null])[0], await _vrOpen(pid, a)]; want.on = [true, off];
+      out.plain = [await _vrOpen(pid, d), await _vrTyped(pid, d, 180), (_vbEntry(pid, a) || [null])[0], await _vrTyped(pid, d, 0)]; want.plain = [free, 180, true, 0];
+      breakBlend(pid, a, c); await wait(300); okDialogs(); render(); await wait(200);
+      out.broken = [_vbEntry(pid, a), await _vrOpen(pid, a), await _vrOpen(pid, c), await _vrTyped(pid, a, 180), await _vrTyped(pid, a, 0)]; want.broken = [null, free, free, 180, 0];
+      if (q.rotations) delete q.rotations[a];
+      setPosition(q, a, 0, 0); setPosition(q, c, sw - 600, 0); setPosition(q, d, 2 * sw + 1000, 0); render(); await wait(250);
+      openScreenPanel(fakeEv, pid, a); await wait(350); const pop = $('#screen-panel'), w = pop && $('#sp-rot', pop).parentElement, tip = w ? (w.getAttribute('title') || w.dataset.tip || '') : ''; closeScreenPanel();
+      out.cross = [(_vbEntry(q.id, a) || [null])[0], _vbEntry(pid, a), !!(pop && $('#sp-rot', pop).disabled), tip.includes(' in ' + q.code + ' (a rotation set on the first preset'), await _vrTyped(pid, a, 90), getRotation(q.id, a)]; want.cross = [true, null, true, true, 0, 0];
+      out.help = (document.body.textContent || '').replace(/\s+/g, ' ').includes('While a destination is part of one combined screen its Rotation (Destination Properties) is off, greyed'); want.help = true;
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { closeScreenPanel(); } catch (e) {} await restore(); }
+    return is(out, want, 'the entry on / D1 window [rotation box, copy, paste, reset greyed; the tooltip] / D2 window / refused [after paste + reset, typed D1, typed D2, setRotationSmart, entry on, Undo steps] / OFF window / OFF [turned 180, Undo steps, entry, back] / ON [entry, window] / D3 [window, turned, D1 entry, back] / Break Blend [entry, D1 window, D2 window, turned, back] / P02 combined, P01 apart [P02 entry, P01 entry, P01 box greyed, tip names P02, typed 90 on P01, P02 rotation] / Help');
   });
   try { _fsPauseAll(); } catch (e) {} $$('video').forEach(v => { try { v.muted = true; v.pause(); } catch (e) {} });
   return { checks };

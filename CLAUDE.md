@@ -113,6 +113,18 @@ Blend Zones ON = the drag's "Create Blend Zone?"; Cancel = the same put-back. Ow
 the move arrows (a swap that would overlap is greyed by `_lbMovePlan`), preset copy / paste and + Preset (they carry an existing
 blend over as it is). The arrow keys ARE bracketed since 16kq (`_resizeSelDest`).
 
+**One combined screen (16lg-blend, 2026-10-08)** — an EDGE blend group (overlapping boxes, not a full stack, no rotated member) is ONE
+screen per preset: `p.combo[<master id>] = {on, ids[, keep]}`, master = first in `screens` order. `_cbNorm()` (top of `render()` /
+`renderFullscreen()`) gives a NEW group `{on:true}` and drops a gone one (master layers clamped back); `_cbOpen()` before the clean
+baseline gives an opened show's groups `{on:false}`. A combined master's layers stay fractions of its OWN size: never clamp a layer to
+0..1 yourself, go through `_layerPosBounds` / `_cbMaxF` (they widen to the combined rectangle). A new canvas renderer must draw through
+`_rcScreenBox` (it draws the slices, the see-through slaves and the master's `.cb-lay`). Read `_cbFind(p,sid)` before showing or
+editing a destination's own BG / layers (a slave's are hidden and kept). 16lg-blend-fix: a drag that redraws on every mousemove must
+hold `_cbHold` (as `startHomeScreenDrag` does) so passing group changes are not worked out; a group with a turned member is paused
+(`_cbPause` / `_cbResume`), not dropped; a new layer on a combined master is centred on `_cbBox`. 16lg-blend-fix2: a member of a
+combined screen cannot be rotated: a new rotation control must go through `setRotationSmart` (it refuses via `_cbRotLock`) and grey
+itself like `_cbRotSync`; `setRotation` stays the unguarded data setter. HANDBOOK › 16lg-blend, 16lg-blend-fix, 16lg-blend-fix2.
+
 **Looking is not a change (2026-09-21)** — the unsaved mark (`_isDirty`, the gold Save button, the New / Load / close question)
 comes on ONLY for a real edit. Two rules, both next to `_dirtyStateString`: (1) view settings are SAVED as before but left out of
 the comparison: `_LB_DIRTY_VIEW_KEYS` (Wire view / zoom / tool / panes / collapsed panels / Align panel place, I/O view / open page)
@@ -219,7 +231,7 @@ its line at Help > Accessibility 90 % / 115 % (`_wtlNmZoomOK`, a hidden span wit
 Details: HANDBOOK section 5
 (`16ky-r3`, `16kz-answers`, `16kz-refresh`, `16kz-fix`, `16la-wire-mv`, `16la-ip`, `16la-colour-mv`, `16la-fix`, `16lb-simple`,
 `16lc-fixes`, `16ld-port`, `16ld-tools`, `16ld-fix`, `16ld-fix2`, `16lc-picsize`, `16lc-fix`, `16lc-names`, `16lc-midword`,
-`16lc-midword-fix`, `16lc-onlyword`, `16lc-onlyword-fix`, `16lc-onlyword-fix2`, `16lc-vpcards`, `16lc-vpvideo`, `16lc-vpaux`, `16lc-vpfinish`, `16lc-vpcards-fix`, `16lc-vpcards-fix2`, `16lc-vpcards-fix3`, `16lc-vpcards-fix4`).
+`16lc-midword-fix`, `16lc-onlyword`, `16lc-onlyword-fix`, `16lc-onlyword-fix2`, `16lc-vpcards`, `16lc-vpvideo`, `16lc-vpaux`, `16lc-vpfinish`, `16lc-vpcards-fix`, `16lc-vpcards-fix2`, `16lc-vpcards-fix3`, `16lc-vpcards-fix4`, `16lg-blend`, `16lg-blend-fix`, `16lg-blend-fix2`).
 
 **One card (16lc-vpcards, 2026-10-06)** — the I/O Patch > Simple card (`_iogCardHTML` + `_iogSrcObj` / `_iogOutObj`) is also the card of
 Wire's left panel (desktop; the phone keeps Wire's own) and of the Video Presets > Advanced left panel (Wire > Simple's sections:

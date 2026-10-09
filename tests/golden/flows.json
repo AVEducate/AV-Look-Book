@@ -913,7 +913,7 @@
    "ok": true
   },
   {
-   "name": "Blend Zones: a top / bottom overlap reads on height (100 px of 1080 = 9%), and a typed PX moves the lower destination in one undo step",
+   "name": "Blend Zones: a top / bottom overlap reads on height (100 px of 1080 = 9%), and a typed PX moves the lower destination in one undo step; 16lg-blend: the blend is one combined screen, its % chip read where it is drawn (above the layers)",
    "ok": true
   },
   {
@@ -2862,6 +2862,58 @@
   },
   {
    "name": "I/O Patch 16lc-vpcards-fix4 VH4 (SPEC H1: \"an auto PBP B / GFX B right under its A\"): with three files imported (numbered where the order puts them, right after the library), a source renamed GFX A gets its GFX B on the next I/O Patch draw right under GFX A (its number + 1) and every source after GFX A, the files included, takes the next number, as in the v0.8.2 candidate; the draw adds no Undo step and nothing is kept; page 1 rebuilt from Simple puts GFX B right under GFX A as its backup, its type reads Backup of GFX A, and Wire Advanced's tile built from page 1 lists it right after GFX A",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16lg-blend VB1 (rules 1-5, Omar: \"PJ 1 and PJ 2 are one image now ... the first destination now becomes the master the second one should grey out\"): a blend made now (D2 600 px over D1) is ONE combined screen at once: D1, first in the list, is the master; its BG is one picture over the whole 3240 x 1080 (one slice), its layers are drawn once above both boxes and may cross the blend zone (L1 at 1140..2100); D2's own BG and layers are hidden and kept, its table row greyed \"Blended with\" D1 with no layer box",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16lg-blend VB2 (rule 6 and the switch, Omar: \"clicking on the red line can still bring the pop up to change thing\"): a double-click on the red % marker opens the blend options with \"One combined screen\" on; off gives D2 its own layers back, puts D1's L1 back inside D1 and is one Undo step; on again brings L1 back over the zone; Undo and Redo step through it",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16lg-blend VB3 (rule 2): a show saved before this build with a blend opens EXACTLY as before: the blend stays two screens (D2 keeps its own layers, its row is not greyed), clean, no Undo step; the switch in the blend options turns it into one combined screen (one Undo step)",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16lg-blend VB4 (rules 1, 3, 9): a top / bottom blend (D2 200 px under D1) is one 1920 x 1960 screen; three in a row (600 px each) are one 4560 x 1080 screen with D1 the master and D2 / D3 greyed; destinations STACKED at one place (ORGILL's P04 / P05) are not a blend group: no entry, no greyed row, each draws its own layers, as before",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16lg-blend VB5 (rule 8, \"the Look Book same as the app\"): the combined screen is the same picture on the Advanced tile, its preset card and the printed Look Book (the master's BG slice and layers over both boxes); the Look Book's Destination Breakdown reads D2 \"Blended with\" D1 and its Layer Resolutions leave D2 out; Advanced's Layers list greys D2 the same way",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16lg-blend VB6 (rule 2: \"saved / undone / copied with + Preset like positions\"): the combined state is in what Save writes and comes back after a reload (clean); + Preset copies it; Undo of the blend takes the combined screen away with it and Redo brings both back; Break Blend gives D2 its own layers back and puts D1's layers back inside D1",
+   "ok": true
+  },
+  {
+   "name": "Help 16lg-blend VB7: Video Presets Help has the One combined screen row (the master, one picture, layers anywhere, Blended with, the red %, the switch, older shows, stacks)",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16lg-blend-fix VF1 (Omar A1, 2026-10-08: \"a new layer added to a combined master starts centred on the WHOLE combined screen ... from every way a layer is added\"): on D1, the master of D1 + D2 (600 px, 3240 x 1080), a new layer from the table or any other way starts at half D1's size centred on the whole combined screen (1140..2100 x 270..810); switched off, a new layer starts on D1's own centre; a destination in no blend (D3) as before",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16lg-blend-fix VF2 (attack D1): a destination dragged over a combined screen and back in ONE drag (Blend Zones) leaves it as it was: D1 pressed, dragged 700 px into D2 (the master of D2 + D3, its L1 over the zone, L2 inside D3) and back, released: the entry stays under D2 the whole time (D1 never its master) and L1 / L2 stay where they were",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16lg-blend-fix VF3 (attack D4): a member of a combined screen turned (Rotation 180) and back: turned, the screens are separate (D2 not greyed) and D1's layers back inside D1; turned back, one combined screen again with L1 over the zone and L2 inside D2 where they were; switched OFF first, it stays OFF through a turn and back",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16lg-blend-fix VF4 (attack D5): a slave's layer picked while One combined screen is OFF is no longer picked once it is switched ON (its layers are hidden): the arrow keys then change nothing and record no Undo step",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16lg-blend-fix VF5 (attack D6; SPEC rule 5 \"combined-screen space\"): the layer window's X on a combined master counts from the combined screen's top-left corner: D1, the master, placed to the RIGHT of D2 (D2 at 0, D1 at 1320): L1 at the combined screen's left edge reads X 0; a typed X 960 puts it 960 px from that edge; the window's words say \"measured from its top-left corner\"",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16lg-blend-fix2 VR1 (Omar 2026-10-08, R1: \"disable this possibility when a blend has merged two destinations\"): while D1 + D2 are ONE combined screen (600 px), Destination Properties greys Rotation on both (box, Paste, Reset; Copy stays; the app tooltip \"Rotation is off while this destination is blended into one combined screen\"); a typed 90 + Apply on D1 or D2, a rotation Paste of 90, a Reset and setRotationSmart change nothing (still combined, no Undo step); switched OFF, D1 turns 180 in one Undo step and back; ON greys it again; Break Blend frees it; D3 (no blend) turns; on the first preset D1 is refused while P02 has it combined (the tooltip names P02); Help says so",
    "ok": true
   }
  ],
