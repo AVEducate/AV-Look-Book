@@ -4848,7 +4848,7 @@ Also called DSM (Downstage Monitor) in broadcast and theater workflows, same thi
   <div class="bb-cell bb-pill bb-cyan" title="The largest number of layers used in any single preset, this is the figure to compare against your switcher's per-scene layer budget. (The most complex single moment in the show.)"><span class="bb-label">Layers</span><strong id="bb-layers">0</strong></div>
   <div id="bb-spacer"></div>
   <div class="bb-cell" id="bb-sel" style="font-size:10px;opacity:.5">—</div>
-  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy, hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16lj</div>
+  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy, hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16lk</div>
   <!-- 16kq (Omar): the Modifiers menu lives on each preset tile only; this place is kept for the Educator tool of a future build (greyed out, does nothing) --><button class="bb-util" id="tb-educator" type="button" disabled aria-disabled="true" title="Educator: coming in a future build" aria-label="Educator, coming in a future build" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:default;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em;opacity:.38"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10L12 5 2 10l10 5 10-5z"/><path d="M6 12v5c0 1 2.7 2.5 6 2.5s6-1.5 6-2.5v-5"/><line x1="22" y1="10" x2="22" y2="16"/></svg><span>Educator</span></button>
   <button class="bb-util" onclick="actions.help()" title="Help, quick reference, keyboard shortcuts, glossary, accessibility" aria-label="Help, quick reference, keyboard shortcuts, glossary, accessibility" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="4.93" y1="4.93" x2="9.17" y2="9.17"/><line x1="14.83" y1="14.83" x2="19.07" y2="19.07"/><line x1="14.83" y1="9.17" x2="19.07" y2="4.93"/><line x1="4.93" y1="19.07" x2="9.17" y2="14.83"/></svg>Help</button>
   <button class="bb-util" id="tb-bug" onclick="reportBug()" title="Report a bug, opens an email to AV Educate with your show file — attached in the app, downloaded for you to attach in a browser" aria-label="Report a bug" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="7.2"/><path d="M15.4 15.4L21 21" stroke-width="2.6"/><ellipse cx="10" cy="11" rx="2.5" ry="3.3" fill="currentColor" stroke="none"/><circle cx="10" cy="7" r="1.5" fill="currentColor" stroke="none"/><path d="M7.5 9.2l-1.7-.8M7.4 11.2H5.6M7.7 13.1l-1.5 1.1M12.5 9.2l1.7-.8M12.6 11.2h1.8M12.3 13.1l1.5 1.1M9.2 5.9l-.8-1.1M10.8 5.9l.8-1.1" stroke-width="1.3"/></svg>Bug</button>   <!-- 16jk (Omar): Report a bug, after Help -->
@@ -9190,7 +9190,7 @@ function _rcScreenBox(p,s,pos,sc,bgF){
   const lnums=getLayerNums(p.id).filter(n=>getL(p.id,s.id,n)); // progressive: all visible layers, not just L1-L4
   const showMode=getShowMode(p.id,s.id);
   const mainRot=getRotation(p.id,s.id);
-  const overrideBg=getPBg(p.id,s.id), overrideColor=getPColor(p.id,s.id), _bgsR=_bgsRec(p,s);   /* 16li-bgsrc */
+  const overrideBg=getPBg(p.id,s.id)||_fuClip(p.id,s.id), overrideColor=getPColor(p.id,s.id), _bgsR=_bgsRec(p,s);   /* 16li-bgsrc; 16lj-followup (D6): P01's clip cover where this preset follows it */
   const bgStyle=_bgsR?'background:'+_bgsVal(p,s,_bgsR,iw/Math.max(1,parseInt(s.w)||1),0,0)+';':overrideBg?'background:'+_fsCoverBg(overrideBg,(typeof getBgName==='function')?getBgName(p.id,s.id):'',p.id,s.id,0,s,iw)+';'   /* 16jq: the BG slice shows in Simple too */
     :overrideColor?'background:'+overrideColor+';'
     :s.bg?'background:url('+s.bg+') center/cover no-repeat;'
@@ -10182,7 +10182,7 @@ function _cbSwitchHTML(pid,aSid){
 /* drawing (_rcScreenBox, every canvas: Simple, the Advanced tile, the preset cards, Display, the Look Book) */
 function _cbBgCss(p,s,R,rw){
   { const _bgsR=_bgsRec(p,s); if(_bgsR){ const _P=(p.positions||{})[s.id]||{x:0,y:0}; return 'background:'+_bgsVal(p,s,_bgsR,rw/Math.max(1,R.w),R.x-_P.x,R.y-_P.y)+';'; } }   /* 16li-bgsrc */
-  const img=getPBg(p.id,s.id), col=getPColor(p.id,s.id);
+  const img=getPBg(p.id,s.id)||_fuClip(p.id,s.id), col=getPColor(p.id,s.id);   /* 16lj-followup (D6) */
   if(img){
     const name=(typeof getBgName==='function')?getBgName(p.id,s.id):'', it=name?_fsMediaItem(name):null, lm=getLayerMedia(p.id,s.id,0);
     if(it&&!_fsGeomIsDefault(lm)){ const g=_fsMediaGeom(it,lm,R.w,R.h,true); if(g){ const k=rw/Math.max(1,g.lw); return 'background:url('+img+') '+(g.ex*k).toFixed(2)+'px '+(g.ey*k).toFixed(2)+'px / '+(g.ew*k).toFixed(2)+'px '+(g.eh*k).toFixed(2)+'px no-repeat;'; } }
@@ -10959,7 +10959,7 @@ function renderTable(){
         <td onclick="event.stopPropagation()" style="width:90px"><div class="home-field-bg" data-pid="${p.id}" data-sid="${s.id}">${(()=>{
           if(_bdIs(s)) return _bdCell('BACKDROP');   /* 16kx-backdrop */
           if(_cbSl) return _cbTableBg(p,s,_cbSl);   /* 16lg-blend (R7) */
-          const _bg=getPBg(p.id,s.id)||s.bg;
+          const _bg=getPBg(p.id,s.id)||_fuClip(p.id,s.id)||s.bg;   /* 16lj-followup (D6) */
           const _c=getPColor(p.id,s.id)||s.color||'#1a1a1a';
           const hasBg=!!_bg;
           const bgName=getBgName(p.id,s.id);
@@ -13277,7 +13277,7 @@ function openScreenPanel(e,pid,sid){
   const spBgBtn=pop.querySelector('#sp-bg-btn');
   const spBgSwatch=pop.querySelector('#sp-bg-swatch');
   if(spBgBtn&&spBgSwatch){
-    const _bg=getPBg(pid,sid)||s.bg;
+    const _bg=getPBg(pid,sid)||_fuClip(pid,sid)||s.bg;   /* 16lj-followup (D6) */
     const _c=getPColor(pid,sid)||s.color||'#1a1a1a';
     if(_bg) spBgSwatch.style.background='url('+_bg+') center/cover';
     else spBgSwatch.style.background=_c;
@@ -15960,8 +15960,9 @@ function _bgsDrop(pid,sid){ const p=_bgsPre(pid); if(p&&p.bgBox&&p.bgBox[sid]) d
 /* SOURCE: source name becomes the BG of (pid, sid) at its own resolution, its top-left at the frame's top-left. One undo step. */
 function _bgsPick(pid,sid,name,noStep){
   const p=_bgsPre(pid), s=_bgsScr(sid); if(!p||!s||!name) return false;
-  const res=_bgsRes(name);
   if(!noStep&&typeof pushUndo==='function') pushUndo();
+  _fuWcAdopt(name);   /* 16lj-followup (W1): one card for the one resolution (the step above holds the hand-made card) */
+  const res=_bgsRes(name);
   const ct=(typeof findContent==='function')?findContent(name):null;
   if(!res){ setBgName(pid,sid,name); if(ct&&typeof setPColor==='function'){ if(ct.img) setPColor(pid,sid,null,ct.img); else if(ct.c) setPColor(pid,sid,ct.c,null); } }   /* no known resolution: it fills the destination, as the Advanced drop always did */
   else {
@@ -16082,9 +16083,10 @@ function _bgsSizeSync(force){
 function _bgsListHTML(){
   const t=colorPopTarget, cur=(t&&t.pid&&typeof getBgName==='function')?getBgName(t.pid,t.sid):'';
   const names=((typeof _srcNameOrder==='function')?_srcNameOrder():[]).filter(function(n){ return n&&String(n).trim(); });
-  if(!names.length) return '<div class="sys-dd-group" style="text-transform:none;letter-spacing:.02em;line-height:1.4">No sources in this show yet. Add one in I/O Patch, or import a file in Video Presets › Advanced.</div>';
+  const _fuW=_fuWcList(names);   /* 16lj-followup (W1) */
+  if(!names.length&&!_fuW.length) return '<div class="sys-dd-group" style="text-transform:none;letter-spacing:.02em;line-height:1.4">No sources in this show yet. Add one in I/O Patch, or import a file in Video Presets › Advanced.</div>';
   let no=null; try{ no=(typeof _lbnSrcMap==='function')?_lbnSrcMap():null; }catch(e){ no=null; }
-  return '<div class="sys-dd-group">Sources</div>'+names.map(function(nm,i){
+  return (names.length?'<div class="sys-dd-group">Sources</div>':'')+names.map(function(nm,i){
     const res=_bgsRes(nm), ct=findContent(nm)||{}, it=(typeof _fsMediaItem==='function')?_fsMediaItem(nm):null, n=(no&&no.get(nm))||(i+1);
     const sw=(it&&it.img)?('#000 url('+it.img+') center/cover'):(ct.img?('#000 url('+ct.img+') center/cover'):(ct.c||'#636870'));
     const tip=nm+(res?' · '+res.w+'×'+res.h+': placed at its own resolution, top-left':' · no resolution set: fills the destination');
@@ -16093,7 +16095,7 @@ function _bgsListHTML(){
       +'<span style="width:10px;height:10px;border-radius:2px;flex-shrink:0;background:'+sw+';border:1px solid rgba(255,255,255,.22)"></span>'
       +'<span class="item-text" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0">'+_esc(nm)+'</span>'
       +'<span class="item-meta" style="font-family:var(--font-mono);flex-shrink:0">'+(res?res.w+'×'+res.h:'fills')+'</span></div>';
-  }).join('');
+  }).join('')+_fuWcRows(_fuW,cur);   /* 16lj-followup (W1) */
 }
 function _bgsListShow(on){
   const el=document.getElementById('cp-bgsrc-list'), b=document.getElementById('cp-bgsrc-src');
@@ -16194,7 +16196,7 @@ function _bgsFrameSync(){
     wr.appendChild(fr); wr.dataset.key=''; want.host.appendChild(wr);
   }
   wr._bgsInner=want.inner; wr._bgsBox=want.box;
-  if(wr.dataset.key!==want.key){ wr.dataset.key=want.key; wr.style.cssText=want.wcss; fr.style.cssText=want.css; }
+  if(wr.dataset.key!==want.key){ wr.dataset.key=want.key; wr.style.cssText=want.wcss; fr.style.cssText=want.css; _fuCursors(fr,want.pid,want.sid); }   /* 16lj-followup (R1) */
   want.box.querySelectorAll(':scope > .rh').forEach(function(h){ if(h.style.display!=='none') h.style.display='none'; });   /* the destination's own corner handles sit at the same corners: hidden while its BG is being sized */
 }
 /* the BG picture repainted in place while a handle is held (the full draw follows the release) */
@@ -16222,11 +16224,13 @@ function _bgsStartResize(e,pid,sid,corner,h){
   const lo=function(e0,f0,d){ if(e0>=f0) return e0+d; const v=f0+d; return (v>f0)?v:e0+d; };
   const hi=function(e0,f1,d){ if(e0<=f1) return e0+d; const v=f1+d; return (v<f1)?v:e0+d; };
   let r=null, moved=false;
+  const rot=_fuRot(pid,sid);   /* 16lj-followup (R1) */
   function mv(ev){
     if(!moved&&Math.abs(ev.clientX-sx)<2&&Math.abs(ev.clientY-sy)<2) return;
     if(!moved){ moved=true; r=_bgsOwn(p,s); _bgsHold=r; }
     if(!r) return;
-    const dx=(ev.clientX-sx)/z/k, dy=(ev.clientY-sy)/z/k;
+    let dx=(ev.clientX-sx)/z/k, dy=(ev.clientY-sy)/z/k;
+    if(rot===90){ const q=dx; dx=dy; dy=-q; } else if(rot===180){ dx=-dx; dy=-dy; } else if(rot===270){ const q=dx; dx=-dy; dy=q; }   /* 16lj-followup (R1): a turned destination's axes, as the move reads them */
     let L=st.x, R=st.x+st.w, T=st.y, B=st.y+st.h;
     if(mL) L=lo(st.x,fL,dx); else R=hi(st.x+st.w,fR,dx);
     if(mT) T=lo(st.y,fT,dy); else B=hi(st.y+st.h,fB,dy);
@@ -16373,6 +16377,66 @@ function _bgsFit(){
 function _bgsFitSoon(){ if(_bgsFitRaf) return; _bgsFitRaf=requestAnimationFrame(function(){ _bgsFitRaf=0; _bgsFit(); }); }
 _bgsGrabWire();
 /* ══ end 16li-fix SOURCE BG helpers ══ */
+/* ══ 16lj-followup (r16lr, Omar 2026-10-09 ~19:05 "fix this after this run"): the three items left open after r16lq ══
+   D6 A clip set as P01's BG (VIDEO, or a clip dropped on P01 in Advanced): a later preset that follows P01's BG there (no fill and no
+      SOURCE box of its own, its BG name is P01's, the clip's) draws the clip's cover as P01 does, in every canvas that draws the preset
+      picture (Simple, the Advanced tile, the preset cards, Display, the Look Book: _rcScreenBox, _cbBgCss) and in the BG swatch of the
+      table and of the destination panel. The clip still plays only in Video Presets › Advanced (by its name, as before). Draw only:
+      nothing in the show's data changes (_fuClip).
+   R1 A SOURCE BG's corner handles on a destination turned 90 / 180 / 270: the drag is read along the turned axes (as the move already
+      is), so the handle under the pointer follows it; the handles' cursors follow the turn (_bgsStartResize, _fuCursors).
+   W1 A source card made by hand in Wire › Advanced is offered by the pop-up's SOURCE list ("Made in Wire", its C number). Picked, it
+      becomes a source of the show in the same undo step: its resolution, cable type, colour, IP and notes go to the show's source card
+      (I/O Patch, Wire, every page) and the hand-made card goes, so ONE card holds the one resolution the BG's W x H is (A4 both ways).
+      Its tiles on the Wire pages keep their place and cables: they go by name (_fuWcAdopt, run by _bgsPick). ══ */
+function _fuRot(pid,sid){ return ((Math.round((typeof getRotation==='function')?(getRotation(pid,sid)||0):0)%360)+360)%360; }
+/* D6: the cover P01 draws for destination sid when its BG there is a clip and preset pid follows it; '' otherwise */
+function _fuClip(pid,sid){
+  const P=(typeof presets!=='undefined'&&Array.isArray(presets))?presets:[], g=P[0], p=P.find(function(x){ return x&&x.id===pid; });
+  if(!g||!p||g.id===p.id||!sid) return '';
+  if((p.colors&&p.colors[sid])||(p.bgs&&p.bgs[sid])||(p.bgBox&&p.bgBox[sid])) return '';   /* a fill or a SOURCE box of its own: its own BG */
+  const img=g.bgs&&g.bgs[sid]; if(!img||typeof img!=='string') return '';
+  const nm=(typeof getBgName==='function')?getBgName(g.id,sid):''; if(!nm||getBgName(p.id,sid)!==nm) return '';   /* the presets whose BG is P01's clip: the ones Advanced plays it in */
+  const it=(typeof _fsMediaItem==='function')?_fsMediaItem(nm):null;
+  return (it&&it.kind==='video')?img:'';
+}
+/* R1: each corner handle's cursor is the corner it shows at on screen */
+function _fuCursors(fr,pid,sid){
+  if(!fr) return; const q=Math.round(_fuRot(pid,sid)/90)%4, ord=['tl','tr','br','bl'], cur=['nw','ne','se','sw'];
+  fr.querySelectorAll('.bgs-h').forEach(function(h){ const i=ord.indexOf(h.dataset.corner); if(i>=0) h.style.cursor=cur[(i+q)%4]+'-resize'; });
+}
+/* W1: the hand-made source cards whose name is not a show source already, with their C number (Wire's: the card's place in the list) */
+function _fuWcList(names){
+  const wa=(typeof wireAdvanced!=='undefined'&&wireAdvanced)||{}, arr=Array.isArray(wa.customSources)?wa.customSources:[];
+  const have=new Set((names||[]).map(function(n){ return String(n).trim().toLowerCase(); })), out=[];
+  arr.forEach(function(c,i){ const k=c&&String(c.name||'').trim().toLowerCase(); if(k&&!have.has(k)){ have.add(k); out.push({c:c,n:i+1}); } });
+  return out;
+}
+function _fuWcRows(list,cur){
+  if(!list||!list.length) return '';
+  return '<div class="sys-dd-group">Made in Wire</div>'+list.map(function(o){
+    const nm=String(o.c.name), res=_bgsRes(nm), sw=String(o.c.wireColor||'#636870');
+    const tip=nm+' · made by hand in Wire › Advanced'+(res?' · '+res.w+'×'+res.h+': placed at its own resolution, top-left':' · no resolution set: fills the destination')+'. Picked, it becomes a source of the show (I/O Patch, Wire, every page).';
+    return '<div class="sys-dd-item'+(nm===cur?' selected':'')+'" role="option" aria-selected="'+(nm===cur)+'" tabindex="0" data-src="'+_esc(nm)+'" data-wc="1" onclick="_bgsListPick(this)" onkeydown="if(event.key===\'Enter\'||event.key===\' \'){event.preventDefault();_bgsListPick(this)}" title="'+_esc(tip)+'" style="padding:6px 8px;gap:7px;min-width:0">'
+      +'<span style="font:700 9px var(--font-mono);color:var(--text3);min-width:20px;flex-shrink:0">C'+o.n+'</span>'
+      +'<span style="width:10px;height:10px;border-radius:2px;flex-shrink:0;background:'+_esc(sw)+';border:1px solid rgba(255,255,255,.22)"></span>'
+      +'<span class="item-text" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0">'+_esc(nm)+'</span>'
+      +'<span class="item-meta" style="font-family:var(--font-mono);flex-shrink:0">'+(res?res.w+'×'+res.h:'fills')+'</span></div>';
+  }).join('');
+}
+/* W1: the hand-made card of this name becomes the show's source of that name (inside the caller's undo step); true when one did */
+function _fuWcAdopt(name){
+  const wa=(typeof wireAdvanced!=='undefined'&&wireAdvanced)||null, arr=(wa&&Array.isArray(wa.customSources))?wa.customSources:null;
+  if(!name||!arr) return false;
+  const i=arr.findIndex(function(c){ return c&&c.name===name; }); if(i<0) return false;
+  if(typeof sources==='undefined'||!Array.isArray(sources)) sources=[];
+  const c=arr[i]; let e=sources.find(function(x){ return x&&x.name===name; });
+  if(!e){ e={name:name}; sources.push(e); }
+  ['resolution','connectorType','wireColor','ip','notes','refresh','type','customType'].forEach(function(k){ const v=c[k]; if(v!=null&&v!==''&&(e[k]==null||e[k]==='')) e[k]=v; });   /* what the show's card has kept; the hand-made card fills the rest */
+  arr.splice(i,1);
+  return true;
+}
+/* ══ end 16lj-followup helpers ══ */
 function triggerScreenImageUpload(sid,pid,mode){
   if(mode&&_bgsMode(sid,pid,mode)) return;   /* 16li-bgsrc: VIDEO / SOURCE; IMAGE (no mode) is the path below, unchanged */
   // Capture the content-label target (layer/content color mode) BEFORE

@@ -1337,6 +1337,20 @@ anchor on the function name and replace the first occurrence after it, never all
   row, a Wire hand-made card; a resolution changed anywhere -> every SOURCE BG of it, X / Y kept; one undo step; a file's own size until
   its card has one; layers keep their sizes); Reset now only goes back to the top-left. Checks: new D1, D2 D7, D3, D4, D5, A1, A2, A3,
   A4; U1-3, U2-4, U3-2 revised (their old expectations were what A4 / A1 / A2 replace). Snapshots unchanged.
+- **16lj-followup** (r16lr, 2026-10-09, Omar "fix this after this run"; on build 16lj = r16lq final page; search `16lj-followup`).
+  The three items left open after r16lq. D6 a clip set as P01's BG (VIDEO, or a clip dropped on P01 in Advanced): later presets that
+  follow P01's BG showed its name and played it in Advanced but no cover in Simple, the preset cards, Display or the Look Book; now a
+  later preset with no fill and no SOURCE box of its own whose BG name is P01's (the clip's) draws the clip's cover as P01 does
+  (`_fuClip`, used by `_rcScreenBox`, `_cbBgCss`, the table's and the destination panel's BG swatches; draw only, no data change; a
+  preset with its own colour or its own BG name keeps it). R1 a SOURCE BG's corner handles on a destination turned 90 / 180 / 270 resized
+  along the unturned axes; the drag is now read along the turned axes (`_bgsStartResize`, as the move), the handle under the pointer
+  follows it in Simple and Advanced, one undo step, the A4 write as before; the handles' cursors follow the turn (`_fuCursors`). W1 a
+  source card made by hand in Wire › Advanced could not be picked as a SOURCE BG (not in the list; typing its name as the BG NAME first
+  made a second card of that name, and I/O Patch's had no resolution); now the SOURCE list offers the hand-made cards under "Made in
+  Wire" (their C numbers), and picking one makes it the show's source in the same undo step (`_fuWcAdopt` in `_bgsPick`: its
+  resolution, cable type, colour, IP and notes go to `sources[]`, the hand-made card goes, its Wire tiles stay by name), so the A4 link
+  runs through the one card: Wire card <-> BG <-> I/O Patch; page 1 by its usual rebuild offer. Checks: FU-1 .. FU-5. Snapshots
+  unchanged.
 - Declined by the owner, do not resurface: mask shapes, anchor points, hardware profiles, canvas/WebGL renderer,
   interpolation filter toggles, upscale-factor notes, per-layer "sharp pixels", any licence mention.
 

@@ -3071,6 +3071,26 @@
   {
    "name": "Video Presets + I/O Patch 16li-fix A4 (Omar 2026-10-09, verbatim: \"make sure the re-sized size resolution update the source resolution to match and vice verse for this situation\"): CENTER LED 3840x1080, U1 CAM (1920x1080) picked by SOURCE, P02 CENTER LED's L1 is U1 CAM: W 2400 typed in the BG window makes U1 CAM's resolution 2400x1080 in one undo step (Undo puts both back); the bottom-right handle dragged 60 px left / 30 px up sets it to the BG's new W x H; U1 CAM's resolution picked as 1280x720 on its I/O Patch card resizes the BG to 1280x720 (X / Y kept) in one undo step and every canvas draws it so; P02's L1 keeps its size",
    "ok": true
+  },
+  {
+   "name": "Video Presets + Look Book 16lj-followup FU-1 (D6, Omar 2026-10-09 \"fix this after this run\": a clip set as P01's BG showed its name on the later presets that follow P01's BG and played there in Advanced, but no cover in Simple, the preset cards or the Look Book): CENTER LED 3840x1080 with no BG in any preset, P03 with its own colour there and P04 with its own BG name; VIDEO (a test clip) on P01 CENTER LED: P01 and every later preset that follows its BG draw the clip's cover in Simple, in the table's BG swatch, in the Advanced preset cards and in the Look Book's canvas picture; P03 keeps its colour and P04 its own BG; Advanced P02 still mounts the clip, Simple has no <video>; Save stays as the change left it",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16lj-followup FU-2 (R1, Omar 2026-10-09: a SOURCE BG's corner handles on a destination turned 90 / 180 / 270 resized along the wrong axes): CENTER LED 3840x1080 turned 90, then 180, then 270 (its panel's Rotation, Apply), U1 CAM picked by SOURCE and typed 800 x 300 at 1500, 390: each of the four corner handles dragged outward on screen (by less than the room to the destination's edge) follows the pointer (within 2 px) while the opposite corner stays, in one undo step, U1 CAM's resolution is the new W x H, and one Undo puts the box and the resolution back",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16lj-followup FU-3 (R1 in Advanced): CENTER LED 3840x1080 turned 90, U1 CAM picked by SOURCE at 800 x 300 from 1500, 390; Advanced P01, its BG row picked: each of the four corner handles of the outline dragged outward on screen follows the pointer (within 2 px), the opposite corner stays, one undo step, U1 CAM's resolution is the new W x H; Undo puts it back",
+   "ok": true
+  },
+  {
+   "name": "Video Presets + Wire 16lj-followup FU-4 (W1, Omar 2026-10-09: a card made by hand in Wire with a resolution, used as a SOURCE BG): Wire › Advanced, + on All Sources (a hand-made card NEW SOURCE), its Resolution menu 1280×720; Video Presets, P01 CENTER LED's BG window, SOURCE: the list offers it under Made in Wire (C1, 1280×720); picked, the BG is NEW SOURCE at 1280x720 from the top-left, and in the same undo step the card becomes the show's source NEW SOURCE (1280x720) with no hand-made twin; Undo brings back the hand-made card and the old BG, Redo the pick; on P01 L it is offered under Sources and placed at 1280x720 too; Wire then shows ONE card for it, at 1280x720",
+   "ok": true
+  },
+  {
+   "name": "Video Presets + Wire + I/O Patch 16lj-followup FU-5 (W1, the A4 link both ways for a Wire hand-made card): a hand-made Wire card FU CARD (1280x720) picked by SOURCE as the BG of P01 CENTER LED and of P01 L; Wire: its card's Resolution 1920×1080 resizes both BGs in one undo step (Simple draws them so) and Undo puts both back; the CENTER LED BG's bottom-right handle dragged 60 left / 30 up: both BGs, the Wire card and the I/O Patch card take the new W x H in one step; I/O Patch Advanced page 1 (rebuilt when it offers) shows it too",
+   "ok": true
   }
  ],
  "pageErrors": []

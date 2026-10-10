@@ -235,7 +235,7 @@ its line at Help > Accessibility 90 % / 115 % (`_wtlNmZoomOK`, a hidden span wit
 Details: HANDBOOK section 5
 (`16ky-r3`, `16kz-answers`, `16kz-refresh`, `16kz-fix`, `16la-wire-mv`, `16la-ip`, `16la-colour-mv`, `16la-fix`, `16lb-simple`,
 `16lc-fixes`, `16ld-port`, `16ld-tools`, `16ld-fix`, `16ld-fix2`, `16lc-picsize`, `16lc-fix`, `16lc-names`, `16lc-midword`,
-`16lc-midword-fix`, `16lc-onlyword`, `16lc-onlyword-fix`, `16lc-onlyword-fix2`, `16lc-vpcards`, `16lc-vpvideo`, `16lc-vpaux`, `16lc-vpfinish`, `16lc-vpcards-fix`, `16lc-vpcards-fix2`, `16lc-vpcards-fix3`, `16lc-vpcards-fix4`, `16lg-blend`, `16lg-blend-fix`, `16lg-blend-fix2`, `16lh-fit`, `16lh-mods`, `16lh-bgtxt`, `16lh-fix`, `16li-bgsrc`, `16li-blendui`, `16li-print`, `16li-fix`).
+`16lc-midword-fix`, `16lc-onlyword`, `16lc-onlyword-fix`, `16lc-onlyword-fix2`, `16lc-vpcards`, `16lc-vpvideo`, `16lc-vpaux`, `16lc-vpfinish`, `16lc-vpcards-fix`, `16lc-vpcards-fix2`, `16lc-vpcards-fix3`, `16lc-vpcards-fix4`, `16lg-blend`, `16lg-blend-fix`, `16lg-blend-fix2`, `16lh-fit`, `16lh-mods`, `16lh-bgtxt`, `16lh-fix`, `16li-bgsrc`, `16li-blendui`, `16li-print`, `16li-fix`, `16lj-followup`).
 
 **One card (16lc-vpcards, 2026-10-06)** — the I/O Patch > Simple card (`_iogCardHTML` + `_iogSrcObj` / `_iogOutObj`) is also the card of
 Wire's left panel (desktop; the phone keeps Wire's own) and of the Video Presets > Advanced left panel (Wire > Simple's sections:
@@ -322,6 +322,11 @@ Never add a time-based "ignore clicks for N ms": the phone gate taps the dialog'
   drawn above the BG. Its W x H IS its source's resolution: `_bgsRes` reads the source card first, `_bgsRec` syncs a box to it on every
   read, `_bgsResFollow` runs from `_sysSetSourceMeta` / the Wire card setter, `_bgsResWrite` on a resize. A top / bottom blend zone's PX
   box and red % sit at its right end (`_U2YR` / `_U2YP`); the BLEND GROUP chip at the group's bounding-box corner. HANDBOOK › 16li-fix.
+  16lj-followup: a later preset that follows P01's clip BG (no fill / SOURCE box of its own, the same BG name) draws P01's cover through
+  `_fuClip` (draw only: `_rcScreenBox`, `_cbBgCss`, the table and panel swatches; Advanced still mounts the clip by name). The SOURCE BG
+  resize reads the drag along a turned destination's axes (`_bgsStartResize`, as `_bgsStartMove`). The SOURCE list offers Wire hand-made
+  source cards ("Made in Wire"); `_bgsPick` adopts such a card into `sources[]` (`_fuWcAdopt`, same undo step) so one card holds the
+  resolution. HANDBOOK › 16lj-followup.
 - Exports' readable print (16li-print: `_lbpInk`, `_wireLogoWordSvg`, `_wireTbFitText`): a value the Look Book prints in a colour made
   for the white page gets an inline colour from `_lbpInk(opts)` in the Dark book (never a stylesheet rule); words drawn into the Wire
   sheet's boxes are measured with `_wireTextWidth` and fitted (smaller, then "…"), never left to run past a line. HANDBOOK › 16li-print.

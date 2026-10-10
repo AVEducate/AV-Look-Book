@@ -15172,6 +15172,189 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
     finally { try { closeColorPop(); } catch (e) {} try { const vp = $('#topbar-nav-vp'); if (document.body.classList.contains('wire-open') || ($('#sys-overlay') && $('#sys-overlay').classList.contains('open'))) { if (vp) vp.click(); await wait(600); okDialogs(); } } catch (e) {} await restore(); }
     return is(out, want, 'W 2400 typed [box, U1 CAM resolution, undo steps] / Undo [box, resolution] / br dragged 60 left, 30 up [width, height, resolution = W x H] / I/O Patch card 1280x720 [resolution, box (X / Y kept), undo steps] / Simple draws 1280x720 / P02 L1 keeps its size / Undo [resolution, BG size]');
   });
+  // ── 16lj-followup (r16lr, 2026-10-09, Omar "fix this after this run"): the three items left open after r16lq — D6 (a clip on P01: its
+  //    cover on the presets that follow it), R1 (SOURCE BG handles on a turned destination), W1 (a Wire hand-made card as a SOURCE BG, the A4
+  //    link both ways). Each FAILS on the build 16lj page (00439e16) and PASSES on the 16lj-followup page. Helpers prefixed _fu; they reuse the
+  //    16li-bgsrc (_u1*), 16li-fix (_lif*) and 16li-print (_u3*) helpers. A user's actions go through the page's own controls.
+  const _fuClipMake = async () => { const cv = document.createElement('canvas'); cv.width = 160; cv.height = 90; const g = cv.getContext('2d'); let clip = null;
+    try { const rec = new MediaRecorder(cv.captureStream(30), { mimeType: 'video/webm' }); const ch = []; rec.ondataavailable = e => { if (e.data.size) ch.push(e.data); };
+      rec.start(100); const iv = setInterval(() => { g.fillStyle = '#' + Math.floor(Math.random() * 0xffffff).toString(16).padStart(6, '0'); g.fillRect(0, 0, 160, 90); }, 40); await wait(700); clearInterval(iv); rec.stop(); await new Promise(r => rec.onstop = r); clip = new Blob(ch, { type: 'video/webm' }); } catch (e) { clip = null; }
+    return (clip && clip.size) ? clip : null; };
+  /* VIDEO in the BG window of (p, s): the page's own file input, answered with the clip */
+  const _fuVideo = async (p, s, clip) => { await _u1Pop(p, s); const vb = $('#cp-bgsrc-vid'); if (!vb || !vis(vb)) throw new Error('no VIDEO button');
+    const realClick = HTMLInputElement.prototype.click;
+    HTMLInputElement.prototype.click = function () { if (this.type !== 'file') return realClick.call(this); const dt = new DataTransfer(); dt.items.add(new File([clip], 'fu clip.webm', { type: 'video/webm' })); this.files = dt.files; this.dispatchEvent(new Event('change')); };
+    try { vb.click(); for (let i = 0; i < 60; i++) { await wait(200); const nm = getBgName(p.id, s.id); if (nm && _fsMediaItem(nm)) break; } await wait(400); } finally { HTMLInputElement.prototype.click = realClick; } };
+  const _fuHas = (el, img) => !!el && !!img && (el.getAttribute('style') || '').indexOf(img.slice(-60)) >= 0;   /* this element's own style draws that picture */
+  /* the destination's Rotation typed in its panel (a double-click on its box), Apply */
+  const _fuTurn = async (p, s, deg) => { const b = $('#canvas-area .screen-box[data-pid="' + p.id + '"][data-sid="' + s.id + '"]'); if (!b) throw new Error('no box to turn'); b.scrollIntoView({ block: 'center' });
+    const r = b.getBoundingClientRect(); b.dispatchEvent(new MouseEvent('dblclick', { bubbles: true, cancelable: true, clientX: r.left + r.width / 2, clientY: r.top + r.height / 2 })); await wait(500);
+    const ri = $('#sp-rot'); if (!ri || !vis(ri)) throw new Error('no Rotation box in the destination panel'); ri.value = String(deg); fire(ri, 'input'); fire(ri, 'change');
+    const ap = $('#sp-apply'); if (!ap) throw new Error('no Apply'); ap.click(); await wait(700); okDialogs(); await wait(300); okDialogs(); render(); await wait(300); };
+  /* one corner handle dragged OUTWARD on screen (24 / 16 px, away from the opposite corner; k = screen px per destination px): did it follow the pointer, did the opposite corner stay, steps */
+  const _fuK = (p, s, root) => { const i = _u1Inner(p, s, root); if (!i) return 1; const r = _lifR(i); return Math.max(r.width, r.height) / Math.max(parseInt(s.w) || 1, parseInt(s.h) || 1); };
+  const _fuCorner = async (root, c, k) => { const OPP = { br: 'tl', tl: 'br', tr: 'bl', bl: 'tr' }; const h = _lifH(root, c), o = _lifH(root, OPP[c]); if (!h || !o) return null;
+    const lim = Math.max(6, Math.floor(280 * (k || 1)));   /* at most 280 destination px: the box never reaches the destination's edge (where a handle stops, 16li-fix D1) */
+    const a = _lifR(h), b = _lifR(o), dx = Math.sign((a.left + a.right) - (b.left + b.right)) * Math.min(24, lim), dy = Math.sign((a.top + a.bottom) - (b.top + b.bottom)) * Math.min(16, lim), u0 = _undoStack.length;
+    await _u1Drag(h, dx, dy);
+    const h2 = _lifH(root, c), o2 = _lifH(root, OPP[c]), a2 = h2 ? _lifR(h2) : null, b2 = o2 ? _lifR(o2) : null;
+    const ok = !!a2 && Math.abs(a2.left - a.left - dx) <= 2 && Math.abs(a2.top - a.top - dy) <= 2;
+    if (!ok) _fuMiss.push(c + ' pointer ' + dx + ',' + dy + ' handle ' + (a2 ? Math.round((a2.left - a.left) * 10) / 10 + ',' + Math.round((a2.top - a.top) * 10) / 10 : 'gone'));
+    return [ok, !!b2 && Math.abs(b2.left - b.left) <= 1.5 && Math.abs(b2.top - b.top) <= 1.5, _undoStack.length - u0]; };
+  const _fuMiss = [];   /* what a handle did when it did not follow (read in a failing check's label) */
+  const _fuMenuPick = async (btn, re) => { if (!btn) throw new Error('no resolution control'); btn.scrollIntoView({ block: 'center' }); btn.click(); await wait(350);
+    const item = $$('.sys-dd-item').filter(vis).find(e => re.test(e.innerText)); if (!item) throw new Error('no ' + re + ' in its menu'); item.click(); await wait(600); okDialogs(); };
+  const _fuWireAdv = async () => { const w = $('#topbar-nav-wire'); if (w) { w.click(); await wait(900); okDialogs(); }
+    if (wireSettings.wireView !== 'advanced') { const b = $$('[data-seg="wire-view"] .lb-seg-btn').find(x => /advanced/i.test(x.textContent)); if (b) { b.click(); await wait(800); okDialogs(); } } };
+  const _fuVP = async () => { const v = $('#topbar-nav-vp'); if (v) { v.click(); await wait(900); okDialogs(); } render(); await wait(300); };
+  const _fuWireRes = n => { const e = $$('#wire-sources-panel .wire-source-card [data-sys-field="resolution"][data-sys-value]').find(x => vis(x.closest('.wire-source-card')) && ((x.closest('.wire-source-card').innerText || '').toUpperCase().indexOf(n) >= 0)); return e ? e.dataset.sysValue : null; };
+  // 16lj-followup FU-1: NEW
+  await check('Video Presets + Look Book 16lj-followup FU-1 (D6, Omar 2026-10-09 "fix this after this run": a clip set as P01\'s BG showed its name on the later presets that follow P01\'s BG and played there in Advanced, but no cover in Simple, the preset cards or the Look Book): CENTER LED 3840x1080 with no BG in any preset, P03 with its own colour there and P04 with its own BG name; VIDEO (a test clip) on P01 CENTER LED: P01 and every later preset that follows its BG draw the clip\'s cover in Simple, in the table\'s BG swatch, in the Advanced preset cards and in the Look Book\'s canvas picture; P03 keeps its colour and P04 its own BG; Advanced P02 still mounts the clip, Simple has no <video>; Save stays as the change left it', async () => {
+    const out = {}, want = {};
+    try {
+      const clip = await _fuClipMake(); if (!clip) return 'no test clip (MediaRecorder)';
+      const { st, C } = _u1St(); if (st.presets.length < 5) return 'the example has fewer than 5 presets';
+      st.presets[2].colors = Object.assign(st.presets[2].colors || {}, { [C.id]: '#335577' }); st.presets[3].bgNames = Object.assign(st.presets[3].bgNames || {}, { [C.id]: 'FU OTHER' });
+      await _u1Open(st);
+      const c = screens.find(x => x.id === C.id), p1 = presets[0];
+      await _fuVideo(p1, c, clip); okDialogs(); render(); await wait(400);
+      const img = (presets[0].bgs || {})[c.id] || '', nm = getBgName(p1.id, c.id), it = _fsMediaItem(nm);
+      out.p01 = [!!it && it.kind, !!img]; want.p01 = ['video', true];
+      const idx = presets.map((p, i) => i).filter(i => i !== 2 && i !== 3);   /* P01 and its followers */
+      out.simple = idx.map(i => _fuHas(_u1Inner(presets[i], c), img)); want.simple = idx.map(() => true);
+      out.own = [_fuHas(_u1Inner(presets[2], c), img), (_u1Inner(presets[2], c).style.background || '').indexOf('rgb(51, 85, 119)') >= 0, _fuHas(_u1Inner(presets[3], c), img)]; want.own = [false, true, false];
+      out.tag = idx.map(i => getBgName(presets[i].id, c.id) === nm); want.tag = idx.map(() => true);
+      out.swatch = idx.map(i => _fuHas($('.home-field-bg[data-pid="' + presets[i].id + '"][data-sid="' + c.id + '"] .home-bg-swatch'), img)); want.swatch = idx.map(() => true);
+      out.noVideo = $$('#canvas-area video').length; want.noVideo = 0;
+      openFullscreen(presets[1].id); await wait(1000); okDialogs(); renderFullscreen(); await wait(600);
+      out.cards = idx.map(i => _fuHas(_u1Inner(presets[i], c, '#fs-preset-list'), img)); want.cards = idx.map(() => true);
+      out.adv = $$('#fs-canvas video').some(v => v.dataset.key === 'BG:' + presets[1].id + ':' + c.id); want.adv = true;
+      try { _fsPauseAll(); } catch (e) {} $$('video').forEach(v => { try { v.muted = true; v.pause(); } catch (e) {} });
+      closeFullscreen(); await wait(600); okDialogs();
+      const html = await _u3Look('dark', ['pdf-opt-presets']); if (typeof html !== 'string' || html.length < 200) return 'no Look Book: ' + html;
+      const f = await _u3Render(html), d = f.contentDocument;
+      const lb = idx.map(i => { const pg = [...d.querySelectorAll('.preset-page')].find(x => (x.querySelector('.ph-code') || {}).textContent === presets[i].code && x.querySelector('.pp-livecanvas')); const b = pg && pg.querySelector('.pp-livecanvas .screen-box[data-sid="' + c.id + '"] > .screen-inner'); return _fuHas(b, img); });
+      f.remove(); out.lookBook = lb; want.lookBook = idx.map(() => true);
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { _fsPauseAll(); } catch (e) {} $$('video').forEach(v => { try { v.muted = true; v.pause(); } catch (e) {} }); try { closeColorPop(); } catch (e) {} try { if (fsPresetId) closeFullscreen(); } catch (e) {} await wait(300); await restore(); }
+    return is(out, want, 'VIDEO on P01 [item, its cover] / Simple draws the cover [P01 + followers] / P03 own colour, P04 own BG [cover on P03, P03 colour, cover on P04] / BG name / table swatch / no <video> in Simple / Advanced preset cards / Advanced P02 mounts the clip / Look Book canvas pictures');
+  });
+  // 16lj-followup FU-2: NEW
+  await check('Video Presets 16lj-followup FU-2 (R1, Omar 2026-10-09: a SOURCE BG\'s corner handles on a destination turned 90 / 180 / 270 resized along the wrong axes): CENTER LED 3840x1080 turned 90, then 180, then 270 (its panel\'s Rotation, Apply), U1 CAM picked by SOURCE and typed 800 x 300 at 1500, 390: each of the four corner handles dragged outward on screen (by less than the room to the destination\'s edge) follows the pointer (within 2 px) while the opposite corner stays, in one undo step, U1 CAM\'s resolution is the new W x H, and one Undo puts the box and the resolution back', async () => {
+    const out = {}, want = {}; _fuMiss.splice(0);
+    try {
+      for (const deg of [90, 180, 270]) {
+        const { st, C } = _u1St(); await _u1Open(st);
+        const c = screens.find(x => x.id === C.id), p1 = presets[0];
+        await _fuTurn(p1, c, deg); out['turn' + deg] = getRotation(p1.id, c.id); want['turn' + deg] = deg;
+        await _u1Pop(presets[0], c); await _u1Src('U1 CAM'); await wait(250);
+        for (const [k, v] of [['w', 800], ['h', 300], ['x', 1500], ['y', 390]]) { const i = $('#cp-bgsrc-size .bgs-inp[data-k="' + k + '"]'); if (i) { i.value = String(v); fire(i, 'change'); await wait(300); } }
+        const b0 = _u1Box(presets[0], c); out['box' + deg] = b0; want['box' + deg] = ['U1 CAM', 1500, 390, 800, 300];
+        const rows = [];
+        for (const corner of ['br', 'tl', 'tr', 'bl']) {
+          if ($('#color-pop').style.display !== 'block') await _u1Pop(presets[0], c);
+          await wait(200); const r = await _fuCorner('#canvas-area', corner, _fuK(presets[0], c)), b1 = _u1Box(presets[0], c);
+          const res = !!b1 && _lifRes('U1 CAM') === b1[3] + 'x' + b1[4];
+          closeColorPop(); await wait(150); doUndo(); await wait(500);
+          rows.push(r ? r.concat([res, JSON.stringify(_u1Box(presets[0], c)) === JSON.stringify(b0) && _lifRes('U1 CAM') === '800x300']) : null);
+        }
+        out['corners' + deg] = rows; want['corners' + deg] = [0, 1, 2, 3].map(() => [true, true, 1, true, true]);
+      }
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { closeColorPop(); } catch (e) {} await restore(); }
+    return is(out, want, 'per turn: the turn / the typed box / br, tl, tr, bl [the handle followed, the opposite corner stayed, undo steps, resolution = W x H, Undo put box + resolution back]' + (_fuMiss.length ? ' (moved: ' + _fuMiss.splice(0).join('; ') + ')' : ''));
+  });
+  // 16lj-followup FU-3: NEW
+  await check('Video Presets 16lj-followup FU-3 (R1 in Advanced): CENTER LED 3840x1080 turned 90, U1 CAM picked by SOURCE at 800 x 300 from 1500, 390; Advanced P01, its BG row picked: each of the four corner handles of the outline dragged outward on screen follows the pointer (within 2 px), the opposite corner stays, one undo step, U1 CAM\'s resolution is the new W x H; Undo puts it back', async () => {
+    const out = {}, want = {};
+    try {
+      const { st, C } = _u1St(); await _u1Open(st);
+      const c = screens.find(x => x.id === C.id), p1 = presets[0];
+      await _fuTurn(p1, c, 90); out.turn = getRotation(p1.id, c.id); want.turn = 90;
+      await _u1Pop(presets[0], c); await _u1Src('U1 CAM'); await wait(250);
+      for (const [k, v] of [['w', 800], ['h', 300], ['x', 1500], ['y', 390]]) { const i = $('#cp-bgsrc-size .bgs-inp[data-k="' + k + '"]'); if (i) { i.value = String(v); fire(i, 'change'); await wait(300); } }
+      const b0 = _u1Box(presets[0], c); closeColorPop(); await wait(200);
+      openFullscreen(presets[0].id); await wait(900); okDialogs(); _fsClearLayer(); _fsSetPropTab('layers'); await wait(400);
+      const pick = async () => { const row = $$('#fs-toolbar .fs-lrow.bgrow').find(r => r.dataset.sid === c.id); if (row) { row.click(); await wait(600); } };
+      await pick(); out.picked = !!_lifH('#fs-canvas', 'br'); want.picked = true;
+      const rows = [];
+      for (const corner of ['br', 'tl', 'tr', 'bl']) {
+        if (!_lifH('#fs-canvas', corner)) await pick();
+        const r = await _fuCorner('#fs-canvas', corner, _fuK(presets[0], c, '#fs-canvas')), b1 = _u1Box(presets[0], c);
+        const res = !!b1 && _lifRes('U1 CAM') === b1[3] + 'x' + b1[4];
+        doUndo(); await wait(600);
+        rows.push(r ? r.concat([res, JSON.stringify(_u1Box(presets[0], c)) === JSON.stringify(b0)]) : null);
+      }
+      out.corners = rows; want.corners = [0, 1, 2, 3].map(() => [true, true, 1, true, true]);
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { closeColorPop(); } catch (e) {} try { if (fsPresetId) closeFullscreen(); } catch (e) {} selLayer = null; await wait(300); await restore(); }
+    return is(out, want, 'turned / BG row picked [its outline] / br, tl, tr, bl [followed, opposite stayed, undo steps, resolution = W x H, Undo put it back]' + (_fuMiss.length ? ' (moved: ' + _fuMiss.splice(0).join('; ') + ')' : ''));
+  });
+  // 16lj-followup FU-4: NEW
+  await check('Video Presets + Wire 16lj-followup FU-4 (W1, Omar 2026-10-09: a card made by hand in Wire with a resolution, used as a SOURCE BG): Wire › Advanced, + on All Sources (a hand-made card NEW SOURCE), its Resolution menu 1280×720; Video Presets, P01 CENTER LED\'s BG window, SOURCE: the list offers it under Made in Wire (C1, 1280×720); picked, the BG is NEW SOURCE at 1280x720 from the top-left, and in the same undo step the card becomes the show\'s source NEW SOURCE (1280x720) with no hand-made twin; Undo brings back the hand-made card and the old BG, Redo the pick; on P01 L it is offered under Sources and placed at 1280x720 too; Wire then shows ONE card for it, at 1280x720', async () => {
+    const out = {}, want = {};
+    try {
+      const { st, C } = _u1St(); await _u1Open(st);
+      const c = screens.find(x => x.id === C.id), L = screens[0], NM = 'NEW SOURCE';
+      await _fuWireAdv(); const plus = $$('.wire-pane-hdr').find(h => /All Sources/i.test(h.textContent)); const pb = plus && $('[onclick*="_wireAdvAddCustomSource"]', plus); if (!pb) return 'no + on All Sources';
+      pb.click(); await wait(600);
+      const card = (wireAdvanced.customSources || []).find(x => x && x.name === NM); if (!card) return 'no hand-made card made';
+      await _fuMenuPick($$('.lbf-wc [data-sys-field="resolution"][data-sys-kind="wcsrc"]').find(e => e.dataset.sysId === card.id), /^\s*1280\s*[×x]\s*720\b/);
+      out.card = card.resolution; want.card = '1280x720';
+      await _fuVP();
+      await _u1Pop(presets[0], c); const sb = $('#cp-bgsrc-src'); if (sb && !vis($('#cp-bgsrc-list'))) { sb.click(); await wait(300); }
+      const groups = $$('#cp-bgsrc-list .sys-dd-group').map(g => g.innerText.trim().toUpperCase()), row = $$('#cp-bgsrc-list .sys-dd-item').find(r => r.dataset.src === NM);
+      out.list = [groups.indexOf('MADE IN WIRE') >= 0, row ? row.innerText.replace(/\s+/g, ' ').trim() : null]; want.list = [true, 'C1 NEW SOURCE 1280×720'];
+      if (!row) return is(out, want, 'the SOURCE list');
+      const u0 = _undoStack.length; row.click(); await wait(600);
+      const showSrc = () => ((sources || []).find(x => x && x.name === NM) || {}).resolution || null, twins = () => (wireAdvanced.customSources || []).filter(x => x && x.name === NM).length;
+      out.picked = [_u1Box(presets[0], c), showSrc(), twins(), _undoStack.length - u0]; want.picked = [[NM, 0, 0, 1280, 720], '1280x720', 0, 1];
+      closeColorPop(); await wait(150);
+      doUndo(); await wait(600); out.undo = [_u1Box(presets[0], c), showSrc(), twins(), getBgName(presets[0].id, c.id) === NM]; want.undo = [null, null, 1, false];
+      doRedo(); await wait(600); out.redo = [_u1Box(presets[0], c), showSrc(), twins()]; want.redo = [[NM, 0, 0, 1280, 720], '1280x720', 0];
+      await _u1Pop(presets[0], L); if (!vis($('#cp-bgsrc-list'))) { $('#cp-bgsrc-src').click(); await wait(300); }
+      const row2 = $$('#cp-bgsrc-list .sys-dd-item').find(r => r.dataset.src === NM); out.second = [!!row2 && !row2.dataset.wc]; if (row2) { row2.click(); await wait(600); } out.second.push(_u1Box(presets[0], L)); want.second = [true, [NM, 0, 0, 1280, 720]];
+      closeColorPop(); await wait(150);
+      await _fuWireAdv(); _wireRender(); await wait(400);
+      const cards = $$('#wire-sources-panel .wire-source-card').filter(x => vis(x) && (x.innerText || '').toUpperCase().indexOf(NM) >= 0);
+      out.wire = [cards.length, cards.filter(x => x.classList.contains('lbf-wc')).length, _fuWireRes(NM)]; want.wire = [1, 0, '1280x720'];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { closeColorPop(); } catch (e) {} try { await _fuVP(); } catch (e) {} await restore(); }
+    return is(out, want, 'the card\'s resolution / the SOURCE list [a Made in Wire group, its row] / picked [box, the show\'s source, hand-made twins, undo steps] / Undo / Redo / P01 L [offered as a show source, box] / Wire [cards for it, hand-made ones, its resolution]');
+  });
+  // 16lj-followup FU-5: NEW
+  await check('Video Presets + Wire + I/O Patch 16lj-followup FU-5 (W1, the A4 link both ways for a Wire hand-made card): a hand-made Wire card FU CARD (1280x720) picked by SOURCE as the BG of P01 CENTER LED and of P01 L; Wire: its card\'s Resolution 1920×1080 resizes both BGs in one undo step (Simple draws them so) and Undo puts both back; the CENTER LED BG\'s bottom-right handle dragged 60 left / 30 up: both BGs, the Wire card and the I/O Patch card take the new W x H in one step; I/O Patch Advanced page 1 (rebuilt when it offers) shows it too', async () => {
+    const out = {}, want = {};
+    try {
+      const { st, C } = _u1St(); st.wireAdvanced = st.wireAdvanced || {}; st.wireAdvanced.customSources = (st.wireAdvanced.customSources || []).concat([{ id: 'fucs1', name: 'FU CARD', resolution: '1280x720', wireColor: '#2d8a5e' }]);
+      await _u1Open(st);
+      const c = screens.find(x => x.id === C.id), L = screens[0], NM = 'FU CARD', near = (a, b) => Math.abs(a - b) <= 1.5;
+      for (const s of [c, L]) { await _u1Pop(presets[0], s); await _u1Src(NM); closeColorPop(); await wait(200); }
+      const both = () => [(_u1Box(presets[0], c) || []).slice(3).join('x'), (_u1Box(presets[0], L) || []).slice(3).join('x')], res = () => _lifRes(NM);
+      out.picked = [both(), res()]; want.picked = [['1280x720', '1280x720'], '1280x720'];
+      await _fuWireAdv(); _wireRender(); await wait(400);
+      const u0 = _undoStack.length;
+      await _fuMenuPick($$('#wire-sources-panel .wire-source-card [data-sys-field="resolution"]').find(e => vis(e) && e.dataset.sysId === NM && !e.closest('.lbf-wc')), /^\s*1920\s*[×x]\s*1080\b/);
+      out.wire = [both(), res(), _undoStack.length - u0]; want.wire = [['1920x1080', '1920x1080'], '1920x1080', 1];
+      await _fuVP(); const Ls = _u1Layer(_u1Inner(presets[0], c)), ks = Ls ? Ls.w / 3840 : 1;
+      out.drawn = Ls ? [Math.round(Ls.size[0] / ks), Math.round(Ls.size[1] / ks)] : null; want.drawn = [1920, 1080];
+      doUndo(); await wait(600); out.undo = [both(), res()]; want.undo = [['1280x720', '1280x720'], '1280x720'];
+      doRedo(); await wait(600);
+      await _u1Pop(presets[0], c); await wait(200); const k = parseFloat(_u1Inner(presets[0], c).style.width) / 3840, br = _lifH('#canvas-area', 'br'); const u1 = _undoStack.length;
+      if (br) await _u1Drag(br, -60, -30);
+      const b2 = _u1Box(presets[0], c), wh = b2 ? b2[3] + 'x' + b2[4] : '';
+      out.drag = b2 ? [near(b2[3], 1920 - 60 / k), near(b2[4], 1080 - 30 / k), res() === wh, both()[1] === wh, _undoStack.length - u1] : null; want.drag = [true, true, true, true, 1];
+      closeColorPop(); await wait(200);
+      await _fuWireAdv(); _wireRender(); await wait(400); out.wireCard = _fuWireRes(NM) === wh; want.wireCard = true;
+      const iop = $('#topbar-nav-iop'); if (iop) { iop.click(); await wait(900); okDialogs(); } if (ioAdvanced.view !== 'simple') { _ioSetView('simple'); await wait(400); okDialogs(); }
+      const pill = $$('[data-sys-field="resolution"][data-sys-kind="src"][data-sys-value]').find(e => e.dataset.sysId === NM && vis(e) && !e.closest('.wire-pane'));
+      out.iop = !!pill && pill.dataset.sysValue === wh; want.iop = true;
+      _ioSetView('advanced'); await wait(800); for (let i = 0; i < 4 && dlgOpen(); i++) { const b = $(/changed since/i.test(dialogText()) ? '#dlg-confirm' : '#dlg-confirm'); if (b) b.click(); await wait(400); }
+      out.page1 = (r2P1('src', NM) || {}).resolution || null; want.page1 = wh;
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { closeColorPop(); } catch (e) {} try { if (ioAdvanced.view !== 'simple') _ioSetView('simple'); } catch (e) {} try { await _fuVP(); } catch (e) {} await restore(); }
+    return is(out, want, 'picked on CENTER LED + L [both BGs, the resolution] / Wire card 1920x1080 [both BGs, resolution, undo steps] / Simple draws 1920x1080 / Undo [both, resolution] / br dragged 60 left, 30 up [width, height, resolution = W x H, the other BG, undo steps] / the Wire card / the I/O Patch card / page 1');
+  });
   try { _fsPauseAll(); } catch (e) {} $$('video').forEach(v => { try { v.muted = true; v.pause(); } catch (e) {} });
   return { checks };
 })
