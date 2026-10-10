@@ -1251,6 +1251,92 @@ anchor on the function name and replace the first occurrence after it, never all
   `_esc`. Not changed: D4 (pre-existing) a Look Book export writes the Wire metadata (`sources`) and the undo safety net records it
   as a step, so the first Cmd+Z after an export does nothing visible (reported, left for its own round). Checks: new 16lh-fix D1,
   D2, D3. Snapshots unchanged (the examples' BG names hold no character `_esc` changes).
+- **16li-bgsrc** (r16lq U1, 2026-10-09, on top of the v0.8.4 page eca64b96; search `16li-bgsrc`). Omar (picture omar_01): "at the bottom
+  is says image and apple, i want to update the section to same IMAGE it own button, then Video, Source, I want a source to be able to be
+  added to the BG ... is the destination is 3840x1080 and the source they picked is 1920x1080 then you only fill half, user need to go in
+  and adjust the resolution"; his answers: "Left edge", "Size it like a layer", VIDEO "Yes, same as today's clips". The Preset Background
+  window of a destination (`openColorPop`) ends in `#cp-bgsrc`: IMAGE · VIDEO · SOURCE (all three `onclick^="triggerScreenImageUpload"`, so
+  every skin rule of the old Image button gives them its look; `triggerScreenImageUpload(sid,pid,mode)` sends 'video' / 'source' to
+  `_bgsMode`), the source list `#cp-bgsrc-list`, the size boxes `#cp-bgsrc-size`; today's Image button beside APPLY is hidden in this
+  mode only (`_bgsRowSync`, run from `cpUpdateInputs`, `openColorPop` and `closeColorPop`: a layer FX / content type / cable / Add
+  Destination colour keep their buttons, the phone keeps today's row). DATA: `p.bgBox[sid] = {src,x,y,w,h}` in destination pixels
+  (the master's for a combined screen); `_bgsRec(p,s)` = the box that holds: own, or P01's when the preset takes P01's BG name, and only
+  while `getBgName` is `src` (`setBgName` drops a box of another name; the source renames carry `src`; IMAGE `_bgsDrop`s it;
+  `clearPresetColor` and Reset Layers clear it, P01 keeps it with its show-wide names). SOURCE (`_bgsPick`): one undo step, the BG
+  name, the box at the source's own resolution (`_bgsRes`: a file's media size, else `sources[].resolution`) from the frame's top-left
+  (`_bgsFrame`: the destination, or the combined screen via `_cbBox`), the preset's own `bgs` / `colors` and P01's `screen.bg` go (the
+  rest shows the destination's colour); no resolution = the old fill path. VIDEO (`_bgsVideo`): `_fsImportOne` then `_fsAssignBg`'s
+  data path (name + cover in `p.bgs`), one undo step. `_fsAssignBg` sends an I/O source with a known resolution (not a media file) to
+  `_bgsPick` (one behaviour). VIEW: `_rcScreenBox`'s bgStyle and `_cbBgCss` draw a box as ONE CSS background (`_bgsVal`: the source's
+  picture or colour sized and placed, over `_bgsBase`), so Simple, the Advanced tile, the preset cards, Display and the Look Book agree;
+  Advanced mounts a file's clip in the box (`_bgsGeom` in `_fsMountVideos` / `_cbMountBg`). Sizing: `_bgsSetBox` (boxes, Fill, Reset;
+  a box taken from P01 becomes the preset's own copy, `_bgsOwn`), Advanced Properties `_bgsPropsHTML`, canvas handles `_bgsFrameSync`
+  (live DOM only, class `lrh`, a MutationObserver on #canvas-area / #fs-canvas; shown while the window is open in Simple or the BG is
+  picked in Advanced; the destination's `.rh` hidden meanwhile), drag `_bgsStartResize` (`_vpSnap` / `_vpPush`: one step). The name tag
+  stays centred on the destination. Not changed: the Look Book / Excel BG text (the source's name), `_bgExportInfo`, the phone's own
+  UI. Checks: new U1-1 .. U1-7. Snapshots unchanged (no example has a box).
+- **16li-blendui** (r16lq U2, 2026-10-09, on top of the v0.8.4 page eca64b96; search `16li-blendui`). Omar (omar_02 / omar_03 / omar_05):
+  the BLEND GROUP chip "a 30 percent black BG so its still transparent but also still readable"; the PX number "move ... down right
+  above the percentage only when a BG has a name or a layer is played center screen" and "the percentage width to match that of the
+  pixel count". The chip (`_rcBlendGroups`) gets an inline `background:rgba(0,0,0,.30)` (it was already z 9, above every BG, layer
+  and the hatch; pointer-events none). `_rcOverlapVis`: the hatch box is no longer a stacking layer of its own (its hatch and shading
+  keep z 6 each), so the PX box and the red % (`.blend-label`, z 11) are drawn above a combined screen's layers (`.cb-lay`, z 7) and
+  the chip; a combined screen's % layer goes z 8 -> 11; both boxes are `_U2W` = 72 px wide, contents centred (the Look Book still
+  drops the % by its `style="bottom:2px` regex). The PX box carries `data-bz` (x / y = side by side / top-bottom); `_u2Place` moves it
+  right above the % (`bottom` = 2 + the % box height + 3, on the % box's own line, `data-stk="1"`) when a `.bg-tag > div` name pill
+  or a layer chip (`.layer-chip[data-lid]`, not lid 0) of the same canvas is drawn where the PX box sits centred, less what a later
+  destination box that is not see-through hides (`_u2Under`: a non-combined blend draws the 2nd destination over the 1st in the
+  zone); back to the middle otherwise. Real rectangles, after every draw: a MutationObserver on `<body>` (an added `.overlap-vis` =
+  a canvas drawn: Simple, the Advanced tile, the preset cards; Display clones the Advanced tile with it), the body class (Blend Zones
+  on) and an IntersectionObserver for boxes drawn off screen (the preset cards under the Layers tab). The Look Book (`exportPDF`):
+  `_u2LbCanvas` lays the canvas picture out on a hidden copy hung off `<html>` (outside `<body>`, so `body.adv-hide-blend` cannot
+  hide it), decides the same way and writes the stacked style into the HTML (no script in the book; a show without blends prints
+  byte for byte as before). A layer dragged over the zone moves the PX box after the drop (the drag itself does not redraw). Checks:
+  new 16li-blendui U2-1 .. U2-5. Snapshots unchanged (the examples have no blends).
+- **16li-print** (r16lq U3, 2026-10-09, on top of the v0.8.4 page eca64b96; search `16li-print`). Omar (omar_04 / omar_05 + omar_06 /
+  omar_07): "it only needs to say 600 pixel over lap (31%) no 1080", "there is some notes there i cant read need to be just white
+  letters there not no two different colors thing happening they should happen in all the section", "the verbiage AV LOOK BOOK is
+  spelling over the lines". P1 the Look Book's BLEND ZONES rows (the one place the line is printed: the cue-sheet and I/O Excel print
+  no blend line; Advanced's blend bar is editable px / % boxes) read `<px> pixel overlap (<pct>%)`: the overlap along the blend
+  (`_blendAxisOf`, as the canvas' red % marker: width side by side, height top / bottom), the share of the smaller destination on
+  that axis, rounded as before, no "~" (v0.8.4 printed `W×H px (~pct%)` with the WIDTH share even for a top / bottom pair: 100%).
+  Blend group totals unchanged. P2 the DARK book ("Dark · For Screen") printed values in the colour made for the white page: notes
+  (`.pnb-text` #0a1322 on the dark page, 1.1 : 1), the breakdown's BG detail (#4a5670, 2.6), crop / FX (#a04050, 3.1) and AOI
+  (#a06010) lines, and the Contents heading (#0a1322, 1.0). Found by measuring every text of every page of 8 shows (7 in both themes)
+  (u3/drv/audit.mjs); everything else under 3 : 1 is an accent LABEL in both themes (NOTES cyan, AUX / DSM amber, slot pills,
+  P-code, headers) and stays. `_lbpInk(opts[, col])` gives those values an inline `color:#fff` (the Contents heading `#d6dde6`, as
+  the other titles) only when `opts.theme === 'dark'`: no stylesheet rule (the CSS trap); nothing of P2 reaches the Light book.
+  P3 the Wire sheet's right column (standalone Wire PDF / SVG / PNG and the Look Book's wire page; the column is the same size on
+  every sheet, Letter to A0): `_wireLogoWordSvg` draws AV LOOK BOOK as before when it fits its logo cell (12 units clear of each
+  line), else scales its size and letter-spacing together (27.1 px / 5.42 in the gate's Chrome: it was 304.8 units in a 294 cell),
+  centres it on its letters and holds it with `textLength`; `_wireTbFitText` sets a Project block value too long for its row
+  smaller (down to 8 px) and cuts it with "…" only when even that is too long (the 16kw-fix key rule); values that fit print byte for
+  byte as before. Both measure with `_wireTextWidth`. Checks: new U3-1 .. U3-4. Goldens: the three examples' Look Books change one
+  line each (the wire page's wordmark); their json and mobile.json do not.
+- **16li-fix** (r16lq fix step, 2026-10-09, on the combined page 1f0e3435 = v0.8.4 + 16li-bgsrc + 16li-blendui + 16li-print; search
+  `16li-fix`). The defects the two attacks found on the combined page: D1 a SOURCE BG cut off by the destination's edge: its handle sat on
+  the visible part, the drag worked on the hidden corner (nothing moved on screen); now a cut-off side works from where it shows (pulled
+  in, the visible edge follows the mouse; pushed out, the hidden part grows). D2 / D7 the outline and handles lived inside the
+  destination's picture: a neighbour, a combined screen's other member or the blend hatch covered the right-hand handles (a press
+  deselected the BG in Advanced, or moved the whole blend group and widened the canvas); now they are drawn one layer above the canvas
+  (`.bgs-wrap`, z 12). D3 the Preset Background window ran off the screen (APPLY out of reach at 1440x900 with the list open, at the
+  Electron minimum 1024x700 after every pick); now it takes the room under the toolbar and scrolls, APPLY kept at its bottom
+  (`_bgsFit`). D4 Advanced Properties of a file picked with SOURCE still showed the old Source crop (centred Size check, dead sliders):
+  not shown for a SOURCE BG. D5 SOURCE on P01 did not reach later presets carrying only P01's BG name (ORGILL P07 / P08): a later
+  preset without a fill of its own follows P01's SOURCE BG, as it follows IMAGE / APPLY (`_bgsRec`). Not fixed (pre-existing in v0.8.4
+  for a clip dropped in Advanced): VIDEO on P01, later presets show the clip's name but no cover in Simple / the Look Book.
+  Omar's additions: A1 "the blend group goes bottom right of the blend destinations, the PX and % stay inside the blend zone and go to
+  the right": the chip at the group's bounding-box bottom-right (`_rcBlendGroups`; side by side unchanged); a top / bottom zone's red %
+  at its right end (6 px in, bottom line) and the PX box right next to it (4 px), above it when a name / layer covers that place.
+  A2 "Brighter colour code": the dark book's crop / FX lines #ff6b7a (7.0 : 1) and AOI line #ffb347 (10.8 : 1); values and notes
+  white; light unchanged. A3 drag-to-move a SOURCE BG like a layer chip (3 px dead zone, kept inside the destination, a bigger one
+  keeps covering it, snaps to the destination's edges / middle and the layers' edges, Shift no snap, one undo step; Simple with its
+  window open, Advanced with the BG picked; a combined screen's other member's box is see-through for it). A4 (verbatim "make sure the
+  re-sized size resolution update the source resolution to match and vice verse for this situation"): a SOURCE BG's W x H and its
+  source's resolution are one value both ways (boxes, Fill, corner drag -> the source card: sources[], a page-1-made source's page-1
+  row, a Wire hand-made card; a resolution changed anywhere -> every SOURCE BG of it, X / Y kept; one undo step; a file's own size until
+  its card has one; layers keep their sizes); Reset now only goes back to the top-left. Checks: new D1, D2 D7, D3, D4, D5, A1, A2, A3,
+  A4; U1-3, U2-4, U3-2 revised (their old expectations were what A4 / A1 / A2 replace). Snapshots unchanged.
 - Declined by the owner, do not resurface: mask shapes, anchor points, hardware profiles, canvas/WebGL renderer,
   interpolation filter toggles, upscale-factor notes, per-layer "sharp pixels", any licence mention.
 

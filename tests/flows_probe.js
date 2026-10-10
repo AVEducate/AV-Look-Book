@@ -14433,6 +14433,745 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
     finally { try { closeColorPop(); } catch (e) {} await restore(); }
     return is(out, want, 'the BG cell [swatch tooltip, swatch aria-label, swatch label, name tooltip, name text, swatches, names, elements made from the name]');
   });
+  // ── 16li-bgsrc (r16lq U1, Omar 2026-10-09 ~08:05, his picture omar_01: "at the bottom is says image and apple, i want to update the section to same
+  //    IMAGE it own button, then Video, Source"; his answers ~08:10: SOURCE "Left edge", sizing "Size it like a layer", VIDEO "Yes, same as today's clips"):
+  //    U1-1 .. U1-7 FAIL on the v0.8.4 page (eca64b96) and PASS after. Helpers prefixed _u1. A user's actions go through the page's own controls: the
+  //    table's BG swatch, the pop-up's buttons, list rows and size boxes, the canvas handles (mousedown / window mousemove / mouseup), the Advanced
+  //    BG row and its Properties, drags with a real DataTransfer (_adDrag), the page's own file input (its click answered with a file).
+  const _u1St = (opts = {}) => {   /* General Session with CENTER LED made 3840 x 1080 and three I/O sources of the show (with their library entries, as I/O Patch syncs them) */
+    const st = JSON.parse(BASE), L = st.screens[0], C = st.screens[1], R = st.screens[2];
+    Object.assign(C, { w: 3840, h: 1080, color: '#1a1a1a' }); delete C.bg; st.canvasW = '7680'; st.canvasH = '1080';
+    st.presets.forEach(p => { p.positions = { [L.id]: { x: 0, y: 0 }, [C.id]: { x: 1920, y: 0 }, [R.id]: { x: 5760, y: 0 } }; ['colors', 'bgs', 'bgNames', 'bgBox'].forEach(k => { if (p[k]) delete p[k][C.id]; }); });
+    st.sources = (st.sources || []).filter(s => !/^U1 /.test(s.name)).concat([{ name: 'U1 CAM', resolution: '1920x1080', type: 'Primary', wireColor: '#b03a30' }, { name: 'U1 WIDE', resolution: '5000x1200', type: 'Primary', wireColor: '#2563eb' }, { name: 'U1 NORES', resolution: '', type: 'Primary', wireColor: '#888888' }]);
+    st.customLibrary = (st.customLibrary || []).filter(c => !/^U1 /.test(c.l)).concat([{ l: 'U1 CAM', c: '#b03a30' }, { l: 'U1 WIDE', c: '#2563eb' }, { l: 'U1 NORES', c: '#7a7a2a' }]);
+    if (opts.legacy) { const p = st.presets[1]; p.bgNames = Object.assign(p.bgNames || {}, { [C.id]: 'U1 CAM' }); p.colors = Object.assign(p.colors || {}, { [C.id]: '#b03a30' }); }
+    return { st, C };
+  };
+  const _u1Open = async st => { try { if (fsPresetId) { closeFullscreen(); await wait(500); } } catch (e) {} try { closeColorPop(); } catch (e) {} _applyProjectText(JSON.stringify(st)); await wait(900); okDialogs(); render(); await wait(400); };
+  const _u1Pop = async (p, s) => { const sw = $('.home-field-bg[data-pid="' + p.id + '"][data-sid="' + s.id + '"] .home-bg-swatch'); if (!sw) throw new Error('no BG swatch'); sw.scrollIntoView({ block: 'center' }); sw.click(); await wait(450); if ($('#color-pop').style.display !== 'block') throw new Error('the BG window did not open'); };
+  const _u1Btns = () => $$('#color-pop button').filter(vis).map(b => ({ t: b.innerText.trim(), r: b.getBoundingClientRect(), svg: !!$('svg', b) })).filter(x => x.t);
+  const _u1Src = async name => { const b = $('#cp-bgsrc-src'); if (!b || !vis(b)) throw new Error('no SOURCE button'); if (!vis($('#cp-bgsrc-list'))) { b.click(); await wait(300); }
+    const row = $$('#cp-bgsrc-list .sys-dd-item').find(r => r.dataset.src === name); if (!row) throw new Error('no ' + name + ' in the SOURCE list'); row.click(); await wait(500); };
+  const _u1Inner = (p, s, root) => $((root || '#canvas-area') + ' .screen-box[data-pid="' + p.id + '"][data-sid="' + s.id + '"] > .screen-inner');
+  const _u1Layer = el => { if (!el) return null; const cs = getComputedStyle(el), w = parseFloat(el.style.width) || el.offsetWidth; const img = cs.backgroundImage, sz = cs.backgroundSize.split(',')[0].trim().split(/\s+/).map(parseFloat), ps = cs.backgroundPosition.split(',')[0].trim().split(/\s+/).map(parseFloat);
+    return { img: img.slice(0, 32), w, size: sz, pos: ps, color: cs.backgroundColor }; };
+  const _u1Box = (p, s) => { const r = p.bgBox && p.bgBox[s.id]; return r ? [r.src, r.x, r.y, r.w, r.h] : null; };
+  const _u1Size = () => $$('#cp-bgsrc-size .bgs-inp').filter(vis).map(i => i.dataset.k + '=' + i.value);
+  const _u1Drag = async (h, dx, dy) => { const r = h.getBoundingClientRect(), x = r.left + r.width / 2, y = r.top + r.height / 2;
+    h.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true, clientX: x, clientY: y, button: 0, buttons: 1 })); await wait(40);
+    for (let i = 1; i <= 5; i++) { window.dispatchEvent(new MouseEvent('mousemove', { bubbles: true, cancelable: true, clientX: x + dx * i / 5, clientY: y + dy * i / 5, button: 0, buttons: 1 })); await wait(30); }
+    window.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, cancelable: true, clientX: x + dx, clientY: y + dy, button: 0 })); await wait(500); };
+  // 16li-bgsrc U1-1: NEW
+  await check('Video Presets 16li-bgsrc U1-1 (Omar 2026-10-09, his picture omar_01: "at the bottom is says image and apple, i want to update the section to same IMAGE it own button, then Video, Source"): the Preset Background window of a destination (the table\'s BG swatch of P01 CENTER LED) ends in ONE row IMAGE · VIDEO · SOURCE (one line, equal widths, an icon each, today\'s Image look: all three share its click prefix) and APPLY under it on its own row, as wide as the row; a content type\'s colour (the layer panel\'s ✎ swatch) keeps today\'s Image + Apply on one line, a layer\'s Edge colour keeps Apply alone', async () => {
+    const out = {}, want = {};
+    try {
+      if (typeof fsPresetId !== 'undefined' && fsPresetId) { closeFullscreen(); await wait(500); }
+      await restore(); render(); await wait(300);
+      await _u1Pop(presets[0], screens[1]);
+      const b = _u1Btns(), three = b.filter(x => /^(IMAGE|VIDEO|SOURCE)$/.test(x.t)), ap = b.find(x => x.t === 'APPLY');
+      out.order = b.map(x => x.t); want.order = ['IMAGE', 'VIDEO', 'SOURCE', 'APPLY'];
+      out.row = three.length === 3 ? [three.every(x => Math.abs(x.r.top - three[0].r.top) < 1), three.every(x => Math.abs(x.r.width - three[0].r.width) < 1), three.every(x => x.svg), $$('#color-pop button[onclick^="triggerScreenImageUpload"]').filter(vis).length] : null; want.row = [true, true, true, 3];
+      out.apply = (ap && three.length === 3) ? [ap.r.top >= three[0].r.bottom, Math.abs(ap.r.left - three[0].r.left) < 1, Math.abs(ap.r.right - three[2].r.right) < 1] : null; want.apply = [true, true, true];
+      closeColorPop(); await wait(200);
+      const f = firstLayer(); await _cfPanel(f.pid, f.sid, 1); const lsw = $('#layer-panel .lp-color-swatch'); if (lsw) { lsw.click(); await wait(350); }
+      const b2 = _u1Btns(); out.label = lsw ? [b2.map(x => x.t.replace(/^\W+/, '')), b2.length === 2 && Math.abs(b2[0].r.top - b2[1].r.top) < 1] : 'no ✎ swatch'; want.label = [['Image', 'APPLY'], true];
+      closeColorPop(); closeLayerPanel(); await wait(200);
+      openLayerPanel(fakeEv, f.pid, f.sid, 1, true); await wait(400); const esw = $('#layer-panel .lfx-swatch[data-path="edge.color"]'); if (esw) { esw.click(); await wait(300); }
+      out.fx = esw ? _u1Btns().map(x => x.t) : 'no Edge swatch'; want.fx = ['APPLY'];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { closeColorPop(); closeLayerPanel(); } catch (e) {} await restore(); }
+    return is(out, want, 'buttons in order / the row [one line, equal widths, icons, buttons with the Image click prefix] / APPLY [under the row, its left edge, its right edge] / a content type\'s colour [buttons, one line] / a layer\'s Edge colour');
+  });
+  // 16li-bgsrc U1-2: NEW
+  await check('Video Presets 16li-bgsrc U1-2 (Omar: "if the destination is 3840x1080 and the source they picked is 1920x1080 then you only fill half"; his answer "Left edge"): CENTER LED made 3840x1080 and three I/O sources (U1 CAM 1920x1080, U1 WIDE 5000x1200, U1 NORES no resolution); P02\'s old BG named U1 CAM (a colour fill) is drawn exactly as before. The table\'s BG swatch of P01 CENTER LED, SOURCE: the list shows the show\'s sources with an S number and the resolution ("fills" without one); U1 CAM clicked: the BG is U1 CAM at 1920x1080 with its top-left at 0,0 (the left half in its colour), the rest the destination\'s colour, one undo step, the window stays open on its size boxes (1920 / 1080 / 0 / 0); U1 WIDE: 5000x1200 from 0,0, cut by the destination\'s edge; U1 NORES: fills the destination with its colour as before', async () => {
+    const out = {}, want = {};
+    try {
+      const { st, C } = _u1St({ legacy: true }); await _u1Open(st);
+      const c = screens.find(x => x.id === C.id), p1 = presets[0], p2 = presets[1];
+      const old = _u1Layer(_u1Inner(p2, c)); out.legacy = old ? [old.img, old.color, getBgName(p2.id, c.id), _u1Box(p2, c)] : null; want.legacy = ['none', 'rgb(176, 58, 48)', 'U1 CAM', null];
+      await _u1Pop(p1, c); const sb = $('#cp-bgsrc-src'); if (sb) { sb.click(); await wait(350); }
+      const rows = $$('#cp-bgsrc-list .sys-dd-item').map(r => [r.dataset.src, (r.innerText || '').replace(/\s+/g, ' ').trim()]);
+      const rw = n => { const r = rows.find(x => x[0] === n); return r ? [/^S\d+ /.test(r[1]), r[1].replace(/^S\d+ /, '')] : null; };
+      out.list = [rows.length >= 3, rw('U1 CAM'), rw('U1 WIDE'), rw('U1 NORES')]; want.list = [true, [true, 'U1 CAM 1920×1080'], [true, 'U1 WIDE 5000×1200'], [true, 'U1 NORES fills']];
+      const u0 = _undoStack.length; await _u1Src('U1 CAM');
+      const L1 = _u1Layer(_u1Inner(p1, c)), k = L1 ? L1.w / 3840 : 0;
+      out.cam = [_u1Box(p1, c), getBgName(p1.id, c.id), _undoStack.length - u0, $('#color-pop').style.display, _u1Size()]; want.cam = [['U1 CAM', 0, 0, 1920, 1080], 'U1 CAM', 1, 'block', ['w=1920', 'h=1080', 'x=0', 'y=0']];
+      out.camDrawn = L1 ? [L1.img, Math.abs(L1.size[0] - 1920 * k) < 1, Math.abs(L1.size[1] - 1080 * k) < 1, L1.pos, L1.color] : null; want.camDrawn = ['linear-gradient(rgb(176, 58, 48)', true, true, [0, 0], 'rgb(26, 26, 26)'];
+      await _u1Src('U1 WIDE'); const L2 = _u1Layer(_u1Inner(p1, c));
+      out.wide = [_u1Box(p1, c), L2 ? [L2.size[0] > L2.w, Math.abs(L2.size[0] - 5000 * k) < 1, L2.pos] : null]; want.wide = [['U1 WIDE', 0, 0, 5000, 1200], [true, true, [0, 0]]];
+      await _u1Src('U1 NORES'); const L3 = _u1Layer(_u1Inner(p1, c));
+      out.nores = [_u1Box(p1, c), getBgName(p1.id, c.id), L3 ? [L3.img, L3.color] : null]; want.nores = [null, 'U1 NORES', ['none', 'rgb(122, 122, 42)']];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { closeColorPop(); } catch (e) {} await restore(); }
+    return is(out, want, 'P02\'s old named BG [picture, colour, name, box] / the SOURCE list [3+ rows, U1 CAM, U1 WIDE, U1 NORES: S number, name + resolution] / U1 CAM [box, BG name, undo steps, the window, its size boxes] / drawn [layer, width, height, top-left, the rest] / U1 WIDE [box, wider than the destination, its width, top-left] / U1 NORES [box, BG name, drawn]');
+  });
+  // 16li-bgsrc U1-3: NEW
+  await check('Video Presets 16li-bgsrc U1-3 (Omar\'s answer "Size it like a layer": "the BG gets the same W x H / position boxes and corner drag that layers have"; 16li-fix A4: its W x H is the source\'s resolution): CENTER LED 3840x1080 with U1 CAM picked by SOURCE: W 3840 typed in the window\'s box fills it and U1 CAM\'s resolution becomes 3840x1080, X 300 typed moves it, Reset puts it back at the top-left at that size, Undo returns X 300, Undo again X 0, a third Undo returns 1920x1080 and U1 CAM\'s 1920x1080; the canvas shows the source\'s outline with four corner handles while the window is open (the destination\'s own handles hidden), its bottom-right handle dragged 120 px right / 30 px down grows it by that many destination pixels and the boxes follow, one undo step; the window closed: no outline, the destination\'s handles back; a reload keeps the box, + Preset copies it, a preset with no BG of its own (P03) draws P01\'s', async () => {
+    const out = {}, want = {};
+    try {
+      const { st, C } = _u1St(); await _u1Open(st);
+      const c = screens.find(x => x.id === C.id), p1 = presets[0];
+      await _u1Pop(p1, c); await _u1Src('U1 CAM');
+      const W = $('#cp-bgsrc-size .bgs-inp[data-k="w"]'); if (!W) throw new Error('no W box'); W.value = '3840'; fire(W, 'change'); await wait(400);
+      const _lifR13 = () => ((sources || []).find(x => x && x.name === 'U1 CAM') || {}).resolution || '';
+      out.typed = [_u1Box(p1, c), _u1Size(), _lifR13()]; want.typed = [['U1 CAM', 0, 0, 3840, 1080], ['w=3840', 'h=1080', 'x=0', 'y=0'], '3840x1080'];
+      const X3 = $('#cp-bgsrc-size .bgs-inp[data-k="x"]'); if (X3) { X3.value = '300'; fire(X3, 'change'); await wait(400); }
+      const rs = $('#cp-bgsrc-size .bgs-reset'); if (rs) { rs.click(); await wait(400); } out.reset = [_u1Box(p1, c), _lifR13()]; want.reset = [['U1 CAM', 0, 0, 3840, 1080], '3840x1080'];
+      doUndo(); await wait(500); out.undo = _u1Box(presets[0], c); want.undo = ['U1 CAM', 300, 0, 3840, 1080];
+      doUndo(); await wait(500); out.undo2 = _u1Box(presets[0], c); want.undo2 = ['U1 CAM', 0, 0, 3840, 1080];
+      doUndo(); await wait(500); out.undo3 = [_u1Box(presets[0], c), _lifR13()]; want.undo3 = [['U1 CAM', 0, 0, 1920, 1080], '1920x1080'];
+      if ($('#color-pop').style.display !== 'block') await _u1Pop(presets[0], c);
+      await wait(200); const box = $('#canvas-area .screen-box[data-pid="' + presets[0].id + '"][data-sid="' + c.id + '"]');
+      const hs = $$('#canvas-area .bgs-frame .bgs-h'); out.frame = [hs.length, hs.map(h => h.dataset.corner).join(','), box ? $$(':scope > .rh', box).filter(h => h.style.display === 'none').length : -1]; want.frame = [4, 'tl,tr,bl,br', 4];
+      const inner = _u1Inner(presets[0], c), k = inner ? (parseFloat(inner.style.width) / 3840) : 1, u0 = _undoStack.length, br = $('#canvas-area .bgs-frame .bgs-h[data-corner="br"]');
+      if (br) await _u1Drag(br, 120, 30);
+      out.drag = [_u1Box(presets[0], c), _undoStack.length - u0, _u1Size()]; want.drag = [['U1 CAM', 0, 0, Math.round(1920 + 120 / k), Math.round(1080 + 30 / k)], 1, ['w=' + Math.round(1920 + 120 / k), 'h=' + Math.round(1080 + 30 / k), 'x=0', 'y=0']];
+      closeColorPop(); await wait(300); const box2 = $('#canvas-area .screen-box[data-pid="' + presets[0].id + '"][data-sid="' + c.id + '"]');
+      out.closed = [$$('#canvas-area .bgs-frame').length, box2 ? $$(':scope > .rh', box2).filter(h => h.style.display === 'none').length : -1]; want.closed = [0, 0];
+      const keep = _u1Box(presets[0], c); _applyProjectText(JSON.stringify(getProjectState())); await wait(900); okDialogs(); render(); await wait(300);
+      out.reload = [JSON.stringify(_u1Box(presets[0], c)) === JSON.stringify(keep)]; want.reload = [true];
+      actions.addPreset(); await wait(400); okDialogs(); render(); await wait(300); const pn = presets[presets.length - 1];
+      out.plus = [JSON.stringify(_u1Box(pn, c)) === JSON.stringify(keep), getBgName(pn.id, c.id)]; want.plus = [true, 'U1 CAM'];
+      const L = _u1Layer(_u1Inner(presets[2], c)); out.p03 = [getBgName(presets[2].id, c.id), L ? L.img : null]; want.p03 = ['U1 CAM', 'linear-gradient(rgb(176, 58, 48)'];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { closeColorPop(); } catch (e) {} await restore(); }
+    return is(out, want, 'W 3840 typed [box, boxes, U1 CAM resolution] / Reset [box, resolution] / Undo / Undo again / a third Undo [box, resolution] / the outline [handles, corners, the destination\'s handles hidden] / bottom-right handle dragged [box, undo steps, boxes] / window closed [outlines, hidden handles] / reload keeps it / + Preset [box, name] / P03 [name, drawn]');
+  });
+  // 16li-bgsrc U1-4: NEW
+  await check('Video Presets 16li-bgsrc U1-4 (SPEC: "for a combined-screen master: the combined screen\'s top-left"): PJ 1 (the master, at x 1320) and PJ 2 (at x 0) one combined 3240x1080 screen; PJ 1\'s BG swatch, SOURCE, U1 CAM: its box starts at the COMBINED screen\'s top-left (x -1320 in PJ 1\'s pixels), drawn from the combined picture\'s left edge at 1920 of its 3240 px; PJ 2 stays see-through', async () => {
+    const out = {}, want = {};
+    try {
+      const st = JSON.parse(BASE), a = st.screens[0], c2 = st.screens[1];
+      Object.assign(a, { name: 'PJ 1', w: 1920, h: 1080, color: '#1a1a1a' }); Object.assign(c2, { name: 'PJ 2', w: 1920, h: 1080, color: '#1a1a1a' }); delete a.bg; delete c2.bg;
+      st.screens = [a, c2]; st.canvasW = '3240'; st.canvasH = '1080';
+      st.presets = st.presets.slice(0, 2).map(p => ({ id: p.id, code: p.code, name: p.name, layers: {}, active: {}, positions: { [a.id]: { x: 1320, y: 0 }, [c2.id]: { x: 0, y: 0 } }, dsmOn: p.dsmOn || {}, dsmContent: p.dsmContent || {}, combo: { [a.id]: { on: true, ids: [a.id, c2.id] } } }));
+      st.sources = (st.sources || []).filter(s => !/^U1 /.test(s.name)).concat([{ name: 'U1 CAM', resolution: '1920x1080', type: 'Primary', wireColor: '#b03a30' }]);
+      st.customLibrary = (st.customLibrary || []).filter(x => !/^U1 /.test(x.l)).concat([{ l: 'U1 CAM', c: '#b03a30' }]);
+      await _u1Open(st);
+      const p1 = presets[0], A = screens[0], f = _cbFind(p1, A.id); out.combined = [!!f && f.role, f && f.g.rect.w]; want.combined = ['m', 3240];
+      await _u1Pop(p1, A); await _u1Src('U1 CAM');
+      const cb = $('#canvas-area .screen-box[data-pid="' + p1.id + '"][data-sid="' + A.id + '"] .cb-bg'), L = _u1Layer(cb), k = L ? L.w / 3240 : 0;
+      out.box = _u1Box(p1, A); want.box = ['U1 CAM', -1320, 0, 1920, 1080];
+      out.drawn = L ? [L.img, L.pos, Math.abs(L.size[0] - 1920 * k) < 1, L.color] : null; want.drawn = ['linear-gradient(rgb(176, 58, 48)', [0, 0], true, 'rgb(26, 26, 26)'];
+      const sl = $('#canvas-area .screen-box[data-pid="' + p1.id + '"][data-sid="' + screens[1].id + '"]'); out.slave = sl ? getComputedStyle(sl).backgroundColor : null; want.slave = 'rgba(0, 0, 0, 0)';
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { closeColorPop(); } catch (e) {} await restore(); }
+    return is(out, want, 'PJ 1 [role, combined width] / the box / drawn on the combined picture [layer, top-left, width, the rest] / PJ 2\'s box');
+  });
+  // 16li-bgsrc U1-5: NEW
+  await check('Video Presets 16li-bgsrc U1-5 (Omar: "video is a feature only for us to test ... keep our rule that in simple it would just show the cover image but not play tell they went to advance"; his answer "Yes, same as today\'s clips"): P02 CENTER LED\'s BG window, VIDEO, a clip given to the page\'s own file input: the clip is in the Video library and is the BG, its cover the picture (one undo step, the window closed), Simple has no <video>; the same clip dropped on P03 CENTER LED\'s BG row in Advanced gives the same BG (name, cover, no box, the same clip settings); in Advanced P02\'s BG clip is mounted (a <video> in its box)', async () => {
+    const out = {}, want = {};
+    let clip = null;
+    try {
+      if (typeof fsPresetId !== 'undefined' && fsPresetId) { closeFullscreen(); await wait(500); }
+      await restore(); render(); await wait(300);
+      const cv = document.createElement('canvas'); cv.width = 160; cv.height = 90; const g = cv.getContext('2d');
+      try { const rec = new MediaRecorder(cv.captureStream(30), { mimeType: 'video/webm' }); const ch = []; rec.ondataavailable = e => { if (e.data.size) ch.push(e.data); };
+        rec.start(100); const iv = setInterval(() => { g.fillStyle = '#' + Math.floor(Math.random() * 0xffffff).toString(16).padStart(6, '0'); g.fillRect(0, 0, 160, 90); }, 40); await wait(700); clearInterval(iv); rec.stop(); await new Promise(r => rec.onstop = r); clip = new Blob(ch, { type: 'video/webm' }); } catch (e) { clip = null; }
+      if (!clip || !clip.size) return 'no test clip (MediaRecorder)';
+      const p2 = presets[1], c = screens[1], n0 = customLibrary.filter(x => x && x.kind).length;
+      await _u1Pop(p2, c); const vb = $('#cp-bgsrc-vid'); if (!vb || !vis(vb)) throw new Error('no VIDEO button');
+      const u0 = _undoStack.length, realClick = HTMLInputElement.prototype.click;
+      HTMLInputElement.prototype.click = function () { if (this.type !== 'file') return realClick.call(this); const dt = new DataTransfer(); dt.items.add(new File([clip], 'u1 clip.webm', { type: 'video/webm' })); this.files = dt.files; this.dispatchEvent(new Event('change')); };
+      try { vb.click(); for (let i = 0; i < 60; i++) { await wait(200); const nm = getBgName(p2.id, c.id); if (nm && _fsMediaItem(nm)) break; } await wait(400); } finally { HTMLInputElement.prototype.click = realClick; }
+      const nm = getBgName(p2.id, c.id), it = _fsMediaItem(nm);
+      out.video = [!!it && it.kind, customLibrary.filter(x => x && x.kind).length - n0, !!it && p2.bgs && p2.bgs[c.id] === it.img, _u1Box(p2, c), _undoStack.length - u0, $('#color-pop').style.display, $$('#canvas-area video').length];
+      want.video = ['video', 1, true, null, 1, 'none', 0];
+      const inner = _u1Inner(p2, c); out.cover = inner ? /^url\(/.test(getComputedStyle(inner).backgroundImage) : null; want.cover = true;
+      openFullscreen(presets[2].id); await wait(800); _fsSetSrcTab('video'); _fsClearLayer(); _fsSetPropTab('layers'); await wait(500);
+      const card = $$('#fs-left-panel [draggable="true"][data-src]').find(e => e.dataset.src === nm), row = $$('#fs-toolbar .fs-lrow.bgrow').find(r => r.dataset.sid === c.id);
+      if (card && row) await _adDrag(card, row);
+      const p3 = presets[2]; out.drop = [!!card, !!row, getBgName(p3.id, c.id) === nm, !!it && p3.bgs && p3.bgs[c.id] === it.img, _u1Box(p3, c), JSON.stringify((p3.layerMedia || {})[c.id] || null) === JSON.stringify((p2.layerMedia || {})[c.id] || null)];
+      want.drop = [true, true, true, true, null, true];
+      fsSwitchPreset(p2.id); await wait(900);
+      out.adv = $$('#fs-canvas video.fs-vid').some(v => v.dataset.key === 'BG:' + p2.id + ':' + c.id); want.adv = true;
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { _fsPauseAll(); } catch (e) {} $$('video').forEach(v => { try { v.muted = true; v.pause(); } catch (e) {} }); try { if (fsPresetId) closeFullscreen(); } catch (e) {} await wait(300); await restore(); }
+    return is(out, want, 'VIDEO [the item, items added, its cover the BG picture, box, undo steps, the window, <video> on Simple] / Simple draws the cover / the Advanced drop on P03 [card, BG row, same name, its cover, box, same clip settings] / P02 in Advanced: its BG clip mounted');
+  });
+  // 16li-bgsrc U1-6: NEW
+  await check('Video Presets 16li-bgsrc U1-6 (SPEC: "A source picked from the table\'s BG cell list from now on behaves the same as SOURCE"; "W x H and X / Y boxes and corner drag ... Advanced\'s Properties, the canvas chip"): CENTER LED 3840x1080; Advanced P01: U1 CAM dragged onto CENTER LED\'s BG row: the BG is U1 CAM at 1920x1080 from 0,0 (not a fill); Properties shows Position & Size with 1920 / 1080 / 0 / 0; X 200 typed moves it (Simple draws it there too); the outline\'s top-left handle dragged 50 px left grows it to the left by that many destination pixels', async () => {
+    const out = {}, want = {};
+    try {
+      const { st, C } = _u1St(); await _u1Open(st);
+      const c = screens.find(x => x.id === C.id), p1 = presets[0];
+      openFullscreen(p1.id); await wait(800); _fsSetSrcTab('images'); _fsClearLayer(); _fsSetPropTab('layers'); await wait(500);
+      const card = $$('#fs-left-panel [draggable="true"][data-src]').find(e => e.dataset.src === 'U1 CAM'), row = $$('#fs-toolbar .fs-lrow.bgrow').find(r => r.dataset.sid === c.id);
+      if (card && row) await _adDrag(card, row);
+      out.drop = [!!card, !!row, _u1Box(p1, c), getBgName(p1.id, c.id), (p1.colors || {})[c.id] || null]; want.drop = [true, true, ['U1 CAM', 0, 0, 1920, 1080], 'U1 CAM', null];
+      if (!(selLayer && selLayer.n === 0)) { const r2 = $$('#fs-toolbar .fs-lrow.bgrow').find(r => r.dataset.sid === c.id); if (r2) { r2.click(); await wait(500); } }
+      const sec = $('#fs-props .lfx-acc[data-sec="bgsrc"]'); out.props = sec ? [($('.lfx-ttl', sec) || {}).textContent, $$('.bgs-inp', sec).map(i => i.dataset.k + '=' + i.value)] : null; want.props = ['Position & Size', ['w=1920', 'h=1080', 'x=0', 'y=0']];
+      const X = sec && $('.bgs-inp[data-k="x"]', sec); if (X) { X.value = '200'; fire(X, 'change'); await wait(600); }
+      const L = _u1Layer(_u1Inner(p1, c)), ks = L ? L.w / 3840 : 0; out.x200 = [_u1Box(p1, c), L ? Math.abs(L.pos[0] - 200 * ks) < 1 : null]; want.x200 = [['U1 CAM', 200, 0, 1920, 1080], true];
+      await wait(200); const tl = $('#fs-canvas .bgs-frame .bgs-h[data-corner="tl"]'), fin = tl && tl.parentElement.parentElement, k = fin ? parseFloat(fin.style.width) / 3840 : 1, z = (typeof fsZoom !== 'undefined' && fsZoom) || 1;
+      out.handles = $$('#fs-canvas .bgs-frame .bgs-h').length; want.handles = 4;
+      if (tl) await _u1Drag(tl, -50, 0);
+      const d = Math.round(1920 + 50 / (z * k)); out.drag = _u1Box(p1, c); want.drag = ['U1 CAM', 200 + 1920 - d, 0, d, 1080];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { if (fsPresetId) closeFullscreen(); } catch (e) {} selLayer = null; await wait(300); await restore(); }
+    return is(out, want, 'U1 CAM dropped on the BG row [card, row, box, BG name, a fill colour] / Properties [section, boxes] / X 200 [box, Simple draws it there] / handles on the Advanced canvas / top-left handle dragged 50 px left');
+  });
+  // 16li-bgsrc U1-7: NEW
+  await check('Help 16li-bgsrc U1-7: Canvas, Video Presets has a Background (BG) row after Layer chip: IMAGE · VIDEO · SOURCE and APPLY, a SOURCE at its own resolution in the top-left corner, sized like a layer', async () => {
+    const rows = $$('#help-overlay div').filter(d => d.children.length === 2 && /^Background \(BG\)$/.test((d.children[0].textContent || '').trim()));
+    const t = rows.length ? rows[0].children[1].textContent.replace(/\s+/g, ' ') : '';
+    const prev = rows.length ? (rows[0].previousElementSibling && rows[0].previousElementSibling.children[0] || {}).textContent : null;
+    return is([rows.length, prev, /IMAGE · VIDEO · SOURCE/.test(t), /APPLY/.test(t), /own resolution in the destination's top-left corner/.test(t), /Size it like a layer/.test(t)], [1, 'Layer chip', true, true, true, true], 'the row / after / IMAGE · VIDEO · SOURCE / APPLY / SOURCE placement / sizing');
+  });
+  // ── 16li-blendui (r16lq U2, Omar 2026-10-09: the blend overlay readable): U2-1 .. U2-5 FAIL on the v0.8.4 page (the BLEND GROUP chip's
+  //    pale orange wash; the PX box stays in the middle under a BG name or a layer, hidden under a combined screen's layer; the red % is
+  //    narrower than the PX box) and PASS after. Helpers prefixed _u2t; they reuse cvAdv / cvLay / cvMouse (the Blend Zones checks),
+  //    _lhfBgName (16lh-fix) and _f3Anyway (16lh-bgtxt).
+  const _u2tR = e => e.getBoundingClientRect();
+  const _u2tHit = (a, b) => a.left < b.right - 0.5 && a.right > b.left + 0.5 && a.top < b.bottom - 0.5 && a.bottom > b.top + 0.5;
+  const _u2tRow = (scope, pid) => $(scope + ' .preset-row[data-pid="' + pid + '"]') || $(scope);
+  /* every blend zone of preset pid in a canvas: its hatch box, its PX box, its red % (a combined screen's % has its own layer, right after) */
+  const _u2tZones = (scope, pid) => { const row = _u2tRow(scope, pid); const sv = row && $('.screens-visual', row); if (sv) sv.scrollIntoView({ block: 'center' });
+    return row ? $$('.overlap-vis[data-pid="' + pid + '"]', row).map(z => { const px = [...z.children].find(e => e.classList.contains('blend-label') && !e.dataset.guide); let mk = $('.blend-label[data-guide]', z);
+      if (!mk) { const n = z.nextElementSibling; if (n && n.dataset.cbMark) mk = $('.blend-label[data-guide]', n); } return { z, px, mk }; }) : []; };
+  /* [where the PX box is drawn: 'centred' in its zone / 'above %' (3 px over the red %, on its middle) / 'hidden' / 'elsewhere', PX width = % width, PX on top where drawn, % on top where drawn] */
+  const _u2tPlace = o => { if (!o || !o.px) return null; const X = _u2tR(o.px), Z = _u2tR(o.z), M = o.mk ? _u2tR(o.mk) : null; if (!(X.width > 0)) return ['hidden'];
+    const cx = X.left + X.width / 2, cy = X.top + X.height / 2, cen = Math.abs(cx - (Z.left + Z.width / 2)) <= 1 && Math.abs(cy - (Z.top + Z.height / 2)) <= 1;
+    const abv = !!M && Math.abs(M.top - X.bottom - 3) <= 1 && Math.abs(cx - (M.left + M.width / 2)) <= 1;
+    const top = e => { e.scrollIntoView({ block: 'nearest', inline: 'nearest' }); const r = _u2tR(e), t = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2); return !!t && (t === e || e.contains(t)); };   /* each box brought into the visible area first (a short canvas area) */
+    return [cen ? 'centred' : abv ? 'above %' : 'elsewhere', !!M && Math.abs(X.width - M.width) <= 0.5, top(o.px), !!M && top(o.mk)]; };
+  /* a preset card (drawn at the tile's scale and shrunk): [PX box stacked, its middle below the zone's middle, PX width = % width] */
+  const _u2tCard = o => { if (!o || !o.px) return null; const X = _u2tR(o.px), Z = _u2tR(o.z), M = o.mk ? _u2tR(o.mk) : null;
+    return [o.px.dataset.stk === '1', X.top + X.height / 2 > Z.top + Z.height / 2 + 2, !!M && Math.abs(X.width - M.width) <= 0.5]; };
+  /* the BLEND GROUP chip of preset pid: [its background colour, no picture / gradient on it, on top at 5 of its points] (its pointer-events made hittable for one synchronous read, then put back) */
+  const _u2tChip = (scope, pid, hit) => { const row = _u2tRow(scope, pid); const c = row && $('.blend-group-chip', row); if (!c || !vis(c)) return null; c.scrollIntoView({ block: 'center' });
+    const cs = getComputedStyle(c), q = _u2tR(c), out = [cs.backgroundColor, cs.backgroundImage === 'none']; if (!hit) return out;
+    const keep = c.style.pointerEvents; c.style.pointerEvents = 'auto'; let top = 0;
+    try { [[.5, .5], [.15, .3], [.85, .3], [.15, .75], [.85, .75]].forEach(([fx, fy]) => { const t = document.elementFromPoint(q.left + q.width * fx, q.top + q.height * fy); if (t && (t === c || c.contains(t))) top++; }); }
+    finally { c.style.pointerEvents = keep; }
+    return out.concat([top]); };
+  /* the table's L1 box of (p, s): the content name typed, the box left (its own blur handler stores it, as a user tabbing out) */
+  const _u2tL1 = async (p, s, name) => { const c = $('.home-field-chev[data-home-field="layer"][data-home-pid="' + p.id + '"][data-home-sid="' + s.id + '"][data-home-n="1"]'), inp = c && $('input', c.parentElement);
+    if (!inp) throw new Error('no L1 box'); inp.value = name; fire(inp, 'input'); fire(inp, 'blur'); await wait(450); okDialogs(); };
+  /* layer n of s pressed where it is on top, 12 moves on the window (Shift: no snap), let go: its middle lands on to() */
+  const _u2tDrag = async (scope, p, s, n, to) => {
+    const c = $(scope + ' .layer-chip[data-pid="' + p.id + '"][data-sid="' + s.id + '"][data-lid="' + n + '"]'); if (!c) throw new Error('no layer chip'); c.scrollIntoView({ block: 'center' }); await wait(100);
+    const q = _u2tR(c); let g = null;
+    for (const [fx, fy] of [[.5, .5], [.3, .5], [.7, .5], [.5, .3], [.5, .7], [.2, .2], [.8, .8], [.2, .8], [.8, .2]]) { const x = q.left + q.width * fx, y = q.top + q.height * fy, t = document.elementFromPoint(x, y); if (t && c.contains(t) && !t.classList.contains('lrh')) { g = { x, y, t }; break; } }
+    if (!g) throw new Error('the layer chip cannot be reached');
+    const T = to(), ex = g.x + (T.x - (q.left + q.width / 2)), ey = g.y + (T.y - (q.top + q.height / 2));
+    cvMouse(g.t, 'mousedown', g.x, g.y, { shiftKey: true });
+    for (let i = 1; i <= 12; i++) { cvMouse(window, 'mousemove', g.x + (ex - g.x) * i / 12, g.y + (ey - g.y) * i / 12, { shiftKey: true }); await wait(20); }
+    cvMouse(window, 'mouseup', ex, ey, { shiftKey: true }); await wait(500); okDialogs(); await wait(100); };
+  const _u2tZc = (scope, pid, k) => () => { const z = $$(scope + ' .overlap-vis[data-pid="' + pid + '"]')[k || 0], r = _u2tR(z); return { x: r.left + r.width / 2, y: r.top + r.height / 2 }; };
+  /* the red % double-clicked where it is drawn: the blend options open? (then closed) */
+  const _u2tDbl = async o => { if (!o || !o.mk) return 'no red %'; o.mk.scrollIntoView({ block: 'nearest', inline: 'nearest' }); const M = _u2tR(o.mk), x = M.left + M.width / 2, y = M.top + M.height / 2, t = document.elementFromPoint(x, y);
+    if (!t || !(t === o.mk || o.mk.contains(t))) return 'covered'; t.dispatchEvent(new MouseEvent('dblclick', { bubbles: true, cancelable: true, clientX: x, clientY: y })); await wait(300);
+    const pop = !!$('#blend-popup'); if (typeof closeBlendPopup === 'function') closeBlendPopup(); await wait(100); return pop; };
+  /* the toolbar's LOOK BOOK, Export Anyway on the check, "Show Blend Zones" ticked in its window, Export PDF: the book's html kept instead of a print tab */
+  const _u2tLook = async () => { const real = exportPDF; let html = null; window.exportPDF = function () { html = real(true); return html; };
+    try { const b = $$('[onclick="actions.exportLookBook()"]').find(vis); if (!b) return 'no LOOK BOOK button'; b.click(); await wait(450); okDialogs(); await _f3Anyway(); await wait(300);
+      const cb = $('#pdf-opt-blend'); if (cb && !cb.checked) cb.click();
+      const go = $$('[onclick="_pdfConfirmExport()"]').find(vis); if (!go) return 'no Export PDF button'; go.click(); await wait(450); }
+    finally { window.exportPDF = real; }
+    return html || 'no Look Book'; };
+  /* preset code's canvas picture in the Look Book: [per PX box [stacked, bottom 24 px, in the middle (top 50 %)], red % boxes, the chip's inline background] */
+  const _u2tLb = (html, code) => { if (typeof html !== 'string') return html; const d = new DOMParser().parseFromString(html, 'text/html'), pd = $$('.preset-doc', d).find(x => x.dataset.code === code); if (!pd) return null;
+    return [$$('.pp-livecanvas .overlap-vis[data-pid] > .blend-label', pd).filter(e => !e.hasAttribute('data-guide')).map(e => { const st = e.getAttribute('style') || ''; return [e.getAttribute('data-stk') === '1', /bottom:24px/.test(st), /top:50%/.test(st)]; }),
+      $$('.pp-livecanvas .blend-label[data-guide]', pd).length, $$('.pp-livecanvas .blend-group-chip', pd).map(c => c.style.backgroundColor)]; };
+  /* Video Presets > Simple on screen: Advanced closed, and Wire / I/O Patch left by the top bar's VIDEO PRESETS (an earlier check can leave either open) */
+  const _u2tSimple = async () => { if (typeof fsPresetId !== 'undefined' && fsPresetId) { closeFullscreen(); await wait(500); }
+    const sys = $('#sys-overlay'); if (document.body.classList.contains('wire-open') || (sys && sys.classList.contains('open'))) { const vp = $('#topbar-nav-vp'); if (vp) { vp.click(); await wait(700); okDialogs(); await wait(200); } } };
+  // 16li-blendui U2-1: NEW
+  await check('Video Presets 16li-blendui U2-1 (r16lq, Omar 2026-10-09: the BLEND GROUP chip "i just need that back to not disappear behind content. can you make it have a 30 percent black BG so its still transparent but also still readable"): with Blend Zones on, P01 LEFT LED + CENTER LED blended 600 px: the chip has a 30% black background (rgba(0, 0, 0, 0.3), no orange wash) in Simple and is on top at every point of it, also with LEFT LED\'s L1 (GFX 1 typed in the table) dragged under it; the same chip, on top, in the Advanced tile, 30% black in its preset card and in the Look Book\'s P01 canvas picture', async () => {
+    const out = {}, want = {}; const was = cvAdv('blend', true);
+    try {
+      await _u2tSimple(); await restore(); cvAdv('blend', true); await cvLay([0, 0], [1320, 0], [4000, 0]);
+      const p = presets[0], L = screens[0];
+      out.simple = _u2tChip('#canvas-area', p.id, true); want.simple = ['rgba(0, 0, 0, 0.3)', true, 5];
+      await _u2tL1(p, L, 'GFX 1'); render(); await wait(250);
+      await _u2tDrag('#canvas-area', p, L, 1, () => { const r = _u2tR($('#canvas-area .preset-row[data-pid="' + p.id + '"] .blend-group-chip')); return { x: r.left + r.width / 2 - 30, y: r.top + r.height / 2 - 15 }; });
+      const c = $('#canvas-area .preset-row[data-pid="' + p.id + '"] .blend-group-chip'), cl = $('#canvas-area .layer-chip[data-pid="' + p.id + '"][data-sid="' + L.id + '"][data-lid="1"]');
+      out.layerUnder = !!c && !!cl && _u2tHit(_u2tR(c), _u2tR(cl)); want.layerUnder = true;
+      out.overLayer = _u2tChip('#canvas-area', p.id, true); want.overLayer = ['rgba(0, 0, 0, 0.3)', true, 5];
+      openFullscreen(p.id); await wait(900);
+      out.advTile = _u2tChip('#fs-canvas', p.id, true); want.advTile = ['rgba(0, 0, 0, 0.3)', true, 5];
+      out.card = _u2tChip('#fs-preset-list', p.id, false); want.card = ['rgba(0, 0, 0, 0.3)', true];
+      await _u2tSimple();
+      out.lookbook = (_u2tLb(await _u2tLook(), p.code) || [])[2]; want.lookbook = ['rgba(0, 0, 0, 0.3)'];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { await _u2tSimple(); cvAdv('blend', was); await restore(); }
+    return is(out, want, 'Simple chip [background, no wash, on top of 5 points] / L1 dragged under it / the chip over the layer [same] / Advanced tile [same] / its preset card [background, no wash] / the Look Book P01 chip background');
+  });
+  // 16li-blendui U2-2: NEW
+  await check('Video Presets 16li-blendui U2-2 (Omar: "when you name a BG the verbiage also goes center ... and the overlap by pixel is center ... i want to move the pixel number down right above the percentage only when a BG has a name or a layer is played center screen, however i also need to update the percentage width to match that of the pixel count"): P01 LEFT LED + CENTER LED blended 600 px, one combined screen: LEFT LED\'s BG name LOGO is drawn in the middle of the blended screen, over the zone: the PX box sits 3 px above the red %, on its middle, as wide as it, both on top, the PX box clear of the name; the Look Book\'s P01 canvas picture: its PX box stacked the same way (bottom 24 px), no red % (as before); the name emptied in the colour window (BG swatch, name box, Apply): the PX box back in the middle of its zone, as wide as the %', async () => {
+    const out = {}, want = {}; const was = cvAdv('blend', true);
+    try {
+      await _u2tSimple(); await restore(); cvAdv('blend', true); await cvLay([0, 0], [1320, 0], [4000, 0]);
+      const p = presets[0], L = screens[0];
+      out.name = getBgName(p.id, L.id); want.name = 'LOGO';
+      let o = _u2tZones('#canvas-area', p.id)[0]; out.named = _u2tPlace(o); want.named = ['above %', true, true, true];
+      const pill = $('#canvas-area .preset-row[data-pid="' + p.id + '"] .bg-tag > div'); out.clear = !!pill && !!o && !_u2tHit(_u2tR(o.px), _u2tR(pill)); want.clear = true;
+      out.lookbook = _u2tLb(await _u2tLook(), p.code); want.lookbook = [[[true, true, false]], 0, ['rgba(0, 0, 0, 0.3)']];
+      await _lhfBgName(p, L, '', '#203040');
+      out.emptied = getBgName(p.id, L.id) || ''; want.emptied = '';
+      o = _u2tZones('#canvas-area', p.id)[0]; out.middle = _u2tPlace(o); want.middle = ['centred', true, true, true];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { closeColorPop(); } catch (e) {} await _u2tSimple(); cvAdv('blend', was); await restore(); }
+    return is(out, want, 'LEFT LED BG name / with the name [PX place, PX = % width, PX on top, % on top] / the PX box clear of the name pill / Look Book P01 [PX [stacked, bottom 24 px, middle], red % boxes, chip] / the name emptied / without it [same four]');
+  });
+  // 16li-blendui U2-3: NEW
+  await check('Video Presets 16li-blendui U2-3 (Omar, omar_03: "when place a layer center both the name and the pixel number are covered up"): P01 LEFT LED + CENTER LED + RIGHT LED blended 600 px each (one combined screen, two zones), LEFT LED\'s BG name emptied, L1 typed GFX 1: L1 dragged over the 2nd zone: only that PX box moves above its red % (on top, as wide), the 1st stays in the middle; dragged over the 1st zone: the two swap', async () => {
+    const out = {}, want = {}; const was = cvAdv('blend', true);
+    try {
+      await _u2tSimple(); await restore(); cvAdv('blend', true); await cvLay([0, 0], [1320, 0], [2640, 0]);
+      const p = presets[0], L = screens[0];
+      await _lhfBgName(p, L, '', '#203040');
+      await _u2tL1(p, L, 'GFX 1'); render(); await wait(250);
+      const st = () => _u2tZones('#canvas-area', p.id).map(o => _u2tPlace(o));
+      out.zones = _u2tZones('#canvas-area', p.id).length; want.zones = 2;
+      await _u2tDrag('#canvas-area', p, L, 1, _u2tZc('#canvas-area', p.id, 1));
+      out.zone2 = st(); want.zone2 = [['centred', true, true, true], ['above %', true, true, true]];
+      await _u2tDrag('#canvas-area', p, L, 1, _u2tZc('#canvas-area', p.id, 0));
+      out.zone1 = st(); want.zone1 = [['above %', true, true, true], ['centred', true, true, true]];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { closeColorPop(); } catch (e) {} await _u2tSimple(); cvAdv('blend', was); await restore(); }
+    return is(out, want, 'zones / L1 over zone 2 [zone 1, zone 2: PX place, PX = % width, PX on top, % on top] / L1 over zone 1 [same]');
+  });
+  // 16li-blendui U2-4: NEW (16li-fix A1: the top / bottom places)
+  await check('Video Presets 16li-blendui U2-4 (Omar: "move the pixel number down right above the percentage ... so when they are separate or together they match width wise"; the % "still opens the blend options"; 16li-fix A1, Omar: "the PX and % stay inside the blend zone and go to the right"): P01 LEFT LED above CENTER LED, 300 px top / bottom blend (one combined screen), LEFT LED\'s BG name emptied and no layers on the two: the red % at the zone\'s right end and the PX box right next to it on its line (4 px apart), as wide, both inside the zone and on top; L1 (GFX 1) dragged over that place: the PX box moves 3 px above the red %, on its line; a double-click on the red % where it is drawn opens the blend options; Blend Zones off: the PX box, the red % and the BLEND GROUP chip are not shown; on again: the PX box above the % again', async () => {
+    const out = {}, want = {}; const was = cvAdv('blend', true);
+    try {
+      await _u2tSimple(); await restore(); cvAdv('blend', true); await cvLay([0, 0], [0, 780], [4000, 0]);
+      const p = presets[0], L = screens[0];
+      [screens[0].id, screens[1].id].forEach(id => { if (p.layers) p.layers[id] = {}; }); render(); await wait(250); await _lhfBgName(p, L, '', '#203040');   /* nothing drawn where the PX box sits: no layers, LEFT LED\'s BG name emptied (its colour window) */
+      const yPlace = o => { if (!o || !o.px) return null; const X = _u2tR(o.px), Z = _u2tR(o.z), M = o.mk ? _u2tR(o.mk) : null; if (!(X.width > 0)) return ['hidden'];
+        const inZ = e => e.left >= Z.left - 0.5 && e.right <= Z.right + 0.5 && e.top >= Z.top - 0.5 && e.bottom <= Z.bottom + 0.5;
+        const beside = !!M && Math.abs(M.left - X.right - 4) <= 1.5 && Math.abs(M.bottom - X.bottom) <= 1.5 && Math.abs(Z.right - M.right - 6) <= 1.5;
+        const abv = !!M && Math.abs(M.top - X.bottom - 3) <= 1 && Math.abs((X.left + X.width / 2) - (M.left + M.width / 2)) <= 1;
+        const top = e => { const r = _u2tR(e), t = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2); return !!t && (t === e || e.contains(t)); };
+        return [beside ? 'next to %' : abv ? 'above %' : 'elsewhere', !!M && Math.abs(X.width - M.width) <= 0.5, !!M && inZ(M) && (abv || inZ(X)), top(o.px), !!M && top(o.mk)]; };
+      let o = _u2tZones('#canvas-area', p.id)[0]; out.free = yPlace(o); want.free = ['next to %', true, true, true, true];
+      await _u2tL1(p, L, 'GFX 1'); render(); await wait(250);
+      const at = () => { const z = $$('#canvas-area .overlap-vis[data-pid="' + p.id + '"]').find(e => !e.dataset.cbMark), Z = _u2tR(z), k = z.offsetWidth ? Z.width / z.offsetWidth : 1; return { x: Z.right - 118 * k, y: Z.bottom - 12 * k }; };   /* where the PX box sits next to the % (read when the drag starts: the page may have scrolled) */
+      await _u2tDrag('#canvas-area', p, L, 1, at); render(); await wait(300);
+      o = _u2tZones('#canvas-area', p.id)[0]; out.covered = yPlace(o).slice(0, 2); want.covered = ['above %', true];
+      out.dbl = await _u2tDbl(o); want.dbl = true;
+      cvAdv('blend', false); await wait(250);
+      const row = _u2tRow('#canvas-area', p.id); o = _u2tZones('#canvas-area', p.id)[0];
+      out.off = [!!o && vis(o.px), !!o && !!o.mk && vis(o.mk), $$('.blend-group-chip', row).some(vis)]; want.off = [false, false, false];
+      cvAdv('blend', true); await wait(250);
+      o = _u2tZones('#canvas-area', p.id)[0]; out.on = yPlace(o).slice(0, 2); want.on = ['above %', true];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { await _u2tSimple(); cvAdv('blend', was); await restore(); }
+    return is(out, want, 'nothing over it [PX place, PX = % width, both inside the zone, PX on top, % on top] / L1 over that place [PX place, same width] / the % double-click opens the blend options / Blend Zones off [PX shown, % shown, chip shown] / on again [PX place, same width]');
+  });
+  // 16li-blendui U2-5: NEW
+  await check('Video Presets 16li-blendui U2-5 ("Same in every canvas that draws it"): P01 LEFT LED + CENTER LED blended 600 px (one combined screen), LEFT LED\'s BG name emptied, L1 typed GFX 1 (it starts in the middle of the blended screen, over the zone): the PX box above the red % in Simple, in the Advanced tile and in P01\'s preset card (stacked, below the zone\'s middle, as wide as the %), still so after the Layers tab and back to the Preset tab; the Look Book\'s P01 canvas picture stacked (bottom 24 px)', async () => {
+    const out = {}, want = {}; const was = cvAdv('blend', true);
+    try {
+      await _u2tSimple(); await restore(); cvAdv('blend', true); await cvLay([0, 0], [1320, 0], [4000, 0]);
+      const p = presets[0], L = screens[0];
+      await _lhfBgName(p, L, '', '#203040');
+      await _u2tL1(p, L, 'GFX 1'); render(); await wait(250);
+      out.simple = _u2tPlace(_u2tZones('#canvas-area', p.id)[0]); want.simple = ['above %', true, true, true];
+      openFullscreen(p.id); await wait(900);
+      out.advTile = _u2tPlace(_u2tZones('#fs-canvas', p.id)[0]); want.advTile = ['above %', true, true, true];
+      out.card = _u2tCard(_u2tZones('#fs-preset-list', p.id)[0]); want.card = [true, true, true];
+      if (typeof _fsSetPropTab === 'function') { const lb = $('#fs-prop-tabs [data-tab="layers"]'), pb = $('#fs-prop-tabs [data-tab="preset"]'); if (lb) lb.click(); await wait(250); if (pb) pb.click(); await wait(400); }
+      out.cardBack = _u2tCard(_u2tZones('#fs-preset-list', p.id)[0]); want.cardBack = [true, true, true];
+      await _u2tSimple();
+      out.lookbook = (_u2tLb(await _u2tLook(), p.code) || [])[0]; want.lookbook = [[true, true, false]];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { closeColorPop(); } catch (e) {} await _u2tSimple(); cvAdv('blend', was); await restore(); }
+    return is(out, want, 'Simple [PX place, PX = % width, PX on top, % on top] / Advanced tile [same] / preset card [stacked, below the middle, PX = % width] / after Layers -> Preset tab [same] / Look Book P01 PX [stacked, bottom 24 px, middle]');
+  });
+  // ── 16li-print (r16lq U3, Omar 2026-10-09, omar_04 / omar_05 + omar_06 / omar_07): U3-1 .. U3-4 FAIL on the v0.8.4 page (eca64b96) and
+  //    PASS after: the blend zone line "600 pixel overlap (31%)", the dark Look Book's values readable, the Wire sheet's AV LOOK BOOK and
+  //    Project block inside their boxes. Helpers prefixed _u3.
+  const _u3T = e => ((e && e.textContent) || '').replace(/\s+/g, ' ').trim();
+  const _u3Anyway = async () => { for (let i = 0; i < 3; i++) { const p = $('#validation-panel'); const b = (p && vis(p)) ? $$('button', p).find(x => /export anyway/i.test(x.textContent)) : null; if (!b) break; b.click(); await wait(450); } };
+  const _u3Look = async (theme, ticks) => {   /* the toolbar's LOOK BOOK, Export Anyway, the window's boxes and theme clicked, Export PDF: the book's html kept instead of a print tab */
+    window._pdfOpts = null; const real = exportPDF; let html = null; window.exportPDF = function () { html = real(true); return html; };
+    try { const b = $$('[onclick="actions.exportLookBook()"]').find(vis); if (!b) return 'no LOOK BOOK button'; b.click(); await wait(450); okDialogs(); await _u3Anyway(); await wait(300);
+      for (const id of (ticks || [])) { const c = $('#' + id); if (c && !c.checked) c.click(); }
+      const t = $('[data-pdf-theme="' + theme + '"]'); if (!t) return 'no ' + theme + ' theme button'; t.click(); await wait(150);
+      const go = $$('[onclick="_pdfConfirmExport()"]').find(vis); if (!go) return 'no Export PDF button'; go.click(); await wait(450); }
+    finally { window.exportPDF = real; const l = $('[data-pdf-theme="light"]'); if (l) l.click(); window._pdfOpts = null; }
+    return html || 'no Look Book';
+  };
+  const _u3Render = async html => {   /* an export laid out the way its window lays it out (its own script runs, the print call taken out) */
+    const f = document.createElement('iframe'); f.style.cssText = 'position:fixed;left:-4000px;top:0;width:1400px;height:900px;border:0;visibility:hidden';
+    f.srcdoc = String(html).replace('setTimeout(()=>window.print(), 800);', '').replace(/setTimeout\(function\(\)\{window\.print\(\);\},600\);/, ''); document.body.appendChild(f);
+    await new Promise(r => { f.onload = r; setTimeout(r, 4000); }); await wait(500); return f;
+  };
+  const _u3Low = d => {   /* every text of a laid-out book under 3 : 1 against what is under it (background colours and a gradient's first stop, through the ancestors) */
+    const w = d.defaultView, P = c => { const m = String(c || '').match(/rgba?\(([^)]+)\)/); if (!m) return null; const p = m[1].split(/[\s,/]+/).filter(Boolean).map(Number); return { r: p[0], g: p[1], b: p[2], a: p.length > 3 ? p[3] : 1 }; };
+    const over = (t, b) => { const a = t.a + b.a * (1 - t.a); return a ? { r: (t.r * t.a + b.r * b.a * (1 - t.a)) / a, g: (t.g * t.a + b.g * b.a * (1 - t.a)) / a, b: (t.b * t.a + b.b * b.a * (1 - t.a)) / a, a } : { r: 0, g: 0, b: 0, a: 0 }; };
+    const L = c => { const f = v => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }; return 0.2126 * f(c.r) + 0.7152 * f(c.g) + 0.0722 * f(c.b); };
+    const bg = el => { const st = []; for (let e = el; e; e = e.parentElement) { const cs = w.getComputedStyle(e), bi = cs.backgroundImage || 'none'; if (/url\(/.test(bi)) return null; const g = bi.match(/rgba?\([^)]+\)/); if (g) st.push(P(g[0])); const c = P(cs.backgroundColor); if (c && c.a > 0) st.push(c); if (c && c.a >= 1) break; }
+      let acc = { r: 255, g: 255, b: 255, a: 1 }; for (let i = st.length - 1; i >= 0; i--) acc = over(st[i], acc); return acc; };
+    const out = [];
+    $$('.page *, .preset-doc *', d).forEach(el => { if (el.closest('svg,style,script,.pp-livecanvas')) return; const own = [...el.childNodes].filter(n => n.nodeType === 3 && n.textContent.trim()).map(n => n.textContent.trim()).join(' '); if (!own) return;
+      const cs = w.getComputedStyle(el); if (cs.display === 'none') return; const b = bg(el); if (!b) return; const t = P(cs.color); if (!t) return; let op = 1; for (let e = el; e; e = e.parentElement) op *= parseFloat(w.getComputedStyle(e).opacity) || 0;
+      const tc = over({ ...t, a: t.a * op }, b), x = L(tc), y = L(b); if ((Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05) < 3) out.push((el.className || el.tagName) + ': ' + own.slice(0, 40)); });
+    return [...new Set(out)];
+  };
+  const _u3Word = d => {   /* each AV LOOK BOOK against its logo cell: its letters (the first one's start to the last one's end, without the letter space after it) clear of both box lines */
+    const res = []; $$('svg', d).forEach(sv => { const t = $$('text', sv).find(e => e.textContent === 'AV LOOK BOOK'); if (!t) return;
+      const ls = parseFloat(t.getAttribute('letter-spacing')) || 0, n = t.getNumberOfChars(), Lx = t.getStartPositionOfChar(0).x, Rx = t.getEndPositionOfChar(n - 1).x - ls;
+      const cell = $$('rect', t.parentNode).filter(r => +r.getAttribute('height') === 96).pop(); if (!cell) { res.push('no logo cell'); return; }
+      const x0 = +cell.getAttribute('x') + (parseFloat(cell.getAttribute('stroke-width')) || 0) / 2, x1 = +cell.getAttribute('x') + (+cell.getAttribute('width')) - (parseFloat(cell.getAttribute('stroke-width')) || 0) / 2;
+      res.push((Lx > x0 && Rx < x1) ? 'inside' : ('over: ' + Math.round((x0 - Lx) * 10) / 10 + ' left, ' + Math.round((Rx - x1) * 10) / 10 + ' right')); });
+    return res.join(' / ') || 'no wordmark';
+  };
+  const _u3WireOpen = async () => { if (typeof fsPresetId !== 'undefined' && fsPresetId) { closeFullscreen(); await wait(500); } const w = $('#topbar-nav-wire'); if (!w) return false; w.click(); await wait(800); okDialogs(); return true; };
+  const _u3WirePdf = async (theme, sheet) => {   /* Wire's Export button, Theme, Sheet size, PDF, Export: the export window's page read back */
+    const realOpen = window.open; let url = null; window.open = function (u) { url = u; return { closed: false }; };
+    try { const ex = $$('[onclick="openWireExportModal()"]').find(vis); if (!ex) return 'no Wire Export button'; ex.click(); await wait(250);
+      $('[data-wire-theme="' + theme + '"]').click(); $('[data-wire-sheet="' + sheet + '"]').click(); $('[data-wire-fmt="pdf"]').click(); await wait(100);
+      $('#wire-export-modal [onclick="_wireExportConfirm()"]').click(); await wait(400); }
+    finally { window.open = realOpen; }
+    if (!url) return 'no PDF window';
+    return await (await fetch(url)).text();
+  };
+  // 16li-print U3-1: NEW
+  await check('Look Book 16li-print U3-1 (Omar 2026-10-09, omar_04: "where is say blend zone one and says 600x1080 31% it only needs to say 600 pixel over lap (31%) no 1080"): his "Test Blend" (PJ 1 + PJ 2, 1920x1080 each, 600 px blend side by side on P01) with P02 stacked (PJ 2 under PJ 1, 200 px blend): the Look Book (toolbar LOOK BOOK, Export Anyway, Show Blend Zones ticked, Export PDF) lists BLEND ZONES as "PJ 1 ↔ PJ 2 | 600 pixel overlap (31%)" side by side and "PJ 1 ↔ PJ 2 | 200 pixel overlap (19%)" top / bottom, the overlap along the blend as the canvas\' red % marker reads it (no "×1080", no "~"); the Blend Groups totals unchanged (3240 × 1080, 1920 × 1960)', async () => {
+    const out = {}, want = {};
+    try {
+      if (typeof fsPresetId !== 'undefined' && fsPresetId) { closeFullscreen(); await wait(500); }
+      const st = JSON.parse(BASE), a = st.screens[0], c = st.screens[1];
+      Object.assign(a, { name: 'PJ 1', w: 1920, h: 1080 }); Object.assign(c, { name: 'PJ 2', w: 1920, h: 1080 });
+      st.screens = [a, c]; st.canvasW = '3240'; st.canvasH = '1960'; st.showName = 'Test Blend';
+      st.presets = st.presets.slice(0, 2).map((p, i) => ({ id: p.id, code: p.code, name: p.name, layers: {}, active: {}, positions: i ? { [a.id]: { x: 0, y: 0 }, [c.id]: { x: 0, y: 880 } } : { [a.id]: { x: 0, y: 0 }, [c.id]: { x: 1320, y: 0 } }, dsmOn: p.dsmOn || {}, dsmContent: p.dsmContent || {} }));
+      _applyProjectText(JSON.stringify(st)); await wait(900); okDialogs(); render(); await wait(400);
+      out.marker = presets.map(p => { const q = _blendPairInfo(p.id, a.id, c.id); return q ? [q.axis, q.px, q.pct] : null; }); want.marker = [['x', 600, 31], ['y', 200, 19]];
+      const html = await _u3Look('light', ['pdf-opt-blend']); if (!/<html/i.test(String(html))) return 'the Look Book: ' + html;
+      const d = new DOMParser().parseFromString(html, 'text/html');
+      out.lists = $$('.preset-doc', d).map(pd => [pd.dataset.code].concat($$('.adv-summary-row', pd).map(r => _u3T($('.adv-pair', r)) + ' | ' + _u3T($('.adv-val', r)))));
+      want.lists = [['P01', 'PJ 1 + PJ 2 | 3240 × 1080', 'PJ 1 ↔ PJ 2 | 600 pixel overlap (31%)'], ['P02', 'PJ 1 + PJ 2 | 1920 × 1960', 'PJ 1 ↔ PJ 2 | 200 pixel overlap (19%)']];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { await restore(); }
+    return is(out, want, 'the canvas\' blend numbers [axis, px, %] per preset / the Look Book\'s Blend Groups and Blend Zones rows per preset');
+  });
+  // 16li-print U3-2: NEW
+  await check('Look Book 16li-print U3-2 (Omar 2026-10-09, omar_05 / omar_06: "below that notes and there is some notes there i cant read need to be just white letters there not no two different colors thing happening they should happen in all the section since there all like that an unreadable"): the General Session example with a crop, a shadow and an AOI on its first layer, the Look Book exported Dark (toolbar LOOK BOOK, Export Anyway, Crop + AOI + Contents ticked, Dark · For Screen, Export PDF) prints every preset\'s NOTES text plain white with the NOTES label still cyan, the Destination Breakdown\'s crop / FX lines red (#ff6b7a) and AOI line amber (#ffb347), brighter (16li-fix A2, Omar: "Brighter colour code"), and the Contents heading in the dark book\'s heading colour (#d6dde6); no text that reads on the Light book is under 3 : 1 on the Dark one; the Light book prints them all exactly as before', async () => {
+    const out = {}, want = {};
+    try {
+      if (typeof fsPresetId !== 'undefined' && fsPresetId) { closeFullscreen(); await wait(500); }
+      await restore(); render(); await wait(300);
+      const f0 = firstLayer(); setCrop(f0.pid, f0.sid, 1, { t: 0, b: 0, l: 20, r: 0 }); setLayerFx(f0.pid, f0.sid, 1, { shadow: { on: true } }); if (!getAOI(f0.pid, f0.sid)) toggleAOI(f0.pid, f0.sid); render(); await wait(300);
+      const read = async theme => { const html = await _u3Look(theme, ['pdf-opt-crop', 'pdf-opt-aoi', 'pdf-opt-toc']); if (!/<html/i.test(String(html))) return 'the Look Book: ' + html;
+        const f = await _u3Render(html), d = f.contentDocument, C = e => d.defaultView.getComputedStyle(e).color, U = a => [...new Set(a)];
+        const r = { theme: d.body.className, notes: U($$('.pnb-text', d).map(C)), label: U($$('.pnb-label', d).map(C)), crop: U($$('.bd-col .bd-crop', d).map(C)), aoi: U($$('.bd-col .bd-aoi', d).map(C)), toc: $$('.toc-hdr h2', d).map(C), low: _u3Low(d) };
+        f.remove(); return r; };
+      const dk = await read('dark'), lt = await read('light'); if (typeof dk === 'string' || typeof lt === 'string') return dk + ' / ' + lt;
+      out.dark = { theme: dk.theme, notes: dk.notes, label: dk.label, crop: dk.crop, aoi: dk.aoi, toc: dk.toc, darkOnlyUnder3: dk.low.filter(x => lt.low.indexOf(x) < 0) };
+      want.dark = { theme: 'theme-dark', notes: ['rgb(255, 255, 255)'], label: ['rgb(34, 196, 212)'], crop: ['rgb(255, 107, 122)'], aoi: ['rgb(255, 179, 71)'], toc: ['rgb(214, 221, 230)'], darkOnlyUnder3: [] };
+      out.light = { theme: lt.theme, notes: lt.notes, label: lt.label, crop: lt.crop, aoi: lt.aoi, toc: lt.toc };
+      want.light = { theme: 'theme-light', notes: ['rgb(10, 19, 34)'], label: ['rgb(34, 196, 212)'], crop: ['rgb(160, 64, 80)'], aoi: ['rgb(160, 96, 16)'], toc: ['rgb(10, 19, 34)'] };
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { await restore(); }
+    return is(out, want, 'the Dark book [body, notes text colours, NOTES label, crop / FX lines, AOI line, Contents heading, texts under 3 : 1 only on the dark page] / the Light book');
+  });
+  // 16li-print U3-3: NEW
+  await check('Wire 16li-print U3-3 (Omar 2026-10-09, omar_07: "the verbiage AV LOOK BOOK is spelling over the lines"): the Wire export (top bar Wire, Export, Theme Dark then Light, Sheet size Letter / Tabloid / D / E / A1 / A0, PDF, Export) and the Look Book\'s wire page (toolbar LOOK BOOK, Wire Diagram ticked) print the logo cell\'s AV LOOK BOOK with every letter inside the cell\'s box, clear of both lines', async () => {
+    const res = [], want = [];
+    try {
+      if (!(await _u3WireOpen())) return 'no Wire button';
+      for (const th of ['dark', 'light']) for (const sh of ['letter', 'tabloid', 'ansid', 'ansie', 'a1', 'a0']) {
+        const html = await _u3WirePdf(th, sh); want.push(th + ' ' + sh + ': inside');
+        if (!/<svg/i.test(String(html))) { res.push(th + ' ' + sh + ': ' + html); continue; }
+        const f = await _u3Render(html); res.push(th + ' ' + sh + ': ' + _u3Word(f.contentDocument)); f.remove();
+      }
+      try { closeWireMode(); } catch (e) {} await wait(300);
+      const lb = await _u3Look('light', ['pdf-opt-wire']); want.push('look book: inside');
+      if (!/<html/i.test(String(lb))) res.push('look book: ' + lb); else { const f = await _u3Render(lb); res.push('look book: ' + _u3Word(f.contentDocument)); f.remove(); }
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { closeWireExportModal(); closeWireMode(); } catch (e) {} await restore(); }
+    return is(res, want, 'AV LOOK BOOK against its logo cell, per export');
+  });
+  // 16li-print U3-4: NEW
+  await check('Wire 16li-print U3-4: Wire › Project Info with a long Project ("Annual Leadership Summit General Session Main Stage 2026"), Venue and Client typed in (committed as Enter / click-away commit them), Wire › Export Dark Letter PDF: every Project block value prints inside its row (the long ones set smaller, down to 8 px, and cut with "…" only where even that is too long, each the start of what was typed); the short ones (the dates, Drawn By, Project Ver) print as before at 11.5 px, whole', async () => {
+    const out = {}, want = {};
+    try {
+      if (!(await _u3WireOpen())) return 'no Wire button';
+      const typed = { project: 'Annual Leadership Summit General Session Main Stage 2026', venue: 'Moscone Center West Hall B Ballroom Level Three', client: 'AV Educate Incorporated Production Services' };
+      const put = (id, v) => { const el = $(id); if (!el) return false; el.focus(); el.value = v; fire(el, 'input'); fire(el, 'change'); el.blur(); return true; };
+      if (!put('#wtb-project', typed.project) || !put('#wtb-venue', typed.venue) || !put('#wtb-client', typed.client)) return 'Wire Project Info has no Project / Venue / Client fields';
+      await wait(300);
+      const html = await _u3WirePdf('dark', 'letter'); if (!/<svg/i.test(String(html))) return 'the Wire export: ' + html;
+      const f = await _u3Render(html), d = f.contentDocument, sv = $('svg', d);
+      const cell = $$('rect', sv).filter(r => +r.getAttribute('height') === 96).pop(), cx0 = +cell.getAttribute('x') + 4;
+      const vals = $$('text', sv).filter(t => Math.abs(+t.getAttribute('x') - (cx0 + 108)) < 0.01).map(t => { const bb = t.getBBox(), mid = bb.y + bb.height / 2;
+        const row = $$('rect', sv).find(r => Math.abs(+r.getAttribute('x') - cx0) < 0.01 && +r.getAttribute('height') <= 40 && +r.getAttribute('y') <= mid && +r.getAttribute('y') + (+r.getAttribute('height')) >= mid);
+        return { text: t.textContent, fs: +t.getAttribute('font-size'), inside: !!row && bb.x + bb.width <= +row.getAttribute('x') + (+row.getAttribute('width')) - 0.4 }; });
+      f.remove();
+      const pick = w => vals.find(v => v.text.replace(/…$/, '').length > 3 && w.indexOf(v.text.replace(/…$/, '')) === 0) || null;
+      out.inside = vals.filter(v => !v.inside).map(v => v.text); want.inside = [];
+      out.long = ['project', 'venue', 'client'].map(k => { const v = pick(typed[k]); return v ? [v.fs >= 8 && v.fs < (k === 'project' ? 16 : 11.5), v.text === typed[k] || /…$/.test(v.text)] : null; });
+      want.long = [[true, true], [true, true], [true, true]];
+      out.short = vals.filter(v => v.text === 'V1' || /^\d\d\/\d\d\/\d{4}$/.test(v.text)).map(v => v.fs); want.short = out.short.length >= 2 ? out.short.map(() => 11.5) : ['the dates and Project Ver'];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { closeWireExportModal(); closeWireMode(); } catch (e) {} await restore(); }
+    return is(out, want, 'Project block values past their row\'s right line / the long Project, Venue, Client [set smaller, whole or cut with …] / the short values\' size');
+  });
+  // ── 16li-fix (r16lq fix step, 2026-10-09): the new defects the BG and blend attacks found on the combined page (D1 D2 D3 D4 D5 D7) and
+  //    Omar's additions A1-A4: each FAILS on the combined page (1f0e3435) and PASSES on the 16li-fix page. Helpers prefixed _lif; they reuse
+  //    the 16li-bgsrc (_u1*), 16li-blendui (_u2t*) and 16li-print (_u3*) helpers and cvMouse / cvAdv / cvLay.
+  const _lifR = e => e.getBoundingClientRect();
+  const _lifOv = (a, b) => !!a && !!b && Math.min(a.right, b.right) - Math.max(a.left, b.left) > 0.5 && Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top) > 0.5;
+  const _lifIn = (a, b) => !!a && !!b && a.left >= b.left - 0.5 && a.right <= b.right + 0.5 && a.top >= b.top - 0.5 && a.bottom <= b.bottom + 0.5;
+  const _lifH = (root, c) => $(root + ' .bgs-frame .bgs-h[data-corner="' + c + '"]');
+  const _lifTop = e => { if (!e) return false; const r = _lifR(e), t = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2); return !!t && (t === e || e.contains(t)); };
+  const _lifRes = n => ((sources || []).find(x => x && x.name === n) || {}).resolution || '';
+  /* a press where the point is (on whatever is drawn there), moves on the window, the release: a hand on the canvas */
+  const _lifDrag = async (x, y, dx, dy, o) => { const t = document.elementFromPoint(x, y); if (!t) throw new Error('nothing at the point');
+    cvMouse(t, 'mousedown', x, y, o); await wait(40);
+    for (let i = 1; i <= 8; i++) { cvMouse(window, 'mousemove', x + dx * i / 8, y + dy * i / 8, o); await wait(25); }
+    cvMouse(window, 'mouseup', x + dx, y + dy, o); await wait(450); return t; };
+  /* a point inside the SOURCE BG's outline (Simple: its window open; Advanced: picked) that nothing drawn above it covers */
+  const _lifGrab = root => { const fr = $(root + ' .bgs-frame'); if (!fr) return null; fr.scrollIntoView({ block: 'center', inline: 'nearest' }); const r = _lifR(fr);
+    for (const [a, b] of [[.5, .5], [.3, .7], [.7, .7], [.3, .3], [.7, .3], [.15, .5], [.85, .5]]) { const x = r.left + r.width * a, y = r.top + r.height * b, t = document.elementFromPoint(x, y);
+      if (t && t.closest('.screen-box') && !t.closest('.layer-chip,.lrh,.blend-label,.overlap-hatch,button,input')) return { x, y }; }
+    return null; };
+  /* PJ 1 (x 0, the master) + PJ 2 (x 1320) one combined 3240x1080 screen, 600 px blend, with the U1 CAM source (1920x1080) */
+  const _lifPair = () => { const st = JSON.parse(BASE), a = st.screens[0], c2 = st.screens[1];
+    Object.assign(a, { name: 'PJ 1', w: 1920, h: 1080, color: '#1a1a1a' }); Object.assign(c2, { name: 'PJ 2', w: 1920, h: 1080, color: '#1a1a1a' }); delete a.bg; delete c2.bg;
+    st.screens = [a, c2]; st.canvasW = '3240'; st.canvasH = '1080';
+    st.presets = st.presets.slice(0, 2).map(p => ({ id: p.id, code: p.code, name: p.name, layers: {}, active: {}, positions: { [a.id]: { x: 0, y: 0 }, [c2.id]: { x: 1320, y: 0 } }, dsmOn: p.dsmOn || {}, dsmContent: p.dsmContent || {}, combo: { [a.id]: { on: true, ids: [a.id, c2.id] } } }));
+    st.sources = (st.sources || []).filter(s => !/^U1 /.test(s.name)).concat([{ name: 'U1 CAM', resolution: '1920x1080', type: 'Primary', wireColor: '#b03a30' }]);
+    st.customLibrary = (st.customLibrary || []).filter(x => !/^U1 /.test(x.l)).concat([{ l: 'U1 CAM', c: '#b03a30' }]);
+    return st; };
+  const _lifPos = () => JSON.stringify(presets.map(p => p.positions)) + '|' + $('#cv-w').value;
+  /* the text's contrast against what is under it in a laid-out book (_u3Low's reading: background colours and a gradient's first stop, through the ancestors) */
+  const _lifCR = (d, el) => { const w = d.defaultView, P = c => { const m = String(c || '').match(/rgba?\(([^)]+)\)/); if (!m) return null; const p = m[1].split(/[\s,/]+/).filter(Boolean).map(Number); return { r: p[0], g: p[1], b: p[2], a: p.length > 3 ? p[3] : 1 }; };
+    const over = (t, b) => { const a = t.a + b.a * (1 - t.a); return a ? { r: (t.r * t.a + b.r * b.a * (1 - t.a)) / a, g: (t.g * t.a + b.g * b.a * (1 - t.a)) / a, b: (t.b * t.a + b.b * b.a * (1 - t.a)) / a, a } : { r: 0, g: 0, b: 0, a: 0 }; };
+    const L = c => { const f = v => { v /= 255; return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4); }; return 0.2126 * f(c.r) + 0.7152 * f(c.g) + 0.0722 * f(c.b); };
+    const st = []; for (let e = el; e; e = e.parentElement) { const cs = w.getComputedStyle(e), bi = cs.backgroundImage || 'none'; const g = bi.match(/rgba?\([^)]+\)/); if (g) st.push(P(g[0])); const c = P(cs.backgroundColor); if (c && c.a > 0) st.push(c); if (c && c.a >= 1) break; }
+    let b = { r: 255, g: 255, b: 255, a: 1 }; for (let i = st.length - 1; i >= 0; i--) b = over(st[i], b);
+    const t = over(P(w.getComputedStyle(el).color), b), x = L(t), y = L(b); return Math.round((Math.max(x, y) + 0.05) / (Math.min(x, y) + 0.05) * 100) / 100; };
+  // 16li-fix D1: NEW
+  await check('Video Presets 16li-fix D1 (r16lq BG attack 2026-10-09: a SOURCE BG cut off by the destination\'s edge: its corner handle sat on the visible part but the drag worked on the hidden corner, so nothing moved on screen): CENTER LED 3840x1080, SOURCE U1 WIDE (5000x1200, cut at the right and bottom edges): the bottom-right handle, on top at the destination\'s corner, dragged 120 px left / 30 px up: the visible picture edge and the handle follow the mouse (the box becomes 3840 - 120 px by 1080 - 30 px in destination pixels, the handle moves 120 / 30 px); U1 CAM with X -600 typed: the top-left handle (at the destination\'s left edge) dragged 30 px right: the visible left edge and the handle follow (X becomes 30 px in destination pixels)', async () => {
+    const out = {}, want = {};
+    try {
+      const { st, C } = _u1St(); await _u1Open(st);
+      const c = screens.find(x => x.id === C.id), p1 = presets[0];
+      await _u1Pop(p1, c); await _u1Src('U1 WIDE'); await wait(250);
+      const inner = _u1Inner(p1, c), k = parseFloat(inner.style.width) / 3840, near = (a, b) => Math.abs(a - b) <= 1.5;
+      let h = _lifH('#canvas-area', 'br'); const r0 = h ? _lifR(h) : null;
+      out.start = [_u1Box(p1, c), _lifTop(h)]; want.start = [['U1 WIDE', 0, 0, 5000, 1200], true];
+      if (h) await _u1Drag(h, -120, -30);
+      h = _lifH('#canvas-area', 'br'); const r1 = h ? _lifR(h) : null, b1 = _u1Box(presets[0], c);
+      out.br = b1 ? [b1[1], b1[2], near(b1[3], 3840 - 120 / k), near(b1[4], 1080 - 30 / k), !!(r0 && r1) && near(r1.left - r0.left, -120) && near(r1.top - r0.top, -30)] : null; want.br = [0, 0, true, true, true];
+      await _u1Src('U1 CAM'); await wait(200);
+      const X = $('#cp-bgsrc-size .bgs-inp[data-k="x"]'); if (X) { X.value = '-600'; fire(X, 'change'); await wait(400); }
+      h = _lifH('#canvas-area', 'tl'); const t0 = h ? _lifR(h) : null; const i0 = _lifR(_u1Inner(presets[0], c));
+      out.x600 = [_u1Box(presets[0], c), !!t0 && near(t0.left + t0.width / 2, i0.left), _lifTop(h)]; want.x600 = [['U1 CAM', -600, 0, 1920, 1080], true, true];
+      if (h) await _u1Drag(h, 30, 0);
+      h = _lifH('#canvas-area', 'tl'); const t1 = h ? _lifR(h) : null, b2 = _u1Box(presets[0], c);
+      out.tl = b2 ? [near(b2[1], 30 / k), near(b2[1] + b2[3], 1320), b2[4], !!(t0 && t1) && near(t1.left - t0.left, 30)] : null; want.tl = [true, true, 1080, true];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { closeColorPop(); } catch (e) {} await restore(); }
+    return is(out, want, 'U1 WIDE picked [box, br handle on top] / br dragged 120 left, 30 up [x, y, width = 3840 - 120 px, height = 1080 - 30 px, the handle followed] / U1 CAM, X -600 [box, the tl handle at the visible left edge, on top] / tl dragged 30 right [x = 30 px, right edge kept, height, the handle followed]');
+  });
+  // 16li-fix D2 D7: NEW
+  await check('Video Presets 16li-fix D2 D7 (r16lq BG + blend attacks 2026-10-09: on a combined screen the SOURCE BG\'s right-hand handles lay under PJ 2\'s picture and the blend hatch; a press there deselected the BG in Advanced, or moved the whole blend group and widened the canvas): PJ 1 (x 0, the master) + PJ 2 (x 1320) one combined 3240x1080 screen with Blend Zones on; PJ 1\'s BG window, SOURCE, U1 CAM (1920x1080, its right edge over PJ 2 at the zone\'s right end): all four handles on top in Simple; the top-right handle dragged 60 px right grows the BG by 60 px of destination pixels, the destinations and the canvas stay; in Advanced (the BG row picked) all four handles on top and the bottom-right one dragged 40 px left / 20 px up shrinks it, the BG stays picked, the destinations stay', async () => {
+    const out = {}, want = {}; const was = cvAdv('blend', true);
+    try {
+      await _u1Open(_lifPair()); cvAdv('blend', true); render(); await wait(300);
+      const p1 = presets[0], A = screens[0], near = (a, b) => Math.abs(a - b) <= 1.5;
+      await _u1Pop(p1, A); await _u1Src('U1 CAM'); await wait(250);
+      const k = parseFloat(_u1Inner(p1, A).style.width) / 1920, pos0 = _lifPos();
+      out.simple = [_u1Box(p1, A), ['tl', 'tr', 'bl', 'br'].map(c => _lifTop(_lifH('#canvas-area', c)))]; want.simple = [['U1 CAM', 0, 0, 1920, 1080], [true, true, true, true]];
+      const tr = _lifH('#canvas-area', 'tr'); if (tr) await _u1Drag(tr, 60, 0);
+      const b1 = _u1Box(presets[0], A);
+      out.trDrag = b1 ? [b1[1], b1[2], near(b1[3], 1920 + 60 / k), b1[4], _lifPos() === pos0, $('#color-pop').style.display] : null; want.trDrag = [0, 0, true, 1080, true, 'block'];
+      closeColorPop(); await wait(200);
+      openFullscreen(p1.id); await wait(800); _fsSetPropTab('layers'); await wait(400);
+      const row = $$('#fs-toolbar .fs-lrow.bgrow').find(r => r.dataset.sid === A.id); if (row) { row.click(); await wait(600); }
+      const z = (typeof fsZoom !== 'undefined' && fsZoom) || 1, kf = parseFloat(_u1Inner(presets[0], A, '#fs-canvas').style.width) / 1920, w1 = b1 ? b1[3] : 0;
+      out.adv = [!!selLayer && selLayer.n, ['tl', 'tr', 'bl', 'br'].map(c => _lifTop(_lifH('#fs-canvas', c)))]; want.adv = [0, [true, true, true, true]];
+      const br = _lifH('#fs-canvas', 'br'); if (br) await _u1Drag(br, -40, -20);
+      const b2 = _u1Box(presets[0], A);
+      out.advDrag = b2 ? [near(b2[3], w1 - 40 / (z * kf)), near(b2[4], 1080 - 20 / (z * kf)), !!selLayer && selLayer.n, _lifPos() === pos0] : null; want.advDrag = [true, true, 0, true];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { closeColorPop(); } catch (e) {} try { if (fsPresetId) closeFullscreen(); } catch (e) {} selLayer = null; cvAdv('blend', was); await wait(300); await restore(); }
+    return is(out, want, 'Simple [box, the four handles on top] / tr dragged 60 right [x, y, width +60 px, height, destinations + canvas kept, the window] / Advanced, BG picked [picked, the four handles on top] / br dragged 40 left, 20 up [width, height, still picked, destinations kept]');
+  });
+  // 16li-fix D3: NEW
+  await check('Video Presets 16li-fix D3 (r16lq BG attack 2026-10-09: the Preset Background window ran off the window, APPLY out of reach): CENTER LED 3840x1080 with U1 CAM picked by SOURCE, its BG window opened again and SOURCE pressed (the list and the size boxes: the tallest window): the window ends inside the page, APPLY is fully on screen and on top; a list row brought into view is not under APPLY; a press on APPLY where it is drawn applies and closes the window', async () => {
+    const out = {}, want = {};
+    try {
+      const { st, C } = _u1St(); await _u1Open(st);
+      const c = screens.find(x => x.id === C.id), p1 = presets[0];
+      await _u1Pop(p1, c); await _u1Src('U1 CAM'); closeColorPop(); await wait(300);
+      await _u1Pop(p1, c); const sb = $('#cp-bgsrc-src'); if (sb) { sb.click(); await wait(400); }
+      const ap = $('#cp-apply'), r = _lifR(ap), pop = _lifR($('#color-pop'));
+      out.fits = [vis($('#cp-bgsrc-list')), vis($('#cp-bgsrc-size')), pop.bottom <= innerHeight + 0.5, r.top >= 0 && r.bottom <= innerHeight + 0.5, _lifTop(ap)]; want.fits = [true, true, true, true, true];
+      const row = $$('#cp-bgsrc-list .sys-dd-item').pop(); if (row) { row.scrollIntoView({ block: 'nearest' }); await wait(100); }
+      out.row = _lifTop(row); want.row = true;
+      const r2 = _lifR(ap), t = document.elementFromPoint(r2.left + r2.width / 2, r2.top + r2.height / 2); if (t) t.click(); await wait(400);
+      out.applied = [!!t && (t === ap || ap.contains(t)), $('#color-pop').style.display]; want.applied = [true, 'none'];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { closeColorPop(); } catch (e) {} await restore(); }
+    return is(out, want, 'list + size boxes open [list, size boxes, the window inside the page, APPLY on screen, APPLY on top] / the last list row brought into view is on top / APPLY pressed where it is drawn [it was APPLY, the window]');
+  });
+  // 16li-fix D4: NEW
+  await check('Video Presets 16li-fix D4 (r16lq BG attack 2026-10-09: Advanced Properties of a file picked with SOURCE still showed the old Source crop: a centred Size check and crop sliders that changed nothing): a 640x360 picture imported into the Video library, picked by SOURCE on P02 CENTER LED (box 640x360 at the top-left), Advanced P02 with its BG row picked: Properties show Position & Size and no Source crop section (no crop sliders)', async () => {
+    const out = {}, want = {};
+    try {
+      if (typeof fsPresetId !== 'undefined' && fsPresetId) { closeFullscreen(); await wait(500); }
+      await restore(); render(); await wait(300);
+      const cv = document.createElement('canvas'); cv.width = 640; cv.height = 360; const g = cv.getContext('2d'); g.fillStyle = '#3366cc'; g.fillRect(0, 0, 640, 360);
+      const blob = await new Promise(r => cv.toBlob(r, 'image/png')); const n0 = customLibrary.length;
+      await _fsImportOne(new File([blob], 'lif d4.png', { type: 'image/png' })); await wait(300);
+      const it = customLibrary.slice(n0).find(x => x && x.kind), nm = it && it.l; if (!nm) return 'the picture was not imported';
+      const p2 = presets[1], c = screens[1];
+      await _u1Pop(p2, c); await _u1Src(nm); closeColorPop(); await wait(300);
+      out.box = _u1Box(p2, c); want.box = [nm, 0, 0, 640, 360];
+      openFullscreen(p2.id); await wait(800); _fsSetPropTab('layers'); await wait(400);
+      const row = $$('#fs-toolbar .fs-lrow.bgrow').find(r => r.dataset.sid === c.id); if (row) { row.click(); await wait(600); }
+      const secs = $$('#fs-props .lfx-acc').map(a => a.dataset.sec);
+      out.props = [!!selLayer && selLayer.n, secs.includes('bgsrc'), secs.includes('geometry'), $$('#fs-props .fs-geom').length]; want.props = [0, true, false, 0];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { if (fsPresetId) closeFullscreen(); } catch (e) {} selLayer = null; await wait(300); await restore(); }
+    return is(out, want, 'the picture picked by SOURCE [box] / Advanced Properties of its BG [picked, Position & Size, Source crop section, crop sliders]');
+  });
+  // 16li-fix D5: NEW
+  await check('Video Presets 16li-fix D5 (r16lq BG attack 2026-10-09, ORGILL: SOURCE on P01 did not reach later presets that carry only P01\'s BG name, while IMAGE and APPLY on P01 do): CENTER LED 3840x1080; P03 has its own BG name U1 CAM and no fill of its own (as + Preset copies make), P04 its own fill; P01\'s BG window, SOURCE, U1 CAM: P02 (no BG of its own) and P03 draw P01\'s U1 CAM box (1920 px wide in its colour), P04 keeps its own fill', async () => {
+    const out = {}, want = {};
+    try {
+      const { st, C } = _u1St(); if (st.presets.length < 4) return 'fewer than 4 presets';
+      st.presets[2].bgNames = Object.assign(st.presets[2].bgNames || {}, { [C.id]: 'U1 CAM' });
+      st.presets[3].colors = Object.assign(st.presets[3].colors || {}, { [C.id]: '#336699' });
+      await _u1Open(st);
+      const c = screens.find(x => x.id === C.id), p1 = presets[0];
+      await _u1Pop(p1, c); await _u1Src('U1 CAM'); closeColorPop(); await wait(300); render(); await wait(300);
+      const drawn = i => { const L = _u1Layer(_u1Inner(presets[i], c)); return L ? [getBgName(presets[i].id, c.id), L.img, Math.round(L.size[0] / (L.w / 3840)), L.color] : null; };
+      out.p02 = drawn(1); want.p02 = ['U1 CAM', 'linear-gradient(rgb(176, 58, 48)', 1920, 'rgb(26, 26, 26)'];
+      out.p03 = drawn(2); want.p03 = ['U1 CAM', 'linear-gradient(rgb(176, 58, 48)', 1920, 'rgb(26, 26, 26)'];
+      const L4 = _u1Layer(_u1Inner(presets[3], c)); out.p04 = L4 ? [L4.img, L4.color] : null; want.p04 = ['none', 'rgb(51, 102, 153)'];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { closeColorPop(); } catch (e) {} await restore(); }
+    return is(out, want, 'P02 [BG name, picture, its width, around it] / P03 (own name, no fill) [same] / P04 (own fill) [picture, colour]');
+  });
+  // 16li-fix A1: NEW
+  await check('Video Presets + Look Book 16li-fix A1 (Omar 2026-10-09: "the blend group goes bottom right of the blend destinations, the PX and % stay inside the blend zone and go to the right"): P01 LEFT LED above CENTER LED, 300 px top / bottom blend, no layers on the two and LEFT LED\'s BG name emptied, Blend Zones on: the BLEND GROUP chip sits at the bottom-right corner of the whole group (6 px in), clear of the zone; the red % at the zone\'s right end (6 px in) with the PX box right next to it, both inside the zone, nothing overlapping, in Simple, the Advanced tile and P01\'s preset card; the Look Book\'s P01 canvas picture puts the chip at the same corner and the PX box at the zone\'s right end; side by side (600 px) the chip stays at the bottom-right of the group (CENTER LED\'s corner, as before)', async () => {
+    const out = {}, want = {}; const was = cvAdv('blend', true);
+    try {
+      await _u2tSimple(); await restore(); cvAdv('blend', true); await cvLay([0, 0], [0, 780], [4000, 0]);
+      const p = presets[0], A = screens[0], Cc = screens[1];
+      [A.id, Cc.id].forEach(id => { if (p.layers) p.layers[id] = {}; }); render(); await wait(250); await _lhfBgName(p, A, '', '#203040');   /* nothing drawn where the PX box sits: no layers, LEFT LED\'s BG name emptied (its colour window) */
+      const geo = scope => { const row = _u2tRow(scope, p.id); if (!row) return null; const sv = $('.screens-visual', row); if (sv) sv.scrollIntoView({ block: 'center' });
+        const z = $$('.overlap-vis[data-pid="' + p.id + '"]', row).find(e => !e.dataset.cbMark); if (!z) return 'no zone'; const cv = z.parentElement;
+        const bx = [...cv.children].filter(e => e.classList.contains('screen-box') && (e.dataset.sid === A.id || e.dataset.sid === Cc.id)).map(_lifR);
+        const G = { r: Math.max(...bx.map(q => q.right)), b: Math.max(...bx.map(q => q.bottom)) };
+        const chip = $(':scope > .blend-group-chip', cv), Cr = chip ? _lifR(chip) : null, Z = _lifR(z), s = z.offsetWidth ? Z.width / z.offsetWidth : 1;
+        const px = [...z.children].find(e => e.classList.contains('blend-label') && !e.dataset.guide); let mk = $('.blend-label[data-guide]', z); if (!mk) { const n = z.nextElementSibling; if (n && n.dataset.cbMark) mk = $('.blend-label[data-guide]', n); }
+        const X = px ? _lifR(px) : null, M = mk ? _lifR(mk) : null;
+        return [!!Cr && Math.abs(G.r - Cr.right - 6 * s) <= 2 && Math.abs(G.b - Cr.bottom - 6 * s) <= 2, !_lifOv(Cr, Z), _lifIn(X, Z), _lifIn(M, Z), !!M && Math.abs(Z.right - M.right - 6 * s) <= 2,
+          !!X && !!M && Math.abs(M.left - X.right - 4 * s) <= 1.5 && Math.abs(M.bottom - X.bottom) <= 1.5, !_lifOv(X, Cr) && !_lifOv(M, Cr) && !_lifOv(X, M)]; };
+      const ALL = [true, true, true, true, true, true, true];
+      out.simple = geo('#canvas-area'); want.simple = ALL;
+      openFullscreen(p.id); await wait(900);
+      out.advTile = geo('#fs-canvas'); want.advTile = ALL;
+      out.card = geo('#fs-preset-list'); want.card = ALL;
+      await _u2tSimple();
+      const html = await _u2tLook(); if (typeof html !== 'string' || html.indexOf('preset-doc') < 0) return 'no Look Book: ' + String(html).slice(0, 80);
+      const d = new DOMParser().parseFromString(html, 'text/html'), pd = $$('.preset-doc', d).find(x => x.dataset.code === p.code), lc = pd && $('.pp-livecanvas', pd);
+      if (!lc) return 'no P01 canvas picture in the Look Book';
+      const num = (e, k) => parseFloat((e.getAttribute('style') || '').match(new RegExp('(?:^|;)\\s*' + k + ':\\s*(-?[\\d.]+)px')) ? RegExp.$1 : 'NaN');
+      const sb = $$('.screen-box', lc).filter(e => e.dataset.sid === A.id || e.dataset.sid === Cc.id), ch = $('.blend-group-chip', lc), lpx = $('.overlap-vis[data-pid] > .blend-label[data-bz]', lc);
+      const gR = Math.max(...sb.map(e => num(e, 'left') + num(e, 'width'))), gB = Math.max(...sb.map(e => num(e, 'top') + num(e, 'height')));
+      out.lookbook = [sb.length, !!ch && Math.abs(num(ch, 'left') - (gR - 6)) <= 1 && Math.abs(num(ch, 'top') - (gB - 6)) <= 1, !!lpx && /left:calc\(100% - (154|78)px\)/.test(lpx.getAttribute('style') || '')]; want.lookbook = [2, true, true];
+      await cvLay([0, 0], [1320, 0], [4000, 0]); render(); await wait(300);
+      out.sideBySide = (geo('#canvas-area') || []).slice(0, 2); want.sideBySide = [true, true];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { if (fsPresetId) closeFullscreen(); } catch (e) {} await _u2tSimple(); cvAdv('blend', was); await restore(); }
+    return is(out, want, 'per canvas [chip at the group\'s bottom-right, chip clear of the zone, PX inside the zone, % inside the zone, % at the zone\'s right end, PX right next to the %, nothing overlapping]: Simple / Advanced tile / preset card / Look Book [boxes, chip at the group\'s corner, PX at the zone\'s right end] / side by side [chip at the corner, clear of the zone]');
+  });
+  // 16li-fix A2: NEW
+  await check('Look Book 16li-fix A2 (Omar 2026-10-09: "Brighter colour code"): the General Session example with a crop, a shadow and an AOI on its first layer, the Look Book exported Dark (toolbar LOOK BOOK, Export Anyway, Crop + AOI ticked, Dark · For Screen, Export PDF): the Destination Breakdown\'s crop / FX lines print red (#ff6b7a) and its AOI line amber (#ffb347), each at least 4.5 : 1 against the dark page, the NOTES text plain white; the Light book prints them exactly as before (#a04050, #a06010)', async () => {
+    const out = {}, want = {};
+    try {
+      if (typeof fsPresetId !== 'undefined' && fsPresetId) { closeFullscreen(); await wait(500); }
+      await restore(); render(); await wait(300);
+      const f0 = firstLayer(); setCrop(f0.pid, f0.sid, 1, { t: 0, b: 0, l: 20, r: 0 }); setLayerFx(f0.pid, f0.sid, 1, { shadow: { on: true } }); if (!getAOI(f0.pid, f0.sid)) toggleAOI(f0.pid, f0.sid); render(); await wait(300);
+      const read = async theme => { const html = await _u3Look(theme, ['pdf-opt-crop', 'pdf-opt-aoi']); if (!/<html/i.test(String(html))) return 'the Look Book: ' + html;
+        const f = await _u3Render(html), d = f.contentDocument, C = e => d.defaultView.getComputedStyle(e).color, U = a => [...new Set(a)];
+        const cr = $$('.bd-col .bd-crop:not(.bd-bgd)', d), ao = $$('.bd-col .bd-aoi', d);
+        const r = { crop: U(cr.map(C)), aoi: U(ao.map(C)), notes: U($$('.pnb-text', d).map(C)), min: Math.min(99, ...cr.concat(ao).map(e => _lifCR(d, e))), n: [cr.length > 0, ao.length > 0] }; f.remove(); return r; };
+      const dk = await read('dark'), lt = await read('light'); if (typeof dk === 'string' || typeof lt === 'string') return dk + ' / ' + lt;
+      out.dark = [dk.n, dk.crop, dk.aoi, dk.notes, dk.min >= 4.5]; want.dark = [[true, true], ['rgb(255, 107, 122)'], ['rgb(255, 179, 71)'], ['rgb(255, 255, 255)'], true];
+      out.light = [lt.crop, lt.aoi]; want.light = [['rgb(160, 64, 80)'], ['rgb(160, 96, 16)']];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { await restore(); }
+    return is(out, want, 'the Dark book [crop / FX and AOI lines printed, crop / FX colour, AOI colour, NOTES text, every one of those lines at least 4.5 : 1] / the Light book [crop / FX colour, AOI colour]');
+  });
+  // 16li-fix A3: NEW
+  await check('Video Presets 16li-fix A3 (Omar 2026-10-09 "yes" to drag-to-move: a SOURCE BG "can also be grabbed anywhere on it and DRAGGED to move it, exactly like a layer chip"): CENTER LED 3840x1080 with U1 CAM picked by SOURCE, its window open: a press inside the BG (where nothing is drawn above it) and a drag of 60 px right moves it by that many destination pixels (one undo step, the window stays open, no destination moves); dragged to 4 px short of the right edge it snaps flush; Undo puts it back; in Advanced with the BG picked a drag of 30 px right moves it and it stays picked; on a combined screen (PJ 1 + PJ 2) with the BG made 2600 px wide a press on it where only PJ 2\'s box lies over it moves the BG, not the blend group', async () => {
+    const out = {}, want = {}; const was = cvAdv('blend', true);
+    try {
+      const { st, C } = _u1St(); await _u1Open(st);
+      const c = screens.find(x => x.id === C.id), p1 = presets[0], near = (a, b) => Math.abs(a - b) <= 1.5;
+      await _u1Pop(p1, c); await _u1Src('U1 CAM'); await wait(250);
+      const k = parseFloat(_u1Inner(p1, c).style.width) / 3840, pos0 = _lifPos(), u0 = _undoStack.length;
+      let g = _lifGrab('#canvas-area'); if (!g) return 'no free point inside the BG';
+      await _lifDrag(g.x, g.y, 60, 0);
+      const b1 = _u1Box(presets[0], c);
+      out.move = b1 ? [near(b1[1], 60 / k), b1[2], b1[3], b1[4], _undoStack.length - u0, $('#color-pop').style.display, _lifPos() === pos0] : null; want.move = [true, 0, 1920, 1080, 1, 'block', true];
+      g = _lifGrab('#canvas-area'); if (g) await _lifDrag(g.x, g.y, (3840 - 1920 - b1[1]) * k - 4, 0);
+      out.snap = _u1Box(presets[0], c); want.snap = ['U1 CAM', 1920, 0, 1920, 1080];
+      doUndo(); await wait(500); const b3 = _u1Box(presets[0], c); out.undo = b3 ? near(b3[1], 60 / k) : null; want.undo = true;
+      closeColorPop(); await wait(200);
+      openFullscreen(p1.id); await wait(800); _fsSetPropTab('layers'); await wait(400);
+      const row = $$('#fs-toolbar .fs-lrow.bgrow').find(r => r.dataset.sid === c.id); if (row) { row.click(); await wait(600); }
+      const z = (typeof fsZoom !== 'undefined' && fsZoom) || 1, kf = parseFloat(_u1Inner(presets[0], c, '#fs-canvas').style.width) / 3840, x0 = (_u1Box(presets[0], c) || [])[1];
+      g = _lifGrab('#fs-canvas'); if (g) await _lifDrag(g.x, g.y, 30, 0);
+      const b4 = _u1Box(presets[0], c); out.adv = [!!g, b4 ? near(b4[1] - x0, 30 / (z * kf)) : null, !!selLayer && selLayer.n, _lifPos() === pos0]; want.adv = [true, true, 0, true];
+      closeFullscreen(); await wait(400); selLayer = null;
+      await _u1Open(_lifPair()); cvAdv('blend', true); render(); await wait(300);
+      const P1 = presets[0], A = screens[0], B2 = screens[1];
+      await _u1Pop(P1, A); await _u1Src('U1 CAM'); await wait(250);
+      const Wc = $('#cp-bgsrc-size .bgs-inp[data-k="w"]'); if (Wc) { Wc.value = '2600'; fire(Wc, 'change'); await wait(400); }   /* wider than PJ 1 + the zone: part of it lies under PJ 2's box only */
+      const fr = _lifR($('#canvas-area .bgs-frame')), bb = _lifR($('#canvas-area .screen-box[data-pid="' + P1.id + '"][data-sid="' + B2.id + '"]')), kc = parseFloat(_u1Inner(P1, A).style.width) / 1920;
+      const zr = _lifR($$('#canvas-area .overlap-vis[data-pid="' + P1.id + '"]').find(e => !e.dataset.cbMark));
+      const gx = (zr.right + fr.right) / 2, gy = fr.top + fr.height * 0.3, under = document.elementFromPoint(gx, gy), posC = _lifPos();
+      out.combinedPoint = [!!under && under.closest('.screen-box') === $('#canvas-area .screen-box[data-pid="' + P1.id + '"][data-sid="' + B2.id + '"]'), gx > bb.left];
+      want.combinedPoint = [true, true];
+      await _lifDrag(gx, gy, 30, 0, { shiftKey: true });
+      const b5 = _u1Box(presets[0], A); out.combined = b5 ? [near(b5[1], 30 / kc), b5[3], _lifPos() === posC] : null; want.combined = [true, 2600, true];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { closeColorPop(); } catch (e) {} try { if (fsPresetId) closeFullscreen(); } catch (e) {} selLayer = null; cvAdv('blend', was); await wait(300); await restore(); }
+    return is(out, want, 'dragged 60 right [x, y, width, height, undo steps, the window, destinations + canvas kept] / dragged to 4 px short of the right edge (snapped) / Undo / Advanced, BG picked [a free point, moved 30 px, still picked, destinations kept] / combined screen [the press lands on PJ 2\'s box, right of PJ 2\'s left edge] / W 2600, dragged 30 right (Shift: no snap) [moved, width, destinations + canvas kept]');
+  });
+  // 16li-fix A4: NEW
+  await check('Video Presets + I/O Patch 16li-fix A4 (Omar 2026-10-09, verbatim: "make sure the re-sized size resolution update the source resolution to match and vice verse for this situation"): CENTER LED 3840x1080, U1 CAM (1920x1080) picked by SOURCE, P02 CENTER LED\'s L1 is U1 CAM: W 2400 typed in the BG window makes U1 CAM\'s resolution 2400x1080 in one undo step (Undo puts both back); the bottom-right handle dragged 60 px left / 30 px up sets it to the BG\'s new W x H; U1 CAM\'s resolution picked as 1280x720 on its I/O Patch card resizes the BG to 1280x720 (X / Y kept) in one undo step and every canvas draws it so; P02\'s L1 keeps its size', async () => {
+    const out = {}, want = {};
+    try {
+      const { st, C } = _u1St(); const p2s = st.presets[1]; p2s.layers = p2s.layers || {}; p2s.layers[C.id] = Object.assign({}, p2s.layers[C.id] || {}, { 1: 'U1 CAM' }); p2s.layerSizes = Object.assign({}, p2s.layerSizes || {}, { [C.id]: { 1: { wf: 0.4, hf: 0.4, xf: 0.1, yf: 0.2 } } });
+      await _u1Open(st);
+      const c = screens.find(x => x.id === C.id), p1 = presets[0], near = (a, b) => Math.abs(a - b) <= 1.5;
+      const lay0 = JSON.stringify(getLayerSize(presets[1].id, c.id, 1) || null);
+      await _u1Pop(p1, c); await _u1Src('U1 CAM'); await wait(250);
+      const u0 = _undoStack.length, W = $('#cp-bgsrc-size .bgs-inp[data-k="w"]'); if (W) { W.value = '2400'; fire(W, 'change'); await wait(400); }
+      out.typed = [_u1Box(presets[0], c), _lifRes('U1 CAM'), _undoStack.length - u0]; want.typed = [['U1 CAM', 0, 0, 2400, 1080], '2400x1080', 1];
+      doUndo(); await wait(500); out.undo = [_u1Box(presets[0], c), _lifRes('U1 CAM')]; want.undo = [['U1 CAM', 0, 0, 1920, 1080], '1920x1080'];
+      if ($('#color-pop').style.display !== 'block') await _u1Pop(presets[0], c);
+      await wait(200); const k = parseFloat(_u1Inner(presets[0], c).style.width) / 3840, br = _lifH('#canvas-area', 'br'); if (br) await _u1Drag(br, -60, -30);
+      const b2 = _u1Box(presets[0], c); out.drag = b2 ? [near(b2[3], 1920 - 60 / k), near(b2[4], 1080 - 30 / k), _lifRes('U1 CAM') === b2[3] + 'x' + b2[4]] : null; want.drag = [true, true, true];
+      closeColorPop(); await wait(200);
+      const X = b2 ? b2[1] : 0, Y = b2 ? b2[2] : 0, iop = $('#topbar-nav-iop'); if (iop) { iop.click(); await wait(900); okDialogs(); }
+      const pill = $$('[data-sys-field="resolution"][data-sys-kind="src"]').find(e => e.dataset.sysId === 'U1 CAM' && vis(e)); if (!pill) return 'no U1 CAM resolution control in I/O Patch';
+      const u1 = _undoStack.length; pill.click(); await wait(350);
+      const item = $$('.sys-dd-item').filter(vis).find(e => /^\s*1280\s*[×x]\s*720\b/.test(e.innerText)); if (!item) return 'no 1280×720 in its menu';
+      item.click(); await wait(600); okDialogs();
+      out.iop = [_lifRes('U1 CAM'), _u1Box(presets[0], c), _undoStack.length - u1]; want.iop = ['1280x720', ['U1 CAM', X, Y, 1280, 720], 1];
+      const vp = $('#topbar-nav-vp'); if (vp) { vp.click(); await wait(900); okDialogs(); } render(); await wait(300);
+      const L = _u1Layer(_u1Inner(presets[0], c)), ks = L ? L.w / 3840 : 1;
+      out.drawn = L ? [Math.round(L.size[0] / ks), Math.round(L.size[1] / ks)] : null; want.drawn = [1280, 720];
+      out.layer = JSON.stringify(getLayerSize(presets[1].id, c.id, 1) || null) === lay0; want.layer = true;
+      doUndo(); await wait(500); out.undoIop = [_lifRes('U1 CAM'), (_u1Box(presets[0], c) || []).slice(3)]; want.undoIop = [b2 ? b2[3] + 'x' + b2[4] : '', b2 ? [b2[3], b2[4]] : []];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { closeColorPop(); } catch (e) {} try { const vp = $('#topbar-nav-vp'); if (document.body.classList.contains('wire-open') || ($('#sys-overlay') && $('#sys-overlay').classList.contains('open'))) { if (vp) vp.click(); await wait(600); okDialogs(); } } catch (e) {} await restore(); }
+    return is(out, want, 'W 2400 typed [box, U1 CAM resolution, undo steps] / Undo [box, resolution] / br dragged 60 left, 30 up [width, height, resolution = W x H] / I/O Patch card 1280x720 [resolution, box (X / Y kept), undo steps] / Simple draws 1280x720 / P02 L1 keeps its size / Undo [resolution, BG size]');
+  });
   try { _fsPauseAll(); } catch (e) {} $$('video').forEach(v => { try { v.muted = true; v.pause(); } catch (e) {} });
   return { checks };
 })

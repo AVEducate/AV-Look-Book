@@ -2971,6 +2971,106 @@
   {
    "name": "Video Presets 16lh-fix D3 (r16lp exports attack 2026-10-09, the same on v0.8.3: a double quote in a BG name filled the cell with attribute text): the table's BG / Color cell of P02 CENTER LED given the BG name 75\" TV <L> LOOP <i data-lhf=\"1\">x</i> (colour window, Apply): the swatch's tooltip and aria-label and the name's tooltip read \"BG: \" + the name + the usual hint (the name whole, nothing cut off at the double quote), the swatch shows the name's first 3 letters and the cell the name, one swatch and one name, no element made from the name",
    "ok": true
+  },
+  {
+   "name": "Video Presets 16li-bgsrc U1-1 (Omar 2026-10-09, his picture omar_01: \"at the bottom is says image and apple, i want to update the section to same IMAGE it own button, then Video, Source\"): the Preset Background window of a destination (the table's BG swatch of P01 CENTER LED) ends in ONE row IMAGE · VIDEO · SOURCE (one line, equal widths, an icon each, today's Image look: all three share its click prefix) and APPLY under it on its own row, as wide as the row; a content type's colour (the layer panel's ✎ swatch) keeps today's Image + Apply on one line, a layer's Edge colour keeps Apply alone",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16li-bgsrc U1-2 (Omar: \"if the destination is 3840x1080 and the source they picked is 1920x1080 then you only fill half\"; his answer \"Left edge\"): CENTER LED made 3840x1080 and three I/O sources (U1 CAM 1920x1080, U1 WIDE 5000x1200, U1 NORES no resolution); P02's old BG named U1 CAM (a colour fill) is drawn exactly as before. The table's BG swatch of P01 CENTER LED, SOURCE: the list shows the show's sources with an S number and the resolution (\"fills\" without one); U1 CAM clicked: the BG is U1 CAM at 1920x1080 with its top-left at 0,0 (the left half in its colour), the rest the destination's colour, one undo step, the window stays open on its size boxes (1920 / 1080 / 0 / 0); U1 WIDE: 5000x1200 from 0,0, cut by the destination's edge; U1 NORES: fills the destination with its colour as before",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16li-bgsrc U1-3 (Omar's answer \"Size it like a layer\": \"the BG gets the same W x H / position boxes and corner drag that layers have\"; 16li-fix A4: its W x H is the source's resolution): CENTER LED 3840x1080 with U1 CAM picked by SOURCE: W 3840 typed in the window's box fills it and U1 CAM's resolution becomes 3840x1080, X 300 typed moves it, Reset puts it back at the top-left at that size, Undo returns X 300, Undo again X 0, a third Undo returns 1920x1080 and U1 CAM's 1920x1080; the canvas shows the source's outline with four corner handles while the window is open (the destination's own handles hidden), its bottom-right handle dragged 120 px right / 30 px down grows it by that many destination pixels and the boxes follow, one undo step; the window closed: no outline, the destination's handles back; a reload keeps the box, + Preset copies it, a preset with no BG of its own (P03) draws P01's",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16li-bgsrc U1-4 (SPEC: \"for a combined-screen master: the combined screen's top-left\"): PJ 1 (the master, at x 1320) and PJ 2 (at x 0) one combined 3240x1080 screen; PJ 1's BG swatch, SOURCE, U1 CAM: its box starts at the COMBINED screen's top-left (x -1320 in PJ 1's pixels), drawn from the combined picture's left edge at 1920 of its 3240 px; PJ 2 stays see-through",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16li-bgsrc U1-5 (Omar: \"video is a feature only for us to test ... keep our rule that in simple it would just show the cover image but not play tell they went to advance\"; his answer \"Yes, same as today's clips\"): P02 CENTER LED's BG window, VIDEO, a clip given to the page's own file input: the clip is in the Video library and is the BG, its cover the picture (one undo step, the window closed), Simple has no <video>; the same clip dropped on P03 CENTER LED's BG row in Advanced gives the same BG (name, cover, no box, the same clip settings); in Advanced P02's BG clip is mounted (a <video> in its box)",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16li-bgsrc U1-6 (SPEC: \"A source picked from the table's BG cell list from now on behaves the same as SOURCE\"; \"W x H and X / Y boxes and corner drag ... Advanced's Properties, the canvas chip\"): CENTER LED 3840x1080; Advanced P01: U1 CAM dragged onto CENTER LED's BG row: the BG is U1 CAM at 1920x1080 from 0,0 (not a fill); Properties shows Position & Size with 1920 / 1080 / 0 / 0; X 200 typed moves it (Simple draws it there too); the outline's top-left handle dragged 50 px left grows it to the left by that many destination pixels",
+   "ok": true
+  },
+  {
+   "name": "Help 16li-bgsrc U1-7: Canvas, Video Presets has a Background (BG) row after Layer chip: IMAGE · VIDEO · SOURCE and APPLY, a SOURCE at its own resolution in the top-left corner, sized like a layer",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16li-blendui U2-1 (r16lq, Omar 2026-10-09: the BLEND GROUP chip \"i just need that back to not disappear behind content. can you make it have a 30 percent black BG so its still transparent but also still readable\"): with Blend Zones on, P01 LEFT LED + CENTER LED blended 600 px: the chip has a 30% black background (rgba(0, 0, 0, 0.3), no orange wash) in Simple and is on top at every point of it, also with LEFT LED's L1 (GFX 1 typed in the table) dragged under it; the same chip, on top, in the Advanced tile, 30% black in its preset card and in the Look Book's P01 canvas picture",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16li-blendui U2-2 (Omar: \"when you name a BG the verbiage also goes center ... and the overlap by pixel is center ... i want to move the pixel number down right above the percentage only when a BG has a name or a layer is played center screen, however i also need to update the percentage width to match that of the pixel count\"): P01 LEFT LED + CENTER LED blended 600 px, one combined screen: LEFT LED's BG name LOGO is drawn in the middle of the blended screen, over the zone: the PX box sits 3 px above the red %, on its middle, as wide as it, both on top, the PX box clear of the name; the Look Book's P01 canvas picture: its PX box stacked the same way (bottom 24 px), no red % (as before); the name emptied in the colour window (BG swatch, name box, Apply): the PX box back in the middle of its zone, as wide as the %",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16li-blendui U2-3 (Omar, omar_03: \"when place a layer center both the name and the pixel number are covered up\"): P01 LEFT LED + CENTER LED + RIGHT LED blended 600 px each (one combined screen, two zones), LEFT LED's BG name emptied, L1 typed GFX 1: L1 dragged over the 2nd zone: only that PX box moves above its red % (on top, as wide), the 1st stays in the middle; dragged over the 1st zone: the two swap",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16li-blendui U2-4 (Omar: \"move the pixel number down right above the percentage ... so when they are separate or together they match width wise\"; the % \"still opens the blend options\"; 16li-fix A1, Omar: \"the PX and % stay inside the blend zone and go to the right\"): P01 LEFT LED above CENTER LED, 300 px top / bottom blend (one combined screen), LEFT LED's BG name emptied and no layers on the two: the red % at the zone's right end and the PX box right next to it on its line (4 px apart), as wide, both inside the zone and on top; L1 (GFX 1) dragged over that place: the PX box moves 3 px above the red %, on its line; a double-click on the red % where it is drawn opens the blend options; Blend Zones off: the PX box, the red % and the BLEND GROUP chip are not shown; on again: the PX box above the % again",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16li-blendui U2-5 (\"Same in every canvas that draws it\"): P01 LEFT LED + CENTER LED blended 600 px (one combined screen), LEFT LED's BG name emptied, L1 typed GFX 1 (it starts in the middle of the blended screen, over the zone): the PX box above the red % in Simple, in the Advanced tile and in P01's preset card (stacked, below the zone's middle, as wide as the %), still so after the Layers tab and back to the Preset tab; the Look Book's P01 canvas picture stacked (bottom 24 px)",
+   "ok": true
+  },
+  {
+   "name": "Look Book 16li-print U3-1 (Omar 2026-10-09, omar_04: \"where is say blend zone one and says 600x1080 31% it only needs to say 600 pixel over lap (31%) no 1080\"): his \"Test Blend\" (PJ 1 + PJ 2, 1920x1080 each, 600 px blend side by side on P01) with P02 stacked (PJ 2 under PJ 1, 200 px blend): the Look Book (toolbar LOOK BOOK, Export Anyway, Show Blend Zones ticked, Export PDF) lists BLEND ZONES as \"PJ 1 ↔ PJ 2 | 600 pixel overlap (31%)\" side by side and \"PJ 1 ↔ PJ 2 | 200 pixel overlap (19%)\" top / bottom, the overlap along the blend as the canvas' red % marker reads it (no \"×1080\", no \"~\"); the Blend Groups totals unchanged (3240 × 1080, 1920 × 1960)",
+   "ok": true
+  },
+  {
+   "name": "Look Book 16li-print U3-2 (Omar 2026-10-09, omar_05 / omar_06: \"below that notes and there is some notes there i cant read need to be just white letters there not no two different colors thing happening they should happen in all the section since there all like that an unreadable\"): the General Session example with a crop, a shadow and an AOI on its first layer, the Look Book exported Dark (toolbar LOOK BOOK, Export Anyway, Crop + AOI + Contents ticked, Dark · For Screen, Export PDF) prints every preset's NOTES text plain white with the NOTES label still cyan, the Destination Breakdown's crop / FX lines red (#ff6b7a) and AOI line amber (#ffb347), brighter (16li-fix A2, Omar: \"Brighter colour code\"), and the Contents heading in the dark book's heading colour (#d6dde6); no text that reads on the Light book is under 3 : 1 on the Dark one; the Light book prints them all exactly as before",
+   "ok": true
+  },
+  {
+   "name": "Wire 16li-print U3-3 (Omar 2026-10-09, omar_07: \"the verbiage AV LOOK BOOK is spelling over the lines\"): the Wire export (top bar Wire, Export, Theme Dark then Light, Sheet size Letter / Tabloid / D / E / A1 / A0, PDF, Export) and the Look Book's wire page (toolbar LOOK BOOK, Wire Diagram ticked) print the logo cell's AV LOOK BOOK with every letter inside the cell's box, clear of both lines",
+   "ok": true
+  },
+  {
+   "name": "Wire 16li-print U3-4: Wire › Project Info with a long Project (\"Annual Leadership Summit General Session Main Stage 2026\"), Venue and Client typed in (committed as Enter / click-away commit them), Wire › Export Dark Letter PDF: every Project block value prints inside its row (the long ones set smaller, down to 8 px, and cut with \"…\" only where even that is too long, each the start of what was typed); the short ones (the dates, Drawn By, Project Ver) print as before at 11.5 px, whole",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16li-fix D1 (r16lq BG attack 2026-10-09: a SOURCE BG cut off by the destination's edge: its corner handle sat on the visible part but the drag worked on the hidden corner, so nothing moved on screen): CENTER LED 3840x1080, SOURCE U1 WIDE (5000x1200, cut at the right and bottom edges): the bottom-right handle, on top at the destination's corner, dragged 120 px left / 30 px up: the visible picture edge and the handle follow the mouse (the box becomes 3840 - 120 px by 1080 - 30 px in destination pixels, the handle moves 120 / 30 px); U1 CAM with X -600 typed: the top-left handle (at the destination's left edge) dragged 30 px right: the visible left edge and the handle follow (X becomes 30 px in destination pixels)",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16li-fix D2 D7 (r16lq BG + blend attacks 2026-10-09: on a combined screen the SOURCE BG's right-hand handles lay under PJ 2's picture and the blend hatch; a press there deselected the BG in Advanced, or moved the whole blend group and widened the canvas): PJ 1 (x 0, the master) + PJ 2 (x 1320) one combined 3240x1080 screen with Blend Zones on; PJ 1's BG window, SOURCE, U1 CAM (1920x1080, its right edge over PJ 2 at the zone's right end): all four handles on top in Simple; the top-right handle dragged 60 px right grows the BG by 60 px of destination pixels, the destinations and the canvas stay; in Advanced (the BG row picked) all four handles on top and the bottom-right one dragged 40 px left / 20 px up shrinks it, the BG stays picked, the destinations stay",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16li-fix D3 (r16lq BG attack 2026-10-09: the Preset Background window ran off the window, APPLY out of reach): CENTER LED 3840x1080 with U1 CAM picked by SOURCE, its BG window opened again and SOURCE pressed (the list and the size boxes: the tallest window): the window ends inside the page, APPLY is fully on screen and on top; a list row brought into view is not under APPLY; a press on APPLY where it is drawn applies and closes the window",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16li-fix D4 (r16lq BG attack 2026-10-09: Advanced Properties of a file picked with SOURCE still showed the old Source crop: a centred Size check and crop sliders that changed nothing): a 640x360 picture imported into the Video library, picked by SOURCE on P02 CENTER LED (box 640x360 at the top-left), Advanced P02 with its BG row picked: Properties show Position & Size and no Source crop section (no crop sliders)",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16li-fix D5 (r16lq BG attack 2026-10-09, ORGILL: SOURCE on P01 did not reach later presets that carry only P01's BG name, while IMAGE and APPLY on P01 do): CENTER LED 3840x1080; P03 has its own BG name U1 CAM and no fill of its own (as + Preset copies make), P04 its own fill; P01's BG window, SOURCE, U1 CAM: P02 (no BG of its own) and P03 draw P01's U1 CAM box (1920 px wide in its colour), P04 keeps its own fill",
+   "ok": true
+  },
+  {
+   "name": "Video Presets + Look Book 16li-fix A1 (Omar 2026-10-09: \"the blend group goes bottom right of the blend destinations, the PX and % stay inside the blend zone and go to the right\"): P01 LEFT LED above CENTER LED, 300 px top / bottom blend, no layers on the two and LEFT LED's BG name emptied, Blend Zones on: the BLEND GROUP chip sits at the bottom-right corner of the whole group (6 px in), clear of the zone; the red % at the zone's right end (6 px in) with the PX box right next to it, both inside the zone, nothing overlapping, in Simple, the Advanced tile and P01's preset card; the Look Book's P01 canvas picture puts the chip at the same corner and the PX box at the zone's right end; side by side (600 px) the chip stays at the bottom-right of the group (CENTER LED's corner, as before)",
+   "ok": true
+  },
+  {
+   "name": "Look Book 16li-fix A2 (Omar 2026-10-09: \"Brighter colour code\"): the General Session example with a crop, a shadow and an AOI on its first layer, the Look Book exported Dark (toolbar LOOK BOOK, Export Anyway, Crop + AOI ticked, Dark · For Screen, Export PDF): the Destination Breakdown's crop / FX lines print red (#ff6b7a) and its AOI line amber (#ffb347), each at least 4.5 : 1 against the dark page, the NOTES text plain white; the Light book prints them exactly as before (#a04050, #a06010)",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16li-fix A3 (Omar 2026-10-09 \"yes\" to drag-to-move: a SOURCE BG \"can also be grabbed anywhere on it and DRAGGED to move it, exactly like a layer chip\"): CENTER LED 3840x1080 with U1 CAM picked by SOURCE, its window open: a press inside the BG (where nothing is drawn above it) and a drag of 60 px right moves it by that many destination pixels (one undo step, the window stays open, no destination moves); dragged to 4 px short of the right edge it snaps flush; Undo puts it back; in Advanced with the BG picked a drag of 30 px right moves it and it stays picked; on a combined screen (PJ 1 + PJ 2) with the BG made 2600 px wide a press on it where only PJ 2's box lies over it moves the BG, not the blend group",
+   "ok": true
+  },
+  {
+   "name": "Video Presets + I/O Patch 16li-fix A4 (Omar 2026-10-09, verbatim: \"make sure the re-sized size resolution update the source resolution to match and vice verse for this situation\"): CENTER LED 3840x1080, U1 CAM (1920x1080) picked by SOURCE, P02 CENTER LED's L1 is U1 CAM: W 2400 typed in the BG window makes U1 CAM's resolution 2400x1080 in one undo step (Undo puts both back); the bottom-right handle dragged 60 px left / 30 px up sets it to the BG's new W x H; U1 CAM's resolution picked as 1280x720 on its I/O Patch card resizes the BG to 1280x720 (X / Y kept) in one undo step and every canvas draws it so; P02's L1 keeps its size",
+   "ok": true
   }
  ],
  "pageErrors": []
