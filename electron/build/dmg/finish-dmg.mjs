@@ -54,12 +54,19 @@ for (const dmg of dmgs) {
   console.log('finished', path.basename(dmg), info.size, 'bytes');
 }
 
-const ymlPath = path.join(dir, 'latest-mac.yml');
-if (fs.existsSync(ymlPath)) {
+// latest-mac.yml: the arm64 and x64 DMGs are built one after the other (they share the disk name "AV Look Book",
+// so building them at the same time collides), each run writing its own yml; rebuild ONE from the finished DMGs,
+// in electron-builder's layout: arm64 first, path / sha512 = the first file.
+const ymls = fs.readdirSync(dir).filter((f) => /^latest-mac.*\.yml$/.test(f));
+if (ymls.length) {
   const yaml = require('js-yaml');
-  const doc = yaml.load(fs.readFileSync(ymlPath, 'utf8'));
-  for (const f of doc.files || []) { const r = results[f.url]; if (r) { f.sha512 = r.sha512; f.size = r.size; } }
-  if (doc.path && results[doc.path]) doc.sha512 = results[doc.path].sha512;
-  fs.writeFileSync(ymlPath, yaml.dump(doc, { lineWidth: 8000 }));
-  console.log('updated latest-mac.yml');
+  const docs = ymls.map((f) => yaml.load(fs.readFileSync(path.join(dir, f), 'utf8')) || {});
+  const names = Object.keys(results).sort((a, b) => (b.includes('arm64') - a.includes('arm64')) || a.localeCompare(b));
+  const files = names.map((n) => ({ url: n, sha512: results[n].sha512, size: results[n].size }));
+  const doc = { version: docs[0].version, files, path: files[0].url, sha512: files[0].sha512,
+    releaseDate: docs.map((d) => d.releaseDate).filter(Boolean).sort().pop() || new Date().toISOString() };
+  for (const f of ymls) fs.rmSync(path.join(dir, f));
+  fs.writeFileSync(ymlPath(), yaml.dump(doc, { lineWidth: 8000 }));
+  console.log('wrote latest-mac.yml for', names.join(', '));
 }
+function ymlPath() { return path.join(dir, 'latest-mac.yml'); }
