@@ -48,11 +48,12 @@ jobs:
         working-directory: electron
         env:
           CSC_IDENTITY_AUTO_DISCOVERY: "false"   # unsigned for now
-        # one architecture at a time: both DMGs use the disk name "AV Look Book", so building them together collides
+        # one architecture at a time: both DMGs use the disk name "AV Look Book", so building them together collides.
+        # The arch must be in the TARGET (dmg:arm64): with plain --arm64 the config's target list still builds both.
         run: |
-          npx electron-builder --mac --arm64 --publish never
+          npx electron-builder --mac dmg:arm64 --publish never
           mv dist/latest-mac.yml dist/latest-mac-arm64.yml
-          npx electron-builder --mac --x64 --publish never
+          npx electron-builder --mac dmg:x64 --publish never
 
       - name: Finish the install window (macOS)
         working-directory: electron
