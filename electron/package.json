@@ -1,6 +1,6 @@
 {
   "name": "av-look-book-desktop",
-  "version": "0.8.6-beta.3",
+  "version": "0.8.6-beta.4",
   "description": "AV Look Book — desktop shell (Electron; one-home loader with GitHub Release content updates)",
   "author": "AV Educate <Info@aveducate.com>",
   "license": "UNLICENSED",
@@ -85,14 +85,12 @@
       "oneClick": false,
       "allowToChangeInstallationDirectory": true
     },
-    "publish": [
-      {
-        "provider": "github",
-        "owner": "AVEducate",
-        "repo": "AV-Look-Book",
-        "releaseType": "release"
-      }
-    ],
+    "publish": {
+      "provider": "github",
+      "owner": "AVEducate",
+      "repo": "AV-Look-Book",
+      "releaseType": "release"
+    },
     "afterPack": "build/afterPack.js",
     "fileAssociations": [
       {

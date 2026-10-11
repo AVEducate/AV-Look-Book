@@ -69,6 +69,9 @@ jobs:
             electron/dist/latest-mac.yml
           retention-days: 7
 
+      # build.publish in electron/package.json must stay ONE object, not a list of one: `electron-builder publish`
+      # (25.1.8) merges the config into itself and a list fails its config check (v0.8.6-beta.3). It also exits 0
+      # when an upload fails, so its log is checked here, and the next step checks the release itself.
       - name: Publish (macOS)
         if: startsWith(github.ref, 'refs/tags/')
         working-directory: electron
@@ -76,9 +79,11 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           EP_PRE_RELEASE: ${{ contains(github.ref_name, '-') }}   # beta tags are born as pre-releases
         run: |
+          set -o pipefail
           files=""
           for f in dist/*.dmg dist/*.dmg.blockmap dist/latest-mac.yml; do files="$files -f $f"; done
-          npx electron-builder publish $files
+          npx electron-builder publish $files 2>&1 | tee publish.log
+          if grep -q "error publishing" publish.log; then echo "electron-builder could not publish (see above)"; exit 1; fi
 
       - name: Check the DMGs reached the release
         if: startsWith(github.ref, 'refs/tags/')
