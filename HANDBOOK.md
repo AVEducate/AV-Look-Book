@@ -14,7 +14,7 @@ conversation that produced it. CLAUDE.md holds the rules in short; this is the h
   page + Quick Guide. Tags with a `-` publish as pre-releases (see RELEASE.md).
 - `tests/` — the gate (`run_smoke.mjs`, `smoke_probe.js` = what the examples produce, `flows_probe.js` = user flows in
   Simple + Advanced, `golden/`). When a feature ships or a bug is fixed, add a check to `flows_probe.js`. `tools/` — `check_js.py`, `cdp.mjs`.
-- `deploy/quick_guide.html` / `.pdf` — the 14-page Quick Guide; `docs/quick_guide.html` mirrors it.
+- `deploy/quick_guide.html` / `.pdf` — the Quick Guide (v7, 2026-10-10: 26 pages, chapters 00 Intro · 01 Video Presets · 02 Modifiers · 03 I/O Patch · 04 Wire · 05 Hand-off; build kit archived in `backups/rounds/qg7/`); `docs/quick_guide.html` mirrors it.
 - `site/` — website blocks (landing page HTML, download counter). `deploy/landing-*.html` are the landing sections.
 - `backups/` — local snapshots (not in git). Take one before any risky page edit.
 - Local scratch (build scripts, probes) lives outside the repo and is disposable; anything worth keeping goes in `tools/` or `tests/`.
