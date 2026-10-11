@@ -104,28 +104,23 @@
       }
     ],
     "dmg": {
-      "backgroundColor": "#1c1c1e",
-      "iconSize": 80,
+      "title": "AV Look Book",
+      "background": "build/dmg/background.tiff",
+      "iconSize": 96,
       "window": {
         "width": 660,
-        "height": 500
+        "height": 528
       },
       "contents": [
         {
-          "x": 230,
-          "y": 200
+          "x": 190,
+          "y": 296
         },
         {
-          "x": 430,
-          "y": 200,
+          "x": 470,
+          "y": 296,
           "type": "link",
           "path": "/Applications"
-        },
-        {
-          "x": 330,
-          "y": 394,
-          "type": "file",
-          "path": "build/dmg/Read Me First.html"
         }
       ]
     }
