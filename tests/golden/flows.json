@@ -3095,6 +3095,10 @@
   {
    "name": "Video Presets 16ll-blendpop BP1 (Omar 2026-10-12 \"isn't this the old style?\" + \"the box should alway stay lined up the check mark is not needed\", mock-up approved): the blend options open in the Destination Properties window's style: header BLEND ZONE + the two names and the plain red close square; the preview draws the screens like the canvas (name tags on the checkerboard); BLEND · P01 and RESOLUTION · all presets; every box in one column (Blend Amount, Blend Percent and each Res row's second box share both edges, PX / % in one column); no tick; the OFF | ON switch (OFF turns it off in one Undo step, OFF again changes nothing, ON turns it back); Break Blend is the danger button; the close square closes",
    "ok": true
+  },
+  {
+   "name": "Video Presets 16ll-blendpop-fix BP2 (Omar 2026-10-13 \"on and off should slide like the rest of the section\"): a flip of One combined screen updates the pop-up in place: the same switch and thumb, the thumb seen between its two ends while it slides (OFF, then ON again), one Undo step each, the line under it follows",
+   "ok": true
   }
  ],
  "pageErrors": []

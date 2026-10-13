@@ -331,7 +331,8 @@ Never add a time-based "ignore clicks for N ms": the phone gate taps the dialog'
   (never give it `.pm`: two handlers treat a `.pm` as a popup); it reuses `.pm-hdr`, `.pm-btn-danger` and the `.lb-seg` switch, draws
   the preview like the canvas (`_BZP_BOX`, the canvas's `.screen-lbl` tags, its checkerboard), puts every box in one grid and has no
   tick. Every id / handler it had is kept (`#blend-popup`, `#blend-popup-px` / `-pct` / `-cb` / `-cbtip` / `-tip`); the switch is still
-  the `role="switch"` button (`_bzpCb`: a click on a side picks it, a click on the switch itself toggles). A rule for it must hold no
+  the `role="switch"` button (`_bzpCb`: a click on a side picks it, a click on the switch itself toggles; the flip updates the pop-up
+  in place, `_bzpHold` / `_bzpCbSync`, 16ll-blendpop-fix, so the thumb slides). A rule for it must hold no
   word of the Look Book's collector list (`_pdfExtractCanvasCss`: blend, overlap, screen-lbl ...): the old `.blend-popup*` rules stay,
   unused, so the printed Look Book's copied CSS does not change. HANDBOOK › 16ll-blendpop.
 - Exports' readable print (16li-print: `_lbpInk`, `_wireLogoWordSvg`, `_wireTbFitText`): a value the Look Book prints in a colour made

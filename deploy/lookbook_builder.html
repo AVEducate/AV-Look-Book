@@ -9543,7 +9543,24 @@ function _bzpCb(e,pid,aSid){
   var on=sw.getAttribute('aria-checked')==='true';
   var side=(e&&e.target&&e.target.closest)?e.target.closest('.lb-seg-btn'):null;
   var want=side?(side.getAttribute('data-v')==='1'):!on;
-  if(want!==on) _cbToggle(pid,aSid);
+  if(want===on) return;
+  _bzpHold=true; try{ _cbToggle(pid,aSid); } finally{ _bzpHold=false; }   /* 16ll-blendpop-fix: no rebuild, the thumb slides */
+  _bzpCbSync(pid,aSid);
+}
+/* 16ll-blendpop-fix (Omar 2026-10-13 "on and off should slide like the rest of the section"): _cbToggle ends with
+   _refreshBlendPopup(), which rebuilt the pop-up (a new switch every flip, no slide). A flip from the switch holds that rebuild
+   (_bzpHold) and brings the switch and its line up to date in place, from _cbSwitchHTML (the words stay in one place); the .lb-seg
+   observer sees the sides' class change and slides the thumb. No switch after the flip (the group changed): rebuilt as before. */
+var _bzpHold=false;
+function _bzpCbSync(pid,aSid){
+  var sw=document.getElementById('blend-popup-cb'), tip=document.getElementById('blend-popup-cbtip'); if(!sw) return;
+  var tmp=document.createElement('div'); tmp.innerHTML=_cbSwitchHTML(pid,aSid);
+  var nsw=tmp.querySelector('#blend-popup-cb'), ntip=tmp.querySelector('#blend-popup-cbtip');
+  if(!nsw){ _refreshBlendPopup(); return; }
+  sw.setAttribute('aria-checked',nsw.getAttribute('aria-checked')); sw.setAttribute('title',nsw.getAttribute('title')||'');
+  var a=sw.querySelectorAll('.lb-seg-btn'), b=nsw.querySelectorAll('.lb-seg-btn');
+  for(var i=0;i<a.length&&i<b.length;i++) a[i].className=b[i].className;
+  if(tip&&ntip) tip.innerHTML=ntip.innerHTML;
 }
 function openBlendPopup(pid, aSid, bSid, ev){
   if(ev && ev.stopPropagation) ev.stopPropagation();
@@ -9714,6 +9731,7 @@ function _blendPopupEsc(e){
 }
 
 function _refreshBlendPopup(){
+  if(_bzpHold) return;   /* 16ll-blendpop-fix: a flip of the switch updates the pop-up in place (_bzpCbSync) */
   const popup = document.getElementById('blend-popup');
   if(!popup) return;
   const input = popup.querySelector('#blend-popup-px');

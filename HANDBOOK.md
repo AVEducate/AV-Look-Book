@@ -1373,7 +1373,11 @@ anchor on the function name and replace the first occurrence after it, never all
   three golden Look Books). Tests: the notes check counts the Res fields by `#blend-popup` (with `.blend-popup` it would count
   nothing and pass), the rotated-pair popup check reads the % box's green and no tick, NEW BP1 (card, preview, sections, one
   column, no tick, OFF / OFF again / ON with Undo steps, Break Blend, the close square). Snapshots unchanged. Phone: not looked at
-  (frozen).
+  (frozen). **16ll-blendpop-fix** (Omar 2026-10-13, testing 16ll: "on and off should slide like the rest of the section"): the
+  switch did not slide because `_cbToggle` ends with `_refreshBlendPopup()`, which rebuilt the pop-up (a new switch every flip).
+  A flip from the switch (`_bzpCb`) now holds that rebuild (`_bzpHold`, read at the top of `_refreshBlendPopup`) and brings the
+  switch and its line up to date in place (`_bzpCbSync`, from `_cbSwitchHTML`), so the `.lb-seg` observer slides the thumb and focus
+  stays on the switch; `_cbToggle` is unchanged (the probe calls it directly). Check BP2 (same switch and thumb, seen between its ends).
 - Declined by the owner, do not resurface: mask shapes, anchor points, hardware profiles, canvas/WebGL renderer,
   interpolation filter toggles, upscale-factor notes, per-layer "sharp pixels", any licence mention.
 

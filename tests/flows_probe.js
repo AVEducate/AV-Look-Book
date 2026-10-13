@@ -15388,6 +15388,32 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
     finally { closeBlendPopup(); cvAdv('blend', was); await restore(); }
     return is(out, want, 'the card [class bzp, not blend-popup, title, names, close] / preview [name tags, checkerboard] / sections / one column [box edges, unit column, Res rows, units] / no tick [element, text] / switch [lb-seg, on] / OFF [state, Undo steps] / OFF again / ON / Break Blend / closed by the square');
   });
+  // 16ll-blendpop-fix BP2: NEW
+  await check('Video Presets 16ll-blendpop-fix BP2 (Omar 2026-10-13 "on and off should slide like the rest of the section"): a flip of One combined screen updates the pop-up in place: the same switch and thumb, the thumb seen between its two ends while it slides (OFF, then ON again), one Undo step each, the line under it follows', async () => {
+    const out = {}, want = {}; const was = cvAdv('blend', true);
+    try {
+      const pid = presets[0].id;
+      await cvLay([0, 0], [1620, 0], [4000, 0]);
+      const mk = $$('#canvas-area .preset-row[data-pid="' + pid + '"] .blend-label[data-guide]').pop();
+      if (mk) mk.dispatchEvent(new MouseEvent('dblclick', { bubbles: true, cancelable: true })); await wait(400);
+      const sw0 = $('#blend-popup-cb'); if (!sw0) return 'the pop-up or its switch did not open';
+      const th0 = $('.seg-thumb', sw0), x = () => { const t = $('#blend-popup-cb .seg-thumb'); const m = t && /matrix\(([^)]+)\)/.exec(getComputedStyle(t).transform); return m ? parseFloat(m[1].split(',')[4]) : null; };
+      const flip = async v => {
+        const a = x(), xs = []; let same = true; const t0 = performance.now();
+        $('.lb-seg-btn[data-v="' + v + '"]', $('#blend-popup-cb')).click();
+        while (performance.now() - t0 < 700) { await new Promise(r => requestAnimationFrame(r)); const s = $('#blend-popup-cb'); same = same && s === sw0 && $('.seg-thumb', s) === th0; xs.push(x()); }
+        const b = xs[xs.length - 1], lo = Math.min(a, b) + 2, hi = Math.max(a, b) - 2;
+        return [same, xs.some(v2 => v2 !== null && v2 > lo && v2 < hi), Math.abs(a - b) > 20];
+      };
+      const u0 = vpUndoLen();
+      out.off = (await flip('0')).concat([sw0.getAttribute('aria-checked'), vpUndoLen() - u0, /^Each destination shows its own BG/.test(($('#blend-popup-cbtip') || {}).textContent || '')]);
+      want.off = [true, true, true, 'false', 1, true];
+      out.on = (await flip('1')).concat([sw0.getAttribute('aria-checked'), vpUndoLen() - u0]);
+      want.on = [true, true, true, 'true', 2];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { closeBlendPopup(); cvAdv('blend', was); await restore(); }
+    return is(out, want, 'OFF [same switch + thumb, seen between the ends, moved, state, Undo steps, the line] / ON [same, between, moved, state, Undo steps]');
+  });
   try { _fsPauseAll(); } catch (e) {} $$('video').forEach(v => { try { v.muted = true; v.pause(); } catch (e) {} });
   return { checks };
 })
