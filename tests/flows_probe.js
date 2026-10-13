@@ -435,7 +435,7 @@
     const q = presets[2], s = screens[1]; homeSetScreenName(q.id, s.id, 'PANEL WALL'); render(); await wait(300);
     out.push(($('.preset-row[data-pid="' + q.id + '"] .screen-box[data-sid="' + s.id + '"] .screen-inner > .screen-lbl') || {}).textContent, ($('.preset-row[data-pid="' + presets[0].id + '"] .screen-box[data-sid="' + s.id + '"] .screen-inner > .screen-lbl') || {}).textContent === 'PANEL WALL');   /* 16lc-vpaux: the first preset reads it too */
     const p = presets[0]; initStripPositions(p.id); setPosition(p, screens[1].id, 1720, 0); const wasB = document.body.classList.contains('adv-hide-blend'); document.body.classList.remove('adv-hide-blend'); render(); await wait(250);
-    openBlendPopup(p.id, screens[0].id, screens[1].id); await wait(250); const cut = $$('.blend-popup input[onchange*="setDestResFromPopup"]').filter(i => i.scrollWidth > i.clientWidth + 1).length; closeBlendPopup(); document.body.classList.toggle('adv-hide-blend', wasB);
+    openBlendPopup(p.id, screens[0].id, screens[1].id); await wait(250); const cut = $$('#blend-popup input[onchange*="setDestResFromPopup"]').filter(i => i.scrollWidth > i.clientWidth + 1).length; closeBlendPopup(); document.body.classList.toggle('adv-hide-blend', wasB);
     out.push(cut); await restore();
     return is(out, [1, 'NEW NOTE', true, 'PANEL WALL', true, 0], 'note undo steps, note / every row of that destination follows / the name on its canvas, the first preset\'s canvas reads it too / resolution fields cut off');
   });
@@ -4015,12 +4015,12 @@
     await cvLay([0, 0], [1080 - 216, 0], [4000, 0]);
     openBlendPopup(pid, screens[0].id, screens[1].id); await wait(200);
     const pop = $('#blend-popup'); if (!pop) { await restore(); return 'popup did not open'; }
-    const pct = $('#blend-popup-pct', pop), g = $('#blend-popup-guide', pop);
-    const seen = [pct.value, g ? g.textContent : null, /Recommended: 15-25% of output width\. Hold Shift to disable snap/.test(pop.textContent)];
+    const pct = $('#blend-popup-pct', pop), g = $('#blend-popup-guide', pop);   /* 16ll-blendpop: no tick in the pop-up (Omar 2026-10-12 "the check mark is not needed"): the box's own colour is the guide */
+    const seen = [pct.value, !g && !/[✓↑↓]/.test(pop.textContent), getComputedStyle(pct).borderTopColor, /Recommended: 15-25% of output width\. Hold Shift to disable snap/.test(pop.textContent)];
     pct.value = '25'; fire(pct, 'change'); await wait(300);
     const p = presets[0], px = p.positions[screens[0].id].x + getEffectiveDims(screens[0], pid).w - p.positions[screens[1].id].x;
     closeBlendPopup(); await restore();
-    return is([seen, px], [['20', '✓', true], 270], 'popup % / tick / caption, then px after 25%');
+    return is([seen, px], [['20', true, 'rgb(77, 220, 138)', true], 270], 'popup % / no tick / the box green / caption, then px after 25%');
   });
   await check('Blend Zones: the % chip reads green tick at 15-25%, amber up-arrow under 15%, red down-arrow over 25%', async () => {
     const was = cvAdv('blend', true); const got = [];
@@ -15354,6 +15354,39 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
     } catch (e) { return 'threw: ' + e.message; }
     finally { try { closeColorPop(); } catch (e) {} try { if (ioAdvanced.view !== 'simple') _ioSetView('simple'); } catch (e) {} try { await _fuVP(); } catch (e) {} await restore(); }
     return is(out, want, 'picked on CENTER LED + L [both BGs, the resolution] / Wire card 1920x1080 [both BGs, resolution, undo steps] / Simple draws 1920x1080 / Undo [both, resolution] / br dragged 60 left, 30 up [width, height, resolution = W x H, the other BG, undo steps] / the Wire card / the I/O Patch card / page 1');
+  });
+  // 16ll-blendpop BP1: NEW
+  await check('Video Presets 16ll-blendpop BP1 (Omar 2026-10-12 "isn\'t this the old style?" + "the box should alway stay lined up the check mark is not needed", mock-up approved): the blend options open in the Destination Properties window\'s style: header BLEND ZONE + the two names and the plain red close square; the preview draws the screens like the canvas (name tags on the checkerboard); BLEND · P01 and RESOLUTION · all presets; every box in one column (Blend Amount, Blend Percent and each Res row\'s second box share both edges, PX / % in one column); no tick; the OFF | ON switch (OFF turns it off in one Undo step, OFF again changes nothing, ON turns it back); Break Blend is the danger button; the close square closes', async () => {
+    const out = {}, want = {}; const was = cvAdv('blend', true);
+    try {
+      const pid = presets[0].id;
+      await cvLay([0, 0], [1620, 0], [4000, 0]);
+      const mk = $$('#canvas-area .preset-row[data-pid="' + pid + '"] .blend-label[data-guide]').pop();
+      if (mk) mk.dispatchEvent(new MouseEvent('dblclick', { bubbles: true, cancelable: true })); await wait(300);
+      const pop = $('#blend-popup'); if (!pop) return 'the pop-up did not open';
+      const R = e => e.getBoundingClientRect(), txt = e => e ? e.textContent.replace(/\s+/g, ' ').trim() : null;
+      out.card = [pop.classList.contains('bzp'), pop.classList.contains('blend-popup'), txt($('.pm-hdr h3', pop)), txt($('.pm-hdr .pm-meta', pop)), !!$('.pm-hdr .pm-close', pop)];
+      want.card = [true, false, 'Blend Zone', screens[0].name + ' + ' + screens[1].name, true];
+      const prev = $('.bzp-prev', pop);
+      out.preview = [$$('.screen-lbl', prev).map(txt), /repeating-conic-gradient/.test(getComputedStyle(prev).backgroundImage)];
+      want.preview = [[screens[0].name, screens[1].name], true];
+      out.sections = $$('.bzp-sec', pop).map(txt); want.sections = ['Blend · ' + presets[0].code, 'Resolution · all presets'];
+      const px = $('#blend-popup-px', pop), pct = $('#blend-popup-pct', pop), hs = $$('input[onchange*="setDestResFromPopup"]', pop).filter(e => /'h'/.test(e.getAttribute('onchange')));
+      const edges = [px, pct].concat(hs).map(e => [Math.round(R(e).left), Math.round(R(e).right)]), units = $$('.bzp-unit', pop).map(u => Math.round(R(u).left));
+      out.lined = [edges.every(e => e[0] === edges[0][0] && e[1] === edges[0][1]), units.every(u => u === units[0]), hs.length, units.length];
+      want.lined = [true, true, 2, 4];
+      out.tick = [!$('#blend-popup-guide'), /[✓↑↓]/.test(pop.textContent)]; want.tick = [true, false];
+      const sw = () => $('#blend-popup-cb'), side = v => $('.lb-seg-btn[data-v="' + v + '"]', sw());
+      out.sw0 = [!!sw() && sw().classList.contains('lb-seg'), sw() ? sw().getAttribute('aria-checked') : null]; want.sw0 = [true, 'true'];
+      const u0 = vpUndoLen(); side('0').click(); await wait(400);
+      out.off = [sw().getAttribute('aria-checked'), vpUndoLen() - u0]; want.off = ['false', 1];
+      side('0').click(); await wait(400); out.offAgain = [sw().getAttribute('aria-checked'), vpUndoLen() - u0]; want.offAgain = ['false', 1];
+      side('1').click(); await wait(400); out.on = [sw().getAttribute('aria-checked'), vpUndoLen() - u0]; want.on = ['true', 2];
+      out.brk = txt($('#blend-popup .pm-btn-danger')); want.brk = 'Break Blend';
+      $('#blend-popup .pm-close').click(); await wait(200); out.closed = !$('#blend-popup'); want.closed = true;
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { closeBlendPopup(); cvAdv('blend', was); await restore(); }
+    return is(out, want, 'the card [class bzp, not blend-popup, title, names, close] / preview [name tags, checkerboard] / sections / one column [box edges, unit column, Res rows, units] / no tick [element, text] / switch [lb-seg, on] / OFF [state, Undo steps] / OFF again / ON / Break Blend / closed by the square');
   });
   try { _fsPauseAll(); } catch (e) {} $$('video').forEach(v => { try { v.muted = true; v.pause(); } catch (e) {} });
   return { checks };

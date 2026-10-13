@@ -1351,6 +1351,29 @@ anchor on the function name and replace the first occurrence after it, never all
   resolution, cable type, colour, IP and notes go to `sources[]`, the hand-made card goes, its Wire tiles stay by name), so the A4 link
   runs through the one card: Wire card <-> BG <-> I/O Patch; page 1 by its usual rebuild offer. Checks: FU-1 .. FU-5. Snapshots
   unchanged.
+- **16ll-blendpop** (2026-10-13, build 16ll on the v0.8.6 page 16lk; search `16ll-blendpop`). Omar: "isn't this the old style? the
+  blend zone pop up remind me of the old style that we have since updated" + "the box should alway stay lined up the check mark is
+  not needed"; a mock-up (git-ignored: `mockups/blend_popup_mockup.html`, `blend_popup_preview_options.html`) approved with the
+  preview "Grey, like the canvas". The blend options pop-up (`openBlendPopup`, double-click a blend zone or its red %) now has the
+  Destination Properties window's look: the `.pm` card copied under its own class `.bzp` (NOT `.pm`: `_lbPressInPopup` and
+  `_lbClickIsInsidePopup` would treat it as one, a behaviour change), the `.pm-hdr` header (strip, BLEND ZONE, the members'
+  names cut with ... and whole in the tooltip, the plain red close square of 16gl), sections BLEND · <preset code> (the switch,
+  Blend Amount, Blend Percent: this preset, `p.positions` / `p.combo`) and RESOLUTION · all presets (`setDestResFromPopup` writes
+  the destination), ONE grid (`.bzp-grid`, 1fr 64 12 64 22) so Blend Amount, Blend Percent and every Res row's second box share
+  both edges and PX / % one column, 320 px wide so "CENTER LED Res" fits; no tick (`#blend-popup-guide` is gone; the % box keeps
+  its green / amber / red, its tip is the box's title, which the app's tooltip system shows as `data-tip`); Break Blend is
+  `.pm-btn-danger`; the boxes have no spinners (as the destination panel's). One combined screen is the app's sliding `.lb-seg`
+  OFF | ON (data-seg `blend-cb`, the thumb mounted by the usual observer) but still `<button id="blend-popup-cb" role="switch"
+  aria-checked>`: `_bzpCb` picks the side clicked, and a click on the switch itself (Space / Enter, its `<label for>`, a script's
+  `.click()`) toggles; `_cbToggle` unchanged. The preview draws the screens like the Video Presets canvas: `_BZP_BOX` (#0d0e0f,
+  the canvas's border) with the canvas's own `.screen-lbl` name tags, on the canvas checkerboard (`.bzp-prev`), the orange hatch and
+  the geometry as before (vertical blends too). THE CSS TRAP: the Look Book copies every rule naming a word of
+  `_pdfExtractCanvasCss`'s want list (blend, overlap, dead-, aoi, screen-lbl ...): the 25 new rules all start `.bzp` and hold none;
+  the old `.blend-popup*` rules are left in place, unused (deleting them changes every printed Look Book's copied CSS and the
+  three golden Look Books). Tests: the notes check counts the Res fields by `#blend-popup` (with `.blend-popup` it would count
+  nothing and pass), the rotated-pair popup check reads the % box's green and no tick, NEW BP1 (card, preview, sections, one
+  column, no tick, OFF / OFF again / ON with Undo steps, Break Blend, the close square). Snapshots unchanged. Phone: not looked at
+  (frozen).
 - Declined by the owner, do not resurface: mask shapes, anchor points, hardware profiles, canvas/WebGL renderer,
   interpolation filter toggles, upscale-factor notes, per-layer "sharp pixels", any licence mention.
 

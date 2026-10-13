@@ -4698,6 +4698,36 @@ body.is-mobile #lb-cal .lb-cal-ft button{height:44px;min-width:64px;margin:0;fon
 .kbv-sw:hover{color:var(--ss-t2)}
 .kbv-sw.on,.kbv-sw.on:hover{color:#fff;border-color:var(--ss-border-soft);background:linear-gradient(180deg,var(--sk-pill1),var(--sk-pill2));box-shadow:0 1px 3px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.05)}
 .lb-pg-export{flex-shrink:0;white-space:nowrap}
+/* ══ 16ll-blendpop (Omar 2026-10-12/13, mock-up approved): the blend options pop-up (openBlendPopup) in the Destination Properties
+   window's style. The look of .pm / .pm.p-orange copied under the pop-up's own class (.bzp is not a .pm: two handlers treat a .pm as a
+   popup), the .pm-hdr header and .pm-btn-danger reused as they are, the app's .lb-seg switch, one grid for every box. No selector here
+   holds a word the Look Book's canvas-CSS collector copies (blend, overlap, dead-, aoi, screen-lbl ...) or starts with :root /
+   #wire-overlay: THE CSS TRAP. ══ */
+.bzp{position:fixed;z-index:9999;width:320px;box-sizing:border-box;padding:16px;background:#10131a;border:1px solid rgba(255,138,61,.3);border-radius:12px;box-shadow:0 16px 50px rgba(0,0,0,.85), var(--n-shadow-raised);max-height:calc(100vh - 24px);overflow-x:hidden;overflow-y:auto;font-family:inherit;color:var(--text)}
+.bzp .pm-hdr{background:linear-gradient(90deg,rgba(255,138,61,.08) 0%,transparent 60%),#10131a}
+.bzp .pm-hdr .pm-strip{background:var(--n-orange);box-shadow:0 0 8px var(--n-orange)}
+.bzp .pm-hdr h3{color:var(--n-orange);flex:0 0 auto}
+.bzp .pm-hdr .pm-meta{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:right}
+.bzp:focus-within .pm-hdr .pm-dot{background:var(--n-orange);box-shadow:0 0 8px var(--n-orange)}
+.bzp-prev{border:1px solid var(--n-line);border-radius:4px;padding:14px 12px;margin:0 0 12px;display:flex;align-items:center;justify-content:center;min-height:80px;box-shadow:inset 0 0 8px rgba(0,0,0,.4);background:repeating-conic-gradient(#2a2c30 0% 25%,#232528 0% 50%) 0 0/8px 8px}
+.bzp-sec{font-size:11px;font-weight:800;color:var(--n-orange);letter-spacing:.12em;text-transform:uppercase;margin:2px 0 10px;display:flex;align-items:center;gap:6px}
+.bzp-sec i{flex:0 0 auto;width:2px;height:10px;border-radius:1px;background:var(--n-orange);box-shadow:0 0 4px var(--n-orange);display:inline-block}
+.bzp-sec span{font-weight:500;color:var(--text3);letter-spacing:.05em;text-transform:none}
+.bzp-block{border-top:1px solid var(--n-line);padding-top:12px;margin-top:14px}
+.bzp-row{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0 0 4px}
+.bzp-lbl{font-size:11px;color:var(--text2);font-weight:600;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+label.bzp-lbl{cursor:pointer}
+.bzp-tip{font-size:10px;line-height:1.4;color:var(--text3);margin:4px 0 0}
+.bzp-grid{display:grid;grid-template-columns:minmax(0,1fr) 64px 12px 64px 22px;gap:6px;align-items:center}
+.bzp-grid input{width:100%;min-width:0;font-size:12px;padding:5px 4px;border:1px solid rgba(255,255,255,.06);border-radius:4px;background:var(--n-track);color:#9dd6ff;outline:none;box-sizing:border-box;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5);font-family:var(--font-mono);text-align:center;-moz-appearance:textfield;appearance:textfield;transition:border-color .15s, box-shadow .15s}
+.bzp-grid input::-webkit-outer-spin-button,.bzp-grid input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.bzp-grid input:focus{border-color:var(--n-orange);box-shadow:inset 2px 2px 4px rgba(0,0,0,.5),0 0 0 1px rgba(255,138,61,.3)}
+.bzp-x{color:var(--text3);font-size:13px;text-align:center}
+.bzp-unit{font-size:10px;color:var(--text3);font-weight:700;letter-spacing:.06em}
+.bzp .pm-btn-danger{margin-top:14px}
+.bzp .bzp-cb{flex:0 0 auto;margin:0;font:inherit;color:inherit;cursor:pointer}
+.bzp .bzp-cb:focus-visible{outline:2px solid var(--ss-ring);outline-offset:2px}
+.bzp .bzp-cb .lb-seg-btn{min-width:44px;padding:0 12px}
 </style>
 </head>
 <body data-skin="black">
@@ -4848,7 +4878,7 @@ Also called DSM (Downstage Monitor) in broadcast and theater workflows, same thi
   <div class="bb-cell bb-pill bb-cyan" title="The largest number of layers used in any single preset, this is the figure to compare against your switcher's per-scene layer budget. (The most complex single moment in the show.)"><span class="bb-label">Layers</span><strong id="bb-layers">0</strong></div>
   <div id="bb-spacer"></div>
   <div class="bb-cell" id="bb-sel" style="font-size:10px;opacity:.5">—</div>
-  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy, hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16lk</div>
+  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy, hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16ll</div>
   <!-- 16kq (Omar): the Modifiers menu lives on each preset tile only; this place is kept for the Educator tool of a future build (greyed out, does nothing) --><button class="bb-util" id="tb-educator" type="button" disabled aria-disabled="true" title="Educator: coming in a future build" aria-label="Educator, coming in a future build" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:default;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em;opacity:.38"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10L12 5 2 10l10 5 10-5z"/><path d="M6 12v5c0 1 2.7 2.5 6 2.5s6-1.5 6-2.5v-5"/><line x1="22" y1="10" x2="22" y2="16"/></svg><span>Educator</span></button>
   <button class="bb-util" onclick="actions.help()" title="Help, quick reference, keyboard shortcuts, glossary, accessibility" aria-label="Help, quick reference, keyboard shortcuts, glossary, accessibility" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="4.93" y1="4.93" x2="9.17" y2="9.17"/><line x1="14.83" y1="14.83" x2="19.07" y2="19.07"/><line x1="14.83" y1="9.17" x2="19.07" y2="4.93"/><line x1="4.93" y1="19.07" x2="9.17" y2="14.83"/></svg>Help</button>
   <button class="bb-util" id="tb-bug" onclick="reportBug()" title="Report a bug, opens an email to AV Educate with your show file — attached in the app, downloaded for you to attach in a browser" aria-label="Report a bug" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="7.2"/><path d="M15.4 15.4L21 21" stroke-width="2.6"/><ellipse cx="10" cy="11" rx="2.5" ry="3.3" fill="currentColor" stroke="none"/><circle cx="10" cy="7" r="1.5" fill="currentColor" stroke="none"/><path d="M7.5 9.2l-1.7-.8M7.4 11.2H5.6M7.7 13.1l-1.5 1.1M12.5 9.2l1.7-.8M12.6 11.2h1.8M12.3 13.1l1.5 1.1M9.2 5.9l-.8-1.1M10.8 5.9l.8-1.1" stroke-width="1.3"/></svg>Bug</button>   <!-- 16jk (Omar): Report a bug, after Help -->
@@ -9498,6 +9528,23 @@ function _rcBlendGroups(pos,sc,pid){
   return html;
 }
 
+/* ══ 16ll-blendpop (Omar 2026-10-12/13, mock-up approved): the blend options pop-up in the Destination Properties window's style
+   (the CSS block of the same name at the end of the stylesheet). openBlendPopup builds: the .pm-hdr header (strip, BLEND ZONE, the
+   members' names, the plain red close square), the preview drawn like the Video Presets canvas (_BZP_BOX boxes with the canvas's
+   .screen-lbl name tags on its checkerboard, the orange hatch as before), BLEND · <preset code> (the switch, Blend Amount, Blend
+   Percent: this preset), RESOLUTION · all presets (the Res rows), one grid for every box, no tick (the % box's colour and title are the
+   guide), Break Blend as .pm-btn-danger. Every id, data-* and handler the pop-up had is kept (#blend-popup, #blend-popup-px / -pct /
+   -cb / -cbtip / -tip, setBlendPx, setBlendPctFromPopup, setDestResFromPopup, breakBlend, _cbToggle). ══ */
+var _BZP_BOX='background:#0d0e0f;border:1px solid var(--n-line);border-radius:3px;overflow:hidden';
+var _BZP_TAG='font-size:8px;font-weight:700;letter-spacing:.02em;text-overflow:ellipsis';
+/* One combined screen: a click on OFF / ON picks that side; a click on the switch itself (Space / Enter, its label, a script) toggles */
+function _bzpCb(e,pid,aSid){
+  var sw=document.getElementById('blend-popup-cb'); if(!sw) return;
+  var on=sw.getAttribute('aria-checked')==='true';
+  var side=(e&&e.target&&e.target.closest)?e.target.closest('.lb-seg-btn'):null;
+  var want=side?(side.getAttribute('data-v')==='1'):!on;
+  if(want!==on) _cbToggle(pid,aSid);
+}
 function openBlendPopup(pid, aSid, bSid, ev){
   if(ev && ev.stopPropagation) ev.stopPropagation();
   closeBlendPopup();
@@ -9542,13 +9589,13 @@ function openBlendPopup(pid, aSid, bSid, ev){
   const previewH = Math.max(hL, ryOff + hR);
   const previewHtml = ''
     + '<div style="position:relative;width:'+previewW+'px;height:'+previewH+'px">'
-      + '<div style="position:absolute;left:0;top:0;width:'+wL+'px;height:'+hL+'px;background:rgba(var(--n-cyan-rgb),.18);border:1px solid rgba(var(--n-cyan-rgb),.7);border-radius:2px;display:flex;align-items:center;justify-content:center;color:var(--n-cyan);font-size:8px;font-weight:800;letter-spacing:.04em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+_esc(leftName)+'</div>'
-      + '<div style="position:absolute;left:'+rxOff+'px;top:'+ryOff+'px;width:'+wR+'px;height:'+hR+'px;background:rgba(var(--n-cyan-rgb),.18);border:1px solid rgba(var(--n-cyan-rgb),.7);border-radius:2px;display:flex;align-items:center;justify-content:center;color:var(--n-cyan);font-size:8px;font-weight:800;letter-spacing:.04em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+_esc(rightName)+'</div>'
+      + '<div style="position:absolute;left:0;top:0;width:'+wL+'px;height:'+hL+'px;'+_BZP_BOX+'"><div class="screen-lbl" style="'+_BZP_TAG+'">'+_esc(leftName)+'</div></div>'   /* 16ll-blendpop: the canvas's screens */
+      + '<div style="position:absolute;left:'+rxOff+'px;top:'+ryOff+'px;width:'+wR+'px;height:'+hR+'px;'+_BZP_BOX+'"><div class="screen-lbl" style="'+_BZP_TAG+'">'+_esc(rightName)+'</div></div>'
       + '<div style="position:absolute;left:'+(_bzV?Math.max(0,rxOff):rxOff)+'px;top:'+Math.max(0, ryOff)+'px;width:'+ovW+'px;height:'+ovH+'px;background:repeating-linear-gradient(45deg,rgba(255,120,0,.55) 0px,rgba(255,120,0,.55) 2px,transparent 2px,transparent 5px);border:1px solid rgba(255,138,61,.7);pointer-events:none;border-radius:1px"></div>'
     + '</div>';
 
   const popup = document.createElement('div');
-  popup.className = 'blend-popup';
+  popup.className = 'bzp';   /* 16ll-blendpop: was blend-popup (its old rules stay, unused) */
   popup.id = 'blend-popup';
   popup.onclick = function(e){ e.stopPropagation(); };
   // 2026-06-04: find the blend group containing this pair so we can
@@ -9583,36 +9630,33 @@ function openBlendPopup(pid, aSid, bSid, ev){
     const name = sc.name || ('D' + (i + 1));
     const wVal = parseInt(sc.w) || 0;
     const hVal = parseInt(sc.h) || 0;
-    resRowsHtml += ''
-      + '<div class="blend-popup-row">'
-        + '<label>' + _esc(name) + ' Res</label>'
-        + '<input type="number" min="1" value="' + wVal + '" data-sid="' + id + '" data-pid="' + pid + '" data-asid="' + aSid + '" data-bsid="' + bSid + '" onchange="setDestResFromPopup(this,\'w\')" style="width:66px">'
-        + '<span class="suffix" style="opacity:.6">\u00d7</span>'
-        + '<input type="number" min="1" value="' + hVal + '" data-sid="' + id + '" data-pid="' + pid + '" data-asid="' + aSid + '" data-bsid="' + bSid + '" onchange="setDestResFromPopup(this,\'h\')" style="width:66px">'
-        + '<span class="suffix">PX</span>'
-      + '</div>';
+    resRowsHtml += ''   /* 16ll-blendpop: four cells of the pop-up's one grid */
+      + '<span class="bzp-lbl" title="' + _esc(name) + ' Res">' + _esc(name) + ' Res</span>'
+      + '<input type="number" min="1" value="' + wVal + '" data-sid="' + id + '" data-pid="' + pid + '" data-asid="' + aSid + '" data-bsid="' + bSid + '" onchange="setDestResFromPopup(this,\'w\')" aria-label="' + _esc(name) + ' width (px)">'
+      + '<span class="bzp-x">\u00d7</span>'
+      + '<input type="number" min="1" value="' + hVal + '" data-sid="' + id + '" data-pid="' + pid + '" data-asid="' + aSid + '" data-bsid="' + bSid + '" onchange="setDestResFromPopup(this,\'h\')" aria-label="' + _esc(name) + ' height (px)">'
+      + '<span class="bzp-unit">PX</span>';
   });
 
-  popup.innerHTML = ''
-    + '<button class="blend-popup-close" onclick="closeBlendPopup()" aria-label="Close blend options">\u00d7</button>'
-    + '<div class="blend-popup-preview">' + previewHtml + '</div>'
-    + '<div class="blend-popup-title">' + groupMembers.map(id => { const sc = screens.find(x => x.id === id); return _esc(sc ? (sc.name || id) : id); }).join(' + ') + '</div>'
+  const _bzpNames = groupMembers.map(id => { const sc = screens.find(x => x.id === id); return _esc(sc ? (sc.name || id) : id); }).join(' + ');
+  popup.innerHTML = ''   /* 16ll-blendpop: the Destination Properties window's header, sections and one grid; no tick */
+    + '<div class="pm-hdr"><div class="pm-strip"></div><h3>Blend Zone</h3><span class="pm-meta" title="' + _bzpNames + '">' + _bzpNames + '</span><div class="pm-dot"></div>'
+      + '<button class="pm-close" onclick="closeBlendPopup()" title="Close blend options" aria-label="Close blend options"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="4" x2="20" y2="20"></line><line x1="20" y1="4" x2="4" y2="20"></line></svg></button></div>'
+    + '<div class="bzp-prev">' + previewHtml + '</div>'
+    + '<div class="bzp-sec"><i></i>Blend <span>\u00b7 ' + _esc(p.code || '') + '</span></div>'
     + _cbSwitchHTML(pid, aSid)   /* 16lg-blend (R2 / R6): One combined screen */
-    + '<div class="blend-popup-row">'
-      + '<label for="blend-popup-px">Blend Amount</label>'
+    + '<div class="bzp-grid" style="margin-top:12px">'
+      + '<label class="bzp-lbl" for="blend-popup-px">Blend Amount</label><span></span><span></span>'
       + '<input type="number" min="1" value="' + blendPx + '" id="blend-popup-px" data-pid="' + pid + '" data-asid="' + aSid + '" data-bsid="' + bSid + '" onchange="setBlendPx(this); _refreshBlendPopup()">'
-      + '<span class="suffix">PX</span>'
+      + '<span class="bzp-unit">PX</span>'
+      + '<label class="bzp-lbl" for="blend-popup-pct">Blend Percent</label><span></span><span></span>'
+      + '<input type="number" min="0" max="100" step="0.1" value="' + blendPct + '" id="blend-popup-pct" title="' + _bzGd.tip + '" style="color:' + _bzGd.color + ';border-color:' + _bzGd.color + '" data-pid="' + pid + '" data-asid="' + aSid + '" data-bsid="' + bSid + '" onchange="setBlendPctFromPopup(this)">'
+      + '<span class="bzp-unit">%</span>'
     + '</div>'
-    + '<div class="blend-popup-row">'
-      + '<label for="blend-popup-pct">Blend Percent</label>'
-      + '<input type="number" min="0" max="100" step="0.1" value="' + blendPct + '" id="blend-popup-pct" style="color:' + _bzGd.color + ';border-color:' + _bzGd.color + '" data-pid="' + pid + '" data-asid="' + aSid + '" data-bsid="' + bSid + '" onchange="setBlendPctFromPopup(this)">'
-      + '<span class="suffix">%</span>'
-      + '<span id="blend-popup-guide" title="' + _bzGd.tip + '" style="color:' + _bzGd.color + ';font-weight:800;font-size:12px;min-width:10px;text-align:center">' + _bzGd.mark + '</span>'
-    + '</div>'
-    + '<div id="blend-popup-tip" style="font-size:10px;line-height:1.35;color:var(--text3);margin:2px 0 0;max-width:230px">Recommended: 15-25% of output ' + (_bzV ? 'height' : 'width') + '. Hold Shift to disable snap</div>'
-    + '<div class="blend-popup-divider"></div>'
-    + resRowsHtml
-    + '<button class="blend-popup-break" onclick="breakBlend(\''+pid+'\',\''+aSid+'\',\''+bSid+'\')">Break Blend</button>';
+    + '<div id="blend-popup-tip" class="bzp-tip">Recommended: 15-25% of output ' + (_bzV ? 'height' : 'width') + '. Hold Shift to disable snap</div>'
+    + '<div class="bzp-block"><div class="bzp-sec"><i></i>Resolution <span>\u00b7 all presets</span></div>'
+      + '<div class="bzp-grid">' + resRowsHtml + '</div></div>'
+    + '<button class="pm-btn-danger" onclick="breakBlend(\''+pid+'\',\''+aSid+'\',\''+bSid+'\')">Break Blend</button>';
   document.body.appendChild(popup);
   _positionBlendPopup(pid, aSid, bSid, popup);
   // Defer click-outside listener so the triggering dblclick doesn't immediately close
@@ -10170,11 +10214,12 @@ function _cbSwitchHTML(pid,aSid){
   const p=presets.find(function(x){ return x.id===pid; }); const g=p?_cbGroupOf(p,aSid):null; if(!g) return '';   /* a full stack, a rotated member: no switch, as before */
   const on=_cbOnG(p,g), m=_esc(_cbName(p,g.master)), others=g.ids.filter(function(id){ return id!==g.master; }).map(function(id){ return _esc(_cbName(p,id)); }).join(', ');
   const sz=g.rect.w+' × '+g.rect.h;
-  return '<div class="blend-popup-row" style="justify-content:space-between">'
-    +'<label for="blend-popup-cb">One combined screen</label>'
-    +'<button type="button" id="blend-popup-cb" role="switch" aria-checked="'+on+'" onclick="_cbToggle(\''+pid+'\',\''+aSid+'\')" title="'+(on?'On: switch off to give every destination its own BG and layers again':'Off: switch on to make '+m+' the master of one '+sz+' screen')+'" style="min-width:54px;height:22px;padding:0 10px;border-radius:11px;border:1px solid '+(on?'var(--n-cyan)':'var(--n-line)')+';background:'+(on?'rgba(var(--n-cyan-rgb),.18)':'transparent')+';color:'+(on?'var(--n-cyan)':'var(--text3)')+';font-size:10px;font-weight:800;letter-spacing:.08em;cursor:pointer;font-family:inherit">'+(on?'ON':'OFF')+'</button>'
+  return '<div class="bzp-row">'   /* 16ll-blendpop: the app's sliding switch (.lb-seg), still the role="switch" button it was */
+    +'<label class="bzp-lbl" for="blend-popup-cb">One combined screen</label>'
+    +'<button type="button" class="lb-seg bzp-cb" data-seg="blend-cb" id="blend-popup-cb" role="switch" aria-checked="'+on+'" onclick="_bzpCb(event,\''+pid+'\',\''+aSid+'\')" title="'+(on?'On: switch off to give every destination its own BG and layers again':'Off: switch on to make '+m+' the master of one '+sz+' screen')+'">'
+      +'<span class="lb-seg-btn'+(on?'':' on')+'" data-v="0">OFF</span><span class="lb-seg-btn'+(on?' on':'')+'" data-v="1">ON</span></button>'
     +'</div>'
-    +'<div id="blend-popup-cbtip" style="font-size:10px;line-height:1.35;color:var(--text3);margin:2px 0 0;max-width:230px">'
+    +'<div id="blend-popup-cbtip" class="bzp-tip">'
     +(on?(m+'’s BG and layers cover the whole '+sz+' screen; '+others+' '+(g.ids.length>2?'are':'is')+' greyed (own BG and layers kept, hidden).')
         :('Each destination shows its own BG and layers. On: '+m+' becomes the master of one '+sz+' screen.'))
     +'</div>';
