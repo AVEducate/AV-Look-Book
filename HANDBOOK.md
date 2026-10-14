@@ -1378,6 +1378,16 @@ anchor on the function name and replace the first occurrence after it, never all
   A flip from the switch (`_bzpCb`) now holds that rebuild (`_bzpHold`, read at the top of `_refreshBlendPopup`) and brings the
   switch and its line up to date in place (`_bzpCbSync`, from `_cbSwitchHTML`), so the `.lb-seg` observer slides the thumb and focus
   stays on the switch; `_cbToggle` is unchanged (the probe calls it directly). Check BP2 (same switch and thumb, seen between its ends).
+- **welcome-grey** (2026-10-14, shell only: `electron/welcome.html`, `welcome-preload.js`, `main.js`; search `welcome-grey`). Omar,
+  mock-up `mockups/welcome_mockup.html` approved: NO CYAN on the Welcome window (New Project like the other two buttons; pointed at /
+  clicked / focus = `--hi` #5d6778 edge + a lighter grey face; the heading strip, a card's edge, More projects..., a list row, Browse
+  for a file..., the tick box and the dialog's glow grey or gone). The Remove project? / File missing window has the I/O card's grey
+  line icons, NO box at rest or pointed at and NO red (Omar: "too distracting"); only the icon brightens; the words are hover tips:
+  - remove from list, trash move to Trash, x cancel (Esc too); File missing: folder find the file, -, x. A missing card, its list row
+  or Open Last Project (last file gone) opens File missing instead of the Mac's alert; the folder -> `relinkRecent` (main.js): the
+  Mac's Open window (.avlb only, the old folder if it still exists, else Documents › AV Look Book); a pick takes the old card's
+  place (name and thumbnail kept, a duplicate card folded in) and opens the show; nothing picked changes nothing. The veil ignores
+  the 2nd click of the double-click that opened the window (`e.detail < 2`). Reaches users only with a new installer.
 - Declined by the owner, do not resurface: mask shapes, anchor points, hardware profiles, canvas/WebGL renderer,
   interpolation filter toggles, upscale-factor notes, per-layer "sharp pixels", any licence mention.
 

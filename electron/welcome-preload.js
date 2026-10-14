@@ -5,7 +5,7 @@ contextBridge.exposeInMainWorld('lookbookWelcome', {
   // { version, build, showOnLaunch, items:[{id,path,name,lastOpened,missing,thumb}] }
   list: () => ipcRenderer.invoke('lb:welcome:list'),
   // 'new' | 'openLast' | 'open' id | 'browse' | 'gettingStarted' |
-  // 'removeConfirmed' id trash | 'setShowOnLaunch' bool
+  // 'removeConfirmed' id trash | 'setShowOnLaunch' bool | 'relink' id (welcome-grey: find a moved file)
   action: (name, ...args) => ipcRenderer.invoke('lb:welcome:action', name, ...args),
   onRefresh: (cb) => ipcRenderer.on('lb:welcome:refresh', () => cb())
 });

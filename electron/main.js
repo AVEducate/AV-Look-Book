@@ -642,6 +642,29 @@ ipcMain.handle('lb:project:sendShow', async (e, p) => {
 });
 ipcMain.handle('lb:welcome:show', async () => { showWelcome(); return { ok: true }; });
 
+// welcome-grey (Omar 2026-10-14): a project whose file moved is found again from the Welcome window. The Mac's Open window
+// (.avlb only) starts where the file was, else in Documents › AV Look Book; the pick takes the old card's place (its name and
+// thumbnail come along; a card the picked file already had is folded in) and the show opens. Nothing picked: nothing changes.
+async function relinkRecent(id){
+  const it = findRecent(id); if (!it) return { ok: false, error: 'not in the list' };
+  const from = path.dirname(it.path);
+  const opts = { title: 'Find \u201c' + (it.name || path.basename(it.path)) + '\u201d', buttonLabel: 'Relink',
+    defaultPath: fs.existsSync(from) ? from : projectsDir(), properties: ['openFile'],
+    filters: [{ name: 'AV Look Book Project', extensions: ['avlb'] }] };
+  const r = (welcomeWin && !welcomeWin.isDestroyed()) ? await dialog.showOpenDialog(welcomeWin, opts) : await dialog.showOpenDialog(opts);
+  if (r.canceled || !r.filePaths || !r.filePaths[0]) return { ok: false, cancelled: true };
+  const np = r.filePaths[0], nid = recentId(np);
+  if (nid !== it.id) {
+    const dup = settings.recents.findIndex(x => x.id === nid && x !== it);
+    if (dup >= 0) settings.recents.splice(dup, 1);
+    try { if (fs.existsSync(thumbPath(it.id)) && !fs.existsSync(thumbPath(nid))) fs.renameSync(thumbPath(it.id), thumbPath(nid)); } catch (e) {}
+    it.id = nid; it.path = np;
+    saveSettings(); refreshWelcome(); rebuildMenu();
+  }
+  openProjectPath(np);
+  return { ok: true, path: np };
+}
+
 // ── Bridge: Welcome window ───────────────────────────────────────────────
 ipcMain.handle('lb:welcome:list', async () => ({
   version: app.getVersion(),
@@ -667,6 +690,7 @@ ipcMain.handle('lb:welcome:action', async (_e, name, a, b) => {
       break;
     }
     case 'setShowOnLaunch': settings.showWelcomeOnLaunch = !!a; saveSettings(); break;
+    case 'relink': return await relinkRecent(a);   /* welcome-grey */
   }
   return { ok: true };
 });
