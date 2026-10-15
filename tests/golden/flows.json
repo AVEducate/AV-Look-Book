@@ -921,7 +921,7 @@
    "ok": true
   },
   {
-   "name": "Blend Zones: the % chip reads green tick at 15-25%, amber up-arrow under 15%, red down-arrow over 25%",
+   "name": "Blend Zones: the % chip is green at 15-25%, amber under 15%, red over 25%, the colour alone with no tick or arrow, the advice in its tip (16lm-chipmark, Omar 2026-10-14 \"Remove them\")",
    "ok": true
   },
   {
@@ -3098,6 +3098,34 @@
   },
   {
    "name": "Video Presets 16ll-blendpop-fix BP2 (Omar 2026-10-13 \"on and off should slide like the rest of the section\"): a flip of One combined screen updates the pop-up in place: the same switch and thumb, the thumb seen between its two ends while it slides (OFF, then ON again), one Undo step each, the line under it follows",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16lm-pxcap PX1 (the full test's major 6, Omar 2026-10-14 \"build it\"): a blend typed bigger than the narrower destination is set to its width less 1 px with a note: the canvas PX box side by side (RIGHT rides along, the combined screen stays, Undo takes it back), top / bottom (its height less 1 px), and the blend options pop-up's PX and % (the pop-up closes for the note and opens again with the number), one Undo step each",
+   "ok": true
+  },
+  {
+   "name": "I/O Patch 16lm-border SO1 (the full test's minor 3, Omar 2026-10-14 \"build it\"): a PBP B named before its A sits right under it and takes the number after it (CAM 1 renamed PBP B, then CAM 2 renamed PBP A: S3 PBP A, S4 PBP B on the cards, in the order and on Wire Simple's router); page 1 pairs them the same; the \"Simple changed since page 1 was built\" notes read the order before the move (as build 16ll did), so nothing is asked, and a Wire Simple edit that stores the rows in the new order is no change either",
+   "ok": true
+  },
+  {
+   "name": "Wire 16lm-slbtab WT1 (the full test's minor 8, Omar 2026-10-14 \"build it\"): Tab / Shift+Tab in a router ID cell of Wire Simple goes to the next / previous ID cell of the same column, the typed ID kept (one Undo step when it changed, none when not) and the cell's text selected; off either end of the column Tab is left to the browser",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16lm-relink RL1 (the full test's minor 11, Omar 2026-10-14 \"build it\"): RELINK with the same file relinks as before (no question, nothing changes); another file asks first (its name and size and the first one's), Cancel changes nothing, Use this file takes its details (file name, size, resolution, picture, also as the cover of the BG it is on) in one Undo step; a picture for a video is refused with a note",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16lm-cvtitle TS1 (the full test's minor 13, Omar 2026-10-14 \"build it\"): the Advanced title line reads the canvas size the top bar shows: 3 screens · 5760×1080px for the strip, 3 screens · 5160×1080px for a 300 px blend on every preset (it read the sum of the widths, 5760, before)",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16lm-tablew TW1 (the full test's minor 20, Omar 2026-10-14 \"build it\"): in a narrow table panel the Name and Notes boxes keep 110 / 150 px and the table scrolls sideways (they were squeezed to a few letters); at full width they are at least that",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16lm-whcheck WH1 (the full test's minor 22, Omar 2026-10-14 \"build it\"): Destination Properties says the range for a Width / Height outside it (8000, then 50 x 5000), puts the size back in the box (the Aspect line too), keeps the window open with the cursor in the box and applies nothing (no Undo step); a good width still applies in one step",
    "ok": true
   }
  ],

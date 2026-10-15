@@ -4728,6 +4728,11 @@ label.bzp-lbl{cursor:pointer}
 .bzp .bzp-cb{flex:0 0 auto;margin:0;font:inherit;color:inherit;cursor:pointer}
 .bzp .bzp-cb:focus-visible{outline:2px solid var(--ss-ring);outline-offset:2px}
 .bzp .bzp-cb .lb-seg-btn{min-width:44px;padding:0 12px}
+/* 16lm-tablew (the full test's minor 20, Omar 2026-10-14 "build it"): the Video Presets table's Name and Notes boxes keep a
+   readable width. A show with many layer / AUX columns squeezed them to a few letters ("LE", "RI", a note "oh no i") while
+   the layer columns kept theirs; now the table is wider than the panel and scrolls sideways instead. Desktop only. */
+body:not(.is-mobile) #tbody .home-field input[name="t-s-name"]{min-width:110px}
+body:not(.is-mobile) #tbody .home-field input[name="t-d-notes"]{min-width:150px}
 </style>
 </head>
 <body data-skin="black">
@@ -4878,7 +4883,7 @@ Also called DSM (Downstage Monitor) in broadcast and theater workflows, same thi
   <div class="bb-cell bb-pill bb-cyan" title="The largest number of layers used in any single preset, this is the figure to compare against your switcher's per-scene layer budget. (The most complex single moment in the show.)"><span class="bb-label">Layers</span><strong id="bb-layers">0</strong></div>
   <div id="bb-spacer"></div>
   <div class="bb-cell" id="bb-sel" style="font-size:10px;opacity:.5">—</div>
-  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy, hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16ll</div>
+  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy, hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16lm</div>
   <!-- 16kq (Omar): the Modifiers menu lives on each preset tile only; this place is kept for the Educator tool of a future build (greyed out, does nothing) --><button class="bb-util" id="tb-educator" type="button" disabled aria-disabled="true" title="Educator: coming in a future build" aria-label="Educator, coming in a future build" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:default;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em;opacity:.38"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10L12 5 2 10l10 5 10-5z"/><path d="M6 12v5c0 1 2.7 2.5 6 2.5s6-1.5 6-2.5v-5"/><line x1="22" y1="10" x2="22" y2="16"/></svg><span>Educator</span></button>
   <button class="bb-util" onclick="actions.help()" title="Help, quick reference, keyboard shortcuts, glossary, accessibility" aria-label="Help, quick reference, keyboard shortcuts, glossary, accessibility" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="4.93" y1="4.93" x2="9.17" y2="9.17"/><line x1="14.83" y1="14.83" x2="19.07" y2="19.07"/><line x1="14.83" y1="9.17" x2="19.07" y2="4.93"/><line x1="4.93" y1="19.07" x2="9.17" y2="14.83"/></svg>Help</button>
   <button class="bb-util" id="tb-bug" onclick="reportBug()" title="Report a bug, opens an email to AV Educate with your show file — attached in the app, downloaded for you to attach in a browser" aria-label="Report a bug" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="7.2"/><path d="M15.4 15.4L21 21" stroke-width="2.6"/><ellipse cx="10" cy="11" rx="2.5" ry="3.3" fill="currentColor" stroke="none"/><circle cx="10" cy="7" r="1.5" fill="currentColor" stroke="none"/><path d="M7.5 9.2l-1.7-.8M7.4 11.2H5.6M7.7 13.1l-1.5 1.1M12.5 9.2l1.7-.8M12.6 11.2h1.8M12.3 13.1l1.5 1.1M9.2 5.9l-.8-1.1M10.8 5.9l.8-1.1" stroke-width="1.3"/></svg>Bug</button>   <!-- 16jk (Omar): Report a bug, after Help -->
@@ -6545,7 +6550,8 @@ function _bdConverted(s,names,pre){
 }
 /* the SOURCES part of the two "built from Simple" notes, before and after the conversion: taking its content away can
    change the source list's order (it follows first use) or drop a source only it used; that is the conversion too */
-function _bdSrcParts(){
+function _bdSrcParts(){ _srcBHold++; try{ return _bdSrcParts0(); } finally{ _srcBHold--; } }   /* 16lm-border: compared with the fingerprints above */
+function _bdSrcParts0(){
   var o={w:null,i:null};
   try{ if(typeof _wireBuildAllSourceNames==='function') o.w=JSON.stringify(_wireBuildAllSourceNames()); }catch(e){}
   try{ if(typeof _ioSimpleFingerprint==='function') o.i=JSON.stringify(JSON.parse(_ioSimpleFingerprint())[0]); }catch(e){}
@@ -9895,6 +9901,20 @@ function _blendGuide(pct){
   return {key:ok?'ok':low?'low':'high', color:ok?'#4ddc8a':low?'#f0c060':'#ff4d5a', mark:ok?'\u2713':low?'\u2191':'\u2193',
     tip:ok?'Inside the recommended 15-25%':low?'Under 15%: widen the blend':'Over 25%: narrow the blend'};
 }
+/* 16lm-pxcap (the full test's major 6, Omar 2026-10-14 "build it"): a blend typed in PX (the canvas box, or the blend options
+   pop-up's PX or %) is at most the narrower destination's width less 1 px (its height for a top / bottom blend, which
+   _setBlendPxY already held to that without a word). Before, 5000 px on a 1920 pair put RIGHT to the left of LEFT, onto other
+   destinations, and the combined screen was gone, with no message. A bigger number is set to the most, and a short note says
+   so. The blend options pop-up sits above the app's windows: it closes for the note and opens again after it. Desktop only. */
+function _blendPxCap(pid,sa,sb,pa,pb,px){
+  const da=getEffectiveDims(sa,pid), db=getEffectiveDims(sb,pid), y=_blendAxisOf(pa,pb,da,db)==='y';
+  const side=y?Math.min(da.h,db.h):Math.min(da.w,db.w), most=Math.max(0,side-1);
+  if(!(px>most)) return px;
+  const back=!!document.getElementById('blend-popup'); if(back) closeBlendPopup();
+  const again=back?function(){ setTimeout(function(){ if(!document.getElementById('blend-popup')) openBlendPopup(pid,sa.id,sb.id); },10); }:null;
+  if(typeof showAlert==='function') showAlert({variant:'info',title:'Blend too big',message:'A blend can be at most '+most+' px here: the '+(y?'shorter':'narrower')+' destination is '+side+' px '+(y?'high':'wide')+'. The blend is set to '+most+' px.',onConfirm:again,onCancel:again});
+  return most;
+}
 /* Top / bottom blend typed in pixels (from the axis y branch of the old fsSetBlendOverlap): the LOWER destination moves,
    everything at or below the upper one's bottom edge rides along. One undo step, only on a real change. */
 function _setBlendPxY(p,pid,sa,sb,pa,pb,newPx){
@@ -10338,7 +10358,7 @@ function _rcOverlapVis(pos,sc,pid){
       const _bzG = _blendGuide(blendPct);
       const _cbOv=(function(){ const c=_cbFind(_hp,sa.id); return !!(c&&c.g.ids.indexOf(sb.id)>=0); })();   /* 16lg-blend (R6): a pair inside a combined screen */
       const _bzMk='<div class="blend-label" style="bottom:2px;'+(isH?'left:50%;transform:translateX(-50%);':'left:'+_U2YR+';transform:none;')+'width:'+_U2W+'px;box-sizing:border-box;justify-content:center;color:'+_bzG.color+';border:1px solid '+_bzG.color+';cursor:pointer" title="'+_bzG.tip+'. Double-click for blend options" data-guide="'+_bzG.key+'" onmousedown="event.stopPropagation()" onclick="event.stopPropagation()" ondblclick="openBlendPopup(\''+pid+'\',\''+sa.id+'\',\''+sb.id+'\',event)">'
-          +'<span>'+blendPct+'</span><span class="suffix" style="color:'+_bzG.color+'">%</span><span>'+_bzG.mark+'</span>'
+          +'<span>'+blendPct+'</span><span class="suffix" style="color:'+_bzG.color+'">%</span>'+(_lbcOn()?'':'<span>'+_bzG.mark+'</span>')   /* 16lm-chipmark (Omar 2026-10-13 "the check mark is not needed", 2026-10-14 "Remove them"): the colour alone, the advice in its tip; the phone (frozen) keeps the mark */
         +'</div>';   /* 16lg-blend (R6): a double-click on the red % opens the blend options too */
       html+='<div class="overlap-vis" data-pid="'+pid+'" data-asid="'+sa.id+'" data-bsid="'+sb.id+'" style="position:absolute;left:'+vox+'px;top:'+voy+'px;width:'+vow+'px;height:'+voh+'px;pointer-events:none;overflow:visible">'   /* 16li-blendui: no stacking layer of its own, so the PX box and the % (z 11) sit above the layers and the chip; the hatch and its shading keep z 6 */
         +'<div class="overlap-hatch" style="pointer-events:auto;cursor:pointer;z-index:6" title="Double-click for blend options" onclick="event.stopPropagation()" ondblclick="openBlendPopup(\''+pid+'\',\''+sa.id+'\',\''+sb.id+'\',event)"></div>'
@@ -12625,7 +12645,7 @@ document.addEventListener('click',e=>{
   if(!e.target.closest('#res-warn-pop')) closeResWarn();
 
   // Screen panel — close if click is outside panel and not on a screen-box (which opens it)
-  if(!window._mbInlinePanelOpen && !e.target.closest('#screen-panel')&&!e.target.closest('.screen-box')) closeScreenPanel();
+  if(!window._mbInlinePanelOpen && !e.target.closest('#screen-panel')&&!e.target.closest('.screen-box')&&!(_lbcOn()&&e.target.closest('#dlg-overlay'))) closeScreenPanel();   /* 16lm-whcheck: a click in the app's window (its size note's OK) leaves it open, as _lbClickIsInsidePopup already does */
 
   // Layer panel — close if outside panel, not on a layer chip, not on a layer dot
   if(!window._mbInlinePanelOpen && !e.target.closest('#layer-panel')&&
@@ -13353,6 +13373,7 @@ function openScreenPanel(e,pid,sid){
 
   // Apply handler
   pop.querySelector('#sp-apply').addEventListener('click',()=>{
+    if(_lbcOn()&&!_spSizeOk(pop,s)) return;   /* 16lm-whcheck: a size out of range is said, nothing is applied */
     const _spU=_spUndoBegin();   /* one Apply = one undo step */
     const _ovlT=_ovlBegin(_spU.snap);   /* no-overlap guard */
     { const _nb=pop.querySelector('#sp-name'); if(_nb&&_lbcOn()){ const _nn=String(_nb.value||'').trim(); if(_nn&&_nn!==s.name&&!(_kzLow(_nn)!==_kzLow(s.name)&&_kzOutRenameBlocked(s,_nn,null))) _sysSetMeta('dest',sid,'name',_nn); } }   /* 16lc-vpfinish (D5): the destination itself, in every preset (16lc-vpaux's rename); an emptied box renames nothing; a name another output has is refused */
@@ -13641,6 +13662,23 @@ function spSetShowMode(mode){
   scheduleRender();
 }
 
+/* 16lm-whcheck (the full test's minor 22, Omar 2026-10-14 "build it"): a Width / Height in Destination Properties outside what a
+   destination can be (67 to 7680 px wide, 67 to 4320 px high: updateScreenSize's limits) was dropped without a word as the window
+   closed. Now Apply (or Enter) says the range, the box shows the size again and the window stays open; nothing is applied (no Undo
+   step). An empty box, or one that is not a number, keeps the size, as before. */
+function _spSizeOk(pop,s){
+  const wb=pop.querySelector('#sp-w'), hb=pop.querySelector('#sp-h'); if(!wb||!hb) return true;
+  const bad=[], chk=function(b,cur,max,word){ const v=String(b.value||'').trim(); if(v==='') return; const n=parseInt(v,10); if(isNaN(n)||n===cur) return; if(n<67||n>max) bad.push({b:b,cur:cur,max:max,word:word}); };
+  chk(wb,parseInt(s.w,10)||0,7680,'width'); chk(hb,parseInt(s.h,10)||0,4320,'height');
+  if(!bad.length) return true;
+  bad.forEach(function(x){ x.b.value=String(x.cur); }); if(typeof _spAspectSync==='function') _spAspectSync(pop);   /* the Aspect line follows the box */
+  const msg=(bad.length>1)
+    ? ('Width can be 67 to 7680 px and height 67 to 4320 px. They stay '+bad[0].cur+' \u00d7 '+bad[1].cur+' px.')
+    : (bad[0].word.charAt(0).toUpperCase()+bad[0].word.slice(1)+' can be 67 to '+bad[0].max+' px. It stays '+bad[0].cur+' px.');
+  const back=function(){ try{ bad[0].b.focus(); bad[0].b.select(); }catch(e){} };
+  if(typeof showAlert==='function') showAlert({variant:'warning',title:'Size out of range',message:msg,onConfirm:back,onCancel:back});
+  return false;
+}
 function closeScreenPanel(){
   if(typeof _homeClearOpen==='function') _homeClearOpen();   // 16go
   const p=document.getElementById('screen-panel');
@@ -14919,7 +14957,7 @@ function _blendPercent(ovPx, awWidth, bwWidth){
 function setBlendPx(input){
   const pid = input.dataset.pid;
   const aSid = input.dataset.asid, bSid = input.dataset.bsid;
-  const newPx = Math.max(0, parseInt(input.value) || 0);
+  let newPx = Math.max(0, parseInt(input.value) || 0);   /* 16lm-pxcap: capped below */
   const p = presets.find(x => x.id === pid); if(!p) return;
   if(!p.positions) initStripPositions(pid);
   const sa = screens.find(x => x.id === aSid);
@@ -14927,6 +14965,7 @@ function setBlendPx(input){
   if(!sa || !sb) return;
   const pa = {...(p.positions[aSid]||{x:0,y:0})};
   const pb = {...(p.positions[bSid]||{x:0,y:0})};
+  if(_lbcOn()) newPx = _blendPxCap(pid,sa,sb,pa,pb,newPx);   /* 16lm-pxcap */
   if(_blendAxisOf(pa,pb,getEffectiveDims(sa,pid),getEffectiveDims(sb,pid))==='y'){ _setBlendPxY(p,pid,sa,sb,pa,pb,newPx); return; }
   let leftSid, rightSid, leftPos, rightPos, leftDims;
   if(pa.x <= pb.x){ leftSid = aSid; rightSid = bSid; leftPos = pa; rightPos = pb; leftDims = getEffectiveDims(sa, pid); }
@@ -16792,7 +16831,29 @@ function _srcNameOrderRaw(){   /* the order the show's names were first seen in 
     // 16jh: an auto-made B sits right under its A everywhere the list is shown
     sources.forEach(s=>{ const link=s&&s.name&&(s.autoB||s.pairOf); if(!link) return; const bi=order.indexOf(s.name), ai=order.indexOf(link); if(bi<0||ai<0||bi===ai+1) return; order.splice(bi,1); const ai2=order.indexOf(link); order.splice(ai2+1,0,s.name); });   // 16ji: manual pairs too
   }
+  if(!_srcBHold&&_lbcOn()) _srcBUnderA(order);   /* 16lm-border */
   return order;
+}
+/* 16lm-border (the full test's minor 3, Omar 2026-10-14 "build it"): a B sits right under its A in every list and takes the number
+   after it, however the pair was made. Before, only a B the app made (autoB) or a page-1 twin (pairOf) moved (16jh / 16ji, above):
+   a B paired on Advanced page 1 (the Backup window, or an "X A" / "X B" pair that pairs by itself) and a PBP B / GFX B named
+   before its A kept their place, so PBP B read S3 above PBP A S4 in Simple, Wire and the Video I-O sheet, which printed "Backup of
+   PBP A" for it, while page 1 had A then B. Read here: page 1's pairs (what "Backup of" prints, _ioBkPrimaryNameFor) and, for a
+   PBP B / GFX B page 1 does not have yet, its PBP A / GFX A by name (the 16jh pair). Desktop only (the phone is frozen). The
+   "Simple changed since page 1 was built" fingerprints read the order without this move (_srcBHold, set by them), so a B moving
+   up is never a change of the show. */
+var _srcBHold=0;
+function _srcBUnderA(order){
+  const key=function(n){ return String(n||'').trim().toLowerCase(); };
+  const by=new Map(); order.forEach(function(n){ const k=key(n); if(k&&!by.has(k)) by.set(k,n); });
+  let rows=[]; try{ const pg=(typeof ioAdvanced==='object'&&ioAdvanced&&Array.isArray(ioAdvanced.pages))?ioAdvanced.pages[0]:null; rows=(pg&&Array.isArray(pg.sources))?pg.sources:[]; }catch(e){ rows=[]; }
+  const onP1=new Set(), pairs=[];
+  rows.forEach(function(r){ if(r&&r.name) onP1.add(key(r.name)); });
+  rows.forEach(function(r){ const p=(r&&r.backupOf)?_ioBkPrimaryOf(rows,r):null; if(!p) return; const a=by.get(key(p.name)), b=by.get(key(r.name)); if(a&&b&&a!==b) pairs.push([a,b]); });
+  order.forEach(function(n){ const m=/^(PBP|GFX)\s+B$/i.exec(String(n||'').trim()); if(!m||onP1.has(key(n))) return; const a=by.get(m[1].toLowerCase()+' a'); if(a&&!onP1.has(key(a))) pairs.push([a,n]); });
+  const usedA=new Set(), usedB=new Set();
+  pairs.forEach(function(pr){ const a=pr[0], b=pr[1]; if(usedA.has(a)||usedB.has(b)||usedA.has(b)||usedB.has(a)) return; usedA.add(a); usedB.add(b);
+    const bi=order.indexOf(b), ai=order.indexOf(a); if(bi<0||ai<0||bi===ai+1) return; order.splice(bi,1); order.splice(order.indexOf(a)+1,0,b); });
 }
 function _sysDiscoverSources(){
   // I/O Patch membership = library + preset content + sources[] = exactly the
@@ -17930,7 +17991,8 @@ function _ioAdvPage(){ return ioAdvanced.pages[ioAdvanced.page]||ioAdvanced.page
 // 16iw (Omar): Advanced opens on the show — page 1 takes the show name and the Simple patch (every discovered source,
 // destination, AUX, I/O destination and multiviewer with its connector, type, resolution and notes). Only an EMPTY
 // page 1 is seeded; a later change on the Simple side offers a rebuild, asked once per change (same as Wire).
-function _ioSimpleFingerprint(){
+function _ioSimpleFingerprint(){ _srcBHold++; try{ return _ioSimpleFingerprint0(); } finally{ _srcBHold--; } }   /* 16lm-border: the order before a B moved up (_srcBUnderA) */
+function _ioSimpleFingerprint0(){
   const dev=o=>[o.name||'',o.connectorType||'',o.deviceType||'',o.customType||'',o.w||'',o.h||'',o.resolution||''];
   const src=_sysDiscoverSources().map(function(nm){ const m=_sysGetSourceMeta(nm)||{}; return [nm,m.connectorType||'',m.type||'',m.customType||'',m.resolution||'']; });   /* 16lc-vpfinish (D9). 16lc-vpcards-fix (E2): the number order (an older show keeps the order it was fingerprinted in: its numbers are kept as it opens) */
   const d=(typeof screens!=='undefined'?screens:[]).filter(function(o){ return o&&!_bdIs(o); }).map(dev);
@@ -23622,6 +23684,22 @@ function _slbSetPt(side, i, value, now){
   if(v === cur) return;   /* nothing typed (a cell that shows an IP and was left as it is, or cleared back to it) */
   _slbEdit(function(M){ if(!M.pt || typeof M.pt !== 'object') M.pt = {}; if(!M.pt[side]) M.pt[side] = {}; if(v) M.pt[side][i] = v; else delete M.pt[side][i]; if(!Object.keys(M.pt[side]).length) delete M.pt[side]; if(!Object.keys(M.pt).length) delete M.pt; }, now ? 'none' : 'later');
 }
+/* 16lm-slbtab (the full test's minor 8, Omar 2026-10-14 "build it"): Tab / Shift+Tab in a router ID cell of Wire Simple goes to
+   the next / previous ID cell of the SAME column, as on Advanced (16kk, _wireAdvPtTabKey). The ID commits on the way (one Undo
+   step when it changed) and the drawing is redrawn a moment later (_slbSetPt 'later'): that rebuilt the box the browser's Tab had
+   moved to, and the focus was lost. Off either end of the column Tab behaves as the browser does, as on Advanced. */
+function _slbPtCell(side, row){ return document.querySelector('#wire-diagram input.slb-pt[data-slb-side="' + side + '"][data-slb-row="' + row + '"]'); }
+function _slbPtTabKey(e){
+  if(!e || e.key !== 'Tab' || e.altKey || e.ctrlKey || e.metaKey) return;
+  const el = e.target; if(!el || el.tagName !== 'INPUT' || !el.classList || !el.classList.contains('slb-pt')) return;
+  const side = el.dataset.slbSide, row = parseInt(el.dataset.slbRow, 10); if(!side || isNaN(row)) return;
+  const next = row + (e.shiftKey ? -1 : 1); if(next < 0 || !_slbPtCell(side, next)) return;
+  e.preventDefault();
+  const go = function(){ const t = _slbPtCell(side, next); if(!t) return; try{ t.focus({ preventScroll: true }); }catch(_e){ t.focus(); } try{ t.select(); }catch(_e){} };
+  el.blur();   /* a changed ID commits here (onchange -> _slbSetPt -> one Undo step; the redraw is queued) */
+  go(); setTimeout(go, 0);   /* and again on the redrawn tile, after the queued redraw */
+}
+document.addEventListener('keydown', _slbPtTabKey, true);
 /* the router's title: Generic Router until the user types a name (wireSettings.simple.title, _wireSetHubName: one undo step);
    a name cleared reads Generic Router again. The name an older show gave its switcher (wireSettings.hub.name) is not read. */
 const _SLB_TITLE = 'Generic Router';
@@ -23993,7 +24071,10 @@ function _slbBuildPage1(p0){
 /* "Simple changed since page 1 was built": the three parts it has always had; a fourth, the cable plan, only when the
    cabling is not the one the old switcher drew (so every page 1 built before this build keeps matching until Simple really
    changes, and a tile moved, a view or an open never asks) */
-function _slbFingerprintPart(){
+/* 16lm-border: inside a fingerprint (_srcBHold) the plan is read in the order before a B moved up, as page 1's note was made;
+   rows that are the default in today's order (stored by an edit after the move) are no plan either, as they were not before */
+function _slbFingerprintPart(){ const r=_slbFingerprintPart0(); if(r===null||!_srcBHold) return r; const h=_srcBHold; _srcBHold=0; try{ return _slbFingerprintPart0()===null?null:r; } finally{ _srcBHold=h; } }
+function _slbFingerprintPart0(){
   const st = _slbState(), d = _slbDefaultRows(st.items);
   if(!st.loose.size && JSON.stringify([st.ins, st.outs]) === JSON.stringify([d.ins, d.outs])) return null;
   const pairs = function(a){ const o = []; a.forEach(function(k, i){ if(k) o.push([k, i]); }); return o; };
@@ -24226,7 +24307,8 @@ function _wireClosePage(pid){
   } else doClose();
 }
 // 16iv: what Page 1 was built from — so a later change on the Simple side can offer a rebuild
-function _wireSimpleFingerprint(){
+function _wireSimpleFingerprint(){ _srcBHold++; try{ return _wireSimpleFingerprint0(); } finally{ _srcBHold--; } }   /* 16lm-border: the order before a B moved up (_srcBUnderA) */
+function _wireSimpleFingerprint0(){
   const d = (typeof screens !== 'undefined' ? _bdNoBd(screens) : []).filter(Boolean).map(x => x.id + '=' + (x.name || ''));
   const m = (typeof dsms !== 'undefined' ? dsms : []).filter(Boolean).map(x => x.id + '=' + (x.name || ''));
   const a = [_wireBuildAllSourceNames(), d, m];   /* 16lc-vpcards-fix (E2): the number order (an older show keeps the order it was fingerprinted in: its numbers are kept as it opens) */
@@ -31574,6 +31656,10 @@ function _rfDeadHtml(p,sc,bounds,pad){
 var _fsTileSc=1;
 function _fsInTile(e){ return !!(typeof fsPresetId!=='undefined'&&fsPresetId&&e&&e.target&&e.target.closest&&e.target.closest('#fs-canvas')); }
 function _fsPointerZoom(e){ return _fsInTile(e)?(fsZoom||1):1; }
+/* 16lm-cvtitle (the full test's minor 13, Omar 2026-10-14 "build it"): the Advanced title line reads the canvas size the top bar
+   and the status bar show (CANVAS W x H), as it already did with a backdrop. totalW() adds every destination's width, so a 3240 px
+   blend read 3840 x 1080. Desktop only; an empty canvas box falls back to the sum, as before. */
+function _fsCvShown(){ if(!_lbcOn()) return false; const w=document.getElementById('cv-w'), h=document.getElementById('cv-h'); return !!(w&&h&&parseInt(w.value,10)>0&&parseInt(h.value,10)>0); }
 function renderFullscreen(){
   if(!fsPresetId)return;
   try{ _cbNorm(); }catch(e){}   /* 16lg-blend (R2) */
@@ -31585,7 +31671,7 @@ function renderFullscreen(){
   document.getElementById('fs-title').textContent=p.code+' '+p.name;
   renderFsPresetList();
   _fsRenderSources();
-  document.getElementById('fs-subtitle').textContent=_bdNoBd(screens).length+' screens · '+(_bdDrawn?(document.getElementById('cv-w').value+'×'+document.getElementById('cv-h').value):(totalW()+'×'+totalH()))+'px';   /* 16kx-backdrop: the canvas size, backdrops left out */
+  document.getElementById('fs-subtitle').textContent=_bdNoBd(screens).length+' screens · '+((_bdDrawn||_fsCvShown())?(document.getElementById('cv-w').value+'×'+document.getElementById('cv-h').value):(totalW()+'×'+totalH()))+'px';   /* 16kx-backdrop: the canvas size, backdrops left out */
 
   const vp=document.getElementById('fs-viewport');
   const canvasW=_bdDrawW(parseInt(document.getElementById('cv-w').value)||totalW());
@@ -37307,7 +37393,55 @@ function _fsImportOne(file,land){
     return _mdbPut(name,file);
   });
 }
-function _fsRelinkFile(name,file){ _fsAttachBlob(name,file); _mdbPut(name,file); _fsSrcSig=''; _fsRenderSources(true); if(fsPresetId) renderFullscreen(); }
+/* 16lm-relink (the full test's minor 11, Omar 2026-10-14 "build it"): RELINK on a missing file's card took ANY file without a
+   word and kept the old file's details (length, size, resolution, picture). Now the file picked is compared with the one the show
+   knows (its name and size): the same file relinks as before; another file asks first, and Use this file takes its details as an
+   import reads them (length, size, resolution, frame rate, codecs, audio, type, file name, place on disk, cover picture, also as
+   the cover of every BG it is on), one Undo step. A picture for a video (or a video for a picture) is refused with a note. Undo
+   brings the old details back; the file picked stays linked (the file is kept outside the show). Desktop only. */
+function _fsRelinkAsk(name,file){
+  const it=_fsMediaItem(name); if(!it||!file) return false;
+  const m=it.media||{}, t=String(file.type||''), fk=/^video\//.test(t)?'video':(/^image\//.test(t)?'image':''), vid=it.kind==='video', what=vid?'video':'picture';
+  if(fk!==(vid?'video':'image')){ if(typeof showAlert==='function') showAlert({variant:'warning',title:'Not a '+what,message:'\u201c'+name+'\u201d is a '+what+'. Pick a '+what+' file to relink it.'}); return true; }
+  if((!m.fileName||m.fileName===file.name)&&(!m.size||m.size===file.size)) return false;   /* the same file: relinked as before */
+  const sz=function(n){ n=n||0; return n>=1048576?(n/1048576).toFixed(1)+' MB':(n>=1024?Math.round(n/1024)+' KB':n+' bytes'); };
+  const was=(m.fileName||'another file')+(m.size?' ('+sz(m.size)+')':''), now=(file.name||'this file')+' ('+sz(file.size)+')';
+  if(typeof showConfirm!=='function') return false;
+  showConfirm({variant:'warning',title:'A different file',message:'\u201c'+name+'\u201d was made from '+was+'. You picked '+now+'. Use this file? Its length, size and picture replace the old ones.',confirmLabel:'Use this file',cancelLabel:'Cancel',onConfirm:function(){ _fsRelinkTake(name,file); }});
+  return true;
+}
+/* the details of the file picked, read as _fsImportOne reads them; the Undo step is recorded when they land (16ks) */
+function _fsRelinkTake(name,file){
+  _fsAttachBlob(name,file);
+  const url=_fsMediaURL[name], isVideo=/^video\//.test(file.type||'');
+  const media={type:file.type,size:file.size,fileName:file.name||'',w:0,h:0,dur:0,hasAudio:false,coverTime:0,peaks:null};
+  let img='', p;
+  if(isVideo){
+    const v=document.createElement('video'); v.muted=true; v.playsInline=true; v.preload='auto'; v.src=url;
+    p=new Promise(function(res,rej){ v.onloadedmetadata=function(){ res(); }; v.onerror=function(){ rej(new Error('video metadata')); }; setTimeout(res,8000); })
+      .then(function(){ media.w=v.videoWidth||0; media.h=v.videoHeight||0; media.dur=isFinite(v.duration)?v.duration:0; media.coverTime=Math.min(1,media.dur/2); return _fsFrameAt(v,media.coverTime); })
+      .then(function(im){ img=im; return _fsProbeAudio(v); })
+      .then(function(has){ media.hasAudio=!!has; return _fsAudioPeaks(file); })
+      .then(function(res){ media.peaks=(res&&res.peaks)||null; if(res){ media.channels=res.channels||0; media.sampleRate=res.sampleRate||0; } if(media.peaks&&media.peaks.some(function(x){ return x>0.01; })) media.hasAudio=true; return _fsParseIsoBmff(file); })
+      .then(function(info){ _fsApplyBoxInfo(media,info); if(!media.fps) return _fsProbeFps(v).then(function(f){ media.fps=f||0; }); })
+      .then(function(){ try{ v.pause(); v.removeAttribute('src'); v.load(); }catch(e){} });
+  } else {
+    const im=new Image(); im.src=url;
+    p=new Promise(function(res,rej){ im.onload=function(){ res(); }; im.onerror=function(){ rej(new Error('image')); }; }).then(function(){ media.w=im.naturalWidth; media.h=im.naturalHeight; img=_fsShrink(im,im.naturalWidth,im.naturalHeight); });
+  }
+  return p.catch(function(e){ console.warn('media relink: the file could not be read',file.name,e); }).then(function(){
+    const it=_fsMediaItem(name); if(!it) return;
+    if(typeof pushUndo==='function') pushUndo();
+    media.path=_fsPathFor(file);   /* desktop shell only; '' in a browser */
+    it.media=media; if(img) it.img=img;
+    if(img) presets.forEach(function(pr){ screens.forEach(function(s){ if(getBgName(pr.id,s.id)===name&&typeof setPColor==='function') setPColor(pr.id,s.id,null,it.img); }); });   /* as _fsSetCover */
+    _mdbPut(name,file);
+    _fsSrcSig=''; _fsRenderSources(true);
+    _isDirty=true; if(typeof _updateDirtyIndicator==='function') _updateDirtyIndicator(); if(typeof scheduleAutoSave==='function') scheduleAutoSave();
+    scheduleRender(); if(fsPresetId) renderFullscreen();
+  });
+}
+function _fsRelinkFile(name,file){ if(_lbcOn()&&_fsRelinkAsk(name,file)) return;   /* 16lm-relink */ _fsAttachBlob(name,file); _mdbPut(name,file); _fsSrcSig=''; _fsRenderSources(true); if(fsPresetId) renderFullscreen(); }
 // ── per-layer playback settings (n=0 = the BG) ──────────────────────────
 function getLayerMedia(pid,sid,n){ const p=presets.find(function(x){ return x.id===pid; }); const rec=(p&&p.layerMedia&&p.layerMedia[sid]&&p.layerMedia[sid][n])||{}; return Object.assign({},_FS_LM_DEF,rec); }
 function setLayerMedia(pid,sid,n,patch){ const p=presets.find(function(x){ return x.id===pid; }); if(!p) return; if(!p.layerMedia) p.layerMedia={}; if(!p.layerMedia[sid]) p.layerMedia[sid]={}; p.layerMedia[sid][n]=Object.assign({},getLayerMedia(pid,sid,n),patch||{}); _isDirty=true; if(typeof _updateDirtyIndicator==='function') _updateDirtyIndicator(); if(typeof scheduleAutoSave==='function') scheduleAutoSave(); }

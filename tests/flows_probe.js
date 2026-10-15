@@ -4022,11 +4022,12 @@
     closeBlendPopup(); await restore();
     return is([seen, px], [['20', true, 'rgb(77, 220, 138)', true], 270], 'popup % / no tick / the box green / caption, then px after 25%');
   });
-  await check('Blend Zones: the % chip reads green tick at 15-25%, amber up-arrow under 15%, red down-arrow over 25%', async () => {
+  // 16lm-chipmark: CHANGED (was 'Blend Zones: the % chip reads green tick at 15-25%, amber up-arrow under 15%, red down-arrow over 25%')
+  await check('Blend Zones: the % chip is green at 15-25%, amber under 15%, red over 25%, the colour alone with no tick or arrow, the advice in its tip (16lm-chipmark, Omar 2026-10-14 "Remove them")', async () => {
     const was = cvAdv('blend', true); const got = [];
-    for (const x of [1620, 1820, 1320]) { await cvLay([0, 0], [x, 0], [4000, 0]); const chip = $$('#canvas-area .overlap-vis .blend-label').pop(); got.push(chip ? (chip.dataset.guide || 'none') + ' ' + chip.textContent.trim() : 'no chip'); }
+    for (const x of [1620, 1820, 1320]) { await cvLay([0, 0], [x, 0], [4000, 0]); const chip = $$('#canvas-area .overlap-vis .blend-label').pop(); got.push(chip ? (chip.dataset.guide || 'none') + ' ' + chip.textContent.trim() + ' | ' + String(chip.title || '').split('.')[0] : 'no chip'); }
     cvAdv('blend', was); await restore();
-    return is(got, ['ok 16%✓', 'low 5%↑', 'high 31%↓'], '300 / 100 / 600 px of 1920');
+    return is(got, ['ok 16% | Inside the recommended 15-25%', 'low 5% | Under 15%: widen the blend', 'high 31% | Over 25%: narrow the blend'], '300 / 100 / 600 px of 1920: guide, text | tip');
   });
   await check('Dead Space: a gap over 500 px carries the "Large gap, check alignment" mark, a 300 px gap does not, and the mark stays out of the printed Look Book', async () => {
     const was = cvAdv('dead', true);
@@ -15413,6 +15414,164 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
     } catch (e) { return 'threw: ' + e.message; }
     finally { closeBlendPopup(); cvAdv('blend', was); await restore(); }
     return is(out, want, 'OFF [same switch + thumb, seen between the ends, moved, state, Undo steps, the line] / ON [same, between, moved, state, Undo steps]');
+  });
+  // 16lm-pxcap PX1: NEW
+  await check('Video Presets 16lm-pxcap PX1 (the full test\'s major 6, Omar 2026-10-14 "build it"): a blend typed bigger than the narrower destination is set to its width less 1 px with a note: the canvas PX box side by side (RIGHT rides along, the combined screen stays, Undo takes it back), top / bottom (its height less 1 px), and the blend options pop-up\'s PX and % (the pop-up closes for the note and opens again with the number), one Undo step each', async () => {
+    const out = {}, want = {}; const was = cvAdv('blend', true);
+    try {
+      const pid = presets[0].id, ids = screens.map(s => s.id), P = () => presets.find(x => x.id === pid);   /* Undo puts in new preset objects: read it fresh */
+      const box = () => $$('#canvas-area .preset-row[data-pid="' + pid + '"] .overlap-vis input[type=number]').find(i => i.dataset.asid === ids[0] && i.dataset.bsid === ids[1]) || null;
+      const type = async (el, v) => { el.value = v; fire(el, 'change'); await wait(350); };
+      const note = () => { const open = dlgOpen(); const t = open ? (($('#dlg-box h3') || {}).textContent || '') + ' | ' + (($('#dlg-box .dlg-body') || {}).textContent || '') : 'no note'; okDialogs(); return t; };
+      const pos = () => ids.map(id => [P().positions[id].x, P().positions[id].y]);
+      const SIDE = 'Blend too big | A blend can be at most 1919 px here: the narrower destination is 1920 px wide. The blend is set to 1919 px.';
+      await cvLay([0, 0], [1620, 0], [3240, 0]);
+      let u0 = vpUndoLen(); const b1 = box(); if (!b1) return 'no PX box on the LEFT / CENTER blend';
+      await type(b1, '5000');
+      out.side = [note(), pos(), vpUndoLen() - u0, ((_bgGroups(P().positions, pid) || []).find(g => g.length > 1) || []).length, !!_cbFind(P(), ids[0])];
+      want.side = [SIDE, [[0, 0], [1, 0], [1621, 0]], 1, 3, true];
+      doUndo(); await wait(350); out.undo = pos(); want.undo = [[0, 0], [1620, 0], [3240, 0]];
+      await cvLay([0, 0], [0, 780], [4000, 0]); u0 = vpUndoLen(); const b2 = box(); if (!b2) return 'no PX box on the top / bottom blend';
+      await type(b2, '5000');
+      out.topBottom = [note(), pos(), vpUndoLen() - u0];
+      want.topBottom = ['Blend too big | A blend can be at most 1079 px here: the shorter destination is 1080 px high. The blend is set to 1079 px.', [[0, 0], [0, 1], [4000, 0]], 1];
+      await cvLay([0, 0], [1620, 0], [4000, 0]); u0 = vpUndoLen();
+      openBlendPopup(pid, ids[0], ids[1]); await wait(350); const px = $('#blend-popup-px'); if (!px) return 'the blend options pop-up did not open';
+      await type(px, '5000'); const gone = !$('#blend-popup');
+      out.popupPx = [gone, note()]; await wait(350); out.popupPx.push(($('#blend-popup-px') || {}).value || 'no pop-up', vpUndoLen() - u0);
+      want.popupPx = [true, SIDE, '1919', 1];
+      const pct = $('#blend-popup-pct'); if (!pct) return 'no % box after the pop-up opened again';
+      await type(pct, '150'); out.popupPct = [!$('#blend-popup'), note()]; await wait(350); out.popupPct.push(($('#blend-popup-px') || {}).value || 'no pop-up');
+      want.popupPct = [true, SIDE, '1919'];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { okDialogs(); closeBlendPopup(); cvAdv('blend', was); await restore(); }
+    return is(out, want, 'side by side [note, positions, Undo steps, group size, combined] / after Undo / top-bottom [note, positions, steps] / pop-up PX [closed for the note, note, PX after, steps] / pop-up % [closed, note, PX after]');
+  });
+  // 16lm-border SO1: NEW
+  await check('I/O Patch 16lm-border SO1 (the full test\'s minor 3, Omar 2026-10-14 "build it"): a PBP B named before its A sits right under it and takes the number after it (CAM 1 renamed PBP B, then CAM 2 renamed PBP A: S3 PBP A, S4 PBP B on the cards, in the order and on Wire Simple\'s router); page 1 pairs them the same; the "Simple changed since page 1 was built" notes read the order before the move (as build 16ll did), so nothing is asked, and a Wire Simple edit that stores the rows in the new order is no change either', async () => {
+    const out = {}, want = {};
+    try {
+      openSystem(); await wait(600); okDialogs(); if (ioAdvanced.view !== 'simple') { _ioSetView('simple'); await wait(400); }
+      const ren = async (from, to) => { const c = ioSimRows('src').find(r => (($('.sys-name-input', r) || {}).value || '') === from); const i = c && $('.sys-name-input', c); if (!i) return false; i.focus(); i.value = to; fire(i, 'input'); i.blur(); await wait(600); okDialogs(); return true; };
+      out.renamed = [await ren('CAM 1', 'PBP B'), await ren('CAM 2', 'PBP A')]; want.renamed = [true, true];
+      out.cards = ioSimRows('src').slice(0, 5).map(r => ((($('.iog-num', r) || {}).textContent || '') + ' ' + (($('.sys-name-input', r) || {}).value || '')).trim());
+      want.cards = ['S1 PPT A', 'S2 PPT B', 'S3 PBP A', 'S4 PBP B', 'S5 LOGO'];
+      out.order = _srcNameOrder().slice(0, 5); want.order = ['PPT A', 'PPT B', 'PBP A', 'PBP B', 'LOGO'];
+      out.notes = [JSON.parse(_ioSimpleFingerprint())[0].slice(0, 5).map(x => x[0]), JSON.parse(_wireSimpleFingerprint())[0].slice(0, 5)];
+      want.notes = [['PPT A', 'PPT B', 'PBP B', 'PBP A', 'LOGO'], ['PPT A', 'PPT B', 'PBP B', 'PBP A', 'LOGO']];
+      _ioSetView('advanced'); await wait(1200); const asked1 = dlgOpen() ? dialogText() : ''; okDialogs();
+      const pg = ioAdvanced.pages[0]; out.page1 = (pg.sources || []).slice(0, 5).map(r => r.name + (r.backupOf ? ' < ' + ((pg.sources.find(x => x.id === r.backupOf) || {}).name || '') : ''));
+      want.page1 = ['PPT A', 'PPT B < PPT A', 'PBP A', 'PBP B < PBP A', 'LOGO'];
+      _ioSetView('simple'); await wait(400); _ioSetView('advanced'); await wait(1000); const asked2 = dlgOpen() ? dialogText() : ''; okDialogs(); _ioSetView('simple'); await wait(300);
+      out.asked = [asked1, asked2]; want.asked = ['', ''];
+      try { closeSystem(); } catch (e) {} await wait(300);
+      await _cMWire('simple'); await wait(400);
+      out.router = $$('#wire-diagram span[data-slb-row^="in:"]').slice(0, 5).map(e => e.textContent.trim()); want.router = ['PPT A', 'PPT B', 'PBP A', 'PBP B', 'LOGO'];
+      const before = _wireSimpleFingerprint(); _slbSetPt('in', 6, 'X9'); await wait(400);
+      out.wireEdit = [JSON.stringify(((_slbM() || {}).rows || {}).in || []).indexOf('"src:PBP A","src:PBP B"') >= 0, _wireSimpleFingerprint() === before];
+      want.wireEdit = [true, true];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { okDialogs(); try { closeWireMode(); } catch (e) {} try { closeSystem(); } catch (e) {} await restore(); }
+    return is(out, want, 'renamed / the cards / the order / the page-1 notes [I/O, Wire] / page 1 / asked [first look, again] / the router / a Simple edit [rows stored in the new order, the Wire note unchanged]');
+  });
+  // 16lm-slbtab WT1: NEW
+  await check('Wire 16lm-slbtab WT1 (the full test\'s minor 8, Omar 2026-10-14 "build it"): Tab / Shift+Tab in a router ID cell of Wire Simple goes to the next / previous ID cell of the same column, the typed ID kept (one Undo step when it changed, none when not) and the cell\'s text selected; off either end of the column Tab is left to the browser', async () => {
+    const out = {}, want = {};
+    try {
+      await _lbOpen();
+      const cell = (s, r) => $$('#wire-diagram input.slb-pt').find(e => e.dataset.slbSide === s && e.dataset.slbRow === String(r));
+      const tab = (el, shift) => { const ev = new KeyboardEvent('keydown', { key: 'Tab', code: 'Tab', shiftKey: !!shift, bubbles: true, cancelable: true }); el.dispatchEvent(ev); return ev.defaultPrevented; };
+      const at = () => { const a = document.activeElement; return (a && a.classList && a.classList.contains('slb-pt')) ? [a.dataset.slbSide, +a.dataset.slbRow, a.value, a.selectionStart === 0 && a.selectionEnd === a.value.length] : (a ? a.tagName : null); };
+      const ids = () => JSON.stringify(((wireSettings.simple || {}).pt || {}).in || null);
+      const u0 = _undoStack.length;
+      const typed = (el, t) => { el.focus(); el.select(); document.execCommand('insertText', false, t); };   /* typed as a user does: the box commits on its way out */
+      let c = cell('in', 0); if (!c) return 'no ID cell'; typed(c, 'R1'); out.down = [tab(c, false)]; await wait(300); out.down.push(at(), ids(), _undoStack.length - u0);
+      want.down = [true, ['in', 1, '', true], '{"0":"R1"}', 1];
+      c = document.activeElement; typed(c, 'R2'); out.up = [tab(c, true)]; await wait(300); out.up.push(at(), ids(), _undoStack.length - u0);
+      want.up = [true, ['in', 0, 'R1', true], '{"0":"R1","1":"R2"}', 2];
+      c = document.activeElement; out.noChange = [tab(c, false)]; await wait(300); out.noChange.push(at(), _undoStack.length - u0);
+      want.noChange = [true, ['in', 1, 'R2', true], 2];
+      c = cell('out', 0); c.focus(); out.outputs = [tab(c, false)]; await wait(300); out.outputs.push(at()); want.outputs = [true, ['out', 1, '', true]];
+      const last = $$('#wire-diagram input.slb-pt').filter(e => e.dataset.slbSide === 'in').pop(); last.focus(); out.end = tab(last, false); want.end = false;
+      c = cell('in', 0); c.focus(); out.top = tab(c, true); want.top = false;
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { closeWireMode(); } catch (e) {} await restore(); }
+    return is(out, want, 'Tab down [moved, the cell now, the IDs, Undo steps] / Shift+Tab up / Tab with nothing typed / the outputs column / Tab at the last row / Shift+Tab at the first row');
+  });
+  // 16lm-relink RL1: NEW
+  await check('Video Presets 16lm-relink RL1 (the full test\'s minor 11, Omar 2026-10-14 "build it"): RELINK with the same file relinks as before (no question, nothing changes); another file asks first (its name and size and the first one\'s), Cancel changes nothing, Use this file takes its details (file name, size, resolution, picture, also as the cover of the BG it is on) in one Undo step; a picture for a video is refused with a note', async () => {
+    const out = {}, want = {};
+    try {
+      const png = (w, h, col) => new Promise(res => { const c = document.createElement('canvas'); c.width = w; c.height = h; const g = c.getContext('2d'); g.fillStyle = col; g.fillRect(0, 0, w, h); c.toBlob(b => res(b), 'image/png'); });
+      const f1 = new File([await png(64, 48, '#c03030')], 'STILL_v1.png', { type: 'image/png' }), f2 = new File([await png(96, 54, '#3050c0')], 'STILL_v2.png', { type: 'image/png' });
+      await _fsImportFiles([f1]); await wait(600);
+      const nm = (customLibrary.find(c => c && c.kind === 'image' && c.media && c.media.fileName === 'STILL_v1.png') || {}).l; if (!nm) return 'the picture was not imported';
+      const p = presets[0], sid = screens[0].id; _fsAssignBg(p.id, sid, nm); await wait(300);
+      const gone = async () => { try { URL.revokeObjectURL(_fsMediaURL[nm]); } catch (e) {} delete _fsMediaURL[nm]; delete _fsMediaBlob[nm]; await _mdbDel(nm); };
+      const it = () => _fsMediaItem(nm), det = () => [it().media.fileName, it().media.size, it().media.w, it().media.h];
+      const q = () => dlgOpen() ? (($('#dlg-box h3') || {}).textContent || '') + ' | ' + (($('#dlg-box .dlg-body') || {}).textContent || '') : 'no question';
+      await gone(); let u0 = vpUndoLen(); const d0 = JSON.stringify(det()), i0 = it().img;
+      _fsRelinkFile(nm, f1); await wait(300);
+      out.same = [q(), !!_fsMediaUrl(nm), JSON.stringify(det()) === d0, vpUndoLen() - u0]; want.same = ['no question', true, true, 0];
+      await gone(); u0 = vpUndoLen();
+      _fsRelinkFile(nm, f2); await wait(300);
+      out.ask = q().replace(/\d+ bytes/g, 'N bytes');
+      want.ask = 'A different file | “' + nm + '” was made from STILL_v1.png (N bytes). You picked STILL_v2.png (N bytes). Use this file? Its length, size and picture replace the old ones.';
+      const cancel = $('#dlg-cancel'); if (cancel) cancel.click(); await wait(300);
+      out.cancel = [dlgOpen(), !!_fsMediaUrl(nm), JSON.stringify(det()) === d0, it().img === i0, vpUndoLen() - u0]; want.cancel = [false, false, true, true, 0];
+      _fsRelinkFile(nm, f2); await wait(300); const use = $('#dlg-confirm'); out.useLabel = use ? use.textContent : 'no button'; want.useLabel = 'Use this file'; if (use) use.click(); await wait(900);
+      out.take = [!!_fsMediaUrl(nm), det(), it().img !== i0, (p.bgs || {})[sid] === it().img, vpUndoLen() - u0, _kySaveLit()]; want.take = [true, ['STILL_v2.png', f2.size, 96, 54], true, true, 1, true];
+      customLibrary.push(_lbfFileItem({ l: 'CLIP 16LM', c: '#888888', kind: 'video', img: '', media: { type: 'video/mp4', size: 12345678, fileName: 'clip.mp4', w: 1920, h: 1080, dur: 12, hasAudio: false, coverTime: 1, peaks: null } }));
+      u0 = vpUndoLen(); _fsRelinkFile('CLIP 16LM', f1); await wait(300);
+      out.kind = [q(), !!_fsMediaUrl('CLIP 16LM'), vpUndoLen() - u0]; want.kind = ['Not a video | “CLIP 16LM” is a video. Pick a video file to relink it.', false, 0];
+      okDialogs();
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { okDialogs(); await restore(); }
+    return is(out, want, 'the same file [question, linked, details, Undo steps] / another file: the question / Cancel [open, linked, details, picture, steps] / the button / Use this file [linked, details, new picture, the BG cover, steps, Save] / a picture for a video [note, linked, steps]');
+  });
+  // 16lm-cvtitle TS1: NEW
+  await check('Video Presets 16lm-cvtitle TS1 (the full test\'s minor 13, Omar 2026-10-14 "build it"): the Advanced title line reads the canvas size the top bar shows: 3 screens · 5760×1080px for the strip, 3 screens · 5160×1080px for a 300 px blend on every preset (it read the sum of the widths, 5760, before)', async () => {
+    const out = {}; const was = cvAdv('blend', true);
+    try {
+      openFullscreen(presets[0].id); await wait(700); okDialogs(); out.strip = $('#fs-subtitle').textContent; closeFullscreen(); await wait(300); okDialogs();
+      presets.forEach(p => { setPosition(p, screens[0].id, 0, 0); setPosition(p, screens[1].id, 1620, 0); setPosition(p, screens[2].id, 3240, 0); }); render(); await wait(400);
+      openFullscreen(presets[0].id); await wait(700); okDialogs();
+      out.blend = [$('#fs-subtitle').textContent, $('#cv-w').value + '×' + $('#cv-h').value, totalW()];
+      closeFullscreen(); await wait(300); okDialogs();
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { cvAdv('blend', was); await restore(); }
+    return is(out, { strip: '3 screens · 5760×1080px', blend: ['3 screens · 5160×1080px', '5160×1080', 5760] }, 'the strip / the blend [title, canvas, sum of widths]');
+  });
+  // 16lm-tablew TW1: NEW
+  await check('Video Presets 16lm-tablew TW1 (the full test\'s minor 20, Omar 2026-10-14 "build it"): in a narrow table panel the Name and Notes boxes keep 110 / 150 px and the table scrolls sideways (they were squeezed to a few letters); at full width they are at least that', async () => {
+    const out = {}; const tp = $('#table-panel'), sc = $('#table-scroll'); const wasC = tp.classList.contains('collapsed'); if (wasC) tp.classList.remove('collapsed');
+    const w = n => { const i = $('#tbody input[name="' + n + '"]'); return i ? Math.round(i.getBoundingClientRect().width) : -1; };
+    try {
+      await wait(150); out.wide = [w('t-s-name') >= 110, w('t-d-notes') >= 150];
+      tp.style.width = '700px'; await wait(250);
+      out.narrow = [w('t-s-name'), w('t-d-notes'), sc.scrollWidth > sc.clientWidth];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { tp.style.width = ''; if (wasC) tp.classList.add('collapsed'); await wait(100); }
+    return is(out, { wide: [true, true], narrow: [110, 150, true] }, 'full width [name >= 110, notes >= 150] / at 700 px [name, notes, scrolls]');
+  });
+  // 16lm-whcheck WH1: NEW
+  await check('Video Presets 16lm-whcheck WH1 (the full test\'s minor 22, Omar 2026-10-14 "build it"): Destination Properties says the range for a Width / Height outside it (8000, then 50 x 5000), puts the size back in the box (the Aspect line too), keeps the window open with the cursor in the box and applies nothing (no Undo step); a good width still applies in one step', async () => {
+    const out = {}, want = {};
+    try {
+      const p = presets[0], s = screens[2]; openScreenPanel(fakeEv, p.id, s.id); await wait(400); const pop = $('#screen-panel'); if (!pop) return 'Destination Properties did not open';
+      const note = () => { const open = dlgOpen(); const t = open ? (($('#dlg-box h3') || {}).textContent || '') + ' | ' + (($('#dlg-box .dlg-body') || {}).textContent || '') : 'no note'; okDialogs(); return t; };
+      const u0 = vpUndoLen();
+      $('#sp-w', pop).value = '8000'; fire($('#sp-w', pop), 'input'); $('#sp-apply', pop).click(); await wait(300);
+      out.w = [note(), !!$('#screen-panel'), $('#sp-w', pop).value, ($('#sp-aspect', pop) || {}).textContent, s.w, vpUndoLen() - u0, document.activeElement === $('#sp-w', pop)];
+      want.w = ['Size out of range | Width can be 67 to 7680 px. It stays 1920 px.', true, '1920', 'Aspect 16:9', 1920, 0, true];
+      $('#sp-w', pop).value = '50'; $('#sp-h', pop).value = '5000'; $('#sp-apply', pop).click(); await wait(300);
+      out.wh = [note(), !!$('#screen-panel'), $('#sp-w', pop).value + 'x' + $('#sp-h', pop).value, [s.w, s.h], vpUndoLen() - u0];
+      want.wh = ['Size out of range | Width can be 67 to 7680 px and height 67 to 4320 px. They stay 1920 × 1080 px.', true, '1920x1080', [1920, 1080], 0];
+      $('#sp-w', pop).value = '2000'; $('#sp-apply', pop).click(); await wait(400); okDialogs();
+      out.ok = [!!$('#screen-panel'), s.w, vpUndoLen() - u0]; want.ok = [false, 2000, 1];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { okDialogs(); try { closeScreenPanel(); } catch (e) {} await restore(); }
+    return is(out, want, '8000 [note, open, the box, Aspect, width, Undo steps, cursor in the box] / 50 x 5000 [note, open, the boxes, size, steps] / 2000 [open, width, steps]');
   });
   try { _fsPauseAll(); } catch (e) {} $$('video').forEach(v => { try { v.muted = true; v.pause(); } catch (e) {} });
   return { checks };

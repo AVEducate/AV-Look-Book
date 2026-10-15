@@ -1388,6 +1388,49 @@ anchor on the function name and replace the first occurrence after it, never all
   Mac's Open window (.avlb only, the old folder if it still exists, else Documents › AV Look Book); a pick takes the old card's
   place (name and thumbnail kept, a duplicate card folded in) and opens the show; nothing picked changes nothing. The veil ignores
   the 2nd click of the double-click that opened the window (`e.detail < 2`). Reaches users only with a new installer.
+- **16lm** (2026-10-14, build 16lm on the v0.8.7 page 16ll; search `16lm-`). Omar: "Yes, build the next round": the canvas % chip's
+  marks and seven items of the 2026-10-11 full real-click test (`backups/rounds/fulltest_2026-10-11/REPORT.md`: major 6, minors 3,
+  8, 11, 13, 20, 22). Every change is desktop only (`_lbcOn` / `body:not(.is-mobile)`): the phone is frozen and keeps its ways.
+  - **16lm-chipmark**: the canvas blend % chip is the colour alone (green 15-25 %, amber under, red over), no tick / up / down arrow
+    (Omar 2026-10-13 "the check mark is not needed", 2026-10-14 "Remove them"); the advice stays in its tip (`_blendGuide().tip`).
+    The old chip check is renamed (its golden entry renamed where it stands).
+  - **16lm-pxcap** (major 6): `setBlendPx` (the canvas PX box, the pop-up's PX, its % through `setBlendPctFromPopup`) caps the typed
+    blend at the narrower destination's width less 1 px (its height for a top / bottom blend, which `_setBlendPxY` already held there
+    without a word) in `_blendPxCap`, with a "Blend too big" note. Before, 5000 px on a 1920 pair put RIGHT to the left of LEFT and
+    dropped the combined screen, silently. The blend options pop-up sits above the app's dialog (z 9999 / 9600): it closes for the note
+    and opens again after it (onConfirm / onCancel). At the most (1919 on a 1920 pair) a chained third destination also overlaps the
+    first one (geometry; the group and its combined screen stay). Check PX1.
+  - **16lm-border** (minor 3): `_srcNameOrderRaw` ends with `_srcBUnderA`: every B paired on Advanced page 1 (`backupOf`, what
+    "Backup of" prints, `_ioBkPrimaryNameFor`) and a PBP B / GFX B page 1 does not have yet (by name, the 16jh pair) sits right under
+    its A; the S numbers follow (`_lbnSrcMap` reads the same order). The three "Simple changed since page 1 was built" readers
+    (`_ioSimpleFingerprint`, `_wireSimpleFingerprint`, `_bdSrcParts`) run under `_srcBHold` (the order before the move), so no show
+    is asked about a rebuild because a B moved up; `_slbFingerprintPart` calls rows that are the default in EITHER order no plan (rows
+    stored by a Wire Simple edit after the move). Seen on ORGILL (S9 PBP B / S10 PBP A became PBP A / PBP B, its page-1 note still
+    equal) and on a show saved by 16ll with B above A and both page-1 notes made (no question in I/O or Wire Advanced). Touches
+    major 4 (a rename renumbers the sources after it), still open. Check SO1.
+  - **16lm-slbtab** (minor 8): `_slbPtTabKey` (capture keydown): Tab / Shift+Tab in a Wire Simple router ID cell (`input.slb-pt`)
+    commits it (`el.blur()` -> `_slbSetPt`, its redraw queued) and focuses the next / previous cell of the same column, again after
+    the queued redraw; off either end the browser's Tab, as `_wireAdvPtTabKey` (16kk). Check WT1 (it types with
+    `execCommand('insertText')`: a value set by script fires no change on blur).
+  - **16lm-relink** (minor 11): `_fsRelinkFile` asks `_fsRelinkAsk` first: the same file (name and size as `media` has them)
+    relinks as before; a picture for a video (or a video for a picture) is refused ("Not a video"); another file asks "A different
+    file" (both names and sizes) and Use this file runs `_fsRelinkTake`: the details read as `_fsImportOne` reads them, one Undo step
+    when they land, `media` and `img` replaced, the cover of every BG it is on (as `_fsSetCover`), `_mdbPut`, Save lit. Known limit:
+    Undo brings the old details back but the file picked stays linked (files live outside the show). Check RL1.
+  - **16lm-cvtitle** (minor 13): the Advanced title line reads `#cv-w` x `#cv-h` (the top bar's read-out, `syncCanvasSize`: the
+    bounding box of every preset) instead of `totalW()` (the sum of the widths): Test_Blend 3840 -> 3240 x 1080. `_fsCvShown`. TS1.
+  - **16lm-tablew** (minor 20): CSS `body:not(.is-mobile) #tbody .home-field input[name="t-s-name"]{min-width:110px}` (and
+    `t-d-notes` 150 px): the Destination Combinations table keeps Name and Notes readable and scrolls sideways (ORGILL at 1280 px:
+    25 / 51 px -> 110 / 150). No word of the CSS trap list. Check TW1.
+  - **16lm-whcheck** (minor 22): `_spSizeOk` at the top of Destination Properties' Apply: a Width / Height outside 67-7680 /
+    67-4320 (`updateScreenSize`'s limits) says "Size out of range" with the range, puts the size back (and the Aspect line,
+    `_spAspectSync`), keeps the window open with the cursor in the box, applies nothing. The old document click closer (its
+    `#screen-panel` line) now leaves clicks inside `#dlg-overlay` alone, as `_lbClickIsInsidePopup` already did: before, a click on
+    the note's OK closed the window. A click anywhere else still closes it. Check WH1.
+  - Not changed: minor 28 (Wire Simple adds the BG name MILLUMIN BG as a 12th source, Save dark): BG names are sources by design
+    (`_wireBuildAllSourceNames`), the colour fill is "looking is not a change"; put to Omar before any change.
+  - Tests: the chip check renamed, PX1, SO1, WT1, RL1, TS1, TW1, WH1 new (flows 775 -> 782); each new check failed on the 16ll page
+    for its own reason and passes on 16lm. Snapshots unchanged.
 - Declined by the owner, do not resurface: mask shapes, anchor points, hardware profiles, canvas/WebGL renderer,
   interpolation filter toggles, upscale-factor notes, per-layer "sharp pixels", any licence mention.
 

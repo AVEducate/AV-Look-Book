@@ -235,7 +235,8 @@ its line at Help > Accessibility 90 % / 115 % (`_wtlNmZoomOK`, a hidden span wit
 Details: HANDBOOK section 5
 (`16ky-r3`, `16kz-answers`, `16kz-refresh`, `16kz-fix`, `16la-wire-mv`, `16la-ip`, `16la-colour-mv`, `16la-fix`, `16lb-simple`,
 `16lc-fixes`, `16ld-port`, `16ld-tools`, `16ld-fix`, `16ld-fix2`, `16lc-picsize`, `16lc-fix`, `16lc-names`, `16lc-midword`,
-`16lc-midword-fix`, `16lc-onlyword`, `16lc-onlyword-fix`, `16lc-onlyword-fix2`, `16lc-vpcards`, `16lc-vpvideo`, `16lc-vpaux`, `16lc-vpfinish`, `16lc-vpcards-fix`, `16lc-vpcards-fix2`, `16lc-vpcards-fix3`, `16lc-vpcards-fix4`, `16lg-blend`, `16lg-blend-fix`, `16lg-blend-fix2`, `16lh-fit`, `16lh-mods`, `16lh-bgtxt`, `16lh-fix`, `16li-bgsrc`, `16li-blendui`, `16li-print`, `16li-fix`, `16lj-followup`, `16ll-blendpop`).
+`16lc-midword-fix`, `16lc-onlyword`, `16lc-onlyword-fix`, `16lc-onlyword-fix2`, `16lc-vpcards`, `16lc-vpvideo`, `16lc-vpaux`, `16lc-vpfinish`, `16lc-vpcards-fix`, `16lc-vpcards-fix2`, `16lc-vpcards-fix3`, `16lc-vpcards-fix4`, `16lg-blend`, `16lg-blend-fix`, `16lg-blend-fix2`, `16lh-fit`, `16lh-mods`, `16lh-bgtxt`, `16lh-fix`, `16li-bgsrc`, `16li-blendui`, `16li-print`, `16li-fix`, `16lj-followup`, `16ll-blendpop`, `16lm-chipmark`, `16lm-pxcap`, `16lm-border`, `16lm-slbtab`,
+`16lm-relink`, `16lm-cvtitle`, `16lm-tablew`, `16lm-whcheck`).
 
 **One card (16lc-vpcards, 2026-10-06)** — the I/O Patch > Simple card (`_iogCardHTML` + `_iogSrcObj` / `_iogOutObj`) is also the card of
 Wire's left panel (desktop; the phone keeps Wire's own) and of the Video Presets > Advanced left panel (Wire > Simple's sections:
@@ -335,6 +336,16 @@ Never add a time-based "ignore clicks for N ms": the phone gate taps the dialog'
   in place, `_bzpHold` / `_bzpCbSync`, 16ll-blendpop-fix, so the thumb slides). A rule for it must hold no
   word of the Look Book's collector list (`_pdfExtractCanvasCss`: blend, overlap, screen-lbl ...): the old `.blend-popup*` rules stay,
   unused, so the printed Look Book's copied CSS does not change. HANDBOOK › 16ll-blendpop.
+  16lm (2026-10-14, the full test's picks; all desktop only): the canvas % chip is the colour alone, the advice in its tip
+  (16lm-chipmark); a blend typed in PX or % is capped at the narrower destination less 1 px with a note (`_blendPxCap`, 16lm-pxcap:
+  the blend pop-up sits above the app's dialog, so it closes for the note and opens again); a paired B sits right under its A in the
+  source order and the S numbers (`_srcBUnderA`, 16lm-border: page 1's pairs, a PBP B / GFX B by name), while the three "Simple
+  changed since page 1 was built" readers run under `_srcBHold` (the order without the move: never compare the shown order with a
+  stored page-1 note outside that hold) and `_slbFingerprintPart` calls rows that are the default in either order no plan; Wire Simple
+  ID cells Tab down / up their column (`_slbPtTabKey`, as `_wireAdvPtTabKey`); RELINK asks before it takes another file and then reads
+  its details (`_fsRelinkAsk` / `_fsRelinkTake`); the Advanced title reads `#cv-w` x `#cv-h` (`_fsCvShown`); the table's Name / Notes
+  boxes have min widths (CSS, `body:not(.is-mobile) #tbody`); Destination Properties says the W / H range (`_spSizeOk`) and the old
+  document click closer leaves clicks inside `#dlg-overlay` alone, as `_lbClickIsInsidePopup` does. HANDBOOK › 16lm.
 - Exports' readable print (16li-print: `_lbpInk`, `_wireLogoWordSvg`, `_wireTbFitText`): a value the Look Book prints in a colour made
   for the white page gets an inline colour from `_lbpInk(opts)` in the Dark book (never a stylesheet rule); words drawn into the Wire
   sheet's boxes are measured with `_wireTextWidth` and fitted (smaller, then "…"), never left to run past a line. HANDBOOK › 16li-print.
