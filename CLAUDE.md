@@ -236,7 +236,8 @@ Details: HANDBOOK section 5
 (`16ky-r3`, `16kz-answers`, `16kz-refresh`, `16kz-fix`, `16la-wire-mv`, `16la-ip`, `16la-colour-mv`, `16la-fix`, `16lb-simple`,
 `16lc-fixes`, `16ld-port`, `16ld-tools`, `16ld-fix`, `16ld-fix2`, `16lc-picsize`, `16lc-fix`, `16lc-names`, `16lc-midword`,
 `16lc-midword-fix`, `16lc-onlyword`, `16lc-onlyword-fix`, `16lc-onlyword-fix2`, `16lc-vpcards`, `16lc-vpvideo`, `16lc-vpaux`, `16lc-vpfinish`, `16lc-vpcards-fix`, `16lc-vpcards-fix2`, `16lc-vpcards-fix3`, `16lc-vpcards-fix4`, `16lg-blend`, `16lg-blend-fix`, `16lg-blend-fix2`, `16lh-fit`, `16lh-mods`, `16lh-bgtxt`, `16lh-fix`, `16li-bgsrc`, `16li-blendui`, `16li-print`, `16li-fix`, `16lj-followup`, `16ll-blendpop`, `16lm-chipmark`, `16lm-pxcap`, `16lm-border`, `16lm-slbtab`,
-`16lm-relink`, `16lm-cvtitle`, `16lm-tablew`, `16lm-whcheck`).
+`16lm-relink`, `16lm-cvtitle`, `16lm-tablew`, `16lm-whcheck`, `16ln-notes`, `16ln-modalkeys`, `16ln-bgown`, `16ln-a11yfit`,
+`16ln-blur`, `16ln-presetbin`, `16ln-anysize`; 16lm-border came back out in 16ln).
 
 **One card (16lc-vpcards, 2026-10-06)** — the I/O Patch > Simple card (`_iogCardHTML` + `_iogSrcObj` / `_iogOutObj`) is also the card of
 Wire's left panel (desktop; the phone keeps Wire's own) and of the Video Presets > Advanced left panel (Wire > Simple's sections:
@@ -338,14 +339,23 @@ Never add a time-based "ignore clicks for N ms": the phone gate taps the dialog'
   unused, so the printed Look Book's copied CSS does not change. HANDBOOK › 16ll-blendpop.
   16lm (2026-10-14, the full test's picks; all desktop only): the canvas % chip is the colour alone, the advice in its tip
   (16lm-chipmark); a blend typed in PX or % is capped at the narrower destination less 1 px with a note (`_blendPxCap`, 16lm-pxcap:
-  the blend pop-up sits above the app's dialog, so it closes for the note and opens again); a paired B sits right under its A in the
-  source order and the S numbers (`_srcBUnderA`, 16lm-border: page 1's pairs, a PBP B / GFX B by name), while the three "Simple
-  changed since page 1 was built" readers run under `_srcBHold` (the order without the move: never compare the shown order with a
-  stored page-1 note outside that hold) and `_slbFingerprintPart` calls rows that are the default in either order no plan; Wire Simple
+  the blend pop-up sits above the app's dialog, so it closes for the note and opens again); 16lm-border (a paired B moved under its
+  A) came back out in 16ln (Omar's sources rules: pairing never moves numbers; the five functions read as in build 16ll); Wire Simple
   ID cells Tab down / up their column (`_slbPtTabKey`, as `_wireAdvPtTabKey`); RELINK asks before it takes another file and then reads
   its details (`_fsRelinkAsk` / `_fsRelinkTake`); the Advanced title reads `#cv-w` x `#cv-h` (`_fsCvShown`); the table's Name / Notes
   boxes have min widths (CSS, `body:not(.is-mobile) #tbody`); Destination Properties says the W / H range (`_spSizeOk`) and the old
   document click closer leaves clicks inside `#dlg-overlay` alone, as `_lbClickIsInsidePopup` does. HANDBOOK › 16lm.
+  16ln (2026-10-17, the full test's majors 1-5 and its 6-7; desktop only except 16ln-notes): an opened show's destination notes are never filled
+  from a preset note (the old Phase 1C conversion in `_applyProjectText` runs only for a file older than version 3); the older windows
+  (`.sys-modal-overlay`) are modal like the one dialog: `_dlgKeyGuard` takes the top one (`_sysModalTop`) as its box, Enter / Space
+  from the page behind go to the window (`_sysModalFocus`), a MutationObserver puts the focus in a new one, `_sysConfirmModal` refuses
+  a second question, and each window still answers Escape itself; a later preset follows P01's SOURCE box only when its BG name is
+  P01's (`_bgsRec`, 16ln-bgown); UI Size fits the window (`_a11yFit`: `--lb-z` + `.lb-zfit`, the body `calc(100vh / var(--lb-z))`);
+  a press on the Wire drawing or either canvas ends the box being typed in once the press is let go (`_lbBlurDown` / `_lbBlurUp`; a
+  key in the moment before goes to the page, `_lbBlurKey`, the first key listener on window), and the layer panel's number boxes
+  leave on Enter; the second click of a double-click on a preset's trash does nothing (`event.detail`, 16ln-presetbin); a
+  destination's height goes to 7680 px wherever it is typed or stepped, as the corner drag did (`_lbMaxH`, 16ln-anysize; the phone
+  keeps 4320). HANDBOOK › 16ln.
 - Exports' readable print (16li-print: `_lbpInk`, `_wireLogoWordSvg`, `_wireTbFitText`): a value the Look Book prints in a colour made
   for the white page gets an inline colour from `_lbpInk(opts)` in the Dark book (never a stylesheet rule); words drawn into the Wire
   sheet's boxes are measured with `_wireTextWidth` and fitted (smaller, then "…"), never left to run past a line. HANDBOOK › 16li-print.

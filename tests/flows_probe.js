@@ -1345,33 +1345,41 @@
   const _efClick = async el => { const r = el.getBoundingClientRect(); const x = r.left + r.width / 2, y = r.top + r.height / 2; _efPtr(el, 'pointerdown', x, y); _efMouse(el, 'mousedown', x, y); _efMouse(el, 'mouseup', x, y); _efPtr(el, 'pointerup', x, y); _efMouse(el, 'click', x, y); await wait(300); };
   const _efLfx = () => { const o = JSON.stringify(_lfxOpen); Object.keys(_lfxOpen).forEach(k => { _lfxOpen[k] = true; }); return () => { Object.keys(_lfxOpen).forEach(k => { delete _lfxOpen[k]; }); Object.assign(_lfxOpen, JSON.parse(o)); }; };
   const _efHome = async () => { try { closeAdvancedMenu(); } catch (e) {} if (fsPresetId) closeFullscreen(); selLayer = null; doSelect(null, null); hideMoveSymbol(); try { _lsGhostEnd(); } catch (e) {} await wait(250); };
+  // ADAPTED in 16ln (16ln-blur, Omar 2026-10-17: "clicking the pencil or the words should allow me to edit it click outside of that should move on to the
+  // next thing"): a press on the canvas now ends the box once it is let go, the box's own commit keeping its typing, and the Escape after it is the
+  // page's (it lets go of the layer). To type after the drag the cursor goes back into the box. The resize survives and Undo undoes it, as before.
   await check('Escape in a box only takes back the TYPING: a corner-handle resize made while the cursor sat in the Width box survives (nothing typed / typed after the drag / typed in another box before the drag), and Undo still undoes that resize', async () => {
     const f = firstLayer(); const back = _efLfx(); const res = {};
     const geo = () => JSON.stringify(((presets.find(p => p.id === f.pid).layerSizes || {})[f.sid] || {})[1] || null);
     const wBox = () => $$('#fs-props .lfx-acc[data-sec="size"] input[type=number]').find(i => i.dataset.dim === 'w');
     const hnd = () => $('#fs-canvas .layer-chip.lsel .lrh-br') || $('#fs-canvas .layer-chip[data-lid="1"][data-sid="' + f.sid + '"] .lrh-br');
     const scene = async () => { await restore(); openFullscreen(f.pid); await wait(700); _fsSelectLayer(f.pid, f.sid, 1); await wait(400); updateLayerSelDOM(f.pid, f.sid, 1, true); await wait(100); return !!wBox() && !!hnd(); };
-    // 1. nothing typed
+    const letGo = () => !selLayer && !!fsPresetId;
+    // 1. nothing typed: the drag ends the box, then Escape lets go of the layer
     if (!(await scene())) { back(); await _efHome(); await restore(); return 'no Width box or no corner handle on the picked layer'; }
-    let g0 = geo(), u0 = _undoStack.length; wBox().focus(); const inBox = document.activeElement === wBox(); await _efDrag(hnd(), -60, -30); let g1 = geo(); _efEsc(document.activeElement); await wait(400); let g2 = geo();
-    const left = document.activeElement === document.body, picked = !!selLayer && !!fsPresetId; doUndo(); await wait(300);
-    res.nothingTyped = [inBox, g1 !== g0, g2 === g1, left, picked, geo() === g0];
-    // 2. the drag first, then typing in the same box
+    let g0 = geo(); wBox().focus(); const inBox = document.activeElement === wBox(); await _efDrag(hnd(), -60, -30); let g1 = geo(); const left = document.activeElement === document.body;
+    _efEsc(document.activeElement); await wait(400); let g2 = geo(); const gone = letGo(); doUndo(); await wait(300);
+    res.nothingTyped = [inBox, g1 !== g0, left, g2 === g1, gone, geo() === g0];
+    // 2. the drag, then the cursor back in the same box and typing: Escape takes the typing back, to the size after the drag
     if (!(await scene())) { back(); await _efHome(); await restore(); return 'scene 2 did not open'; }
-    g0 = geo(); let b = wBox(); b.focus(); await _efDrag(hnd(), -60, -30); g1 = geo(); _efType(b, '640'); await wait(200); const gTyped = geo(); _efEsc(b); await wait(400);
-    res.typedAfterTheDrag = [g1 !== g0, gTyped !== g1, geo() === g1];
-    // 3. typing in the Opacity box, then the drag: the opacity goes back, the resize stays
+    g0 = geo(); let b = wBox(); b.focus(); await _efDrag(hnd(), -60, -30); g1 = geo(); const left2 = document.activeElement === document.body;
+    b = wBox(); b.focus(); _efType(b, '640'); await wait(200); const gTyped = geo(); _efEsc(b); await wait(400);
+    res.typedAfterTheDrag = [g1 !== g0, left2, gTyped !== g1, geo() === g1];
+    // 3. typing in the Opacity box, then the drag: the drag ends the box with the typed opacity kept and the resize stays; Escape then lets go of the layer
     if (!(await scene())) { back(); await _efHome(); await restore(); return 'scene 3 did not open'; }
-    g0 = geo(); const snap0 = _snapshot(); b = $('#fs-props input.lfx-op256[type=number]'); if (!b) { back(); await _efHome(); await restore(); return 'no Opacity box'; }
-    b.focus(); _efType(b, '7'); await wait(200); const opTyped = getLayerFx(f.pid, f.sid, 1).op; await _efDrag(hnd(), -60, -30); g1 = geo(); _efEsc(b); await wait(400);
-    const norm = t => { const o = JSON.parse(t); const q = o.presets.find(x => x.id === f.pid); if (q.layerSizes) { delete q.layerSizes[f.sid]; if (!Object.keys(q.layerSizes).length) delete q.layerSizes; } return JSON.stringify(o); };
-    const only = norm(snap0) === norm(_snapshot());
-    res.typedBeforeTheDrag = [opTyped, g1 !== g0, getLayerFx(f.pid, f.sid, 1).op, geo() === g1, only];
+    g0 = geo(); b = $('#fs-props input.lfx-op256[type=number]'); if (!b) { back(); await _efHome(); await restore(); return 'no Opacity box'; }
+    b.focus(); b.select(); document.execCommand('insertText', false, '7'); await wait(200); const opTyped = getLayerFx(f.pid, f.sid, 1).op; await _efDrag(hnd(), -60, -30); g1 = geo(); const left3 = document.activeElement === document.body;
+    _efEsc(document.activeElement); await wait(400);
+    res.typedBeforeTheDrag = [opTyped, g1 !== g0, left3, getLayerFx(f.pid, f.sid, 1).op, geo() === g1, letGo()];
     back(); await _efHome(); await restore();
-    return is(res, { nothingTyped: [true, true, true, true, true, true], typedAfterTheDrag: [true, true, true], typedBeforeTheDrag: [7, true, 256, true, true] },
-      'nothing typed [cursor in the box, the drag resized, resize kept after Escape, cursor left, layer + page still there, Undo goes back to before the drag] / typed after the drag [drag resized, typing resized, Escape = the size after the drag] / typed before the drag [opacity typed, drag resized, opacity after Escape, resize kept, nothing else differs from the start]');
+    return is(res, { nothingTyped: [true, true, true, true, true, true], typedAfterTheDrag: [true, true, true, true], typedBeforeTheDrag: [7, true, true, 7, true, true] },
+      'ADAPTED 16ln-blur: nothing typed [cursor in the box, the drag resized, the cursor left the box when the drag was let go, resize kept after Escape, Escape let go of the layer (Advanced stays), Undo goes back to before the drag] / typed after the drag, the cursor back in the box [drag resized, cursor left on the release, typing resized, Escape = the size after the drag] / typed before the drag [opacity typed, drag resized, cursor left on the release, the typed opacity after Escape, resize kept, Escape let go of the layer]');
   });
-  await check('Escape in a box only takes back the TYPING, other pages: the Wire - output button pressed under a typed Project box keeps its change (the old project text is back), and a destination corner drag under the Show name box keeps its size', async () => {
+  // ADAPTED in 16ln (16ln-blur, Omar 2026-10-17: "click outside of that should move on to the next thing"): the - press on the Wire drawing now ends the
+  // Project box with its typed text kept (before: the cursor stayed and Escape put the old text back); the Show name box ends on the corner drag the
+  // same way. The Escape after it is the page's: nothing is picked after the - press, so Wire goes back to Video Presets (the 16ks rule iii,
+  // an idle Wire page); Video Presets lets go of the destination.
+  await check('Escape in a box only takes back the TYPING, other pages: the Wire - output button pressed under a typed Project box keeps its change (16ln-blur: the press ends the box, the typed project text kept), and a destination corner drag under the Show name box keeps its size', async () => {
     const out = {}; await restore();
     // Wire Advanced
     const view0 = wireSettings.wireView; wireSettings.wireView = 'advanced'; openWireMode(); await wait(800); okDialogs();
@@ -1379,16 +1387,18 @@
     const srcId = wireAdvanced.sources[wireAdvanced.sources.length - 1].id; const outC = () => (wireAdvanced.sources.find(s => s.id === srcId) || {}).outC;
     const wp = $('#wtb-project'), btn = $$('#wire-overlay .wire-src-outbtn').find(x => x.dataset.act === 'rem');
     if (!wp || !btn) { closeWireMode(); wireSettings.wireView = view0; await restore(); return 'no Project box or no - button in Wire Advanced'; }
-    wp.focus(); const wp0 = wp.value; _efType(wp, wp0 + ' ZQ'); await _efClick(btn); const c1 = outC(); _efEsc(wp); await wait(350);
-    out.wire = [c1, outC(), $('#wtb-project').value === wp0, document.activeElement === document.body, getComputedStyle($('#wire-overlay')).display === 'flex'];
+    wp.focus(); const wp0 = wp.value; _efType(wp, wp0 + ' ZQ'); await _efClick(btn); const c1 = outC(); const left = document.activeElement === document.body;
+    _efEsc(document.activeElement); await wait(350);
+    out.wire = [c1, outC(), _wireTitleBlockRead('project') === wp0 + ' ZQ', $('#wtb-project').value === wp0 + ' ZQ', left, getComputedStyle($('#wire-overlay')).display !== 'flex'];
     closeWireMode(); await wait(250); wireSettings.wireView = view0; await restore();
     // Simple: Show name + a destination corner handle
     const s = screens[screens.length - 1], p = presets[0]; hideMoveSymbol(); doSelect(null, null); selLayer = null; await wait(100); doSelect(p.id, s.id); render(); await wait(300);
     const h = $('#canvas-area .screen-box.sel .rh-br'); if (!h) { doSelect(null, null); await restore(); return 'no corner handle on the picked destination'; }
     const sz = () => parseInt(s.w) + 'x' + parseInt(s.h); const z0 = sz(); const sn = $('#show-name'); sn.focus(); await _efDrag(h, 30, 17); okDialogs(); const z1 = (() => { const t = screens[screens.length - 1]; return parseInt(t.w) + 'x' + parseInt(t.h); })();
-    _efEsc(sn); await wait(350); const t2 = screens[screens.length - 1]; out.simple = [z1 !== z0, parseInt(t2.w) + 'x' + parseInt(t2.h) === z1, document.activeElement === document.body];
+    const left2 = document.activeElement === document.body;
+    _efEsc(document.activeElement); await wait(350); const t2 = screens[screens.length - 1]; out.simple = [z1 !== z0, parseInt(t2.w) + 'x' + parseInt(t2.h) === z1, left2, !sel];
     doSelect(null, null); hideMoveSymbol(); await restore();
-    return is(out, { wire: [2, 2, true, true, true], simple: [true, true, true] }, 'Wire [outputs after the - press, outputs after Escape, old project text back, cursor left the box, Wire still open] / Simple [the drag resized, size kept after Escape, cursor left the box]');
+    return is(out, { wire: [2, 2, true, true, true, true], simple: [true, true, true, true] }, 'ADAPTED 16ln-blur: Wire [outputs after the - press, outputs after Escape, the typed project text saved, and in the box, the cursor left the box on the press, then Escape back to Video Presets (an idle Wire page)] / Simple [the drag resized, size kept after Escape, the cursor left the box on the release, Escape let go of the destination]');
   });
   await check('Advanced: a fader that holds the cursor is not a text box (the first Escape lets go of the layer, the fader value stays); a lit AUX box is a pick (first Escape lets go of it, the second goes back to Simple); the layer strip ghost view ends on the same press as the pick', async () => {
     const f = firstLayer(); const back = _efLfx(); const up = () => !!fsPresetId && getComputedStyle($('#fs-overlay')).display !== 'none'; await restore(); const dsm0 = selDSM; selDSM = null;   /* the picked AUX is not part of the show: put back by hand at the end */
@@ -6725,7 +6735,8 @@ await check('Help says what the app does: the layer chip takes two clicks, the s
     actions.addDestination(); await wait(300); const home = _stTop($('#ms-n')); closeModal();
     return is(seen.concat(home), [true, true, true, true, true], 'Wire window / Wire picker / I/O window / I/O picker / Video Presets window on top');
   });
-  await check('toolbar: Add Destination is one undo step and is held to the size limits (67 to 7680 wide, 67 to 4320 high)', async () => {
+  // ADAPTED in 16ln (its name only, 16ln-anysize: Omar 2026-10-17 "Any size, warning up"): the height goes to 7680 too
+  await check('toolbar: Add Destination is one undo step and is held to the size limits (67 to 7680 wide and, since 16ln-anysize, 67 to 7680 high)', async () => {
     const n = screens.length, u = _undoStack.length; actions.addDestination(); await wait(300); $('#ms-n').value = 'LIMIT TEST'; $('#ms-w').value = '99999'; $('#ms-h').value = '-5'; confirmScreen(); await wait(450); okDialogs();
     const s = screens[screens.length - 1]; const got = [screens.length, s.w, s.h, _undoStack.length - u]; doUndo(); await wait(400); const back = screens.length; await restore();
     return is(got.concat(back), [n + 1, 7680, 1080, 1, n], 'count / width / height / undo steps / count after Undo');
@@ -15447,33 +15458,6 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
     finally { okDialogs(); closeBlendPopup(); cvAdv('blend', was); await restore(); }
     return is(out, want, 'side by side [note, positions, Undo steps, group size, combined] / after Undo / top-bottom [note, positions, steps] / pop-up PX [closed for the note, note, PX after, steps] / pop-up % [closed, note, PX after]');
   });
-  // 16lm-border SO1: NEW
-  await check('I/O Patch 16lm-border SO1 (the full test\'s minor 3, Omar 2026-10-14 "build it"): a PBP B named before its A sits right under it and takes the number after it (CAM 1 renamed PBP B, then CAM 2 renamed PBP A: S3 PBP A, S4 PBP B on the cards, in the order and on Wire Simple\'s router); page 1 pairs them the same; the "Simple changed since page 1 was built" notes read the order before the move (as build 16ll did), so nothing is asked, and a Wire Simple edit that stores the rows in the new order is no change either', async () => {
-    const out = {}, want = {};
-    try {
-      openSystem(); await wait(600); okDialogs(); if (ioAdvanced.view !== 'simple') { _ioSetView('simple'); await wait(400); }
-      const ren = async (from, to) => { const c = ioSimRows('src').find(r => (($('.sys-name-input', r) || {}).value || '') === from); const i = c && $('.sys-name-input', c); if (!i) return false; i.focus(); i.value = to; fire(i, 'input'); i.blur(); await wait(600); okDialogs(); return true; };
-      out.renamed = [await ren('CAM 1', 'PBP B'), await ren('CAM 2', 'PBP A')]; want.renamed = [true, true];
-      out.cards = ioSimRows('src').slice(0, 5).map(r => ((($('.iog-num', r) || {}).textContent || '') + ' ' + (($('.sys-name-input', r) || {}).value || '')).trim());
-      want.cards = ['S1 PPT A', 'S2 PPT B', 'S3 PBP A', 'S4 PBP B', 'S5 LOGO'];
-      out.order = _srcNameOrder().slice(0, 5); want.order = ['PPT A', 'PPT B', 'PBP A', 'PBP B', 'LOGO'];
-      out.notes = [JSON.parse(_ioSimpleFingerprint())[0].slice(0, 5).map(x => x[0]), JSON.parse(_wireSimpleFingerprint())[0].slice(0, 5)];
-      want.notes = [['PPT A', 'PPT B', 'PBP B', 'PBP A', 'LOGO'], ['PPT A', 'PPT B', 'PBP B', 'PBP A', 'LOGO']];
-      _ioSetView('advanced'); await wait(1200); const asked1 = dlgOpen() ? dialogText() : ''; okDialogs();
-      const pg = ioAdvanced.pages[0]; out.page1 = (pg.sources || []).slice(0, 5).map(r => r.name + (r.backupOf ? ' < ' + ((pg.sources.find(x => x.id === r.backupOf) || {}).name || '') : ''));
-      want.page1 = ['PPT A', 'PPT B < PPT A', 'PBP A', 'PBP B < PBP A', 'LOGO'];
-      _ioSetView('simple'); await wait(400); _ioSetView('advanced'); await wait(1000); const asked2 = dlgOpen() ? dialogText() : ''; okDialogs(); _ioSetView('simple'); await wait(300);
-      out.asked = [asked1, asked2]; want.asked = ['', ''];
-      try { closeSystem(); } catch (e) {} await wait(300);
-      await _cMWire('simple'); await wait(400);
-      out.router = $$('#wire-diagram span[data-slb-row^="in:"]').slice(0, 5).map(e => e.textContent.trim()); want.router = ['PPT A', 'PPT B', 'PBP A', 'PBP B', 'LOGO'];
-      const before = _wireSimpleFingerprint(); _slbSetPt('in', 6, 'X9'); await wait(400);
-      out.wireEdit = [JSON.stringify(((_slbM() || {}).rows || {}).in || []).indexOf('"src:PBP A","src:PBP B"') >= 0, _wireSimpleFingerprint() === before];
-      want.wireEdit = [true, true];
-    } catch (e) { return 'threw: ' + e.message; }
-    finally { okDialogs(); try { closeWireMode(); } catch (e) {} try { closeSystem(); } catch (e) {} await restore(); }
-    return is(out, want, 'renamed / the cards / the order / the page-1 notes [I/O, Wire] / page 1 / asked [first look, again] / the router / a Simple edit [rows stored in the new order, the Wire note unchanged]');
-  });
   // 16lm-slbtab WT1: NEW
   await check('Wire 16lm-slbtab WT1 (the full test\'s minor 8, Omar 2026-10-14 "build it"): Tab / Shift+Tab in a router ID cell of Wire Simple goes to the next / previous ID cell of the same column, the typed ID kept (one Undo step when it changed, none when not) and the cell\'s text selected; off either end of the column Tab is left to the browser', async () => {
     const out = {}, want = {};
@@ -15555,7 +15539,8 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
     return is(out, { wide: [true, true], narrow: [110, 150, true] }, 'full width [name >= 110, notes >= 150] / at 700 px [name, notes, scrolls]');
   });
   // 16lm-whcheck WH1: NEW
-  await check('Video Presets 16lm-whcheck WH1 (the full test\'s minor 22, Omar 2026-10-14 "build it"): Destination Properties says the range for a Width / Height outside it (8000, then 50 x 5000), puts the size back in the box (the Aspect line too), keeps the window open with the cursor in the box and applies nothing (no Undo step); a good width still applies in one step', async () => {
+  // ADAPTED in 16ln (16ln-anysize, Omar 2026-10-17 "Any size, warning up"): the height goes to 7680 px like the width, so the two-box case is 50 x 8000
+  await check('Video Presets 16lm-whcheck WH1 (the full test\'s minor 22, Omar 2026-10-14 "build it"): Destination Properties says the range for a Width / Height outside it (8000, then 50 x 8000), puts the size back in the box (the Aspect line too), keeps the window open with the cursor in the box and applies nothing (no Undo step); a good width still applies in one step', async () => {
     const out = {}, want = {};
     try {
       const p = presets[0], s = screens[2]; openScreenPanel(fakeEv, p.id, s.id); await wait(400); const pop = $('#screen-panel'); if (!pop) return 'Destination Properties did not open';
@@ -15564,14 +15549,195 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
       $('#sp-w', pop).value = '8000'; fire($('#sp-w', pop), 'input'); $('#sp-apply', pop).click(); await wait(300);
       out.w = [note(), !!$('#screen-panel'), $('#sp-w', pop).value, ($('#sp-aspect', pop) || {}).textContent, s.w, vpUndoLen() - u0, document.activeElement === $('#sp-w', pop)];
       want.w = ['Size out of range | Width can be 67 to 7680 px. It stays 1920 px.', true, '1920', 'Aspect 16:9', 1920, 0, true];
-      $('#sp-w', pop).value = '50'; $('#sp-h', pop).value = '5000'; $('#sp-apply', pop).click(); await wait(300);
+      $('#sp-w', pop).value = '50'; $('#sp-h', pop).value = '8000'; $('#sp-apply', pop).click(); await wait(300);
       out.wh = [note(), !!$('#screen-panel'), $('#sp-w', pop).value + 'x' + $('#sp-h', pop).value, [s.w, s.h], vpUndoLen() - u0];
-      want.wh = ['Size out of range | Width can be 67 to 7680 px and height 67 to 4320 px. They stay 1920 × 1080 px.', true, '1920x1080', [1920, 1080], 0];
+      want.wh = ['Size out of range | Width and height can be 67 to 7680 px. They stay 1920 × 1080 px.', true, '1920x1080', [1920, 1080], 0];
       $('#sp-w', pop).value = '2000'; $('#sp-apply', pop).click(); await wait(400); okDialogs();
       out.ok = [!!$('#screen-panel'), s.w, vpUndoLen() - u0]; want.ok = [false, 2000, 1];
     } catch (e) { return 'threw: ' + e.message; }
     finally { okDialogs(); try { closeScreenPanel(); } catch (e) {} await restore(); }
-    return is(out, want, '8000 [note, open, the box, Aspect, width, Undo steps, cursor in the box] / 50 x 5000 [note, open, the boxes, size, steps] / 2000 [open, width, steps]');
+    return is(out, want, 'ADAPTED 16ln-anysize: 8000 [note, open, the box, Aspect, width, Undo steps, cursor in the box] / 50 x 8000 [note, open, the boxes, size, steps] / 2000 [open, width, steps]');
+  });
+  // 16ln-notes NT1: NEW
+  await check('Video Presets 16ln-notes NT1 (the full test\'s major 1, Omar 2026-10-17: "notes should be saved and transfer and be added to the excel or lookbook prints out at all times"): opening a show never copies a preset\'s note into an empty destination note (a show of this app, version 3, opened again keeps CENTER LED\'s emptied note empty); the preset note prints on the cue sheet and the Look Book, the destination notes in the Look Book and the I/O Excel; an older file (no version, no destination notes) is still converted once', async () => {
+    const out = {}, want = {};
+    try {
+      const pn = presets[0].notes;
+      screens[1].notes = ''; const st = JSON.parse(JSON.stringify(getProjectState()));
+      _applyProjectText(JSON.stringify(st)); await wait(700); okDialogs();
+      out.reopen = [st.version, screens.map(s => s.notes || '')]; want.reopen = [3, ['2.6 mm, stage left', '', '2.6 mm, stage right']];
+      const real = window.dl; let cue = null; window.dl = function (b) { cue = b; }; try { exportExcel(); await wait(500); } finally { window.dl = real; } okDialogs();
+      const cwb = cue ? await xlRead(cue) : null, cueText = cwb ? Object.keys(cwb.parts).filter(k => /^xl\/(worksheets\/sheet\d+|sharedStrings)\.xml$/.test(k)).map(k => cwb.parts[k]).join(' ') : '';
+      const html = await userLookBook();
+      const io = await ioBook(), ioText = io ? Object.keys(io.parts).filter(k => /^xl\/(worksheets\/sheet\d+|sharedStrings)\.xml$/.test(k)).map(k => io.parts[k]).join(' ') : '';
+      out.prints = [cueText.indexOf(pn) >= 0, html.indexOf(pn) >= 0, html.indexOf('2.6 mm, stage left') >= 0, ioText.indexOf('2.6 mm, stage left') >= 0];
+      want.prints = [true, true, true, true];
+      const old = JSON.parse(JSON.stringify(st)); delete old.version; old.screens.forEach(s => { delete s.notes; });
+      _applyProjectText(JSON.stringify(old)); await wait(700); okDialogs();
+      out.older = screens.map(s => s.notes || ''); want.older = [pn, pn, pn];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { okDialogs(); await restore(); }
+    return is(out, want, 'opened again [version, destination notes] / prints [cue sheet: preset note, Look Book: preset note, Look Book: destination note, I/O Excel: destination note] / an older file [destination notes]');
+  });
+  // 16ln-modalkeys MK1: NEW
+  await check('Wire 16ln-modalkeys MK1 (the full test\'s major 2, Omar 2026-10-17 "yes, build it"): an older question window takes the keyboard: the card trash\'s Delete Source question opens with the focus on Delete; Backspace and Cmd+Z reach nothing behind it (the picked Wire tile stays, no Undo step); Enter from the trash behind goes to the window and stacks no second one, nor does a second open; Escape cancels it; its Delete answers it once; the Remove Source picker takes the focus too and Backspace reaches nothing behind it', async () => {
+    const out = {}, want = {};
+    try {
+      await _lbOpen();
+      const key = (t, k, o) => { const ev = new KeyboardEvent('keydown', Object.assign({ key: k, bubbles: true, cancelable: true }, o || {})); t.dispatchEvent(ev); return ev.defaultPrevented; };
+      const off = () => JSON.stringify(((_slbM() || {}).off) || []);
+      _wireState.selectedNodes.clear(); _wireState.selectedNodes.add('src:CAM 2'); _wireState.selectedEdgeKey = null;
+      const off0 = off(), u0 = vpUndoLen(), n0 = _srcNameOrder().length;
+      const card = $$('#wire-panel-left .iog-card').find(c => (($('.sys-name-input', c) || {}).value || '') === 'CAM 1'), trash = card && $('.sys-icon-btn[data-sys-action="delete"]', card);
+      if (!trash) return 'no trash on the CAM 1 card';
+      trash.click(); await wait(150);
+      out.opened = [$$('.sys-modal-overlay').length, (document.activeElement || {}).id || '']; want.opened = [1, 'sys-confirm-go'];
+      key(document.body, 'Backspace'); key(document.activeElement, 'Backspace'); key(document.body, 'z', { metaKey: true }); await wait(150);
+      out.behind = [$$('.sys-modal-overlay').length, off() === off0, vpUndoLen() - u0]; want.behind = [1, true, 0];
+      trash.focus(); const prevented = key(trash, 'Enter'); await wait(100);
+      out.enterBehind = [prevented, $$('.sys-modal-overlay').length, (document.activeElement || {}).id || '']; want.enterBehind = [true, 1, 'sys-confirm-go'];
+      _sysRowDelete('src', 'CAM 1'); await wait(100); out.second = $$('.sys-modal-overlay').length; want.second = 1;
+      key(document.activeElement, 'Escape'); await wait(150);
+      out.esc = [$$('.sys-modal-overlay').length, _srcNameOrder().length === n0, vpUndoLen() - u0]; want.esc = [0, true, 0];
+      trash.click(); await wait(150); const go = $('#sys-confirm-go'); if (go) go.click(); await wait(300);
+      out.answer = [$$('.sys-modal-overlay').length, _srcNameOrder().includes('CAM 1'), vpUndoLen() - u0]; want.answer = [0, false, 1];
+      doUndo(); await wait(300);
+      _sysOpenRemoveSourceModal(); await wait(150);
+      const pk = $('.sys-modal-overlay'); out.picker = [!!pk, !!(pk && pk.contains(document.activeElement))];
+      key(document.body, 'Backspace'); await wait(100); out.picker.push(off() === off0, $$('.sys-modal-overlay').length);
+      want.picker = [true, true, true, 1];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { $$('.sys-modal-overlay').forEach(o => o.remove()); try { _sysCloseConfirmModal(false); } catch (e) {} try { closeWireMode(); } catch (e) {} await restore(); }
+    return is(out, want, 'opened [windows, focus] / behind [windows, the picked tile kept, Undo steps] / Enter from the trash [prevented, windows, focus] / a second open [windows] / Escape [windows, sources kept, steps] / Delete [windows, CAM 1 there, steps] / the picker [open, focus inside, tile kept, windows]');
+  });
+  // 16ln-bgown BG1: NEW
+  await check('Video Presets 16ln-bgown BG1 (the full test\'s major 3, Omar 2026-10-17): a SOURCE background on P01 (CAM 1 on LEFT LED) is drawn on a later preset only when its background name is P01\'s: P02 with a name of its own (PGM) keeps PGM and draws no CAM 1 box (as the table and the Excel say); P03 with no name of its own follows P01\'s box as before', async () => {
+    const out = {};
+    try {
+      const L = screens[0].id, p1 = presets[0], p2 = presets[1], p3 = presets[2];
+      _bgsPick(p1.id, L, 'CAM 1'); await wait(300); okDialogs();
+      setBgName(p2.id, L, 'PGM'); ['bgs', 'colors', 'bgBox'].forEach(k => { if (p2[k]) delete p2[k][L]; });
+      ['bgNames', 'bgs', 'colors', 'bgBox'].forEach(k => { if (p3[k]) delete p3[k][L]; });
+      render(); await wait(400);
+      const rec = p => { const r = _bgsRec(p, screens[0]); return r ? r.src : null; };
+      const box = p => { const b = $('#canvas-area .preset-row[data-pid="' + p.id + '"] .screen-box[data-sid="' + L + '"]'); const i = b && $('.screen-inner', b); return b ? /no-repeat/.test(((i && i.getAttribute('style')) || '') + (b.getAttribute('style') || '')) : 'no box'; };
+      out.p1 = [getBgName(p1.id, L), rec(p1), box(p1)]; out.p2 = [getBgName(p2.id, L), rec(p2), box(p2)]; out.p3 = [getBgName(p3.id, L), rec(p3), box(p3)];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { await restore(); }
+    return is(out, { p1: ['CAM 1', 'CAM 1', true], p2: ['PGM', null, false], p3: ['CAM 1', 'CAM 1', true] }, 'P01 / P02 / P03 [BG name, the SOURCE box read, the box drawn]');
+  });
+  // 16ln-a11yfit AF1: NEW
+  await check('Help 16ln-a11yfit AF1 (the full test\'s major 4, Omar 2026-10-17 "yes, build it"): at UI Size Large and Small the page fits the window: the bottom bar ends at the window\'s bottom edge and HELP / BUG are under the pointer where they are drawn; Default takes the fitting off', async () => {
+    const out = {};
+    const bar = () => { const q = n => $$('button.bb-util').find(b => new RegExp(n, 'i').test((b.getAttribute('aria-label') || '') + b.textContent)); const h = q('help'), g = q('bug'); if (!h || !g) return 'no HELP / BUG';
+      const hit = el => { const r = el.getBoundingClientRect(); const e = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2); return !!(e && el.contains(e)); };
+      return [Math.abs(h.getBoundingClientRect().bottom - innerHeight) <= 2, hit(h), hit(g)]; };
+    try {
+      setA11yScale(1.15); await wait(300); out.large = bar();
+      setA11yScale(0.9); await wait(300); out.small = bar();
+      setA11yScale(1); await wait(300); out.def = [bar(), document.body.classList.contains('lb-zfit'), document.body.style.getPropertyValue('--lb-z')];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { setA11yScale(1); } catch (e) {} }
+    return is(out, { large: [true, true, true], small: [true, true, true], def: [[true, true, true], false, ''] }, 'Large [bottom edge, HELP under the pointer, BUG under the pointer] / Small / Default [the same, the class, the zoom value]');
+  });
+  // 16ln-blur BL1: NEW
+  await check('Wire / Video Presets 16ln-blur BL1 (the full test\'s major 5, Omar 2026-10-17: "clicking the pencil or the words should allow me to edit it click outside of that should move on to the next thing"): a press on the Wire drawing ends the Client box being typed in, its text kept, and the next Backspace takes the picked tile off; a press on Advanced\'s empty canvas ends a card\'s name box, the name kept; Enter leaves the layer panel\'s Opacity box with the value kept', async () => {
+    const out = {}, want = {}; let tab0 = null, backLfx = null;
+    try {
+      await _lbOpen();
+      const key = (t, k) => { const ev = new KeyboardEvent('keydown', { key: k, bubbles: true, cancelable: true }); t.dispatchEvent(ev); return ev.defaultPrevented; };
+      const cl = $('#wtb-client'); if (!cl) return 'no Client box';
+      cl.focus(); cl.select(); document.execCommand('insertText', false, 'NEW CLIENT');
+      const tile = $$('#wire-diagram .slb-tile').find(t => /^CAM 1/.test((t.textContent || '').trim())); if (!tile) return 'no CAM 1 tile';
+      await _lbClick(tile); await wait(250);
+      out.wire = [document.activeElement === cl, showMeta.client, [..._wireState.selectedNodes].join()]; want.wire = [false, 'NEW CLIENT', 'src:CAM 1'];
+      key(document.body, 'Backspace'); await wait(300);
+      out.backspace = (((_slbM() || {}).off) || []).indexOf('src:CAM 1') >= 0; want.backspace = true;
+      try { closeWireMode(); } catch (e) {} await restore();
+      openFullscreen(presets[0].id); await wait(800); okDialogs();
+      tab0 = _fsSrcTab; if (_fsSrcTab !== 'images') { _fsSetSrcTab('images'); await wait(300); }   // the sources tab, whatever an earlier check left (the first 16ln gate found it on Video)
+      const nm = $$('#fs-left-panel .iog-card .sys-name-input').find(i => i.value === 'PPT A'); if (!nm) return 'no PPT A name box';
+      nm.focus(); nm.select(); document.execCommand('insertText', false, 'PPT X');
+      const vp = $('#fs-viewport'), r = vp.getBoundingClientRect();
+      _lbMouse(vp, 'mousedown', r.left + 12, r.top + 12); _lbMouse(window, 'mouseup', r.left + 12, r.top + 12); await wait(400);
+      out.adv = [document.activeElement === nm, _srcNameOrder()[0]]; want.adv = [false, 'PPT X'];
+      if (tab0 && tab0 !== _fsSrcTab) _fsSetSrcTab(tab0); closeFullscreen(); await wait(300); await restore();
+      const f = firstLayer(); backLfx = _efLfx(); openFullscreen(f.pid); await wait(700); okDialogs(); _fsSelectLayer(f.pid, f.sid, 1); await wait(350);   // every layer-panel section open, as the Escape checks do (a closed Opacity section hides the box)
+      const box = $('#fs-props input.lfx-op256[type=number]'); if (!box) return 'no Opacity box';
+      box.focus(); box.select(); document.execCommand('insertText', false, '128'); key(box, 'Enter'); await wait(300);
+      out.opacity = [document.activeElement === box, getLayerFx(f.pid, f.sid, 1).op]; want.opacity = [false, 128];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { closeWireMode(); } catch (e) {} try { closeFullscreen(); } catch (e) {} if (backLfx) backLfx(); await restore(); }
+    return is(out, want, 'Wire [Client box still focused, client, picked] / Backspace [CAM 1 off the drawing] / Advanced [name box still focused, S1] / Opacity [box still focused, value]');
+  });
+  // 16ln-blur BL2: NEW (16ln v2, after the first gate)
+  await check('Wire 16ln-blur BL2 (the full test\'s major 5, Omar 2026-10-17: "click outside of that should move on to the next thing"): a key pressed after a press on the drawing but before the box has gone (a slow redraw holds the page) goes to the drawing, never into the box: the Client box ends at that key with its typed text kept, the key is kept out of the box, and the Backspace takes the picked tile off', async () => {
+    const out = {}, want = {};
+    try {
+      await _lbOpen();
+      const cl = $('#wtb-client'); if (!cl) return 'no Client box';
+      cl.focus(); cl.select(); document.execCommand('insertText', false, 'FAST CLIENT');
+      const tile = $$('#wire-diagram .slb-tile').find(t => /^CAM 1/.test((t.textContent || '').trim())); if (!tile) return 'no CAM 1 tile';
+      const [x, y] = _lbPt(tile); _lbMouse(tile, 'mousedown', x, y); _lbMouse(window, 'mouseup', x, y);   // no wait: the key comes before the box's own exit
+      const ev = new KeyboardEvent('keydown', { key: 'Backspace', code: 'Backspace', keyCode: 8, bubbles: true, cancelable: true }); cl.dispatchEvent(ev);
+      out.atTheKey = [document.activeElement === cl, ev.defaultPrevented]; want.atTheKey = [false, true];
+      await wait(300);
+      out.after = [showMeta.client, [..._wireState.selectedNodes].join(), (((_slbM() || {}).off) || []).indexOf('src:CAM 1') >= 0]; want.after = ['FAST CLIENT', '', true];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { closeWireMode(); } catch (e) {} await restore(); }
+    return is(out, want, 'at the key [Client box still focused, the key kept out of the box] / after [client, picked, CAM 1 off the drawing]');
+  });
+  // 16ln-presetbin PB1: NEW (16ln v2)
+  await check('Video Presets 16ln-presetbin PB1 (the full test\'s 6, Omar 2026-10-17: "click the trash can of the preset should only kill that one preset"): a double-click on P02\'s trash deletes P02 only: the first click deletes it, the second click lands on the trash of P03 (moved up under the pointer) and does nothing; one Undo brings P02 back; one click on a trash still deletes its preset', async () => {
+    const out = {}, want = {};
+    try {
+      const ids0 = presets.map(p => p.id), n0 = ids0.length, u0 = vpUndoLen(); if (n0 < 3) return 'fewer than 3 presets';
+      const bin = pid => $('#canvas-area .preset-row[data-pid="' + pid + '"] .pr-actions button.del-btn.v-red');
+      const b1 = bin(ids0[1]); if (!b1) return 'no trash on P02';
+      b1.scrollIntoView({ block: 'center' }); await wait(300);
+      const r = b1.getBoundingClientRect(), x = r.left + r.width / 2, y = r.top + r.height / 2;
+      const clk = d => { const t = document.elementFromPoint(x, y), b = t && t.closest ? t.closest('button') : null; if (!b) return 'nothing under the pointer';
+        ['mousedown', 'mouseup', 'click'].forEach(tp => b.dispatchEvent(new MouseEvent(tp, { bubbles: true, cancelable: true, view: window, clientX: x, clientY: y, button: 0, buttons: tp === 'mousedown' ? 1 : 0, detail: d })));
+        const row = b.closest('.preset-row'); return row ? row.dataset.pid : 'not a preset row'; };
+      const hit1 = clk(1); await wait(400); const hit2 = clk(2); await wait(400);
+      out.dbl = [hit1 === ids0[1], hit2 === ids0[2], presets.length, presets.map(p => p.id).join() === ids0.filter(i => i !== ids0[1]).join(), vpUndoLen() - u0];
+      want.dbl = [true, true, n0 - 1, true, 1];
+      doUndo(); await wait(400); out.undo = presets.map(p => p.id).join() === ids0.join(); want.undo = true;
+      const b2 = bin(ids0[2]); if (!b2) return 'no trash on P03 after the Undo';
+      b2.click(); await wait(400);
+      out.single = [presets.length, presets.some(p => p.id === ids0[2])]; want.single = [n0 - 1, false];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { await restore(); }
+    return is(out, want, 'a double-click on P02\'s trash [the first click on P02, the second on P03\'s trash, presets, only P02 gone, Undo steps] / Undo [P02 back] / one click on P03\'s trash [presets, P03 there]');
+  });
+  // 16ln-anysize AS1: NEW (16ln v2)
+  await check('Video Presets 16ln-anysize AS1 (the full test\'s 7, Omar 2026-10-17: "user can do w.e they like the warning should go up for an engineer to approve said resolution since it probably not a common resolution", "Any size, warning up"): a destination takes 67 to 7680 px high everywhere: Destination Properties applies 5000 in one Undo step and its red pill then asks for the engineer ("Above DCI 4K"); 8000 gets the range note (67 to 7680) and nothing changes; the Down arrow goes past 4320; Add Destination makes a 1920 x 6000 destination', async () => {
+    const out = {}, want = {};
+    try {
+      const p = presets[0], s = screens[2]; delete s.approved; render(); await wait(200);   // not approved yet: the pill's question is open
+      const note = () => { const open = dlgOpen(); const t = open ? (($('#dlg-box h3') || {}).textContent || '') + ' | ' + (($('#dlg-box .dlg-body') || {}).textContent || '') : 'no note'; okDialogs(); return t; };
+      const pill = () => !!document.querySelector('[onclick*="openResWarn(event,\'' + s.id + '\')"] .sys-warn-pill.active');
+      openScreenPanel(fakeEv, p.id, s.id); await wait(400); let pop = $('#screen-panel'); if (!pop) return 'Destination Properties did not open';
+      const u0 = vpUndoLen(); out.box = [$('#sp-h', pop).max, pill()]; want.box = ['7680', false];
+      $('#sp-h', pop).value = '5000'; fire($('#sp-h', pop), 'input'); $('#sp-apply', pop).click(); await wait(400);
+      out.applied = [note(), !!$('#screen-panel'), parseInt(s.h, 10), vpUndoLen() - u0, checkRes(s).warning, !!checkRes(s).approved, pill()];
+      want.applied = ['no note', false, 5000, 1, 'Above DCI 4K, verify EDID support with engineer', false, true];
+      openScreenPanel(fakeEv, p.id, s.id); await wait(400); pop = $('#screen-panel'); if (!pop) return 'Destination Properties did not open again';
+      $('#sp-h', pop).value = '8000'; fire($('#sp-h', pop), 'input'); $('#sp-apply', pop).click(); await wait(300);
+      out.over = [note(), !!$('#screen-panel'), $('#sp-h', pop).value, parseInt(s.h, 10), vpUndoLen() - u0];
+      want.over = ['Size out of range | Height can be 67 to 7680 px. It stays 5000 px.', true, '5000', 5000, 1];
+      okDialogs(); closeScreenPanel(); await wait(200);
+      updateScreenSize(s.id, 'h', 4320); render(); await wait(200); selLayer = null; doSelect(p.id, s.id); await wait(150);
+      document.body.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', code: 'ArrowDown', keyCode: 40, bubbles: true, cancelable: true })); await wait(300);
+      out.arrow = parseInt(s.h, 10); want.arrow = 4321;
+      doSelect(null, null); await wait(100);
+      const n0 = screens.length; openModal(); await wait(250);
+      out.addBox = ($('#ms-h') || {}).max; want.addBox = '7680';
+      $('#ms-h').value = '6000'; confirmScreen(); await wait(400); okDialogs();
+      const t = screens[screens.length - 1]; out.added = [screens.length - n0, parseInt(t.w, 10), parseInt(t.h, 10)]; want.added = [1, 1920, 6000];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { okDialogs(); try { closeScreenPanel(); } catch (e) {} try { closeModal(); } catch (e) {} doSelect(null, null); await restore(); }
+    return is(out, want, 'the Height box [its max, the pill before] / 5000 [note, window open, height, Undo steps, warning, approved, the pill] / 8000 [note, window open, the box, height, steps] / the Down arrow from 4320 [height] / Add Destination [its Height box max] / 1920 x 6000 [destinations added, width, height]');
   });
   try { _fsPauseAll(); } catch (e) {} $$('video').forEach(v => { try { v.muted = true; v.pause(); } catch (e) {} });
   return { checks };

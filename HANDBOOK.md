@@ -1407,7 +1407,9 @@ anchor on the function name and replace the first occurrence after it, never all
     is asked about a rebuild because a B moved up; `_slbFingerprintPart` calls rows that are the default in EITHER order no plan (rows
     stored by a Wire Simple edit after the move). Seen on ORGILL (S9 PBP B / S10 PBP A became PBP A / PBP B, its page-1 note still
     equal) and on a show saved by 16ll with B above A and both page-1 notes made (no question in I/O or Wire Advanced). Touches
-    major 4 (a rename renumbers the sources after it), still open. Check SO1.
+    major 4 (a rename renumbers the sources after it), still open. Check SO1. **Taken back out in 16ln** (Omar 2026-10-17, the
+    sources rules: "when the user pick primary and back up the source numbers stay the same"): the five edits read as in build 16ll
+    again; SO1 is gone; the sources round sets the numbers by creation order (`backups/rounds/sources-names/SPEC.md`).
   - **16lm-slbtab** (minor 8): `_slbPtTabKey` (capture keydown): Tab / Shift+Tab in a Wire Simple router ID cell (`input.slb-pt`)
     commits it (`el.blur()` -> `_slbSetPt`, its redraw queued) and focuses the next / previous cell of the same column, again after
     the queued redraw; off either end the browser's Tab, as `_wireAdvPtTabKey` (16kk). Check WT1 (it types with
@@ -1431,6 +1433,55 @@ anchor on the function name and replace the first occurrence after it, never all
     (`_wireBuildAllSourceNames`), the colour fill is "looking is not a change"; put to Omar before any change.
   - Tests: the chip check renamed, PX1, SO1, WT1, RL1, TS1, TW1, WH1 new (flows 775 -> 782); each new check failed on the 16ll page
     for its own reason and passes on 16lm. Snapshots unchanged.
+- **16ln** (2026-10-17, build 16ln on the local 16lm; search `16ln-`). Omar: the full test's majors 1-5 as he answered them, "Majors
+  first, then sources", and the two he added while the first gate ran (6, 7). Desktop only (`_lbcOn` / `body:not(.is-mobile)`)
+  except 16ln-notes, which is about the file itself.
+  - **16ln-notes** (major 1, Omar: "notes should be saved and transfer and be added to the excel or lookbook prints out at all
+    times"): the Phase 1C conversion in `_applyProjectText` (a destination without notes takes the first preset note) ran on EVERY
+    open, so an emptied destination note came back as "Doors open ..." and the next save wrote it. It runs only for a file older than
+    version 3 (per-destination notes came with version 3, 2026-05-16, in the backups). Notes print as before: preset notes on the cue
+    sheet and the Look Book's preset pages, destination notes in the Look Book and the I/O Excel. Check NT1.
+  - **16ln-modalkeys** (major 2): the older windows (`.sys-modal-overlay`: `_sysConfirmModal`, the Remove pickers, Backup, Rename,
+    Custom resolution, Wire's count / ask windows) left the keyboard on the page (Enter pressed the trash behind again: a second
+    question whose buttons answered the first one's callbacks; Backspace / Cmd+Z acted behind). `_dlgKeyGuard` now takes the top one
+    (`_sysModalTop`) as its box (Tab inside, held Enter / Space dropped, page keys stopped), Enter / Space from the page behind go to the
+    window (`_sysModalFocus`), a MutationObserver on body puts the focus in a new one 40 ms after it opens (after the window's own focus
+    code), and `_sysConfirmModal` refuses a second question. Escape untouched: each window answers it (`_lbEscTop` lists them with no
+    closer). Check MK1 (in Wire: the picked tile survives Backspace behind the question).
+  - **16ln-bgown** (major 3): `_bgsRec` gave a later preset P01's SOURCE box whenever it had no fill of its own (16li-fix D5, "its own BG
+    name or not"), so P02 PROJECTION 04 with its own BG name MEDIA SERVER drew P01's IMAG box while the table and the Excel said MEDIA
+    SERVER. The box is followed only when the preset's BG name is P01's (`q.src===nm`), as P01's clip already was (`_fuClip`). BG1.
+  - **16ln-a11yfit** (major 4): Help > Accessibility's UI Size is `body.style.zoom`; the body was 100vh in its own zoomed pixels, so
+    Large put the bottom bar (HELP, BUG) about 15 % below the window (no way back by mouse, remembered) and Small left a band.
+    `_a11yFit` (from `setA11yScale`, `resetA11y`, `loadA11ySettings`) sets `--lb-z` and `.lb-zfit`: `body:not(.is-mobile).lb-zfit
+    {height:calc(100vh / var(--lb-z,1))}`. At 1024 x 700 Large shows HELP and BUG; a window under 1024 px cuts BUG (below the minimum).
+    Check AF1.
+  - **16ln-blur** (major 5, Omar: "clicking the pencil or the words should allow me to edit it click outside of that should move on to
+    the next thing"): the Wire drawing, Simple's canvas and Advanced's canvas prevent the press's default (for dragging), so a box kept
+    the cursor. `_lbBlurDown` (window capture mousedown) notes the box when a press starts on `#wire-diagram`, `#fs-viewport` or
+    `#canvas-area` outside it; `_lbBlurUp` blurs it after the press is let go (after a drag), so its own commit keeps the text and the
+    next key goes to the drawing. The layer panel's Opacity 0-256 / Percent and its other number boxes (`lfx-num`) leave on Enter, as X /
+    Y / W / H did, so the wheel no longer steps a box that kept the cursor. v2, after the first gate: a key pressed after the press but
+    before the box had gone (the press's own redraw can hold the page, and a key that waits then runs before the timer) went into the
+    box (a quick click on a layer, then Delete, took a letter out of it). `_lbBlurKey`, the first key listener on window (registered at
+    `_lbCalKeys`), ends the box first and sends the key on to the page. Checks BL1 (it now opens Advanced's Images tab and the layer
+    panel's sections first: the first gate left them on Video / closed), BL2.
+  - **16ln-presetbin** (the full test's 6, Omar: "click the trash can of the preset should only kill that one preset"): a preset's
+    trash deletes at once and the next preset moves up under the pointer, so the second click of a double-click deleted that one too.
+    The trash ignores the second and later clicks of one multi-click (`event.detail>1`, the system's own double-click count); a click,
+    the keyboard and Undo as before. Check PB1.
+  - **16ln-anysize** (the full test's 7, Omar: "user can do w.e they like the warning should go up for an engineer to approve said
+    resolution since it probably not a common resolution", answered "Any size, warning up"): the corner drags already went to 7680 x
+    7680 while Destination Properties (`updateScreenSize`, `_spSizeOk`, the `#sp-h` box, its size copy), Add Destination (`_lbDestDim`,
+    `#ms-h`) and the arrow keys (through `updateScreenSize`) stopped the height at 4320. `_lbMaxH()` is 7680 on the desktop, 4320 on the
+    frozen phone. Above DCI 4K the red pill (`checkRes`) asks for the engineer's approval as before. Left alone: the AUX window's 4320
+    (an AUX has no corner drag), `_fsScreenCard` / `fsPanelScreenSize` (unreachable since 16hu), the I/O Patch's W x H box (no limit).
+    Check AS1.
+  - 16lm-border came back out (above). Tests: SO1 out, NT1, MK1, BG1, AF1, BL1, BL2, PB1, AS1 new (flows 782 -> 789); ADAPTED in
+    place, Omar's words in each: the two "Escape in a box only takes back the TYPING" checks (16ln-blur: a press on a drawing ends the
+    box and the Escape after it is the page's, so the typed text stays; the "other pages" one renamed), WH1 (16ln-anysize: 50 x 8000,
+    renamed) and the Add Destination limits check (renamed: 7680 high). Each new check failed on the build before it for its own
+    reason and passes on 16ln. Snapshots unchanged.
 - Declined by the owner, do not resurface: mask shapes, anchor points, hardware profiles, canvas/WebGL renderer,
   interpolation filter toggles, upscale-factor notes, per-layer "sharp pixels", any licence mention.
 

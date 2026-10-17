@@ -4733,6 +4733,10 @@ label.bzp-lbl{cursor:pointer}
    the layer columns kept theirs; now the table is wider than the panel and scrolls sideways instead. Desktop only. */
 body:not(.is-mobile) #tbody .home-field input[name="t-s-name"]{min-width:110px}
 body:not(.is-mobile) #tbody .home-field input[name="t-d-notes"]{min-width:150px}
+/* 16ln-a11yfit (the full test's major 4, Omar 2026-10-17 "yes, build it"): Help > Accessibility's UI Size zooms the whole page;
+   the body is the window's height in its own zoomed pixels, so Large no longer pushes the bottom bar (HELP, BUG) below the window
+   and Small no longer leaves a band under it (_a11yFit sets --lb-z and the class). Desktop only. */
+body:not(.is-mobile).lb-zfit{height:calc(100vh / var(--lb-z,1))}
 </style>
 </head>
 <body data-skin="black">
@@ -4883,7 +4887,7 @@ Also called DSM (Downstage Monitor) in broadcast and theater workflows, same thi
   <div class="bb-cell bb-pill bb-cyan" title="The largest number of layers used in any single preset, this is the figure to compare against your switcher's per-scene layer budget. (The most complex single moment in the show.)"><span class="bb-label">Layers</span><strong id="bb-layers">0</strong></div>
   <div id="bb-spacer"></div>
   <div class="bb-cell" id="bb-sel" style="font-size:10px;opacity:.5">—</div>
-  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy, hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16lm</div>
+  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy, hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16ln</div>
   <!-- 16kq (Omar): the Modifiers menu lives on each preset tile only; this place is kept for the Educator tool of a future build (greyed out, does nothing) --><button class="bb-util" id="tb-educator" type="button" disabled aria-disabled="true" title="Educator: coming in a future build" aria-label="Educator, coming in a future build" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:default;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em;opacity:.38"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10L12 5 2 10l10 5 10-5z"/><path d="M6 12v5c0 1 2.7 2.5 6 2.5s6-1.5 6-2.5v-5"/><line x1="22" y1="10" x2="22" y2="16"/></svg><span>Educator</span></button>
   <button class="bb-util" onclick="actions.help()" title="Help, quick reference, keyboard shortcuts, glossary, accessibility" aria-label="Help, quick reference, keyboard shortcuts, glossary, accessibility" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="4.93" y1="4.93" x2="9.17" y2="9.17"/><line x1="14.83" y1="14.83" x2="19.07" y2="19.07"/><line x1="14.83" y1="9.17" x2="19.07" y2="4.93"/><line x1="4.93" y1="19.07" x2="9.17" y2="14.83"/></svg>Help</button>
   <button class="bb-util" id="tb-bug" onclick="reportBug()" title="Report a bug, opens an email to AV Educate with your show file — attached in the app, downloaded for you to attach in a browser" aria-label="Report a bug" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="7.2"/><path d="M15.4 15.4L21 21" stroke-width="2.6"/><ellipse cx="10" cy="11" rx="2.5" ry="3.3" fill="currentColor" stroke="none"/><circle cx="10" cy="7" r="1.5" fill="currentColor" stroke="none"/><path d="M7.5 9.2l-1.7-.8M7.4 11.2H5.6M7.7 13.1l-1.5 1.1M12.5 9.2l1.7-.8M12.6 11.2h1.8M12.3 13.1l1.5 1.1M9.2 5.9l-.8-1.1M10.8 5.9l.8-1.1" stroke-width="1.3"/></svg>Bug</button>   <!-- 16jk (Omar): Report a bug, after Help -->
@@ -6550,8 +6554,7 @@ function _bdConverted(s,names,pre){
 }
 /* the SOURCES part of the two "built from Simple" notes, before and after the conversion: taking its content away can
    change the source list's order (it follows first use) or drop a source only it used; that is the conversion too */
-function _bdSrcParts(){ _srcBHold++; try{ return _bdSrcParts0(); } finally{ _srcBHold--; } }   /* 16lm-border: compared with the fingerprints above */
-function _bdSrcParts0(){
+function _bdSrcParts(){
   var o={w:null,i:null};
   try{ if(typeof _wireBuildAllSourceNames==='function') o.w=JSON.stringify(_wireBuildAllSourceNames()); }catch(e){}
   try{ if(typeof _ioSimpleFingerprint==='function') o.i=JSON.stringify(JSON.parse(_ioSimpleFingerprint())[0]); }catch(e){}
@@ -10945,7 +10948,7 @@ function _rcPresetRow(p,sc,canvasVW,canvasVH){
             +'<button class="del-btn h-amber" onclick="actions.resetPreset(\''+p.id+'\')" title="Reset this preset to the way Quick Setup made it. Asks what to reset: destinations, layers, AUX. One Undo brings it back." aria-label="Reset this preset: choose destinations, layers, AUX"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>Reset</button>'
             +'<div style="width:1px;height:18px;background:var(--n-line)"></div>'
             +'<button class="del-btn h-dim" onclick="actions.toggleMinimize(\''+p.id+'\')" style="padding:3px 8px" title="'+(p.minimized?'Expand':'Minimize')+'" aria-label="'+(p.minimized?'Expand':'Minimize')+'">'+(p.minimized?_CHEV2.right:_CHEV2.down)+'</button>'
-            +'<button class="del-btn v-red" onclick="actions.deletePreset(\''+p.id+'\')" style="padding:3px 8px" title="Remove preset" aria-label="Remove preset"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg></button>'
+            +'<button class="del-btn v-red" onclick="if(event.detail>1&&_lbcOn())return;actions.deletePreset(\''+p.id+'\')" style="padding:3px 8px" title="Remove preset" aria-label="Remove preset"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg></button>'   /* 16ln-presetbin (the full test's 6, Omar 2026-10-17: "click the trash can of the preset should only kill that one preset"): the trash deletes at once and the next preset moves up under the pointer, so the second click of a double-click deleted that one too. The second and later clicks of one multi-click (event.detail, the system's own double-click count) do nothing; a click, the keyboard and Undo as before. Desktop only */
           +'</div>'
         +'</div>'
       +'</div>'
@@ -11338,12 +11341,18 @@ function openDSMPanel(e,pid,dsmId){
 
 
 
+/* 16ln-anysize (the full test's 7, Omar 2026-10-17: "user can do w.e they like the warning should go up for an engineer to approve said
+   resolution since it probably not a common resolution", "Any size, warning up"): a corner drag already made a destination up to
+   7680 x 7680 (Simple and Advanced), while Destination Properties, Add Destination and the arrow keys stopped the height at 4320. Each
+   now takes 67 to 7680 px both ways. Above DCI 4K the red pill asks for the engineer's approval (checkRes), as before. The phone keeps
+   4320 (frozen). */
+function _lbMaxH(){ return _lbcOn()?7680:4320; }
 function updateScreenSize(sid,dim,val){
   if(_bdIsId(sid)) return;   /* 16kx-backdrop: sized in feet (Destination Properties) */
   const s=screens.find(x=>x.id===sid);
   if(!s)return;
   const n=parseInt(val);
-  const minV=67, maxV=dim==='w'?7680:4320;
+  const minV=67, maxV=dim==='w'?7680:_lbMaxH();   /* 16ln-anysize */
   if(isNaN(n)||n<minV||n>maxV) return;
 
   // Capture old dimension before applying change
@@ -11543,7 +11552,7 @@ function openModal(){
   document.getElementById('ms-c').value='#1a1a1a';
   document.getElementById('ms-n').value=_r4fNewDest();   /* 16kx-r3 (K); 16ky-r4fix (D1): its number, or the next free one */
   document.getElementById('ms-w').value='1920';
-  document.getElementById('ms-h').value='1080';
+  document.getElementById('ms-h').value='1080'; document.getElementById('ms-h').max=String(_lbMaxH());   /* 16ln-anysize */
   const hexEl=document.getElementById('ms-hex');
   const prev=document.getElementById('ms-preview');
   if(hexEl) hexEl.value='#1a1a1a';
@@ -12434,6 +12443,7 @@ function _lbCalKeys(e){
     c.mf=m; _lbCalRender(); _lbCalFocusActive();
   }
 }
+window.addEventListener('keydown',function(e){ if(typeof _lbBlurKey==='function') _lbBlurKey(e); },true);   /* 16ln-blur: the first key listener on window (see _lbBlurKey) */
 window.addEventListener('keydown',_lbCalKeys,true);
 window.addEventListener('keyup',function(e){ var c=_lbCal; if(c&&e.target&&e.target.nodeType===1&&c.el.contains(e.target)&&!e.ctrlKey&&!e.metaKey) e.stopImmediatePropagation(); },true);
 /* a press anywhere outside closes it (the box's own calendar button toggles it instead) */
@@ -13251,7 +13261,7 @@ function openScreenPanel(e,pid,sid){
       <div style="color:var(--text3);font-size:13px;text-align:center;padding-bottom:8px">×</div>
       <div>
         <div style="font-size:11px;color:var(--text3);margin-bottom:4px;letter-spacing:.04em">Height</div>
-        <input id="sp-h" type="number" value="${s.h}" min="67" max="4320"
+        <input id="sp-h" type="number" value="${s.h}" min="67" max="${_lbMaxH()}"
           style="width:100%;font-size:12px;padding:7px 12px;border:1px solid rgba(255,255,255,.06);border-radius:4px;background:var(--n-track);color:#9dd6ff;outline:none;box-sizing:border-box;appearance:textfield;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5);transition:all .15s;font-family:var(--font-mono);text-align:center"
           data-fx="orange-c" aria-label="Destination height (px)">
       </div>
@@ -13555,7 +13565,7 @@ function _spTool(action,key){
   const fld=function(id){ const el=pop.querySelector(id); return el?parseFloat(el.value):NaN; };
   if(key==='rot'&&action!=='copy'&&_cbRotLock(pid,sid)){ _spFlash(pop,'rot','Off while blended'); _cbRotSync(pop); return; }   /* 16lg-blend-fix2 (R1) */
   if(action==='copy'){   /* copies what the window shows */
-    if(key==='size'){ const w=parseInt(fld('#sp-w')), h=parseInt(fld('#sp-h')); _spClip.size={w:(w>=67&&w<=7680)?w:parseInt(s.w), h:(h>=67&&h<=4320)?h:parseInt(s.h)}; }
+    if(key==='size'){ const w=parseInt(fld('#sp-w')), h=parseInt(fld('#sp-h')); _spClip.size={w:(w>=67&&w<=7680)?w:parseInt(s.w), h:(h>=67&&h<=_lbMaxH())?h:parseInt(s.h)}; }   /* 16ln-anysize */
     else if(key==='pos'){ const cur=(p.positions&&p.positions[sid])||{x:0,y:0}; const x=parseInt(fld('#sp-x')), y=parseInt(fld('#sp-y')); _spClip.pos={x:isNaN(x)?cur.x:Math.max(0,x), y:isNaN(y)?cur.y:Math.max(0,y)}; }
     else if(key==='rot'){ const r=fld('#sp-rot'); _spClip.rot=isNaN(r)?getRotation(pid,sid):Math.max(-360,Math.min(360,r)); }
     _spFlash(pop,key,'Copied'); return;
@@ -13669,11 +13679,11 @@ function spSetShowMode(mode){
 function _spSizeOk(pop,s){
   const wb=pop.querySelector('#sp-w'), hb=pop.querySelector('#sp-h'); if(!wb||!hb) return true;
   const bad=[], chk=function(b,cur,max,word){ const v=String(b.value||'').trim(); if(v==='') return; const n=parseInt(v,10); if(isNaN(n)||n===cur) return; if(n<67||n>max) bad.push({b:b,cur:cur,max:max,word:word}); };
-  chk(wb,parseInt(s.w,10)||0,7680,'width'); chk(hb,parseInt(s.h,10)||0,4320,'height');
+  chk(wb,parseInt(s.w,10)||0,7680,'width'); chk(hb,parseInt(s.h,10)||0,_lbMaxH(),'height');   /* 16ln-anysize: 7680 high too (the phone 4320) */
   if(!bad.length) return true;
   bad.forEach(function(x){ x.b.value=String(x.cur); }); if(typeof _spAspectSync==='function') _spAspectSync(pop);   /* the Aspect line follows the box */
   const msg=(bad.length>1)
-    ? ('Width can be 67 to 7680 px and height 67 to 4320 px. They stay '+bad[0].cur+' \u00d7 '+bad[1].cur+' px.')
+    ? ((_lbMaxH()===7680?'Width and height can be 67 to 7680 px':'Width can be 67 to 7680 px and height 67 to 4320 px')+'. They stay '+bad[0].cur+' \u00d7 '+bad[1].cur+' px.')   /* 16ln-anysize */
     : (bad[0].word.charAt(0).toUpperCase()+bad[0].word.slice(1)+' can be 67 to '+bad[0].max+' px. It stays '+bad[0].cur+' px.');
   const back=function(){ try{ bad[0].b.focus(); bad[0].b.select(); }catch(e){} };
   if(typeof showAlert==='function') showAlert({variant:'warning',title:'Size out of range',message:msg,onConfirm:back,onCancel:back});
@@ -13973,7 +13983,7 @@ function _lpAdvancedSection(v, cr, pid, sid, n, isAdv){
   const innerBg = ct ? (ct.img ? 'url('+ct.img+') center/cover no-repeat' : ct.c) : 'var(--n-cyan)';   // 16ie: the cover / picture, not just the colour
   const geo = _lfxGeo(pid,sid,n,_sw,_sh);
   const fx = getLayerFx(pid,sid,n);
-  const num = (path,val,min,max) => `<input class="lfx-inp lfx-num" data-path="${path}" type="number" value="${val}" min="${min}" max="${max}" oninput="_lfxNumInput(this)" onfocus="_lfxFocus()" onchange="_lfxCommit()">`;
+  const num = (path,val,min,max) => `<input class="lfx-inp lfx-num" data-path="${path}" type="number" value="${val}" min="${min}" max="${max}" oninput="_lfxNumInput(this)" onfocus="_lfxFocus()" onchange="_lfxCommit()" onkeydown="if(event.key==='Enter'&&_lbcOn()){event.preventDefault();this.blur()}">`;   /* 16ln-blur: Enter leaves the box, so the wheel no longer steps it */
   const tog = (path,on,sub) => `<button type="button" class="lfx-tog${on?' on':''}" data-path="${path}"${sub?' data-sub="'+sub+'"':''} onclick="_lfxTog(this)" aria-pressed="${on}">${on?'ON':'OFF'}</button>`;
   // 16if (Omar): a number with a fader under it — slide in real time or type, the two stay together
   const slide = (path,val,min,max) => `<div class="lfx-ns">${num(path,val,min,max)}<input type="range" class="fs-range lfx-slide" data-path="${path}" min="${min}" max="${max}" value="${val}" oninput="_lfxNumInput(this)" onpointerdown="_lfxFocus()" onchange="_lfxCommit()" aria-label="${path}"></div>`;
@@ -13986,8 +13996,8 @@ function _lpAdvancedSection(v, cr, pid, sid, n, isAdv){
   const geoInp = (dim,label,val) => `<div><div class="lfx-lbl" style="margin-bottom:4px">${label} <span style="opacity:.55;font-weight:400">(px)</span></div><input class="lfx-inp lfx-geo" data-dim="${dim}" type="number" value="${val}" onchange="_lfxGeoChange(this)" onkeydown="if(event.key==='Enter'){event.preventDefault();this.blur()}"></div>`;
   const posBody = _lfxPosBody(pid,sid,n,_sw,_sh);   // 16js: faders + numbers, the same window the chip drag edits
   const sizeBody = _lfxSizeBody(pid,sid,n,_sw,_sh);
-  const opBody = `${row('0 \u2013 256',`<input class="lfx-inp lfx-op256" type="number" min="0" max="256" value="${fx.op}" oninput="_lfxOpInput(this,'v256')" onfocus="_lfxFocus()" onchange="_lfxCommit()">`)}
-          ${row('Percent',`<input class="lfx-inp lfx-oppct" type="number" min="0" max="100" value="${Math.round(fx.op/256*100)}" oninput="_lfxOpInput(this,'pct')" onfocus="_lfxFocus()" onchange="_lfxCommit()">`)}
+  const opBody = `${row('0 \u2013 256',`<input class="lfx-inp lfx-op256" type="number" min="0" max="256" value="${fx.op}" oninput="_lfxOpInput(this,'v256')" onfocus="_lfxFocus()" onchange="_lfxCommit()" onkeydown="if(event.key==='Enter'&&_lbcOn()){event.preventDefault();this.blur()}">`)}
+          ${row('Percent',`<input class="lfx-inp lfx-oppct" type="number" min="0" max="100" value="${Math.round(fx.op/256*100)}" oninput="_lfxOpInput(this,'pct')" onfocus="_lfxFocus()" onchange="_lfxCommit()" onkeydown="if(event.key==='Enter'&&_lbcOn()){event.preventDefault();this.blur()}">`)}
           <input type="range" class="lfx-range lfx-op256" min="0" max="256" value="${fx.op}" oninput="_lfxOpInput(this,'v256')" onpointerdown="_lfxFocus()" onchange="_lfxCommit()" aria-label="Opacity">`;
   const cropBody = `<div style="position:relative;width:100%;padding-bottom:56.25%;background:#10131a;border:1px solid var(--n-line);border-radius:4px;margin:6px 0 8px;overflow:hidden;box-shadow:inset 0 2px 6px rgba(0,0,0,.6)" id="lp-crop-prev">
             <div id="lp-crop-inner" style="position:absolute;background:${innerBg};transition:all .1s;border:1px solid rgba(255,255,255,.3)"></div>
@@ -16036,7 +16046,7 @@ function _bgsRec(p,s){
   const nm=(typeof getBgName==='function')?getBgName(p.id,s.id):''; if(!nm) return null;
   let r=p.bgBox&&p.bgBox[s.id], ok=!!(r&&typeof r==='object'&&r.src===nm);
   if(!r){ const g=presets[0], fill=(p.colors&&p.colors[s.id])||(p.bgs&&p.bgs[s.id]);
-    if(!fill&&g&&g.id!==p.id){ const q=g.bgBox&&g.bgBox[s.id]; if(q&&typeof q==='object'&&q.src===getBgName(g.id,s.id)){ r=q; ok=true; } } }   /* 16li-fix (D5): a later preset without a fill of its own follows P01's SOURCE BG, as it follows P01's IMAGE and APPLY (its own BG name or not) */
+    if(!fill&&g&&g.id!==p.id){ const q=g.bgBox&&g.bgBox[s.id]; if(q&&typeof q==='object'&&q.src===getBgName(g.id,s.id)&&(!_lbcOn()||q.src===nm)){ r=q; ok=true; } } }   /* 16ln-bgown (the full test's major 3, Omar 2026-10-17): a later preset with a BG name of its own (MEDIA SERVER) keeps its own BG; it drew P01's SOURCE box while the table and the Excel said MEDIA SERVER. P01's box fills only the presets whose BG is P01's (no name of their own, or the same name), as P01's clip does (_fuClip) */   /* 16li-fix (D5): a later preset without a fill of its own follows P01's SOURCE BG, as it follows P01's IMAGE and APPLY (its own BG name or not) */
   if(!ok||!(r.w>0&&r.h>0)) return null;
   if(r!==_bgsHold){ const R=_bgsRes(r.src); if(R&&(r.w!==R.w||r.h!==R.h)){ r.w=R.w; r.h=R.h; } }   /* 16li-fix (A4): the source's resolution changed somewhere: the BG takes it (its X / Y kept) */
   return r;
@@ -16831,29 +16841,7 @@ function _srcNameOrderRaw(){   /* the order the show's names were first seen in 
     // 16jh: an auto-made B sits right under its A everywhere the list is shown
     sources.forEach(s=>{ const link=s&&s.name&&(s.autoB||s.pairOf); if(!link) return; const bi=order.indexOf(s.name), ai=order.indexOf(link); if(bi<0||ai<0||bi===ai+1) return; order.splice(bi,1); const ai2=order.indexOf(link); order.splice(ai2+1,0,s.name); });   // 16ji: manual pairs too
   }
-  if(!_srcBHold&&_lbcOn()) _srcBUnderA(order);   /* 16lm-border */
   return order;
-}
-/* 16lm-border (the full test's minor 3, Omar 2026-10-14 "build it"): a B sits right under its A in every list and takes the number
-   after it, however the pair was made. Before, only a B the app made (autoB) or a page-1 twin (pairOf) moved (16jh / 16ji, above):
-   a B paired on Advanced page 1 (the Backup window, or an "X A" / "X B" pair that pairs by itself) and a PBP B / GFX B named
-   before its A kept their place, so PBP B read S3 above PBP A S4 in Simple, Wire and the Video I-O sheet, which printed "Backup of
-   PBP A" for it, while page 1 had A then B. Read here: page 1's pairs (what "Backup of" prints, _ioBkPrimaryNameFor) and, for a
-   PBP B / GFX B page 1 does not have yet, its PBP A / GFX A by name (the 16jh pair). Desktop only (the phone is frozen). The
-   "Simple changed since page 1 was built" fingerprints read the order without this move (_srcBHold, set by them), so a B moving
-   up is never a change of the show. */
-var _srcBHold=0;
-function _srcBUnderA(order){
-  const key=function(n){ return String(n||'').trim().toLowerCase(); };
-  const by=new Map(); order.forEach(function(n){ const k=key(n); if(k&&!by.has(k)) by.set(k,n); });
-  let rows=[]; try{ const pg=(typeof ioAdvanced==='object'&&ioAdvanced&&Array.isArray(ioAdvanced.pages))?ioAdvanced.pages[0]:null; rows=(pg&&Array.isArray(pg.sources))?pg.sources:[]; }catch(e){ rows=[]; }
-  const onP1=new Set(), pairs=[];
-  rows.forEach(function(r){ if(r&&r.name) onP1.add(key(r.name)); });
-  rows.forEach(function(r){ const p=(r&&r.backupOf)?_ioBkPrimaryOf(rows,r):null; if(!p) return; const a=by.get(key(p.name)), b=by.get(key(r.name)); if(a&&b&&a!==b) pairs.push([a,b]); });
-  order.forEach(function(n){ const m=/^(PBP|GFX)\s+B$/i.exec(String(n||'').trim()); if(!m||onP1.has(key(n))) return; const a=by.get(m[1].toLowerCase()+' a'); if(a&&!onP1.has(key(a))) pairs.push([a,n]); });
-  const usedA=new Set(), usedB=new Set();
-  pairs.forEach(function(pr){ const a=pr[0], b=pr[1]; if(usedA.has(a)||usedB.has(b)||usedA.has(b)||usedB.has(a)) return; usedA.add(a); usedB.add(b);
-    const bi=order.indexOf(b), ai=order.indexOf(a); if(bi<0||ai<0||bi===ai+1) return; order.splice(bi,1); order.splice(order.indexOf(a)+1,0,b); });
 }
 function _sysDiscoverSources(){
   // I/O Patch membership = library + preset content + sources[] = exactly the
@@ -17991,8 +17979,7 @@ function _ioAdvPage(){ return ioAdvanced.pages[ioAdvanced.page]||ioAdvanced.page
 // 16iw (Omar): Advanced opens on the show — page 1 takes the show name and the Simple patch (every discovered source,
 // destination, AUX, I/O destination and multiviewer with its connector, type, resolution and notes). Only an EMPTY
 // page 1 is seeded; a later change on the Simple side offers a rebuild, asked once per change (same as Wire).
-function _ioSimpleFingerprint(){ _srcBHold++; try{ return _ioSimpleFingerprint0(); } finally{ _srcBHold--; } }   /* 16lm-border: the order before a B moved up (_srcBUnderA) */
-function _ioSimpleFingerprint0(){
+function _ioSimpleFingerprint(){
   const dev=o=>[o.name||'',o.connectorType||'',o.deviceType||'',o.customType||'',o.w||'',o.h||'',o.resolution||''];
   const src=_sysDiscoverSources().map(function(nm){ const m=_sysGetSourceMeta(nm)||{}; return [nm,m.connectorType||'',m.type||'',m.customType||'',m.resolution||'']; });   /* 16lc-vpfinish (D9). 16lc-vpcards-fix (E2): the number order (an older show keeps the order it was fingerprinted in: its numbers are kept as it opens) */
   const d=(typeof screens!=='undefined'?screens:[]).filter(function(o){ return o&&!_bdIs(o); }).map(dev);
@@ -21290,6 +21277,7 @@ function _sysRowDelete(kind,id){
 // ── Custom confirm modal ───────────────────────────────────────────────
 function _sysConfirmModal(opts){
   opts=opts||{};
+  if(_lbcOn()&&document.getElementById('sys-confirm-overlay')) return;   /* 16ln-modalkeys: a second press never stacks a second question (its buttons answered the first one's callbacks) */
   const title=opts.title||'Confirm';
   const bodyHtml=opts.bodyHtml||'';
   const confirmLabel=opts.confirmLabel||'OK';
@@ -24071,10 +24059,7 @@ function _slbBuildPage1(p0){
 /* "Simple changed since page 1 was built": the three parts it has always had; a fourth, the cable plan, only when the
    cabling is not the one the old switcher drew (so every page 1 built before this build keeps matching until Simple really
    changes, and a tile moved, a view or an open never asks) */
-/* 16lm-border: inside a fingerprint (_srcBHold) the plan is read in the order before a B moved up, as page 1's note was made;
-   rows that are the default in today's order (stored by an edit after the move) are no plan either, as they were not before */
-function _slbFingerprintPart(){ const r=_slbFingerprintPart0(); if(r===null||!_srcBHold) return r; const h=_srcBHold; _srcBHold=0; try{ return _slbFingerprintPart0()===null?null:r; } finally{ _srcBHold=h; } }
-function _slbFingerprintPart0(){
+function _slbFingerprintPart(){
   const st = _slbState(), d = _slbDefaultRows(st.items);
   if(!st.loose.size && JSON.stringify([st.ins, st.outs]) === JSON.stringify([d.ins, d.outs])) return null;
   const pairs = function(a){ const o = []; a.forEach(function(k, i){ if(k) o.push([k, i]); }); return o; };
@@ -24307,8 +24292,7 @@ function _wireClosePage(pid){
   } else doClose();
 }
 // 16iv: what Page 1 was built from — so a later change on the Simple side can offer a rebuild
-function _wireSimpleFingerprint(){ _srcBHold++; try{ return _wireSimpleFingerprint0(); } finally{ _srcBHold--; } }   /* 16lm-border: the order before a B moved up (_srcBUnderA) */
-function _wireSimpleFingerprint0(){
+function _wireSimpleFingerprint(){
   const d = (typeof screens !== 'undefined' ? _bdNoBd(screens) : []).filter(Boolean).map(x => x.id + '=' + (x.name || ''));
   const m = (typeof dsms !== 'undefined' ? dsms : []).filter(Boolean).map(x => x.id + '=' + (x.name || ''));
   const a = [_wireBuildAllSourceNames(), d, m];   /* 16lc-vpcards-fix (E2): the number order (an older show keeps the order it was fingerprinted in: its numbers are kept as it opens) */
@@ -32632,7 +32616,12 @@ function _applyProjectText(text){
     // Now they're per-destination (s.notes). If a screen has no notes,
     // populate from the first non-empty preset note so existing data
     // remains visible on first open.
-    if(Array.isArray(screens)){
+    /* 16ln-notes (the full test's major 1, Omar 2026-10-17: "notes should be saved and transfer and be added to the excel or lookbook
+       prints out at all times"): the conversion above ran on EVERY open, so each destination with an empty note got the first preset's
+       note ("Doors open. Logo on all walls"), silently, and the next save wrote it into the file. Per-destination notes came with the
+       file version 3 (2026-05-16): only an older file (version 2, or none) still needs it. Every note stays where it was typed, is saved
+       and prints as before (preset notes on the cue sheet and the Look Book's preset pages, destination notes on the I/O sheets). */
+    if(Array.isArray(screens)&&!(s.version>=3)){
       let fallback='';
       if(Array.isArray(presets)){
         const pWithNote=presets.find(pp=>pp&&pp.notes&&pp.notes.trim());
@@ -33540,9 +33529,9 @@ function _lbKeyNewShow(){
   var qs=document.getElementById('qs-modal'); if(qs&&getComputedStyle(qs).display!=='none') return;
   if(typeof newShow==='function') newShow(); else if(typeof openQS==='function') openQS();
 }
-/* S2  Add Destination: the same limits as Destination Properties (67 to 7680 wide, 67 to 4320 high); 0, blank or a minus keeps the default */
+/* S2  Add Destination: the same limits as Destination Properties (67 to 7680 wide, 67 to 4320 high; 16ln-anysize: 7680 high on the desktop); 0, blank or a minus keeps the default */
 function _lbDestDim(v,dim){
-  var n=parseInt(v,10), def=(dim==='w')?1920:1080, max=(dim==='w')?7680:4320;
+  var n=parseInt(v,10), def=(dim==='w')?1920:1080, max=(dim==='w')?7680:_lbMaxH();
   if(isNaN(n)||n<=0) return def;
   return Math.max(67,Math.min(max,n));
 }
@@ -36750,12 +36739,13 @@ function _dlgIsTextBox(t){
 function _dlgKeyGuard(e){
   const k=e.key, sp=(k===' '||k==='Spacebar');
   if(e.type==='keyup'){ if(sp&&_dlgSpaceHeld){ _dlgSpaceHeld=false; e.stopPropagation(); } return; }
-  const dlg=_dlgUp(); if(!dlg&&!_qsUp()) return;   /* 16kt-sic-fix (1): the dialog first, else Quick Setup / Edit Show Info */
-  const box=document.getElementById(dlg?'dlg-box':'qs-modal'); if(!box) return;
+  const dlg=_dlgUp(), _sm=(!dlg&&!_qsUp()&&_lbcOn())?_sysModalTop():null; if(!dlg&&!_qsUp()&&!_sm) return;   /* 16kt-sic-fix (1): the dialog first, else Quick Setup / Edit Show Info; 16ln-modalkeys: else an older window (.sys-modal-overlay) */
+  const box=_sm||document.getElementById(dlg?'dlg-box':'qs-modal'); if(!box) return;
   if((k==='Enter'||sp)&&e.repeat){ e.preventDefault(); e.stopPropagation(); return; }   /* 16ks-merge */ /* a HELD Enter or Space is the press that opened the window (or the Advanced pan hand), never its answer */
+  if(_sm&&(k==='Enter'||sp)&&!(e.target&&e.target.nodeType===1&&_sm.contains(e.target))){ e.preventDefault(); e.stopPropagation(); _sysModalFocus(_sm); return; }   /* 16ln-modalkeys: Enter or Space from the page behind never presses again what opened the window: the window gets the focus */
   if(k==='Escape'||k==='Enter'||k==='Shift'||k==='Control'||k==='Alt'||k==='Meta') return;
   const t=e.target, inBox=!!(t&&t.nodeType===1&&box.contains(t));
-  if(!dlg&&!inBox&&t&&t.nodeType===1&&t!==document.body&&_qsOnTop(t)){ if(_dlgIsTextBox(t)) return; e.stopPropagation(); return; }   /* 16kt-merge2: typing in that window's boxes is its own; every other key stops here, so no page shortcut runs behind it */   /* 16kt-sic-fix (1): the cursor sits in a window ABOVE Quick Setup (the custom resolution box, a list): that window keeps its keys, Tab included; anything the overlay covers is behind */
+  if(!_sm&&!dlg&&!inBox&&t&&t.nodeType===1&&t!==document.body&&_qsOnTop(t)){ if(_dlgIsTextBox(t)) return; e.stopPropagation(); return; }   /* 16kt-merge2: typing in that window's boxes is its own; every other key stops here, so no page shortcut runs behind it */   /* 16kt-sic-fix (1): the cursor sits in a window ABOVE Quick Setup (the custom resolution box, a list): that window keeps its keys, Tab included; anything the overlay covers is behind */
   if(inBox&&k!=='Tab'&&_dlgIsTextBox(t)) return;
   e.stopPropagation();
   if(k==='Tab'){
@@ -36783,6 +36773,51 @@ function _dlgClickGuard(e){
 }
 window.addEventListener('keydown',_dlgKeyGuard,true);
 window.addEventListener('keyup',_dlgKeyGuard,true);
+/* 16ln-blur (the full test's major 5, Omar 2026-10-17: "clicking the pencil or the words should allow me to edit it click outside of that
+   should move on to the next thing"): the Wire drawing, the Video Presets canvas and Advanced's canvas take a mouse press without moving
+   the focus (their own press handlers stop the browser's default, for dragging), so a box being typed in kept the cursor: Backspace edited
+   it instead of removing the picked tile, Cmd+Z and 1-9 went into it, and a later Escape threw the typing away. A press that starts on
+   one of them, outside the box, now ends the box once the press is let go (after any drag): its text is kept by its own commit and the
+   next key goes to the drawing. A press anywhere else already moved the focus; the pencil still puts the cursor in. Desktop only. */
+var _lbBlurBox=null, _lbBlurPend=null;
+function _lbBlurDown(e){
+  _lbBlurBox=null; if(!_lbcOn()||!e||e.button!==0) return;
+  const a=document.activeElement, t=e.target; if(!a||a===document.body||!_lbEscIsText(a)||!t||!t.closest||a.contains(t)) return;
+  if(t.closest('#wire-diagram,#fs-viewport,#canvas-area')) _lbBlurBox=a;
+}
+function _lbBlurNow(){ const a=_lbBlurPend; _lbBlurPend=null; if(a&&document.activeElement===a) a.blur(); }
+function _lbBlurUp(){ const a=_lbBlurBox; _lbBlurBox=null; if(!a) return; _lbBlurPend=a; setTimeout(function(){ if(_lbBlurPend===a) _lbBlurNow(); },0); }
+/* A key pressed after the press but before the box has gone (the press's own redraw can hold the page for a moment, and a key that
+   waits then runs before the timer): the box goes first and the key goes to the page, as it would a moment later, never into the box
+   (a quick click on a layer, then Delete, took a letter out of the box). Its listener is the first key listener on window (at
+   _lbCalKeys), so no other listener sees the key in the box. */
+function _lbBlurKey(e){
+  const a=_lbBlurPend; if(!a||!e||e.target!==a||e.isComposing) return;
+  _lbBlurNow(); if(document.activeElement===a) return;
+  e.preventDefault(); e.stopImmediatePropagation();
+  (document.body||document.documentElement).dispatchEvent(new KeyboardEvent('keydown',{ key: e.key, code: e.code, keyCode: e.keyCode, location: e.location, repeat: e.repeat, shiftKey: e.shiftKey, ctrlKey: e.ctrlKey, altKey: e.altKey, metaKey: e.metaKey, bubbles: true, cancelable: true }));
+}
+window.addEventListener('mousedown',_lbBlurDown,true);
+window.addEventListener('mouseup',_lbBlurUp,true);
+/* 16ln-modalkeys (the full test's major 2, Omar 2026-10-17 "yes, build it"): the older windows (.sys-modal-overlay: the I/O Patch's
+   questions, the Remove pickers, Backup, Rename, Custom resolution, Wire's count / ask windows) left the keyboard on the page: Enter
+   pressed again the button behind (a second window whose Reset / Delete did nothing), Backspace / Cmd+Z acted on the page (a Wire
+   tile was deleted behind an open question). Now the top one is modal like the one dialog (_dlgKeyGuard above): it takes the focus
+   when it opens (its main button, else its box, else the window), Tab stays inside, a held Enter / Space is dropped, no other key
+   reaches the page. Each window keeps answering Escape itself (_lbEscTop lists it with no closer). Desktop only. */
+function _sysModalTop(){ const L=document.querySelectorAll('.sys-modal-overlay'); for(let i=L.length-1;i>=0;i--){ const o=L[i]; if(o.isConnected&&o.getClientRects().length) return o; } return null; }
+function _sysModalFocus(o){
+  if(!o||!o.isConnected) return;
+  const a=document.activeElement; if(a&&a!==document.body&&o.contains(a)) return;   /* the window put the cursor somewhere itself */
+  let f=o.querySelector('#sys-confirm-go, .sys-modal-btn.primary, .sys-modal-btn.danger-solid')||o.querySelector('.sys-modal input:not([type=hidden]):not([disabled]), .sys-modal textarea')||o.querySelector('.sys-modal-footer .sys-modal-btn')||o.querySelector('.sys-modal');
+  if(!f) return;
+  if(f.classList&&f.classList.contains('sys-modal')&&!f.hasAttribute('tabindex')) f.setAttribute('tabindex','-1');
+  try{ f.focus({ preventScroll: true }); }catch(e){ try{ f.focus(); }catch(_e){} }
+}
+(function(){ const go=function(){ if(typeof MutationObserver!=='function'||!document.body) return; new MutationObserver(function(ms){
+  if(!_lbcOn()) return;
+  ms.forEach(function(m){ m.addedNodes.forEach(function(n){ if(n&&n.nodeType===1&&n.classList&&n.classList.contains('sys-modal-overlay')) setTimeout(function(){ _sysModalFocus(n); },40); }); });   /* after the window's own focus code (the Backup window's 30 ms) */
+}).observe(document.body,{ childList: true }); }; if(document.body) go(); else document.addEventListener('DOMContentLoaded',go); })();
 window.addEventListener('click',_dlgClickGuard,true);
 /* a tick-box dialog's own rule: Enter on the Cancel button cancels (everywhere else in the window Enter = the confirm
    button, as in every dialog). Tab and Space are answered for every dialog by _dlgKeyGuard above. */
@@ -38417,8 +38452,16 @@ function _a11ySave(obj){
   catch(e){}
 }
 
+/* 16ln-a11yfit: the body's height follows the UI Size (see the rule at the end of the stylesheet) */
+function _a11yFit(){
+  const b=document.body; if(!b) return;
+  const z=parseFloat(b.style.zoom)||1;
+  if(z!==1){ b.style.setProperty('--lb-z',String(z)); b.classList.add('lb-zfit'); }
+  else { b.style.removeProperty('--lb-z'); b.classList.remove('lb-zfit'); }
+}
 function setA11yScale(scale){
   document.body.style.zoom = scale;
+  _a11yFit();   /* 16ln-a11yfit */
   const s = _a11yLoad(); s.scale = scale; _a11ySave(s);
   _a11yReflectActive();
 }
@@ -38476,6 +38519,7 @@ if(document.readyState === 'loading'){
 function resetA11y(){
   try { localStorage.removeItem(_A11Y_KEY); } catch(e){}
   document.body.style.zoom = '';
+  _a11yFit();   /* 16ln-a11yfit */
   document.body.classList.remove('a11y-reduce-motion');
   document.body.classList.remove('a11y-high-contrast');
   // Reset all content type colors to defaults
@@ -38690,6 +38734,7 @@ function _a11yStyleBtn(b, on){
 function loadA11ySettings(){
   const s = _a11yLoad();
   if(s.scale != null && s.scale !== 1) document.body.style.zoom = s.scale;
+  _a11yFit();   /* 16ln-a11yfit */
   if(s.motion === 'on') document.body.classList.add('a11y-reduce-motion');
   if(s.contrast === 'on') document.body.classList.add('a11y-high-contrast');
   // Apply saved content type color overrides BEFORE first render so

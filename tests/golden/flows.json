@@ -357,7 +357,7 @@
    "ok": true
   },
   {
-   "name": "Escape in a box only takes back the TYPING, other pages: the Wire - output button pressed under a typed Project box keeps its change (the old project text is back), and a destination corner drag under the Show name box keeps its size",
+   "name": "Escape in a box only takes back the TYPING, other pages: the Wire - output button pressed under a typed Project box keeps its change (16ln-blur: the press ends the box, the typed project text kept), and a destination corner drag under the Show name box keeps its size",
    "ok": true
   },
   {
@@ -1637,7 +1637,7 @@
    "ok": true
   },
   {
-   "name": "toolbar: Add Destination is one undo step and is held to the size limits (67 to 7680 wide, 67 to 4320 high)",
+   "name": "toolbar: Add Destination is one undo step and is held to the size limits (67 to 7680 wide and, since 16ln-anysize, 67 to 7680 high)",
    "ok": true
   },
   {
@@ -3105,10 +3105,6 @@
    "ok": true
   },
   {
-   "name": "I/O Patch 16lm-border SO1 (the full test's minor 3, Omar 2026-10-14 \"build it\"): a PBP B named before its A sits right under it and takes the number after it (CAM 1 renamed PBP B, then CAM 2 renamed PBP A: S3 PBP A, S4 PBP B on the cards, in the order and on Wire Simple's router); page 1 pairs them the same; the \"Simple changed since page 1 was built\" notes read the order before the move (as build 16ll did), so nothing is asked, and a Wire Simple edit that stores the rows in the new order is no change either",
-   "ok": true
-  },
-  {
    "name": "Wire 16lm-slbtab WT1 (the full test's minor 8, Omar 2026-10-14 \"build it\"): Tab / Shift+Tab in a router ID cell of Wire Simple goes to the next / previous ID cell of the same column, the typed ID kept (one Undo step when it changed, none when not) and the cell's text selected; off either end of the column Tab is left to the browser",
    "ok": true
   },
@@ -3125,7 +3121,39 @@
    "ok": true
   },
   {
-   "name": "Video Presets 16lm-whcheck WH1 (the full test's minor 22, Omar 2026-10-14 \"build it\"): Destination Properties says the range for a Width / Height outside it (8000, then 50 x 5000), puts the size back in the box (the Aspect line too), keeps the window open with the cursor in the box and applies nothing (no Undo step); a good width still applies in one step",
+   "name": "Video Presets 16lm-whcheck WH1 (the full test's minor 22, Omar 2026-10-14 \"build it\"): Destination Properties says the range for a Width / Height outside it (8000, then 50 x 8000), puts the size back in the box (the Aspect line too), keeps the window open with the cursor in the box and applies nothing (no Undo step); a good width still applies in one step",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16ln-notes NT1 (the full test's major 1, Omar 2026-10-17: \"notes should be saved and transfer and be added to the excel or lookbook prints out at all times\"): opening a show never copies a preset's note into an empty destination note (a show of this app, version 3, opened again keeps CENTER LED's emptied note empty); the preset note prints on the cue sheet and the Look Book, the destination notes in the Look Book and the I/O Excel; an older file (no version, no destination notes) is still converted once",
+   "ok": true
+  },
+  {
+   "name": "Wire 16ln-modalkeys MK1 (the full test's major 2, Omar 2026-10-17 \"yes, build it\"): an older question window takes the keyboard: the card trash's Delete Source question opens with the focus on Delete; Backspace and Cmd+Z reach nothing behind it (the picked Wire tile stays, no Undo step); Enter from the trash behind goes to the window and stacks no second one, nor does a second open; Escape cancels it; its Delete answers it once; the Remove Source picker takes the focus too and Backspace reaches nothing behind it",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16ln-bgown BG1 (the full test's major 3, Omar 2026-10-17): a SOURCE background on P01 (CAM 1 on LEFT LED) is drawn on a later preset only when its background name is P01's: P02 with a name of its own (PGM) keeps PGM and draws no CAM 1 box (as the table and the Excel say); P03 with no name of its own follows P01's box as before",
+   "ok": true
+  },
+  {
+   "name": "Help 16ln-a11yfit AF1 (the full test's major 4, Omar 2026-10-17 \"yes, build it\"): at UI Size Large and Small the page fits the window: the bottom bar ends at the window's bottom edge and HELP / BUG are under the pointer where they are drawn; Default takes the fitting off",
+   "ok": true
+  },
+  {
+   "name": "Wire / Video Presets 16ln-blur BL1 (the full test's major 5, Omar 2026-10-17: \"clicking the pencil or the words should allow me to edit it click outside of that should move on to the next thing\"): a press on the Wire drawing ends the Client box being typed in, its text kept, and the next Backspace takes the picked tile off; a press on Advanced's empty canvas ends a card's name box, the name kept; Enter leaves the layer panel's Opacity box with the value kept",
+   "ok": true
+  },
+  {
+   "name": "Wire 16ln-blur BL2 (the full test's major 5, Omar 2026-10-17: \"click outside of that should move on to the next thing\"): a key pressed after a press on the drawing but before the box has gone (a slow redraw holds the page) goes to the drawing, never into the box: the Client box ends at that key with its typed text kept, the key is kept out of the box, and the Backspace takes the picked tile off",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16ln-presetbin PB1 (the full test's 6, Omar 2026-10-17: \"click the trash can of the preset should only kill that one preset\"): a double-click on P02's trash deletes P02 only: the first click deletes it, the second click lands on the trash of P03 (moved up under the pointer) and does nothing; one Undo brings P02 back; one click on a trash still deletes its preset",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16ln-anysize AS1 (the full test's 7, Omar 2026-10-17: \"user can do w.e they like the warning should go up for an engineer to approve said resolution since it probably not a common resolution\", \"Any size, warning up\"): a destination takes 67 to 7680 px high everywhere: Destination Properties applies 5000 in one Undo step and its red pill then asks for the engineer (\"Above DCI 4K\"); 8000 gets the range note (67 to 7680) and nothing changes; the Down arrow goes past 4320; Add Destination makes a 1920 x 6000 destination",
    "ok": true
   }
  ],
