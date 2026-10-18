@@ -1564,6 +1564,40 @@ anchor on the function name and replace the first occurrence after it, never all
     the 5 older checks that wrote down the old rules adapted in place with his words (patch_tests_16lp.py lists them): two of the
     hand-made card names (a typed name of another card was numbered), the ghost rows (a copied row renamed made a twin), the
     Remove lists (an I/O-only destination went at once), FU-4 (its + now asks). Snapshots unchanged.
+- **16lq** (2026-10-18, build 16lq on the local 16lp; search `16lq-`). Round 2 part 1 (Omar: "do ths fixes"; the list and his answers in
+  backups/rounds/sources-names/OMAR_ANSWERS_2026-10-17.md): the Video Presets and I/O Patch fixes. Desktop only (`_lbcOn`).
+  - **16lq-approval** (#1, "yes"): the engineer's approval remembers the size it was given at (`approvedRes`, set by
+    `setScreenApproved`); `_resApproved(s)` is the approval at the current size (checkRes, the red pill window's tick, the export
+    check, the CSV, the Advanced cards read it); `_resApproveSweep(false)` at the top of render clears an approval whose size
+    changed, inside the change's own Undo step (Undo brings both back); `_resApproveSweep(true)` at open (before the baseline)
+    gives an older show's approved destination the size it opens with. AP1.
+  - **16lq-auxsize** (#2, "should stop at a 4k resolution 3840x2160" / "continue that then"): an AUX is at most 3840 x 2160:
+    AUX Properties says the range and stays open (`_lbqAuxSizeOk`, as 16lm-whcheck); `_sysSetMetaNow` (an AUX or I/O-only AUX
+    card, Wire's card), A0 (`_iogApplyOut`, one note) and a hand-made AUX card (`_lbfWcSet`) refuse a bigger size with Too big
+    for an AUX (`_auxSizeRefused`); the AUX resolution menus (`_sysBuildResOptions`, `_auxKindOf`) grey a COPY of each bigger
+    size (the `_SYS_RES` entries are shared with every menu: greying them in place greyed the destinations' too, found by AX1).
+    A size an AUX already has stays. AX1.
+  - **16lq-tabskip** (#9): Tab / Shift+Tab with a layer picked skips the destination's empty slots (`_cycleSelLayer`). TB1.
+  - **16lq-rowpick** (#11, "the way you descripe it is how it was" / "yes"): a capture-phase click listener on `#tbody` rows
+    picks the row (doSelect + showMoveSymbol: live DOM, no redraw, so the cell's own job still happens) and marks the event, so
+    rowClick does not take the pick away again; a click on the picked row's free column still lets it go. RP1.
+  - **16lq-levelclick** (#12, "fix that so its only one undo move then"): `_fsVolStart` no longer sets the level at the press
+    (it snapped 148 to 145, an extra Undo step before the double-click's 100 %); it moves once the pointer drags (Shift primes the
+    fine reference). LV1.
+  - **16lq-cropreset** (#13, "yes"): `setL` drops the layer's Source crop (`layerMedia.crop`) when the layer gets a different
+    source (a rename does not come through `setL`, so a renamed source keeps it). CR1.
+  - **16lq-webmdur** (#14, "yes"): both import paths wait for `_lbqRealDur` (seek to 1e101, as the frame strip did); a clip saved
+    with 00:00 is filled in once a session (`_fsMediaLacksInfo` / `_fsEnrichMedia`, `_lbqDurTried`). WD1.
+  - **16lq-bgone** (#15, "BG should only ever by able to be one thing image, source, or BG. they would replace each other cause
+    BG layer can only be one thing at a time. we should add an undo step though for BG"): IMAGE pushes an Undo step and clears the
+    preset's BG name, cover (and on P01 its own colour) first (`_lbqBgOne`); VIDEO and a SOURCE with no known size clear P01's
+    picture (`s.bg`), as SOURCE already did. APPLY's colour still tints around a SOURCE box (16li-bgsrc). BO1.
+  - **16lq-ptabs** (#16, "if its to long it break into two row and if that not enough when you hover over the tile it should pop
+    up below it with the full name"): an I/O Patch Advanced page tab holds its name in `.io-ptab-nm` (two lines, then …; the copy
+    and close buttons stay in the tab); `_lbqTabTip` pops the full name up under the tab on hover or focus (`#io-ptab-tip`). A page
+    name still takes 32 letters. PT1.
+  - Tests: AP1, AX1, TB1, RP1, LV1, CR1, WD1, BO1, PT1 new, each failing on 16lp for its own reason;
+    the 1 older check that counted the open I/O page tab's parts adapted in place (16lc-picsize Y2: 4 parts, its name is its own box now, as on Wire). Snapshots unchanged.
 - Declined by the owner, do not resurface: mask shapes, anchor points, hardware profiles, canvas/WebGL renderer,
   interpolation filter toggles, upscale-factor notes, per-layer "sharp pixels", any licence mention.
 

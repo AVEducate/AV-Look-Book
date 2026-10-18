@@ -1022,6 +1022,10 @@ body.is-mobile .mb-io-card .mb-io-field .mb-io-rescol>.io-rf-ask{flex:1 0 104px;
 #io-tabs{display:flex;align-items:center}
 .io-adv-bar{display:flex;align-items:center;gap:14px;margin:0 0 14px;flex-wrap:wrap}
 .io-adv-pages{display:inline-flex;flex-wrap:nowrap;align-items:center;gap:2px;padding:3px;border:1px solid var(--ss-border-soft);border-radius:4px;background:#0a0d12;box-shadow:var(--n-shadow-inset)}
+#io-page-tabs .io-ptab{white-space:normal}   /* 16lq-ptabs: the name wraps inside the tab, the copy / close buttons stay in it */
+#io-page-tabs .io-ptab>span{flex:none}
+#io-page-tabs .io-ptab>.io-ptab-nm{flex:0 1 auto;min-width:0;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;white-space:normal;overflow-wrap:anywhere;line-height:11px;text-align:left}
+#io-ptab-tip{position:fixed;z-index:9000;max-width:360px;padding:6px 9px;border-radius:6px;background:#0b0e13;border:1px solid var(--n-line);color:var(--text);font-size:11px;font-weight:600;letter-spacing:.02em;box-shadow:0 6px 18px rgba(0,0,0,.5);pointer-events:none;overflow-wrap:anywhere}
 #io-page-tabs::-webkit-scrollbar,#wire-page-tabs::-webkit-scrollbar{height:5px}
 #io-page-tabs::-webkit-scrollbar-thumb,#wire-page-tabs::-webkit-scrollbar-thumb{background:#2a3038;border-radius:3px}
 #io-page-tabs,#wire-page-tabs{scrollbar-width:thin}
@@ -4904,7 +4908,7 @@ Also called DSM (Downstage Monitor) in broadcast and theater workflows, same thi
   <div class="bb-cell bb-pill bb-cyan" title="The largest number of layers used in any single preset, this is the figure to compare against your switcher's per-scene layer budget. (The most complex single moment in the show.)"><span class="bb-label">Layers</span><strong id="bb-layers">0</strong></div>
   <div id="bb-spacer"></div>
   <div class="bb-cell" id="bb-sel" style="font-size:10px;opacity:.5">—</div>
-  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy, hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16lp</div>
+  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy, hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16lq</div>
   <!-- 16kq (Omar): the Modifiers menu lives on each preset tile only; this place is kept for the Educator tool of a future build (greyed out, does nothing) --><button class="bb-util" id="tb-educator" type="button" disabled aria-disabled="true" title="Educator: coming in a future build" aria-label="Educator, coming in a future build" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:default;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em;opacity:.38"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10L12 5 2 10l10 5 10-5z"/><path d="M6 12v5c0 1 2.7 2.5 6 2.5s6-1.5 6-2.5v-5"/><line x1="22" y1="10" x2="22" y2="16"/></svg><span>Educator</span></button>
   <button class="bb-util" onclick="actions.help()" title="Help, quick reference, keyboard shortcuts, glossary, accessibility" aria-label="Help, quick reference, keyboard shortcuts, glossary, accessibility" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="4.93" y1="4.93" x2="9.17" y2="9.17"/><line x1="14.83" y1="14.83" x2="19.07" y2="19.07"/><line x1="14.83" y1="9.17" x2="19.07" y2="4.93"/><line x1="4.93" y1="19.07" x2="9.17" y2="14.83"/></svg>Help</button>
   <button class="bb-util" id="tb-bug" onclick="reportBug()" title="Report a bug, opens an email to AV Educate with your show file — attached in the app, downloaded for you to attach in a browser" aria-label="Report a bug" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="7.2"/><path d="M15.4 15.4L21 21" stroke-width="2.6"/><ellipse cx="10" cy="11" rx="2.5" ry="3.3" fill="currentColor" stroke="none"/><circle cx="10" cy="7" r="1.5" fill="currentColor" stroke="none"/><path d="M7.5 9.2l-1.7-.8M7.4 11.2H5.6M7.7 13.1l-1.5 1.1M12.5 9.2l1.7-.8M12.6 11.2h1.8M12.3 13.1l1.5 1.1M9.2 5.9l-.8-1.1M10.8 5.9l.8-1.1" stroke-width="1.3"/></svg>Bug</button>   <!-- 16jk (Omar): Report a bug, after Help -->
@@ -7362,9 +7366,9 @@ function checkRes(s){
   const exact=RES_STANDARDS.find(r=>r.w===w&&r.h===h);
   if(exact) return {ok:true,warning:null,label:exact.label+' ('+exact.std+')',approved:true};
   // Above DCI 4K threshold
-  if(w>DCI_4K_W||h>DCI_4K_H) return {ok:'warn',warning:'Above DCI 4K, verify EDID support with engineer',label:'Custom >4K',approved:s.approved||false};
+  if(w>DCI_4K_W||h>DCI_4K_H) return {ok:'warn',warning:'Above DCI 4K, verify EDID support with engineer',label:'Custom >4K',approved:_resApproved(s)};   /* 16lq-approval */
   // Non-standard but within range
-  return {ok:'warn',warning:'Non-standard resolution, not in SMPTE/VESA library. Verify EDID with engineer.',label:'Custom',approved:s.approved||false};
+  return {ok:'warn',warning:'Non-standard resolution, not in SMPTE/VESA library. Verify EDID with engineer.',label:'Custom',approved:_resApproved(s)};   /* 16lq-approval */
 }
 
 
@@ -7660,7 +7664,7 @@ function setL(pid,sid,n,v){
   const p=presets.find(p=>p.id===pid);if(!p)return;
   if(!p.layers[sid]){ if(v===null||v===undefined||v==='') return; p.layers[sid]={}; }   /* unsaved-16ks3: clearing a layer that is not there writes nothing (an empty table cell clicked into and left) */
   if(v===null)delete p.layers[sid][n];
-  else { const _wasEmpty=!p.layers[sid][n]; p.layers[sid][n]=v; if(_wasEmpty&&typeof _lbPlaceNewLayer==='function') _lbPlaceNewLayer(pid,sid,n); }   /* round 3: new layer = centred PIP */
+  else { const _wasEmpty=!p.layers[sid][n], _was=p.layers[sid][n]; p.layers[sid][n]=v; if(_wasEmpty&&typeof _lbPlaceNewLayer==='function') _lbPlaceNewLayer(pid,sid,n); else if(_was!==v&&!_srcLbcOff()){ const _lm=p.layerMedia&&p.layerMedia[sid]&&p.layerMedia[sid][n]; if(_lm&&_lm.crop) delete _lm.crop; } }   /* 16lq-cropreset (#13, "yes"): the source crop is in the old source's pixels */   /* round 3: new layer = centred PIP */
 }
 // round 3 (Omar, 2026-09-21): the default for a NEW layer. An empty slot that gets content starts as a CENTRED PIP sized from half
 // the destination: half the width and half the height for plain content; for a picture or a clip with the aspect
@@ -9026,6 +9030,7 @@ function screenClick(e,pid,sid){
 function rowClick(e,pid,sid){
   // Allow clicks on layer-dot to pass through to their own handler
   if(e.target.classList.contains('layer-dot')) return;
+  if(e&&e._lbqPicked) return;   /* 16lq-rowpick: this click picked the row already (its capture) */
   // If clicking an input, still select the row — just don't steal focus
   e.stopPropagation();
   if(sel&&sel.pid===pid&&sel.sid===sid){doSelect(null,null);return;}
@@ -9045,6 +9050,7 @@ function render(){
   try{ _cbNorm(); }catch(e){}   /* 16lg-blend (R2): a blend made just now is one combined screen; an un-blended one's entry goes */
   try{ _cbSelDrop(); }catch(e){}   /* 16lg-blend-fix (D5): the arrow keys, Delete and Tab never act on a layer nobody can see */
   try{ _cbRotSync(); }catch(e){}   /* 16lg-blend-fix2 (R1): Destination Properties' Rotation greyed while it is part of one combined screen */
+  try{ _resApproveSweep(false); }catch(e){}   /* 16lq-approval: a destination resized since its approval loses it, in the step that resized it */
   syncCanvasSize();renderStats();renderCanvas();renderTable();
   _scheduleDirtyCheck();
   if(fsPresetId) renderFullscreen();
@@ -11299,14 +11305,14 @@ function openDSMPanel(e,pid,dsmId){
     <div style="display:grid;grid-template-columns:1fr 16px 1fr;gap:6px;align-items:end;margin-bottom:10px">
       <div>
         <div style="font-size:11px;color:var(--text3);margin-bottom:4px;letter-spacing:.04em">Width</div>
-        <input id="dsmp-w" type="number" value="${dsm.w}" min="67" max="7680"
+        <input id="dsmp-w" type="number" value="${dsm.w}" min="67" max="${_lbcOn()?_AUX_MAX_W:7680}"
           style="width:100%;font-size:12px;padding:7px 12px;border:1px solid rgba(255,255,255,.06);border-radius:4px;background:var(--n-track);color:#9dd6ff;outline:none;box-sizing:border-box;appearance:textfield;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5);transition:all .15s;font-family:var(--font-mono);text-align:center"
           data-fx="amber-c" aria-label="AUX width (px)">
       </div>
       <div style="color:var(--text3);font-size:13px;text-align:center;padding-bottom:8px">×</div>
       <div>
         <div style="font-size:11px;color:var(--text3);margin-bottom:4px;letter-spacing:.04em">Height</div>
-        <input id="dsmp-h" type="number" value="${dsm.h}" min="67" max="4320"
+        <input id="dsmp-h" type="number" value="${dsm.h}" min="67" max="${_lbcOn()?_AUX_MAX_H:4320}"
           style="width:100%;font-size:12px;padding:7px 12px;border:1px solid rgba(255,255,255,.06);border-radius:4px;background:var(--n-track);color:#9dd6ff;outline:none;box-sizing:border-box;appearance:textfield;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5);transition:all .15s;font-family:var(--font-mono);text-align:center"
           data-fx="amber-c" aria-label="AUX height (px)">
       </div>
@@ -11323,6 +11329,7 @@ function openDSMPanel(e,pid,dsmId){
     </div>`;
 
   pop.querySelector('#dsmp-apply').addEventListener('click',()=>{
+    if(!_lbqAuxSizeOk(pop,dsm)) return;   /* 16lq-auxsize */
     const _vpU=_vpSnap();
     const newName=pop.querySelector('#dsmp-name').value.trim()||dsm.name;
     const newW=Math.max(67,Math.min(7680,parseInt(pop.querySelector('#dsmp-w').value)||dsm.w));
@@ -11455,6 +11462,7 @@ function setScreenApproved(sid, val){
   const s=screens.find(x=>x.id===sid); if(!s||s.approved===val) return;
   pushUndo();
   s.approved=val;
+  if(!_srcLbcOff()){ if(val) s.approvedRes=_resWH(s); else delete s.approvedRes; }   /* 16lq-approval */
 }
 // ── Per-preset canvas position setter (2026-06-22, Phase 4): the single write
 // point for p.positions[sid]. Accepts (p,sid,x,y) or (p,sid,{x,y}). ──
@@ -11540,7 +11548,7 @@ function openResWarn(e,sid){
   if(chk.ok==='warn'||chk.ok===false){
     approveRow.style.display='flex';
     approvedBadge.style.display='none';
-    chkBox.checked=s.approved||false;
+    chkBox.checked=_resApproved(s);   /* 16lq-approval */
     chkBox.onchange=()=>{
       setScreenApproved(_resWarnSid, chkBox.checked);
       if(chkBox.checked){
@@ -12752,7 +12760,8 @@ function _resizeSelDest(dw, dh){
 function _cycleSelLayer(direction){
   if(typeof selLayer === 'undefined' || !selLayer) return;
   const {pid, sid, n} = selLayer;
-  const L = (typeof getLayerNums === 'function') ? getLayerNums(pid) : [1,2,3,4];
+  let L = (typeof getLayerNums === 'function') ? getLayerNums(pid) : [1,2,3,4];
+  if(!_srcLbcOff()){ const _F = L.filter(function(k){ return k === n || !!getL(pid, sid, k); }); if(_F.length) L = _F; }   /* 16lq-tabskip (#9, "yes"): an empty slot is skipped */
   if(!L.length) return;
   const i = L.indexOf(n);
   if(i < 0) return;
@@ -16104,7 +16113,7 @@ function _bgsPick(pid,sid,name,noStep){
   _fuWcAdopt(name);   /* 16lj-followup (W1): one card for the one resolution (the step above holds the hand-made card) */
   const res=_bgsRes(name);
   const ct=(typeof findContent==='function')?findContent(name):null;
-  if(!res){ setBgName(pid,sid,name); if(ct&&typeof setPColor==='function'){ if(ct.img) setPColor(pid,sid,null,ct.img); else if(ct.c) setPColor(pid,sid,ct.c,null); } }   /* no known resolution: it fills the destination, as the Advanced drop always did */
+  if(!res){ setBgName(pid,sid,name); if(!_srcLbcOff()&&presets[0]&&presets[0].id===pid&&s.bg) delete s.bg; if(ct&&typeof setPColor==='function'){ if(ct.img) setPColor(pid,sid,null,ct.img); else if(ct.c) setPColor(pid,sid,ct.c,null); } }   /* no known resolution: it fills the destination, as the Advanced drop always did */
   else {
     setBgName(pid,sid,name);
     if(presets[0]&&presets[0].id===pid&&s.bg) delete s.bg;   /* P01: the destination's own picture was its BG; the source replaces it */
@@ -16270,6 +16279,7 @@ function _bgsVideo(sid,pid){
       if(!it){ if(typeof showAlert==='function') showAlert({variant:'warning',title:'Video not read',message:'This file could not be read as a video in this app.'}); return; }
       land();
       setBgName(pid,sid,it.l);
+      if(!_srcLbcOff()&&presets[0]&&presets[0].id===pid&&s.bg) delete s.bg;   /* 16lq-bgone */
       if(typeof setPColor==='function'){ if(it.img) setPColor(pid,sid,null,it.img); else if(it.c) setPColor(pid,sid,it.c,null); }   /* _fsAssignBg's data path: the BG name and its cover as the picture */
       try{ _fsSrcSig=''; if(typeof _fsRenderSources==='function') _fsRenderSources(true); }catch(e){}
       if(typeof _isDirty!=='undefined'){ _isDirty=true; if(typeof _updateDirtyIndicator==='function') _updateDirtyIndicator(); }
@@ -16605,6 +16615,7 @@ function triggerScreenImageUpload(sid,pid,mode){
         });
         return;
       }
+      if(!_srcLbcOff()){ if(typeof pushUndo==='function') pushUndo(); _lbqBgOne(pid,sid,isFirst); }   /* 16lq-bgone */
       _bgsDrop(pid,sid);   /* 16li-bgsrc: the picture replaces a SOURCE BG */
       if(isFirst){
         const s=screens.find(x=>x.id===sid);
@@ -17585,7 +17596,7 @@ function _sysSetMetaNow(kind,id,field,value){
     if(!d) return;
     if(field==='resolution'){
       const parts=String(value||'').split('x').map(n=>parseInt(n)||0);
-      if(parts[0]&&parts[1]){d.w=parts[0];d.h=parts[1];}
+      if(parts[0]&&parts[1]){ if((parts[0]!==parseInt(d.w,10)||parts[1]!==parseInt(d.h,10))&&_auxSizeRefused(parts[0],parts[1])) return; d.w=parts[0];d.h=parts[1];}   /* 16lq-auxsize */
     } else {
       d[field]=value;
     }
@@ -17601,7 +17612,7 @@ function _sysSetMetaNow(kind,id,field,value){
     // I/O-Patch-only destination (lives in ioDests[], never on canvas).
     const d=(typeof ioDests!=='undefined'&&Array.isArray(ioDests))?ioDests.find(x=>x.id===id):null;
     if(!d) return;
-    if(field==='resolution'){ const parts=String(value||'').split('x').map(n=>parseInt(n)||0); if(parts[0]&&parts[1]){d.w=parts[0];d.h=parts[1];} }
+    if(field==='resolution'){ const parts=String(value||'').split('x').map(n=>parseInt(n)||0); if(parts[0]&&parts[1]){ if(d.aux&&(parts[0]!==parseInt(d.w,10)||parts[1]!==parseInt(d.h,10))&&_auxSizeRefused(parts[0],parts[1])) return; d.w=parts[0];d.h=parts[1];} }   /* 16lq-auxsize */
     else { d[field]=value; }
     if(field!=='name') _ioAdvFollowTwinDest(d,[field]);   /* excel-tab-fix (16kt): page 1's row takes the same value, same edit */
     _isDirty=true; if(typeof _updateDirtyIndicator==='function') _updateDirtyIndicator();
@@ -18364,7 +18375,7 @@ function _ioRenderTabs(){
           h+='<span style="'+_pageTabStyle(true)+';padding:3px 8px">'+num(i,true)+'<input id="io-page-rename" type="text" value="'+_esc(p.name)+'" maxlength="32" onkeydown="_ioRenameKeydown(event,'+i+')" onblur="_ioCommitRename('+i+', this.value)"></span>';
         } else {
           const pencil=on?_pageCopyBtnHTML('_ioCopyPage('+i+')')+'<span onclick="event.stopPropagation();_ioClosePage('+i+')" title="Close this page" style="cursor:pointer;display:inline-flex;align-items:center;margin-left:2px" onmouseover="this.style.color=\'var(--n-red)\'" onmouseout="this.style.color=\'\'"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" width="10" height="10"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></span>':'';   // 16iv: × closes the page
-          h+='<button type="button" onclick="_ioSetPage('+i+')" ondblclick="_ioRenamePage('+i+')" style="'+_pageTabStyle(on)+'" title="'+_esc(p.name)+', click to open, double-click to rename">'+num(i,on)+_esc(p.name)+pencil+'</button>';
+          h+='<button type="button"'+(_lbcOn()?' class="io-ptab" data-full="'+_esc(p.name)+'"':'')+' onclick="_ioSetPage('+i+')" ondblclick="_ioRenamePage('+i+')" style="'+_pageTabStyle(on)+'" title="'+_esc(p.name)+', click to open, double-click to rename">'+num(i,on)+(_lbcOn()?'<span class="io-ptab-nm">'+_esc(p.name)+'</span>':_esc(p.name))+pencil+'</button>';   /* 16lq-ptabs */
         }
       });
       h+='</div>';
@@ -19614,6 +19625,102 @@ function _lbhcDelAsk(id,from){
       _sysRender(); if(typeof _wireRefreshIfOpen==='function') _wireRefreshIfOpen(); } });
 }
 /* ══ end 16lp-wirecards ══ */
+/* ══ 16lq (Round 2, the fixes; Omar 2026-10-17, backups/rounds/sources-names/OMAR_ANSWERS_2026-10-17.md). Desktop only (_lbcOn):
+   the phone keeps its ways (frozen). ══ */
+/* ── 16lq-approval (#1, "yes": a size change clears the engineer's approval): the approval remembers the size it was given at
+   (approvedRes). A destination whose size changes loses it (the red pill comes back) in the same Undo step, so Undo brings both back.
+   An older show's approved destination is approved at the size it opens with (before the baseline: no change, no Save light). ── */
+function _resWH(s){ return (parseInt(s&&s.w,10)||0)+'x'+(parseInt(s&&s.h,10)||0); }
+function _resApproved(s){ if(!s||!s.approved) return false; if(_srcLbcOff()) return true; return !s.approvedRes||s.approvedRes===_resWH(s); }
+function _resApproveSweep(open){
+  if(_srcLbcOff()) return;
+  (Array.isArray(screens)?screens:[]).forEach(function(s){
+    if(!s||!s.approved) return;
+    if(!s.approvedRes){ if(open) s.approvedRes=_resWH(s); return; }
+    if(s.approvedRes!==_resWH(s)){ s.approved=false; delete s.approvedRes; }
+  });
+}
+/* ── 16lq-auxsize (#2, "should stop at a 4k resolution 3840x2160" / "continue that then"): an AUX is at most 3840 x 2160, wherever its
+   size is set: AUX Properties (says the range and stays open, as Destination Properties does since 16lm-whcheck), the I/O Patch and
+   Wire cards, A0, a hand-made AUX card, an I/O-only AUX; the resolution menus grey the sizes above. A size it already has stays. ── */
+var _AUX_MAX_W=3840, _AUX_MAX_H=2160, _AUX_SIZE_TIP='An AUX stops at 3840 × 2160 (a 4K resolution)';
+function _auxSizeOk(w,h){ return _srcLbcOff()||((parseInt(w,10)||0)<=_AUX_MAX_W&&(parseInt(h,10)||0)<=_AUX_MAX_H); }
+function _auxSizeRefused(w,h){
+  if(_auxSizeOk(w,h)) return false;
+  if(typeof showAlert==='function') showAlert({variant:'warning',title:'Too big for an AUX',message:'An AUX can be up to 3840 × 2160 (a 4K resolution). It keeps its size.'});
+  return true;
+}
+function _auxKindOf(trigger){
+  const ds=(trigger&&trigger.dataset)||{}, k=String(ds.sysKind||'');
+  if(k==='aux'||k==='aux-all'||k==='wcaux') return true;
+  if(k==='iodest'&&typeof _lbhcIoOut==='function') return !!_lbhcIoOut(ds.sysId,true);
+  return false;
+}
+function _lbqAuxSizeOk(pop,dsm){   /* AUX Properties: a Width / Height outside 67 to 3840 x 2160 is not applied; it says so and the window stays */
+  if(_srcLbcOff()) return true;
+  const wb=pop.querySelector('#dsmp-w'), hb=pop.querySelector('#dsmp-h'); if(!wb||!hb) return true;
+  const bad=[], chk=function(b,cur,max,word){ const v=String(b.value||'').trim(); if(v==='') return; const n=parseInt(v,10); if(isNaN(n)||n===cur) return; if(n<67||n>max) bad.push({b:b,cur:cur,word:word}); };
+  chk(wb,parseInt(dsm.w,10)||0,_AUX_MAX_W,'width'); chk(hb,parseInt(dsm.h,10)||0,_AUX_MAX_H,'height');
+  if(!bad.length) return true;
+  bad.forEach(function(x){ x.b.value=String(x.cur); });
+  const msg=(bad.length>1)?('An AUX can be 67 to 3840 px wide and 67 to 2160 px high (a 4K resolution). It stays '+bad[0].cur+' × '+bad[1].cur+' px.')
+    :((bad[0].word==='width'?'An AUX can be 67 to 3840 px wide':'An AUX can be 67 to 2160 px high')+' (a 4K resolution). It stays '+bad[0].cur+' px.');
+  const back=function(){ try{ bad[0].b.focus(); bad[0].b.select(); }catch(e){} };
+  if(typeof showAlert==='function') showAlert({variant:'warning',title:'Size out of range',message:msg,onConfirm:back,onCancel:back});
+  return false;
+}
+/* ── 16lq-rowpick (#11, "the way you descripe it is how it was" / "yes"): a click anywhere on a Video Presets table row picks that
+   destination and moves the working-preset bar, as the row's narrow red-pill column always did; the cell's own job (its name, notes,
+   a layer, the BG swatch, a chevron, the trash) still happens. A click on the picked row's cells keeps it picked. ── */
+document.addEventListener('click',function(e){
+  if(_srcLbcOff()) return;
+  const tr=(e.target&&e.target.closest)?e.target.closest('#tbody tr[data-pid][data-sid]'):null; if(!tr) return;
+  if(e.target.classList&&e.target.classList.contains('layer-dot')) return;
+  const pid=tr.dataset.pid, sid=tr.dataset.sid;
+  if(typeof sel!=='undefined'&&sel&&sel.pid===pid&&sel.sid===sid) return;
+  doSelect(pid,sid); if(typeof showMoveSymbol==='function') showMoveSymbol(pid,sid);
+  e._lbqPicked=true;   /* rowClick (the row's own click, after the cell's) does not take the pick away again */
+},true);
+/* ── 16lq-webmdur (#14, "a WebM with no length gets a real length"): a clip whose file holds no length (a MediaRecorder WebM) reads
+   Infinity; seeking far past its end makes the browser find the real length (as the frame strip already does). A clip imported before
+   with 00:00 gets its length on open (filled in, not an edit), tried once a session. ── */
+var _lbqDurTried={};
+function _lbqRealDur(v){
+  return new Promise(function(res){
+    if(!v||isFinite(v.duration)||_srcLbcOff()) return res();
+    let done=false; const fin=function(){ if(done) return; done=true; v.removeEventListener('durationchange',on); res(); };
+    const on=function(){ if(isFinite(v.duration)) fin(); };
+    v.addEventListener('durationchange',on); setTimeout(fin,4000);
+    try{ v.currentTime=1e101; }catch(e){ fin(); }
+  });
+}
+/* ── 16lq-bgone (#15, "BG should only ever by able to be one thing image, source, or BG. they would replace each other cause BG layer
+   can only be one thing at a time. we should add an undo step though for BG"): IMAGE takes the place of a VIDEO or SOURCE background
+   (its name, its cover, its box), on P01 too, in one Undo step; VIDEO and SOURCE take the place of P01's picture. APPLY's colour still
+   tints the destination around a SOURCE box (16li-bgsrc). ── */
+function _lbqBgOne(pid,sid,isFirst){
+  const p=(pid&&presets.find(function(x){ return x.id===pid; }))||(isFirst?presets[0]:null); if(!p) return;
+  if(p.bgNames) delete p.bgNames[sid];
+  if(p.bgs) delete p.bgs[sid];
+  if(isFirst&&p.colors) delete p.colors[sid];
+}
+/* ── 16lq-ptabs (#16, "you should be able to type anything if its to long it break into two row and if that not enough when you hover
+   over the tile it should pop up below it with the full name like any file would do in general"): an I/O Patch Advanced page tab's
+   name wraps to two lines inside the tab, its copy and close buttons stay in it; a name longer than two lines ends in … and pops up
+   in full under the tab on hover (or keyboard focus). ── */
+function _lbqTabTip(el){
+  let tip=document.getElementById('io-ptab-tip');
+  const tab=(el&&el.closest)?el.closest('#io-page-tabs .io-ptab'):null, nm=tab?tab.querySelector('.io-ptab-nm'):null;
+  if(!nm||nm.scrollHeight<=nm.clientHeight+1){ if(tip) tip.remove(); return; }   /* it fits: no pop-up */
+  if(!tip){ tip=document.createElement('div'); tip.id='io-ptab-tip'; tip.setAttribute('role','tooltip'); document.body.appendChild(tip); }
+  tip.textContent=tab.dataset.full||nm.textContent;
+  const r=tab.getBoundingClientRect();
+  tip.style.top=Math.round(r.bottom+4)+'px'; tip.style.left=Math.round(Math.max(8,Math.min(window.innerWidth-tip.offsetWidth-8,r.left)))+'px';
+}
+document.addEventListener('mouseover',function(e){ if(_srcLbcOff()) return; _lbqTabTip(e.target); },true);
+document.addEventListener('focusin',function(e){ if(_srcLbcOff()) return; _lbqTabTip(e.target); },true);
+document.addEventListener('mouseout',function(e){ if(!e.relatedTarget){ const t=document.getElementById('io-ptab-tip'); if(t) t.remove(); } },true);
+/* ══ end 16lq ══ */
 /* ══ 16lc-vpfinish block (r16lm SPEC: Omar's answers to step A's questions, 2026-10-06 ~17:00, and to step C's questions and the picture pack,
    2026-10-06 night / 10-07). Every change of this block is desktop only (_lbcOn): the phone is frozen and keeps its ways. ══ */
 /* (D2, Omar: "the panel stops at card width") the narrowest the Video Presets > Advanced left panel can be dragged: what its cards need (236 px
@@ -19792,7 +19899,7 @@ function _lbfWcSet(k,id,field,value){
     it.name=v;
   } else if(field==='resolution'){
     if(kd==='src'){ const v=String(value==null?'':value).trim(); if(v===String(it.resolution||'')) return false; it.resolution=v; if(typeof _bgsResFollow==='function') _bgsResFollow(it.name); }   /* 16li-fix (A4) */
-    else { const m=/^(\d{2,5})\s*[x×X*]\s*(\d{2,5})$/.exec(String(value==null?'':value).trim()); if(!m) return false; const w=parseInt(m[1],10), h=parseInt(m[2],10); if(w===it.w&&h===it.h) return false; it.w=w; it.h=h; }
+    else { const m=/^(\d{2,5})\s*[x×X*]\s*(\d{2,5})$/.exec(String(value==null?'':value).trim()); if(!m) return false; const w=parseInt(m[1],10), h=parseInt(m[2],10); if(w===it.w&&h===it.h) return false; if(k==='wcaux'&&_auxSizeRefused(w,h)) return false; it.w=w; it.h=h; }   /* 16lq-auxsize */
   } else if(field==='connectorType'){
     const v=String(value==null?'':value); if(v===String(it.connectorType||'')) return false;
     it.connectorType=v;
@@ -20206,6 +20313,7 @@ function _iogApplyOut(allKind,field,opt){
   if(!f) return;
   const list=(k==='aux')?((typeof dsms!=='undefined'&&Array.isArray(dsms))?dsms:[]):((typeof multiviewers!=='undefined'&&Array.isArray(multiviewers))?multiviewers:[]);
   const v=(opt&&opt.value!=null)?String(opt.value):'';
+  if(k==='aux'&&f==='resolution'){ const _pr=v.split('x'); if(_auxSizeRefused(_pr[0],_pr[1])) return; }   /* 16lq-auxsize: one note for the whole row */
   list.filter(Boolean).slice().forEach(function(o){ _sysSetMeta(k,o.id,f,v); });
   if(k==='aux') _lbhcIoOuts(true).slice().forEach(function(o){ _sysSetMeta('iodest',o.id,f,v); });   /* 16lp-wirecards */
 }
@@ -20428,6 +20536,7 @@ function _sysBuildResOptions(trigger){   /* 16lc-vpcards: trigger = the control 
     inUse.forEach(v=>opts.push({value:v,label:v.replace('x','×'),meta:"in use"}));
   }
   _SYS_RES.forEach(o=>opts.push(o));
+  if(_auxKindOf(trigger)) opts.forEach(function(x,i){ const m=(x&&!x.group&&!x.custom)?/^(\d+)x(\d+)$/.exec(String(x.value||'')):null; if(m&&!_auxSizeOk(m[1],m[2])) opts[i]=Object.assign({},x,{disabled:true,tip:_AUX_SIZE_TIP}); });   /* 16lq-auxsize: a copy (the list's own entries are shared with every menu) */
   return opts;
 }
 
@@ -31566,7 +31675,7 @@ function _fsScreenCard(s,p,isSel,isOverlap){
   const spos=(p.positions&&p.positions[s.id])||{x:0,y:0};
   const rot=getRotation(p.id,s.id);
   const chk=checkRes(s);
-  const warn=chk.ok===true||s.approved?'':'<span style="color:var(--n-amber);font-size:11px" title="'+chk.warning+'">⚠</span>';
+  const warn=chk.ok===true||chk.approved?'':'<span style="color:var(--n-amber);font-size:11px" title="'+chk.warning+'">⚠</span>';
   const RS='display:flex;align-items:center;justify-content:space-between;margin-bottom:4px';
   const aoi=getAOI(p.id,s.id);
   const _copiedAOI=window._copiedAOI||null;
@@ -33157,6 +33266,7 @@ function _applyProjectText(text){
     _lbfOneName();   /* 16lc-vpfinish (D7, Omar: "Older shows: clean up names on open"): before the baseline, so it is no change and no Undo step */
     try{ _cbOpen(); }catch(e){}   /* 16lg-blend (R2): every edge blend the show has stays separate screens until switched on; before the baseline */
     srcOrder=_srcOrderOpen(s.srcOrder);   /* 16lo-srcorder: a show of this build keeps its order; an older one starts from the order it shows today; before the baseline, so opening is no change */
+    _resApproveSweep(true);   /* 16lq-approval */
     ioNums=_lbnNorm(s.ioNums); _lbnOpen(!!(s.ioNums&&typeof s.ioNums==='object'));   /* 16lc-vpcards-fix (E2, main session 2026-10-07: "opening an older show must NOT renumber anything it already shows"): the numbers kept, a file's colour, before the baseline */
     _isDirty=false; _captureCleanBaseline(); _lbFromDraft=false;   /* 16kt-canvas-draft-fix: a loaded show is not a restored draft */
     if(typeof _mvPicFill==='function'&&_mvPicFill()) _recomputeDirty();   /* 16la-wire-mv (N): a multiviewer saved without a picture gets one at random now, after the baseline: the show reads as changed and asks to be saved */
@@ -33489,6 +33599,7 @@ function restoreAutoSave(){
         _lbfOneName();   /* 16lc-vpfinish (D7): a draft opens the same way */
         try{ _cbOpen(); }catch(e){}   /* 16lg-blend (R2): a draft opens the same way */
         srcOrder=_srcOrderOpen(s.srcOrder);   /* 16lo-srcorder */
+        _resApproveSweep(true);   /* 16lq-approval */
         ioNums=_lbnNorm(s.ioNums); _lbnOpen(!!(s.ioNums&&typeof s.ioNums==='object'));   /* 16lc-vpcards-fix (E2): so do its numbers */
         _isDirty=false; _captureCleanBaseline(); if(typeof _mvPicFill==='function'&&_mvPicFill()) _recomputeDirty(); _updateDirtyIndicator();   /* 16la-wire-mv (N): as a file opened */
         _lbFromDraft=true;   /* 16kt-canvas-draft-fix: clean, but not a file until it is saved */
@@ -34209,7 +34320,7 @@ function validateProject(){
   // ── Warnings (advisory, export still allowed) ────────────────────────────
   screens.forEach(s=>{
     const chk=checkRes(s);
-    if(chk.ok!==true&&!s.approved)
+    if(chk.ok!==true&&!chk.approved)   /* 16lq-approval */
       warnings.push('Destination "'+s.name+'": '+chk.warning);
   });
 
@@ -34397,7 +34508,7 @@ function _doExportCSV(){
       ...screens.map(s=>{
         const chk=checkRes(s);
         if(_bdIs(s)) return _bdSizeTxt(s);   /* 16kx-backdrop */
-        return s.w+'x'+s.h+(chk.ok===true||s.approved?'':' ⚠');
+        return s.w+'x'+s.h+(chk.ok===true||chk.approved?'':' ⚠');
       }),
       ...activeDSMs.map(d=>d.w+'x'+d.h)]);
     rows.push([]);
@@ -37924,7 +38035,7 @@ function _fsImportOne(file,land){
   let p;
   if(isVideo){
     const v=document.createElement('video'); v.muted=true; v.playsInline=true; v.preload='auto'; v.src=url;
-    p=new Promise(function(res,rej){ v.onloadedmetadata=function(){ res(); }; v.onerror=function(){ rej(new Error('video metadata')); }; setTimeout(res,8000); })
+    p=new Promise(function(res,rej){ v.onloadedmetadata=function(){ res(); }; v.onerror=function(){ rej(new Error('video metadata')); }; setTimeout(res,8000); }).then(function(){ return _lbqRealDur(v); })   /* 16lq-webmdur */
       .then(function(){ media.w=v.videoWidth||0; media.h=v.videoHeight||0; media.dur=isFinite(v.duration)?v.duration:0; media.coverTime=Math.min(1,media.dur/2); return _fsFrameAt(v,media.coverTime); })
       .then(function(im){ img=im; return _fsProbeAudio(v); })
       .then(function(has){ media.hasAudio=!!has; return _fsAudioPeaks(file); })
@@ -37968,7 +38079,7 @@ function _fsRelinkTake(name,file){
   let img='', p;
   if(isVideo){
     const v=document.createElement('video'); v.muted=true; v.playsInline=true; v.preload='auto'; v.src=url;
-    p=new Promise(function(res,rej){ v.onloadedmetadata=function(){ res(); }; v.onerror=function(){ rej(new Error('video metadata')); }; setTimeout(res,8000); })
+    p=new Promise(function(res,rej){ v.onloadedmetadata=function(){ res(); }; v.onerror=function(){ rej(new Error('video metadata')); }; setTimeout(res,8000); }).then(function(){ return _lbqRealDur(v); })   /* 16lq-webmdur */
       .then(function(){ media.w=v.videoWidth||0; media.h=v.videoHeight||0; media.dur=isFinite(v.duration)?v.duration:0; media.coverTime=Math.min(1,media.dur/2); return _fsFrameAt(v,media.coverTime); })
       .then(function(im){ img=im; return _fsProbeAudio(v); })
       .then(function(has){ media.hasAudio=!!has; return _fsAudioPeaks(file); })
@@ -38165,7 +38276,7 @@ function _fsPresetGoToLast(n){ Object.keys(_fsVideoEls).forEach(function(t){ con
 // the audio level line across the waveform: bottom = 0 %, middle = 100 %, top = 200 % (boost through the audio graph)
 function _fsApplyGain(vid,level){ const rec=vid?_fsMeterNodes.get(vid):null; if(rec&&rec.gain) rec.gain.gain.value=Math.max(1,(level==null?100:level)/100); }
 function _fsVolSync(level){ const el=document.querySelector('#fs-timeline .fs-tl-vol'); if(!el) return; level=Math.max(0,Math.min(200,level==null?100:level)); el.style.top=((1-level/200)*100)+'%'; const b=el.querySelector('b'); el.setAttribute('aria-valuenow',String(Math.round(level))); if(b){ b.textContent=Math.round(level)+'%'; b.style.top=level>150?'4px':''; } }
-function _fsVolStart(ev){ if(ev.button!==0) return; ev.stopPropagation(); ev.preventDefault(); if(!_fsVideoEls[_fsTargetKey()]) return; const track=ev.currentTarget.parentNode; _fsVolFineRef=null; try{ ev.currentTarget.focus({preventScroll:true}); }catch(e2){} const _lvSnap=(typeof _snapshot==='function')?_snapshot():null; const move=function(e){ const r=track.getBoundingClientRect(); const f=1-Math.max(0,Math.min(1,(e.clientY-r.top)/Math.max(1,r.height))); _fsSetLevel(_fsVolFine(e,Math.round(f*200/5)*5)); }; move(ev); const up=function(){ window.removeEventListener('mousemove',move); window.removeEventListener('mouseup',up); if(_lvSnap&&typeof pushUndoFrom==='function') pushUndoFrom(_lvSnap); }; window.addEventListener('mousemove',move); window.addEventListener('mouseup',up); }
+function _fsVolStart(ev){ if(ev.button!==0) return; ev.stopPropagation(); ev.preventDefault(); if(!_fsVideoEls[_fsTargetKey()]) return; const track=ev.currentTarget.parentNode; _fsVolFineRef=null; try{ ev.currentTarget.focus({preventScroll:true}); }catch(e2){} const _lvSnap=(typeof _snapshot==='function')?_snapshot():null; const move=function(e){ const r=track.getBoundingClientRect(); const f=1-Math.max(0,Math.min(1,(e.clientY-r.top)/Math.max(1,r.height))); _fsSetLevel(_fsVolFine(e,Math.round(f*200/5)*5)); }; if(_srcLbcOff()) move(ev); else if(ev.shiftKey) _fsVolFine(ev,0); const up=function(){ window.removeEventListener('mousemove',move); window.removeEventListener('mouseup',up); if(_lvSnap&&typeof pushUndoFrom==='function') pushUndoFrom(_lvSnap); }; window.addEventListener('mousemove',move); window.addEventListener('mouseup',up); }
 var _fsVolFineRef=null;
 function _fsVolFine(e,coarse){ if(!e.shiftKey){ _fsVolFineRef=null; return coarse; } if(!_fsVolFineRef){ const t=_fsTargetKey(); const q=t?_fsKeyParts(t):null; _fsVolFineRef={y:e.clientY,lvl:q?getLayerMedia(q.pid,q.sid,q.n).level:coarse}; } return Math.max(0,Math.min(200,Math.round(_fsVolFineRef.lvl+(_fsVolFineRef.y-e.clientY)))); }
 function _fsVolKey(e){ const up=(e.key==='ArrowUp'||e.key==='ArrowRight'), dn=(e.key==='ArrowDown'||e.key==='ArrowLeft'); if(!up&&!dn) return; e.preventDefault(); e.stopPropagation();   /* the arrows must not nudge the picked layer */ const t=_fsTargetKey(); if(!_fsVideoEls[t]) return; const q=_fsKeyParts(t); const cur=Math.round(getLayerMedia(q.pid,q.sid,q.n).level); const nx=Math.max(0,Math.min(200,cur+(up?1:-1)*(e.shiftKey?10:1))); if(nx===cur) return; if(!e.repeat&&typeof pushUndo==='function') pushUndo();   /* a held key is one undo step */ _fsSetLevel(nx); }
@@ -38721,7 +38832,7 @@ function _fsSnapFrame(t,fps){ fps=fps||30; return Math.round(t*fps)/fps+0.0005; 
 function _fsStepFrame(dir){ const key=_fsTargetKey(); const vid=_fsVideoEls[key]; if(!vid) return; const q=_fsKeyParts(key); const fps=_fsClipFps(_fsMediaItem(q.n?getL(q.pid,q.sid,q.n):getBgName(q.pid,q.sid))); delete _fsWantPlay[key]; try{ vid.pause(); }catch(e){} const dur=isFinite(vid.duration)?vid.duration:1e9; const f=Math.round(vid.currentTime*fps)+dir; try{ vid.currentTime=Math.max(0,Math.min(dur-1/fps,f/fps+0.0005)); }catch(e){} _fsResetFades(); _fsTlSync(); }
 document.addEventListener('keydown',function(e){ if(typeof fsPresetId==='undefined'||!fsPresetId) return; const t=e.target; if(t&&(t.tagName==='INPUT'||t.tagName==='TEXTAREA'||t.tagName==='SELECT'||t.isContentEditable)) return; if(e.key===','){ _fsStepFrame(-1); e.preventDefault(); } else if(e.key==='.'){ _fsStepFrame(1); e.preventDefault(); } else if((e.key==='i'||e.key==='I'||e.key==='o'||e.key==='O')&&!e.metaKey&&!e.ctrlKey&&!e.altKey&&!e.repeat&&!document.querySelector('#dlg-overlay.show')&&_fsVideoEls[_fsTargetKey()]){ if(e.key==='i'||e.key==='I') _fsSetIn(); else _fsSetOut(); e.preventDefault(); } });
 function _fsPathFor(f){ try{ const nat=window.lookbookNative; if(nat&&typeof nat.pathForFile==='function') return nat.pathForFile(f)||''; }catch(e){} return ''; }
-function _fsMediaLacksInfo(it){ const m=it.media||{}; if(!m.fileName) return true; if(it.kind==='video'&&(m.vcodec===undefined||m.bitDepth===undefined||!m.fps)) return true; return false; }
+function _fsMediaLacksInfo(it){ const m=it.media||{}; if(!m.fileName) return true; if(it.kind==='video'&&(m.vcodec===undefined||m.bitDepth===undefined||!m.fps)) return true; if(it.kind==='video'&&!(m.dur>0)&&!_srcLbcOff()&&!_lbqDurTried[it.l]) return true; return false; }   /* 16lq-webmdur */
 // older items: the file name comes back with the stored File, codecs / fps / channels from the file itself
 function _fsEnrichMedia(it,blob){
   const _get=function(){ return it.media||null; }, _set=function(v){ if(v===null) delete it.media; else it.media=v; }, _a=_lbPart(_get);   /* unsaved-16kr2: what this fills in is not an edit */
@@ -38733,6 +38844,7 @@ function _fsEnrichMedia(it,blob){
         const v=document.createElement('video'); v.playsInline=true; v.muted=true; v.preload='auto'; v.src=_fsMediaUrl(it.l);
         return new Promise(function(r){ v.oncanplay=function(){ r(); }; v.onerror=function(){ r(); }; setTimeout(r,6000); }).then(function(){ return _fsProbeFps(v); }).then(function(f){ m.fps=f||0; try{ v.removeAttribute('src'); v.load(); }catch(e){} }); }));
     }
+    if(!(m.dur>0)&&!_srcLbcOff()&&!_lbqDurTried[it.l]){ _lbqDurTried[it.l]=1; todo.push(new Promise(function(r){ const v=document.createElement('video'); v.playsInline=true; v.muted=true; v.preload='auto'; v.src=_fsMediaUrl(it.l); let ok=false; const fin=function(){ if(ok) return; ok=true; try{ v.removeAttribute('src'); v.load(); }catch(e){} r(); }; v.onloadedmetadata=function(){ _lbqRealDur(v).then(function(){ if(isFinite(v.duration)&&v.duration>0){ m.dur=v.duration; if(!m.coverTime) m.coverTime=Math.min(1,m.dur/2); } fin(); }); }; v.onerror=fin; setTimeout(fin,9000); })); }   /* 16lq-webmdur */
     if(m.hasAudio&&!m.channels&&blob&&blob.size<400*1024*1024) todo.push(_fsAudioPeaks(blob).then(function(res){ if(res){ if(!m.peaks) m.peaks=res.peaks; m.channels=res.channels||0; m.sampleRate=res.sampleRate||0; } }));
   }
   return Promise.all(todo).then(function(){ if(_a!==null) _lbNotAChangeDone(_a,_get,_set); if(typeof _recomputeDirty==='function') _recomputeDirty(); });   /* unsaved-16kr2: no hard unsaved flag; was the show, without this fill-in, the saved show? */

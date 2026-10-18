@@ -3243,6 +3243,42 @@
   {
    "name": "Wire 16lp-wirecards WC4 (#5: \"is it just here\"): Wire only in the window makes a hand-made card, as the + did before (in Wire's list, not on the I/O Patch); with Always ticked, Help › Accessibility lights Wire only and the next + makes a hand-made card at once; Reset in Help › Accessibility brings back Ask each time",
    "ok": true
+  },
+  {
+   "name": "Video Presets 16lq-approval AP1 (Round 2 #1, Omar 2026-10-17: a size change clears the engineer's approval, \"yes\"): a destination given a size off the standards (2000 × 1000 in Destination Properties) shows the red pill; ticked in the red pill window it is approved and the pill goes; resized to 2100 × 1000 the approval is gone in that same Undo step (the pill is back, the window's tick clear); one Undo brings back the size and the approval; an older show whose approved destination remembers no size opens approved and clean",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16lq-auxsize AX1 (Round 2 #2, Omar 2026-10-17: \"should stop at a 4k resolution 3840x2160\" / \"continue that then\"): AUX Properties refuses 3841 wide and 2161 high (Size out of range, the window stays, nothing applied) and takes 3840 × 2160; the I/O Patch AUX card's resolution menu greys 4096 × 2160 and 7680 × 4320 but not 3840 × 2160 (a destination's menu greys none); a bigger size picked on an AUX card, or set with A0, says Too big for an AUX once and changes nothing; an AUX already bigger keeps its size",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16lq-tabskip TB1 (Round 2 #9, Omar 2026-10-17 \"yes\"): with CENTER LED using L1 and L2 and RIGHT LED using L4 (four layer columns), Tab from CENTER's L2 goes to its L1 and Tab again to L2, never into its empty L3 / L4; Shift+Tab steps back the same way",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16lq-rowpick RP1 (Round 2 #11, Omar 2026-10-17: \"the way you descripe it is how it was\" / \"11. yes\"): a click on a table row's Notes box picks that destination (P02 RIGHT LED) and moves the working-preset bar to P02, the box keeping the cursor; a click on its Name box keeps it picked; a click on the row's narrow column still lets the pick go",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16lq-levelclick LV1 (Round 2 #12, Omar 2026-10-17: \"fix that so its only one undo move then\"): in Advanced, with a clip's level at 148 %, a double-click on its level line is ONE Undo step to 100 % (the presses before it no longer snap the level to 145 first), and one Undo brings back 148",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16lq-cropreset CR1 (Round 2 #13, Omar 2026-10-17 \"yes\"): a layer showing picture A with a Source crop, given picture B, drops A's crop (B shows whole) in the same Undo step, and Undo brings A back with its crop; B renamed keeps the crop it was given",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16lq-webmdur WD1 (Round 2 #14, Omar 2026-10-17 \"yes\"): a WebM whose file holds no length (a MediaRecorder recording) imports with its real length instead of 00:00, and a clip saved with 00:00 gets its length when its details are filled in on open",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16lq-bgone BO1 (Round 2 #15, Omar 2026-10-17: \"BG should only ever by able to be one thing image, source, or BG. they would replace each other cause BG layer can only be one thing at a time. we should add an undo step though for BG\"): on P01 a VIDEO background, then IMAGE: the picture takes its place (the video's name and cover go) in ONE Undo step, and Undo brings the video back; the same on P02; VIDEO on P01 then takes the picture's place",
+   "ok": true
+  },
+  {
+   "name": "I/O Patch 16lq-ptabs PT1 (Round 2 #16, Omar 2026-10-17: \"you should be able to type anything if its to long it break into two row and if that not enough when you hover over the tile it should pop up below it with the full name like any file would do in general\"): an Advanced page renamed BALLROOM SALON C NORTH REHEARSAL (32 letters, the most a page name takes) wraps in its tab with its copy and close buttons inside it, ends in … past two lines, and on hover pops up its full name right under the tab; a short name pops nothing up",
+   "ok": true
   }
  ],
  "pageErrors": []

@@ -11944,6 +11944,7 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
     return is(out, want, 'each switch {the chosen side\'s words, the other sides\' words, the thumb on the chosen side, any cyan}');
   });
   // 16lc-picsize Y2: NEW
+  // ADAPTED in 16lq: 16lq-ptabs (Round 2 #16, Omar 2026-10-17: "if its to long it break into two row"): an I/O Patch page tab's name is its own box now (number / name / copy / x), as Wire's tab already was, so the open tab has 4 parts; its colours are unchanged
   await check('16lc-picsize (Y2) (Omar 2026-10-02: "get rid of the cyan color", his picture of the page tabs with "1 TEST FILE" in cyan): on the Wire Advanced and the I/O Patch Advanced page tabs the open tab\'s number, name, copy icon and x read WHITE (fully: not faded) on its lifted pill, the other tabs GREY (--ss-t3), no cyan in any tab (words, icons, inset line); the tab being renamed types in white; with more tabs than the bar holds, opening the last one still scrolls it into view (the open tab is found by its pill now, not by its cyan)', async () => {
     const out = {};
     const read = root => $$('button', root).map(b => { const on = /--sk-pill1/.test(b.getAttribute('style') || ''), cs = getComputedStyle(b);
@@ -11967,7 +11968,7 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
     } catch (e) { return 'threw: ' + e.message; }
     finally { await restore(); }
     const tabs = { open: [[_pzWhite, true, 4]], others: [_pzGrey + ' ["' + _pzGrey + '"]'], cyan: false };
-    return is(out, { wire: tabs, wireRename: _pzWhite, io: { open: [[_pzWhite, true, 3]], others: tabs.others, cyan: false }, ioRename: _pzWhite, scrolled: [true, true, true] },
+    return is(out, { wire: tabs, wireRename: _pzWhite, io: { open: [[_pzWhite, true, 4]], others: tabs.others, cyan: false }, ioRename: _pzWhite, scrolled: [true, true, true] },
       'Wire tabs {the open tab [its words, number / name / copy / x all white and not faded, parts], the other tabs [colour, parts], any cyan} / the Wire tab being renamed / the I/O Patch tabs / the I/O Patch tab being renamed / many pages [more tabs, the strip overflows, the open last tab in view]');
   });
   // 16lc-picsize Y3: NEW
@@ -16204,6 +16205,180 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
     } catch (e) { return 'threw: ' + e.message; }
     finally { okDialogs(); const o = $('#lbhc-overlay'); if (o) o.remove(); _hcOff(); try { closeWireMode(); } catch (e) {} await restore(); }
     return is(out, want, 'Wire only [hand-made cards added, I/O-only added, its card in Wire, the rule] / Always [the rule, Wire only lit] / the next + [a window, hand-made added, I/O-only added] / Reset [the rule, Ask each time lit]');
+  });
+  // ── Round 16lq: Round 2, the fixes, Video Presets and I/O Patch (Omar 2026-10-17 / 18: "do ths fixes") ──
+  const _lqDP = async (s, w, h) => { openScreenPanel(fakeEv, presets[0].id, s.id); await wait(350); const pop = $('#screen-panel'); if (!pop) return false; if (w != null) { $('#sp-w', pop).value = String(w); fire($('#sp-w', pop), 'input'); } if (h != null) { $('#sp-h', pop).value = String(h); fire($('#sp-h', pop), 'input'); } $('#sp-apply', pop).click(); await wait(350); okDialogs(); return true; };
+  const _lqWebm = async () => { const c = document.createElement('canvas'); c.width = 320; c.height = 180; const g = c.getContext('2d'); g.fillStyle = '#10131a'; g.fillRect(0, 0, 320, 180);
+    const rec = new MediaRecorder(c.captureStream(30), { mimeType: 'video/webm' }); const ch = []; rec.ondataavailable = e => { if (e.data.size) ch.push(e.data); };
+    rec.start(100); const iv = setInterval(() => { g.fillStyle = '#2dd4bf'; g.fillRect(Math.random() * 250, 60, 40, 60); }, 40); await wait(800); clearInterval(iv); const done = new Promise(r => { rec.onstop = r; }); rec.stop(); await done; return new Blob(ch, { type: 'video/webm' }); };
+  const _lqPng = (w, h, col) => new Promise(r => { const c = document.createElement('canvas'); c.width = w; c.height = h; const g = c.getContext('2d'); g.fillStyle = col; g.fillRect(0, 0, w, h); c.toBlob(r, 'image/png'); });
+  const _lqPickFile = async (file, fn) => { const real = HTMLInputElement.prototype.click; HTMLInputElement.prototype.click = function () { if (this.type !== 'file') return real.call(this); const dt = new DataTransfer(); dt.items.add(file); this.files = dt.files; this.dispatchEvent(new Event('change')); }; try { fn(); } finally { HTMLInputElement.prototype.click = real; } await wait(900); };
+  const _lqImport = async (blob, fname) => { const n0 = customLibrary.length; await _fsImportOne(new File([blob], fname, { type: blob.type })); await wait(300); return customLibrary.slice(n0).find(c => c && c.kind) || null; };
+  // 16lq-approval AP1: NEW
+  await check('Video Presets 16lq-approval AP1 (Round 2 #1, Omar 2026-10-17: a size change clears the engineer\'s approval, "yes"): a destination given a size off the standards (2000 × 1000 in Destination Properties) shows the red pill; ticked in the red pill window it is approved and the pill goes; resized to 2100 × 1000 the approval is gone in that same Undo step (the pill is back, the window\'s tick clear); one Undo brings back the size and the approval; an older show whose approved destination remembers no size opens approved and clean', async () => {
+    const out = {}, want = {};
+    try {
+      await restore(); const s = screens[2]; await _lqDP(s, 2000, 1000); render(); await wait(250);
+      const red = () => { const tr = $$('#tbody tr[data-sid="' + s.id + '"]')[0]; return !!(tr && tr.querySelector('[onclick*="openResWarn"]')); };
+      out.off = [s.w + 'x' + s.h, checkRes(s).approved, red()]; want.off = ['2000x1000', false, true];
+      openResWarn({ stopPropagation() {}, target: document.body }, s.id); await wait(200); const ck = $('#rwp-chk'); if (!ck) return 'no approve tick';
+      ck.checked = true; ck.dispatchEvent(new Event('change', { bubbles: true })); await wait(1100); render(); await wait(250);
+      out.ok = [checkRes(s).approved, s.approvedRes || null, red()]; want.ok = [true, '2000x1000', false];
+      const u0 = vpUndoLen(); await _lqDP(s, 2100, null); render(); await wait(300);
+      openResWarn({ stopPropagation() {}, target: document.body }, s.id); await wait(200);
+      out.resized = [s.w + 'x' + s.h, !!s.approved, checkRes(s).approved, red(), !!($('#rwp-chk') || {}).checked, vpUndoLen() - u0]; want.resized = ['2100x1000', false, false, true, false, 1];
+      try { closeResWarn(); } catch (e) {}
+      doUndo(); await wait(400); const s1 = screens[2]; out.undo = [s1.w + 'x' + s1.h, checkRes(s1).approved]; want.undo = ['2000x1000', true];   /* Undo restores new objects */
+      const st = JSON.parse(BASE); st.screens[2].w = 2000; st.screens[2].h = 1000; st.screens[2].approved = true; delete st.screens[2].approvedRes;
+      _applyProjectText(JSON.stringify(st)); await wait(700); okDialogs(); await wait(300);
+      const s2 = screens[2]; out.older = [checkRes(s2).approved, s2.approvedRes || null, !!_isDirty]; want.older = [true, '2000x1000', false];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { okDialogs(); try { closeResWarn(); } catch (e) {} try { closeScreenPanel(); } catch (e) {} await restore(); }
+    return is(out, want, '2000 × 1000 [size, approved, red pill] / ticked [approved, the size it remembers, red pill] / resized to 2100 [size, approved (stored), approved, red pill, the tick, Undo steps] / one Undo [size, approved] / an older show [approved, the size it remembers, Save lit]');
+  });
+  // 16lq-auxsize AX1: NEW
+  await check('Video Presets 16lq-auxsize AX1 (Round 2 #2, Omar 2026-10-17: "should stop at a 4k resolution 3840x2160" / "continue that then"): AUX Properties refuses 3841 wide and 2161 high (Size out of range, the window stays, nothing applied) and takes 3840 × 2160; the I/O Patch AUX card\'s resolution menu greys 4096 × 2160 and 7680 × 4320 but not 3840 × 2160 (a destination\'s menu greys none); a bigger size picked on an AUX card, or set with A0, says Too big for an AUX once and changes nothing; an AUX already bigger keeps its size', async () => {
+    const out = {}, want = {};
+    try {
+      await restore(); const d = dsms[0], u0 = vpUndoLen();
+      openDSMPanel(fakeEv, presets[0].id, d.id); await wait(350); const pop = $('#dsm-panel'); if (!pop) return 'AUX Properties did not open';
+      const note = () => { const t = dlgOpen() ? (($('#dlg-box h3') || {}).textContent || '') : 'no note'; okDialogs(); return t; };
+      $('#dsmp-w', pop).value = '3841'; $('#dsmp-apply', pop).click(); await wait(300);
+      out.w = [note(), !!$('#dsm-panel'), d.w, vpUndoLen() - u0]; want.w = ['Size out of range', true, 1920, 0];
+      $('#dsmp-w', pop).value = '1920'; $('#dsmp-h', pop).value = '2161'; $('#dsmp-apply', pop).click(); await wait(300);
+      out.h = [note(), !!$('#dsm-panel'), d.h]; want.h = ['Size out of range', true, 1080];
+      $('#dsmp-w', pop).value = '3840'; $('#dsmp-h', pop).value = '2160'; $('#dsmp-apply', pop).click(); await wait(400); okDialogs();
+      out.ok = [!!$('#dsm-panel'), d.w + 'x' + d.h]; want.ok = [false, '3840x2160'];
+      await _loIO();
+      const card = sec => $$('#io-grid [data-iog-sec="' + sec + '"] .iog-card')[0], rb = c => c && $('[data-sys-field="resolution"]', c);
+      const off = (trig, v) => { const o = _sysBuildResOptions(trig).find(x => x.value === v); return o ? !!o.disabled : 'absent'; };
+      out.menu = [off(rb(card('aux')), '4096x2160'), off(rb(card('aux')), '7680x4320'), off(rb(card('aux')), '3840x2160'), off(rb(card('dst')), '7680x4320')]; want.menu = [true, true, false, false];
+      rb(card('aux')).click(); await wait(250); const shown = $$('.sys-dd .sys-dd-item').filter(x => /7680×4320/.test(x.textContent)).map(x => x.classList.contains('disabled')); document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true })); await wait(150);
+      out.shown = shown; want.shown = [true];
+      _sysSetMeta('aux', d.id, 'resolution', '7680x4320'); await wait(150); out.card = [note(), d.w + 'x' + d.h]; want.card = ['Too big for an AUX', '3840x2160'];
+      const n0 = dsms.map(x => x.w + 'x' + x.h).join(','); let notes = 0; const realA = window.showAlert; window.showAlert = function (o) { notes++; return realA.apply(this, arguments); };
+      try { _sysApplyToAll('aux-all', 'resolution', { value: '4096x2160' }); await wait(200); } finally { window.showAlert = realA; }
+      out.a0 = [notes, dsms.map(x => x.w + 'x' + x.h).join(',') === n0]; want.a0 = [1, true]; okDialogs();
+      const d2 = dsms[1]; d2.w = 7680; d2.h = 4320; _sysSetMeta('aux', d2.id, 'resolution', '7680x4320'); await wait(150); out.kept = [dlgOpen(), d2.w + 'x' + d2.h]; want.kept = [false, '7680x4320'];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { okDialogs(); try { const p = $('#dsm-panel'); if (p) p.remove(); } catch (e) {} try { closeSystem(); } catch (e) {} await restore(); }
+    return is(out, want, 'AUX Properties 3841 wide [note, open, width, Undo steps] / 2161 high [note, open, height] / 3840 × 2160 [open, size] / the menus [AUX 4096 × 2160, AUX 8K, AUX 4K UHD, destination 8K greyed] / the open menu greys 8K / an AUX card set to 8K [note, size] / A0 4096 × 2160 [notes, sizes kept] / an AUX already 8K [note, size]');
+  });
+  // 16lq-tabskip TB1: NEW
+  await check('Video Presets 16lq-tabskip TB1 (Round 2 #9, Omar 2026-10-17 "yes"): with CENTER LED using L1 and L2 and RIGHT LED using L4 (four layer columns), Tab from CENTER\'s L2 goes to its L1 and Tab again to L2, never into its empty L3 / L4; Shift+Tab steps back the same way', async () => {
+    const out = {}, want = {};
+    try {
+      await restore(); const p = presets[0], c = screens.find(s => s.name === 'CENTER LED'), r = screens.find(s => s.name === 'RIGHT LED');
+      homeSetL(p.id, c.id, 1, 'CAM 1'); homeSetL(p.id, c.id, 2, 'CAM 2'); homeSetL(p.id, c.id, 3, null); homeSetL(p.id, c.id, 4, null); homeSetL(p.id, r.id, 4, 'LOGO'); render(); await wait(350);
+      out.cols = getLayerNums(p.id).length >= 4; want.cols = true;
+      if (document.activeElement && document.activeElement !== document.body) document.activeElement.blur();
+      selLayer = { pid: p.id, sid: c.id, n: 2 }; updateLayerSelDOM(p.id, c.id, 2, true);
+      const tab = sh => document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab', code: 'Tab', shiftKey: !!sh, bubbles: true, cancelable: true }));
+      tab(false); await wait(120); const a = selLayer && selLayer.n; tab(false); await wait(120); const b = selLayer && selLayer.n; tab(true); await wait(120); const s3 = selLayer && selLayer.n;
+      out.steps = [a, b, s3]; want.steps = [1, 2, 1];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { selLayer = null; await restore(); }
+    return is(out, want, 'four columns / Tab, Tab, Shift+Tab from CENTER L2');
+  });
+  // 16lq-rowpick RP1: NEW
+  await check('Video Presets 16lq-rowpick RP1 (Round 2 #11, Omar 2026-10-17: "the way you descripe it is how it was" / "11. yes"): a click on a table row\'s Notes box picks that destination (P02 RIGHT LED) and moves the working-preset bar to P02, the box keeping the cursor; a click on its Name box keeps it picked; a click on the row\'s narrow column still lets the pick go', async () => {
+    const out = {}, want = {};
+    try {
+      await restore(); doSelect(null, null); render(); await wait(300);
+      const p2 = presets[1], s = screens.find(x => x.name === 'RIGHT LED'); const row = () => $$('#tbody tr[data-pid="' + p2.id + '"][data-sid="' + s.id + '"]')[0]; if (!row()) return 'no P02 RIGHT LED row';
+      const notes = row().children[4].querySelector('input'), name = row().children[3].querySelector('input'); if (!notes || !name) return 'no Name / Notes box';
+      notes.focus(); notes.click(); await wait(200);
+      out.notes = [!!sel && sel.pid === p2.id && sel.sid === s.id, _currentPid === p2.id, document.activeElement === notes]; want.notes = [true, true, true];
+      name.focus(); name.click(); await wait(200); out.name = !!sel && sel.pid === p2.id && sel.sid === s.id; want.name = true;
+      row().children[5].click(); await wait(200); out.free = !!sel; want.free = false;
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { doSelect(null, null); await restore(); }
+    return is(out, want, 'Notes click [picked, working preset, the box keeps the cursor] / Name click [still picked] / the narrow column [picked]');
+  });
+  // 16lq-levelclick LV1: NEW
+  await check('Video Presets 16lq-levelclick LV1 (Round 2 #12, Omar 2026-10-17: "fix that so its only one undo move then"): in Advanced, with a clip\'s level at 148 %, a double-click on its level line is ONE Undo step to 100 % (the presses before it no longer snap the level to 145 first), and one Undo brings back 148', async () => {
+    const out = {}, want = {};
+    try {
+      await restore(); const it = await _lqImport(await _lqWebm(), 'lq level clip.webm'); if (!it) return 'no clip imported';
+      const p = presets[0], s = screens[0]; homeSetL(p.id, s.id, 1, it.l); openFullscreen(p.id); await wait(900); selLayer = { pid: p.id, sid: s.id, n: 1 }; renderFullscreen(); await wait(600); mute(); _fsTlSync();
+      setLayerMedia(p.id, s.id, 1, { level: 148 }); _fsTlSync(); await wait(150);
+      const el = $('#fs-timeline .fs-tl-vol'); if (!el) return 'no level line'; const r = el.getBoundingClientRect(), x = r.left + r.width / 2, y = r.top; const u0 = _undoStack.length;
+      const press = () => { el.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, cancelable: true, clientX: x, clientY: y, button: 0 })); window.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, clientX: x, clientY: y })); };
+      press(); press(); el.dispatchEvent(new MouseEvent('dblclick', { bubbles: true, cancelable: true, clientX: x, clientY: y })); await wait(300);
+      out.dbl = [getLayerMedia(p.id, s.id, 1).level, _undoStack.length - u0]; want.dbl = [100, 1];
+      doUndo(); await wait(300); out.undo = getLayerMedia(p.id, s.id, 1).level; want.undo = 148; mute();
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { _fsPauseAll(); } catch (e) {} mute(); try { closeFullscreen(); } catch (e) {} selLayer = null; await restore(); }
+    return is(out, want, 'the double-click [level, Undo steps] / one Undo');
+  });
+  // 16lq-cropreset CR1: NEW
+  await check('Video Presets 16lq-cropreset CR1 (Round 2 #13, Omar 2026-10-17 "yes"): a layer showing picture A with a Source crop, given picture B, drops A\'s crop (B shows whole) in the same Undo step, and Undo brings A back with its crop; B renamed keeps the crop it was given', async () => {
+    const out = {}, want = {};
+    try {
+      await restore(); const p = presets[0], s = screens[0];
+      const a = await _lqImport(await _lqPng(800, 400, '#ff4e8b'), 'lq crop a.png'), b = await _lqImport(await _lqPng(640, 480, '#22e4ff'), 'lq crop b.png'); if (!a || !b) return 'pictures not imported';
+      homeSetL(p.id, s.id, 1, a.l); setLayerMedia(p.id, s.id, 1, { crop: { x: 100, y: 50, w: 400, h: 200 } }); await wait(150);
+      const crop = () => getLayerMedia(p.id, s.id, 1).crop || null; const u0 = vpUndoLen();
+      homeSetL(p.id, s.id, 1, b.l); await wait(150); out.swap = [getL(p.id, s.id, 1) === b.l, crop(), vpUndoLen() - u0]; want.swap = [true, null, 1];
+      doUndo(); await wait(300); out.undo = [getL(p.id, s.id, 1) === a.l, JSON.stringify(crop())]; want.undo = [true, JSON.stringify({ x: 100, y: 50, w: 400, h: 200 })];
+      doRedo(); await wait(300); setLayerMedia(p.id, s.id, 1, { crop: { x: 10, y: 10, w: 320, h: 240 } });
+      _sysApplyGlobalRename(b.l, 'LQ CROP B RENAMED'); await wait(250); out.rename = [getL(p.id, s.id, 1), JSON.stringify(crop())]; want.rename = ['LQ CROP B RENAMED', JSON.stringify({ x: 10, y: 10, w: 320, h: 240 })];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { await restore(); }
+    return is(out, want, 'B on the layer [B there, crop, Undo steps] / Undo [A back, its crop] / B renamed [the layer, its crop]');
+  });
+  // 16lq-webmdur WD1: NEW
+  await check('Video Presets 16lq-webmdur WD1 (Round 2 #14, Omar 2026-10-17 "yes"): a WebM whose file holds no length (a MediaRecorder recording) imports with its real length instead of 00:00, and a clip saved with 00:00 gets its length when its details are filled in on open', async () => {
+    const out = {}, want = {};
+    try {
+      await restore(); const blob = await _lqWebm(); const it = await _lqImport(blob, 'lq webm.webm'); if (!it) return 'not imported';
+      out.imp = [it.kind, (it.media && it.media.dur) > 0.3]; want.imp = ['video', true];
+      it.media.dur = 0; it.media.coverTime = 0; await _fsEnrichMedia(it, blob); await wait(200);
+      out.fill = (it.media.dur || 0) > 0.3; want.fill = true;
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { await restore(); }
+    return is(out, want, 'imported [kind, a length] / filled in on open [a length]');
+  });
+  // 16lq-bgone BO1: NEW
+  await check('Video Presets 16lq-bgone BO1 (Round 2 #15, Omar 2026-10-17: "BG should only ever by able to be one thing image, source, or BG. they would replace each other cause BG layer can only be one thing at a time. we should add an undo step though for BG"): on P01 a VIDEO background, then IMAGE: the picture takes its place (the video\'s name and cover go) in ONE Undo step, and Undo brings the video back; the same on P02; VIDEO on P01 then takes the picture\'s place', async () => {
+    const out = {}, want = {};
+    try {
+      await restore(); const p1 = presets[0], p2 = presets[1], s = screens[0];
+      const clipBlob = await _lqWebm(), clip = await _lqImport(clipBlob, 'lq bg clip.webm'); if (!clip) return 'no clip';
+      const png = new File([await _lqPng(320, 180, '#ffb020')], 'lq bg.png', { type: 'image/png' });
+      const vid = pid => { setBgName(pid, s.id, clip.l); setPColor(pid, s.id, null, clip.img || null); };
+      vid(p1.id); render(); await wait(200); let u0 = vpUndoLen();
+      await _lqPickFile(png, () => triggerScreenImageUpload(s.id, p1.id)); render(); await wait(200);
+      out.p01 = [getBgName(p1.id, s.id) || '', !!(p1.bgs && p1.bgs[s.id]), /^data:image\/png/.test(String(s.bg || '')), vpUndoLen() - u0]; want.p01 = ['', false, true, 1];
+      doUndo(); await wait(300); out.undo = [getBgName(p1.id, s.id)]; want.undo = [clip.l];
+      vid(p2.id); u0 = vpUndoLen(); await _lqPickFile(png, () => triggerScreenImageUpload(s.id, p2.id)); render(); await wait(200); const q2 = presets[1];   /* Undo restored new objects */
+      out.p02 = [(q2.bgNames || {})[s.id] || '', /^data:image\/png/.test(String((q2.bgs || {})[s.id] || '')), vpUndoLen() - u0]; want.p02 = ['', true, 1];
+      await restore(); screens[0].bg = 'data:image/png;base64,iVBORw0KGgo=';
+      await _lqPickFile(new File([clipBlob], 'lq bg clip 2.webm', { type: 'video/webm' }), () => _bgsVideo(screens[0].id, presets[0].id));
+      for (let i = 0; i < 40 && getBgName(presets[0].id, screens[0].id) !== 'LQ BG CLIP 2'; i++) await wait(250);
+      out.video = [getBgName(presets[0].id, screens[0].id), !screens[0].bg]; want.video = ['LQ BG CLIP 2', true];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { okDialogs(); await restore(); }
+    return is(out, want, 'IMAGE over P01\'s video [BG name, P01\'s own cover, the picture, Undo steps] / Undo [the video] / IMAGE over P02\'s video [BG name, P02\'s picture, Undo steps] / VIDEO over P01\'s picture [a BG name, the picture gone]');
+  });
+  // 16lq-ptabs PT1: NEW
+  await check('I/O Patch 16lq-ptabs PT1 (Round 2 #16, Omar 2026-10-17: "you should be able to type anything if its to long it break into two row and if that not enough when you hover over the tile it should pop up below it with the full name like any file would do in general"): an Advanced page renamed BALLROOM SALON C NORTH REHEARSAL (32 letters, the most a page name takes) wraps in its tab with its copy and close buttons inside it, ends in … past two lines, and on hover pops up its full name right under the tab; a short name pops nothing up', async () => {
+    const out = {}, want = {};
+    try {
+      await restore(); openSystem(); await wait(600); okDialogs(); _ioSetView('advanced'); await wait(700); okDialogs(); await wait(300);
+      _ioRenamePage(0); await wait(200); const box = $('#io-page-rename'); if (!box) return 'no rename box';
+      box.focus(); box.select(); document.execCommand('insertText', false, 'BALLROOM SALON C NORTH REHEARSAL'); box.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true, cancelable: true })); await wait(400);
+      const tab = $('#io-page-tabs .io-ptab'); if (!tab) return 'no page tab'; const nm = $('.io-ptab-nm', tab), r = tab.getBoundingClientRect();
+      const inside = [...tab.querySelectorAll('span[onclick], span[title]')].filter(x => x !== nm).every(x => { const q = x.getBoundingClientRect(); return q.width > 0 && q.left >= r.left - 1 && q.right <= r.right + 1; });
+      out.tab = [ioAdvanced.pages[0].name, !!nm && nm.scrollHeight > nm.clientHeight + 1, inside]; want.tab = ['BALLROOM SALON C NORTH REHEARSAL', true, true];
+      tab.dispatchEvent(new MouseEvent('mouseover', { bubbles: true })); await wait(120); const tip = $('#io-ptab-tip');
+      out.tip = tip ? [tip.textContent, Math.abs(tip.getBoundingClientRect().top - r.bottom - 4) <= 2] : null; want.tip = ['BALLROOM SALON C NORTH REHEARSAL', true];
+      document.body.dispatchEvent(new MouseEvent('mouseover', { bubbles: true })); await wait(80); out.away = !$('#io-ptab-tip'); want.away = true;
+      ioAdvanced.pages[0].name = 'MAIN'; _sysRender(); await wait(300); const t2 = $('#io-page-tabs .io-ptab'); if (t2) t2.dispatchEvent(new MouseEvent('mouseover', { bubbles: true })); await wait(100);
+      out.short = !$('#io-ptab-tip'); want.short = true;
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { const t = $('#io-ptab-tip'); if (t) t.remove(); try { _ioSetView('simple'); } catch (e) {} try { closeSystem(); } catch (e) {} await restore(); }
+    return is(out, want, 'the long name [kept, past two lines, the copy / close buttons in the tab] / hover [the full name, right under the tab] / pointer away [gone] / a short name [nothing pops up]');
   });
   try { _fsPauseAll(); } catch (e) {} $$('video').forEach(v => { try { v.muted = true; v.pause(); } catch (e) {} });
   return { checks };
