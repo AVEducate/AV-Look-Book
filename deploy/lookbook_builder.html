@@ -2271,6 +2271,13 @@ body.is-mobile .sys-btn{min-height:var(--ss-touch)}
 .bk-title{background:#0a0e16;color:#e8e8ea;font-weight:800;letter-spacing:.18em;font-size:15px;text-transform:uppercase;text-align:center;padding:8px 0}
 .bk-sub{background:#000;color:#e8e8ea;font-weight:700;letter-spacing:.1em;font-size:11px;text-transform:uppercase;text-align:center;padding:5px 0}
 .bk-grid{display:grid;grid-template-columns:44px 1fr 44px 1fr;font-size:12px;max-height:280px;overflow:auto}
+.bk-grid.bk-grid-new{max-height:none;overflow:visible}   /* 16lp-backups: the "Type a missing source" line under the list, always in view */
+.lb-clash-opt{display:flex;align-items:center;gap:8px;padding:6px 2px;color:var(--text);cursor:pointer}   /* 16lp-nameclash */
+.lb-clash-name{display:flex;align-items:center;gap:8px;margin-top:10px;color:var(--text2)}
+.lb-clash-name input{flex:1;min-width:0;height:30px;padding:0 10px;border:1px solid var(--n-line);border-radius:6px;background:#0a0d12;color:var(--text);font:inherit}
+.lb-clash-note{min-height:16px;margin-top:8px;font-size:11px;color:var(--text2)}
+.lbhc-txt{display:block;line-height:1.35}   /* 16lp-wirecards */
+.lbhc-sub{display:block;margin-top:2px;font-size:11px;font-weight:400;color:var(--text2)}
 .bk-hdr{background:#cfe9d8;color:#1f2937;font-weight:800;letter-spacing:.04em;text-transform:uppercase;text-align:center;padding:6px 4px;position:sticky;top:0}
 .bk-cell{padding:0 10px;height:34px;display:flex;align-items:center;gap:8px;border-right:1px solid rgba(255,255,255,.06);border-bottom:1px solid rgba(255,255,255,.06);color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .bk-cell.bk-num{justify-content:center;font-family:var(--font-mono);color:var(--text2);background:rgba(0,0,0,.25)}
@@ -4897,7 +4904,7 @@ Also called DSM (Downstage Monitor) in broadcast and theater workflows, same thi
   <div class="bb-cell bb-pill bb-cyan" title="The largest number of layers used in any single preset, this is the figure to compare against your switcher's per-scene layer budget. (The most complex single moment in the show.)"><span class="bb-label">Layers</span><strong id="bb-layers">0</strong></div>
   <div id="bb-spacer"></div>
   <div class="bb-cell" id="bb-sel" style="font-size:10px;opacity:.5">—</div>
-  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy, hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16lo</div>
+  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy, hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16lp</div>
   <!-- 16kq (Omar): the Modifiers menu lives on each preset tile only; this place is kept for the Educator tool of a future build (greyed out, does nothing) --><button class="bb-util" id="tb-educator" type="button" disabled aria-disabled="true" title="Educator: coming in a future build" aria-label="Educator, coming in a future build" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:default;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em;opacity:.38"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10L12 5 2 10l10 5 10-5z"/><path d="M6 12v5c0 1 2.7 2.5 6 2.5s6-1.5 6-2.5v-5"/><line x1="22" y1="10" x2="22" y2="16"/></svg><span>Educator</span></button>
   <button class="bb-util" onclick="actions.help()" title="Help, quick reference, keyboard shortcuts, glossary, accessibility" aria-label="Help, quick reference, keyboard shortcuts, glossary, accessibility" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="4.93" y1="4.93" x2="9.17" y2="9.17"/><line x1="14.83" y1="14.83" x2="19.07" y2="19.07"/><line x1="14.83" y1="9.17" x2="19.07" y2="4.93"/><line x1="4.93" y1="19.07" x2="9.17" y2="14.83"/></svg>Help</button>
   <button class="bb-util" id="tb-bug" onclick="reportBug()" title="Report a bug, opens an email to AV Educate with your show file — attached in the app, downloaded for you to attach in a browser" aria-label="Report a bug" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="7.2"/><path d="M15.4 15.4L21 21" stroke-width="2.6"/><ellipse cx="10" cy="11" rx="2.5" ry="3.3" fill="currentColor" stroke="none"/><circle cx="10" cy="7" r="1.5" fill="currentColor" stroke="none"/><path d="M7.5 9.2l-1.7-.8M7.4 11.2H5.6M7.7 13.1l-1.5 1.1M12.5 9.2l1.7-.8M12.6 11.2h1.8M12.3 13.1l1.5 1.1M9.2 5.9l-.8-1.1M10.8 5.9l.8-1.1" stroke-width="1.3"/></svg>Bug</button>   <!-- 16jk (Omar): Report a bug, after Help -->
@@ -5576,6 +5583,17 @@ Also called DSM (Downstage Monitor) in broadcast and theater workflows, same thi
             <button data-a11y-scale="0.9"  onclick="setA11yScale(0.9)"  class="a11y-opt" style="padding:10px 6px;border:1px solid var(--n-line);background:var(--n-track);color:var(--text2);border-radius:8px;cursor:pointer;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-family:inherit;transition:all .15s"><span style="display:block;margin-bottom:4px;color:var(--text);font-weight:600;letter-spacing:0;text-transform:none;font-size:10px">Aa</span>Small</button>
             <button data-a11y-scale="1"    onclick="setA11yScale(1)"    class="a11y-opt" style="padding:10px 6px;border:1px solid var(--n-line);background:var(--n-track);color:var(--text2);border-radius:8px;cursor:pointer;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-family:inherit;transition:all .15s"><span style="display:block;margin-bottom:4px;color:var(--text);font-weight:600;letter-spacing:0;text-transform:none;font-size:12px">Aa</span>Default</button>
             <button data-a11y-scale="1.15" onclick="setA11yScale(1.15)" class="a11y-opt" style="padding:10px 6px;border:1px solid var(--n-line);background:var(--n-track);color:var(--text2);border-radius:8px;cursor:pointer;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-family:inherit;transition:all .15s"><span style="display:block;margin-bottom:4px;color:var(--text);font-weight:600;letter-spacing:0;text-transform:none;font-size:14px">Aa</span>Large</button>
+          </div>
+        </div>
+
+        <!-- Hand-made Wire cards (16lp-wirecards) -->
+        <div style="margin-bottom:18px">
+          <div style="font-size:10px;font-weight:700;color:#c8dff5;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px">Hand-made Wire cards</div>
+          <div style="font-size:11px;color:#8a93a8;margin-bottom:8px;line-height:1.5">Where the + on a Wire Advanced heading puts a new source, destination or AUX: ask each time, Wire only (a hand-made card) or Wire and the I/O Patch (an I/O-only one).</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
+            <button data-a11y-wirecards="ask" onclick="setA11yWireCards('ask')" class="a11y-opt" style="padding:10px 6px;border:1px solid var(--n-line);background:var(--n-track);color:var(--text2);border-radius:8px;cursor:pointer;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-family:inherit;transition:all .15s">Ask each time</button>
+            <button data-a11y-wirecards="wire" onclick="setA11yWireCards('wire')" class="a11y-opt" style="padding:10px 6px;border:1px solid var(--n-line);background:var(--n-track);color:var(--text2);border-radius:8px;cursor:pointer;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-family:inherit;transition:all .15s">Wire only</button>
+            <button data-a11y-wirecards="io" onclick="setA11yWireCards('io')" class="a11y-opt" style="padding:10px 6px;border:1px solid var(--n-line);background:var(--n-track);color:var(--text2);border-radius:8px;cursor:pointer;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;font-family:inherit;transition:all .15s">Wire and the I/O Patch</button>
           </div>
         </div>
 
@@ -6631,7 +6649,7 @@ function _bdDropAdv(s,names,pre){
         var r=rows[i], nm=String((r&&r.name)||'').trim().toLowerCase();
         if(!r||!nm||!low[nm]||mine.indexOf(r)<0) continue;   /* 16kx-r2fix */
         if(!(r.fromShow===true||(pi===0&&r.fromShow===undefined))) continue;   /* a row typed on another page is that page's own */
-        rows.forEach(function(x){ if(x&&x.backupOf===r.id) x.backupOf=null; if(x&&x.autoB===r.id) delete x.autoB; });
+        _ioBkForget(rows,r.id); rows.forEach(function(x){ if(x&&x.autoB===r.id) delete x.autoB; });   /* 16lp-backups */
         rows.splice(i,1); any=true;   /* 16kx-r2fix */
       }
       if(any){ if(!rows.length) rows.push(_ioAdvBlank('dst')); patchGone.push({uid:pg.uid||'',id:pg.id,names:gone}); }
@@ -17789,7 +17807,7 @@ function _sysApplyToAll(allKind, field, opt){
     var apply=function(fn){
       if(typeof screens!=='undefined'&&Array.isArray(screens)) _bdNoBd(screens).filter(function(s){ return !_outIoOff(s); }).forEach(fn);   /* 16kx-backdrop: Set for all never reaches a backdrop; 16lo-delwin: nor one off the patch */
       /* 16ky-r2b (Omar): D0 no longer reaches the AUX / DSM outputs; A0 in the AUX / DSM title does */
-      if(typeof ioDests!=='undefined'&&Array.isArray(ioDests)) ioDests.forEach(fn);
+      _lbhcIoOuts(false).forEach(fn);   /* 16lp-wirecards: the I/O-only AUX take A0 */
     };
     if(field==='connector'){ apply(function(o){ o.connectorType=opt.value; });
       _cmCableAll((typeof screens!=='undefined'&&Array.isArray(screens))?_bdNoBd(screens).filter(function(s){ return !_outIoOff(s); }):[],opt.value);   /* 16la-colour-mv (Q): each destination the cable's colour, same undo step */
@@ -18066,8 +18084,18 @@ function _ioAdvRow(kind,id){ const arr=_ioAdvArr(_ioAdvPage(),kind); return arr.
 // the list, the backup row lines up right under its primary on the patch, the primary's icon lights green and the
 // backup shows a B tag. Names ending in " A" / " B" (PBP A / PBP B, GFX A / GFX B) pair on their own. Export I/O
 // prints P / B in a column between Connector and Source Name.
-function _ioBkPrimaryOf(rows,r){ return (r&&r.backupOf)?(rows.find(function(x){ return x&&x.id===r.backupOf; })||null):null; }
-function _ioBkBackupOf(rows,r){ return r?(rows.find(function(x){ return x&&x.backupOf===r.id; })||null):null; }
+/* 16lp-backups (the full test's #20, Omar 2026-10-17: "it should not matter how many input or output there are and primary and back up
+   should be able to be picked mutiple times its a feature in the system i could have 10 machine all back up to one laptop thats playing
+   logo if the user wanted to. should never be any issue"): a backup row's backupOf holds every primary it backs up (one id, or a list
+   of ids), and a primary can have several backups. A pair is added, never swapped for another (#19: the window replaced a primary's
+   backup without asking), and never moves a row (16lo-nopairs). A backup is not a primary of something else. */
+function _ioBkPrims(r){ const b=r&&r.backupOf; return Array.isArray(b)?b.filter(Boolean):(b?[b]:[]); }
+function _ioBkSetPrims(r,ids){ ids=(ids||[]).filter(function(x,i,a){ return !!x&&a.indexOf(x)===i; }); r.backupOf=ids.length>1?ids:(ids[0]||null); }
+function _ioBkForget(rows,id){ (rows||[]).forEach(function(x){ if(x&&_ioBkPrims(x).indexOf(id)>=0) _ioBkSetPrims(x,_ioBkPrims(x).filter(function(p){ return p!==id; })); }); }
+function _ioBkPrimariesOf(rows,r){ return _ioBkPrims(r).map(function(id){ return rows.find(function(x){ return x&&x.id===id; }); }).filter(Boolean); }
+function _ioBkBackupsOf(rows,r){ return r?rows.filter(function(x){ return x&&_ioBkPrims(x).indexOf(r.id)>=0; }):[]; }
+function _ioBkPrimaryOf(rows,r){ return _ioBkPrimariesOf(rows,r)[0]||null; }
+function _ioBkBackupOf(rows,r){ return _ioBkBackupsOf(rows,r)[0]||null; }
 function _ioBkState(rows,r){ if(!r) return ''; if(_ioBkPrimaryOf(rows,r)) return 'backup'; if(_ioBkBackupOf(rows,r)) return 'primary'; return ''; }
 function _ioBkPB(rows,r){ const st=_ioBkState(rows,r); return st==='primary'?'P':(st==='backup'?'B':''); }
 /* 16kk: the primary a source backs up, by NAME, from today's pairs: Advanced I/O page 1 (the show's page: the backup
@@ -18078,8 +18106,8 @@ function _ioBkPrimaryNameFor(name){
     const pg=(typeof ioAdvanced==='object'&&ioAdvanced&&Array.isArray(ioAdvanced.pages))?ioAdvanced.pages[0]:null;
     const rows=(pg&&Array.isArray(pg.sources))?pg.sources:[];
     const r=rows.find(function(x){ return x&&String(x.name||'').trim().toLowerCase()===nm; });
-    const p=r?_ioBkPrimaryOf(rows,r):null;
-    if(p&&String(p.name||'').trim()) return String(p.name).trim();
+    const _ps=r?_ioBkPrimariesOf(rows,r):[], _pn=_ps.map(function(x){ return String(x.name||'').trim(); }).filter(Boolean).join(', ');   /* 16lp-backups */
+    if(_pn) return _pn;
     const m=(typeof _sysGetSourceMeta==='function')?(_sysGetSourceMeta(name)||{}):{};
     return String(m.pairOf||m.autoB||'').trim();
   }catch(e){ return ''; }
@@ -18090,13 +18118,14 @@ function _ioBkPlaceUnder(rows,primaryId,backupId){ const bi=rows.findIndex(funct
 function _ioBkPair(pg,primaryId,backupId){
   const rows=pg.sources; const p=rows.find(function(x){ return x&&x.id===primaryId; }); const b=rows.find(function(x){ return x&&x.id===backupId; });
   if(!p||!b||p===b) return false;
+  if(_lbcOn()){ if(_ioBkPrims(p).length||_ioBkBackupsOf(rows,b).length) return false; const _ids=_ioBkPrims(b); if(_ids.indexOf(p.id)>=0) return false; _ids.push(p.id); _ioBkSetPrims(b,_ids); delete p.noAuto; delete b.noAuto; return true; }   /* 16lp-backups */
   rows.forEach(function(x){ if(x&&x.backupOf===p.id&&x!==b) x.backupOf=null; });   // one backup per primary
   rows.forEach(function(x){ if(x&&x.backupOf===b.id) x.backupOf=null; });          // a backup is nobody's primary
   p.backupOf=null; b.backupOf=p.id; delete p.noAuto; delete b.noAuto;
   _ioBkPlaceUnder(rows,p.id,b.id);
   return true;
 }
-function _ioBkUnpair(pg,backupId){ const b=pg.sources.find(function(x){ return x&&x.id===backupId; }); if(!b) return; const p=_ioBkPrimaryOf(pg.sources,b); b.backupOf=null; b.noAuto=true; if(p) p.noAuto=true; }
+function _ioBkUnpair(pg,backupId,primaryId){ const b=pg.sources.find(function(x){ return x&&x.id===backupId; }); if(!b) return; if(primaryId&&_lbcOn()){ _ioBkSetPrims(b,_ioBkPrims(b).filter(function(x){ return x!==primaryId; })); return; } const p=_ioBkPrimaryOf(pg.sources,b); b.backupOf=null; b.noAuto=true; if(p) p.noAuto=true; }   /* 16lp-backups: one pair */
 // 16jh (Omar): PBP and GFX always travel as a pair. Add "PBP A" (or "GFX A") and "PBP B" appears with it — on the
 // Simple patch as an I/O-only source (Wire sees it, the presets don't), on an Advanced page as the backup row under
 // its primary. Deleting the B remembers that (noAutoB on the A), so it never comes back on its own.
@@ -18224,7 +18253,7 @@ function _ioBkOptions(field){
     if(!r||!(r.name||'').trim()) return;
     const st=_ioBkState(rows,r);
     if(field==='bk-primary'){ if(st==='backup') return; }                                   // a backup can't be a primary
-    else { if(st||r.id===_ioBk.primary) return; }                                          // used ones are blocked
+    else { if(_lbcOn()){ if(st==='primary'||r.id===_ioBk.primary||(_ioBk.primary&&_ioBkPrims(r).indexOf(_ioBk.primary)>=0)) return; } else if(st||r.id===_ioBk.primary) return; }   /* 16lp-backups */                                          // used ones are blocked
     out.push({ value:r.id, label:r.name, meta:_lbnRowLab(pg,'src',r,'S'+(i+1)) });
   });
   if(!out.length) out.push({ value:'', label:'— nothing free —', meta:'' });
@@ -18237,7 +18266,7 @@ function _ioBkCommit(){
   if(_ioBkPair(pg,_ioBk.primary,_ioBk.backup)){ _isDirty=true; if(typeof _updateDirtyIndicator==='function') _updateDirtyIndicator(); if(typeof scheduleAutoSave==='function') scheduleAutoSave(); }
   _ioBk={primary:'',backup:''}; _ioBackupRender();
 }
-function _ioBkRemove(backupId){ const pg=_ioAdvPage(); if(typeof pushUndo==='function') pushUndo(); _ioBkUnpair(pg,backupId); _isDirty=true; if(typeof _updateDirtyIndicator==='function') _updateDirtyIndicator(); if(typeof scheduleAutoSave==='function') scheduleAutoSave(); _ioBackupRender(); }
+function _ioBkRemove(backupId,primaryId){ const pg=_ioAdvPage(); if(typeof pushUndo==='function') pushUndo(); _ioBkUnpair(pg,backupId,primaryId); _isDirty=true; if(typeof _updateDirtyIndicator==='function') _updateDirtyIndicator(); if(typeof scheduleAutoSave==='function') scheduleAutoSave(); _ioBackupRender(); }
 function _ioBackupRender(){
   const pg=_ioAdvPage(); const rows=pg.sources||[]; const dests=(pg.dests||[]).concat(pg.mvs||[]);
   const chev='<span class="pill-chev"><svg aria-hidden="true" viewBox="0 0 10 10" fill="currentColor"><path d="M2 4l3 3 3-3z"/></svg></span>';
@@ -18245,14 +18274,14 @@ function _ioBackupRender(){
   const slot=function(id){ const i=rows.findIndex(function(x){ return x&&x.id===id; }); return i>=0?_lbnRowLab(pg,'src',rows[i],'S'+(i+1)):''; };
   const pill=function(field,val,prompt){ return '<div class="sys-pill clickable'+(val?'':' empty')+'" data-sys-kind="bk" data-sys-id="'+field+'" data-sys-field="'+field+'" data-sys-value="'+_esc(val)+'" onclick="event.stopPropagation();_sysOpenDropdown(this)"><span class="pill-label">'+(val?_esc(nameOf(val)):prompt)+'</span>'+chev+'</div>'; };
   let pairs='';
-  rows.forEach(function(r){ const p=_ioBkPrimaryOf(rows,r); if(!p) return; pairs+='<div class="bk-pair"><span class="bk-name"><span class="bk-slot">'+slot(p.id)+'</span>'+_esc(p.name||'')+'</span><span class="bk-arrow">'+_IO_BK_ICON+'</span><span class="bk-name"><span class="bk-slot">'+slot(r.id)+'</span>'+_esc(r.name||'')+'</span><button type="button" class="sys-icon-btn del" onclick="_ioBkRemove(\''+_esc(r.id)+'\')" title="Remove this pair" aria-label="Remove this pair">×</button></div>'; });
+  rows.forEach(function(r){ _ioBkPrimariesOf(rows,r).forEach(function(p){ pairs+='<div class="bk-pair"><span class="bk-name"><span class="bk-slot">'+slot(p.id)+'</span>'+_esc(p.name||'')+'</span><span class="bk-arrow">'+_IO_BK_ICON+'</span><span class="bk-name"><span class="bk-slot">'+slot(r.id)+'</span>'+_esc(r.name||'')+'</span><button type="button" class="sys-icon-btn del" onclick="_ioBkRemove(\''+_esc(r.id)+'\',\''+_esc(p.id)+'\')" title="Remove this pair" aria-label="Remove this pair">×</button></div>'; }); });
   const canPair=!!(_ioBk.primary&&_ioBk.backup);
   let grid='';
   // 16jh (Omar): the grid reads PRIMARY | BACKUP — every primary-capable source on the left, its backup (or nothing yet)
   // on the right, and an empty cell at the bottom to type a source that is missing from the page.
   const prim=rows.filter(function(r){ return r&&_ioBkState(rows,r)!=='backup'; });
-  prim.forEach(function(r,i){ const b=_ioBkBackupOf(rows,r); grid+='<div class="bk-cell bk-num">'+(i+1)+'</div><div class="bk-cell">'+_esc(r.name||'')+''+'</div><div class="bk-cell bk-num">'+(b?(i+1):'')+'</div><div class="bk-cell'+(b?'':' bk-dead')+'">'+(b?_esc(b.name||''):'')+'</div>'; });
-  grid+='<div class="bk-cell bk-num"></div><div class="bk-cell"><input class="bk-new" type="text" placeholder="Type a missing source, Enter adds it" onkeydown="if(event.key===\'Enter\'){event.preventDefault();this.blur();}" onchange="if(this.value.trim())_ioBkAddNamed(this.value)"></div><div class="bk-cell bk-num"></div><div class="bk-cell bk-dead"></div>';
+  prim.forEach(function(r,i){ const bs=_ioBkBackupsOf(rows,r), b=bs[0]||null; grid+='<div class="bk-cell bk-num">'+(i+1)+'</div><div class="bk-cell">'+_esc(r.name||'')+''+'</div><div class="bk-cell bk-num">'+(b?(i+1):'')+'</div><div class="bk-cell'+(b?'':' bk-dead')+'">'+(b?_esc(bs.map(function(x){ return x.name||''; }).join(', ')):'')+'</div>'; });   /* 16lp-backups */
+  const _bkNew='<div class="bk-cell bk-num"></div><div class="bk-cell"><input class="bk-new" type="text" placeholder="Type a missing source, Enter adds it" onkeydown="if(event.key===\'Enter\'){event.preventDefault();this.blur();}" onchange="if(this.value.trim())_ioBkAddNamed(this.value)"></div><div class="bk-cell bk-num"></div><div class="bk-cell bk-dead"></div>';
   const nBk=rows.filter(function(r){ return r&&_ioBkState(rows,r)==='backup'; }).length;
   const html='<div class="sys-modal-overlay" id="sys-bk-overlay" onclick="if(event.target===this)_ioBackupClose()">'
     +'<div class="sys-modal bk-modal">'
@@ -18261,7 +18290,7 @@ function _ioBackupRender(){
       +'<div class="bk-head"><span>Primary</span><span></span><span>Backup</span><span></span></div>'
       +(pairs||'<div class="bk-empty">No pairs yet. Pick a primary and the source that falls back for it.</div>')
       +'<div class="bk-assign">'+pill('bk-primary',_ioBk.primary,'— Primary —')+'<span class="bk-arrow">'+_IO_BK_ICON+'</span>'+pill('bk-backup',_ioBk.backup,'— Backup —')+'<button type="button" class="sys-add-btn green" onclick="_ioBkCommit()"'+(canPair?'':' disabled')+'>Pair</button><button type="button" class="sys-add-btn green" onclick="_ioBkAddNamed(\'\')" title="Add a source row to this page">+ Add source</button></div>'
-      +'<div class="bk-router"><div class="bk-title">'+_esc(pg.name||'Page').toUpperCase()+'</div><div class="bk-sub">'+prim.length+' PRIMARY \u00b7 '+nBk+' BACKUP</div><div class="bk-grid"><div class="bk-hdr">#</div><div class="bk-hdr">Primary</div><div class="bk-hdr">#</div><div class="bk-hdr">Backup</div>'+grid+'</div></div>'
+      +'<div class="bk-router"><div class="bk-title">'+_esc(pg.name||'Page').toUpperCase()+'</div><div class="bk-sub">'+prim.length+' PRIMARY \u00b7 '+nBk+' BACKUP</div><div class="bk-grid"><div class="bk-hdr">#</div><div class="bk-hdr">Primary</div><div class="bk-hdr">#</div><div class="bk-hdr">Backup</div>'+grid+(_lbcOn()?'':_bkNew)+'</div>'+(_lbcOn()?'<div class="bk-grid bk-grid-new">'+_bkNew+'</div>':'')+'</div>'
     +'</div></div></div>';
   const old=document.getElementById('sys-bk-overlay');
   if(old){ const bodyEl=old.querySelector('.sys-modal-body'); const tmp=document.createElement('div'); tmp.innerHTML=html; const fresh=tmp.querySelector('.sys-modal-body'); if(bodyEl&&fresh){ bodyEl.innerHTML=fresh.innerHTML; return; } old.remove(); }   // 16iy: swap the body only, so the window never blinks
@@ -18445,7 +18474,7 @@ function _ioAdvTable(kind, rows, title){
     if(_kzAux&&!_kzA0&&_kzAux.has(r)){ h+=_ioAdvGlobalRowHtml('aux'); _kzA0=true; }   /* A0, just above the first AUX / DSM row */
     const raw=isSrc?_sysMachineRaw(r):_sysDeviceRaw(r); const t=isSrc?r.type:r.deviceType; const isCustom=(t==='Custom');
     const _bkp=isSrc?_ioBkPrimaryOf(rows,r):null;
-    h+=_ioAdvGoneRow(r,_sysRowHtml({ icon:_lbnRowLab(_ioAdvPage(),kind,r,badge+(i+1)), mini:_iogMiniFor(kind,r,_lbnRowLab(_ioAdvPage(),kind,r,badge+(i+1))), bk:isSrc?_ioBkState(rows,r):'', bkOf:isSrc?(_bkp?(_bkp.name||''):((_ioBkBackupOf(rows,r)||{}).name||'')):'', iconClass:isSrc?'':'dest', name:r.name||'', conn:r.connectorType||'', typeRaw:raw, typeLabel:isCustom?(r.customType||''):raw, typeClass:isSrc?_sysMachineClass(r):_sysDeviceClass(r), isCustomType:isCustom, customVal:r.customType||'', res:r.resolution||'', rf:r.refresh||'', notes:r.notes||'', kind:k, id:r.id }));   /* 16kz-refresh (R1) */
+    h+=_ioAdvGoneRow(r,_sysRowHtml({ icon:_lbnRowLab(_ioAdvPage(),kind,r,badge+(i+1)), mini:_iogMiniFor(kind,r,_lbnRowLab(_ioAdvPage(),kind,r,badge+(i+1))), bk:isSrc?_ioBkState(rows,r):'', bkOf:isSrc?(_ioBkPrimariesOf(rows,r).map(function(x){ return x.name||''; }).join(', ')||_ioBkBackupsOf(rows,r).map(function(x){ return x.name||''; }).join(', ')):'', iconClass:isSrc?'':'dest', name:r.name||'', conn:r.connectorType||'', typeRaw:raw, typeLabel:isCustom?(r.customType||''):raw, typeClass:isSrc?_sysMachineClass(r):_sysDeviceClass(r), isCustomType:isCustom, customVal:r.customType||'', res:r.resolution||'', rf:r.refresh||'', notes:r.notes||'', kind:k, id:r.id }));   /* 16kz-refresh (R1) */
   });
   h+='</div><div class="sys-section-footer"><button class="sys-add-btn '+(isSrc?'green':(isMv?'':'orange'))+'" onclick="_ioAdvAdd(\''+kind+'\')">+ Add '+one+'</button><div class="hint">'+((ioAdvanced&&Array.isArray(ioAdvanced.pages)&&ioAdvanced.pages.indexOf(_ioAdvPage())===0)?(isSrc?'Named sources on page 1 also appear in Simple and in Wire.':'Named rows on page 1 also appear in Simple.'):'Rows here live only on this page.')+'</div></div></div>';
   return h;
@@ -18878,10 +18907,11 @@ function _lbcSrcCard(nm,i,drag){
 /* a destination ('dest') or AUX / DSM ('aux') card, numbered as the I/O Patch numbers it; drag 'wire' or '' */
 function _lbcOutCard(kind,o,drag){
   let num, slot;
-  if(kind==='dest'){ const n=_bdNo(o); num='D'+n; slot='Destination '+n; }   /* 16lc-vpcards-fix (E2): _bdNo is its D number */
+  if(kind==='iodest'){ num='IO'; slot=o.aux?'I/O-only AUX':'I/O-only destination'; }   /* 16lp-wirecards: as its I/O Patch card */
+  else if(kind==='dest'){ const n=_bdNo(o); num='D'+n; slot='Destination '+n; }   /* 16lc-vpcards-fix (E2): _bdNo is its D number */
   else { const n=_lbcOn()?_lbnOutNo('aux',o):(((typeof dsms!=='undefined'&&Array.isArray(dsms))?dsms:[]).filter(Boolean).indexOf(o)+1); num='A'+n; slot=(_sysResolveDsmType(o)||'AUX')+' '+n; }   /* 16lc-vpcards-fix (E2): its A number */
   const c=_iogOutObj(kind,o,num,slot);
-  if(drag==='wire') c.rootAttrs=' draggable="true" ondragstart="'+(kind==='dest'?'_wireAdvDestDragStart':'_wireAdvDsmDragStart')+'(event, \''+_iogIdAttr(o.id)+'\')" style="cursor:grab"';
+  if(drag==='wire') c.rootAttrs=' draggable="true" ondragstart="'+((kind==='dest'||(kind==='iodest'&&!o.aux))?'_wireAdvDestDragStart':'_wireAdvDsmDragStart')+'(event, \''+_iogIdAttr(o.id)+'\')" style="cursor:grab"';
   return _lbfFitCard(_iogCardHTML(c),o.name||'',false);   /* 16lc-vpfinish (D8, Omar: never CONFIDENC / E) */
 }
 /* a press held inside host (a name box left by pressing another card's control): fn runs after it, so that press lands where it was aimed */
@@ -19395,6 +19425,195 @@ function _lbDelAdvRow(kind,id){
   return false;
 }
 /* ══ end 16lo-delwin / 16lo-addback ══ */
+/* ══ 16lp-p1rename (the full test's #21, Omar 2026-10-17: "just rename it not make a new card"): a page-1 row copied from the show IS
+   that item on the I/O Patch. Typing a new name over it renamed only the row, so page 1 made a new I/O-only card for the typed name and
+   the item kept its old one. Now it renames the item everywhere, as its I/O card's name box does (a source: _sysApplyGlobalRename,
+   with its number kept, 16lo-srcorder; a destination, AUX or multiviewer: _sysSetMeta). A row typed by hand, or on another page, as
+   before. ══ */
+function _lbP1Rename(kind,rowId,oldName,newName,el){
+  if(typeof ioAdvanced!=='object'||!ioAdvanced||ioAdvanced.page!==0) return false;
+  const pg=_ioAdvPage(), r=(_ioAdvArr(pg,kind)||[]).find(function(x){ return x&&x.id===rowId; });
+  if(!r||r.fromShow!==true||r.gone===true) return false;
+  const low=String(oldName||'').trim().toLowerCase(); if(!low) return false;
+  const same=function(o){ return !!o&&String(o.name||'').trim().toLowerCase()===low; };
+  if(kind==='adv-src'){
+    const nm=_sysDiscoverSources().find(function(n){ return String(n).trim().toLowerCase()===low; }); if(!nm) return false;
+    if(_sysRenameBlocked(nm,newName,el)) return 'refused';
+    pushUndo(); _sysApplyGlobalRename(nm,newName);
+  } else {
+    let k=null, o=null;
+    if(kind==='adv-mv'){ o=(Array.isArray(multiviewers)?multiviewers:[]).find(same); k='mv'; }
+    else { o=(Array.isArray(screens)?screens:[]).find(function(x){ return same(x)&&!_bdIs(x); }); k='dest'; if(!o){ o=(Array.isArray(dsms)?dsms:[]).find(same); k='aux'; } }
+    if(!o) return false;
+    if(_kzNameBoxBlocked(k,o.id,newName,el,oldName)) return 'refused';   /* a name another output has: Name in use, as its card's name box */
+    pushUndo(); _sysSetMeta(k,o.id,'name',newName);
+  }
+  _isDirty=true; if(typeof _updateDirtyIndicator==='function') _updateDirtyIndicator();
+  if(typeof scheduleRender==='function') scheduleRender(); if(typeof renderTable==='function') renderTable(); _sysRender();
+  return 'done';
+}
+/* ══ 16lp-nameclash (the full test's #22, Omar 2026-10-17: "we should just asked which one get the new name and what do they want to
+   change the old name out too" / "a new pop up ... was created to help solve this type of mistake"): + Add multiviewer named the new one
+   MV 2 although an I/O-only destination (his AVE TEST File) already was MV 2: two outputs of one name. Now, when the name it would
+   take is another output's, a window asks which one gets the name and what the other one is called (the next free name filled in);
+   one Undo step; Cancel adds nothing. ══ */
+function _lbOutFree(base){   /* the first "BASE n" no output has (any capitals) */
+  const t=_kzOutTaken(null), m=/^(.*?)\s*(\d+)$/.exec(String(base||'').trim()), stem=m?m[1]:String(base||'').trim();
+  let n=m?parseInt(m[2],10):1, v=base; while(t[_kzLow(v)]){ n++; v=stem+' '+n; } return v;
+}
+function _lbMvPush(name){ multiviewers.push({id:uid(),name:name,connectorType:'MV',resolution:'1920x1080',deviceType:'Monitor',notes:'Operator monitor · not on canvas',mvPic:_mvPicRandom()}); }
+function _lbMvClash(nm){
+  const low=_kzLow(nm), L=_kzOutLists(), find=function(a){ return (a||[]).find(function(x){ return x&&_kzLow(x.name)===low; }); };
+  let k='iodest', o=find(L.io); if(!o){ k='dest'; o=find(L.scr); } if(!o){ k='aux'; o=find(L.aux); }
+  if(!o) return false;
+  const what=((k==='iodest'&&o.aux)?'the I/O-only AUX':({ iodest:'the I/O-only destination', dest:'the destination', aux:'the AUX' })[k])+' '+o.name;
+  _lbClashAsk({ name:nm, newWhat:'The new multiviewer', otherWhat:what, suggest:_lbOutFree(nm),
+    go:function(newGets,other){
+      pushUndo();
+      if(newGets){ const was=o.name; if(k==='iodest'){ _sysSetMeta('iodest',o.id,'name',other); _ioAdvRenameTwin('dest',was,other); } else _sysSetMeta(k,o.id,'name',other); _lbMvPush(nm); }
+      else _lbMvPush(other);
+      _isDirty=true; if(typeof _updateDirtyIndicator==='function') _updateDirtyIndicator();
+      if(typeof scheduleRender==='function') scheduleRender(); _sysRender(); if(typeof _wireRefreshIfOpen==='function') _wireRefreshIfOpen();
+    } });
+  return true;
+}
+/* the window: o = { name, newWhat, otherWhat, suggest, go(newGets, otherName) } */
+function _lbClashAsk(o){
+  const old=document.getElementById('lb-clash-overlay'); if(old) old.remove();
+  const e=function(v){ return _esc(String(v==null?'':v)); };
+  const ov=document.createElement('div'); ov.className='sys-modal-overlay'; ov.id='lb-clash-overlay';
+  ov.innerHTML='<div class="sys-modal" style="max-width:480px"><div class="sys-modal-header"><h3><span class="strip"></span>Name in use</h3></div>'
+    +'<div class="sys-modal-body"><p class="muted">“'+e(o.name)+'” is already the name of '+e(o.otherWhat)+'. Which one gets “'+e(o.name)+'”?</p>'
+    +'<label class="lb-clash-opt"><input type="radio" name="lb-clash" value="new" checked> '+e(o.newWhat)+'</label>'
+    +'<label class="lb-clash-opt"><input type="radio" name="lb-clash" value="old"> '+e(o.otherWhat.charAt(0).toUpperCase()+o.otherWhat.slice(1))+'</label>'
+    +'<label class="lb-clash-name">The other one is named <input id="lb-clash-name" type="text" maxlength="40" value="'+e(o.suggest)+'"></label>'
+    +'<div class="lb-clash-note" id="lb-clash-note" role="status" aria-live="polite"></div></div>'
+    +'<div class="sys-modal-footer"><button class="sys-modal-btn" id="lb-clash-cancel">Cancel</button><button class="sys-modal-btn primary" id="lb-clash-go">OK</button></div></div>';
+  document.body.appendChild(ov);
+  const close=function(){ document.removeEventListener('keydown',esc,true); ov.remove(); };
+  const esc=function(ev){ if(ev.key==='Escape'&&document.getElementById('lb-clash-overlay')===ov){ ev.preventDefault(); ev.stopPropagation(); close(); } };
+  const ok=function(){
+    const box=ov.querySelector('#lb-clash-name'), v=String(box.value||'').trim(), newGets=!!ov.querySelector('input[name="lb-clash"][value="new"]').checked;
+    const note=ov.querySelector('#lb-clash-note'); const t=_kzOutTaken(null);
+    if(!v||_kzLow(v)===_kzLow(o.name)||t[_kzLow(v)]){ note.textContent=v?('“'+v+'” is in use too. Pick another name.'):'Type a name for the other one.'; try{ box.focus(); box.select(); }catch(err){} return; }
+    close(); o.go(newGets,v);
+  };
+  ov.querySelector('#lb-clash-cancel').addEventListener('click',close);
+  ov.querySelector('#lb-clash-go').addEventListener('click',ok);
+  ov.querySelector('#lb-clash-name').addEventListener('keydown',function(ev){ if(ev.key==='Enter'){ ev.preventDefault(); ok(); } });
+  ov.addEventListener('click',function(ev){ if(ev.target===ov) close(); });
+  document.addEventListener('keydown',esc,true);
+  setTimeout(function(){ const b=ov.querySelector('#lb-clash-go'); if(b&&ov.isConnected) try{ b.focus(); }catch(err){} },30);
+}
+/* ══ 16lp-wcnames (the full test's #25, Omar 2026-10-17: "didnt we make a rule about warning when there was double name? people would
+   have to change them"): two hand-made Wire cards took "Record Deck" and "RECORD DECK" (only an exact match was numbered). A name
+   another hand-made card has, in any capitals, now says Name in use and keeps the old name, as a show source's name already did. ══ */
+function _lbwWcClash(kd,it,v){
+  const lo=String(v==null?'':v).trim().toLowerCase(); if(!lo||!_lbcOn()) return false;
+  const lists=(kd==='src')?['customSources']:['customDests','customDsms'];
+  const hit=lists.some(function(k){ return ((typeof wireAdvanced==='object'&&wireAdvanced&&wireAdvanced[k])||[]).some(function(c){ return c&&c!==it&&c.id!==(it&&it.id)&&String(c.name||'').trim().toLowerCase()===lo; }); });
+  if(!hit) return false;
+  if(typeof showAlert==='function') showAlert({variant:'warning',title:'Name in use',message:'"'+String(v).trim()+'" is already a hand-made card in Wire. Pick another name, or rename that one first.'});
+  return true;
+}
+/* ══ end 16lp-p1rename / 16lp-nameclash / 16lp-wcnames ══ */
+/* ══ 16lp-wirecards (the full test's #5, Omar 2026-10-17: "no they should be added to I/O Patch so they all match even when working in
+   advance now, ask for the fist time is it just here or in I.O Patch and then also include always follow this rule a check mark for
+   it"; a hand-made AUX: "A", an I/O-only AUX on the I/O Patch and Wire only; sources and destinations: "Yes, same as the AUX"; the Always
+   choice is changed in Help › Accessibility; the Look Book: "Keep the rule", no I/O-only item prints in it). The + on a Wire Advanced
+   heading asks where the new card goes, until Always is ticked (Help › Accessibility › Hand-made Wire cards changes it back):
+   - Wire only: a hand-made card, as before (_wireAdvAddCustomSource / Dest / Dsm, which every direct call still makes).
+   - Wire and the I/O Patch: a source is an I/O-only source with the next S number, in Wire's Sources list with the others; a
+     destination an I/O-only destination (ioDests); an AUX an I/O-only AUX (new: an ioDests row with aux:true). They show on the I/O
+     Patch (an IO card; the AUX in the AUX / DSM section), its Advanced page 1 and the I/O Excel (I/O AUX rows right after the AUX
+     rows), and in Wire Advanced's lists, every I/O-only destination and AUX (page 1's too), where they drag onto the drawing like any
+     card: the tile takes the card's name, size and cable. Not in the Look Book, not in Video Presets.
+   - Their trash asks in the grey window (16lo-delwin, "use the same template ... on all sections"): Everywhere, I/O Patch, Wire, the
+     page it is on ticked. The I/O Patch is their home, so it is everywhere (as Video Presets is for a destination); Wire alone takes its
+     tiles off every drawing. Desktop only: the phone keeps its ways (frozen). ══ */
+var _lbhcGo=false;   /* the window's Delete with the I/O Patch ticked: the I/O-only row's own delete runs, no second question */
+function _lbhcRule(){ const v=(_a11yLoad()||{}).wireCards; return (v==='wire'||v==='io')?v:'ask'; }
+function setA11yWireCards(v){ const s=_a11yLoad(); if(v==='wire'||v==='io') s.wireCards=v; else delete s.wireCards; _a11ySave(s); _a11yReflectActive(); }
+function _lbhcIoOuts(aux){ return ((typeof ioDests!=='undefined'&&Array.isArray(ioDests))?ioDests:[]).filter(function(d){ return !!d&&!!d.aux===!!aux; }); }
+function _lbhcIoOut(id,aux){ return _lbhcIoOuts(aux).find(function(d){ return d.id===id; })||null; }
+/* the first "BASE", "BASE 2" ... that no source (kd 'src') or no output (else) and no hand-made card of Wire has, in any capitals */
+function _lbhcFree(base,kd){
+  const wa=(typeof wireAdvanced==='object'&&wireAdvanced)||{}, low=function(n){ return String(n==null?'':n).trim().toLowerCase(); };
+  const hand=((kd==='src')?(wa.customSources||[]):(wa.customDests||[]).concat(wa.customDsms||[])).filter(Boolean).map(function(c){ return low(c.name); });
+  const srcs=(kd==='src')?_sysDiscoverSources().map(low):[], outs=(kd==='src')?{}:_kzOutTaken(null);
+  const taken=function(v){ return hand.indexOf(low(v))>=0||((kd==='src')?srcs.indexOf(low(v))>=0:!!outs[_kzLow(v)]); };
+  let v=base, n=1; while(taken(v)){ n++; v=base+' '+n; } return v;
+}
+/* Wire and the I/O Patch: the I/O-only source / destination / AUX, one Undo step */
+function _lbhcMakeIo(kd){
+  if(typeof pushUndo==='function') pushUndo();
+  if(kd==='src'){
+    if(typeof sources==='undefined'||!Array.isArray(sources)) sources=[];
+    sources.push({ name:_lbhcFree('NEW SOURCE','src'), connectorType:'', resolution:'', notes:'', type:'PC', ioOnly:true });
+  } else {
+    if(typeof ioDests==='undefined'||!Array.isArray(ioDests)) ioDests=[];
+    const aux=(kd==='dsm'), o={ id:uid(), name:_lbhcFree(aux?'NEW AUX/DSM':'NEW DESTINATION','out'), connectorType:'', deviceType:'', customType:'', w:1920, h:1080, notes:'' };
+    if(aux) o.aux=true;
+    ioDests.push(o);
+  }
+  _isDirty=true; if(typeof _updateDirtyIndicator==='function') _updateDirtyIndicator();
+  if(typeof scheduleAutoSave==='function') scheduleAutoSave();
+  if(typeof _wireRender==='function') _wireRender();
+  _sysRender();
+}
+function _lbhcWire(kd){ if(kd==='src') _wireAdvAddCustomSource(); else if(kd==='dst') _wireAdvAddCustomDest(); else _wireAdvAddCustomDsm(); }
+/* the + of a Wire Advanced heading (key: 'src' | 'dst' | 'aux') */
+function _lbhcPlus(key){
+  const kd=(key==='aux'||key==='dsm')?'dsm':((key==='dst')?'dst':'src'), r=_lbhcRule();
+  if(r==='wire'){ _lbhcWire(kd); return; }
+  if(r==='io'){ _lbhcMakeIo(kd); return; }
+  _lbhcWin(kd);
+}
+/* the question: Wire and the I/O Patch (picked) / Wire only, and Always do this; Cancel, Escape or a click outside adds nothing */
+function _lbhcWin(kd){
+  const old=document.getElementById('lbhc-overlay'); if(old) old.remove();
+  const what=({ src:'source', dst:'destination', dsm:'AUX / DSM' })[kd]||'card';
+  const ov=document.createElement('div'); ov.className='sys-modal-overlay'; ov.id='lbhc-overlay';
+  ov.innerHTML='<div class="sys-modal" style="max-width:480px" role="dialog" aria-modal="true" aria-labelledby="lbhc-title"><div class="sys-modal-header"><h3 id="lbhc-title"><span class="strip"></span>New '+what+'</h3></div>'
+    +'<div class="sys-modal-body"><p class="muted">Where does the new '+what+' go?</p>'
+    +'<label class="lb-clash-opt"><input type="radio" name="lbhc-where" value="io" checked><span class="lbhc-txt"><b>Wire and the I/O Patch</b><span class="lbhc-sub">An I/O-only '+what+(kd==='src'?' with the next S number':'')+': on the I/O Patch, its Advanced page 1 and the I/O Excel, and in Wire’s list with the others</span></span></label>'
+    +'<label class="lb-clash-opt"><input type="radio" name="lbhc-where" value="wire"><span class="lbhc-txt"><b>Wire only</b><span class="lbhc-sub">A hand-made card, in Wire only</span></span></label>'
+    +'<label class="lb-clash-opt"><input type="checkbox" id="lbhc-always"><span class="lbhc-txt"><b>Always do this</b><span class="lbhc-sub">Change it later in Help › Accessibility › Hand-made Wire cards</span></span></label></div>'
+    +'<div class="sys-modal-footer"><button class="sys-modal-btn" id="lbhc-cancel">Cancel</button><button class="sys-modal-btn primary" id="lbhc-go">OK</button></div></div>';
+  document.body.appendChild(ov);
+  const close=function(){ document.removeEventListener('keydown',esc,true); ov.remove(); };
+  const esc=function(ev){ if(ev.key==='Escape'&&document.getElementById('lbhc-overlay')===ov){ ev.preventDefault(); ev.stopPropagation(); close(); } };
+  const ok=function(){
+    const v=((ov.querySelector('input[name="lbhc-where"]:checked')||{}).value==='wire')?'wire':'io', al=!!(ov.querySelector('#lbhc-always')||{}).checked;
+    close(); if(al) setA11yWireCards(v);
+    if(v==='wire') _lbhcWire(kd); else _lbhcMakeIo(kd);
+  };
+  ov.querySelector('#lbhc-cancel').addEventListener('click',close);
+  ov.querySelector('#lbhc-go').addEventListener('click',ok);
+  ov.addEventListener('click',function(ev){ if(ev.target===ov) close(); });
+  ov.addEventListener('keydown',function(ev){ if(ev.key==='Enter'&&ev.target&&ev.target.tagName==='INPUT'){ ev.preventDefault(); ok(); } });
+  document.addEventListener('keydown',esc,true);
+  setTimeout(function(){ const b=ov.querySelector('#lbhc-go'); if(b&&ov.isConnected) try{ b.focus(); }catch(err){} },30);
+}
+/* the trash of an I/O-only destination / AUX card (the I/O Patch, Wire's list, the Remove lists) */
+function _lbhcDelAsk(id,from){
+  const d=_lbhcIoOut(id,false)||_lbhcIoOut(id,true); if(!d) return;
+  from=from||_lbDelPage();
+  const nm=d.name||'(unnamed)', aux=!!d.aux, w=aux?'AUX':'destination', k=aux?'dsm':'dst', io=(from!=='wire');
+  showConfirm({ variant:'grey', title:'Delete '+nm, message:'Take '+nm+' (an I/O-only '+w+') off:',
+    checks:[ { key:'all', label:'Everywhere', all:true, checked:io },
+             { key:'io', label:'I/O Patch', hint:'Its card, page 1 and the I/O Excel; an I/O-only '+w+' lives on the I/O Patch, so off it, it leaves the show', checked:io },
+             { key:'wire', label:'Wire', hint:'Every Wire drawing (its card stays in Wire’s list)', checked:true } ],
+    checksTie:function(key,on,set){ if(key==='io'&&on) set('wire',true); if(key==='wire'&&!on) set('io',false); },
+    checksState:function(t){ t=t||{}; if(!t.io&&!t.wire) return { ok:false, note:'Tick where '+nm+' goes from.' };
+      return { ok:true, note:t.io?(nm+' leaves the show.'):(nm+' stays on the I/O Patch. Its card stays in Wire’s list to drag back.') }; },
+    confirmLabel:'Delete', cancelLabel:'Cancel',
+    onConfirm:function(t){ t=t||{}; if(!t.io&&!t.wire) return;
+      _sysWithUndo(function(){ if(t.io){ _lbhcGo=true; try{ _sysRowDelete('iodest',id); } finally{ _lbhcGo=false; } _lbDelWire(k,id,true); } else _lbDelWire(k,id,false); });
+      _isDirty=true; if(typeof _updateDirtyIndicator==='function') _updateDirtyIndicator();
+      _sysRender(); if(typeof _wireRefreshIfOpen==='function') _wireRefreshIfOpen(); } });
+}
+/* ══ end 16lp-wirecards ══ */
 /* ══ 16lc-vpfinish block (r16lm SPEC: Omar's answers to step A's questions, 2026-10-06 ~17:00, and to step C's questions and the picture pack,
    2026-10-06 night / 10-07). Every change of this block is desktop only (_lbcOn): the phone is frozen and keeps its ways. ══ */
 /* (D2, Omar: "the panel stops at card width") the narrowest the Video Presets > Advanced left panel can be dragged: what its cards need (236 px
@@ -19563,6 +19782,7 @@ function _lbfWcSet(k,id,field,value){
     let v=String(value==null?'':value).trim(); if(!v) return false;
     if(kd!=='src'&&_kzWireNameRefused(it,v)) return false;
     if(kd==='src'&&_lbwSrcClash(it,v)) return false;   /* 16lc-vpcards-fix (W) */
+    if(_lbwWcClash(kd,it,v)) return false;   /* 16lp-wcnames */
     v=_wireAdvUniqueCustomName(v,id,kd); if(v===it.name) return false;
     if(kd==='src'){
       const old=it.name;
@@ -19987,6 +20207,7 @@ function _iogApplyOut(allKind,field,opt){
   const list=(k==='aux')?((typeof dsms!=='undefined'&&Array.isArray(dsms))?dsms:[]):((typeof multiviewers!=='undefined'&&Array.isArray(multiviewers))?multiviewers:[]);
   const v=(opt&&opt.value!=null)?String(opt.value):'';
   list.filter(Boolean).slice().forEach(function(o){ _sysSetMeta(k,o.id,f,v); });
+  if(k==='aux') _lbhcIoOuts(true).slice().forEach(function(o){ _sysSetMeta('iodest',o.id,f,v); });   /* 16lp-wirecards */
 }
 function _iogAllHTML(kind){
   const K=_IOG_ALL[kind]||_IOG_ALL.dst, allKind=K[0], da='data-sys-kind="'+allKind+'" data-sys-id="*"';
@@ -20060,8 +20281,8 @@ function _iogRender(){
   const srcCards=_sysIoSources().map(function(nm,i){ return _iogCardHTML(_iogSrcObj(nm,(_lbnNo&&Object.prototype.hasOwnProperty.call(_lbnNo,nm))?_lbnNo[nm]:i)); });   /* 16lc-vpcards: the card object Wire and Video Presets use too */
   const outCard=function(kind,o,num,slot){ return _iogCardHTML(_iogOutObj(kind,o,num,slot)); };
   const dstCards=_iogDests().map(function(s){ const i=_bdNo(s)-1; return outCard('dest',s,'D'+(i+1),'Destination '+(i+1)); })   /* 16kx-r3 (K): numbered without the backdrops, one number per destination (around a backdrop D1, D2) */
-    .concat(((typeof ioDests!=='undefined'&&Array.isArray(ioDests))?ioDests:[]).filter(Boolean).map(function(d){ return outCard('iodest',d,'IO','I/O-only destination (it prints after the AUX rows in the I/O Excel)'); }));
-  const auxCards=_lbnSortOut('aux',((typeof dsms!=='undefined'&&Array.isArray(dsms))?dsms:[]).filter(function(d){ return !!d&&!_outIoOff(d); })).map(function(d,i){ const _n=_lbcOn()?_lbnOutNo('aux',d):(i+1); return outCard('aux',d,'A'+_n,(_sysResolveDsmType(d)||'AUX')+' '+_n); });   /* 16lc-vpcards-fix (E2): in number order, each its A number */
+    .concat(_lbhcIoOuts(false).map(function(d){ return outCard('iodest',d,'IO','I/O-only destination (it prints after the AUX rows in the I/O Excel)'); }));   /* 16lp-wirecards: an I/O-only AUX is in the AUX / DSM section */
+  const auxCards=_lbnSortOut('aux',((typeof dsms!=='undefined'&&Array.isArray(dsms))?dsms:[]).filter(function(d){ return !!d&&!_outIoOff(d); })).map(function(d,i){ const _n=_lbcOn()?_lbnOutNo('aux',d):(i+1); return outCard('aux',d,'A'+_n,(_sysResolveDsmType(d)||'AUX')+' '+_n); }).concat(_lbhcIoOuts(true).map(function(d){ return outCard('iodest',d,'IO','I/O-only AUX (it prints after the AUX rows in the I/O Excel)'); }));   /* 16lp-wirecards */   /* 16lc-vpcards-fix (E2): in number order, each its A number */
   const mvCards=((typeof multiviewers!=='undefined'&&Array.isArray(multiviewers))?multiviewers:[]).filter(Boolean).map(function(m,i){ return outCard('mv',m,'MV'+(i+1),'Multiviewer '+(i+1)); });
   /* a section's Set for all row shows when the section has a card, as the table's Set-for-all rows did; 16ky-r2b: every section
      has its own (D0: the destinations and I/O-only destinations only) and a Remove at the right end of its title */
@@ -20436,7 +20657,7 @@ function _ioAdvGoneRow(r,html){
 function _ioAdvRowPrints(r){ return !!r&&r.gone!==true; }
 function _ioAdvStripGone(pg){
   ['sources','dests','mvs'].forEach(function(k){ const rows=pg&&pg[k]; if(!Array.isArray(rows)) return;
-    for(let i=rows.length-1;i>=0;i--){ const r=rows[i]; if(!r||r.gone!==true) continue; rows.forEach(function(x){ if(x&&x.backupOf===r.id) x.backupOf=null; if(x&&x.autoB===r.id) delete x.autoB; }); rows.splice(i,1); }
+    for(let i=rows.length-1;i>=0;i--){ const r=rows[i]; if(!r||r.gone!==true) continue; _ioBkForget(rows,r.id); rows.forEach(function(x){ if(x&&x.autoB===r.id) delete x.autoB; }); rows.splice(i,1); }   /* 16lp-backups */
   });
 }
 /* The undo safety net watches the gesture that is open (the click that opened the I/O Patch or the Advanced tab). What
@@ -20620,7 +20841,7 @@ function _ioAdvDropTwin(kind,name){
   const o=String(name||'').trim().toLowerCase(); if(!o) return false; let hit=false;
   _ioAdvTwinRows(kind).forEach(function(rows){
     for(let i=rows.length-1;i>=0;i--){ const r=rows[i]; if(!r||String(r.name||'').trim().toLowerCase()!==o) continue;
-      rows.forEach(function(x){ if(x&&x.backupOf===r.id) x.backupOf=null; });
+      _ioBkForget(rows,r.id);   /* 16lp-backups */
       rows.splice(i,1); hit=true; }
   });
   return hit;
@@ -20823,6 +21044,7 @@ if(!window._sysHandlersAttached){
         if(_nn){
           if(_nn!==_on){
             if(_kzNameBoxBlocked(_k,e.target.dataset.sysId,_nn,e.target,_on)) return;   /* 16kz-answers (C): a name another output has */
+            { const _p1=(_lbcOn()&&/^adv-/.test(_k))?_lbP1Rename(_k,e.target.dataset.sysId,_on,_nn,e.target):false; if(_p1==='refused'){ e.target.value=_on; return; } if(_p1){ e.target.dataset.sysOldName=_nn; return; } }   /* 16lp-p1rename */
             pushUndo();
             _sysSetMeta(_k, e.target.dataset.sysId, 'name', _nn);
             e.target.dataset.sysOldName=_nn;
@@ -21457,6 +21679,7 @@ function _sysRowDelete(kind,id){
   if(kind==='dest'&&_kzDelRefused(_kzScreenOf(id))) return;   /* 16kz-refresh (L1): the I/O Patch card's trash and the Remove Destination window */
   if(kind==='src'){ const _e=_sysGetSourceMeta(id); if(_e&&_e.ioOnly&&!_lbvInPresets(id)){ _sysRemoveSourceScoped(id); return; } }   /* 16lc-vpvideo: one a preset uses asks first, as any preset source */   // 16jh: an I/O-only row goes straight away (undoable), no preset warning
   if(kind==='adv-src'||kind==='adv-dst'||kind==='adv-mv'){ const pg=_ioAdvPage(); const arr=_ioAdvArr(pg,kind); const i=arr.findIndex(x=>x&&x.id===id); if(i>=0){ if(typeof pushUndo==='function') pushUndo(); const _d=arr[i]; if(_d&&_d.autoB){ const _a=arr.find(x=>x&&x.id===_d.autoB); if(_a) _a.noAutoB=true; } if(ioAdvanced.page===0) _ioAdvUnsyncRow(kind,_d); arr.splice(i,1); _isDirty=true; if(typeof _updateDirtyIndicator==='function') _updateDirtyIndicator(); if(typeof scheduleAutoSave==='function') scheduleAutoSave(); } _sysRender(); return; }   // 16hm
+  if(_lbcOn()&&kind==='iodest'&&!_lbhcGo){ _lbhcDelAsk(id,null); return; }   /* 16lp-wirecards: in the grey window, as every trash */
   if(kind==='iodest'){
     if(typeof pushUndo==='function') pushUndo();
     _ioAdvDropTwinDest(id);
@@ -21681,8 +21904,14 @@ function _sysExportIOExcel(){
         styles.push([3,7,5,7,7,7,6]);
       });
     }
+    _lbhcIoOuts(true).forEach(function(d,i){   /* 16lp-wirecards: the I/O-only AUX, right after the AUX rows */
+      anyDest=true;
+      const _iod=(typeof _sysDeviceRaw==='function')?_sysDeviceRaw(d):'';
+      rows.push(['I/O AUX '+(i+1), d.connectorType||'', d.name||'', (_iod==='Custom')?(d.customType||''):_iod, (d.w&&d.h)?(d.w+'x'+d.h):'', _rfNum(d.refresh), d.notes||'']);
+      styles.push([2,7,5,7,7,7,6]);
+    });
     if(typeof ioDests!=='undefined'&&Array.isArray(ioDests)){   /* excel-tab-32: the I/O-only destinations, after AUX as on the screen */
-      ioDests.forEach(function(d,i){
+      _lbhcIoOuts(false).forEach(function(d,i){   /* 16lp-wirecards */
         anyDest=true;
         const _iod=(typeof _sysDeviceRaw==='function')?_sysDeviceRaw(d):'';
         rows.push([
@@ -21746,6 +21975,7 @@ function _sysAddMV(){
   const existing=new Set(multiviewers.map(function(m){return m&&m.name;}).filter(Boolean));
   let nm='MV '+n;
   while(existing.has(nm)){n++;nm='MV '+n;}
+  if(_lbcOn()&&_lbMvClash(nm)) return;   /* 16lp-nameclash: the window adds it */
   if(typeof pushUndo==='function') pushUndo();
   multiviewers.push({id:uid(),name:nm,connectorType:'MV',resolution:'1920x1080',deviceType:'Monitor',notes:'Operator monitor · not on canvas',mvPic:_mvPicRandom()});
   _isDirty=true; if(typeof _updateDirtyIndicator==='function') _updateDirtyIndicator();
@@ -21776,7 +22006,7 @@ function _sysOpenRemoveDestModal(only){   /* 16ky-r2b: only==='dst' = the Destin
     });
   }
   if(typeof ioDests!=='undefined'&&Array.isArray(ioDests)){
-    ioDests.forEach(function(d,i){
+    _lbhcIoOuts(false).forEach(function(d,i){   /* 16lp-wirecards: the I/O-only AUX are in Remove AUX */
       items.push({ kind:'iodest', id:d.id, slot:'I/O '+(i+1), name:d.name||'(unnamed)',
         meta:(d.connectorType||'\u2014')+' \u00b7 '+((d.w&&d.h)?(d.w+'\u00d7'+d.h):'\u2014')+' \u00b7 I/O-only' });
     });
@@ -21844,12 +22074,13 @@ function _sysOpenRemoveAUXModal(){
         meta:(d.connectorType||'\u2014')+' \u00b7 '+((d.w&&d.h)?(d.w+'\u00d7'+d.h):'\u2014')+' \u00b7 '+tlabel });
     });
   }
+  _lbhcIoOuts(true).forEach(function(d,i){ items.push({ kind:'iodest', id:d.id, slot:'I/O AUX '+(i+1), name:d.name||'(unnamed)', meta:(d.connectorType||'\u2014')+' \u00b7 '+((d.w&&d.h)?(d.w+'\u00d7'+d.h):'\u2014')+' \u00b7 I/O-only' }); });   /* 16lp-wirecards */
   let body;
   if(items.length===0){
     body='<div class="sys-picker-empty">No AUX / DSM outputs to remove yet. Use <strong>Add AUX</strong> to create one.</div>';
   } else {
     const list=items.map(function(it){
-      return '<div class="sys-src-picker-item" data-rm-id="'+_esc(it.id)+'" data-rm-name="'+_esc(it.name)+'">'
+      return '<div class="sys-src-picker-item"'+(it.kind?' data-rm-kind="'+_esc(it.kind)+'"':'')+' data-rm-id="'+_esc(it.id)+'" data-rm-name="'+_esc(it.name)+'">'   /* 16lp-wirecards */
         +'<div class="picker-icon" style="background:rgba(255,224,74,0.10);border-color:rgba(255,224,74,0.4);color:var(--n-yellow)">'+_esc(it.slot.split(' ')[0].slice(0,3))+'</div>'
         +'<div class="picker-info"><div class="picker-name">'+_esc(it.name)+'</div><div class="picker-meta">'+_esc(it.slot)+' \u00b7 '+_esc(it.meta)+'</div></div>'
         +'<div class="picker-arrow"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></div>'
@@ -21880,7 +22111,7 @@ function _sysOpenRemoveAUXModal(){
     it.addEventListener('click',function(){
       const id=it.dataset.rmId;
       _sysCloseRemoveAUXModal();
-      if(typeof _sysRowDelete==='function') _sysRowDelete('aux',id);
+      if(typeof _sysRowDelete==='function') _sysRowDelete(it.dataset.rmKind||'aux',id);   /* 16lp-wirecards: an I/O-only AUX */
     });
   });
 }
@@ -24796,12 +25027,12 @@ function _wireAdvGetDestTemplate(refId){
   if(_cmIsMvRef(refId)) return _cmMvById(String(refId).slice(3));   /* 16la-colour-mv (R): a multiviewer tile names its router cell, its IP */
   const sys = (typeof screens !== 'undefined' ? _bdNoBd(screens) : []).find(s => s && s.id === refId);
   if(sys) return sys;
-  return (wireAdvanced && wireAdvanced.customDests) ? wireAdvanced.customDests.find(d => d.id === refId) : null;
+  return ((wireAdvanced && wireAdvanced.customDests) ? wireAdvanced.customDests.find(d => d.id === refId) : null) || (_lbcOn() ? _lbhcIoOut(refId, false) : null);   /* 16lp-wirecards */
 }
 function _wireAdvGetDsmTemplate(refId){
   const sys = (typeof dsms !== 'undefined' ? dsms : []).find(d => d && d.id === refId);
   if(sys) return sys;
-  return (wireAdvanced && wireAdvanced.customDsms) ? wireAdvanced.customDsms.find(d => d.id === refId) : null;
+  return ((wireAdvanced && wireAdvanced.customDsms) ? wireAdvanced.customDsms.find(d => d.id === refId) : null) || (_lbcOn() ? _lbhcIoOut(refId, true) : null);   /* 16lp-wirecards */
 }
 
 // One-time migration: when a show loaded with older Advanced wires
@@ -25731,6 +25962,7 @@ function _cmShowColor(kind,refId){ const o=_cmOut(kind,refId); return (o&&!(kind
 function _cmTileColor(kind,refId){
   const c=_cmShowColor(kind,refId); if(c) return c;
   const wa=(typeof wireAdvanced==='object'&&wireAdvanced)||{}, h=((kind==='dsm'?wa.customDsms:wa.customDests)||[]).find(function(x){ return x&&x.id===refId; });
+  if(!h&&_lbcOn()&&_lbhcIoOut(refId,kind==='dsm')) return '#0e7490';   /* 16lp-wirecards */
   return (h&&h.wireColor)||(kind==='dsm'?'#2d8a5e':'#0e7490');   /* a hand-made card's own colour, as its card shows it */
 }
 function _cmCable(kind,id,value){   /* one row's connector was just written: its destination / AUX takes the cable's colour, same edit */
@@ -29508,7 +29740,7 @@ function _wireRenderSourcesPanel(container){
   function paneHdr(key, label, count, addFn, panelSide){
     const collapsed = !panes[key];
     const plus = (isAdvanced && addFn)
-      ? '<button class="wire-pane-add" title="Add a custom ' + (key === 'src' ? 'source' : (key === 'dst' ? 'destination' : 'AUX / DSM')) + '" onclick="event.stopPropagation();' + addFn + '()">' + plusIcon + '</button>'
+      ? '<button class="wire-pane-add" title="Add a custom ' + (key === 'src' ? 'source' : (key === 'dst' ? 'destination' : 'AUX / DSM')) + '" onclick="event.stopPropagation();' + (_lbc ? '_lbhcPlus(\'' + key + '\')' : addFn + '()') + '">' + plusIcon + '</button>'
       : '';
     const panelToggle = panelSide
       ? '<button class="wire-panel-inline-toggle" onclick="event.stopPropagation();_wireTogglePanelCollapse(\'' + panelSide + '\')" title="Collapse / expand panel" aria-label="Toggle panel"><svg aria-hidden="true" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="7" height="16" rx="1.5"/><rect x="13" y="4" width="8" height="16" rx="1.5" fill="currentColor" opacity=".22"/></svg></button>'
@@ -29532,6 +29764,7 @@ function _wireRenderSourcesPanel(container){
   const customSources = (isAdvanced && wireAdvanced && Array.isArray(wireAdvanced.customSources)) ? wireAdvanced.customSources : [];
   const customDests   = (isAdvanced && wireAdvanced && Array.isArray(wireAdvanced.customDests))   ? wireAdvanced.customDests   : [];
   const customDsms    = (isAdvanced && wireAdvanced && Array.isArray(wireAdvanced.customDsms))    ? wireAdvanced.customDsms    : [];
+  const _lbhcD = (isAdvanced && _lbc) ? _lbhcIoOuts(false) : [], _lbhcA = (isAdvanced && _lbc) ? _lbhcIoOuts(true) : [];   /* 16lp-wirecards: every I/O-only destination / AUX, with the others */
 
   // \u2500\u2500 Sources pane \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
   html += '<div class="wire-pane">';
@@ -29547,24 +29780,26 @@ function _wireRenderSourcesPanel(container){
 
   // \u2500\u2500 Destinations pane \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
   html += '<div class="wire-pane">';
-  html += paneHdr('dst', 'All Destinations', dests.length + customDests.length, '_wireAdvAddCustomDest');
+  html += paneHdr('dst', 'All Destinations', dests.length + customDests.length + _lbhcD.length, '_wireAdvAddCustomDest');
   html += '<div class="wire-pane-body">';
-  if(dests.length === 0 && customDests.length === 0){
+  if(dests.length === 0 && customDests.length === 0 && !_lbhcD.length){
     html += emptyBody('No destinations yet. Add screens in the Video Presets view.');
   } else {
     dests.forEach(s => { html += _lbc ? _lbcOutCard('dest', s, _lbcD) : _wireDestCardHTML_panel(s, isAdvanced); });   /* 16lc-vpcards */
+    _lbhcD.forEach(d => { html += _lbcOutCard('iodest', d, _lbcD); });   /* 16lp-wirecards */
     customDests.forEach((d, i) => { html += _lbc ? _lbfWcCard('wcdst', d, i) : _wireCustomDestCardHTML_panel(d); });   /* 16lc-vpfinish (D4) */
   }
   html += '</div></div>';
 
   // \u2500\u2500 AUX\u00b7DSM pane \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
   html += '<div class="wire-pane">';
-  html += paneHdr('aux', 'AUX / DSM', dsmList.length + customDsms.length, '_wireAdvAddCustomDsm');
+  html += paneHdr('aux', 'AUX / DSM', dsmList.length + customDsms.length + _lbhcA.length, '_wireAdvAddCustomDsm');
   html += '<div class="wire-pane-body">';
-  if(dsmList.length === 0 && customDsms.length === 0){
+  if(dsmList.length === 0 && customDsms.length === 0 && !_lbhcA.length){
     html += emptyBody('No AUX or DSM outputs yet. Add them from the DSM toolbar in the Video Presets view.');
   } else {
     dsmList.forEach(d => { html += _lbc ? _lbcOutCard('aux', d, _lbcD) : _wireDsmCardHTML_panel(d, isAdvanced); });   /* 16lc-vpcards */
+    _lbhcA.forEach(d => { html += _lbcOutCard('iodest', d, _lbcD); });   /* 16lp-wirecards */
     customDsms.forEach((d, i) => { html += _lbc ? _lbfWcCard('wcaux', d, i) : _wireCustomDsmCardHTML_panel(d); });   /* 16lc-vpfinish (D4) */
   }
   html += '</div></div>';
@@ -38967,6 +39202,7 @@ function _a11yReflectActive(){
     const on = Math.abs(parseFloat(b.dataset.a11yScale) - scale) < 0.01;
     _a11yStyleBtn(b, on, '0.9'===b.dataset.a11yScale || '1'===b.dataset.a11yScale || '1.15'===b.dataset.a11yScale);
   });
+  document.querySelectorAll('[data-a11y-wirecards]').forEach(b => { _a11yStyleBtn(b, b.dataset.a11yWirecards === _lbhcRule()); });   /* 16lp-wirecards */
   // Slide-toggle for motion + contrast (DSM ↔ AUX pattern, cyan accent)
   function _setSlideToggle(group, on){
     if(!group) return;

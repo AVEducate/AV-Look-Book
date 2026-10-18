@@ -238,7 +238,7 @@ Details: HANDBOOK section 5
 `16lc-midword-fix`, `16lc-onlyword`, `16lc-onlyword-fix`, `16lc-onlyword-fix2`, `16lc-vpcards`, `16lc-vpvideo`, `16lc-vpaux`, `16lc-vpfinish`, `16lc-vpcards-fix`, `16lc-vpcards-fix2`, `16lc-vpcards-fix3`, `16lc-vpcards-fix4`, `16lg-blend`, `16lg-blend-fix`, `16lg-blend-fix2`, `16lh-fit`, `16lh-mods`, `16lh-bgtxt`, `16lh-fix`, `16li-bgsrc`, `16li-blendui`, `16li-print`, `16li-fix`, `16lj-followup`, `16ll-blendpop`, `16lm-chipmark`, `16lm-pxcap`, `16lm-border`, `16lm-slbtab`,
 `16lm-relink`, `16lm-cvtitle`, `16lm-tablew`, `16lm-whcheck`, `16ln-notes`, `16ln-modalkeys`, `16ln-bgown`, `16ln-a11yfit`,
 `16ln-blur`, `16ln-presetbin`, `16ln-anysize`; 16lm-border came back out in 16ln; `16lo-srcorder`, `16lo-nopairs`,
-`16lo-delwin`, `16lo-addback`).
+`16lo-delwin`, `16lo-addback`; `16lp-backups`, `16lp-p1rename`, `16lp-nameclash`, `16lp-wcnames`, `16lp-wirecards`).
 
 **One card (16lc-vpcards, 2026-10-06)** — the I/O Patch > Simple card (`_iogCardHTML` + `_iogSrcObj` / `_iogOutObj`) is also the card of
 Wire's left panel (desktop; the phone keeps Wire's own) and of the Video Presets > Advanced left panel (Wire > Simple's sections:
@@ -367,6 +367,13 @@ Never add a time-based "ignore clicks for N ms": the phone gate taps the dialog'
   takes its tiles off every drawing (`_lbDelWire`); + Add on the I/O Patch lists what is off it (`_lbAddAsk`, the `io-add` menu);
   a multiviewer's trash deletes it at once (`_lbMvDelete`; the only one is followed by a new MV 1, as every show keeps one);
   Undo / Redo give a deleted file its file back at once (`_fsTrashSync` in `_lbRestoreData`). HANDBOOK › 16lo.
+  16lp (2026-10-18, the sources rules part 2; desktop only): backups many-to-many (`backupOf` = one primary id or a list:
+  `_ioBkPrims` / `_ioBkSetPrims`, `_ioBkPrimariesOf` / `_ioBkBackupsOf`; pairing adds, never replaces or moves a row); a new name
+  over a copied page-1 row renames its item (`_lbP1Rename`); + Add multiviewer asks on a name clash (`_lbMvClash` / `_lbClashAsk`);
+  hand-made Wire card names unique in any capitals (`_lbwWcClash`); the + of a Wire Advanced heading asks Wire only / Wire and the
+  I/O Patch (`_lbhcPlus` / `_lbhcWin`, the rule `wireCards` in the a11y settings); an I/O-only AUX is an `ioDests` row with
+  `aux:true` (`_lbhcIoOuts(aux)`); I/O-only destinations / AUX are IO cards and tiles in Wire Advanced; their trash asks
+  (`_lbhcDelAsk`). The Look Book still prints no I/O-only item. HANDBOOK › 16lp.
 - Exports' readable print (16li-print: `_lbpInk`, `_wireLogoWordSvg`, `_wireTbFitText`): a value the Look Book prints in a colour made
   for the white page gets an inline colour from `_lbpInk(opts)` in the Dark book (never a stylesheet rule); words drawn into the Wire
   sheet's boxes are measured with `_wireTextWidth` and fitted (smaller, then "…"), never left to run past a line. HANDBOOK › 16li-print.

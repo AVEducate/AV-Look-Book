@@ -1523,6 +1523,47 @@ anchor on the function name and replace the first occurrence after it, never all
     the patch it adds at once as before. In DW1, DW5, DW7.
   - Tests: SO1, SO2, NP1, DW1-DW9 new, each failing on 16ln for its own reason (DW9 also on 16lo without the Undo fix); the
     checks that wrote down the old rules adapted in place with Omar's words (patch_tests_16lo.py lists them). Snapshots unchanged.
+- **16lp** (2026-10-18, build 16lp on the local 16lo; search `16lp-`). The sources rules part 2 (backups/rounds/sources-names/SPEC.md,
+  OMAR_ANSWERS_2026-10-17.md): the full test's #20 / #19, #21, #22, #25 and #5. Desktop only (`_lbcOn`): the phone keeps its ways.
+  - **16lp-backups** (#20, Omar: "primary and back up should be able to be picked mutiple times its a feature in the system i could
+    have 10 machine all back up to one laptop thats playing logo"): a backup row's `backupOf` holds one primary id or a list
+    (`_ioBkPrims` / `_ioBkSetPrims`; `_ioBkPrimariesOf` / `_ioBkBackupsOf`, `_ioBkPrimaryOf` / `_ioBkBackupOf` the first). `_ioBkPair`
+    adds a pair and never replaces one or moves a row (no chains: a backup is no primary, a primary no backup); `_ioBkUnpair` /
+    `_ioBkRemove` take one pair away; the Backup window has one line per pair, its list shows every backup, its menu offers a backup
+    again; a backup's Type reads every primary ("PC · Backup of CAM 1, CAM 2, PPT A"); a row that leaves forgets its pairs
+    (`_ioBkForget`, three places). The "Type a missing source" line (#19) has its own `.bk-grid.bk-grid-new` under the list, outside
+    the 280 px scroll, so it never hides (it did at 7 primaries). BK1, BK2.
+  - **16lp-p1rename** (#21, "just rename it not make a new card"): a new name typed over a row page 1 copied from the show renames
+    that item everywhere (`_lbP1Rename`: a source by `_sysApplyGlobalRename`, its number kept; a destination, AUX or multiviewer by
+    `_sysSetMeta`, refused with Name in use as on its card, `_kzNameBoxBlocked`); before, page 1 made a new I/O-only card. PR1, PR2.
+  - **16lp-nameclash** (#22, "we should just asked which one get the new name and what do they want to change the old name out
+    too"): + Add multiviewer whose name another output has (an I/O-only destination MV 2 in his AVE TEST File) asks which one gets
+    the name and what the other is called (`_lbMvClash` / `_lbClashAsk`, the next free name filled in by `_lbOutFree`); one Undo
+    step; Cancel adds nothing. NC1.
+  - **16lp-wcnames** (#25, "didnt we make a rule about warning when there was double name? people would have to change them"): a
+    hand-made Wire card renamed to another hand-made card's name in any capitals says Name in use and keeps its name (`_lbwWcClash`
+    in `_lbfWcSet`). WN1.
+  - **16lp-wirecards** (#5, "no they should be added to I/O Patch so they all match even when working in advance now, ask for the
+    fist time is it just here or in I.O Patch and then also include always follow this rule a check mark for it"; a hand-made AUX:
+    "A"; sources and destinations: "Yes, same as the AUX"; the Always choice: Help › Accessibility; the Look Book: "Keep the
+    rule"): the + of a Wire Advanced heading (`_lbhcPlus`, desktop) asks in `_lbhcWin` (an older window, like the name clash's):
+    **Wire and the I/O Patch** (picked) or **Wire only**, and **Always do this**; the rule is `wireCards` in the a11y settings
+    (`_lbhcRule`, `setA11yWireCards`; Help › Accessibility › Hand-made Wire cards: Ask each time / Wire only / Wire and the I/O
+    Patch; Reset = Ask). A direct call of `_wireAdvAddCustomSource` / `Dest` / `Dsm` still makes a hand-made card. Wire and the I/O
+    Patch (`_lbhcMakeIo`, one Undo step): an I/O-only source NEW SOURCE (the next S number, in Wire's Sources with the others), an
+    I/O-only destination NEW DESTINATION (`ioDests`) or an **I/O-only AUX** NEW AUX/DSM, new: an `ioDests` row with `aux:true`
+    (`_lbhcIoOuts(aux)` keeps them apart; names free of every output and hand-made card, `_lbhcFree`). The I/O-only AUX ends the I/O
+    Patch's AUX / DSM section (an IO card), A0 sets it, Remove AUX lists it, the I/O Excel prints I/O AUX n right after the AUX rows;
+    D0, Remove Destination and the I/O Dest rows keep to the I/O-only destinations. Every I/O-only destination and AUX (page 1's
+    too) is an IO card in Wire Advanced's lists (`_lbcOutCard('iodest')`) and drags onto the drawing; its tile finds it
+    (`_wireAdvGetDestTemplate` / `_wireAdvGetDsmTemplate`), in the I/O-only cyan (`_cmTileColor`). Its trash asks in the grey window
+    (`_lbhcDelAsk`): Everywhere / I/O Patch / Wire, the page it is on ticked; the I/O Patch is its home, so ticking it ticks Wire too
+    and it leaves the show (the old iodest branch of `_sysRowDelete` under `_lbhcGo`, then `_lbDelWire(..., true)`); Wire alone
+    takes its tiles off. Not in the Look Book (the June rule kept), Video Presets or Wire Simple's lists. WC1-WC4.
+  - Tests: BK1, BK2, PR1, PR2, NC1, WN1, WC1-WC4 new, each failing on 16lo for its own reason;
+    the 5 older checks that wrote down the old rules adapted in place with his words (patch_tests_16lp.py lists them): two of the
+    hand-made card names (a typed name of another card was numbered), the ghost rows (a copied row renamed made a twin), the
+    Remove lists (an I/O-only destination went at once), FU-4 (its + now asks). Snapshots unchanged.
 - Declined by the owner, do not resurface: mask shapes, anchor points, hardware profiles, canvas/WebGL renderer,
   interpolation filter toggles, upscale-factor notes, per-layer "sharp pixels", any licence mention.
 

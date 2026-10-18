@@ -5099,7 +5099,8 @@
   //   older shows' names cleaned up on open; long names shrink to fit; files after the sources, in capitals, own colours; + ADD VIDEO at
   //   a file card's size; + ADD SOURCE named after its number. Here: Wire Advanced's hand-made cards are the I/O Patch card now (Omar: "I/O standard card too"): its name box is the card's
   //   .sys-name-input (renamed when it is left) on a .lbf-wc card, not .wire-custom-name on .wire-custom-card. What it pins is unchanged.
-  await check('Wire Advanced: a second custom destination or AUX given a name that is taken is numbered, the way custom sources are (16lc-vpfinish: typed in the I/O Patch card a hand-made card is)', async () => {
+  // ADAPTED in 16lp: 16lp-wcnames (the full test's #25, Omar 2026-10-17: "didnt we make a rule about warning when there was double name? people would have to change them"; his answer: Name in use, any capitals): a typed name another hand-made card has is refused, the exact name too (it was numbered); renamed
+  await check('Wire Advanced: a second custom destination or AUX given a name another custom card has says Name in use and keeps its name (16lp-wcnames, Omar 2026-10-17: "didnt we make a rule about warning when there was double name? people would have to change them"; before, it was numbered WA ONE DECK 2; 16lc-vpfinish: typed in the I/O Patch card a hand-made card is)', async () => {
     const spare = await _waSpare();
     const nameLast = (paneIdx, text) => {
       const p = [...document.querySelectorAll('#wire-sources-panel .wire-pane')][paneIdx]; if (!p) return 'no pane ' + paneIdx;
@@ -5109,18 +5110,18 @@
     _wireAdvAddCustomDest(); const d1 = wireAdvanced.customDests[wireAdvanced.customDests.length - 1];
     _wireRender(); await wait(250); nameLast(1, 'WA ONE DECK'); await wait(250);
     _wireAdvAddCustomDest(); const d2 = wireAdvanced.customDests[wireAdvanced.customDests.length - 1];
-    _wireRender(); await wait(250); nameLast(1, 'WA ONE DECK'); await wait(250);
+    _wireRender(); await wait(250); nameLast(1, 'WA ONE DECK'); await wait(250); const inUse = [dlgOpen() && /Name in use/i.test(dialogText())]; okDialogs(); await wait(100);
     _wireAdvAddCustomDsm(); const m1 = wireAdvanced.customDsms[wireAdvanced.customDsms.length - 1];
     _wireRender(); await wait(250); nameLast(2, 'WA ONE AUX'); await wait(250);
     _wireAdvAddCustomDsm(); const m2 = wireAdvanced.customDsms[wireAdvanced.customDsms.length - 1];
-    _wireRender(); await wait(250); nameLast(2, 'WA ONE AUX'); await wait(250);
+    _wireRender(); await wait(250); nameLast(2, 'WA ONE AUX'); await wait(250); inUse.push(dlgOpen() && /Name in use/i.test(dialogText())); okDialogs(); await wait(100);
     const dests = [d1, d2].map(d => (wireAdvanced.customDests.find(x => x.id === d.id) || {}).name);
     const auxes = [m1, m2].map(d => (wireAdvanced.customDsms.find(x => x.id === d.id) || {}).name);
     _wireAdvDeleteCustom('dst', d1.id); _wireAdvDeleteCustom('dst', d2.id);
     _wireAdvDeleteCustom('dsm', m1.id); _wireAdvDeleteCustom('dsm', m2.id); await wait(250);
     await _waHome();
-    return is([dests, auxes], [['WA ONE DECK', 'WA ONE DECK 2'], ['WA ONE AUX', 'WA ONE AUX 2']],
-              'the two custom destination names / the two custom AUX names');
+    return is([dests, auxes, inUse], [['WA ONE DECK', 'NEW DESTINATION'], ['WA ONE AUX', 'NEW AUX/DSM'], [true, true]],
+              'the two custom destination names / the two custom AUX names / Name in use [the destination, the AUX]');
   });
   await check('Wire: closes cleanly', async () => { closeWireMode(); await wait(300); return is(getComputedStyle($('#wire-overlay')).display, 'none', 'overlay'); });
   await restore();
@@ -5329,16 +5330,17 @@
     return is([out, back], [[[true, 3], [true, true, true, true, true, 4, [], true, 0, true], [false, false, false, false, true]], [['NOTES', true, false], [a0, true, true, false, false], [d0, true, false, [], []]]],
       'gold + 3 steps after the deletions / page 1 still has PGM, NOTES, the destination, the AUX; all four marked gone; four rows drawn dimmed; I/O-only twins; gold; extra steps from opening Advanced; rebuild asked / the page-1 sheet without the four, with rows / after each Undo: the item back in the show, its row on page 1 and not gone; clean at the end, no twins, nothing gone');
   });
-  await check('I/O Patch ghost rows: the rows page 1 copied from the show are marked, a row typed by hand is not and still becomes an I/O-only row, a copied row renamed by hand becomes a hand row and keeps its place', async () => {
+  // ADAPTED in 16lp: 16lp-p1rename (the full test's #21, Omar 2026-10-17: "just rename it not make a new card"): a copied row renamed renames its source, no I/O-only twin; renamed
+  await check('I/O Patch ghost rows: the rows page 1 copied from the show are marked, a row typed by hand is not and still becomes an I/O-only row, and a new name typed over a copied row renames that source everywhere (16lp-p1rename, Omar 2026-10-17: "just rename it not make a new card"): its row stays marked, no I/O-only twin is made', async () => {
     await restore(); openSystem(); await wait(500); if (ioAdvanced.view !== 'simple') { _grTab('simple'); await wait(300); } _grTab('advanced'); await wait(800); _grKeep();
     const f0 = _grP1().flags; const allMarked = f0.length > 0 && f0.every(x => /:S$/.test(x));
     _ioAdvAdd('src'); await wait(200); const row = ioAdvanced.pages[0].sources[ioAdvanced.pages[0].sources.length - 1]; const inp = $('#io-adv .sys-name-input[data-sys-id="' + row.id + '"]'); inp.focus(); inp.value = 'GR HAND ROW'; inp.blur(); await wait(400);
     const hand = [row.fromShow, _grTwins().includes('GR HAND ROW')];
     const cam = ioAdvanced.pages[0].sources.find(r => r.name === 'CAM 2'); const ci = $('#io-adv .sys-name-input[data-sys-id="' + cam.id + '"]'); ci.focus(); ci.value = 'GR CAM 2 RENAMED'; ci.blur(); await wait(400);
     _grTab('simple'); await wait(300); _grTab('advanced'); await wait(800); _grKeep();
-    const p1 = _grP1(); const renamed = [cam.fromShow, cam.name, p1.src.includes('GR CAM 2 RENAMED'), _grTwins().includes('GR CAM 2 RENAMED'), srcNames().includes('CAM 2')];
+    const p1 = _grP1(); const renamed = [cam.fromShow, cam.name, p1.src.includes('GR CAM 2 RENAMED'), _grTwins().includes('GR CAM 2 RENAMED'), srcNames().includes('CAM 2'), srcNames().includes('GR CAM 2 RENAMED')];
     closeSystem(); await restore();
-    return is([allMarked, hand, renamed], [true, [undefined, true], [undefined, 'GR CAM 2 RENAMED', true, true, true]], 'every copied row marked / hand row: no mark, I/O-only twin / renamed copied row: no mark, new name, still on page 1, I/O-only twin, CAM 2 itself untouched');
+    return is([allMarked, hand, renamed], [true, [undefined, true], [true, 'GR CAM 2 RENAMED', true, false, false, true]], 'every copied row marked / hand row: no mark, I/O-only twin / renamed copied row: still marked, new name, still on page 1, an I/O-only twin, CAM 2 still a source, the new name a source');
   });
   // REPLACES 'I/O Patch ghost rows: a show file from an older build (page 1 without marks) is marked on the first I/O Patch draw without lighting Save or recording a step, and follows the show from then on'
   await check('I/O Patch ghost rows: a show file from an older build (page 1 without marks) is marked on the first I/O Patch draw without lighting Save or recording a step, and follows the show from then on: an AUX deleted afterwards stays on page 1 marked not in the show, with its PGM, and neither twins', async () => {
@@ -8724,7 +8726,8 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
   });
   // 16ky-r2b N2: NEW
   // ADAPTED in 16lo: 16lo-delwin (SPEC rule 8, Omar's pick "Video Presets = everywhere"; the sources default 3 he said yes to on 2026-10-17: "The Remove Source / Destination / AUX lists open the delete window after you pick one"): the card's trash and the Remove pick ask in the same grey window; ticking Video Presets deletes it everywhere; renamed
-  await check('I/O 16ky-r2b: − Remove sits at the right end of the Destinations and the AUX / DSM titles, the same button and look as in the Sources and Multiviewers titles (Omar: "Yes"); Destinations\' Remove lists that section\'s items only (the destinations the grid shows and the I/O-only destinations, in card order; never an AUX, never a screen the grid leaves out) and AUX / DSM\'s lists the AUX / DSM outputs only; a pick asks exactly what that card\'s trash asks (16lo-delwin: the grey delete window), and Delete with Video Presets ticked removes it everywhere in ONE undo step that lights Save (Undo brings it back); an I/O-only destination goes at once, as its trash does; the Remove Destination window opened as before still lists destinations, AUX and I/O-only destinations', async () => {
+  // ADAPTED in 16lp: 16lp-wirecards (Omar 2026-10-17: "use the same template to answer this question on all sections"): an I/O-only destination picked in Remove asks in the grey window (Everywhere / I/O Patch / Wire); renamed
+  await check('I/O 16ky-r2b: − Remove sits at the right end of the Destinations and the AUX / DSM titles, the same button and look as in the Sources and Multiviewers titles (Omar: "Yes"); Destinations\' Remove lists that section\'s items only (the destinations the grid shows and the I/O-only destinations, in card order; never an AUX, never a screen the grid leaves out) and AUX / DSM\'s lists the AUX / DSM outputs only; a pick asks exactly what that card\'s trash asks (16lo-delwin: the grey delete window), and Delete with Video Presets ticked removes it everywhere in ONE undo step that lights Save (Undo brings it back); an I/O-only destination asks too, in the grey window with Everywhere ticked, as its trash does (16lp-wirecards, Omar 2026-10-17: "use the same template to answer this question on all sections"); the Remove Destination window opened as before still lists destinations, AUX and I/O-only destinations', async () => {
     await restore(); const io0 = _kbIoOnly(); await _kbClean(); const io = ioDests.find(d => d && d.name === io0.name); await ioOpenSimple(); const out = {};
     const look = b => { if (!b) return 'no Remove'; const cs = getComputedStyle(b), r = b.getBoundingClientRect(), t = b.closest('.iog-hd').getBoundingClientRect(); return JSON.stringify([b.className, (b.textContent || '').trim(), cs.color, cs.backgroundColor, cs.borderTopColor, cs.fontSize, Math.round(r.height), Math.round(t.right - r.right)]); };
     const looks = ['src', 'dst', 'aux', 'mv'].map(s => look(_kbRm(s)));
@@ -8750,13 +8753,13 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
     out.dest = await del('dst', 'dest', screens[2], '#sys-rmdest-overlay');
     out.aux = await del('aux', 'aux', dsms[0], '#sys-rmaux-overlay');
     { if (await openRm('dst')) { const it = $$('#sys-rmdest-overlay .sys-src-picker-item').find(i => i.dataset.rmId === String(io.id)); const u0 = _undoStack.length;
-        if (it) { it.click(); await wait(300); out.ioOnly = [!_kbConfirmText() && !dlgOpen(), !ioDests.some(d => d.id === io.id), _undoStack.length - u0]; doUndo(); await wait(400); out.ioOnly.push(ioDests.some(d => d.id === io.id)); } else { out.ioOnly = 'not in the list'; _sysCloseRemoveDestModal(); } } else out.ioOnly = 'no Remove'; }
+        if (it) { it.click(); await wait(300); out.ioOnly = [dlgOpen() && $('#dlg-box').classList.contains('v-grey') && !!($('#dlg-box .dlg-ticks input[data-tick="all"]') || {}).checked && $$('#dlg-box .dlg-ticks input[data-tick]').length === 3]; if (dlgOpen()) { $('#dlg-confirm').click(); await wait(400); } out.ioOnly.push(!ioDests.some(d => d.id === io.id), _undoStack.length - u0); doUndo(); await wait(400); out.ioOnly.push(ioDests.some(d => d.id === io.id)); } else { out.ioOnly = 'not in the list'; _sysCloseRemoveDestModal(); } } else out.ioOnly = 'no Remove'; }
     _sysOpenRemoveDestModal(); await wait(200); out.asBefore = list('#sys-rmdest-overlay'); _sysCloseRemoveDestModal();
     const wantBefore = screens.map(s => 'dest:' + s.name).concat(dsms.map(d => 'aux:' + d.name), ioDests.map(d => 'iodest:' + d.name));
     closeSystem(); await restore();
     return is(out, { remove: [true, 1, 'Remove a destination…', 'Remove an AUX / DSM output…'], dstList: ['Remove Destination', wantDst], auxList: ['Remove AUX / DSM', wantAux], leftOut: [false, false],
       dest: [true, true, false, true, 1, true, true], aux: [true, true, false, true, 1, true, true], ioOnly: [true, true, 1, true], asBefore: wantBefore },
-      'Remove in the four titles [each there, distinct looks, the Destinations and AUX / DSM tooltips] / Destinations\' Remove [window, its list] / AUX / DSM\'s [window, its list] / a screen the grid leaves out [its card, offered] / a destination and an AUX removed from the title [the same window as its trash, gone, preset references left, card gone, undo steps, Save lit, back after Undo] / an I/O-only destination [no window, gone, undo steps, back] / the window opened as before');
+      'Remove in the four titles [each there, distinct looks, the Destinations and AUX / DSM tooltips] / Destinations\' Remove [window, its list] / AUX / DSM\'s [window, its list] / a screen the grid leaves out [its card, offered] / a destination and an AUX removed from the title [the same window as its trash, gone, preset references left, card gone, undo steps, Save lit, back after Undo] / an I/O-only destination [the grey window, Everywhere ticked, three rows; gone, undo steps, back] / the window opened as before');
   });
   // 16ky-r2b N3: NEW
   // 16la-wire-mv P3: REPLACES the check named in its header (reason in the block)
@@ -9665,7 +9668,8 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
   //   assigned automatically, typed on any card's number box (a taken one refused, the change everywhere); the main session (14:05): opening
   //   an older show renumbers nothing. Here: a hand-made card's default name is in capitals now (Omar, E1: NEW DESTINATION, NEW AUX/DSM); what it pins (a show output's name refused)
   //   is unchanged.
-  await check('Wire 16kz-refresh (L4): Wire Advanced\'s hand-made destination / AUX cards refuse a SHOW output\'s name (16lc-vpfinish: typed in the I/O Patch card they are now; Omar 2026-09-28 ~18:50, "all recommended"): a hand-made destination card renamed "left led" or "AUX 1" and a hand-made AUX card renamed "mv 1" say Name in use and keep their names (no undo step); two hand-made destination cards both named STAGE are numbered apart as before (STAGE, STAGE 2); a new hand-made card is never given a show output\'s name (with CENTER LED named New Destination, + gives New Destination 2); 16lc-vpcards-fix: the new cards named in capitals', async () => {
+  // ADAPTED in 16lp: 16lp-wcnames (the full test's #25, Omar 2026-10-17: "didnt we make a rule about warning when there was double name? people would have to change them"): two cards typed STAGE are no longer numbered apart, the second is refused; renamed
+  await check('Wire 16kz-refresh (L4): Wire Advanced\'s hand-made destination / AUX cards refuse a SHOW output\'s name (16lc-vpfinish: typed in the I/O Patch card they are now; Omar 2026-09-28 ~18:50, "all recommended"): a hand-made destination card renamed "left led" or "AUX 1" and a hand-made AUX card renamed "mv 1" say Name in use and keep their names (no undo step); a second hand-made destination card typed STAGE says Name in use and keeps its name (16lp-wcnames, Omar 2026-10-17: "didnt we make a rule about warning when there was double name? people would have to change them"; before, STAGE, STAGE 2); a new hand-made card is never given a show output\'s name nor another card\'s (with CENTER LED named New Destination and a card still NEW DESTINATION 2, + gives NEW DESTINATION 3); 16lc-vpcards-fix: the new cards named in capitals', async () => {
     await restore(); const out = {};
     try {
       openWireMode(); await wait(400); okDialogs(); wireSettings.wireView = 'advanced'; _wireRender(); await wait(300); okDialogs();
@@ -9677,11 +9681,11 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
         const t = dlgOpen() ? dialogText() : ''; okDialogs(); await wait(100); const b2 = box(i, k); return [/Name in use/.test(t), !!b2 && b2.value === was, _undoStack.length - u0]; };
       out.ren = [await ren(1, 0, 'left led'), await ren(1, 1, 'AUX 1'), await ren(2, 0, 'mv 1')];
       out.after = [wireAdvanced.customDests.map(c => c.name), wireAdvanced.customDsms.map(c => c.name)];
-      await ren(1, 0, 'STAGE'); await ren(1, 1, 'STAGE'); out.two = wireAdvanced.customDests.map(c => c.name);
+      await ren(1, 0, 'STAGE'); out.twoRen = await ren(1, 1, 'STAGE'); out.two = wireAdvanced.customDests.map(c => c.name);
       screens.find(s => s.name === 'CENTER LED').name = 'New Destination'; _wireAdvAddCustomDest(); out.newName = wireAdvanced.customDests[wireAdvanced.customDests.length - 1].name;
     } finally { try { closeWireMode(); } catch (e) {} okDialogs(); await wait(200); await restore(); }
-    return is(out, { made: [['NEW DESTINATION', 'NEW DESTINATION 2'], ['NEW AUX/DSM']], ren: [[true, true, 0], [true, true, 0], [true, true, 0]], after: [['NEW DESTINATION', 'NEW DESTINATION 2'], ['NEW AUX/DSM']], two: ['STAGE', 'STAGE 2'], newName: 'NEW DESTINATION 2' },
-      'the hand-made cards made / each rename into a show output\'s name [Name in use, the card keeps its name, undo steps] / the cards after / two cards typed STAGE / a new card with CENTER LED named New Destination');
+    return is(out, { made: [['NEW DESTINATION', 'NEW DESTINATION 2'], ['NEW AUX/DSM']], ren: [[true, true, 0], [true, true, 0], [true, true, 0]], after: [['NEW DESTINATION', 'NEW DESTINATION 2'], ['NEW AUX/DSM']], twoRen: [true, true, 0], two: ['STAGE', 'NEW DESTINATION 2'], newName: 'NEW DESTINATION 3' },
+      'the hand-made cards made / each rename into a show output\'s name [Name in use, the card keeps its name, undo steps] / the cards after / the second typed STAGE [Name in use, keeps its name, undo steps] / the cards / a new card with CENTER LED named New Destination');
   });
   // ── 16kz-fix (the fixer's round after the two attacks on 16kz-refresh). Appended at the END of the probe (after 16kz-refresh's
   //    Y16). Each NEW check FAILS on the second builder's 16kz-refresh page (r16kz/build2, sha1 f715089b) for the defect it names
@@ -15326,13 +15330,14 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
     return is(out, want, 'turned / BG row picked [its outline] / br, tl, tr, bl [followed, opposite stayed, undo steps, resolution = W x H, Undo put it back]' + (_fuMiss.length ? ' (moved: ' + _fuMiss.splice(0).join('; ') + ')' : ''));
   });
   // 16lj-followup FU-4: NEW
-  await check('Video Presets + Wire 16lj-followup FU-4 (W1, Omar 2026-10-09: a card made by hand in Wire with a resolution, used as a SOURCE BG): Wire › Advanced, + on All Sources (a hand-made card NEW SOURCE), its Resolution menu 1280×720; Video Presets, P01 CENTER LED\'s BG window, SOURCE: the list offers it under Made in Wire (C1, 1280×720); picked, the BG is NEW SOURCE at 1280x720 from the top-left, and in the same undo step the card becomes the show\'s source NEW SOURCE (1280x720) with no hand-made twin; Undo brings back the hand-made card and the old BG, Redo the pick; on P01 L it is offered under Sources and placed at 1280x720 too; Wire then shows ONE card for it, at 1280x720', async () => {
+  // ADAPTED in 16lp: 16lp-wirecards (the full test's #5, Omar 2026-10-17: "ask for the fist time is it just here or in I.O Patch"): the + asks where the card goes; this card is a hand-made one, so Wire only; renamed
+  await check('Video Presets + Wire 16lj-followup FU-4 (W1, Omar 2026-10-09: a card made by hand in Wire with a resolution, used as a SOURCE BG): Wire › Advanced, + on All Sources and Wire only in its question (16lp-wirecards; a hand-made card NEW SOURCE), its Resolution menu 1280×720; Video Presets, P01 CENTER LED\'s BG window, SOURCE: the list offers it under Made in Wire (C1, 1280×720); picked, the BG is NEW SOURCE at 1280x720 from the top-left, and in the same undo step the card becomes the show\'s source NEW SOURCE (1280x720) with no hand-made twin; Undo brings back the hand-made card and the old BG, Redo the pick; on P01 L it is offered under Sources and placed at 1280x720 too; Wire then shows ONE card for it, at 1280x720', async () => {
     const out = {}, want = {};
     try {
       const { st, C } = _u1St(); await _u1Open(st);
       const c = screens.find(x => x.id === C.id), L = screens[0], NM = 'NEW SOURCE';
-      await _fuWireAdv(); const plus = $$('.wire-pane-hdr').find(h => /All Sources/i.test(h.textContent)); const pb = plus && $('[onclick*="_wireAdvAddCustomSource"]', plus); if (!pb) return 'no + on All Sources';
-      pb.click(); await wait(600);
+      await _fuWireAdv(); const plus = $$('.wire-pane-hdr').find(h => /All Sources/i.test(h.textContent)); const pb = plus && $('.wire-pane-add', plus); if (!pb) return 'no + on All Sources';
+      pb.click(); await wait(300); const hw = $('#lbhc-overlay'); if (hw) { $('input[name="lbhc-where"][value="wire"]', hw).click(); $('#lbhc-go').click(); } await wait(600);   /* 16lp-wirecards: the + asks first; Wire only makes the hand-made card */
       const card = (wireAdvanced.customSources || []).find(x => x && x.name === NM); if (!card) return 'no hand-made card made';
       await _fuMenuPick($$('.lbf-wc [data-sys-field="resolution"][data-sys-kind="wcsrc"]').find(e => e.dataset.sysId === card.id), /^\s*1280\s*[×x]\s*720\b/);
       out.card = card.resolution; want.card = '1280x720';
@@ -15981,6 +15986,224 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
     } catch (e) { return 'threw: ' + e.message; }
     finally { okDialogs(); try { closeSystem(); } catch (e) {} await restore(); }
     return is(out, want, 'the window [Everywhere, Video Presets, I/O Patch, Wire] / deleted [in the library, its picture, L2, Undo steps] / one Undo on the I/O Patch [in the library, L2, its picture, its stored copy] / Redo [in the library, its picture, L2]');
+  });
+  // ── Round 16lp: the sources rules part 2 (Omar 2026-10-17) ──
+  const _lpIO = async () => { openSystem(); await wait(700); okDialogs(); _ioSetView('advanced'); await wait(700); okDialogs(); await wait(300); return ioAdvanced.pages[0]; };
+  const _lpRow = (pg, nm) => (pg.sources || []).find(r => r && r.name === nm);
+  // 16lp-backups BK1: NEW
+  await check('I/O Patch 16lp-backups BK1 (the full test\'s #20, Omar 2026-10-17: "primary and back up should be able to be picked mutiple times its a feature in the system i could have 10 machine all back up to one laptop thats playing logo"): in the Backup window one backup (PLAYBACK) is paired with CAM 1, CAM 2 and PPT A, and CAM 1 takes a second backup (NOTES, listed in page order); nothing is replaced and no row moves; the Backup menu offers PLAYBACK again; Remove takes away just that pair; one Undo step a pair', async () => {
+    const out = {}, want = {};
+    try {
+      const pg = await _lpIO(); const ord0 = (pg.sources || []).map(r => r.name).join('|'), u0 = vpUndoLen();
+      const id = nm => (_lpRow(pg, nm) || {}).id; const pair = async (p, b) => { _ioBackupOpen(id(p)); await wait(150); _ioBkPick('bk-primary', id(p)); _ioBkPick('bk-backup', id(b)); _ioBkCommit(); await wait(150); };
+      await pair('CAM 1', 'PLAYBACK'); _ioBk = { primary: id('CAM 2'), backup: '' }; out.offer = _ioBkOptions('bk-backup').some(o => o.label === 'PLAYBACK'); want.offer = true;
+      await pair('CAM 2', 'PLAYBACK'); await pair('PPT A', 'PLAYBACK'); await pair('CAM 1', 'NOTES');
+      const rows = pg.sources; const pb = _lpRow(pg, 'PLAYBACK');
+      out.pairs = [_ioBkPrimariesOf(rows, pb).map(r => r.name).join(', '), _ioBkBackupsOf(rows, _lpRow(pg, 'CAM 1')).map(r => r.name).join(', '), $$('#sys-bk-overlay .bk-pair').length, (pg.sources || []).map(r => r.name).join('|') === ord0, vpUndoLen() - u0];
+      want.pairs = ['CAM 1, CAM 2, PPT A', 'NOTES, PLAYBACK', 4, true, 4];   // in page order (no row moves)
+      out.typeText = _ioBkTypeText('PLAYBACK', 'PC'); want.typeText = 'PC · Backup of CAM 1, CAM 2, PPT A';
+      const rm = $$('#sys-bk-overlay .bk-pair').find(p => /CAM 2/.test(p.textContent) && /PLAYBACK/.test(p.textContent)); const x = rm && $('.sys-icon-btn.del', rm); if (x) { x.click(); await wait(200); }
+      out.removed = [_ioBkPrimariesOf(rows, _lpRow(pg, 'PLAYBACK')).map(r => r.name).join(', '), $$('#sys-bk-overlay .bk-pair').length]; want.removed = ['CAM 1, PPT A', 3];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { okDialogs(); try { _ioBackupClose(); } catch (e) {} try { _ioSetView('simple'); } catch (e) {} try { closeSystem(); } catch (e) {} await restore(); }
+    return is(out, want, 'the menu offers PLAYBACK again / pairs [PLAYBACK backs up, CAM 1\'s backups, lines in the list, rows kept in order, Undo steps] / Type text / Remove one [PLAYBACK backs up, lines]');
+  });
+  // 16lp-backups BK2: NEW
+  await check('I/O Patch 16lp-backups BK2 (the full test\'s #20: "it should not matter how many input or output there are"): with 11 primaries the Backup window still shows the "Type a missing source" line under the list, in view and typable; Enter adds the source', async () => {
+    const out = {}, want = {};
+    try {
+      const pg = await _lpIO(); _ioBackupOpen(pg.sources[0].id); await wait(300);
+      const inp = $('#sys-bk-overlay .bk-new'), grid = $('#sys-bk-overlay .bk-grid'); if (!inp) return 'no Type a missing source line';
+      const r = inp.getBoundingClientRect(), g = grid.getBoundingClientRect(), top = document.elementFromPoint(r.left + 20, r.top + r.height / 2);
+      out.seen = [$$('#sys-bk-overlay .bk-grid:not(.bk-grid-new) .bk-cell').length / 4 >= 11, r.height > 0, top === inp || inp.contains(top)]; want.seen = [true, true, true];
+      inp.focus(); document.execCommand('insertText', false, 'SPARE LAPTOP'); inp.dispatchEvent(new Event('change', { bubbles: true })); await wait(300);
+      out.added = (pg.sources || []).some(x => x && x.name === 'SPARE LAPTOP'); want.added = true;
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { okDialogs(); try { _ioBackupClose(); } catch (e) {} try { _ioSetView('simple'); } catch (e) {} try { closeSystem(); } catch (e) {} await restore(); }
+    return is(out, want, 'the line [11+ primaries listed, drawn, under the pointer] / Enter [SPARE LAPTOP added]');
+  });
+  // 16lp-p1rename PR1: NEW
+  await check('I/O Patch 16lp-p1rename PR1 (the full test\'s #21, Omar 2026-10-17: "just rename it not make a new card"): a new name typed over CAM 1\'s copied row on Advanced page 1 renames CAM 1 everywhere (every preset, its Simple card, S3 kept), no new card; one Undo step; a name another source has is refused', async () => {
+    const out = {}, want = {};
+    try {
+      const pg = await _lpIO(); const n0 = _srcNameOrderRaw().length, u0 = vpUndoLen();
+      const row = $$('#sys-overlay .sys-name-input').find(i => i.value === 'CAM 1' && i.dataset.sysKind === 'adv-src'); if (!row) return 'no CAM 1 name box on page 1';
+      row.focus(); row.select(); document.execCommand('insertText', false, 'CAMERA ONE'); row.blur(); await wait(400); okDialogs();
+      out.renamed = [_srcNameOrderRaw().includes('CAM 1'), _srcNameOrderRaw().includes('CAMERA ONE'), _lbvInPresets('CAMERA ONE'), _lbnSrcNo('CAMERA ONE'), _srcNameOrderRaw().length === n0, (pg.sources || []).some(r => r.name === 'CAMERA ONE'), vpUndoLen() - u0];
+      want.renamed = [false, true, true, 3, true, true, 1];
+      const row2 = $$('#sys-overlay .sys-name-input').find(i => i.value === 'CAMERA ONE' && i.dataset.sysKind === 'adv-src');
+      if (row2) { row2.focus(); row2.select(); document.execCommand('insertText', false, 'CAM 2'); row2.blur(); await wait(300); }
+      out.refused = [dlgOpen() && /Name in use/i.test(($('#dlg-box h3') || {}).textContent || ''), _srcNameOrderRaw().includes('CAMERA ONE')]; want.refused = [true, true];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { okDialogs(); try { _ioSetView('simple'); } catch (e) {} try { closeSystem(); } catch (e) {} await restore(); }
+    return is(out, want, 'renamed [CAM 1 still there, CAMERA ONE there, in a preset, its S, as many sources, its page-1 row, Undo steps] / CAM 2 typed [Name in use, CAMERA ONE kept]');
+  });
+  // 16lp-p1rename PR2: NEW
+  await check('I/O Patch 16lp-p1rename PR2 (the full test\'s #21, Omar 2026-10-17: "just rename it not make a new card"): a new name typed over LEFT LED\'s copied row on Advanced page 1 renames that destination everywhere (its D number kept, no I/O-only card made), one Undo step; CENTER LED, another destination\'s name, is refused with Name in use', async () => {
+    const out = {}, want = {};
+    try {
+      const pg = await _lpIO(); const s0 = screens.find(s => s && s.name === 'LEFT LED'); if (!s0) return 'no LEFT LED';
+      const io0 = (ioDests || []).length, u0 = vpUndoLen(), d0 = _bdNo(s0);
+      const row = $$('#sys-overlay .sys-name-input').find(i => i.value === 'LEFT LED' && i.dataset.sysKind === 'adv-dst'); if (!row) return 'no LEFT LED name box on page 1';
+      row.focus(); row.select(); document.execCommand('insertText', false, 'LEFT WALL'); row.blur(); await wait(400); okDialogs();
+      out.renamed = [s0.name, _bdNo(s0) === d0, (ioDests || []).length - io0, (pg.dests || []).some(r => r && r.name === 'LEFT WALL'), vpUndoLen() - u0]; want.renamed = ['LEFT WALL', true, 0, true, 1];
+      const row2 = $$('#sys-overlay .sys-name-input').find(i => i.value === 'LEFT WALL' && i.dataset.sysKind === 'adv-dst');
+      if (row2) { row2.focus(); row2.select(); document.execCommand('insertText', false, 'CENTER LED'); row2.blur(); await wait(300); }
+      out.refused = [dlgOpen() && /Name in use/i.test(($('#dlg-box h3') || {}).textContent || ''), s0.name, screens.filter(s => s && s.name === 'CENTER LED').length]; want.refused = [true, 'LEFT WALL', 1];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { okDialogs(); try { _ioSetView('simple'); } catch (e) {} try { closeSystem(); } catch (e) {} await restore(); }
+    return is(out, want, 'renamed [the destination, its D number kept, I/O-only cards made, its page-1 row, Undo steps] / CENTER LED typed [Name in use, the name kept, CENTER LEDs]');
+  });
+  // 16lp-nameclash NC1: NEW
+  await check('I/O Patch 16lp-nameclash NC1 (the full test\'s #22, Omar 2026-10-17: "we should just asked which one get the new name and what do they want to change the old name out too"): with an I/O-only destination named MV 2, + Add multiviewer asks; Cancel adds nothing; the new multiviewer taking MV 2 renames the I/O-only destination to the name typed (MV 3 filled in), one Undo step; the other choice names the new multiviewer MV 3', async () => {
+    const out = {}, want = {};
+    try {
+      ioDests.push({ id: 'ncIo', name: 'MV 2', connectorType: '', deviceType: '', customType: '', w: 1920, h: 1080, notes: '' });
+      await _loIO(); const m0 = multiviewers.length, u0 = vpUndoLen();
+      _sysAddMV(); await wait(250); const ov = $('#lb-clash-overlay');
+      out.asked = [!!ov, ov ? ($('#lb-clash-name', ov) || {}).value : '', multiviewers.length - m0]; want.asked = [true, 'MV 3', 0];
+      $('#lb-clash-cancel').click(); await wait(200); out.cancel = [!!$('#lb-clash-overlay'), multiviewers.length - m0, vpUndoLen() - u0]; want.cancel = [false, 0, 0];
+      _sysAddMV(); await wait(250); $('#lb-clash-go').click(); await wait(300);
+      out.newGets = [multiviewers.map(m => m.name).includes('MV 2'), (ioDests.find(d => d.id === 'ncIo') || {}).name, vpUndoLen() - u0]; want.newGets = [true, 'MV 3', 1];
+      doUndo(); await wait(300);
+      _sysAddMV(); await wait(250); const old = $('#lb-clash-overlay input[value="old"]'); if (old) old.click(); $('#lb-clash-go').click(); await wait(300);
+      out.oldKeeps = [(ioDests.find(d => d.id === 'ncIo') || {}).name, multiviewers[multiviewers.length - 1].name]; want.oldKeeps = ['MV 2', 'MV 3'];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { const o = $('#lb-clash-overlay'); if (o) o.remove(); okDialogs(); try { closeSystem(); } catch (e) {} await restore(); }
+    return is(out, want, 'asked [the window, the name filled in, multiviewers added] / Cancel [window, added, steps] / the new one gets MV 2 [an MV 2 multiviewer, the I/O-only destination\'s name, steps] / the other choice [the I/O-only destination, the new multiviewer]');
+  });
+  // 16lp-wcnames WN1: NEW
+  await check('Wire 16lp-wcnames WN1 (the full test\'s #25, Omar 2026-10-17: "didnt we make a rule about warning when there was double name? people would have to change them"): with a hand-made source Record Deck, another hand-made source renamed RECORD DECK says Name in use and keeps its name; the same for a hand-made destination', async () => {
+    const out = {}, want = {};
+    try {
+      await _cMWire('advanced');
+      _wireAdvAddCustomSource(); _wireAdvAddCustomSource(); const cs = wireAdvanced.customSources; const a = cs[cs.length - 2], b = cs[cs.length - 1];
+      _sysSetMeta('wcsrc', a.id, 'name', 'Record Deck'); okDialogs(); const was = b.name;
+      _sysSetMeta('wcsrc', b.id, 'name', 'RECORD DECK'); await wait(150);
+      out.src = [a.name, dlgOpen() && /Name in use/i.test(($('#dlg-box h3') || {}).textContent || ''), b.name === was]; want.src = ['Record Deck', true, true]; okDialogs();
+      _wireAdvAddCustomDest(); _wireAdvAddCustomDest(); const cd = wireAdvanced.customDests; const c = cd[cd.length - 2], d = cd[cd.length - 1];
+      _sysSetMeta('wcdst', c.id, 'name', 'Recorder In'); okDialogs(); const wd = d.name; _sysSetMeta('wcdst', d.id, 'name', 'RECORDER IN'); await wait(150);
+      out.dst = [dlgOpen() && /Name in use/i.test(($('#dlg-box h3') || {}).textContent || ''), d.name === wd]; want.dst = [true, true];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { okDialogs(); try { closeWireMode(); } catch (e) {} await restore(); }
+    return is(out, want, 'sources [the first name, Name in use, the second kept] / destinations [Name in use, kept]');
+  });
+  // ── Round 16lp Stage D: hand-made Wire cards on the I/O Patch (the full test's #5, Omar 2026-10-17) ──
+  const _hcPlus = w => $('#wire-panel-left button.wire-pane-add[title="Add a custom ' + w + '"]');
+  const _hcCard = nm => $$('#wire-panel-left .iog-card').find(c => (($('.sys-name-input', c) || {}).value || '') === nm) || null;
+  const _hcIoCard = (sec, nm) => $$('#io-grid [data-iog-sec="' + sec + '"] .iog-card').find(c => (($('.sys-name-input', c) || {}).value || '') === nm) || null;
+  const _hcTicks = () => { const w = _loWin(); return w ? [w.ticks[0], w.ticks[2], w.ticks[3], $$('#dlg-box .dlg-ticks input[data-tick]').length] : null; };
+  const _hcOff = () => { try { localStorage.removeItem('lookbook_a11y_settings'); } catch (e) {} };
+  const _hcLbNames = async () => [...new DOMParser().parseFromString(await userLookBook(), 'text/html').querySelectorAll('td.io-name-cell')].map(c => c.textContent.trim());   /* the Look Book's I/O pages */
+  const _hcXl = async () => { const wb = await ioBook(); if (!wb) return []; const tab = xlRows(wb, wb.sheets.indexOf('Video I-O') + 1); const h = tab.findIndex(r => r[0] && r[0].text === 'DESTINATIONS'); return tab.slice(h + 2).filter(r => r.length && r[0]).map(r => r[0].text + '|' + ((r[2] || {}).text || '')); };
+  // 16lp-wirecards WC1: NEW
+  await check('Wire 16lp-wirecards WC1 (the full test\'s #5, Omar 2026-10-17: "ask for the fist time is it just here or in I.O Patch and then also include always follow this rule a check mark for it"; sources: "Yes, same as the AUX"): with Help › Accessibility\'s Hand-made Wire cards on Ask each time, the + on Wire Advanced\'s Sources heading asks where the new source goes (Wire and the I/O Patch picked, Always not ticked, the focus on OK); Cancel and Escape add nothing; OK makes NEW SOURCE an I/O-only source with the next S number, on the I/O Patch and in Wire\'s Sources list as its I/O card (no hand-made card), in one Undo step, and not on the Look Book\'s I/O pages', async () => {
+    const out = {}, want = {};
+    try {
+      await restore(); _hcOff(); await _cMWire('advanced'); await wait(300);
+      const n0 = sources.length, h0 = (wireAdvanced.customSources || []).length, o0 = _srcNameOrderRaw().length, u0 = vpUndoLen();
+      const b = _hcPlus('source'); if (!b) return 'no + on the Sources heading';
+      b.click(); await wait(200); let ov = $('#lbhc-overlay');
+      out.win = ov ? [($('h3', ov) || {}).textContent, ($('input[name="lbhc-where"]:checked', ov) || {}).value, $('#lbhc-always', ov).checked, (document.activeElement || {}).id] : null;
+      want.win = ['New source', 'io', false, 'lbhc-go'];
+      if (ov) { $('#lbhc-cancel').click(); await wait(200); }
+      out.cancel = [!!$('#lbhc-overlay'), sources.length - n0, vpUndoLen() - u0]; want.cancel = [false, 0, 0];
+      b.click(); await wait(200); document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true })); await wait(200);
+      out.esc = [!!$('#lbhc-overlay'), sources.length - n0, vpUndoLen() - u0]; want.esc = [false, 0, 0];
+      _hcPlus('source').click(); await wait(200); if ($('#lbhc-go')) $('#lbhc-go').click(); await wait(400);
+      const e = sources.find(s => s && s.name === 'NEW SOURCE') || {};
+      out.made = [!!e.ioOnly, _srcNameOrderRaw().length - o0, _lbnSrcNo('NEW SOURCE') === o0 + 1, !!_hcCard('NEW SOURCE') && _hcCard('NEW SOURCE').dataset.iogKey === 'src:NEW SOURCE', (wireAdvanced.customSources || []).length - h0, vpUndoLen() - u0];
+      want.made = [true, 1, true, true, 0, 1];
+      out.patch = _sysIoSources().includes('NEW SOURCE'); want.patch = true;
+      const lbn = await _hcLbNames(); out.lb = [lbn.includes('CAM 1'), lbn.includes('NEW SOURCE')]; want.lb = [true, false];
+      doUndo(); await wait(300); out.undo = sources.some(s => s && s.name === 'NEW SOURCE'); want.undo = false;
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { okDialogs(); const o = $('#lbhc-overlay'); if (o) o.remove(); _hcOff(); try { closeWireMode(); } catch (e) {} await restore(); }
+    return is(out, want, 'the window [title, picked, Always, focus] / Cancel [window, sources added, steps] / Escape [window, added, steps] / OK [I/O-only, sources added, the next S number, Wire\'s I/O card, hand-made cards added, steps] / on the I/O Patch / the Look Book\'s I/O pages [CAM 1, NEW SOURCE] / after Undo');
+  });
+  // 16lp-wirecards WC2: NEW
+  await check('Wire 16lp-wirecards WC2 (#5, Omar 2026-10-17 "Yes, same as the AUX": a hand-made destination becomes an I/O-only destination; its trash: "use the same template to answer this question on all sections"): Wire and the I/O Patch makes NEW DESTINATION an I/O-only destination: an IO card in Wire Advanced\'s Destinations list and on the I/O Patch\'s Destinations, an I/O Dest row in the I/O Excel, not on the Look Book\'s I/O pages; its card drags onto the drawing as a tile with its name; renamed on the I/O Patch, the tile follows; its trash in Wire asks in the grey window with only Wire ticked (no Video Presets row) and takes the tile off, the card stays; its trash on the I/O Patch has Everywhere ticked and deletes it and its tiles in one Undo step', async () => {
+    const out = {}, want = {};
+    try {
+      await restore(); _hcOff(); await _cMWire('advanced'); await wait(300);
+      const b = _hcPlus('destination'); if (!b) return 'no + on the Destinations heading';
+      b.click(); await wait(200); if ($('#lbhc-go')) $('#lbhc-go').click(); await wait(400);
+      const d = (ioDests || []).find(x => x && x.name === 'NEW DESTINATION'); if (!d) return 'no I/O-only destination made';
+      const c = _hcCard('NEW DESTINATION');
+      out.wire = [!!c && c.dataset.iogKey === 'iodest:' + d.id, !!c && (($('.iog-num', c) || {}).textContent || '') === 'IO', !d.aux]; want.wire = [true, true, true];
+      const data = _cMDragData(c), n0 = (wireAdvanced.dests || []).length; await _cMDrop(data, 900, 420);
+      const t = (wireAdvanced.dests || [])[n0];
+      out.tile = [data === 'wire-adv-dest:' + d.id, !!t && t.refId === d.id, t ? (_wireAdvGetDestTemplate(t.refId) || {}).name : null]; want.tile = [true, true, 'NEW DESTINATION'];
+      try { closeWireMode(); } catch (e) {} await wait(250); await _loIO();
+      const ic = _hcIoCard('dst', 'NEW DESTINATION'); out.patch = [!!ic, !_hcIoCard('aux', 'NEW DESTINATION')]; want.patch = [true, true];
+      const xl = await _hcXl(); out.xl = xl.filter(r => /^I\/O (Dest|AUX) /.test(r)); want.xl = ['I/O Dest 1|NEW DESTINATION'];
+      const lbn = await _hcLbNames(); out.lb = [lbn.includes('LEFT LED'), lbn.includes('NEW DESTINATION')]; want.lb = [true, false];
+      const box = ic && $('.sys-name-input', ic); if (box) { box.focus(); box.select(); document.execCommand('insertText', false, 'RECORD FEED'); box.blur(); await wait(400); okDialogs(); }
+      out.renamed = [d.name, (_wireAdvGetDestTemplate(t.refId) || {}).name]; want.renamed = ['RECORD FEED', 'RECORD FEED'];
+      closeSystem(); await wait(250); await _cMWire('advanced'); await wait(300);
+      const wc = _hcCard('RECORD FEED'), wt = wc && $('.sys-icon-btn[data-sys-action="delete"]', wc); if (!wt) return 'no trash on the Wire card';
+      wt.click(); await wait(300); out.wireWin = _hcTicks(); want.wireWin = [false, false, true, 3];
+      $('#dlg-confirm').click(); await wait(400);
+      out.wireDel = [(wireAdvanced.dests || []).some(x => x && x.refId === d.id), (ioDests || []).some(x => x && x.id === d.id), !!_hcCard('RECORD FEED')]; want.wireDel = [false, true, true];
+      await _cMDrop('wire-adv-dest:' + d.id, 900, 420);
+      try { closeWireMode(); } catch (e) {} await wait(250); await _loIO();
+      const it = _hcIoCard('dst', 'RECORD FEED'), itr = it && $('.sys-icon-btn[data-sys-action="delete"]', it); if (!itr) return 'no trash on the I/O Patch card';
+      const u1 = vpUndoLen(); itr.click(); await wait(300); out.ioWin = _hcTicks(); want.ioWin = [true, true, true, 3];
+      $('#dlg-confirm').click(); await wait(400);
+      const tiles = () => { let n = 0; _wireAdvEachPage(function (pg) { (pg.dests || []).forEach(x => { if (x && x.refId === d.id) n++; }); }); return n; };
+      out.ioDel = [(ioDests || []).some(x => x && x.id === d.id), tiles(), vpUndoLen() - u1]; want.ioDel = [false, 0, 1];
+      doUndo(); await wait(300); out.undo = [(ioDests || []).some(x => x && x.id === d.id), tiles()]; want.undo = [true, 1];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { okDialogs(); const o = $('#lbhc-overlay'); if (o) o.remove(); _hcOff(); try { closeSystem(); } catch (e) {} try { closeWireMode(); } catch (e) {} await restore(); }
+    return is(out, want, 'in Wire [its I/O card, IO, a destination] / the drop [its data, the tile, the tile\'s name] / the I/O Patch [in Destinations, not in AUX] / the I/O Excel rows / the Look Book\'s I/O pages [LEFT LED, NEW DESTINATION] / renamed on the I/O Patch [the card, the tile] / Wire\'s trash [Everywhere, I/O Patch, Wire, rows] / its Delete [a tile left, still in the show, its Wire card] / the I/O Patch trash [ticks] / its Delete [in the show, tiles, steps] / one Undo [back, its tile]');
+  });
+  // 16lp-wirecards WC3: NEW
+  await check('Wire 16lp-wirecards WC3 (#5, a hand-made AUX, Omar 2026-10-17: "A", an I/O-only AUX on the I/O Patch and Wire only; Always: "Help › Accessibility"): Always do this with Wire and the I/O Patch makes NEW AUX/DSM an I/O-only AUX and keeps the choice: Help › Accessibility\'s Hand-made Wire cards lights Wire and the I/O Patch and the next + makes NEW AUX/DSM 2 at once; both are IO cards in the I/O Patch\'s AUX / DSM section (not Destinations) and in Wire\'s AUX / DSM list, and I/O AUX 1 / 2 rows right after the AUX rows of the I/O Excel; A0 sets their connector; Remove in the AUX / DSM title lists them; Ask each time asks again', async () => {
+    const out = {}, want = {};
+    try {
+      await restore(); _hcOff(); await _cMWire('advanced'); await wait(300);
+      const b = _hcPlus('AUX / DSM'); if (!b) return 'no + on the AUX / DSM heading';
+      b.click(); await wait(200); const ov = $('#lbhc-overlay'); if (!ov) return 'no window';
+      $('#lbhc-always', ov).click(); $('#lbhc-go').click(); await wait(400);
+      out.rule = [_lbhcRule(), ($('[data-a11y-wirecards="io"]') || { style: {} }).style.borderColor, ($('[data-a11y-wirecards="ask"]') || { style: {} }).style.borderColor]; want.rule = ['io', 'var(--n-cyan)', 'var(--n-line)'];
+      _hcPlus('AUX / DSM').click(); await wait(300);
+      out.second = [!!$('#lbhc-overlay'), _lbhcIoOuts(true).map(x => x.name)]; want.second = [false, ['NEW AUX/DSM', 'NEW AUX/DSM 2']];
+      out.wire = ['NEW AUX/DSM', 'NEW AUX/DSM 2'].map(n => !!_hcCard(n) && (($('.iog-num', _hcCard(n)) || {}).textContent || '') === 'IO'); want.wire = [true, true];
+      try { closeWireMode(); } catch (e) {} await wait(250); await _loIO();
+      out.patch = [!!_hcIoCard('aux', 'NEW AUX/DSM'), !!_hcIoCard('aux', 'NEW AUX/DSM 2'), !!_hcIoCard('dst', 'NEW AUX/DSM')]; want.patch = [true, true, false];
+      const xl = await _hcXl(), ia = xl.findIndex(r => /^I\/O AUX 1\|/.test(r)), la = xl.map(r => /^AUX \d+\|/.test(r)).lastIndexOf(true);
+      out.xl = [xl.filter(r => /^I\/O AUX /.test(r)), ia === la + 1]; want.xl = [['I/O AUX 1|NEW AUX/DSM', 'I/O AUX 2|NEW AUX/DSM 2'], true];
+      _sysApplyToAll('aux-all', 'connector', { value: 'SDI' }); await wait(200);
+      out.a0 = _lbhcIoOuts(true).map(x => x.connectorType); want.a0 = ['SDI', 'SDI'];
+      _sysOpenRemoveAUXModal(); await wait(200);
+      out.remove = $$('#sys-rmaux-overlay .sys-src-picker-item[data-rm-kind="iodest"]').map(x => x.dataset.rmName); want.remove = ['NEW AUX/DSM', 'NEW AUX/DSM 2'];
+      _sysCloseRemoveAUXModal(); closeSystem(); await wait(250);
+      setA11yWireCards('ask'); await _cMWire('advanced'); _hcPlus('AUX / DSM').click(); await wait(200);
+      out.asks = !!$('#lbhc-overlay'); want.asks = true;
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { okDialogs(); const o = $('#lbhc-overlay'); if (o) o.remove(); try { _sysCloseRemoveAUXModal(); } catch (e) {} _hcOff(); try { closeSystem(); } catch (e) {} try { closeWireMode(); } catch (e) {} await restore(); }
+    return is(out, want, 'Always [the rule, Wire and the I/O Patch lit, Ask each time unlit] / the next + [a window, the I/O-only AUX] / Wire\'s IO cards / the I/O Patch [in AUX / DSM x2, in Destinations] / the I/O Excel [the I/O AUX rows, right after the AUX rows] / A0 / Remove AUX lists them / Ask each time asks again');
+  });
+  // 16lp-wirecards WC4: NEW
+  await check('Wire 16lp-wirecards WC4 (#5: "is it just here"): Wire only in the window makes a hand-made card, as the + did before (in Wire\'s list, not on the I/O Patch); with Always ticked, Help › Accessibility lights Wire only and the next + makes a hand-made card at once; Reset in Help › Accessibility brings back Ask each time', async () => {
+    const out = {}, want = {};
+    try {
+      await restore(); _hcOff(); await _cMWire('advanced'); await wait(300);
+      const h0 = (wireAdvanced.customDests || []).length, io0 = (ioDests || []).length;
+      _hcPlus('destination').click(); await wait(200); const ov = $('#lbhc-overlay'); if (!ov) return 'no window';
+      $('input[name="lbhc-where"][value="wire"]', ov).click(); $('#lbhc-go').click(); await wait(400);
+      const hc = (wireAdvanced.customDests || [])[h0];
+      out.wireOnly = [(wireAdvanced.customDests || []).length - h0, (ioDests || []).length - io0, !!hc && !!_hcCard(hc.name), _lbhcRule()]; want.wireOnly = [1, 0, true, 'ask'];
+      _hcPlus('destination').click(); await wait(200); const ov2 = $('#lbhc-overlay'); if (!ov2) return 'no second window';
+      $('input[name="lbhc-where"][value="wire"]', ov2).click(); $('#lbhc-always', ov2).click(); $('#lbhc-go').click(); await wait(400);
+      out.always = [_lbhcRule(), ($('[data-a11y-wirecards="wire"]') || { style: {} }).style.borderColor]; want.always = ['wire', 'var(--n-cyan)'];
+      _hcPlus('destination').click(); await wait(300);
+      out.third = [!!$('#lbhc-overlay'), (wireAdvanced.customDests || []).length - h0, (ioDests || []).length - io0]; want.third = [false, 3, 0];
+      resetA11y(); await wait(150);
+      out.reset = [_lbhcRule(), ($('[data-a11y-wirecards="ask"]') || { style: {} }).style.borderColor]; want.reset = ['ask', 'var(--n-cyan)'];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { okDialogs(); const o = $('#lbhc-overlay'); if (o) o.remove(); _hcOff(); try { closeWireMode(); } catch (e) {} await restore(); }
+    return is(out, want, 'Wire only [hand-made cards added, I/O-only added, its card in Wire, the rule] / Always [the rule, Wire only lit] / the next + [a window, hand-made added, I/O-only added] / Reset [the rule, Ask each time lit]');
   });
   try { _fsPauseAll(); } catch (e) {} $$('video').forEach(v => { try { v.muted = true; v.pause(); } catch (e) {} });
   return { checks };
