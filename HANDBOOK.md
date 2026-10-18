@@ -1482,6 +1482,47 @@ anchor on the function name and replace the first occurrence after it, never all
     box and the Escape after it is the page's, so the typed text stays; the "other pages" one renamed), WH1 (16ln-anysize: 50 x 8000,
     renamed) and the Add Destination limits check (renamed: 7680 high). Each new check failed on the build before it for its own
     reason and passes on 16ln. Snapshots unchanged.
+- **16lo** (2026-10-17, build 16lo on the local 16ln; search `16lo-`). Omar: "keep going ... the sources round is next, with the grey
+  delete window"; the rules of backups/rounds/sources-names/SPEC.md and his answers (OMAR_ANSWERS_2026-10-17.md), part 1 of the
+  round (part 2, 16lp: backups many-to-many, the page-1 rename, the name-clash window, hand-made Wire cards on the I/O Patch).
+  Desktop only (`_lbcOn`): the phone keeps the order first seen and its ways (frozen).
+  - **16lo-srcorder** (rules 1-4, Omar: "a layer is created a source is created in the order its created in S# ... when a source
+    or destination is deleted everything past the source gets re-number to match"): the S numbers were worked out again on every
+    draw from the order scan (library, presets, sources[]), so a rename (the library copy it adds) or an I/O Patch draw
+    (`_sysSyncAllSourcesToCustomLibrary`) moved the sources after it (the full test's major 4). The order is now kept with the
+    show (`srcOrder`: names, saved, in the draft, in every Undo step and the Escape put-back): `_srcNameOrderRaw` lists the show's
+    sources in that order and appends the ones made since in the order first seen; `pushUndo` syncs it at the start of every
+    change (a source gone since is forgotten, so made again it goes at the end); `_sysApplyGlobalRename` and `_fsRenameContent`
+    put the new name in the old place (`_srcKeepBefore` / `_srcKeepAfter`; a split, the old name still used, is a new source). An
+    older show (no srcOrder) starts from `_srcScanOrder(true)`, today's order with the 16jh B-under-A move, before the baseline: the
+    same numbers, nothing lit. Checks SO1, SO2.
+  - **16lo-nopairs** (rule 6, "No automatic pairs ... Only the user pairs, in the Backup window. Pairing never moves a number or a
+    row"): the 16jh automatic B (Simple and Advanced) and the 16ix pairing by "X A" / "X B" names are off; a deleted B never comes
+    back (the full test's major 3). Pairs already made stay (rule 7); a renamed A keeps its B (autoB / pairOf follow the rename).
+    Check NP1.
+  - **16lo-delwin** (rules 8-10; Omar: "grey for the delete window", "use the same template to answer this question on all
+    sections"): every trash of a source, destination or AUX card (the I/O Patch, Wire's list, Video Presets › Advanced), the
+    table ✕, Destination Properties' and AUX Properties' Remove, the Remove Source / Destination / AUX lists and a file's trash ask
+    in ONE grey window (`_lbDelAsk`): Everywhere, Video Presets, I/O Patch, Wire, the page the trash is on ticked; for a destination
+    or AUX Video Presets is everywhere (the dialog's new `checksTie`). Video Presets: a source leaves every layer, background and
+    AUX box and the library (a file as the Video tab's trash) and stays on the I/O Patch as I/O-only unless that is ticked too; a
+    destination / AUX leaves the show (`deleteScreen`, its page-1 row, its Wire tiles). I/O Patch: `ioOff` (the patch's cards, page
+    1, the I/O Excel, the Look Book's I/O pages, Set for all and the I/O check leave it out; it keeps its number, so the patch can
+    skip one). Wire: its tiles and cables leave every drawing (`_lbDelWire`), its card stays in Wire's list. Everywhere: out of the
+    show, the numbers after it move up one; nothing is left as a NOT IN THE SHOW row (the full test's #17). The only screen cannot
+    leave Video Presets (the note says why). A multiviewer's trash deletes it at once, one Undo step (rule 10, `_lbMvDelete`; the
+    show's only one is followed by a new MV 1, the old rule of `_sysRender` that every show keeps one). Not
+    changed: the × of a typed name in the Simple layer list (16lc-vpcards-fix2: its backgrounds and AUX boxes keep the name), Wire's
+    hand-made cards (16lp), an I/O-only destination's trash. A copied page-1 row's trash on I/O Patch Advanced asks too (`_lbDelAdvRow`, I/O
+    Patch ticked; a multiviewer's row goes at once; a row typed by hand, or on another page, as before). A file taken off Video Presets
+    from any page goes the Video tab's way (`_fsRemoveMedia`: its stored copy waits in `_fsTrash`), and Undo / Redo now give it back
+    or take it away at once (`_fsTrashSync` in `_lbRestoreData`; before, only the Video tab's draw did, VPADV A7, so after an Undo
+    on the I/O Patch the file had no picture and no stored copy until the Video tab drew). Checks DW1-DW9.
+  - **16lo-addback** ("+ Add source lists it"): + Add source / destination / AUX on the I/O Patch opens the menu chrome when
+    something is off the patch (New first, then each with its number; the `io-add` field of `_sysOpenDropdown`); with nothing off
+    the patch it adds at once as before. In DW1, DW5, DW7.
+  - Tests: SO1, SO2, NP1, DW1-DW9 new, each failing on 16ln for its own reason (DW9 also on 16lo without the Undo fix); the
+    checks that wrote down the old rules adapted in place with Omar's words (patch_tests_16lo.py lists them). Snapshots unchanged.
 - Declined by the owner, do not resurface: mask shapes, anchor points, hardware profiles, canvas/WebGL renderer,
   interpolation filter toggles, upscale-factor notes, per-layer "sharp pixels", any licence mention.
 

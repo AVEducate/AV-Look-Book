@@ -237,7 +237,8 @@ Details: HANDBOOK section 5
 `16lc-fixes`, `16ld-port`, `16ld-tools`, `16ld-fix`, `16ld-fix2`, `16lc-picsize`, `16lc-fix`, `16lc-names`, `16lc-midword`,
 `16lc-midword-fix`, `16lc-onlyword`, `16lc-onlyword-fix`, `16lc-onlyword-fix2`, `16lc-vpcards`, `16lc-vpvideo`, `16lc-vpaux`, `16lc-vpfinish`, `16lc-vpcards-fix`, `16lc-vpcards-fix2`, `16lc-vpcards-fix3`, `16lc-vpcards-fix4`, `16lg-blend`, `16lg-blend-fix`, `16lg-blend-fix2`, `16lh-fit`, `16lh-mods`, `16lh-bgtxt`, `16lh-fix`, `16li-bgsrc`, `16li-blendui`, `16li-print`, `16li-fix`, `16lj-followup`, `16ll-blendpop`, `16lm-chipmark`, `16lm-pxcap`, `16lm-border`, `16lm-slbtab`,
 `16lm-relink`, `16lm-cvtitle`, `16lm-tablew`, `16lm-whcheck`, `16ln-notes`, `16ln-modalkeys`, `16ln-bgown`, `16ln-a11yfit`,
-`16ln-blur`, `16ln-presetbin`, `16ln-anysize`; 16lm-border came back out in 16ln).
+`16ln-blur`, `16ln-presetbin`, `16ln-anysize`; 16lm-border came back out in 16ln; `16lo-srcorder`, `16lo-nopairs`,
+`16lo-delwin`, `16lo-addback`).
 
 **One card (16lc-vpcards, 2026-10-06)** — the I/O Patch > Simple card (`_iogCardHTML` + `_iogSrcObj` / `_iogOutObj`) is also the card of
 Wire's left panel (desktop; the phone keeps Wire's own) and of the Video Presets > Advanced left panel (Wire > Simple's sections:
@@ -356,6 +357,16 @@ Never add a time-based "ignore clicks for N ms": the phone gate taps the dialog'
   leave on Enter; the second click of a double-click on a preset's trash does nothing (`event.detail`, 16ln-presetbin); a
   destination's height goes to 7680 px wherever it is typed or stepped, as the corner drag did (`_lbMaxH`, 16ln-anysize; the phone
   keeps 4320). HANDBOOK › 16ln.
+  16lo (2026-10-17, the sources rules part 1, backups/rounds/sources-names/SPEC.md; desktop only): the S numbers follow the order
+  the sources were made in, kept with the show (`srcOrder`: `_srcNameOrderRaw` reads it, `_srcScanOrder` is the old scan, an
+  older show starts from it with the 16jh move, `pushUndo` syncs it, `_srcKeepBefore` / `_srcKeepAfter` keep a rename's place);
+  no automatic PBP B / GFX B and no pairing by name (`_sysEnsureAutoPairs`, `_ioAdvEnsureAutoPairs`, `_ioBkAutoPair` off);
+  every source / destination / AUX trash asks in the grey window (`_lbDelAsk` / `_lbDelDo`, `variant:'grey'`, the dialog's
+  `checksTie`): off the I/O Patch is `ioOff` on the sources[] entry / the destination / the AUX (`_sysIoSources`, `_outIoOff`:
+  the patch's cards, page 1, the I/O Excel, the Look Book's I/O pages and the I/O check leave it out, the number stays), off Wire
+  takes its tiles off every drawing (`_lbDelWire`); + Add on the I/O Patch lists what is off it (`_lbAddAsk`, the `io-add` menu);
+  a multiviewer's trash deletes it at once (`_lbMvDelete`; the only one is followed by a new MV 1, as every show keeps one);
+  Undo / Redo give a deleted file its file back at once (`_fsTrashSync` in `_lbRestoreData`). HANDBOOK › 16lo.
 - Exports' readable print (16li-print: `_lbpInk`, `_wireLogoWordSvg`, `_wireTbFitText`): a value the Look Book prints in a colour made
   for the white page gets an inline colour from `_lbpInk(opts)` in the Dark book (never a stylesheet rule); words drawn into the Wire
   sheet's boxes are measured with `_wireTextWidth` and fitted (smaller, then "…"), never left to run past a line. HANDBOOK › 16li-print.

@@ -205,7 +205,7 @@
    "ok": true
   },
   {
-   "name": "unsaved 2: a saved show with PBP A / GFX A content stays clean when I/O Patch opens (the automatic B twin), and the twin waits in the show for the next save",
+   "name": "unsaved 2: a saved show with PBP A / GFX A content stays clean when I/O Patch opens (16lo-nopairs: no automatic B twin is made any more)",
    "ok": true
   },
   {
@@ -233,7 +233,7 @@
    "ok": true
   },
   {
-   "name": "unsaved 2: opening the Backup window (it pairs \"X A\" / \"X B\" rows by itself) leaves a saved show clean, and a pair set by hand still lights Save",
+   "name": "unsaved 2: opening the Backup window leaves a saved show clean (16lo-nopairs: it no longer pairs \"X A\" / \"X B\" rows by itself), and a pair set by hand still lights Save",
    "ok": true
   },
   {
@@ -2089,7 +2089,7 @@
    "ok": true
   },
   {
-   "name": "I/O 16ky-r2b: − Remove sits at the right end of the Destinations and the AUX / DSM titles, the same button and look as in the Sources and Multiviewers titles (Omar: \"Yes\"); Destinations' Remove lists that section's items only (the destinations the grid shows and the I/O-only destinations, in card order; never an AUX, never a screen the grid leaves out) and AUX / DSM's lists the AUX / DSM outputs only; a pick asks exactly what that card's trash asks, and Delete removes it everywhere in ONE undo step that lights Save (Undo brings it back); an I/O-only destination goes at once, as its trash does; the Remove Destination window opened as before still lists destinations, AUX and I/O-only destinations",
+   "name": "I/O 16ky-r2b: − Remove sits at the right end of the Destinations and the AUX / DSM titles, the same button and look as in the Sources and Multiviewers titles (Omar: \"Yes\"); Destinations' Remove lists that section's items only (the destinations the grid shows and the I/O-only destinations, in card order; never an AUX, never a screen the grid leaves out) and AUX / DSM's lists the AUX / DSM outputs only; a pick asks exactly what that card's trash asks (16lo-delwin: the grey delete window), and Delete with Video Presets ticked removes it everywhere in ONE undo step that lights Save (Undo brings it back); an I/O-only destination goes at once, as its trash does; the Remove Destination window opened as before still lists destinations, AUX and I/O-only destinations",
    "ok": true
   },
   {
@@ -2113,7 +2113,7 @@
    "ok": true
   },
   {
-   "name": "I/O 16ky-r3: the multiviewer card's trash asks \"Delete the Multiviewer MV 1? … You can re-add via + Add multiviewer.\" (the Destinations footer it named is gone since 16ky); Cancel keeps it",
+   "name": "I/O 16ky-r3: the multiviewer card's trash deletes it from everywhere at once (16lo-delwin, SPEC rule 10: no window; the show's only one is followed by a new MV 1, as every show keeps one); one Undo brings it back",
    "ok": true
   },
   {
@@ -2197,7 +2197,7 @@
    "ok": true
   },
   {
-   "name": "I/O 16kz-refresh (H): on I/O Patch ADVANCED every control of a row takes Tab, in reading order (Omar's 12, \"do the recommended\"): CAM 1 reads name, its ▼, backup, connector, Type, resolution, refresh, notes, reset, delete; LEFT LED the same without the backup column; PPT B (a backup: its button is off) without it; the Set for all rows S0 / D0 / A0 / M0 read connector, Type, resolution, refresh; every menu pill is a button with a popup; page 2 reads the same",
+   "name": "I/O 16kz-refresh (H): on I/O Patch ADVANCED every control of a row takes Tab, in reading order (Omar's 12, \"do the recommended\"): CAM 1 reads name, its ▼, backup, connector, Type, resolution, refresh, notes, reset, delete; LEFT LED the same without the backup column; PPT B the same as CAM 1 (16lo-nopairs: no longer PPT A's backup by itself); the Set for all rows S0 / D0 / A0 / M0 read connector, Type, resolution, refresh; every menu pill is a button with a popup; page 2 reads the same",
    "ok": true
   },
   {
@@ -2249,7 +2249,7 @@
    "ok": true
   },
   {
-   "name": "Backdrop 16kz-refresh (L1): the only screen left is never deleted (Omar 2026-09-28 ~18:50, \"all recommended\"): with CENTER LED and RIGHT LED backdrops (Edit Show Info), the trash on LEFT LED's I/O Patch card, Remove (Destinations) > LEFT LED, the Video Presets table's ✕ (P01's first row; 16lc-vpfinish: it asks first, never for the only screen left) and Destination Properties' Remove Globally each say \"A show needs at least one screen\", ask nothing and delete nothing (no undo step); Undo and Redo never restore a step with no screen (one an older build could have left: refused, the show keeps LEFT LED) and a normal Undo still works; with LEFT LED and CENTER LED backdrops Edit Show Info's − (it would take RIGHT LED) is refused and the list keeps its 3 rows",
+   "name": "Backdrop 16kz-refresh (L1): the only screen left is never deleted (Omar 2026-09-28 ~18:50, \"all recommended\"): with CENTER LED and RIGHT LED backdrops (Edit Show Info), the trash on LEFT LED's I/O Patch card, Remove (Destinations) > LEFT LED, the Video Presets table's ✕ (P01's first row; 16lc-vpfinish: it asks first, never for the only screen left) and Destination Properties' Remove Globally each open the grey delete window (16lo-delwin), whose note says LEFT LED is the only screen left and cannot leave Video Presets (Delete off once Video Presets is ticked), and delete nothing (no undo step); Undo and Redo never restore a step with no screen (one an older build could have left: refused, the show keeps LEFT LED) and a normal Undo still works; with LEFT LED and CENTER LED backdrops Edit Show Info's − (it would take RIGHT LED) is refused and the list keeps its 3 rows",
    "ok": true
   },
   {
@@ -2733,7 +2733,7 @@
    "ok": true
   },
   {
-   "name": "I/O Patch 16lc-vpvideo VV6: an I/O-only source a preset uses is a preset source: its card's trash asks first, the Remove picker leaves it out and the Look Book's I/O Sources page lists it; one no preset uses still goes straight away (one Undo step)",
+   "name": "I/O Patch 16lc-vpvideo VV6: an I/O-only source a preset uses is a preset source: its card's trash asks first, the Remove picker leaves it out and the Look Book's I/O Sources page lists it; one no preset uses asks too (16lo-delwin) and Everywhere removes it (one Undo step)",
    "ok": true
   },
   {
@@ -2861,7 +2861,7 @@
    "ok": true
   },
   {
-   "name": "Video Presets 16lc-vpcards-fix2 VX1 (Omar 2026-10-07: \"the × next to an imported file in a Video Presets > Simple layer dropdown asks first, with the same confirm as a card's trash can\"): the × beside a picture in a layer's ▾ list opens the window of the trash on the file's card (the same title, words and buttons); Cancel changes nothing (no Undo step); Remove takes it out of the whole show (its layer, BG and AUX, the library) in one Undo step; one Undo brings it all back",
+   "name": "Video Presets 16lc-vpcards-fix2 VX1 (Omar 2026-10-07: \"the × next to an imported file in a Video Presets > Simple layer dropdown asks first, with the same confirm as a card's trash can\"): the × beside a picture in a layer's ▾ list opens the window of the trash on the file's card (the same title, words and buttons); Cancel changes nothing (no Undo step); Delete with Video Presets ticked (16lo-delwin) takes it out of its layer, BG and AUX and the library in one Undo step; one Undo brings it all back",
    "ok": true
   },
   {
@@ -2869,7 +2869,7 @@
    "ok": true
   },
   {
-   "name": "I/O Patch 16lc-vpcards-fix4 VH1 (SPEC H1: numbers \"by order on every page\", \"imported files numbered exactly where r16lj/fix numbers them\"; \"Nothing may be written into a saved show that r16lj/fix would not write\"): in a show whose library is VH ONE, whose P01 uses VH TWO and VH THREE and whose I/O Patch made VH IO, two pictures imported take their places in the order first seen, right after the library (S2 / S3), and VH TWO, VH THREE, VH IO each take the next number (S4-S6), on the I/O Patch, Wire and Video Presets cards (Wire lists the ones it shows with the same numbers); Save and the browser draft carry no ioNums",
+   "name": "I/O Patch 16lc-vpcards-fix4 VH1 (SPEC H1: numbers \"by order on every page\", \"imported files numbered exactly where r16lj/fix numbers them\"; \"Nothing may be written into a saved show that r16lj/fix would not write\"): in a show whose library is VH ONE, whose P01 uses VH TWO and VH THREE and whose I/O Patch made VH IO, two pictures imported after it opened go at the end (16lo-srcorder, Omar 2026-10-17: \"a source is created in the order its created in S#\"): VH ONE S1, VH TWO S2, VH THREE S3, VH IO S4, the pictures S5 / S6, on the I/O Patch, Wire and Video Presets cards (Wire lists the ones it shows with the same numbers); Save and the browser draft carry no ioNums",
    "ok": true
   },
   {
@@ -2877,11 +2877,11 @@
    "ok": true
   },
   {
-   "name": "I/O Patch 16lc-vpcards-fix4 VH3 (SPEC H1: \"Opening any show gives the same numbers as r16lj/fix\"): a show saved before 16lc-vpcards-fix whose GFX A has no saved GFX B, with a show source the library lacks, opens as the v0.8.2 candidate opens it: nothing is written (no ioNums, no B yet, no Undo step, no Save light), the numbers are the order first seen (Wire Simple's router in that order before any I/O Patch visit); the I/O Patch draw then makes GFX B right under GFX A and files that source after the library's own names, exactly the v0.8.2 numbers (VJ ONE S1, VJ ORPHAN S2, GFX A S3, GFX B S4, VJ TWO S5, VJ THREE S6) on the I/O Patch, Video Presets and the Look Book, with no Undo step and no Save light",
+   "name": "I/O Patch 16lc-vpcards-fix4 VH3 (SPEC H1: \"Opening any show gives the same numbers as r16lj/fix\"): a show saved before 16lc-vpcards-fix whose GFX A has no saved GFX B, with a show source the library lacks, opens as the v0.8.2 candidate opens it: nothing is written (no ioNums, no B, no Undo step, no Save light), the numbers are the order first seen (Wire Simple's router in that order before any I/O Patch visit); 16lo-srcorder / 16lo-nopairs: the I/O Patch draw then makes no GFX B and moves no number (VJ ONE S1, GFX A S2, VJ TWO S3, VJ THREE S4, VJ ORPHAN S5) on the I/O Patch, Video Presets and the Look Book, with no Undo step and no Save light",
    "ok": true
   },
   {
-   "name": "I/O Patch 16lc-vpcards-fix4 VH4 (SPEC H1: \"an auto PBP B / GFX B right under its A\"): with three files imported (numbered where the order puts them, right after the library), a source renamed GFX A gets its GFX B on the next I/O Patch draw right under GFX A (its number + 1) and every source after GFX A, the files included, takes the next number, as in the v0.8.2 candidate; the draw adds no Undo step and nothing is kept; page 1 rebuilt from Simple puts GFX B right under GFX A as its backup, its type reads Backup of GFX A, and Wire Advanced's tile built from page 1 lists it right after GFX A",
+   "name": "I/O Patch 16lc-vpcards-fix4 VH4 (SPEC rule 6 \"No automatic pairs\"; Omar 2026-10-17: \"a source is created in the order its created in S#\"): with three files imported after the show opened (the last three numbers), a source renamed GFX A keeps its number and gets no GFX B on the next I/O Patch draw, and no number moves; the draw adds no Undo step and nothing is kept; page 1 rebuilt from Simple has GFX A and no GFX B (no backup made), and Wire Advanced's tile built from page 1 lists GFX A and no GFX B",
    "ok": true
   },
   {
@@ -3129,7 +3129,7 @@
    "ok": true
   },
   {
-   "name": "Wire 16ln-modalkeys MK1 (the full test's major 2, Omar 2026-10-17 \"yes, build it\"): an older question window takes the keyboard: the card trash's Delete Source question opens with the focus on Delete; Backspace and Cmd+Z reach nothing behind it (the picked Wire tile stays, no Undo step); Enter from the trash behind goes to the window and stacks no second one, nor does a second open; Escape cancels it; its Delete answers it once; the Remove Source picker takes the focus too and Backspace reaches nothing behind it",
+   "name": "Wire 16ln-modalkeys MK1 (the full test's major 2, Omar 2026-10-17 \"yes, build it\"): an older question window takes the keyboard: the card's Reset question opens with the focus on Reset; Backspace and Cmd+Z reach nothing behind it (the picked Wire tile stays, no Undo step); Enter from the Reset button behind goes to the window and stacks no second one, nor does a second open; Escape cancels it; its Reset answers it once; the Remove Source picker takes the focus too and Backspace reaches nothing behind it; the card trash's grey Delete window (16lo-delwin) opens with the focus on Delete, Backspace and Cmd+Z reach nothing behind it, and Escape cancels it",
    "ok": true
   },
   {
@@ -3154,6 +3154,54 @@
   },
   {
    "name": "Video Presets 16ln-anysize AS1 (the full test's 7, Omar 2026-10-17: \"user can do w.e they like the warning should go up for an engineer to approve said resolution since it probably not a common resolution\", \"Any size, warning up\"): a destination takes 67 to 7680 px high everywhere: Destination Properties applies 5000 in one Undo step and its red pill then asks for the engineer (\"Above DCI 4K\"); 8000 gets the range note (67 to 7680) and nothing changes; the Down arrow goes past 4320; Add Destination makes a 1920 x 6000 destination",
+   "ok": true
+  },
+  {
+   "name": "I/O Patch 16lo-srcorder SO1 (the sources rules, Omar 2026-10-17: \"a layer is created a source is created in the order its created in S# ... when the user pick primary and back up the source numbers stay the same\"): a show opens with the numbers it showed before; a source renamed in its I/O card keeps its number (PPT B, S2, renamed: still S2, CAM 1 still S3); a new source goes at the end; Undo puts the name and numbers back; a saved and reopened show keeps the order",
+   "ok": true
+  },
+  {
+   "name": "I/O Patch 16lo-srcorder SO2 (SPEC rule 4, \"Older shows keep the numbers they show today\"): a show saved by an older build (no kept order) opens with the numbers it showed: an app-made PBP B kept at the end of the patch sits right under PBP A as before (16jh); a source made after that goes at the end and the B stays where it is; nothing lights Save at open",
+   "ok": true
+  },
+  {
+   "name": "I/O Patch 16lo-nopairs NP1 (SPEC rule 6: \"No automatic pairs: typing PBP A / GFX A makes no B; names ending A / B do not pair by themselves\"; Omar 2026-10-17: \"only have the user make the primary and back up option but source numbers stay the same\"): PBP A on a layer brings no PBP B on the I/O Patch, Simple or Advanced page 1; the Backup window does not pair \"LOGO A\" / \"LOGO B\" rows by itself",
+   "ok": true
+  },
+  {
+   "name": "I/O Patch 16lo-delwin DW1 (the sources rules, Omar 2026-10-17: \"provide the option when someone tried to delete a source file Video Preset, I.O patch, wire just make a check box option\", \"Only the page you're on\", \"grey for the delete window\"): the I/O card trash of CAM 1 asks in the grey window with I/O Patch ticked; I/O Patch alone takes it off the patch (no card, no I/O Excel row) while Video Presets keeps it and it keeps S3, one Undo step; + Add source lists it and puts it back with S3",
+   "ok": true
+  },
+  {
+   "name": "I/O Patch 16lo-delwin DW2 (SPEC rule 2, \"When it is gone from every page, the ones after it move up one\"): Everywhere on CAM 1's trash ticks all three, the note says CAM 2 becomes S3; Delete takes CAM 1 out of the show (its layers, its page-1 row) and CAM 2 is S3, one Undo step; Undo brings CAM 1 back as S3 and CAM 2 as S4; Cancel changes nothing",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16lo-delwin DW3 (SPEC rule 8: \"Video Presets: every preset's layers, backgrounds and AUX boxes (a source stays on the I/O Patch as I/O-only)\"): the trash of a source card on Video Presets > Advanced asks with Video Presets ticked; Video Presets alone empties every layer, background and AUX box that used PPT A and keeps it on the I/O Patch as an I/O-only source with S1",
+   "ok": true
+  },
+  {
+   "name": "Wire 16lo-delwin DW4 (SPEC rule 8: \"Wire: its tiles leave every Wire drawing; its card stays in Wire's list to drag back\"): the trash of CAM 2's card in Wire's list asks with Wire ticked; Wire alone takes its tile off the Simple drawing and off every Advanced page with their cables; the card stays in Wire's list and on the I/O Patch, S4 kept",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16lo-delwin DW5 (SPEC rule 8, \"Destinations / AUX: Video Presets = everywhere\"; the full test's #17, Omar 2026-10-17: \"a deleation removes it from all places\"): the table x of LEFT LED asks with all three ticked and unticking I/O Patch unticks Video Presets; from its I/O card only I/O Patch is ticked and it goes off the patch (still on the canvas, D1 kept, + Add destination lists it); Video Presets takes it out of the show: CENTER LED is D1, no NOT IN THE SHOW row on page 1, no Wire Advanced tile left, one Undo step",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16lo-delwin DW6 (SPEC rule 8, \"The only screen is never deleted (as today)\"): with one screen left its window cannot take it off Video Presets (the note says why, Delete is off) but can take it off the I/O Patch",
+   "ok": true
+  },
+  {
+   "name": "I/O Patch 16lo-delwin DW7 (SPEC rules 8 and 10: AUX as destinations; \"Multiviewers: the trash deletes them everywhere, no window\"): AUX Properties' Remove asks with all three ticked; the AUX card trash on the I/O Patch has I/O Patch ticked and takes it off the patch (A1 kept, + Add AUX lists it); a multiviewer's trash deletes it at once, one Undo step",
+   "ok": true
+  },
+  {
+   "name": "I/O Patch 16lo-delwin DW8 (Omar 2026-10-17: \"use the same template to answer this question on all sections\"): on I/O Patch Advanced page 1 the trash of CAM 1's copied row asks in the grey window with I/O Patch ticked; Delete takes CAM 1 off the patch (its page-1 row and its Simple card) while Video Presets keeps it with S3; a row typed by hand still goes at once",
+   "ok": true
+  },
+  {
+   "name": "I/O Patch 16lo-delwin DW9 (the attack on 16lo-delwin: a file deleted from another page): a picture file on a layer, deleted from its I/O Patch card with Video Presets ticked as well, leaves the library and loses its file; one Undo, still on the I/O Patch, puts it back on its layer WITH its picture and its stored copy there and then (not only once the Video tab draws again); Redo takes them away again",
    "ok": true
   }
  ],

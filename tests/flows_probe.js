@@ -392,11 +392,12 @@
   // 16lc-vpaux: RENAMED in place. Why: Omar 2026-10-06 (16lc-vpaux): AUX name "Rename everywhere" (a destination too: renamed anywhere, renamed in every preset);
   //   AUX box "Always fill"; the band pill's double-click and the two remove-globally confirms (r16lm SPEC C). Here: Remove AUX Globally asks first now (the I/O Patch trash's window, C3); the check reads that it asked and presses its Delete.
   //   What it pins (one step each for +, Apply and Remove, each undone) is unchanged.
+  // ADAPTED in 16lo: 16lo-delwin (Omar 2026-10-17: "grey for the delete window", "use the same template to answer this question on all sections"): Remove AUX Globally asks in the grey delete window (Video Presets ticked = everywhere); its Delete is still the one step
   await check('Simple: Add AUX (+), the AUX panel Apply and Remove AUX Globally are each one undo step (16lc-vpaux: Remove AUX Globally asks first in the I/O Patch trash\'s window; its Delete is the step)', async () => {
     const out = []; let n = vpUndoLen(); const c0 = dsms.length; actions.addDSM(); await wait(250); out.push(vpUndoLen() - n, dsms.length - c0); doUndo(); await wait(250); out.push(dsms.length - c0);
     const p = presets[0], dm = dsms[0]; selDSM = { pid: p.id, dsmId: dm.id }; openDSMPanel(fakeEv, p.id, dm.id); await wait(350); n = vpUndoLen();
     $('#dsmp-name').value = 'RECORD 1'; $('#dsmp-apply').click(); await wait(250); out.push(vpUndoLen() - n, getDSMName(p.id, dm.id)); doUndo(); await wait(250); out.push(getDSMName(p.id, dm.id) !== 'RECORD 1');
-    const dm2 = dsms[0]; openDSMPanel(fakeEv, p.id, dm2.id); await wait(350); n = vpUndoLen(); const c1 = dsms.length; $('#dsmp-remove').click(); await wait(250); okDialogs(); const _asked = !!$('#sys-confirm-overlay'); { const _g = $('#sys-confirm-go'); if (_g) _g.click(); } await wait(200); out.push(_asked, vpUndoLen() - n, c1 - dsms.length);   /* 16lc-vpaux: it asks first; Delete in the confirm window */ doUndo(); await wait(250); out.push(dsms.length === c1);
+    const dm2 = dsms[0]; openDSMPanel(fakeEv, p.id, dm2.id); await wait(350); n = vpUndoLen(); const c1 = dsms.length; $('#dsmp-remove').click(); await wait(250); const _asked = dlgOpen() && $('#dlg-box').classList.contains('v-grey'); okDialogs(); await wait(200); out.push(_asked, vpUndoLen() - n, c1 - dsms.length);   /* 16lc-vpaux: it asks first; Delete in the confirm window */ doUndo(); await wait(250); out.push(dsms.length === c1);
     selDSM = null; await restore();
     return is(out, [1, 1, 0, 1, 'RECORD 1', true, true, 1, 1, true], '+ steps, added, undone / Apply steps, name, undone / Remove asked first, steps, removed, undone');
   });
@@ -748,11 +749,12 @@
   const _u2Rename = (to) => { const inp = $('#table-panel input[title^="Destination name"]'); if (!inp) throw new Error('no destination name field in the table'); inp.value = to; fire(inp, 'blur'); };   /* the table field commits on blur */
   const _u2Cell = nm => { for (const r of (wireAdvanced.routers || [])) for (const c of (r.outputs || [])) if (c && c.name === nm) return true; return false; };
 
-  await check('unsaved 2: a saved show with PBP A / GFX A content stays clean when I/O Patch opens (the automatic B twin), and the twin waits in the show for the next save', async () => {
+  // ADAPTED in 16lo: 16lo-nopairs (SPEC rule 6: "No automatic pairs: typing PBP A / GFX A makes no B"): the I/O Patch makes no B twin, so none waits in the show; renamed
+  await check('unsaved 2: a saved show with PBP A / GFX A content stays clean when I/O Patch opens (16lo-nopairs: no automatic B twin is made any more)', async () => {
     await _u2Home(); setL(presets[0].id, screens[0].id, 1, 'PBP A'); setL(presets[0].id, screens[0].id, 2, 'GFX A'); await _u2AsSaved(getProjectState()); const opened = _u2Gold();
     clearTimeout(eval('_autoSaveTimer')); eval('_autoSaveTimer=null'); $('#topbar-nav-iop').click(); await wait(700); const looked = _u2Gold();
     const twins = ['PBP B', 'GFX B'].map(n => getProjectState().sources.some(s => s && s.name === n && !!s.autoB)); const armed = !!eval('_autoSaveTimer');
-    await _u2Home(); return is([opened, looked, twins, armed], [false, false, [true, true], true], 'gold when opened / gold after ONE look at I/O Patch / PBP B and GFX B in getProjectState / autosave armed');
+    await _u2Home(); return is([opened, looked, twins, armed], [false, false, [false, false], true], 'gold when opened / gold after ONE look at I/O Patch / PBP B and GFX B in getProjectState (none: 16lo-nopairs) / autosave armed');
   });
   await check('unsaved 2: after a look at Wire, I/O Patch copies GFX B into the content library without lighting Save', async () => {
     await _u2Home(); setL(presets[0].id, screens[0].id, 1, 'GFX B'); await _u2AsSaved(getProjectState());
@@ -810,14 +812,15 @@
     const repaired = [_u2Cell('U2 OLD BUILD'), wireAdvanced.wires.some(w => w.id === 'u2dead'), wireAdvanced.customSources.map(c => c.name).join('|')];
     await _u2Home(); return is([opened, gold, repaired], [false, [false, false, false, false], [true, false, 'U2 Spare|U2 Spare 2']], 'gold when opened / gold after Wire, page tab 2, page tab 1, I/O Patch / cell follows, dead cable still there, custom source names');
   });
-  await check('unsaved 2: opening the Backup window (it pairs "X A" / "X B" rows by itself) leaves a saved show clean, and a pair set by hand still lights Save', async () => {
+  // ADAPTED in 16lo: 16lo-nopairs (SPEC rule 6: "names ending A / B do not pair by themselves ... Only the user pairs, in the Backup window"); renamed
+  await check('unsaved 2: opening the Backup window leaves a saved show clean (16lo-nopairs: it no longer pairs "X A" / "X B" rows by itself), and a pair set by hand still lights Save', async () => {
     await _u2Home(); openSystem(); await wait(500); await _u2IoAdv(); _ioSetPage(1); await wait(250);
     const pg = ioAdvanced.pages[1]; const a = _ioAdvBlank('src'), b = _ioAdvBlank('src'), c = _ioAdvBlank('src'); a.name = 'U2 CAM A'; b.name = 'U2 CAM B'; c.name = 'U2 SPARE'; pg.sources = [a, b, c]; _sysRender(); await wait(250); _u2Saved();
     const icon = $$('#io-adv .sys-bk-btn').find(vis); if (!icon) { await _u2Home(); return 'no backup icon on the page'; } icon.click(); await wait(450);
     const opened = _u2Gold(); const paired = b.backupOf === a.id;
     _ioBkPick('bk-primary', a.id); _ioBkPick('bk-backup', c.id); await wait(150); const pb = $('#sys-bk-overlay [onclick="_ioBkCommit()"]'); if (pb) pb.click(); await wait(250);
     eval('_isDirty=false'); _recomputeDirty(); const byHand = [c.backupOf === a.id, !!eval('_isDirty')];   /* the Pair button; the exact comparison alone has to find the change */
-    await _u2Home(); return is([opened, paired, byHand], [false, true, [true, true]], 'gold after opening the window / it paired A and B by itself / a pair set with the Pair button: made, and found by the exact comparison');
+    await _u2Home(); return is([opened, paired, byHand], [false, false, [true, true]], 'gold after opening the window / it paired A and B by itself (no: 16lo-nopairs) / a pair set with the Pair button: made, and found by the exact comparison');
   });
   await check('unsaved 2: an older show whose clip lacks its codec info is opened: the info is filled in a moment later and Save stays clean', async () => {
     await _u2Home(); let clip = false;
@@ -3742,12 +3745,13 @@
   // 16lc-vpvideo: RENAMED in place. Why: Omar 2026-10-05 / 06 (16lc-vpvideo): the VIDEO tab cards are "Option C"; files and the I/O Patch's own sources are sources
   //   everywhere ("Show them everywhere ... when you are not in video preset, advancer it should not play out just show the cover image"). Here: the Video card is the Option C card now (.vc) and its trash sits in the shuffle square (.vc-trash),
   //   not the old corner x (.fs-src-x on .fs-src-media). What it pins is unchanged.
+  // ADAPTED in 16lo: 16lo-delwin (Omar 2026-10-17: "use the same template to answer this question on all sections"): a file's trash asks in the grey delete window (Video Presets ticked), which still names where the file is used; its button reads Delete
   await check('Advanced: a Video card has a remove button; Remove asks first, empties every layer and BG that used the file with their clip settings, and one Undo brings it all back (16lc-vpvideo: the trash in the Option C card\'s shuffle square)', async () => {
     const name = clipOk ? 'TEST CLIP' : 'TEST 4x3'; const b0 = _undoStack.length; pushUndo();
     homeSetL(A.pid, A.sid, 2, name); _fsAssignBg(A.pid, screens[1].id, name); setLayerMedia(A.pid, A.sid, 2, { hue: 20 }); _fsClearLayer(); _fsSetSrcTab('video'); await wait(400); mute();
     const back0 = async () => { while (_undoStack.length > b0) { doUndo(); await wait(250); } _fsSetSrcTab('images'); _fsClearLayer(); await wait(300); mute(); };
     const card = $$('#fs-source-list .vc').find(c => c.dataset.src === name); const x = card && card.querySelector('.vc-trash'); if (!x) { await back0(); return 'no remove button on the Video card'; }   /* 16lc-vpvideo: the Option C card, its trash in the shuffle square */
-    const u0 = _undoStack.length; x.click(); await wait(350); const asked = /Remove/.test(dialogText()) && /2 places/.test(dialogText()); okDialogs(); await wait(600);
+    const u0 = _undoStack.length; x.click(); await wait(350); const asked = /Delete/.test(dialogText()) && /2 places/.test(dialogText()); okDialogs(); await wait(600);
     const p = () => presets.find(q => q.id === A.pid); const gone = [customLibrary.some(c => c.l === name), getL(A.pid, A.sid, 2), (p().bgNames || {})[screens[1].id] || null, !!((p().layerMedia || {})[A.sid] || {})[2], _undoStack.length - u0];
     doUndo(); await wait(700); mute(); const back = [customLibrary.some(c => c.l === name), getL(A.pid, A.sid, 2), (p().bgNames || {})[screens[1].id], !clipOk || !!_fsMediaUrl(name)];
     await back0();
@@ -5185,9 +5189,10 @@
     out.push(_undoStack.length - u3); doUndo(); await wait(400); out.push(srcNames()[0] === n && !srcNames().includes('UNDO RENAMED'));
     closeSystem(); await restore(); return is(out, [1, true, 1, true, 1, true, 1, true], 'undo steps / state back, for connector, custom resolution, note, rename');
   });
+  // ADAPTED in 16lo: 16lo-delwin (Omar 2026-10-17: "the user pick which place the source goes away from"): the trash asks in the grey window; Everywhere is ticked here, as the old trash took the source out of every preset
   await check('I/O Patch: deleting a source from its row is one undo step and Undo puts it back in every preset', async () => {
     await restore(); await ioOpenSimple(); const f = firstLayer(); const n = getL(f.pid, f.sid, 1); const refs = () => JSON.stringify(presets.map(p => p.layers)).split(JSON.stringify(n)).length - 1; const r0 = refs(), u0 = _undoStack.length;
-    $('[data-sys-action="delete"]', ioRow(n)).click(); await wait(250); const go = $('#sys-confirm-go'); if (!go) return 'no confirm window'; go.click(); await wait(400); const gone = refs();
+    $('[data-sys-action="delete"]', ioRow(n)).click(); await wait(250); if (!dlgOpen()) return 'no delete window'; { const _t = $('#dlg-box .dlg-ticks input[data-tick="all"]'); if (_t && !_t.checked) _t.click(); } $('#dlg-confirm').click(); await wait(400); const gone = refs();
     const steps = _undoStack.length - u0; doUndo(); await wait(400); const back = refs(); closeSystem(); await restore();
     return is([gone, steps, back], [0, 1, r0], 'layer references after delete / undo steps / after undo');
   });
@@ -5210,10 +5215,11 @@
     const said = /already a source/i.test(dialogText()); okDialogs(); await wait(200); const dup = sources.filter(s => s && s.name === b).length;
     const out = is([said, srcNames().length, srcNames()[0], dup], [true, n0, a, 1], 'refused with a message / source count / first source / entries named ' + b); closeSystem(); await restore(); return out;
   });
+  // ADAPTED in 16lo: 16lo-delwin: the trash asks in the grey window; Everywhere is ticked, as the old trash deleted the source from the show
   await check('I/O Patch: a source renamed or deleted in Simple does not come back as a ghost row after Advanced is opened', async () => {
     await restore(); await ioOpenSimple(); _ioSetView('advanced'); await wait(700); okDialogs(); _ioSetView('simple'); await wait(400); const a = srcNames()[0], b = srcNames()[3];
     const nm = $('.sys-name-input', ioRow(a)); nm.focus(); nm.value = 'GHOST TEST'; nm.blur(); await wait(400);
-    $('[data-sys-action="delete"]', ioRow(b)).click(); await wait(250); $('#sys-confirm-go').click(); await wait(400);
+    $('[data-sys-action="delete"]', ioRow(b)).click(); await wait(250); { const _t = $('#dlg-box .dlg-ticks input[data-tick="all"]'); if (_t && !_t.checked) _t.click(); } $('#dlg-confirm').click(); await wait(400);
     _ioSetView('advanced'); await wait(800); const cancel = $('#dlg-cancel'); if (dlgOpen() && cancel) cancel.click(); await wait(300); const names = srcNames(); const p1 = ioAdvanced.pages[0].sources.map(r => r.name);
     closeSystem(); await restore(); return is([names.includes(a), names.includes(b), p1.includes('GHOST TEST'), p1.includes(a), p1.includes(b)], [false, false, true, false, false], 'old name back in Simple / deleted source back in Simple / page 1 has the new name / page 1 still has the old name / page 1 still has the deleted source');
   });
@@ -5645,8 +5651,9 @@
 // ═══ BLOCK 5: insert right AFTER the check
 //     'Look Book: a cover, one page per preset, the I/O reference, the wire sheet and the summary'
 
+  // ADAPTED in 16lo: 16lo-nopairs (SPEC rule 6: "Only the user pairs, in the Backup window"): PPT B is no longer PPT A's backup by itself, so the check pairs them in the Backup window first
   await check('Look Book: a backup source prints Backup of <primary> in the I/O reference Type column, its primary and the others keep their plain type', async () => {
-    openSystem(); await wait(400); _ioSetView('advanced'); await wait(500); const p0 = ioAdvanced.pages[0], rowB = p0.sources.find(r => r.name === 'PPT B'), prim = rowB && _ioBkPrimaryOf(p0.sources, rowB);
+    openSystem(); await wait(400); _ioSetView('advanced'); await wait(500); const p0 = ioAdvanced.pages[0], rowA = p0.sources.find(r => r.name === 'PPT A'), rowB = p0.sources.find(r => r.name === 'PPT B'); if (rowA && rowB) { _ioBackupOpen(rowA.id); await wait(150); _ioBkPick('bk-primary', rowA.id); _ioBkPick('bk-backup', rowB.id); _ioBkCommit(); await wait(150); _ioBackupClose(); await wait(150); } const prim = rowB && _ioBkPrimaryOf(p0.sources, rowB);
     _ioSetView('simple'); await wait(300); closeSystem(); await wait(300);
     const d = new DOMParser().parseFromString(await userLookBook(), 'text/html'); const typeOf = nm => { const c = [...d.querySelectorAll('td.io-name-cell')].find(x => x.textContent.trim() === nm); return c ? c.nextElementSibling.textContent.trim() : 'row missing'; };
     const got = [prim ? prim.name : 'not paired', typeOf('PPT B'), typeOf('PPT A'), typeOf('CAM 1')]; await restore();
@@ -6122,8 +6129,9 @@ await check('Help says what the app does: the layer chip takes two clicks, the s
         page1: [['Destination 1', 'LEFT LED'], ['Destination 2', 'CENTER LED'], ['Destination 3', 'RIGHT LED'], ['Destination 4', 'DSM 1'], ['Destination 5', 'AUX 1'], ['Destination 6', 'IO EXCEL TEST']], fromAdv: true },
       'the grid [Destinations, AUX / DSM, Multiviewers] as [number, name] / Video I-O slot order / the I/O-only row / its slot cell styled like a destination / page-1 tab destinations / the row came from page 1');
   });
+  // ADAPTED in 16lo: 16lo-nopairs: PPT B is no longer PPT A's backup by itself, so the check pairs them in the Backup window first
   await check('I/O Patch Excel: a backup source prints "PC · Backup of PPT A" in the Video I-O Type column, its primary and the others keep their plain type, the page-1 tab keeps its P / B letters', async () => {
-    await restore(); await ioOpenSimple(); _ioSetView('advanced'); await wait(700); okDialogs(); const p0 = ioAdvanced.pages[0], rowB = p0.sources.find(r => r.name === 'PPT B'), prim = rowB && _ioBkPrimaryOf(p0.sources, rowB);
+    await restore(); await ioOpenSimple(); _ioSetView('advanced'); await wait(700); okDialogs(); const p0 = ioAdvanced.pages[0], rowA = p0.sources.find(r => r.name === 'PPT A'), rowB = p0.sources.find(r => r.name === 'PPT B'); if (rowA && rowB) { _ioBackupOpen(rowA.id); await wait(150); _ioBkPick('bk-primary', rowA.id); _ioBkPick('bk-backup', rowB.id); _ioBkCommit(); await wait(150); _ioBackupClose(); await wait(150); } const prim = rowB && _ioBkPrimaryOf(p0.sources, rowB);
     _ioSetView('simple'); await wait(400); okDialogs();
     const wb = await ioBook(); if (!wb) { closeSystem(); await restore(); return 'the I/O export produced no file'; }
     const tab = xlRows(wb, wb.sheets.indexOf('Video I-O') + 1); const typeOf = n => { const r = tab.find(x => x[2] && x[2].text === n && /^Source \d+$/.test(x[0].text)); return r ? r[3].text : 'row missing'; };
@@ -8715,7 +8723,8 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
       'the title bars [chip, controls (Tab)] of Sources / Destinations / AUX / DSM / Multiviewers / their menus [Connector, Resolution: first two rows] / each pick [picked, what moved (src, dst, io = I/O-only, aux, mv), undo steps, Save lit by it, Undo takes it back] / A0 › Custom resolution… 1024 × 768 [every AUX / DSM, a destination too, undo steps] / the Advanced page\'s own Set-for-all rows / A0, M0 against the same picks made card by card [cards, bulk steps, card steps = 2 per card, show + page 1 + Excel + Look Book the same, all set] / no AUX / DSM output [no A0, Remove still there]');
   });
   // 16ky-r2b N2: NEW
-  await check('I/O 16ky-r2b: − Remove sits at the right end of the Destinations and the AUX / DSM titles, the same button and look as in the Sources and Multiviewers titles (Omar: "Yes"); Destinations\' Remove lists that section\'s items only (the destinations the grid shows and the I/O-only destinations, in card order; never an AUX, never a screen the grid leaves out) and AUX / DSM\'s lists the AUX / DSM outputs only; a pick asks exactly what that card\'s trash asks, and Delete removes it everywhere in ONE undo step that lights Save (Undo brings it back); an I/O-only destination goes at once, as its trash does; the Remove Destination window opened as before still lists destinations, AUX and I/O-only destinations', async () => {
+  // ADAPTED in 16lo: 16lo-delwin (SPEC rule 8, Omar's pick "Video Presets = everywhere"; the sources default 3 he said yes to on 2026-10-17: "The Remove Source / Destination / AUX lists open the delete window after you pick one"): the card's trash and the Remove pick ask in the same grey window; ticking Video Presets deletes it everywhere; renamed
+  await check('I/O 16ky-r2b: − Remove sits at the right end of the Destinations and the AUX / DSM titles, the same button and look as in the Sources and Multiviewers titles (Omar: "Yes"); Destinations\' Remove lists that section\'s items only (the destinations the grid shows and the I/O-only destinations, in card order; never an AUX, never a screen the grid leaves out) and AUX / DSM\'s lists the AUX / DSM outputs only; a pick asks exactly what that card\'s trash asks (16lo-delwin: the grey delete window), and Delete with Video Presets ticked removes it everywhere in ONE undo step that lights Save (Undo brings it back); an I/O-only destination goes at once, as its trash does; the Remove Destination window opened as before still lists destinations, AUX and I/O-only destinations', async () => {
     await restore(); const io0 = _kbIoOnly(); await _kbClean(); const io = ioDests.find(d => d && d.name === io0.name); await ioOpenSimple(); const out = {};
     const look = b => { if (!b) return 'no Remove'; const cs = getComputedStyle(b), r = b.getBoundingClientRect(), t = b.closest('.iog-hd').getBoundingClientRect(); return JSON.stringify([b.className, (b.textContent || '').trim(), cs.color, cs.backgroundColor, cs.borderTopColor, cs.fontSize, Math.round(r.height), Math.round(t.right - r.right)]); };
     const looks = ['src', 'dst', 'aux', 'mv'].map(s => look(_kbRm(s)));
@@ -8731,9 +8740,9 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
       finally { if (typeof had === 'function') window._bdIs = had; else delete window._bdIs; _sysRender(); await wait(150); } }
     /* the window a pick asks = the card's trash window; Delete: gone everywhere, one undo step, Save lit; Undo */
     const del = async (sec, kind, o, ov) => {
-      $('[data-sys-action="delete"]', _kyCard(kind + ':' + o.id)).click(); await wait(250); const trash = _kbConfirmText(); _sysCloseConfirmModal(false); await wait(150);
+      $('[data-sys-action="delete"]', _kyCard(kind + ':' + o.id)).click(); await wait(250); const trash = dlgOpen() ? dialogText() : null; { const c = $('#dlg-cancel'); if (c) c.click(); } await wait(150);
       if (!await openRm(sec)) return 'no Remove'; const it = $$(ov + ' .sys-src-picker-item').find(i => i.dataset.rmId === String(o.id)); if (!it) { _sysCloseRemoveDestModal(); _sysCloseRemoveAUXModal(); return 'not in the list'; }
-      const u0 = _undoStack.length, lit0 = _kySaveLit(); it.click(); await wait(250); const asked = _kbConfirmText(); const go = $('#sys-confirm-go'); if (go) { go.click(); await wait(400); }
+      const u0 = _undoStack.length, lit0 = _kySaveLit(); it.click(); await wait(250); const asked = dlgOpen() ? dialogText() : null; { const v = $('#dlg-box .dlg-ticks input[data-tick="vp"]'); if (v && !v.checked) v.click(); } const go = $('#dlg-confirm'); if (go) { go.click(); await wait(400); }
       const arr = () => kind === 'dest' ? screens : kind === 'aux' ? dsms : ioDests; const gone = !arr().some(x => x && x.id === o.id);
       const refs = kind === 'dest' ? presets.some(p => p.positions && p.positions[o.id]) : kind === 'aux' ? presets.some(p => p.dsmContent && p.dsmContent[o.id]) : false;
       const r = [trash !== null && trash === asked, gone, refs, !_kyCard(kind + ':' + o.id), _undoStack.length - u0, !lit0 && _kySaveLit()]; doUndo(); await wait(400);
@@ -8741,7 +8750,7 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
     out.dest = await del('dst', 'dest', screens[2], '#sys-rmdest-overlay');
     out.aux = await del('aux', 'aux', dsms[0], '#sys-rmaux-overlay');
     { if (await openRm('dst')) { const it = $$('#sys-rmdest-overlay .sys-src-picker-item').find(i => i.dataset.rmId === String(io.id)); const u0 = _undoStack.length;
-        if (it) { it.click(); await wait(300); out.ioOnly = [!_kbConfirmText(), !ioDests.some(d => d.id === io.id), _undoStack.length - u0]; doUndo(); await wait(400); out.ioOnly.push(ioDests.some(d => d.id === io.id)); } else { out.ioOnly = 'not in the list'; _sysCloseRemoveDestModal(); } } else out.ioOnly = 'no Remove'; }
+        if (it) { it.click(); await wait(300); out.ioOnly = [!_kbConfirmText() && !dlgOpen(), !ioDests.some(d => d.id === io.id), _undoStack.length - u0]; doUndo(); await wait(400); out.ioOnly.push(ioDests.some(d => d.id === io.id)); } else { out.ioOnly = 'not in the list'; _sysCloseRemoveDestModal(); } } else out.ioOnly = 'no Remove'; }
     _sysOpenRemoveDestModal(); await wait(200); out.asBefore = list('#sys-rmdest-overlay'); _sysCloseRemoveDestModal();
     const wantBefore = screens.map(s => 'dest:' + s.name).concat(dsms.map(d => 'aux:' + d.name), ioDests.map(d => 'iodest:' + d.name));
     closeSystem(); await restore();
@@ -8884,12 +8893,13 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
       'Reset on each card [its window, after: connector, resolution, Type, custom Type, note, undo steps]: a source, LEFT LED, DSM 1, MV 1, the I/O-only destination (no window, as before)');
   });
   // 16ky-r3 H1: NEW
-  await check('I/O 16ky-r3: the multiviewer card\'s trash asks "Delete the Multiviewer MV 1? … You can re-add via + Add multiviewer." (the Destinations footer it named is gone since 16ky); Cancel keeps it', async () => {
-    await restore(); await ioOpenSimple(); const k = 'mv:' + multiviewers[0].id; const c = $$('#io-grid .iog-card').find(x => x.dataset.iogKey === k);
+  // ADAPTED in 16lo: 16lo-delwin (the sources rules, Omar 2026-10-17: "same rule applys for destination and aux but not MV, MV it delete that from everywhere"): the trash deletes the multiviewer at once (with the show's only one, the old rule that every show keeps one draws a new MV 1); renamed
+  await check('I/O 16ky-r3: the multiviewer card\'s trash deletes it from everywhere at once (16lo-delwin, SPEC rule 10: no window; the show\'s only one is followed by a new MV 1, as every show keeps one); one Undo brings it back', async () => {
+    await restore(); await ioOpenSimple(); const id0 = multiviewers[0].id, k = 'mv:' + id0; const c = $$('#io-grid .iog-card').find(x => x.dataset.iogKey === k);
     const b = c ? $('[data-sys-action="delete"]', c) : null; if (!b) { closeSystem(); await restore(); return 'no trash on the MV card'; }
-    b.click(); await wait(300); const o = $('#sys-confirm-overlay'); const t = o ? ($('.confirm-msg', o) || o).textContent.replace(/\s+/g, ' ').trim() : ''; const cancel = o ? $$('.sys-modal-btn', o).find(x => x.id !== 'sys-confirm-go') : null; if (cancel) cancel.click(); await wait(300);
-    const kept = multiviewers.length; closeSystem(); await restore();
-    return is([t, kept], ['Delete the Multiviewer MV 1?Most shows keep an MV, operators rely on it. You can re-add via + Add multiviewer.', 1], 'the window / multiviewers after Cancel');
+    b.click(); await wait(300); const asked = dlgOpen() || !!$('#sys-confirm-overlay'); const gone = !multiviewers.some(x => x.id === id0), fresh = multiviewers.length === 1 && multiviewers[0].name === 'MV 1'; doUndo(); await wait(300);
+    const back = multiviewers.length === 1 && multiviewers[0].id === id0; closeSystem(); await restore();
+    return is([asked, gone, fresh, back], [false, true, true, true], 'a window / that multiviewer gone / a new MV 1 in its place (every show keeps one) / one Undo brings it back, the only one');
   });
   // 16ky-r3 I1: NEW
   // 16kx-r3 XI1: REPLACES the check named in its header (reason in the block)
@@ -9318,7 +9328,8 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
   const _rzCustom = async (pill, text) => { if (!pill) return 'no pill'; if (!await ioPick(pill, /^Custom…$/)) return 'no Custom… in the Refresh menu'; await wait(150); const b = _rzBox(); if (!b) return 'no box'; const seen = [document.activeElement === b, b.value]; tfType(b, text); await wait(400); return seen; };
   const _rzLines = sp => sp ? $$(':scope > span', sp).map(s => s.textContent) : null;   /* the lines drawn on a picture: one inline span a line */
   // 16kz-refresh Y1: NEW
-  await check('I/O 16kz-refresh (H): on I/O Patch ADVANCED every control of a row takes Tab, in reading order (Omar\'s 12, "do the recommended"): CAM 1 reads name, its ▼, backup, connector, Type, resolution, refresh, notes, reset, delete; LEFT LED the same without the backup column; PPT B (a backup: its button is off) without it; the Set for all rows S0 / D0 / A0 / M0 read connector, Type, resolution, refresh; every menu pill is a button with a popup; page 2 reads the same', async () => {
+  // ADAPTED in 16lo: 16lo-nopairs (SPEC rule 6: "names ending A / B do not pair by themselves"): PPT B is not a backup, so its row has the backup button like CAM 1; renamed
+  await check('I/O 16kz-refresh (H): on I/O Patch ADVANCED every control of a row takes Tab, in reading order (Omar\'s 12, "do the recommended"): CAM 1 reads name, its ▼, backup, connector, Type, resolution, refresh, notes, reset, delete; LEFT LED the same without the backup column; PPT B the same as CAM 1 (16lo-nopairs: no longer PPT A\'s backup by itself); the Set for all rows S0 / D0 / A0 / M0 read connector, Type, resolution, refresh; every menu pill is a button with a popup; page 2 reads the same', async () => {
     await restore(); await _r3P1Up();
     const row = r => r ? _rzTabs(r).map(_rzName) : 'no row';
     const out = { cam: row(r2Row('CAM 1')), left: row(r2Row('LEFT LED')), pptb: row(r2Row('PPT B')), mv: row(_r3P1Row('MV 1', 'mv')),
@@ -9329,7 +9340,7 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
     _ioSetPage(0); await wait(250); _ioSetView('simple'); await wait(300); closeSystem(); await restore();
     const S = ['connector', 'src-type', 'resolution', 'refresh'], D = ['connector', 'dst-type', 'resolution', 'refresh'];
     return is(out, { cam: ['name', 'src-name', 'backup', 'connector', 'src-type', 'resolution', 'refresh', 'notes', 'reset', 'delete'], left: ['name', 'dst-name', 'connector', 'dst-type', 'resolution', 'refresh', 'notes', 'reset', 'delete'],
-      pptb: ['name', 'src-name', 'connector', 'src-type', 'resolution', 'refresh', 'notes', 'reset', 'delete'], mv: ['name', 'dst-name', 'connector', 'dst-type', 'resolution', 'refresh', 'notes', 'reset', 'delete'],
+      pptb: ['name', 'src-name', 'backup', 'connector', 'src-type', 'resolution', 'refresh', 'notes', 'reset', 'delete'], mv: ['name', 'dst-name', 'connector', 'dst-type', 'resolution', 'refresh', 'notes', 'reset', 'delete'],
       all: ['S0:' + S.join(','), 'D0:' + D.join(','), 'A0:' + D.join(','), 'M0:' + D.join(',')], pills: true,
       page2: [['name', 'src-name', 'backup', 'connector', 'src-type', 'resolution', 'refresh', 'notes', 'reset', 'delete'], ['S0:' + S.join(','), 'D0:' + D.join(','), 'M0:' + D.join(',')]] },
       'Tab order of CAM 1 / LEFT LED / PPT B / MV 1 / the Set for all rows / every pill a keyboard button with a popup and a name / page 2 [its first row, its Set for all rows]');
@@ -9589,14 +9600,15 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
   //   older shows' names cleaned up on open; long names shrink to fit; files after the sources, in capitals, own colours; + ADD VIDEO at
   //   a file card's size; + ADD SOURCE named after its number. Here: the Video Presets table's x asks first now (Omar: the table's x "asks first"); its button calls _lbxRemoveDest, which refuses the
   //   only screen left with the same words and no question. The check finds the button by its new click action; what it pins is unchanged.
-  await check('Backdrop 16kz-refresh (L1): the only screen left is never deleted (Omar 2026-09-28 ~18:50, "all recommended"): with CENTER LED and RIGHT LED backdrops (Edit Show Info), the trash on LEFT LED\'s I/O Patch card, Remove (Destinations) > LEFT LED, the Video Presets table\'s ✕ (P01\'s first row; 16lc-vpfinish: it asks first, never for the only screen left) and Destination Properties\' Remove Globally each say "A show needs at least one screen", ask nothing and delete nothing (no undo step); Undo and Redo never restore a step with no screen (one an older build could have left: refused, the show keeps LEFT LED) and a normal Undo still works; with LEFT LED and CENTER LED backdrops Edit Show Info\'s − (it would take RIGHT LED) is refused and the list keeps its 3 rows', async () => {
+  // ADAPTED in 16lo: 16lo-delwin (SPEC rule 8: "The only screen is never deleted (as today)"): every trash asks in the grey window; with Video Presets ticked its note says the only screen left cannot leave Video Presets and Delete is off; nothing changes; renamed
+  await check('Backdrop 16kz-refresh (L1): the only screen left is never deleted (Omar 2026-09-28 ~18:50, "all recommended"): with CENTER LED and RIGHT LED backdrops (Edit Show Info), the trash on LEFT LED\'s I/O Patch card, Remove (Destinations) > LEFT LED, the Video Presets table\'s ✕ (P01\'s first row; 16lc-vpfinish: it asks first, never for the only screen left) and Destination Properties\' Remove Globally each open the grey delete window (16lo-delwin), whose note says LEFT LED is the only screen left and cannot leave Video Presets (Delete off once Video Presets is ticked), and delete nothing (no undo step); Undo and Redo never restore a step with no screen (one an older build could have left: refused, the show keeps LEFT LED) and a normal Undo still works; with LEFT LED and CENTER LED backdrops Edit Show Info\'s − (it would take RIGHT LED) is refused and the list keeps its 3 rows', async () => {
     await restore(); const out = {}; const nm = s => s.name + (s.deviceType === 'Backdrop' ? ' [bd]' : '');
     try {
       await _kzEsi(); for (const i of [1, 2]) { await _fxOpenRow(i); const t = $('#qs-bd-' + i); if (t && t.getAttribute('aria-pressed') !== 'true') t.click(); await wait(200); }
       $('#qs-confirm-btn').click(); await wait(600); okDialogs(); await wait(400); okDialogs();
       out.show = screens.map(nm); const L = screens.find(s => s.name === 'LEFT LED'); if (!L) return 'no LEFT LED';
       const same = () => JSON.stringify(screens.map(nm)) === JSON.stringify(out.show);
-      const step = async fn => { const u0 = _undoStack.length; await fn(); await wait(400); const t = dlgOpen() ? dialogText() : ''; const sc = !!$('#sys-confirm-overlay'); okDialogs(); const c = $('#sys-confirm-overlay'); if (c) { const x = $('.sys-modal-btn', c); if (x) x.click(); } await wait(200); return [/A show needs at least one screen/.test(t), sc, same(), _undoStack.length - u0]; };
+      const step = async fn => { const u0 = _undoStack.length; await fn(); await wait(400); const grey = dlgOpen() && $('#dlg-box').classList.contains('v-grey'); { const v = $('#dlg-box .dlg-ticks input[data-tick="vp"]'); if (grey && v && !v.checked) v.click(); } await wait(50); const t = grey ? (($('#dlg-box .dlg-tick-note') || {}).textContent || '') : ''; const off = grey && !!($('#dlg-confirm') || {}).disabled; { const x = $('#dlg-cancel'); if (x) x.click(); } const c = $('#sys-confirm-overlay'); if (c) { const x = $('.sys-modal-btn', c); if (x) x.click(); } await wait(200); return [/only screen left/.test(t), off, same(), _undoStack.length - u0]; };
       await ioOpenSimple();
       out.card = await step(async () => { const b = $('#io-grid .iog-card .sys-icon-btn.del[data-sys-id="' + L.id + '"]'); if (b) b.click(); });
       out.remove = await step(async () => { _iogRmDest(); await wait(300); const it = $('#sys-rmdest-overlay .sys-src-picker-item[data-rm-name="LEFT LED"]'); if (it) it.click(); try { _sysCloseRemoveDestModal(); } catch (e) {} });
@@ -9615,9 +9627,9 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
       out.count = [/A show needs at least one screen/.test(tc), +$('#qs-screens-val').textContent, $$('[id^="qs-sn-"]').length];
       try { closeQS(); } catch (e) {}
     } finally { okDialogs(); try { closeScreenPanel(); } catch (e) {} await restore(); }
-    return is(out, { show: ['LEFT LED', 'BACKDROP [bd]', 'BACKDROP 2 [bd]'], card: [true, false, true, 0], remove: [true, false, true, 0], table: [true, false, true, 0], props: [true, false, true, 0],
+    return is(out, { show: ['LEFT LED', 'BACKDROP [bd]', 'BACKDROP 2 [bd]'], card: [true, true, true, 0], remove: [true, true, true, 0], table: [true, true, true, 0], props: [true, true, true, 0],
       undo: [true, true, true], redo: [true, true, true], normal: ['LEFT LED', 'CENTER LED', 'RIGHT LED'], show2: ['BACKDROP [bd]', 'BACKDROP 2 [bd]', 'RIGHT LED'], count: [true, 3, 3] },
-      'the show after Edit Show Info / each delete of LEFT LED [said, a question asked, the show unchanged, undo steps]: the card\'s trash, Remove, the table\'s ✕, Destination Properties / Undo onto a step with no screen [said, unchanged, the step kept] / Redo the same / a normal Undo / with RIGHT LED the only screen / Edit Show Info\'s − [said, the count, the rows]');
+      'the show after Edit Show Info / each delete of LEFT LED [the window\'s note says it is the only screen left, Delete off, the show unchanged, undo steps]: the card\'s trash, Remove, the table\'s ✕, Destination Properties / Undo onto a step with no screen [said, unchanged, the step kept] / Redo the same / a normal Undo / with RIGHT LED the only screen / Edit Show Info\'s − [said, the count, the rows]');
   });
   // 16kz-refresh Y15: NEW
   // 16lc-vpcards-fix RF15: REPLACES the check named in its header (reason in the block)
@@ -13238,7 +13250,8 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
     return is(out, want, '[the I/O-made source in the layer panel: listed, no ×, swatch hidden] / [the files\' rows show their cover] / [picked: the layer, Undo steps] / [in AUX PROPERTIES]');
   });
   // 16lc-vpvideo VV6: NEW
-  await check('I/O Patch 16lc-vpvideo VV6: an I/O-only source a preset uses is a preset source: its card\'s trash asks first, the Remove picker leaves it out and the Look Book\'s I/O Sources page lists it; one no preset uses still goes straight away (one Undo step)', async () => {
+  // ADAPTED in 16lo: 16lo-delwin (SPEC rule 8: "Every trash on a source / destination / AUX card opens the delete window"): the unused I/O-only source asks too; Everywhere removes it; renamed
+  await check('I/O Patch 16lc-vpvideo VV6: an I/O-only source a preset uses is a preset source: its card\'s trash asks first, the Remove picker leaves it out and the Look Book\'s I/O Sources page lists it; one no preset uses asks too (16lo-delwin) and Everywhere removes it (one Undo step)', async () => {
     const out = {}, want = {};
     try {
       await restore(); await ioOpenSimple(); _sysAddSource(); await wait(200); const io = sources[sources.length - 1].name; _sysAddSource(); await wait(200); const io2 = sources[sources.length - 1].name;
@@ -13249,15 +13262,15 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
       await ioOpenSimple();
       const del = n => { const k = $$('#io-grid .iog-card').find(x => x.dataset.iogKey === 'src:' + n); return k && $('.sys-icon-btn.del', k); };
       const u0 = _undoStack.length; del(io).click(); await wait(350);
-      out.asks = [!!_kbConfirmText(), sources.some(x => x && x.name === io), _undoStack.length - u0]; want.asks = [true, true, 0];
-      try { _sysCloseConfirmModal(false); } catch (e) {} await wait(200);
+      out.asks = [dlgOpen() && $('#dlg-box').classList.contains('v-grey'), sources.some(x => x && x.name === io), _undoStack.length - u0]; want.asks = [true, true, 0];
+      { const c = $('#dlg-cancel'); if (c && dlgOpen()) c.click(); } await wait(200);
       _sysOpenRemoveSourceModal(); await wait(300); const names = $$('#sys-remove-overlay .sys-src-picker-item').map(i => (($('.picker-name', i) || {}).textContent || '').trim()); try { _sysCloseRemoveSourceModal(); } catch (e) {}
       out.picker = [names.includes(io), names.includes(io2)]; want.picker = [false, true];
-      const u1 = _undoStack.length; del(io2).click(); await wait(350);
-      out.straight = [!_kbConfirmText(), sources.some(x => x && x.name === io2), _undoStack.length - u1]; want.straight = [true, false, 1];
+      const u1 = _undoStack.length; del(io2).click(); await wait(350); const asked2 = dlgOpen(); { const t = $('#dlg-box .dlg-ticks input[data-tick="all"]'); if (t && !t.checked) t.click(); } { const g = $('#dlg-confirm'); if (g && dlgOpen()) g.click(); } await wait(350);
+      out.straight = [asked2, sources.some(x => x && x.name === io2), _undoStack.length - u1]; want.straight = [true, false, 1];
     } catch (e) { return 'threw: ' + e.message; }
     finally { try { _sysCloseConfirmModal(false); } catch (e) {} await _vvBack(); }
-    return is(out, want, '[Look Book I/O Sources page: lists the one a preset uses, the unused I/O-only one] / [used by a preset: trash asks, still there, Undo steps] / [Remove picker: lists the used one, lists the unused one] / [unused: no ask, gone, Undo steps]');
+    return is(out, want, '[Look Book I/O Sources page: lists the one a preset uses, the unused I/O-only one] / [used by a preset: trash asks, still there, Undo steps] / [Remove picker: lists the used one, lists the unused one] / [unused: asks, gone with Everywhere, Undo steps]');
   });
   // 16lc-vpvideo VV7: NEW
   await check('Help 16lc-vpvideo VV7: Help says what the Video tab cards do (play on the picture, sound in the colour bar, trash, rename keeps the file, RELINK), that a file is a source on every page with its cover, and that + Add source on the I/O Patch reaches Video Presets; the old "the presets never do" is gone', async () => {
@@ -13276,8 +13289,9 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
   const _vaHex = c => { const m = /^#([0-9a-f]{6})$/i.exec(String(c || '').trim()); if (!m) return String(c); const n = parseInt(m[1], 16); return 'rgb(' + (n >> 16 & 255) + ', ' + (n >> 8 & 255) + ', ' + (n & 255) + ')'; };
   const _vaBox = (pid, id, root) => { const r = root || $('.preset-row[data-pid="' + pid + '"]'); return r ? $$('.dsm-box', r).find(e => (e.getAttribute('onclick') || '').includes("dsmId:'" + id + "'")) || null : null; };
   const _vaPill = (pid, id, root) => { const r = root || $('.preset-row[data-pid="' + pid + '"]'); return r ? $$('.dsm-toggle', r).find(e => (e.getAttribute('onclick') || '').includes("'" + id + "')")) || null : null; };
-  const _vaSys = () => { const m = $('#sys-confirm-overlay'); return m ? { title: ($('h3', m) || {}).textContent.trim(), body: ($('.confirm-msg', m) || {}).textContent.replace(/\s+/g, ' ').trim() } : null; };
-  const _vaSysCancel = async () => { const m = $('#sys-confirm-overlay'); const c = m && $$('.sys-modal-btn', m).find(e => /cancel/i.test(e.textContent)); if (c) c.click(); await wait(300); };
+  // ADAPTED in 16lo (16lo-delwin): the window a trash asks in can be the grey delete window too
+  const _vaSys = () => { const m = $('#sys-confirm-overlay'); if (m) return { title: ($('h3', m) || {}).textContent.trim(), body: ($('.confirm-msg', m) || {}).textContent.replace(/\s+/g, ' ').trim() }; if (dlgOpen() && $('#dlg-box').classList.contains('v-grey')) return { title: ($('#dlg-box h3') || {}).textContent.trim(), body: ($('#dlg-box .dlg-body') || {}).textContent.replace(/\s+/g, ' ').trim() }; return null; };
+  const _vaSysCancel = async () => { const m = $('#sys-confirm-overlay'); const c = m && $$('.sys-modal-btn', m).find(e => /cancel/i.test(e.textContent)); if (c) c.click(); else { const d = $('#dlg-cancel'); if (d && dlgOpen()) d.click(); } await wait(300); };
   const _vaBack = async () => { try { _sysCloseMenu(); } catch (e) {} try { if (typeof _sysCloseConfirmModal === 'function' && $('#sys-confirm-overlay')) _sysCloseConfirmModal(false); } catch (e) {} try { if (eval('fsPresetId')) closeFullscreen(); } catch (e) {} try { closeWireMode(); } catch (e) {} try { closeSystem(); } catch (e) {}
     ['dsm-panel', 'screen-panel'].forEach(i => { const e = document.getElementById(i); if (e) e.remove(); }); await restore(); };
   // 16lc-vpaux VA1: NEW
@@ -13371,13 +13385,14 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
       'a double-click [AUX PROPERTIES open, DSM 1 on, undo steps] / a single click [on after 120 ms, after 720 ms, steps, a window] / a click with no count [on at once, steps]');
   });
   // 16lc-vpaux VA6: NEW
+  // ADAPTED in 16lo: 16lo-delwin: Remove Globally / Remove AUX Globally ask in the grey delete window, with the I/O Patch trash's title and words; Video Presets is ticked there (everywhere), so Delete removes it
   await check('Video Presets 16lc-vpaux VA6 (C3): Destination Properties\' "Remove Globally, All Presets" and AUX PROPERTIES\' "Remove AUX Globally" ask first in the I/O Patch trash\'s window, with its words; Cancel changes nothing (no step); Delete removes it (one step) and Undo brings it back', async () => {
     await restore(); const p1 = presets[0], C = screens.find(s => s.name === 'CENTER LED'), a1 = dsms.find(x => x.name === 'AUX 1');
     await ioOpenSimple(); const tr = (id) => $('#io-grid .iog-card .sys-icon-btn.del[data-sys-id="' + id + '"]'); let ioD = null, ioA = null;
     if (tr(C.id)) { tr(C.id).click(); await wait(300); ioD = _vaSys(); await _vaSysCancel(); } if (tr(a1.id)) { tr(a1.id).click(); await wait(300); ioA = _vaSys(); await _vaSysCancel(); } closeSystem(); await wait(300);
     const flow = async (open, btn, read) => { const v0 = read(), n0 = vpUndoLen(); open(); await wait(350); const b = $(btn); if (!b) return 'no ' + btn; b.click(); await wait(350); const ask = _vaSys();
       if (!ask) return ['nothing asked', read() === v0 ? 'kept' : 'removed at once']; await _vaSysCancel(); const cancel = [read() === v0, vpUndoLen() - n0, !!$('#sys-confirm-overlay')];
-      open(); await wait(350); $(btn).click(); await wait(350); const g = $('#sys-confirm-go'); if (g) g.click(); await wait(400); const del = [read() !== v0, vpUndoLen() - n0];
+      open(); await wait(350); $(btn).click(); await wait(350); const g = $('#sys-confirm-go') || (dlgOpen() ? $('#dlg-confirm') : null); if (g) g.click(); await wait(400); const del = [read() !== v0, vpUndoLen() - n0];
       doUndo(); await wait(400); return { ask, cancel, del, undo: read() === v0 }; };
     const dest = await flow(() => openScreenPanel(Object.assign({}, fakeEv), p1.id, C.id), '#screen-panel #sp-remove', () => screens.map(s => s.name).join('|'));
     const aux = await flow(() => openDSMPanel(Object.assign({}, fakeEv), p1.id, a1.id), '#dsm-panel #dsmp-remove', () => dsms.map(d => d.name).join('|'));
@@ -13386,15 +13401,16 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
       'Destination Properties / AUX PROPERTIES: [the window (= the I/O Patch trash\'s), Cancel: kept / steps / window left, Delete: gone / steps, Undo brings it back]');
   });
   // 16lc-vpaux VA7: NEW
+  // ADAPTED in 16lo: 16lo-delwin: the confirm window is the grey delete window; Escape still closes only it
   await check('Video Presets 16lc-vpaux VA7 (C3): on Video Presets > Advanced, Escape on a confirm window (a card\'s trash, Remove Globally) closes the window, not the page, and removes nothing', async () => {
     await restore(); await _vcAdv(); if (!eval('fsPresetId')) { await _vaBack(); return 'Advanced did not open'; }
     const C = screens.find(s => s.name === 'CENTER LED'); const names = () => screens.map(s => s.name).join('|'); const n0 = names(), u0 = vpUndoLen();
     const esc = () => document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', code: 'Escape', bubbles: true, cancelable: true }));
     const tr = $('#fs-left-panel .iog-card .sys-icon-btn.del[data-sys-id="' + C.id + '"]'); let card = 'no trash on the card';
-    if (tr) { tr.click(); await wait(300); const asked = !!$('#sys-confirm-overlay'); esc(); await wait(500); card = [asked, !!$('#sys-confirm-overlay'), !!eval('fsPresetId'), names() === n0, vpUndoLen() - u0]; }
+    if (tr) { tr.click(); await wait(300); const asked = !!$('#sys-confirm-overlay') || dlgOpen(); esc(); await wait(500); card = [asked, !!$('#sys-confirm-overlay') || dlgOpen(), !!eval('fsPresetId'), names() === n0, vpUndoLen() - u0]; }
     if (!eval('fsPresetId')) await _vcAdv();
     openScreenPanel(Object.assign({}, fakeEv), presets[0].id, C.id); await wait(350); const b = $('#screen-panel #sp-remove'); let props = 'no Remove Globally';
-    if (b) { b.click(); await wait(350); const asked = !!$('#sys-confirm-overlay'); esc(); await wait(500); props = [asked, !!$('#sys-confirm-overlay'), !!eval('fsPresetId'), names() === n0, vpUndoLen() - u0]; }
+    if (b) { b.click(); await wait(350); const asked = !!$('#sys-confirm-overlay') || dlgOpen(); esc(); await wait(500); props = [asked, !!$('#sys-confirm-overlay') || dlgOpen(), !!eval('fsPresetId'), names() === n0, vpUndoLen() - u0]; }
     await _vaBack();
     return is({ card, props }, { card: [true, false, true, true, 0], props: [true, false, true, true, 0] }, 'the card\'s trash / Destination Properties\' Remove Globally: [asked, still asking after Escape, still on Advanced, nothing removed, steps]');
   });
@@ -13417,8 +13433,9 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
   //    open, long one-word names shrink to fit, files numbered after the sources, in capitals, each its own cable colour, + ADD VIDEO at a file
   //    card's size, + ADD SOURCE named after its number. VD1-VD11 FAIL on the 16lc-vpaux page (r16lm/C, 301c10cb) and PASS after. Helpers
   //    prefixed _vd (never a page name).
-  const _vdSys = () => { const m = $('#sys-confirm-overlay'); return m ? { title: ($('h3', m) || {}).textContent.trim(), body: ($('.confirm-msg', m) || {}).textContent.replace(/\s+/g, ' ').trim() } : null; };
-  const _vdSysCancel = async () => { const m = $('#sys-confirm-overlay'); const c = m && $$('.sys-modal-btn', m).find(e => /cancel/i.test(e.textContent)); if (c) c.click(); await wait(300); };
+  // ADAPTED in 16lo (16lo-delwin): the window a trash asks in can be the grey delete window too
+  const _vdSys = () => { const m = $('#sys-confirm-overlay'); if (m) return { title: ($('h3', m) || {}).textContent.trim(), body: ($('.confirm-msg', m) || {}).textContent.replace(/\s+/g, ' ').trim() }; if (dlgOpen() && $('#dlg-box').classList.contains('v-grey')) return { title: ($('#dlg-box h3') || {}).textContent.trim(), body: ($('#dlg-box .dlg-body') || {}).textContent.replace(/\s+/g, ' ').trim() }; return null; };
+  const _vdSysCancel = async () => { const m = $('#sys-confirm-overlay'); const c = m && $$('.sys-modal-btn', m).find(e => /cancel/i.test(e.textContent)); if (c) c.click(); else { const d = $('#dlg-cancel'); if (d && dlgOpen()) d.click(); } await wait(300); };
   const _vdBack = async () => { try { _sysCloseMenu(); } catch (e) {} try { if (typeof _sysCloseConfirmModal === 'function' && $('#sys-confirm-overlay')) _sysCloseConfirmModal(false); } catch (e) {} try { if (eval('fsPresetId')) closeFullscreen(); } catch (e) {} try { closeWireMode(); } catch (e) {} try { closeSystem(); } catch (e) {}
     ['dsm-panel', 'screen-panel'].forEach(i => { const e = document.getElementById(i); if (e) e.remove(); }); try { if (typeof _fsSrcTab !== 'undefined' && _fsSrcTab !== 'images') _fsSetSrcTab('images'); } catch (e) {} await restore(); };
   const _vdLines = el => el ? new Set([...el.getClientRects()].filter(r => r.width > 0).map(r => Math.round(r.top))).size : -1;
@@ -13481,16 +13498,17 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
     return is({ label, steps, names, io, back, refused }, { label: 'Destination name (all presets)', steps: 1, names: ['MAIN WALL'], io: 'MAIN WALL', back: ['CENTER LED'], refused: [true, ['CENTER LED']] }, 'the Name box / Apply steps / its name in every preset / its I/O Patch card / after Undo / another output\'s name [Name in use, names]');
   });
   // 16lc-vpfinish VD5: NEW
+  // ADAPTED in 16lo: 16lo-delwin (Omar 2026-10-17: "grey for the delete window"): the x asks in the grey delete window, titled Delete <its name>; Video Presets is ticked there, so Delete removes it
   await check('Video Presets 16lc-vpfinish VD5 (Omar 2026-10-07: the table\'s x "asks first"): the x on a destination\'s first row of the Video Presets table asks in the I/O Patch trash\'s window; Cancel changes nothing (no step); Delete removes it in one step and Undo brings it back', async () => {
     await restore(); if (typeof renderTable === 'function') renderTable(); await wait(200);
     const read = () => screens.map(s => s.name).join('|'), v0 = read(), n0 = vpUndoLen();
     const x = () => $$('.t-del')[1] || $('.t-del'); if (!x()) { await _vdBack(); return 'no x in the table'; }
-    x().click(); await wait(350); const ask = _vdSys(); if (!ask) { const now = read(); await _vdBack(); return 'nothing asked; ' + (now === v0 ? 'kept' : 'removed at once'); }
+    const _xn = ((x().getAttribute('onclick') || '').match(/_lbxRemoveDest\('([^']+)'\)/) || [])[1], _xs = screens.find(s => s.id === _xn); x().click(); await wait(350); const ask = _vdSys(); if (!ask) { const now = read(); await _vdBack(); return 'nothing asked; ' + (now === v0 ? 'kept' : 'removed at once'); }
     await _vdSysCancel(); const cancel = [read() === v0, vpUndoLen() - n0, !!$('#sys-confirm-overlay')];
-    x().click(); await wait(350); const g = $('#sys-confirm-go'); if (g) g.click(); await wait(400); const del = [read() !== v0, vpUndoLen() - n0];
+    x().click(); await wait(350); const g = $('#sys-confirm-go') || (dlgOpen() ? $('#dlg-confirm') : null); if (g) g.click(); await wait(400); const del = [read() !== v0, vpUndoLen() - n0];
     doUndo(); await wait(400); const undo = read() === v0;
     await _vdBack();
-    return is({ title: ask.title, cancel, del, undo }, { title: 'Delete Destination', cancel: [true, 0, false], del: [true, 1], undo: true }, 'the window / Cancel [kept, steps, window left] / Delete [gone, steps] / Undo');
+    return is({ title: ask.title, cancel, del, undo }, { title: 'Delete ' + (_xs ? _xs.name : '?'), cancel: [true, 0, false], del: [true, 1], undo: true }, 'the window / Cancel [kept, steps, window left] / Delete [gone, steps] / Undo');
   });
   // 16lc-vpfinish VD6: NEW
   await check('Video Presets 16lc-vpfinish VD6 (Omar 2026-10-07: "Older shows: clean up names on open"): a show where P03 calls DSM 1 "P03 MON" and P02 calls CENTER LED "P02 CENTER" opens with DSM 1 and CENTER LED in every preset, no preset keeps a name of its own, no Undo step, the show is clean (no Save light); the Look Book prints only the main names', async () => {
@@ -13600,8 +13618,9 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
   //   by order and nothing is kept or saved ("Nothing may be written into a saved show that r16lj/fix would not write"). The numbers it reads
   //   (the file S1, the order the old build gave, no Undo step, no Save light) are r16lj/fix's and unchanged; it now pins that Save carries
   //   no ioNums.
+  // ADAPTED in 16lo: 16lo-srcorder: a show saved before this build has no kept order either (BASE, made by this build, carries one), so it is taken out too; the numbers it reads are unchanged
   await check('I/O Patch 16lc-vpcards-fix VF1 (main session 2026-10-07: "opening an older show must NOT renumber anything it already shows"): a show saved before this build with a picture file among its sources (first in the library: the old build numbered it S1) opens with the file still S1 and every source on the number it had (the order first seen, as the v0.8.2 candidate numbers it); 16lc-vpcards-fix4: nothing is kept (Save carries no ioNums), no Undo step, no Save light', async () => {
-    await restore(); const st = JSON.parse(BASE); delete st.ioNums;
+    await restore(); const st = JSON.parse(BASE); delete st.ioNums; delete st.srcOrder;
     st.customLibrary = [{ l: 'OLD CLIP', c: '#3a6ea5', kind: 'image', img: null, media: { w: 1920, h: 1080, type: 'image/png' } }].concat(st.customLibrary || []);
     const p0 = st.presets[0]; const s0 = st.screens.find(s => !(s.backdrop)); p0.layers = p0.layers || {}; p0.layers[s0.id] = Object.assign({}, p0.layers[s0.id] || {}); p0.layers[s0.id]['3'] = 'OLD CLIP';
     _applyProjectText(JSON.stringify(st)); await wait(700); okDialogs(); await wait(150);
@@ -13749,7 +13768,8 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
     x.click(); await wait(450); return true;
   };
   // 16lc-vpcards-fix2 VX1: NEW
-  await check('Video Presets 16lc-vpcards-fix2 VX1 (Omar 2026-10-07: "the × next to an imported file in a Video Presets > Simple layer dropdown asks first, with the same confirm as a card\'s trash can"): the × beside a picture in a layer\'s ▾ list opens the window of the trash on the file\'s card (the same title, words and buttons); Cancel changes nothing (no Undo step); Remove takes it out of the whole show (its layer, BG and AUX, the library) in one Undo step; one Undo brings it all back', async () => {
+  // ADAPTED in 16lo: 16lo-delwin (Omar 2026-10-17: "use the same template to answer this question on all sections"): the file's trash and the x ask in the grey delete window, titled Delete <its name>, Video Presets ticked; renamed
+  await check('Video Presets 16lc-vpcards-fix2 VX1 (Omar 2026-10-07: "the × next to an imported file in a Video Presets > Simple layer dropdown asks first, with the same confirm as a card\'s trash can"): the × beside a picture in a layer\'s ▾ list opens the window of the trash on the file\'s card (the same title, words and buttons); Cancel changes nothing (no Undo step); Delete with Video Presets ticked (16lo-delwin) takes it out of its layer, BG and AUX and the library in one Undo step; one Undo brings it all back', async () => {
     const out = {}, want = {};
     try {
       await restore(); await _vvMk();
@@ -13757,7 +13777,7 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
       setL(p.id, s.id, 3, 'VV PIC'); p.bgNames = p.bgNames || {}; p.bgNames[s.id] = 'VV PIC'; p.dsmContent = p.dsmContent || {}; p.dsmContent[d.id] = 'VV PIC'; scheduleRender(); await wait(500);
       const u0 = vpUndoLen(), uses0 = _x2Uses('VV PIC');
       _fsRemoveMediaAsk('VV PIC'); await wait(250); const trash = _x2Win(); _x2Shut(); await wait(300);   /* the window the trash on the file's card opens (its button calls this) */
-      out.trash = [!!trash, trash && trash.title, uses0.length, vpUndoLen() - u0]; want.trash = [true, 'Remove picture', 3, 0];
+      out.trash = [!!trash, trash && trash.title, uses0.length, vpUndoLen() - u0]; want.trash = [true, 'Delete VV PIC', 3, 0];
       out.x = await _x2X(p.id, s.id, 3, 'VV PIC'); want.x = true;
       out.win = _x2Win(); want.win = trash;
       out.asked = [_x2Item('VV PIC'), _x2Uses('VV PIC').length, vpUndoLen() - u0, !!$('#layer-panel')]; want.asked = ['image', 3, 0, false];
@@ -13811,10 +13831,11 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
   const _vhSaved = () => { const k = _AUTO_SAVE_KEY; let prev = null; try { prev = localStorage.getItem(k); } catch (e) {} let draft = null; try { _writeAutoSaveNow(); draft = JSON.parse(localStorage.getItem(k) || 'null'); } catch (e) {} try { if (prev === null) localStorage.removeItem(k); else localStorage.setItem(k, prev); } catch (e) {}
     return [Object.prototype.hasOwnProperty.call(getProjectState(), 'ioNums'), !!draft && Object.prototype.hasOwnProperty.call(draft, 'ioNums')]; };
   // 16lc-vpcards-fix4 VH1: NEW
-  await check('I/O Patch 16lc-vpcards-fix4 VH1 (SPEC H1: numbers "by order on every page", "imported files numbered exactly where r16lj/fix numbers them"; "Nothing may be written into a saved show that r16lj/fix would not write"): in a show whose library is VH ONE, whose P01 uses VH TWO and VH THREE and whose I/O Patch made VH IO, two pictures imported take their places in the order first seen, right after the library (S2 / S3), and VH TWO, VH THREE, VH IO each take the next number (S4-S6), on the I/O Patch, Wire and Video Presets cards (Wire lists the ones it shows with the same numbers); Save and the browser draft carry no ioNums', async () => {
+  // ADAPTED in 16lo: 16lo-srcorder (Omar 2026-10-17: "a layer is created a source is created in the order its created in S#"): files imported after the show opened take the next numbers at the end; renamed
+  await check('I/O Patch 16lc-vpcards-fix4 VH1 (SPEC H1: numbers "by order on every page", "imported files numbered exactly where r16lj/fix numbers them"; "Nothing may be written into a saved show that r16lj/fix would not write"): in a show whose library is VH ONE, whose P01 uses VH TWO and VH THREE and whose I/O Patch made VH IO, two pictures imported after it opened go at the end (16lo-srcorder, Omar 2026-10-17: "a source is created in the order its created in S#"): VH ONE S1, VH TWO S2, VH THREE S3, VH IO S4, the pictures S5 / S6, on the I/O Patch, Wire and Video Presets cards (Wire lists the ones it shows with the same numbers); Save and the browser draft carry no ioNums', async () => {
     const out = {}, want = {};
     try {
-      await restore(); const st = JSON.parse(BASE); delete st.ioNums; delete st.ioAdvanced; if (st.wireSettings) delete st.wireSettings.simple;
+      await restore(); const st = JSON.parse(BASE); delete st.ioNums; delete st.srcOrder; delete st.ioAdvanced; if (st.wireSettings) delete st.wireSettings.simple;
       st.customLibrary = [{ l: 'VH ONE', c: '#3a6ea5' }];
       st.presets.forEach(p => { p.layers = {}; p.bgNames = {}; p.dsmContent = {}; });
       const s0 = st.screens.find(s => !(s.backdrop)); st.presets[0].layers[s0.id] = { '1': 'VH TWO', '2': 'VH THREE' };
@@ -13823,11 +13844,11 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
       const m0 = customLibrary.filter(c => c && c.kind).length;
       await _fsImportFiles([await _vdPng('vh pic a.png', '#3a6ea5'), await _vdPng('vh pic b.png', '#a53a6e')]);
       for (let i = 0; i < 40 && customLibrary.filter(c => c && c.kind).length < m0 + 2; i++) await wait(150);
-      const all = ['VH ONE=S1', 'VH PIC A=S2', 'VH PIC B=S3', 'VH TWO=S4', 'VH THREE=S5', 'VH IO=S6'];
+      const all = ['VH ONE=S1', 'VH TWO=S2', 'VH THREE=S3', 'VH IO=S4', 'VH PIC A=S5', 'VH PIC B=S6'];
       out.order = _vhOrder(); want.order = all;
       await ioOpenSimple(); out.io = _vhCards('#io-grid'); closeSystem(); await wait(250); want.io = all;
       openWireMode(); await wait(700); out.wire = _vhCards('#wire-panel-left'); try { closeWireMode(); } catch (e) {} await wait(250); want.wire = all.slice(1);   /* Wire lists no library name that nothing uses (VH ONE), as before; the numbers are the I/O Patch's */
-      await _vcAdv(); out.vp = _vhCards('#fs-left-panel'); try { closeFullscreen(); } catch (e) {} await wait(250); want.vp = ['VH ONE=S1', 'VH TWO=S4', 'VH THREE=S5', 'VH IO=S6'];   /* the pictures are on the Video tab */
+      await _vcAdv(); out.vp = _vhCards('#fs-left-panel'); try { closeFullscreen(); } catch (e) {} await wait(250); want.vp = ['VH ONE=S1', 'VH TWO=S2', 'VH THREE=S3', 'VH IO=S4'];   /* the pictures are on the Video tab */
       out.saved = _vhSaved(); want.saved = [false, false];
     } catch (e) { return 'threw: ' + e.message; }
     finally { await _vdBack(); }
@@ -13859,10 +13880,11 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
     return is(out, want, '[kinds, every number shown, problems] and a click on a number [a typing box, a window, Undo steps, the number kept] on the I/O Patch / Wire Simple / Wire Advanced / Video Presets > Advanced');
   });
   // 16lc-vpcards-fix4 VH3: NEW (REPLACES 16lc-vpcards-fix3 VG1, removed: it pinned the numbers written at open and the B made at open)
-  await check('I/O Patch 16lc-vpcards-fix4 VH3 (SPEC H1: "Opening any show gives the same numbers as r16lj/fix"): a show saved before 16lc-vpcards-fix whose GFX A has no saved GFX B, with a show source the library lacks, opens as the v0.8.2 candidate opens it: nothing is written (no ioNums, no B yet, no Undo step, no Save light), the numbers are the order first seen (Wire Simple\'s router in that order before any I/O Patch visit); the I/O Patch draw then makes GFX B right under GFX A and files that source after the library\'s own names, exactly the v0.8.2 numbers (VJ ONE S1, VJ ORPHAN S2, GFX A S3, GFX B S4, VJ TWO S5, VJ THREE S6) on the I/O Patch, Video Presets and the Look Book, with no Undo step and no Save light', async () => {
+  // ADAPTED in 16lo: 16lo-srcorder / 16lo-nopairs (SPEC rule 6 "No automatic pairs"; Omar 2026-10-17: "when the user pick primary and back up the source numbers stay the same"): the I/O Patch draw no longer renumbers (its library filing moves no number) and makes no GFX B; renamed
+  await check('I/O Patch 16lc-vpcards-fix4 VH3 (SPEC H1: "Opening any show gives the same numbers as r16lj/fix"): a show saved before 16lc-vpcards-fix whose GFX A has no saved GFX B, with a show source the library lacks, opens as the v0.8.2 candidate opens it: nothing is written (no ioNums, no B, no Undo step, no Save light), the numbers are the order first seen (Wire Simple\'s router in that order before any I/O Patch visit); 16lo-srcorder / 16lo-nopairs: the I/O Patch draw then makes no GFX B and moves no number (VJ ONE S1, GFX A S2, VJ TWO S3, VJ THREE S4, VJ ORPHAN S5) on the I/O Patch, Video Presets and the Look Book, with no Undo step and no Save light', async () => {
     const out = {}, want = {};
     try {
-      await restore(); const st = JSON.parse(BASE); delete st.ioNums; delete st.ioAdvanced; if (st.wireSettings) delete st.wireSettings.simple;
+      await restore(); const st = JSON.parse(BASE); delete st.ioNums; delete st.srcOrder; delete st.ioAdvanced; if (st.wireSettings) delete st.wireSettings.simple;
       st.customLibrary = [{ l: 'VJ ONE', c: '#3a6ea5' }];
       st.presets.forEach(p => { p.layers = {}; p.bgNames = {}; p.dsmContent = {}; });
       const s0 = st.screens.find(s => !(s.backdrop)); st.presets[0].layers[s0.id] = { '1': 'GFX A', '2': 'VJ TWO', '3': 'VJ THREE', '4': 'VJ ONE' };
@@ -13872,43 +13894,44 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
       out.first = _vhOrder(); want.first = ['VJ ONE=S1', 'GFX A=S2', 'VJ TWO=S3', 'VJ THREE=S4', 'VJ ORPHAN=S5'];
       out.router = _slbState().ins.filter(Boolean); want.router = ['src:VJ ONE', 'src:GFX A', 'src:VJ TWO', 'src:VJ THREE', 'src:VJ ORPHAN'];
       await ioOpenSimple(); out.io = _vhCards('#io-grid'); closeSystem(); await wait(250);
-      const exp = ['VJ ONE=S1', 'VJ ORPHAN=S2', 'GFX A=S3', 'GFX B=S4', 'VJ TWO=S5', 'VJ THREE=S6']; want.io = exp;
-      out.after = [vpUndoLen(), !!$('.save-dirty'), !!sources.find(x => x && x.name === 'GFX B' && x.autoB === 'GFX A'), _vhSaved()[0]]; want.after = [0, false, true, false];
+      const exp = ['VJ ONE=S1', 'GFX A=S2', 'VJ TWO=S3', 'VJ THREE=S4', 'VJ ORPHAN=S5']; want.io = exp;
+      out.after = [vpUndoLen(), !!$('.save-dirty'), !!sources.find(x => x && x.name === 'GFX B' && x.autoB === 'GFX A'), _vhSaved()[0]]; want.after = [0, false, false, false];
       await _vcAdv(); out.vp = _vhCards('#fs-left-panel').filter(x => /^(GFX [AB]|VJ ORPHAN)=/.test(x)); try { closeFullscreen(); } catch (e) {} await wait(250);
-      want.vp = ['VJ ORPHAN=S2', 'GFX A=S3', 'GFX B=S4'];
-      const lb = _vfLbSlots(await userLookBook()); out.lb = [lb['VJ ONE'], lb['VJ ORPHAN'], lb['GFX A'], lb['VJ TWO']]; want.lb = ['Source 1', 'Source 2', 'Source 3', 'Source 5'];
+      want.vp = ['GFX A=S2', 'VJ ORPHAN=S5'];
+      const lb = _vfLbSlots(await userLookBook()); out.lb = [lb['VJ ONE'], lb['VJ ORPHAN'], lb['GFX A'], lb['VJ TWO']]; want.lb = ['Source 1', 'Source 5', 'Source 2', 'Source 3'];
     } catch (e) { return 'threw: ' + e.message; }
     finally { await _vfBack(); }
     return is(out, want, '[Undo steps, Save lit, GFX B made, Save carries ioNums] at open / the numbers at open / Wire Simple\'s router inputs before the I/O Patch / the I/O Patch cards / [Undo steps, Save lit, GFX B made by the draw, Save carries ioNums] after the I/O Patch draw / Video Presets\' cards / the Look Book\'s I/O Reference');
   });
   // 16lc-vpcards-fix4 VH4: NEW (REPLACES 16lc-vpcards-fix3 VG2, removed: it pinned the B at the next free number after the files)
-  await check('I/O Patch 16lc-vpcards-fix4 VH4 (SPEC H1: "an auto PBP B / GFX B right under its A"): with three files imported (numbered where the order puts them, right after the library), a source renamed GFX A gets its GFX B on the next I/O Patch draw right under GFX A (its number + 1) and every source after GFX A, the files included, takes the next number, as in the v0.8.2 candidate; the draw adds no Undo step and nothing is kept; page 1 rebuilt from Simple puts GFX B right under GFX A as its backup, its type reads Backup of GFX A, and Wire Advanced\'s tile built from page 1 lists it right after GFX A', async () => {
+  // ADAPTED in 16lo: 16lo-nopairs / 16lo-srcorder (SPEC rules 1 and 6): no automatic GFX B, so nothing moves under GFX A and no backup is made; files imported after the show opened are numbered last; renamed
+  await check('I/O Patch 16lc-vpcards-fix4 VH4 (SPEC rule 6 "No automatic pairs"; Omar 2026-10-17: "a source is created in the order its created in S#"): with three files imported after the show opened (the last three numbers), a source renamed GFX A keeps its number and gets no GFX B on the next I/O Patch draw, and no number moves; the draw adds no Undo step and nothing is kept; page 1 rebuilt from Simple has GFX A and no GFX B (no backup made), and Wire Advanced\'s tile built from page 1 lists GFX A and no GFX B', async () => {
     const out = {}, want = {};
     try {
       await restore(); await _vvMk(); await wait(200);
       const o0 = _srcNameOrder().slice(), m0 = {}; o0.forEach((n, i) => { m0[n] = i + 1; });
       const media = new Set(customLibrary.filter(c => c && c.kind).map(c => c.l)), a0 = o0.find(n => !media.has(n) && !/^(PBP|GFX)\s+[AB]$/i.test(n)), nA = m0[a0];
-      out.files = o0.filter(n => media.has(n)).map(n => m0[n] < o0.length - 1); want.files = [true, true, true];   /* the files are not after every source */
+      out.files = o0.filter(n => media.has(n)).map(n => m0[n]); want.files = [o0.length - 2, o0.length - 1, o0.length];   /* 16lo-srcorder: made last, numbered last */
       _sysHandleSourceRename(a0, 'GFX A', null); await wait(300); const u0 = vpUndoLen();
       await ioOpenSimple(); await wait(200); closeSystem(); await wait(250);
       const o1 = _srcNameOrder(), m1 = {}; o1.forEach((n, i) => { m1[n] = i + 1; });
-      out.b = [m1['GFX A'], m1['GFX B'], !!sources.find(x => x && x.name === 'GFX B' && x.autoB === 'GFX A')]; want.b = [nA, nA + 1, true];
-      out.moved = o0.filter(n => n !== a0).filter(n => m1[n] !== (m0[n] > nA ? m0[n] + 1 : m0[n])).map(n => n + ' ' + m0[n] + '->' + m1[n]); want.moved = [];
+      out.b = [m1['GFX A'], o1.length - o0.length, !!sources.find(x => x && x.name === 'GFX B')]; want.b = [nA, 0, false];
+      out.moved = o0.filter(n => n !== a0).filter(n => m1[n] !== m0[n]).map(n => n + ' ' + m0[n] + '->' + m1[n]); want.moved = [];
       out.steps = vpUndoLen() - u0; want.steps = 0;
       out.kept = _vhSaved()[0]; want.kept = false;
       openSystem(); await wait(400); _ioSetView('advanced'); await wait(700); okDialogs(); await wait(400);   /* page 1: Rebuild from Simple, as the question offers */
       const rows = (ioAdvanced.pages[0].sources || []).filter(r => r && r.name), ia = rows.findIndex(r => r.name === 'GFX A'), ib = rows.findIndex(r => r.name === 'GFX B');
-      out.page1 = [ia >= 0, ib === ia + 1, !!(rows[ib] && rows[ia] && rows[ib].backupOf === rows[ia].id)]; want.page1 = [true, true, true];
-      out.type = _ioBkTypeText('GFX B', '').indexOf('Backup of GFX A') >= 0; want.type = true;
+      out.page1 = [ia >= 0, ib >= 0, !!(rows[ia] && rows.some(r => r && r.backupOf === rows[ia].id))]; want.page1 = [true, false, false];
+      out.type = _ioBkTypeText('GFX B', '').indexOf('Backup of GFX A') >= 0; want.type = false;
       _ioSetView('simple'); await wait(300); closeSystem(); await wait(200);
       openWireMode(); await wait(700); if (!(wireSettings && wireSettings.wireView === 'advanced')) { _wireSwitchToAdvanced(); await wait(700); } okDialogs(); await wait(300);
       const n0 = (wireAdvanced.routers || []).length; _wireAdvAddPatchTile(0); await wait(400);
       const t = (wireAdvanced.routers || [])[n0], ins = t ? (t.inputs || []).map(i => i.name) : [];
-      out.tile = [!!t, ins.indexOf('GFX B') === ins.indexOf('GFX A') + 1 && ins.indexOf('GFX A') >= 0]; want.tile = [true, true];
+      out.tile = [!!t, ins.indexOf('GFX A') >= 0, ins.indexOf('GFX B') < 0]; want.tile = [true, true, true];
       try { closeWireMode(); } catch (e) {}
     } catch (e) { return 'threw: ' + e.message; }
     finally { await _vvBack(); }
-    return is(out, want, 'files [not after every source] / [GFX A\'s number, GFX B\'s number, made] / numbers not as the order gives them / Undo steps of the draw / Save carries ioNums / [page 1: GFX A there, GFX B right under it, its backup] / Backup of GFX A / [the page tile made, GFX B right after GFX A]');
+    return is(out, want, 'the files\' numbers / [GFX A\'s number, sources added by the draw, a GFX B made] / numbers that moved / Undo steps of the draw / Save carries ioNums / [page 1: GFX A there, a GFX B row, a backup of GFX A] / Backup of GFX A / [the page tile made, GFX A on it, no GFX B]');
   });
   // ── 16lg-blend (r16lo SPEC rules 1-9; Omar 2026-10-07 / 08: "when doing blends the combined screen should allow layers to move between
   //    both screen ... the first destination now becomes the master the second one should grey out on the bottom excel sheet ... BG
@@ -15580,35 +15603,45 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
     return is(out, want, 'opened again [version, destination notes] / prints [cue sheet: preset note, Look Book: preset note, Look Book: destination note, I/O Excel: destination note] / an older file [destination notes]');
   });
   // 16ln-modalkeys MK1: NEW
-  await check('Wire 16ln-modalkeys MK1 (the full test\'s major 2, Omar 2026-10-17 "yes, build it"): an older question window takes the keyboard: the card trash\'s Delete Source question opens with the focus on Delete; Backspace and Cmd+Z reach nothing behind it (the picked Wire tile stays, no Undo step); Enter from the trash behind goes to the window and stacks no second one, nor does a second open; Escape cancels it; its Delete answers it once; the Remove Source picker takes the focus too and Backspace reaches nothing behind it', async () => {
+  // ADAPTED in 16lo: 16lo-delwin (SPEC rule 8, "Every trash on a source / destination / AUX card opens the delete window"): the card trash now asks in the grey Delete window (the one dialog), so the older-window keyboard rules are checked on the same card's Reset question, still an older window; the grey window's own keys are checked after it; renamed
+  await check('Wire 16ln-modalkeys MK1 (the full test\'s major 2, Omar 2026-10-17 "yes, build it"): an older question window takes the keyboard: the card\'s Reset question opens with the focus on Reset; Backspace and Cmd+Z reach nothing behind it (the picked Wire tile stays, no Undo step); Enter from the Reset button behind goes to the window and stacks no second one, nor does a second open; Escape cancels it; its Reset answers it once; the Remove Source picker takes the focus too and Backspace reaches nothing behind it; the card trash\'s grey Delete window (16lo-delwin) opens with the focus on Delete, Backspace and Cmd+Z reach nothing behind it, and Escape cancels it', async () => {
     const out = {}, want = {};
     try {
       await _lbOpen();
       const key = (t, k, o) => { const ev = new KeyboardEvent('keydown', Object.assign({ key: k, bubbles: true, cancelable: true }, o || {})); t.dispatchEvent(ev); return ev.defaultPrevented; };
       const off = () => JSON.stringify(((_slbM() || {}).off) || []);
+      const meta = () => { const m = _sysGetSourceMeta('CAM 1') || {}; return (m.connectorType || '') + '|' + (m.resolution || ''); };
+      const btn = a => { const c = $$('#wire-panel-left .iog-card').find(x => (($('.sys-name-input', x) || {}).value || '') === 'CAM 1'); return c && $('.sys-icon-btn[data-sys-action="' + a + '"]', c); };   /* found again after each draw */
       _wireState.selectedNodes.clear(); _wireState.selectedNodes.add('src:CAM 2'); _wireState.selectedEdgeKey = null;
-      const off0 = off(), u0 = vpUndoLen(), n0 = _srcNameOrder().length;
-      const card = $$('#wire-panel-left .iog-card').find(c => (($('.sys-name-input', c) || {}).value || '') === 'CAM 1'), trash = card && $('.sys-icon-btn[data-sys-action="delete"]', card);
-      if (!trash) return 'no trash on the CAM 1 card';
-      trash.click(); await wait(150);
+      const off0 = off(), u0 = vpUndoLen(), m0 = meta();
+      const reset = btn('reset'); if (!reset || !btn('delete')) return 'no Reset / trash on the CAM 1 card';
+      out.meta = m0 !== '|'; want.meta = true;   /* CAM 1 has a cable type or a resolution to reset */
+      reset.click(); await wait(150);
       out.opened = [$$('.sys-modal-overlay').length, (document.activeElement || {}).id || '']; want.opened = [1, 'sys-confirm-go'];
       key(document.body, 'Backspace'); key(document.activeElement, 'Backspace'); key(document.body, 'z', { metaKey: true }); await wait(150);
       out.behind = [$$('.sys-modal-overlay').length, off() === off0, vpUndoLen() - u0]; want.behind = [1, true, 0];
-      trash.focus(); const prevented = key(trash, 'Enter'); await wait(100);
+      reset.focus(); const prevented = key(reset, 'Enter'); await wait(100);
       out.enterBehind = [prevented, $$('.sys-modal-overlay').length, (document.activeElement || {}).id || '']; want.enterBehind = [true, 1, 'sys-confirm-go'];
-      _sysRowDelete('src', 'CAM 1'); await wait(100); out.second = $$('.sys-modal-overlay').length; want.second = 1;
+      _sysRowReset('src', 'CAM 1'); await wait(100); out.second = $$('.sys-modal-overlay').length; want.second = 1;
       key(document.activeElement, 'Escape'); await wait(150);
-      out.esc = [$$('.sys-modal-overlay').length, _srcNameOrder().length === n0, vpUndoLen() - u0]; want.esc = [0, true, 0];
-      trash.click(); await wait(150); const go = $('#sys-confirm-go'); if (go) go.click(); await wait(300);
-      out.answer = [$$('.sys-modal-overlay').length, _srcNameOrder().includes('CAM 1'), vpUndoLen() - u0]; want.answer = [0, false, 1];
+      out.esc = [$$('.sys-modal-overlay').length, meta() === m0, vpUndoLen() - u0]; want.esc = [0, true, 0];
+      const reset2 = btn('reset'); if (reset2) reset2.click(); await wait(150); const go = $('#sys-confirm-go'); if (go) go.click(); await wait(300);
+      out.answer = [$$('.sys-modal-overlay').length, meta(), vpUndoLen() - u0]; want.answer = [0, '|', 1];
       doUndo(); await wait(300);
+      const u1 = vpUndoLen(), n1 = _srcNameOrder().length, off1 = off(), tr = btn('delete'); if (!tr) return 'no trash on the CAM 1 card after Undo';
+      tr.click(); await wait(200);
+      out.grey = [dlgOpen(), (document.activeElement || {}).id || '', $$('.sys-modal-overlay').length]; want.grey = [true, 'dlg-confirm', 0];
+      key(document.body, 'Backspace'); key(document.activeElement, 'Backspace'); key(document.body, 'z', { metaKey: true }); await wait(150);
+      out.greyBehind = [dlgOpen(), off() === off1, vpUndoLen() - u1]; want.greyBehind = [true, true, 0];
+      key(document.activeElement, 'Escape'); await wait(250);
+      out.greyEsc = [dlgOpen(), _srcNameOrder().length === n1, off() === off1, vpUndoLen() - u1]; want.greyEsc = [false, true, true, 0];
       _sysOpenRemoveSourceModal(); await wait(150);
       const pk = $('.sys-modal-overlay'); out.picker = [!!pk, !!(pk && pk.contains(document.activeElement))];
       key(document.body, 'Backspace'); await wait(100); out.picker.push(off() === off0, $$('.sys-modal-overlay').length);
       want.picker = [true, true, true, 1];
     } catch (e) { return 'threw: ' + e.message; }
-    finally { $$('.sys-modal-overlay').forEach(o => o.remove()); try { _sysCloseConfirmModal(false); } catch (e) {} try { closeWireMode(); } catch (e) {} await restore(); }
-    return is(out, want, 'opened [windows, focus] / behind [windows, the picked tile kept, Undo steps] / Enter from the trash [prevented, windows, focus] / a second open [windows] / Escape [windows, sources kept, steps] / Delete [windows, CAM 1 there, steps] / the picker [open, focus inside, tile kept, windows]');
+    finally { $$('.sys-modal-overlay').forEach(o => o.remove()); try { _sysCloseConfirmModal(false); } catch (e) {} okDialogs(); try { closeWireMode(); } catch (e) {} await restore(); }
+    return is(out, want, 'CAM 1 has something to reset / opened [windows, focus] / behind [windows, the picked tile kept, Undo steps] / Enter from the Reset button [prevented, windows, focus] / a second open [windows] / Escape [windows, cable type and resolution kept, steps] / Reset [windows, cable type | resolution, steps] / the grey Delete window [open, focus, older windows] / behind it [open, the picked tile kept, steps] / its Escape [open, sources kept, the picked tile kept, steps] / the picker [open, focus inside, tile kept, windows]');
   });
   // 16ln-bgown BG1: NEW
   await check('Video Presets 16ln-bgown BG1 (the full test\'s major 3, Omar 2026-10-17): a SOURCE background on P01 (CAM 1 on LEFT LED) is drawn on a later preset only when its background name is P01\'s: P02 with a name of its own (PGM) keeps PGM and draws no CAM 1 box (as the table and the Excel say); P03 with no name of its own follows P01\'s box as before', async () => {
@@ -15738,6 +15771,216 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
     } catch (e) { return 'threw: ' + e.message; }
     finally { okDialogs(); try { closeScreenPanel(); } catch (e) {} try { closeModal(); } catch (e) {} doSelect(null, null); await restore(); }
     return is(out, want, 'the Height box [its max, the pill before] / 5000 [note, window open, height, Undo steps, warning, approved, the pill] / 8000 [note, window open, the box, height, steps] / the Down arrow from 4320 [height] / Add Destination [its Height box max] / 1920 x 6000 [destinations added, width, height]');
+  });
+  // ── Round 16lo: the sources rules (Omar 2026-10-17, backups/rounds/sources-names/SPEC.md) ──
+  const _loWin = () => { if (!dlgOpen()) return null; const t = {}; $$('#dlg-box .dlg-ticks input[data-tick]').forEach(i => { t[i.dataset.tick] = i.checked; }); return { title: ($('#dlg-box h3') || {}).textContent || '', msg: ($('#dlg-box .dlg-body') || {}).textContent || '', ticks: [t.all, t.vp, t.io, t.wire], note: ($('#dlg-box .dlg-tick-note') || {}).textContent || '', grey: $('#dlg-box').classList.contains('v-grey'), off: !!($('#dlg-confirm') || {}).disabled }; };
+  const _loTick = (k, on) => { const i = $('#dlg-box .dlg-ticks input[data-tick="' + k + '"]'); if (i && i.checked !== on) i.click(); };
+  const _loIO = async () => { openSystem(); await wait(700); okDialogs(); _ioSetView('simple'); await wait(400); };
+  const _loIoCard = nm => $$('#io-grid [data-iog-sec="src"] .iog-card').find(c => (($('.sys-name-input', c) || {}).value || '') === nm);
+  const _loXlNames = async () => { const b = await ioBook(); return b ? Object.keys(b.parts).filter(k => /^xl\/(worksheets\/sheet\d+|sharedStrings)\.xml$/.test(k)).map(k => b.parts[k]).join(' ') : ''; };
+  // 16lo-srcorder SO1: NEW
+  await check('I/O Patch 16lo-srcorder SO1 (the sources rules, Omar 2026-10-17: "a layer is created a source is created in the order its created in S# ... when the user pick primary and back up the source numbers stay the same"): a show opens with the numbers it showed before; a source renamed in its I/O card keeps its number (PPT B, S2, renamed: still S2, CAM 1 still S3); a new source goes at the end; Undo puts the name and numbers back; a saved and reopened show keeps the order', async () => {
+    const out = {}, want = {};
+    try {
+      const o0 = _srcNameOrderRaw().slice(); out.open = o0.slice(0, 4); want.open = ['PPT A', 'PPT B', 'CAM 1', 'CAM 2'];
+      await _loIO(); const u0 = vpUndoLen();
+      const card = _loIoCard('PPT B'), box = card && $('.sys-name-input', card); if (!box) return 'no PPT B name box';
+      box.focus(); box.select(); document.execCommand('insertText', false, 'SLIDES 2'); box.blur(); await wait(400); okDialogs(); await wait(200);
+      out.renamed = [_lbnSrcNo('SLIDES 2'), _lbnSrcNo('CAM 1'), _srcNameOrderRaw().length === o0.length, vpUndoLen() - u0]; want.renamed = [2, 3, true, 1];
+      try { closeSystem(); } catch (e) {} await wait(200);
+      pushUndo(); setL(presets[0].id, screens[0].id, 4, 'MADE LAST'); scheduleRender(); await wait(300);
+      out.made = [_lbnSrcNo('MADE LAST'), _srcNameOrderRaw().length]; want.made = [o0.length + 1, o0.length + 1];
+      const st = JSON.parse(JSON.stringify(getProjectState())); _applyProjectText(JSON.stringify(st)); await wait(700); okDialogs();
+      out.reopened = [_lbnSrcNo('SLIDES 2'), _lbnSrcNo('MADE LAST'), JSON.stringify(st.srcOrder) === JSON.stringify(_srcNameOrderRaw())]; want.reopened = [2, o0.length + 1, true];
+      doUndo(); await wait(300);
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { okDialogs(); try { closeSystem(); } catch (e) {} await restore(); }
+    out.undoAll = _srcNameOrderRaw().slice(0, 3); want.undoAll = ['PPT A', 'PPT B', 'CAM 1'];
+    return is(out, want, 'at open [S1-S4] / renamed in its card [S of the new name, CAM 1, as many sources, Undo steps] / a new source [its S, how many] / saved and reopened [renamed S, new S, the order kept] / after restore [S1-S3]');
+  });
+  // 16lo-srcorder SO2: NEW
+  await check('I/O Patch 16lo-srcorder SO2 (SPEC rule 4, "Older shows keep the numbers they show today"): a show saved by an older build (no kept order) opens with the numbers it showed: an app-made PBP B kept at the end of the patch sits right under PBP A as before (16jh); a source made after that goes at the end and the B stays where it is; nothing lights Save at open', async () => {
+    const out = {}, want = {};
+    try {
+      const st = JSON.parse(BASE); delete st.srcOrder;
+      const p = st.presets[0], s = st.screens[0]; p.layers = p.layers || {}; p.layers[s.id] = Object.assign({}, p.layers[s.id] || {}, { 4: 'PBP A' });
+      st.sources = (st.sources || []).concat([{ name: 'PBP B', ioOnly: true, autoB: 'PBP A', notes: 'Backup of PBP A' }]);
+      _applyProjectText(JSON.stringify(st)); await wait(700); okDialogs();
+      const o = _srcNameOrderRaw(); out.open = [o.indexOf('PBP B') - o.indexOf('PBP A'), _kySaveLit()]; want.open = [1, false];
+      pushUndo(); setL(presets[0].id, screens[0].id, 3, 'MADE AFTER'); scheduleRender(); await wait(300);
+      const o2 = _srcNameOrderRaw(); out.after = [o2.indexOf('PBP B') - o2.indexOf('PBP A'), o2[o2.length - 1]]; want.after = [1, 'MADE AFTER'];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { okDialogs(); await restore(); }
+    return is(out, want, 'opened [PBP B after PBP A, Save lit] / a source made after [PBP B after PBP A, the last source]');
+  });
+  // 16lo-nopairs NP1: NEW
+  await check('I/O Patch 16lo-nopairs NP1 (SPEC rule 6: "No automatic pairs: typing PBP A / GFX A makes no B; names ending A / B do not pair by themselves"; Omar 2026-10-17: "only have the user make the primary and back up option but source numbers stay the same"): PBP A on a layer brings no PBP B on the I/O Patch, Simple or Advanced page 1; the Backup window does not pair "LOGO A" / "LOGO B" rows by itself', async () => {
+    const out = {}, want = {};
+    try {
+      pushUndo(); setL(presets[0].id, screens[0].id, 4, 'PBP A'); setL(presets[0].id, screens[1].id, 4, 'LOGO A'); setL(presets[0].id, screens[2].id, 4, 'LOGO B'); scheduleRender(); await wait(300);
+      await _loIO(); await wait(300);
+      out.simple = _sysDiscoverSources().filter(n => /^PBP B$/i.test(n)).length; want.simple = 0;
+      _ioSetView('advanced'); await wait(700); okDialogs(); await wait(300);
+      const rows = ((ioAdvanced.pages || [])[0] || {}).sources || [];
+      out.page1 = [rows.some(r => /^PBP B$/i.test(r.name || '')), rows.some(r => r && r.backupOf)]; want.page1 = [false, false];
+      const a = rows.find(r => r.name === 'LOGO A'); if (a) { _ioBackupOpen(a.id); await wait(300); }
+      out.window = [!!$('#sys-bk-overlay'), rows.some(r => r && r.backupOf)]; want.window = [true, false];
+      try { _ioBackupClose(); } catch (e) {}
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { okDialogs(); try { _ioBackupClose(); } catch (e) {} try { _ioSetView('simple'); } catch (e) {} try { closeSystem(); } catch (e) {} await restore(); }
+    return is(out, want, 'Simple [PBP B made] / Advanced page 1 [a PBP B row, any pair] / the Backup window [open, any pair]');
+  });
+  // 16lo-delwin DW1: NEW
+  await check('I/O Patch 16lo-delwin DW1 (the sources rules, Omar 2026-10-17: "provide the option when someone tried to delete a source file Video Preset, I.O patch, wire just make a check box option", "Only the page you\'re on", "grey for the delete window"): the I/O card trash of CAM 1 asks in the grey window with I/O Patch ticked; I/O Patch alone takes it off the patch (no card, no I/O Excel row) while Video Presets keeps it and it keeps S3, one Undo step; + Add source lists it and puts it back with S3', async () => {
+    const out = {}, want = {};
+    try {
+      await _loIO(); const u0 = vpUndoLen();
+      const card = _loIoCard('CAM 1'), bin = card && $('.sys-icon-btn[data-sys-action="delete"]', card); if (!bin) return 'no trash on the CAM 1 card';
+      bin.click(); await wait(250);
+      out.win = _loWin(); want.win = { title: 'Delete CAM 1', msg: 'Take CAM 1 (S3) off:', ticks: [false, false, true, false], note: 'CAM 1 stays in Video Presets and Wire and keeps S3. + Add source on the I/O Patch puts it back.', grey: true, off: false };
+      $('#dlg-confirm').click(); await wait(400);
+      const xl = await _loXlNames();
+      out.off = [!!_loIoCard('CAM 1'), _lbvInPresets('CAM 1'), _lbnSrcNo('CAM 1'), xl.indexOf('CAM 1') >= 0, xl.indexOf('CAM 2') >= 0, vpUndoLen() - u0]; want.off = [false, true, 3, false, true, 1];
+      const add = $('#io-grid .iog-add[data-iog-add="src"]'); if (!add) return 'no + Add source card'; add.click(); await wait(250);
+      out.menu = $$('.sys-dd .sys-dd-item, .sys-dd .sys-dd-group').map(e => e.textContent.trim()); want.menu = ['New source', 'Not on the I/O Patch', 'CAM 1 (S3)'];
+      const item = $$('.sys-dd .sys-dd-item').find(e => e.textContent.indexOf('CAM 1') >= 0); if (item) item.click(); await wait(400);
+      out.back = [!!_loIoCard('CAM 1'), _lbnSrcNo('CAM 1'), vpUndoLen() - u0]; want.back = [true, 3, 2];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { okDialogs(); try { _sysCloseMenu(); } catch (e) {} try { closeSystem(); } catch (e) {} await restore(); }
+    return is(out, want, 'the window / off the patch [card, in a preset, S, in the I/O Excel, CAM 2 in it, Undo steps] / + Add source [its list] / put back [card, S, steps]');
+  });
+  // 16lo-delwin DW2: NEW
+  await check('I/O Patch 16lo-delwin DW2 (SPEC rule 2, "When it is gone from every page, the ones after it move up one"): Everywhere on CAM 1\'s trash ticks all three, the note says CAM 2 becomes S3; Delete takes CAM 1 out of the show (its layers, its page-1 row) and CAM 2 is S3, one Undo step; Undo brings CAM 1 back as S3 and CAM 2 as S4; Cancel changes nothing', async () => {
+    const out = {}, want = {};
+    try {
+      await _loIO(); _ioSetView('advanced'); await wait(600); okDialogs(); _ioSetView('simple'); await wait(400);
+      const u0 = vpUndoLen(); _sysRowDelete('src', 'CAM 1'); await wait(250); $('#dlg-cancel').click(); await wait(250);
+      out.cancel = [dlgOpen(), _lbnSrcNo('CAM 1'), vpUndoLen() - u0]; want.cancel = [false, 3, 0];
+      _sysRowDelete('src', 'CAM 1'); await wait(250); _loTick('all', true); await wait(50);
+      const w = _loWin(); out.win = [w.ticks, w.note]; want.win = [[true, true, true, true], 'CAM 1 leaves the show. CAM 2 becomes S3 and every source after it moves up one.'];
+      $('#dlg-confirm').click(); await wait(400);
+      const rows = ((ioAdvanced.pages || [])[0] || {}).sources || [];
+      out.gone = [_srcNameOrderRaw().includes('CAM 1'), _lbvInPresets('CAM 1'), rows.some(r => r && r.name === 'CAM 1'), _lbnSrcNo('CAM 2'), vpUndoLen() - u0]; want.gone = [false, false, false, 3, 1];
+      doUndo(); await wait(400); out.undo = [_lbnSrcNo('CAM 1'), _lbnSrcNo('CAM 2')]; want.undo = [3, 4];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { okDialogs(); try { closeSystem(); } catch (e) {} await restore(); }
+    return is(out, want, 'Cancel [window open, CAM 1 S, steps] / Everywhere [ticks, note] / after Delete [in the show, in a preset, page-1 row, CAM 2 S, steps] / Undo [CAM 1, CAM 2]');
+  });
+  // 16lo-delwin DW3: NEW
+  await check('Video Presets 16lo-delwin DW3 (SPEC rule 8: "Video Presets: every preset\'s layers, backgrounds and AUX boxes (a source stays on the I/O Patch as I/O-only)"): the trash of a source card on Video Presets > Advanced asks with Video Presets ticked; Video Presets alone empties every layer, background and AUX box that used PPT A and keeps it on the I/O Patch as an I/O-only source with S1', async () => {
+    const out = {}, want = {};
+    try {
+      openFullscreen(presets[0].id); await wait(800); okDialogs(); if (_fsSrcTab !== 'images') { _fsSetSrcTab('images'); await wait(300); }
+      const card = $$('#fs-left-panel .iog-card').find(c => (($('.sys-name-input', c) || {}).value || '') === 'PPT A'), bin = card && $('.sys-icon-btn[data-sys-action="delete"]', card); if (!bin) return 'no trash on the PPT A card';
+      bin.click(); await wait(250); const w = _loWin(); out.win = [w.title, w.ticks, w.note]; want.win = ['Delete PPT A', [false, true, false, false], 'PPT A stays in the I/O Patch and Wire and keeps S1.'];
+      $('#dlg-confirm').click(); await wait(400);
+      const m = _sysGetSourceMeta('PPT A') || {};
+      out.after = [_lbvInPresets('PPT A'), (customLibrary || []).some(c => c && c.l === 'PPT A'), !!m.ioOnly, _sysIoSources().includes('PPT A'), _lbnSrcNo('PPT A')]; want.after = [false, false, true, true, 1];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { okDialogs(); try { closeFullscreen(); } catch (e) {} await restore(); }
+    return is(out, want, 'the window [title, ticks, note] / after [in a preset, in the library, I/O-only, on the patch, S]');
+  });
+  // 16lo-delwin DW4: NEW
+  await check('Wire 16lo-delwin DW4 (SPEC rule 8: "Wire: its tiles leave every Wire drawing; its card stays in Wire\'s list to drag back"): the trash of CAM 2\'s card in Wire\'s list asks with Wire ticked; Wire alone takes its tile off the Simple drawing and off every Advanced page with their cables; the card stays in Wire\'s list and on the I/O Patch, S4 kept', async () => {
+    const out = {}, want = {};
+    try {
+      await _cMWire('advanced'); const onAdv = () => { let n = 0; _wireAdvEachPage(pg => { (pg.sources || []).forEach(s => { if (s && s.name === 'CAM 2') n++; }); }); return n; };
+      out.before = onAdv() > 0; want.before = true;
+      await _cMWire('simple');
+      const card = $$('#wire-panel-left .iog-card').find(c => (($('.sys-name-input', c) || {}).value || '') === 'CAM 2'), bin = card && $('.sys-icon-btn[data-sys-action="delete"]', card); if (!bin) return 'no trash on the CAM 2 card in Wire';
+      bin.click(); await wait(250); const w = _loWin(); out.win = [w.ticks, w.note]; want.win = [[false, false, false, true], 'CAM 2 stays in Video Presets and the I/O Patch and keeps S4. Its card stays in Wire’s list to drag back.'];
+      $('#dlg-confirm').click(); await wait(500);
+      out.after = [!!_slbState().all['src:CAM 2'], onAdv(), !!$$('#wire-panel-left .iog-card').find(c => (($('.sys-name-input', c) || {}).value || '') === 'CAM 2'), _sysIoSources().includes('CAM 2'), _lbnSrcNo('CAM 2')]; want.after = [false, 0, true, true, 4];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { okDialogs(); try { closeWireMode(); } catch (e) {} await restore(); }
+    return is(out, want, 'on Advanced before / the window [ticks, note] / after [on Simple, tiles on Advanced pages, card in Wire\'s list, on the I/O Patch, S]');
+  });
+  // 16lo-delwin DW5: NEW
+  await check('Video Presets 16lo-delwin DW5 (SPEC rule 8, "Destinations / AUX: Video Presets = everywhere"; the full test\'s #17, Omar 2026-10-17: "a deleation removes it from all places"): the table x of LEFT LED asks with all three ticked and unticking I/O Patch unticks Video Presets; from its I/O card only I/O Patch is ticked and it goes off the patch (still on the canvas, D1 kept, + Add destination lists it); Video Presets takes it out of the show: CENTER LED is D1, no NOT IN THE SHOW row on page 1, no Wire Advanced tile left, one Undo step', async () => {
+    const out = {}, want = {};
+    try {
+      const L = screens[0], C = screens[1];
+      await _loIO(); _ioSetView('advanced'); await wait(600); okDialogs(); _ioSetView('simple'); await wait(300); try { closeSystem(); } catch (e) {}
+      await _cMWire('advanced'); try { closeWireMode(); } catch (e) {} await wait(300);
+      _lbxRemoveDest(L.id); await wait(250); let w = _loWin(); out.vp = [w.ticks, w.note]; want.vp = [[true, true, true, true], 'LEFT LED leaves the show. CENTER LED becomes D1 and every destination after it moves up one.'];
+      _loTick('io', false); await wait(50); out.untick = _loWin().ticks; want.untick = [false, false, false, true];
+      $('#dlg-cancel').click(); await wait(250);
+      await _loIO(); _sysRowDelete('dest', L.id); await wait(250); w = _loWin(); out.io = w.ticks; want.io = [false, false, true, false];
+      $('#dlg-confirm').click(); await wait(400);
+      out.off = [screens.some(s => s.id === L.id), _iogDests().some(s => s.id === L.id), _bdNo(L), _lbAddOff('dst').map(o => o.label)]; want.off = [true, false, 1, ['LEFT LED (D1)']];
+      try { closeSystem(); } catch (e) {} await restore();
+      const L2 = screens[0], u0 = vpUndoLen(); _lbxRemoveDest(L2.id); await wait(250); $('#dlg-confirm').click(); await wait(500);
+      const rows = ((ioAdvanced.pages || [])[0] || {}).dests || []; let tiles = 0; _wireAdvEachPage(pg => { (pg.dests || []).forEach(d => { if (d && d.refId === L2.id) tiles++; }); });
+      out.vpDel = [screens.some(s => s.id === L2.id), _bdNo(screens[0]), screens[0].name, rows.some(r => r && r.name === 'LEFT LED'), tiles, vpUndoLen() - u0]; want.vpDel = [false, 1, 'CENTER LED', false, 0, 1];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { okDialogs(); try { closeSystem(); } catch (e) {} try { closeWireMode(); } catch (e) {} await restore(); }
+    return is(out, want, 'table x [ticks, note] / I/O Patch unticked [ticks] / from its I/O card [ticks] / off the patch [on the canvas, a card, D, + Add destination] / Video Presets [on the canvas, the first D, its name, page-1 row, Wire tiles, steps]');
+  });
+  // 16lo-delwin DW6: NEW
+  await check('Video Presets 16lo-delwin DW6 (SPEC rule 8, "The only screen is never deleted (as today)"): with one screen left its window cannot take it off Video Presets (the note says why, Delete is off) but can take it off the I/O Patch', async () => {
+    const out = {}, want = {};
+    try {
+      const st = JSON.parse(BASE); st.screens = st.screens.slice(0, 1); _applyProjectText(JSON.stringify(st)); await wait(700); okDialogs();
+      const s = screens[0]; _lbxRemoveDest(s.id); await wait(250); const w = _loWin();
+      out.vp = [w.ticks, w.off, /only screen left/.test(w.note)]; want.vp = [[true, true, true, true], true, true];
+      _loTick('all', false); _loTick('io', true); await wait(50); out.io = [_loWin().off]; want.io = [false];
+      $('#dlg-confirm').click(); await wait(400); out.after = [screens.length, !!screens[0].ioOff]; want.after = [1, true];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { okDialogs(); await restore(); }
+    return is(out, want, 'Video Presets ticked [ticks, Delete off, the note] / I/O Patch alone [Delete off] / after [screens, off the patch]');
+  });
+  // 16lo-delwin DW7: NEW
+  await check('I/O Patch 16lo-delwin DW7 (SPEC rules 8 and 10: AUX as destinations; "Multiviewers: the trash deletes them everywhere, no window"): AUX Properties\' Remove asks with all three ticked; the AUX card trash on the I/O Patch has I/O Patch ticked and takes it off the patch (A1 kept, + Add AUX lists it); a multiviewer\'s trash deletes it at once, one Undo step', async () => {
+    const out = {}, want = {};
+    try {
+      const d = dsms[0], nm = d.name;
+      openDSMPanel(fakeEv, presets[0].id, d.id); await wait(350); $('#dsmp-remove').click(); await wait(300); out.props = _loWin().ticks; want.props = [true, true, true, true];
+      $('#dlg-cancel').click(); await wait(250);
+      await _loIO(); _sysRowDelete('aux', d.id); await wait(250); out.card = _loWin().ticks; want.card = [false, false, true, false];
+      $('#dlg-confirm').click(); await wait(400);
+      out.off = [dsms.some(x => x.id === d.id), _lbAddOff('aux').map(o => o.label)]; want.off = [true, [nm + ' (A1)']];
+      const mv = multiviewers[0], u0 = vpUndoLen(); _sysRowDelete('mv', mv.id); await wait(300);
+      out.mv = [dlgOpen(), multiviewers.some(x => x.id === mv.id), vpUndoLen() - u0]; want.mv = [false, false, 1];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { okDialogs(); try { closeSystem(); } catch (e) {} await restore(); }
+    return is(out, want, 'AUX Properties [ticks] / its card [ticks] / off the patch [in the show, + Add AUX] / multiviewer [a window, still there, steps]');
+  });
+  // 16lo-delwin DW8: NEW
+  await check('I/O Patch 16lo-delwin DW8 (Omar 2026-10-17: "use the same template to answer this question on all sections"): on I/O Patch Advanced page 1 the trash of CAM 1\'s copied row asks in the grey window with I/O Patch ticked; Delete takes CAM 1 off the patch (its page-1 row and its Simple card) while Video Presets keeps it with S3; a row typed by hand still goes at once', async () => {
+    const out = {}, want = {};
+    try {
+      await _loIO(); _ioSetView('advanced'); await wait(700); okDialogs(); await wait(300);
+      const pg = ioAdvanced.pages[0]; const r = (pg.sources || []).find(x => x && x.name === 'CAM 1'); if (!r) return 'no CAM 1 row on page 1';
+      _sysRowDelete('adv-src', r.id); await wait(250); const w = _loWin(); out.win = w ? [w.title, w.ticks, w.grey] : null; want.win = ['Delete CAM 1', [false, false, true, false], true];
+      $('#dlg-confirm').click(); await wait(400);
+      out.off = [(pg.sources || []).some(x => x && x.name === 'CAM 1'), _sysIoSources().includes('CAM 1'), _lbvInPresets('CAM 1'), _lbnSrcNo('CAM 1')]; want.off = [false, false, true, 3];
+      _ioAdvAdd('src'); await wait(300); const typed = pg.sources[pg.sources.length - 1], n0 = pg.sources.length;
+      _sysRowDelete('adv-src', typed.id); await wait(250); out.typed = [dlgOpen(), pg.sources.length === n0 - 1]; want.typed = [false, true];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { okDialogs(); try { _ioSetView('simple'); } catch (e) {} try { closeSystem(); } catch (e) {} await restore(); }
+    return is(out, want, 'the window [title, ticks, grey] / after [the page-1 row, on the patch, in a preset, S] / a row typed by hand [a window, gone at once]');
+  });
+  // 16lo-delwin DW9: NEW
+  await check('I/O Patch 16lo-delwin DW9 (the attack on 16lo-delwin: a file deleted from another page): a picture file on a layer, deleted from its I/O Patch card with Video Presets ticked as well, leaves the library and loses its file; one Undo, still on the I/O Patch, puts it back on its layer WITH its picture and its stored copy there and then (not only once the Video tab draws again); Redo takes them away again', async () => {
+    const out = {}, want = {}, nm = 'DW9 PIC';
+    try {
+      await restore();
+      const cv = document.createElement('canvas'); cv.width = 64; cv.height = 36; const g = cv.getContext('2d'); g.fillStyle = '#33aa77'; g.fillRect(0, 0, 64, 36);
+      const blob = await new Promise(r => cv.toBlob(r, 'image/png'));
+      customLibrary.push({ l: nm, kind: 'image', img: cv.toDataURL('image/png'), media: { w: 64, h: 36, type: 'image/png', fileName: 'dw9.png' } }); _fsAttachBlob(nm, blob);
+      const p0 = presets[0].id, s0 = screens[0].id; pushUndo(); homeSetL(p0, s0, 2, nm); await wait(300);
+      await _loIO(); const c = _loIoCard(nm), t = c && $('.sys-icon-btn[data-sys-action="delete"]', c); if (!t) return 'no trash on the ' + nm + ' card';
+      const u0 = vpUndoLen(); t.click(); await wait(300); _loTick('vp', true); await wait(100);
+      out.win = (_loWin() || {}).ticks; want.win = [false, true, true, false];
+      $('#dlg-confirm').click(); await wait(500);
+      out.del = [!!_fsMediaItem(nm), !!_fsMediaUrl(nm), getL(p0, s0, 2), vpUndoLen() - u0]; want.del = [false, false, null, 1];
+      doUndo(); await wait(400);
+      out.undo = [!!_fsMediaItem(nm), getL(p0, s0, 2), !!_fsMediaUrl(nm), !!(_fsTrash[nm] && _fsTrash[nm].inDb)]; want.undo = [true, nm, true, true];
+      doRedo(); await wait(400);
+      out.redo = [!!_fsMediaItem(nm), !!_fsMediaUrl(nm), getL(p0, s0, 2)]; want.redo = [false, false, null];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { okDialogs(); try { closeSystem(); } catch (e) {} await restore(); }
+    return is(out, want, 'the window [Everywhere, Video Presets, I/O Patch, Wire] / deleted [in the library, its picture, L2, Undo steps] / one Undo on the I/O Patch [in the library, L2, its picture, its stored copy] / Redo [in the library, its picture, L2]');
   });
   try { _fsPauseAll(); } catch (e) {} $$('video').forEach(v => { try { v.muted = true; v.pause(); } catch (e) {} });
   return { checks };

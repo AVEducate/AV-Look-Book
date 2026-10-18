@@ -773,6 +773,14 @@ body.is-mobile .dlg-box .dlg-tick{min-height:var(--ss-touch);box-sizing:border-b
 .dlg-box.v-destructive .dlg-hdr{background:linear-gradient(90deg,rgba(255,77,90,.12) 0%,transparent 60%)}
 .dlg-box.v-destructive .dlg-strip{background:var(--n-red);box-shadow:0 0 10px var(--n-red)}
 .dlg-box.v-destructive h3,.dlg-box.v-destructive .dlg-icon{color:var(--n-red)}
+/* 16lo-delwin (Omar 2026-10-17: "grey for the delete window"): the delete window is grey all the way through: its border, strip,
+   title, tick boxes and note (no red, no amber) */
+.dlg-box.v-grey{border:1px solid rgba(255,255,255,.16);box-shadow:0 20px 60px rgba(0,0,0,.9)}
+.dlg-box.v-grey .dlg-hdr{background:linear-gradient(90deg,rgba(255,255,255,.05) 0%,transparent 60%)}
+.dlg-box.v-grey .dlg-strip{background:#8a93a3}
+.dlg-box.v-grey h3,.dlg-box.v-grey .dlg-icon{color:#d3d9e2}
+.dlg-box.v-grey .dlg-tick input{accent-color:#aab3c0}
+.dlg-box.v-grey .dlg-tick-note{color:var(--text2)}
 
 /* Variant-colored confirm button */
 .dlg-btn-primary{flex:0 0 auto;font-size:var(--ss-fs-label);font-weight:600;padding:10px 22px;height:40px;min-height:40px;border-radius:999px;cursor:pointer;letter-spacing:.02em;border:1px solid;transition:all .15s;text-shadow:0 1px 0 rgba(255,255,255,.25)}
@@ -1495,6 +1503,8 @@ body[data-skin="black"] #custom-modal .tb-btn:not(.pri):hover{color:var(--n-cyan
 .dlg-btn-primary.v-error::before,.dlg-btn-primary.v-destructive::before{background:linear-gradient(180deg,#ff4d5a,#c1212f)}
 .dlg-btn-primary.v-success{color:#02321a !important}
 .dlg-btn-primary.v-success::before{background:linear-gradient(180deg,#4ddc8a,#2bb56b)}
+.dlg-btn-primary.v-grey{color:#fff !important}   /* 16lo-delwin */
+.dlg-btn-primary.v-grey::before{background:linear-gradient(180deg,#5d6573,#3e4551)}
 .pm-btn-primary.is-orange{color:#2a1000 !important}
 .pm-btn-primary.is-orange::before{background:linear-gradient(180deg,#ff8a3d,#c95f1f)}
 .pm-btn-primary.is-amber{color:#221500 !important}
@@ -4887,7 +4897,7 @@ Also called DSM (Downstage Monitor) in broadcast and theater workflows, same thi
   <div class="bb-cell bb-pill bb-cyan" title="The largest number of layers used in any single preset, this is the figure to compare against your switcher's per-scene layer budget. (The most complex single moment in the show.)"><span class="bb-label">Layers</span><strong id="bb-layers">0</strong></div>
   <div id="bb-spacer"></div>
   <div class="bb-cell" id="bb-sel" style="font-size:10px;opacity:.5">—</div>
-  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy, hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16ln</div>
+  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy, hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16lo</div>
   <!-- 16kq (Omar): the Modifiers menu lives on each preset tile only; this place is kept for the Educator tool of a future build (greyed out, does nothing) --><button class="bb-util" id="tb-educator" type="button" disabled aria-disabled="true" title="Educator: coming in a future build" aria-label="Educator, coming in a future build" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:default;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em;opacity:.38"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10L12 5 2 10l10 5 10-5z"/><path d="M6 12v5c0 1 2.7 2.5 6 2.5s6-1.5 6-2.5v-5"/><line x1="22" y1="10" x2="22" y2="16"/></svg><span>Educator</span></button>
   <button class="bb-util" onclick="actions.help()" title="Help, quick reference, keyboard shortcuts, glossary, accessibility" aria-label="Help, quick reference, keyboard shortcuts, glossary, accessibility" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="4.93" y1="4.93" x2="9.17" y2="9.17"/><line x1="14.83" y1="14.83" x2="19.07" y2="19.07"/><line x1="14.83" y1="9.17" x2="19.07" y2="4.93"/><line x1="4.93" y1="19.07" x2="9.17" y2="14.83"/></svg>Help</button>
   <button class="bb-util" id="tb-bug" onclick="reportBug()" title="Report a bug, opens an email to AV Educate with your show file — attached in the app, downloaded for you to attach in a browser" aria-label="Report a bug" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="7.2"/><path d="M15.4 15.4L21 21" stroke-width="2.6"/><ellipse cx="10" cy="11" rx="2.5" ry="3.3" fill="currentColor" stroke="none"/><circle cx="10" cy="7" r="1.5" fill="currentColor" stroke="none"/><path d="M7.5 9.2l-1.7-.8M7.4 11.2H5.6M7.7 13.1l-1.5 1.1M12.5 9.2l1.7-.8M12.6 11.2h1.8M12.3 13.1l1.5 1.1M9.2 5.9l-.8-1.1M10.8 5.9l.8-1.1" stroke-width="1.3"/></svg>Bug</button>   <!-- 16jk (Omar): Report a bug, after Help -->
@@ -12575,7 +12585,7 @@ function _lbEscPutBack(cur,old){
 }
 function _lbEscRestoreShow(snap){
   if(!snap||typeof _snapshot!=='function'||snap===_snapshot()) return false;
-  var old=JSON.parse(snap), live={screens:screens,presets:presets,dsms:dsms,customLibrary:customLibrary,customTypes:customTypes,contentColors:contentColors,multiviewers:multiviewers,sources:sources,ioDests:ioDests,ioNums:ioNums,wireLayout:wireLayout,wireThumbnails:wireThumbnails,wireSettings:wireSettings,wireAdvanced:wireAdvanced,ioAdvanced:ioAdvanced};
+  var old=JSON.parse(snap), live={screens:screens,presets:presets,dsms:dsms,customLibrary:customLibrary,customTypes:customTypes,contentColors:contentColors,multiviewers:multiviewers,sources:sources,ioDests:ioDests,ioNums:ioNums,srcOrder:srcOrder,wireLayout:wireLayout,wireThumbnails:wireThumbnails,wireSettings:wireSettings,wireAdvanced:wireAdvanced,ioAdvanced:ioAdvanced};
   Object.keys(live).forEach(function(k){ if(live[k]&&old[k]&&typeof live[k]==='object'&&JSON.stringify(live[k])!==JSON.stringify(old[k])) _lbEscPutBack(live[k],old[k]); });
   if(_snapshot()!==snap) console.error('[esc] the show did not go back exactly');
   return true;
@@ -16818,7 +16828,34 @@ function _sysClassifyConnector(t){
 // the bottom: it appends to customLibrary (Globally) or only to sources[]
 // (Only Here) - the last places a new name can first appear. No alpha sort.
 function _srcNameOrder(){ if(_lbnOff()) return _srcNameOrderRaw();   /* 16lc-vpcards-fix4 (H1): the order first seen, as in the v0.8.2 candidate (r16lj/fix) */ if(typeof _lbcOn==='function'&&!_lbcOn()) return _srcNameOrderRaw(); const raw=_srcNameOrderRaw(), m=_lbnSrcMap(raw); return raw.slice().sort(function(a,b){ return m.get(a)-m.get(b); }); }   /* 16lc-vpfinish (D9, Omar: "Imported files are numbered after all the show's own sources"): the order every page, number and export reads. 16lc-vpcards-fix (E2): the S number order (_lbnSrcMap: the numbers the show keeps, the rest around them, files after the sources); the phone keeps the order first seen (frozen) */
-function _srcNameOrderRaw(){   /* the order the show's names were first seen in (16lc-vpfinish: what the page-1 fingerprints read, so an older show with files is not "changed since page 1 was built" by this build) */
+/* 16lo-srcorder (the sources rules, Omar 2026-10-17: "a layer is created a source is created in the order its created in S# when the
+   user pick primary and back up the source numbers stay the same ... when a source or destination is deleted everything past the
+   source gets re-number to match"; SPEC rules 1-4, "One number until gone", "Goes with its last layer"): the S numbers follow the
+   order the show's sources were made in, kept WITH the show (srcOrder, names). A source keeps its number while it is on any page
+   (it is in the order scan: the library, a preset's layer / BG / AUX box, sources[]); a rename keeps its place (_srcKeepBefore /
+   _srcKeepAfter); one that is on no page any more leaves the list and the ones after it move up one; a new one goes at the end.
+   Before, the numbers were worked out again on every draw from that scan, so a rename (the library copy it adds) or an I/O
+   Patch draw (_sysSyncAllSourcesToCustomLibrary) moved the sources after it (the full test's major 4). An older show (no
+   srcOrder in the file) starts from the order it shows today (_srcScanOrder with the 16jh move), so it opens with the same
+   numbers; pairing never moves one any more (16lo-nopairs). The phone keeps the order first seen (frozen). */
+var srcOrder=[];
+function _srcNameOrderRaw(){
+  if((typeof _lbcOn==='function'&&!_lbcOn())||!Array.isArray(srcOrder)) return _srcScanOrder(true);
+  const scan=_srcScanOrder(false), inSet=new Set(scan), out=[], seen=new Set();
+  srcOrder.forEach(function(n){ if(inSet.has(n)&&!seen.has(n)){ seen.add(n); out.push(n); } });
+  scan.forEach(function(n){ if(!seen.has(n)){ seen.add(n); out.push(n); } });   /* made since: at the end, in the order first seen */
+  return out;
+}
+function _srcLbcOff(){ return typeof _lbcOn==='function'&&!_lbcOn(); }
+function _srcOrderOpen(v){ if(Array.isArray(v)) return v.filter(function(n){ return typeof n==='string'&&!!n; }); return _srcLbcOff()?null:_srcScanOrder(true); }   /* a file of this build, else the order it shows today */
+function _srcOrderOut(){ if(_srcLbcOff()) return Array.isArray(srcOrder)?srcOrder.slice():null; return _srcNameOrderRaw(); }   /* what a save, a draft and an Undo step keep */
+function _srcOrderSync(){ if(Array.isArray(srcOrder)&&!_srcLbcOff()) srcOrder=_srcNameOrderRaw(); }   /* at the start of every change: a source gone since is forgotten, so made again it goes at the end */
+function _srcKeepBefore(old){ if(!Array.isArray(srcOrder)||_srcLbcOff()) return null; return { i:_srcNameOrderRaw().indexOf(old) }; }
+function _srcKeepAfter(k,old,nw){   /* the renamed source takes the old name's place; a split (the old name still used) is a new source */
+  if(!k||k.i<0||!nw||nw===old) return; const now=_srcNameOrderRaw(); if(now.indexOf(old)>=0) return;
+  const out=now.filter(function(n){ return n!==nw; }); out.splice(Math.min(k.i,out.length),0,nw); srcOrder=out;
+}
+function _srcScanOrder(withMove){   /* the order the show's names were first seen in (16lc-vpfinish: what the page-1 fingerprints read, so an older show with files is not "changed since page 1 was built" by this build); 16lo-srcorder: the 16jh move only for an older show's first order */
   const order=[]; const seen=new Set();
   const add=(nm)=>{ if(nm&&typeof nm==='string'&&!seen.has(nm)){ seen.add(nm); order.push(nm); } };
   if(typeof customLibrary!=='undefined'&&Array.isArray(customLibrary)){
@@ -16839,7 +16876,7 @@ function _srcNameOrderRaw(){   /* the order the show's names were first seen in 
   if(typeof sources!=='undefined'&&Array.isArray(sources)){
     sources.forEach(s=>{ if(s&&s.name) add(s.name); });
     // 16jh: an auto-made B sits right under its A everywhere the list is shown
-    sources.forEach(s=>{ const link=s&&s.name&&(s.autoB||s.pairOf); if(!link) return; const bi=order.indexOf(s.name), ai=order.indexOf(link); if(bi<0||ai<0||bi===ai+1) return; order.splice(bi,1); const ai2=order.indexOf(link); order.splice(ai2+1,0,s.name); });   // 16ji: manual pairs too
+    if(withMove) sources.forEach(s=>{ const link=s&&s.name&&(s.autoB||s.pairOf); if(!link) return; const bi=order.indexOf(s.name), ai=order.indexOf(link); if(bi<0||ai<0||bi===ai+1) return; order.splice(bi,1); const ai2=order.indexOf(link); order.splice(ai2+1,0,s.name); });   // 16ji: manual pairs too
   }
   return order;
 }
@@ -17738,7 +17775,7 @@ function _sysApplyToAll(allKind, field, opt){
   if(typeof pushUndo==='function') pushUndo(); // one bulk action = one undo
   if(allKind==='aux-all'||allKind==='mv-all') _iogApplyOut(allKind,field,opt);   /* 16ky-r2b: A0 / M0 */
   else if(isSrc){
-    var names=_sysDiscoverSources();
+    var names=_sysIoSources();   /* 16lo-delwin */
     names.forEach(function(nm){
       if(field==='connector'){ const _sp=(opt.value&&typeof _wireCableSpec==='function')?_wireCableSpec(opt.value):null; _sysSetSourceMeta(nm, _sp ? {connectorType:opt.value, wireColor:_sp.color} : {connectorType:opt.value}); }   // 16ej: tile matches cable
       else if(field==='resolution') _sysSetSourceMeta(nm,{resolution:opt.value});
@@ -17750,12 +17787,12 @@ function _sysApplyToAll(allKind, field, opt){
     if(field==='connector') _ipGiveAll(names.map(function(nm){ return ['src',nm]; }));   /* 16la-ip (P): each source its own address, same undo step */
   } else {
     var apply=function(fn){
-      if(typeof screens!=='undefined'&&Array.isArray(screens)) _bdNoBd(screens).forEach(fn);   /* 16kx-backdrop: Set for all never reaches a backdrop */
+      if(typeof screens!=='undefined'&&Array.isArray(screens)) _bdNoBd(screens).filter(function(s){ return !_outIoOff(s); }).forEach(fn);   /* 16kx-backdrop: Set for all never reaches a backdrop; 16lo-delwin: nor one off the patch */
       /* 16ky-r2b (Omar): D0 no longer reaches the AUX / DSM outputs; A0 in the AUX / DSM title does */
       if(typeof ioDests!=='undefined'&&Array.isArray(ioDests)) ioDests.forEach(fn);
     };
     if(field==='connector'){ apply(function(o){ o.connectorType=opt.value; });
-      _cmCableAll((typeof screens!=='undefined'&&Array.isArray(screens))?_bdNoBd(screens):[],opt.value);   /* 16la-colour-mv (Q): each destination the cable's colour, same undo step */
+      _cmCableAll((typeof screens!=='undefined'&&Array.isArray(screens))?_bdNoBd(screens).filter(function(s){ return !_outIoOff(s); }):[],opt.value);   /* 16la-colour-mv (Q): each destination the cable's colour, same undo step */
       const _ipL=[]; apply(function(o){ _ipL.push([(typeof ioDests!=='undefined'&&Array.isArray(ioDests)&&ioDests.indexOf(o)>=0)?'iodest':'dest',o.id]); }); _ipGiveAll(_ipL); }   /* 16la-ip (P): each row its own address */
     else if(field==='resolution'){
       var parts=String(opt.value||'').split('x').map(function(n){return parseInt(n)||0;});
@@ -17981,9 +18018,9 @@ function _ioAdvPage(){ return ioAdvanced.pages[ioAdvanced.page]||ioAdvanced.page
 // page 1 is seeded; a later change on the Simple side offers a rebuild, asked once per change (same as Wire).
 function _ioSimpleFingerprint(){
   const dev=o=>[o.name||'',o.connectorType||'',o.deviceType||'',o.customType||'',o.w||'',o.h||'',o.resolution||''];
-  const src=_sysDiscoverSources().map(function(nm){ const m=_sysGetSourceMeta(nm)||{}; return [nm,m.connectorType||'',m.type||'',m.customType||'',m.resolution||'']; });   /* 16lc-vpfinish (D9). 16lc-vpcards-fix (E2): the number order (an older show keeps the order it was fingerprinted in: its numbers are kept as it opens) */
-  const d=(typeof screens!=='undefined'?screens:[]).filter(function(o){ return o&&!_bdIs(o); }).map(dev);
-  const a=(typeof dsms!=='undefined'?dsms:[]).filter(Boolean).map(dev);
+  const src=_sysIoSources().map(function(nm){ const m=_sysGetSourceMeta(nm)||{}; return [nm,m.connectorType||'',m.type||'',m.customType||'',m.resolution||'']; });   /* 16lo-delwin: what the patch shows */   /* 16lc-vpfinish (D9). 16lc-vpcards-fix (E2): the number order (an older show keeps the order it was fingerprinted in: its numbers are kept as it opens) */
+  const d=(typeof screens!=='undefined'?screens:[]).filter(function(o){ return o&&!_bdIs(o)&&!_outIoOff(o); }).map(dev);
+  const a=(typeof dsms!=='undefined'?dsms:[]).filter(function(o){ return !!o&&!_outIoOff(o); }).map(dev);
   const io=(typeof ioDests!=='undefined'?ioDests:[]).filter(Boolean).map(dev);
   const mv=(typeof multiviewers!=='undefined'?multiviewers:[]).filter(Boolean).map(dev);
   return JSON.stringify([src,d,a,io,mv]);
@@ -17995,7 +18032,7 @@ function _ioAdvSeedFromSimple(noUndo){
   const showEl=document.getElementById('show-name'); const nm=String((showEl&&showEl.value)||'').trim().slice(0,32);
   if(nm && /^page\s*1$/i.test(p0.name||'')) p0.name=nm;
   if(_ioAdvPageUsed(p0)) return false;
-  const names=_sysDiscoverSources(); const scr=(typeof screens!=='undefined'?screens:[]).filter(function(o){ return o&&!_bdIs(o); }); const ax=(typeof dsms!=='undefined'?dsms:[]).filter(Boolean); const io=(typeof ioDests!=='undefined'?ioDests:[]).filter(Boolean); const mvs=(typeof multiviewers!=='undefined'?multiviewers:[]).filter(Boolean);
+  const names=_sysIoSources(); const scr=(typeof screens!=='undefined'?screens:[]).filter(function(o){ return o&&!_bdIs(o)&&!_outIoOff(o); }); const ax=(typeof dsms!=='undefined'?dsms:[]).filter(function(o){ return !!o&&!_outIoOff(o); });   /* 16lo-delwin */ const io=(typeof ioDests!=='undefined'?ioDests:[]).filter(Boolean); const mvs=(typeof multiviewers!=='undefined'?multiviewers:[]).filter(Boolean);
   if(!names.length && !scr.length && !ax.length && !io.length) return false;
   if(!noUndo && typeof pushUndo==='function') pushUndo();
   p0.seed=_ioSimpleFingerprint(); p0.seedAsked='';
@@ -18065,6 +18102,11 @@ function _ioBkUnpair(pg,backupId){ const b=pg.sources.find(function(x){ return x
 // its primary. Deleting the B remembers that (noAutoB on the A), so it never comes back on its own.
 function _sysAutoBStem(name){ const m=/^(PBP|GFX)\s+A$/i.exec(String(name||'').trim()); return m?m[1]:null; }
 function _sysEnsureAutoPairs(){
+  /* 16lo-nopairs (SPEC rule 6: "No automatic pairs: typing PBP A / GFX A makes no B; names ending A / B do not pair by themselves
+     (Simple or Advanced page 1). Only the user pairs, in the Backup window."; Omar 2026-10-17: "only have the user make the primary
+     and back up option but source numbers stay the same"): the 16jh automatic B is off on the desktop (a deleted B never comes
+     back: the full test's major 3). Pairs the app already made stay pairs (rule 7). */
+  if(!_srcLbcOff()) return false;
   if(typeof sources==='undefined'||!Array.isArray(sources)) return false;
   const names=_sysDiscoverSources(); const lower=new Set(names.map(function(n){ return String(n).toLowerCase(); })); let added=false;
   names.forEach(function(nm){
@@ -18078,6 +18120,7 @@ function _sysEnsureAutoPairs(){
   return added;
 }
 function _ioAdvEnsureAutoPairs(pg){
+  if(!_srcLbcOff()) return false;   /* 16lo-nopairs */
   if(!pg||!Array.isArray(pg.sources)) return false; const rows=pg.sources; let added=false;
   rows.slice().forEach(function(a){
     if(!a||a.noAutoB||a.gone===true) return; const stem=_sysAutoBStem(a.name); if(!stem) return;
@@ -18147,6 +18190,7 @@ function _ioAdvUnsyncRow(kind,r){
   if((kind==='adv-dst'||kind==='adv-mv')&&typeof ioDests!=='undefined'&&Array.isArray(ioDests)){ for(let i=ioDests.length-1;i>=0;i--){ const d=ioDests[i]; if(d&&d.fromAdv&&String(d.name||'').toLowerCase()===nm) ioDests.splice(i,1); } }
 }
 function _ioBkAutoPair(pg){
+  if(!_srcLbcOff()) return 0;   /* 16lo-nopairs */
   const rows=pg.sources||[]; let n=0;
   rows.forEach(function(a){
     if(!a||!a.name||a.noAuto||_ioBkState(rows,a)) return;
@@ -18457,7 +18501,7 @@ function _sysRender(){
   _sysEnsureAutoPairs();   // 16jh: PBP A / GFX A bring their B
   _ioAdvTwinCatchUp();   /* excel-tab-fix (16kt): an I/O-only row page 1 created and its page-1 row brought together on this draw as well, not an edit */
   // ── Sources ──
-  const sourceNames=_sysDiscoverSources();
+  const sourceNames=_sysIoSources();   /* 16lo-delwin */
   const srcRows=document.getElementById('sys-src-rows');
   if(srcRows){
     if(sourceNames.length===0){
@@ -18656,7 +18700,7 @@ function _mvPicCycle(id){
 /* every screens[] entry the grid shows: the ONE place a kind of destination is left out of the grid. Rebase note (16kx):
    a Backdrop is not in the I/O Patch there (_bdIs), so it is left out here too once that build is under this one; on a
    page without _bdIs every destination shows. */
-function _iogDests(){ return (typeof screens!=='undefined'&&Array.isArray(screens))?_lbnSortOut('dst',screens.filter(function(s){ return !!s&&!(typeof _bdIs==='function'&&_bdIs(s)); })):[]; }   /* 16lc-vpcards-fix (E2): in D number order */
+function _iogDests(){ return (typeof screens!=='undefined'&&Array.isArray(screens))?_lbnSortOut('dst',screens.filter(function(s){ return !!s&&!(typeof _bdIs==='function'&&_bdIs(s))&&!_outIoOff(s); })):[]; }   /* 16lo-delwin: not one off the patch */   /* 16lc-vpcards-fix (E2): in D number order */
 function _iogIdAttr(v){ return String(v==null?'':v).replace(/'/g,"\\'").replace(/"/g,'&quot;'); }
 /* one card. c = { kind, id, name, num, color, thumbKey ('' = no picture slot), badge, colorRow, conn, res, pen }. 16ky-r2 (Omar 2026-09-27): a card is the name, the resolution and the cable type;
    no Type chip and no notes box (the Advanced page keeps both, unchanged, and nothing stored is touched) */
@@ -18737,6 +18781,7 @@ function _iogAddHTML(sec,cls,o){   /* 16la-wire-mv (O): cls = the iog-add-xC cla
 /* the Add buttons of the I/O Patch, as they were: Add Source (I/O only, its own undo step), Add Destination (16ky-r2b, Omar: "simple adds it
    everywhere": always a real destination, whatever the old Only Here scope was left at), Add AUX, Add MV (its own undo step). The two that never pushed one are wrapped into ONE undo step. */
 function _iogAdd(sec){
+  if(sec==='src'||sec==='dst'||sec==='aux'){ const _ev=window.event, _c=(_ev&&_ev.target&&_ev.target.closest)?_ev.target.closest('#io-grid .iog-add'):null; if(_lbAddAsk(sec,_c||document.querySelector('#io-grid .iog-add[data-iog-add="'+sec+'"]'))) return; }   /* 16lo-addback */
   const _laA=document.activeElement, _laK=!!(_laA&&_laA.classList&&_laA.classList.contains('iog-add'));   /* 16la-wire-mv (O) */
   _iogAddItem(sec);   /* 16lc-vpcards: the add itself, which the Video Presets > Advanced + Add cards make too */
   const s=document.querySelector('#io-grid [data-iog-sec="'+sec+'"]'); const all=s?s.querySelectorAll('.iog-card'):[]; const last=all.length?all[all.length-1]:null;
@@ -19133,16 +19178,223 @@ function _lbxDelBody(kind,info){
 }
 function _lbxRemoveDest(sid){
   if(!_lbcOn()){ deleteScreen(sid); return; }   /* the phone keeps its ways (frozen) */
+  _lbDelAsk('dest',sid,'vp'); return;   /* 16lo-delwin (the only screen: the window says why Video Presets cannot be ticked) */
   if(screens.length<=1||_kzLastScreen(_kzScreenOf(sid))){ deleteScreen(sid); return; }   /* the only screen left: deleteScreen says why, there is nothing to ask */
   const info=_sysGetRowEntity('dest',sid);
   _sysConfirmModal({title:'Delete '+(info.kindLabel||'Row'),bodyHtml:_lbxDelBody('dest',info),confirmLabel:'Delete',destructive:true,onConfirm:function(){ deleteScreen(sid); }});
 }
 function _lbxRemoveAux(dsmId,go){
   if(!_lbcOn()){ go(); return; }   /* the phone keeps its ways (frozen) */
+  _lbDelAsk('aux',dsmId,'vp'); return;   /* 16lo-delwin */
   const info=_sysGetRowEntity('aux',dsmId);
   _sysConfirmModal({title:'Delete '+(info.kindLabel||'Row'),bodyHtml:_lbxDelBody('aux',info),confirmLabel:'Delete',destructive:true,onConfirm:go});
 }
 /* ══ end 16lc-vpaux block ══ */
+/* ══ 16lo-delwin (the sources rules, Omar 2026-10-17: "provide the option when someone tried to delete a source file Video Preset, I.O
+   patch, wire just make a check box option like in the look book option so the user pick which place the source goes away from. same
+   rule applys for destination and aux but not MV, MV it delete that from everywhere"; "Only the page you're on"; "Video Presets =
+   everywhere"; "grey for the delete window"; "use the same template to answer this question on all sections"; SPEC rules 8-10).
+   Every trash of a source, destination or AUX card (the I/O Patch, Wire's list, Video Presets > Advanced), the Video Presets table's
+   ✕, Destination Properties' and AUX Properties' Remove and the three Remove lists ask in ONE grey window: Everywhere, Video Presets,
+   I/O Patch, Wire. The page the trash is on is ticked when it opens; for a destination or an AUX, Video Presets is everywhere
+   (ticking it ticks the other two). One Undo step.
+   - Video Presets: a source leaves every preset's layers, backgrounds and AUX boxes and the library (a file: as the Video tab's trash,
+     its stored copy goes with Undo to bring it back); the I/O Patch keeps it as an I/O-only source unless it is ticked too.
+     A destination / AUX leaves the show (the canvas, every preset, the I/O Patch with its page-1 row, every Wire drawing).
+   - I/O Patch: off the patch (ioOff on its sources[] entry / on the destination / AUX): no card, no I/O Excel row, no Look Book
+     I/O row, no page-1 row; it keeps its number and "+ Add" on the I/O Patch lists it to put it back (16lo-addback).
+   - Wire: its tiles and their cables leave every Wire drawing (Simple: off the drawing as its ×; Advanced: every page); its card
+     stays in Wire's list to drag back.
+   - Everywhere: it leaves the show; the numbers after it move up one (16lo-srcorder). Nothing is left behind as a NOT IN THE SHOW
+     row (the full test's #17). Desktop only: the phone keeps its ways (frozen). ══ */
+function _lbDelPage(){   /* the page the user is on */
+  const w=document.getElementById('wire-overlay'); if(w&&w.style.display==='flex') return 'wire';
+  const io=document.getElementById('sys-overlay'); if(io&&io.classList.contains('open')) return 'io';
+  return 'vp';
+}
+function _srcIoOff(nm){ return !_srcLbcOff()&&!!nm&&!!(_sysGetSourceMeta(nm)||{}).ioOff; }   /* a source taken off the I/O Patch */
+function _outIoOff(o){ return !_srcLbcOff()&&!!o&&!!o.ioOff; }                               /* a destination / AUX taken off it */
+function _sysIoSources(){ return _sysDiscoverSources().filter(function(n){ return !_srcIoOff(n); }); }   /* the sources the I/O Patch shows */
+function _lbDelOut(kind,id){ const L=(kind==='dest')?screens:dsms; return (Array.isArray(L)?L:[]).find(function(x){ return x&&x.id===id; })||null; }
+function _lbDelItem(kind,id){
+  if(kind==='src'){
+    const order=_srcNameOrderRaw(), i=order.indexOf(id); if(!id) return null;
+    return { name:id, num:i>=0?('S'+(i+1)):'', next:(i>=0&&order[i+1])?order[i+1]:'', word:'source', words:'source' };
+  }
+  const o=_lbDelOut(kind,id); if(!o) return null;
+  if(kind==='dest'){
+    const L=screens.filter(function(x){ return x&&!_bdIs(x); }), i=L.indexOf(o);
+    return { name:o.name||'(unnamed)', num:'D'+_bdNo(o), next:(i>=0&&L[i+1])?(L[i+1].name||''):'', word:'destination', words:'destination', last:_kzLastScreen(o) };
+  }
+  const L=_lbnOutList('aux'), i=L.indexOf(o), w=(typeof _sysResolveDsmType==='function')?_sysResolveDsmType(o):'AUX';
+  return { name:o.name||'(unnamed)', num:'A'+_lbnOutNo('aux',o), next:(i>=0&&L[i+1])?(L[i+1].name||''):'', word:w, words:'AUX / DSM' };
+}
+function _lbDelNote(kind,it,t){
+  const any=t.vp||t.io||t.wire; if(!any) return { ok:false, note:'Tick where '+it.name+' goes from.' };
+  const out=(kind!=='src');
+  if(out&&t.vp&&it.last) return { ok:false, note:it.name+' is the only screen left: it cannot leave Video Presets. Add another screen first.' };
+  if((t.vp&&t.io&&t.wire)||(out&&t.vp)){
+    return { ok:true, note:it.name+' leaves the show.'+(it.next?(' '+it.next+' becomes '+it.num+' and every '+it.words+' after it moves up one.'):'') };
+  }
+  const pages=[]; if(!t.vp) pages.push('Video Presets'); if(!t.io) pages.push('the I/O Patch'); if(!t.wire) pages.push('Wire');
+  let n=it.name+' stays in '+pages.join(' and ')+(it.num?(' and keeps '+it.num):'')+'.';
+  if(t.io) n+=' + Add '+(kind==='src'?'source':kind==='dest'?'destination':'AUX')+' on the I/O Patch puts it back.';
+  if(t.wire) n+=' Its card stays in Wire’s list to drag back.';
+  return { ok:true, note:n };
+}
+/* the window. from: 'vp' | 'io' | 'wire' (the page the trash is on); done: after a Delete (Destination Properties closes) */
+function _lbDelAsk(kind,id,from,done){
+  const it=_lbDelItem(kind,id); if(!it) return;
+  from=from||_lbDelPage();
+  const out=(kind!=='src');
+  const pre={ vp:from==='vp', io:from==='io'||(out&&from==='vp'), wire:from==='wire'||(out&&from==='vp') };
+  const H={ vp:out?'The canvas and every preset; a '+it.word.toLowerCase()+' off Video Presets leaves the I/O Patch and Wire too':'Every preset’s layers, backgrounds and AUX boxes',
+            io:'Its card, the I/O Excel and the Look Book’s I/O pages', wire:'Every Wire drawing (its card stays in Wire’s list)' };
+  let msg='Take '+it.name+(it.num?' ('+it.num+')':'')+' off:';
+  if(kind==='src'&&typeof _fsMediaItem==='function'&&_fsMediaItem(id)&&typeof _fsMediaUses==='function'){ const u=_fsMediaUses(id); msg+='\n'+(u.length?('Used in '+u.length+' place'+(u.length===1?'':'s')+': '+u.slice(0,8).map(function(x){ return x.label; }).join(', ')+(u.length>8?' and '+(u.length-8)+' more':'')+'.'):'Not used in any preset.'); }   /* a file: where it is used, as its trash said before (16lc-vpvideo) */
+  showConfirm({ variant:'grey', title:'Delete '+it.name, message:msg,
+    checks:[ { key:'all', label:'Everywhere', all:true, checked:pre.vp&&pre.io&&pre.wire },
+             { key:'vp', label:'Video Presets', hint:H.vp, checked:pre.vp },
+             { key:'io', label:'I/O Patch', hint:H.io, checked:pre.io },
+             { key:'wire', label:'Wire', hint:H.wire, checked:pre.wire } ],
+    checksTie: out?function(key,on,set){ if(key==='vp'&&on){ set('io',true); set('wire',true); } if((key==='io'||key==='wire')&&!on) set('vp',false); if(key==='all'&&!on){ set('vp',false); } }:null,
+    checksState:function(t){ return _lbDelNote(kind,it,t||{}); },
+    confirmLabel:'Delete', cancelLabel:'Cancel',
+    onConfirm:function(t){ _lbDelDo(kind,id,t||{}); if(typeof done==='function') done(); } });
+}
+function _lbDelDo(kind,id,t){
+  if(!(t.vp||t.io||t.wire)) return;
+  const it=_lbDelItem(kind,id); if(!it) return;
+  if(kind==='dest'&&t.vp&&it.last) return;
+  _sysWithUndo(function(){
+    if(kind==='src'){
+      if(t.vp&&t.io&&t.wire) _lbDelSrcAll(id);
+      else { if(t.vp) _lbDelSrcVP(id,!t.io); if(t.io) _lbDelSrcIO(id); if(t.wire) _lbDelWire('src',id,false); }
+    } else {
+      if(t.vp) _lbDelOutAll(kind,id);
+      else { if(t.io) _lbDelOutIO(kind,id); if(t.wire) _lbDelWire(kind==='dest'?'dst':'dsm',id,false); }
+    }
+  });
+  _isDirty=true; if(typeof _updateDirtyIndicator==='function') _updateDirtyIndicator();
+  if(sel&&kind==='dest'&&sel.sid===id) sel=null;
+  if(typeof scheduleRender==='function') scheduleRender();
+  if(typeof renderTable==='function') renderTable();
+  _sysRender();
+  if(typeof fsPresetId!=='undefined'&&fsPresetId&&typeof renderFullscreen==='function') renderFullscreen();
+  if(typeof _wireRefreshIfOpen==='function') _wireRefreshIfOpen();
+}
+/* Wire: the tiles of a source (ref = its name) / destination ('dst', ref = id) / AUX ('dsm') leave every drawing; forget: it left the show */
+function _lbDelWire(k,ref,forget){
+  if(typeof _wireAdvEachPage==='function') _wireAdvEachPage(function(pg){
+    const f=(k==='src')?'sources':(k==='dst')?'dests':'dsms', arr=Array.isArray(pg[f])?pg[f]:[], n0=arr.length;
+    pg[f]=arr.filter(function(x){ return !(x&&((k==='src')?x.name===ref:x.refId===ref)); });
+    if(pg[f].length!==n0&&typeof _wireAdvSweepPageWires==='function') _wireAdvSweepPageWires(pg);
+  });
+  const key=k+':'+ref;
+  try{
+    const st=_slbState();
+    if(st.all[key]){ _slbFreeze(st); _slbMaterialize(st); const M=_slbMw(); _slbUnrow(M,key); _slbSetLoose(M,key,false); if(!Array.isArray(M.off)) M.off=[]; const i=M.off.indexOf(key); if(forget){ if(i>=0) M.off.splice(i,1); } else if(i<0) M.off.push(key); if(typeof wireLayout==='object'&&wireLayout) delete wireLayout[key]; _slbTidy(); }
+    else if(forget){ const M=_slbM(); if(M&&Array.isArray(M.off)&&M.off.indexOf(key)>=0){ M.off.splice(M.off.indexOf(key),1); _slbTidy(); } }
+  }catch(e){ console.error('[delwin] Wire Simple',e); }
+}
+/* a source off Video Presets: its uses in every preset and its library entry; keepIO: the I/O Patch keeps it (an I/O-only source) */
+function _lbDelSrcVP(nm,keepIO){
+  if(typeof _fsMediaItem==='function'&&_fsMediaItem(nm)&&typeof _fsRemoveMedia==='function') _fsRemoveMedia(nm);   /* a file: as the Video tab's trash (first: its own step is the one this delete takes) */
+  (Array.isArray(presets)?presets:[]).forEach(function(p){
+    if(!p) return;
+    if(p.layers) Object.keys(p.layers).forEach(function(sid){ const lm=p.layers[sid]; if(lm&&typeof lm==='object') Object.keys(lm).forEach(function(n){ if(lm[n]===nm){ delete lm[n]; if(p.layerMedia&&p.layerMedia[sid]){ delete p.layerMedia[sid][n]; if(!Object.keys(p.layerMedia[sid]).length) delete p.layerMedia[sid]; } } }); });
+    if(p.bgNames) Object.keys(p.bgNames).forEach(function(sid){ if(p.bgNames[sid]===nm){ delete p.bgNames[sid]; if(p.bgBox&&p.bgBox[sid]&&p.bgBox[sid].src===nm) delete p.bgBox[sid]; } });
+    if(p.dsmContent) Object.keys(p.dsmContent).forEach(function(did){ if(p.dsmContent[did]===nm) delete p.dsmContent[did]; });
+  });
+  if(Array.isArray(customLibrary)){ for(let i=customLibrary.length-1;i>=0;i--){ if(customLibrary[i]&&customLibrary[i].l===nm) customLibrary.splice(i,1); } }
+  if(keepIO){ if(!Array.isArray(sources)) sources=[]; const e=sources.find(function(s){ return s&&s.name===nm; }); if(e) e.ioOnly=true; else sources.push({ name:nm, ioOnly:true }); }
+}
+/* a source off the I/O Patch: its card, page-1 row, Excel and Look Book rows; it keeps its number */
+function _lbDelSrcIO(nm){
+  if(!Array.isArray(sources)) sources=[];
+  let e=sources.find(function(s){ return s&&s.name===nm; }); if(!e){ e={ name:nm }; sources.push(e); }
+  e.ioOff=true;
+  _ioAdvDropTwin('src',nm);
+}
+/* a source everywhere: it leaves the show */
+function _lbDelSrcAll(nm){
+  _lbDelSrcVP(nm,false);
+  _ioAdvDropTwin('src',nm);
+  if(Array.isArray(sources)){
+    for(let i=sources.length-1;i>=0;i--){ if(sources[i]&&sources[i].name===nm) sources.splice(i,1); }
+    sources.forEach(function(s){ if(s&&s.backupOf===nm){ s.backupOf=null; s.type='Primary'; } if(s&&s.autoB===nm) delete s.autoB; if(s&&s.pairOf===nm) delete s.pairOf; });
+  }
+  _lbDelWire('src',nm,true);
+  if(typeof wireThumbnails==='object'&&wireThumbnails) delete wireThumbnails['src:'+nm];
+}
+/* a destination / AUX off the I/O Patch: it keeps its number; its page-1 row goes */
+function _lbDelOutIO(kind,id){ const o=_lbDelOut(kind,id); if(!o) return; o.ioOff=true; _ioAdvDropTwin('dest',o.name); }   /* page 1's destination / AUX rows ('dest': not a multiviewer's) */
+/* a destination / AUX everywhere (Video Presets ticked) */
+function _lbDelOutAll(kind,id){
+  const o=_lbDelOut(kind,id); if(!o) return; const nm=o.name;
+  if(kind==='dest'){ deleteScreen(id); if(_lbDelOut('dest',id)) return; }   /* deleteScreen first: its own step is the one this delete takes; refused = nothing more */
+  else {
+    dsms=dsms.filter(function(d){ return !(d&&d.id===id); });
+    (Array.isArray(presets)?presets:[]).forEach(function(p){ ['dsmOn','dsmContent','dsmColor','dsmName','dsmType'].forEach(function(k){ if(p&&p[k]&&typeof p[k]==='object') delete p[k][id]; }); });
+  }
+  _ioAdvDropTwin('dest',nm);
+  _lbDelWire(kind==='dest'?'dst':'dsm',id,true);
+  if(typeof wireThumbnails==='object'&&wireThumbnails) delete wireThumbnails[(kind==='dest'?'dst:':'dsm:')+id];
+}
+/* ══ 16lo-addback (SPEC rule 8, "+ Add source lists it"): the I/O Patch's + Add source / destination / AUX card lists what is off the
+   patch (New first, then each item with its number); with nothing off the patch it adds at once, as before. ══ */
+function _lbAddOff(sec){
+  if(_srcLbcOff()) return [];
+  if(sec==='src') return _sysDiscoverSources().filter(_srcIoOff).map(function(n){ return { value:'n:'+n, label:n+' (S'+_lbnSrcNo(n)+')' }; });
+  if(sec==='dst') return (Array.isArray(screens)?screens:[]).filter(function(s){ return s&&!_bdIs(s)&&s.ioOff; }).map(function(s){ return { value:'d:'+s.id, label:(s.name||'')+' (D'+_bdNo(s)+')' }; });
+  if(sec==='aux') return (Array.isArray(dsms)?dsms:[]).filter(function(d){ return d&&d.ioOff; }).map(function(d){ return { value:'a:'+d.id, label:(d.name||'')+' (A'+_lbnOutNo('aux',d)+')' }; });
+  return [];
+}
+function _lbAddOptions(sec){
+  const w={ src:'source', dst:'destination', aux:'AUX' }[sec]||'item';
+  return [{ value:'new', label:'New '+w }, { group:'Not on the I/O Patch' }].concat(_lbAddOff(sec));
+}
+function _lbAddPick(sec,opt){
+  const v=String((opt&&opt.value)||''); if(!v) return;
+  if(v==='new'){ _iogAddItem(sec); return; }
+  _sysWithUndo(function(){
+    if(v.indexOf('n:')===0){ const e=(Array.isArray(sources)?sources:[]).find(function(s){ return s&&s.name===v.slice(2); }); if(e) delete e.ioOff; }
+    else { const o=_lbDelOut(v.indexOf('d:')===0?'dest':'aux',v.slice(2)); if(o) delete o.ioOff; }
+  });
+  _isDirty=true; if(typeof _updateDirtyIndicator==='function') _updateDirtyIndicator();
+  _sysRender(); if(typeof _wireRefreshIfOpen==='function') _wireRefreshIfOpen();
+}
+/* the + Add card of the I/O Patch: the list when something is off the patch */
+function _lbAddAsk(sec,card){
+  if(!card||!_lbAddOff(sec).length) return false;
+  card.dataset.sysField='io-add'; card.dataset.sysKind=sec;
+  _sysOpenDropdown(card);
+  return true;
+}
+/* SPEC rule 10: a multiviewer's trash deletes it everywhere, no window (its page-1 row, its Wire tiles and cables on every page and
+   on Simple), one Undo step */
+function _lbMvDelete(id){
+  const m=(Array.isArray(multiviewers)?multiviewers:[]).find(function(x){ return x&&x.id===id; }); if(!m) return;
+  _sysWithUndo(function(){ _ioAdvDropTwin('mv',m.name); multiviewers=multiviewers.filter(function(x){ return !(x&&x.id===id); }); if(typeof _cmMvDropTiles==='function') _cmMvDropTiles(id); });
+  _isDirty=true; if(typeof _updateDirtyIndicator==='function') _updateDirtyIndicator();
+  if(typeof scheduleRender==='function') scheduleRender();
+  _sysRender(); if(typeof _wireRefreshIfOpen==='function') _wireRefreshIfOpen();
+}
+/* a page-1 row copied from the show is that item on the I/O Patch: its trash asks in the window too (Omar: "use the same template
+   to answer this question on all sections"); a multiviewer's row deletes it everywhere; a row typed by hand, or on another page, as before */
+function _lbDelAdvRow(kind,id){
+  if(typeof ioAdvanced!=='object'||!ioAdvanced||ioAdvanced.page!==0) return false;
+  const pg=_ioAdvPage(), arr=_ioAdvArr(pg,kind), r=(arr||[]).find(function(x){ return x&&x.id===id; });
+  if(!r||r.fromShow!==true||r.gone===true) return false;
+  const low=String(r.name||'').trim().toLowerCase(); if(!low) return false;
+  const same=function(o){ return !!o&&String(o.name||'').trim().toLowerCase()===low; };
+  if(kind==='adv-src'){ const nm=_sysDiscoverSources().find(function(n){ return String(n).trim().toLowerCase()===low; }); if(!nm) return false; _lbDelAsk('src',nm,'io'); return true; }
+  if(kind==='adv-mv'){ const m=(Array.isArray(multiviewers)?multiviewers:[]).find(same); if(!m) return false; _lbMvDelete(m.id); return true; }
+  const sc=(Array.isArray(screens)?screens:[]).find(function(o){ return same(o)&&!_bdIs(o); }); if(sc){ _lbDelAsk('dest',sc.id,'io'); return true; }
+  const ax=(Array.isArray(dsms)?dsms:[]).find(same); if(ax){ _lbDelAsk('aux',ax.id,'io'); return true; }
+  return false;
+}
+/* ══ end 16lo-delwin / 16lo-addback ══ */
 /* ══ 16lc-vpfinish block (r16lm SPEC: Omar's answers to step A's questions, 2026-10-06 ~17:00, and to step C's questions and the picture pack,
    2026-10-06 night / 10-07). Every change of this block is desktop only (_lbcOn): the phone is frozen and keeps its ways. ══ */
 /* (D2, Omar: "the panel stops at card width") the narrowest the Video Presets > Advanced left panel can be dragged: what its cards need (236 px
@@ -19805,11 +20057,11 @@ function _iogRender(){
   _iogCloneWireCss();
   const spot=_iogSpot(host,document.activeElement)||((_iogBlur&&Date.now()-_iogBlur.t<400)?_iogBlur.spot:null); _iogBlur=null;
   const _lbnNo=_lbcOn()?_lbcSrcNo():null;   /* 16lc-vpcards-fix (E2): each card its S number */
-  const srcCards=_sysDiscoverSources().map(function(nm,i){ return _iogCardHTML(_iogSrcObj(nm,(_lbnNo&&Object.prototype.hasOwnProperty.call(_lbnNo,nm))?_lbnNo[nm]:i)); });   /* 16lc-vpcards: the card object Wire and Video Presets use too */
+  const srcCards=_sysIoSources().map(function(nm,i){ return _iogCardHTML(_iogSrcObj(nm,(_lbnNo&&Object.prototype.hasOwnProperty.call(_lbnNo,nm))?_lbnNo[nm]:i)); });   /* 16lc-vpcards: the card object Wire and Video Presets use too */
   const outCard=function(kind,o,num,slot){ return _iogCardHTML(_iogOutObj(kind,o,num,slot)); };
   const dstCards=_iogDests().map(function(s){ const i=_bdNo(s)-1; return outCard('dest',s,'D'+(i+1),'Destination '+(i+1)); })   /* 16kx-r3 (K): numbered without the backdrops, one number per destination (around a backdrop D1, D2) */
     .concat(((typeof ioDests!=='undefined'&&Array.isArray(ioDests))?ioDests:[]).filter(Boolean).map(function(d){ return outCard('iodest',d,'IO','I/O-only destination (it prints after the AUX rows in the I/O Excel)'); }));
-  const auxCards=_lbnSortOut('aux',((typeof dsms!=='undefined'&&Array.isArray(dsms))?dsms:[]).filter(Boolean)).map(function(d,i){ const _n=_lbcOn()?_lbnOutNo('aux',d):(i+1); return outCard('aux',d,'A'+_n,(_sysResolveDsmType(d)||'AUX')+' '+_n); });   /* 16lc-vpcards-fix (E2): in number order, each its A number */
+  const auxCards=_lbnSortOut('aux',((typeof dsms!=='undefined'&&Array.isArray(dsms))?dsms:[]).filter(function(d){ return !!d&&!_outIoOff(d); })).map(function(d,i){ const _n=_lbcOn()?_lbnOutNo('aux',d):(i+1); return outCard('aux',d,'A'+_n,(_sysResolveDsmType(d)||'AUX')+' '+_n); });   /* 16lc-vpcards-fix (E2): in number order, each its A number */
   const mvCards=((typeof multiviewers!=='undefined'&&Array.isArray(multiviewers))?multiviewers:[]).filter(Boolean).map(function(m,i){ return outCard('mv',m,'MV'+(i+1),'Multiviewer '+(i+1)); });
   /* a section's Set for all row shows when the section has a card, as the table's Set-for-all rows did; 16ky-r2b: every section
      has its own (D0: the destinations and I/O-only destinations only) and a Remove at the right end of its title */
@@ -20022,6 +20274,7 @@ function _sysOpenDropdown(trigger){
   else if(field==='fs-source') opts=_fsBuildSourceOptions();   // 16ib: the Advanced layer Source picker is one of these menus
   else if(field==='bk-primary'||field==='bk-backup') opts=_ioBkOptions(field);   // 16ix: the Backup window's pickers
   else if(field==='fs-speed') opts=_fsSpeedOptions(currentVal);   /* 16kf */
+  else if(field==='io-add') opts=_lbAddOptions(trigger.dataset.sysKind);   /* 16lo-addback */
   else if(field==='fs-fit') opts=[{value:'fit',label:'Scale to fit',meta:'bars if needed'},{value:'fill',label:'Scale to fill',meta:'crops the overflow'},{value:'stretch',label:'Stretch',meta:'to the layer box'},{value:'native',label:'1:1 native',meta:'overflow cut'}];   // 16ie: Geometry resize mode
   else return;
   const menu=document.createElement('div');
@@ -20165,8 +20418,8 @@ function _ioAdvScanShowRows(pg){
   const low=function(list,key){ return new Set((list||[]).filter(Boolean).map(function(o){ return String((key?o[key]:o)||'').trim().toLowerCase(); })); };
   const srcArr=(typeof sources!=='undefined'&&Array.isArray(sources))?sources:[];
   const scr=(typeof screens!=='undefined'?screens:[]), ax=(typeof dsms!=='undefined'?dsms:[]), io=(typeof ioDests!=='undefined'&&Array.isArray(ioDests))?ioDests:[], mv=(typeof multiviewers!=='undefined'?multiviewers:[]);
-  const src=low(_sysDiscoverSources()), srcTwin=low(srcArr.filter(function(s){ return s&&s.fromAdv; }),'name');
-  const dst=low([].concat(_bdNoBd(scr),ax,io,mv),'name'), dstTwin=low(io.filter(function(d){ return d&&d.fromAdv; }),'name');
+  const src=low(_sysIoSources()), srcTwin=low(srcArr.filter(function(s){ return s&&s.fromAdv; }),'name');   /* 16lo-delwin */
+  const dst=low([].concat(_bdNoBd(scr).filter(function(o){ return !_outIoOff(o); }),ax.filter(function(o){ return !_outIoOff(o); }),io,mv),'name'), dstTwin=low(io.filter(function(d){ return d&&d.fromAdv; }),'name');
   const scan=function(rows,have,twin){ (rows||[]).forEach(function(r){
     const nm=String((r&&r.name)||'').trim().toLowerCase(); if(!nm) return;
     if(r.fromShow===true){ if(!have.has(nm)){ out.gone.push(r); if(r.gone!==true) out.writes++; } else if(r.gone===true){ out.back.push(r); out.writes++; } }
@@ -20386,6 +20639,7 @@ function _sysIoDestRename(el){
    everything picked from a Wire card keep pushing their own. */
 function _sysHandlePick(trigger,opt){
   const ds=(trigger&&trigger.dataset)||{}; const k=ds.sysKind||'', f=ds.sysField||'';
+  if(f==='io-add'){ _lbAddPick(k,opt); return; }   /* 16lo-addback */
   if(_lbfWcK(k)){ _lbfWcPick(trigger,opt); return; }   /* 16lc-vpfinish (D4): a Wire > Advanced hand-made card's menu: one Undo step */
   if(f==='refresh'&&opt&&opt.custom){ _rfAsk(trigger); return; }   /* 16kz-refresh (R2): Refresh › Custom… types in place; nothing is written yet */
   if(f==='connector'&&opt&&opt.custom){ if(ds.wireOrigin==='1') _wireConnAsk(trigger); else _sysConnAsk(trigger); return; }   /* 16kw-r2: on a Wire card too */   /* 16kw-menus: Connector › Custom… asks in the cell; nothing is written yet */
@@ -20800,12 +21054,14 @@ function _sysBuildNameOptions(){
 // ── Source rename — global replace across presets ─────────────────────
 function _sysApplyGlobalRename(oldName,newName){
   if(!oldName||!newName||oldName===newName) return;
+  const _soK=_srcKeepBefore(oldName);   /* 16lo-srcorder */
   const _lbvF=(typeof _fsMediaItem==='function')?_fsMediaItem(oldName):null;   /* 16lc-vpvideo: a video / picture file */
   // Update sources[] entry
   if(typeof sources!=='undefined'&&Array.isArray(sources)){
     sources.forEach(s=>{if(s&&s.name===oldName)s.name=newName;});
     // Also update any backupOf references that pointed at the renamed source
     sources.forEach(s=>{if(s&&s.backupOf===oldName)s.backupOf=newName;});
+    sources.forEach(s=>{ if(s&&s.autoB===oldName) s.autoB=newName; if(s&&s.pairOf===oldName) s.pairOf=newName; });   /* 16lo-nopairs ("Keep them as pairs"): a renamed A keeps its B */
   }
   _ioAdvRenameTwin('src',oldName,newName);   /* io-patch click-through: Advanced page 1 is the show */
   // Update customLibrary entries
@@ -20839,6 +21095,7 @@ function _sysApplyGlobalRename(oldName,newName){
       }
     });
   }
+  _srcKeepAfter(_soK,oldName,newName);   /* 16lo-srcorder */
   _isDirty=true; if(typeof _updateDirtyIndicator==='function') _updateDirtyIndicator();
   if(typeof render==='function') scheduleRender();
   if(typeof renderTable==='function') renderTable();
@@ -21194,6 +21451,9 @@ function _sysRowReset(kind,id){
 }
 function _sysRowDelete(kind,id){
   if(_lbfWcK(kind)){ _lbfWcDelete(kind,id); return; }   /* 16lc-vpfinish (D4): asks first, like the I/O Patch trash */
+  if(_lbcOn()&&(kind==='src'||kind==='dest'||kind==='aux')){ _lbDelAsk(kind,id,null); return; }   /* 16lo-delwin: the page the card is on is ticked */
+  if(_lbcOn()&&kind==='mv'){ _lbMvDelete(id); return; }   /* 16lo-delwin (SPEC rule 10) */
+  if(_lbcOn()&&(kind==='adv-src'||kind==='adv-dst'||kind==='adv-mv')&&_lbDelAdvRow(kind,id)) return;   /* 16lo-delwin: a copied page-1 row */
   if(kind==='dest'&&_kzDelRefused(_kzScreenOf(id))) return;   /* 16kz-refresh (L1): the I/O Patch card's trash and the Remove Destination window */
   if(kind==='src'){ const _e=_sysGetSourceMeta(id); if(_e&&_e.ioOnly&&!_lbvInPresets(id)){ _sysRemoveSourceScoped(id); return; } }   /* 16lc-vpvideo: one a preset uses asks first, as any preset source */   // 16jh: an I/O-only row goes straight away (undoable), no preset warning
   if(kind==='adv-src'||kind==='adv-dst'||kind==='adv-mv'){ const pg=_ioAdvPage(); const arr=_ioAdvArr(pg,kind); const i=arr.findIndex(x=>x&&x.id===id); if(i>=0){ if(typeof pushUndo==='function') pushUndo(); const _d=arr[i]; if(_d&&_d.autoB){ const _a=arr.find(x=>x&&x.id===_d.autoB); if(_a) _a.noAutoB=true; } if(ioAdvanced.page===0) _ioAdvUnsyncRow(kind,_d); arr.splice(i,1); _isDirty=true; if(typeof _updateDirtyIndicator==='function') _updateDirtyIndicator(); if(typeof scheduleAutoSave==='function') scheduleAutoSave(); } _sysRender(); return; }   // 16hm
@@ -21355,7 +21615,7 @@ function _sysExportIOExcel(){
     rows.push(['Slot','Connector','Source Name','Type','Resolution','Refresh','Notes']);   /* 16kz-refresh (R3): Refresh after Resolution */
     styles.push([1,1,1,1,1,1,1]);
 
-    const sourceNames=(typeof _sysDiscoverSources==='function')?_sysDiscoverSources():[];
+    const sourceNames=(typeof _sysDiscoverSources==='function')?_sysIoSources():[];   /* 16lo-delwin */
     if(sourceNames.length===0){
       rows.push(['','','(no sources discovered yet)','','','','']);
       styles.push([7,7,7,7,7,7,7]);
@@ -21389,6 +21649,7 @@ function _sysExportIOExcel(){
     if(typeof screens!=='undefined'&&Array.isArray(screens)){
       _lbnSortOut('dst',screens).forEach(function(s,i){   /* 16kx-r3 (K): numbered without the backdrops (Omar: "no number count drops by one"), one number per destination in the whole show. 16lc-vpcards-fix (E2): in number order */
         if(_bdIs(s)) return;   /* 16kx-backdrop: not in the I/O Excel */
+        if(_outIoOff(s)) return;   /* 16lo-delwin */
         anyDest=true;
         const _sd=(typeof _sysDeviceRaw==='function')?_sysDeviceRaw(s):'';
         rows.push([
@@ -21405,6 +21666,7 @@ function _sysExportIOExcel(){
     }
     if(typeof dsms!=='undefined'&&Array.isArray(dsms)){
       (_lbcOn()?_lbnSortOut('aux',dsms.filter(Boolean)):dsms).forEach(function(d,i){   /* 16lc-vpcards-fix (E2) */
+        if(_outIoOff(d)) return;   /* 16lo-delwin */
         anyDest=true;
         const dType=(typeof _sysDeviceRaw==='function')?(_sysDeviceRaw(d)==='Custom'?(d.customType||''):_sysDeviceRaw(d)):'';
         rows.push([
@@ -21637,7 +21899,7 @@ function _sysOpenRemoveMVModal(){
     return;
   }
   // Single MV — skip picker, go straight to confirm
-  if(multiviewers.length===1){
+  if(multiviewers.length===1&&!_lbcOn()){   /* 16lo-delwin: on the desktop the list opens for one too: its pick deletes at once (SPEC rule 10), so the title's Remove never deletes on one click */
     const m=multiviewers[0];
     if(typeof _sysRowDelete==='function') _sysRowDelete('mv',m.id);
     return;
@@ -21693,7 +21955,7 @@ function _sysRmMVEscClose(e){if(e.key==='Escape') _sysCloseRemoveMVModal();}
 // the System metadata; auto-discovery may re-surface the name with
 // empty fields if it's still used in presets).
 function _sysOpenRemoveSourceModal(){
-  const sourceNames=((typeof _sysDiscoverSources==='function')?_sysDiscoverSources():[]).filter(function(nm){ const m=_sysGetSourceMeta(nm); return !!(m&&m.ioOnly)&&!_lbvInPresets(nm); });   /* 16lc-vpvideo: one a preset uses leaves with the presets */   // 16jh: only I/O-only sources leave from here; a preset source leaves with the presets
+  const sourceNames=((typeof _sysDiscoverSources==='function')?_sysDiscoverSources():[]).filter(function(nm){ const m=_sysGetSourceMeta(nm); return !!(m&&m.ioOnly)&&!_lbvInPresets(nm)&&!_srcIoOff(nm); });   /* 16lc-vpvideo: one a preset uses leaves with the presets; 16lo-delwin: not one off the patch */   // 16jh: only I/O-only sources leave from here; a preset source leaves with the presets
   let body;
   if(sourceNames.length===0){
     body='<div class="sys-picker-empty">Nothing to remove here. Only sources added on this patch (I/O-only) can be removed; a source that lives in the presets leaves when it leaves the presets.</div>';
@@ -21736,6 +21998,7 @@ function _sysOpenRemoveSourceModal(){
     item.addEventListener('click',function(){
       const nm=item.dataset.srcName;
       _sysCloseRemoveSourceModal();
+      if(_lbcOn()){ _lbDelAsk('src',nm,'io'); return; }   /* 16lo-delwin */
       _sysRemoveSourceScoped(nm);
     });
   });
@@ -32375,6 +32638,7 @@ function getProjectState(){
     canvasW:document.getElementById('cv-w').value,
     canvasH:document.getElementById('cv-h').value,
     screens,presets,customLibrary,customTypes,contentColors,dsms,multiviewers,sources,ioDests,
+    srcOrder:_srcOrderOut(),   /* 16lo-srcorder */
     wireLayout,
     wireThumbnails,
     wireSettings,
@@ -32657,6 +32921,7 @@ function _applyProjectText(text){
     presets.forEach(p=>{ if(typeof initStripPositions==='function') initStripPositions(p.id); });
     _lbfOneName();   /* 16lc-vpfinish (D7, Omar: "Older shows: clean up names on open"): before the baseline, so it is no change and no Undo step */
     try{ _cbOpen(); }catch(e){}   /* 16lg-blend (R2): every edge blend the show has stays separate screens until switched on; before the baseline */
+    srcOrder=_srcOrderOpen(s.srcOrder);   /* 16lo-srcorder: a show of this build keeps its order; an older one starts from the order it shows today; before the baseline, so opening is no change */
     ioNums=_lbnNorm(s.ioNums); _lbnOpen(!!(s.ioNums&&typeof s.ioNums==='object'));   /* 16lc-vpcards-fix (E2, main session 2026-10-07: "opening an older show must NOT renumber anything it already shows"): the numbers kept, a file's colour, before the baseline */
     _isDirty=false; _captureCleanBaseline(); _lbFromDraft=false;   /* 16kt-canvas-draft-fix: a loaded show is not a restored draft */
     if(typeof _mvPicFill==='function'&&_mvPicFill()) _recomputeDirty();   /* 16la-wire-mv (N): a multiviewer saved without a picture gets one at random now, after the baseline: the show reads as changed and asks to be saved */
@@ -32855,6 +33120,7 @@ function _writeAutoSaveNow(){
   try{
     const state=JSON.stringify({
       screens,presets,dsms,customLibrary,customTypes,contentColors,sources,multiviewers,ioDests,
+      srcOrder:_srcOrderOut(),   /* 16lo-srcorder */
       wireLayout,wireThumbnails,wireSettings,wireAdvanced,
       ioAdvanced,   /* 16kh: the browser draft left the I/O Patch Advanced pages out, so restoring a draft wiped them (the desktop app was not affected) */
       /* 16lc-vpcards-fix4 (H1): no ioNums in the draft, as in the v0.8.2 candidate */
@@ -32987,6 +33253,7 @@ function restoreAutoSave(){
         presets.forEach(function(pr){ if(pr&&pr.id&&typeof initStripPositions==='function') initStripPositions(pr.id); });
         _lbfOneName();   /* 16lc-vpfinish (D7): a draft opens the same way */
         try{ _cbOpen(); }catch(e){}   /* 16lg-blend (R2): a draft opens the same way */
+        srcOrder=_srcOrderOpen(s.srcOrder);   /* 16lo-srcorder */
         ioNums=_lbnNorm(s.ioNums); _lbnOpen(!!(s.ioNums&&typeof s.ioNums==='object'));   /* 16lc-vpcards-fix (E2): so do its numbers */
         _isDirty=false; _captureCleanBaseline(); if(typeof _mvPicFill==='function'&&_mvPicFill()) _recomputeDirty(); _updateDirtyIndicator();   /* 16la-wire-mv (N): as a file opened */
         _lbFromDraft=true;   /* 16kt-canvas-draft-fix: clean, but not a file until it is saved */
@@ -33132,7 +33399,7 @@ function _snapshot(){
   try{ (presets||[]).forEach(function(p){ if(p&&p.id){ const o={}; pv.forEach(function(k){ if(k in p) o[k]=p[k]; }); _lbFoldsSeen[p.id]=o; } }); }catch(e){}
   return JSON.stringify({screens,
     presets:(presets||[]).map(function(p){ return (p&&pv.some(function(k){ return k in p; }))?_lbWithoutKeys(p,pv):p; }),
-    dsms,customLibrary,customTypes,contentColors,multiviewers,sources,ioDests,ioNums,wireLayout,wireThumbnails,
+    dsms,customLibrary,customTypes,contentColors,multiviewers,sources,ioDests,ioNums,srcOrder:_srcOrderOut(),wireLayout,wireThumbnails,
     wireSettings:_lbWireSettingsData(),wireAdvanced,ioAdvanced:_lbWithoutKeys(ioAdvanced,_LB_VIEW_KEYS.ioAdvanced)});
 }
 /* Are two snapshots the same show? Text first. When they were taken on different Wire page tabs the text differs
@@ -33179,6 +33446,7 @@ function _lbCloseChangesNothing(list,idx,max,fresh){
 var _lbRedoKept=null;   /* 16ks: the Redo history a recorded step cleared; it comes back when that step turns out to be empty (_lbDropEmptySteps) */
 function _lbKeepIfLooking(){ if(typeof _lbCleanLook!=='undefined'&&_lbCleanLook>0){ try{ _lbKeepAlso(); }catch(e){} } }   /* unsaved-16kr: a step recorded inside a first look on a clean show */
 function pushUndo(){
+  _srcOrderSync();   /* 16lo-srcorder */
   const s=_snapshot(); let n=_undoStack.length;
   /* 16ks: a step equal to the one under it would undo nothing (the action before this one changed nothing) */
   if(!n||!_lbSameShow(_undoStack[n-1],s)){ _undoStack.push(s); } else { while(n&&_lbSameShow(_undoStack[n-1],s)) n--; }
@@ -33202,13 +33470,18 @@ function pushUndoFrom(snap){
    it stands are dropped on the way. */
 function _lbRestoreData(s){
   const view=_lbViewStateGet();
-  screens=s.screens;presets=s.presets;dsms=s.dsms||[];customLibrary=s.customLibrary||[];if(typeof _fsMediaRehydrate==='function')_fsMediaRehydrate();customTypes=(s.customTypes&&typeof s.customTypes==='object')?s.customTypes:{machines:[],devices:[]};
+  screens=s.screens;presets=s.presets;dsms=s.dsms||[];customLibrary=s.customLibrary||[];
+  if(typeof _fsTrashSync==='function'&&!_srcLbcOff()) _fsTrashSync();   /* 16lo-delwin: a file deleted from any page (the I/O Patch, Wire, the table,
+     a Remove list) gets its file and its stored copy back on the Undo itself; only the Video tab's draw did that (VPADV A7), so after
+     an Undo on another page the file had no picture / video and no stored copy until the Video tab drew again. Redo takes it away. */
+  if(typeof _fsMediaRehydrate==='function')_fsMediaRehydrate();customTypes=(s.customTypes&&typeof s.customTypes==='object')?s.customTypes:{machines:[],devices:[]};
   contentColors=(s.contentColors&&typeof s.contentColors==='object')?s.contentColors:{};   /* 16kt-colours: Undo / Redo cover the show's content colours */
   multiviewers=Array.isArray(s.multiviewers)?s.multiviewers:[];
   if(typeof _mvPicFill==='function') _mvPicFill();   /* 16la-wire-mv (N): a step without a picture (this build never records one) gets one */
   sources=Array.isArray(s.sources)?s.sources:[];
   ioDests=Array.isArray(s.ioDests)?s.ioDests:[];
   ioNums=_lbnNorm(s.ioNums);   /* 16lc-vpcards-fix (E2) */
+  if(Array.isArray(s.srcOrder)) srcOrder=s.srcOrder.slice();   /* 16lo-srcorder */
   wireLayout=(s.wireLayout&&typeof s.wireLayout==='object')?s.wireLayout:{};
   wireThumbnails=(s.wireThumbnails&&typeof s.wireThumbnails==='object')?s.wireThumbnails:{};
   _lbWireSettingsData(s.wireSettings||null);
@@ -33627,6 +33900,7 @@ function newShow(){
     wireAdvanced = { sources: [], dests: [], dsms: [], wires: [], routers: [], customSources: [], customDests: [], customDsms: [] };
     ioAdvanced = _ioAdvDefault();   // 16hm
     ioNums=_lbnNorm(null);   /* 16lc-vpcards-fix (E2): a show of this build (it is saved with its numbers) */
+    srcOrder=[];   /* 16lo-srcorder */
     sel=null;selLayer=null;
     _isDirty=false; _lbFromDraft=false;   /* baseline captured at the END of _doNew, after the DOM resets; 16kt-canvas-draft-fix: a new show is not a restored draft */
     _updateDirtyIndicator();
@@ -33733,7 +34007,7 @@ function _sysValidateIO(){
   const errors=[];
   const warnings=[];
   // ── Sources bucket ────────────────────────────────────────────
-  const srcNames=(typeof _sysDiscoverSources==='function')?_sysDiscoverSources():[];
+  const srcNames=(typeof _sysDiscoverSources==='function')?_sysIoSources():[];   /* 16lo-delwin */
   const srcMissingConn=[];
   const srcMissingRes=[];
   const srcOverCable=[];
@@ -33753,6 +34027,7 @@ function _sysValidateIO(){
   if(typeof screens!=='undefined'&&Array.isArray(screens)){
     screens.forEach(function(s){
       if(_bdIs(s)) return;   /* 16kx-backdrop: no connector, no resolution */
+      if(_outIoOff(s)) return;   /* 16lo-delwin */
       const label=s.name||s.id;
       if(!s.connectorType) dstMissingConn.push(label);
       const res=(s.w&&s.h)?(s.w+'x'+s.h):'';
@@ -33764,6 +34039,7 @@ function _sysValidateIO(){
   }
   if(typeof dsms!=='undefined'&&Array.isArray(dsms)){
     dsms.forEach(function(d){
+      if(_outIoOff(d)) return;   /* 16lo-delwin */
       const dType=(typeof _sysResolveDsmType==='function')?_sysResolveDsmType(d):'AUX';
       const label=dType+' "'+(d.name||d.id)+'"';
       if(!d.connectorType) dstMissingConn.push(label);
@@ -34699,7 +34975,7 @@ function exportPDF(_returnHtml){
   // ── I/O Reference: Sources page ───────────────────────────────────────────
   // Same data path as _sysExportIOExcel — discover + meta; a source prints its own note (decision 30).
   // Slot column reads "Source N" (full name, matches Excel convention).
-  const sourceNames = ((typeof _sysDiscoverSources === 'function') ? _sysDiscoverSources() : []).filter(function(nm){ return !(((typeof _sysGetSourceMeta==='function'?_sysGetSourceMeta(nm):{}) || {}).ioOnly && !_lbvInPresets(nm)); });   /* 16lc-vpvideo: an I/O-only source a preset uses is a preset source */
+  const sourceNames = ((typeof _sysDiscoverSources === 'function') ? _sysDiscoverSources() : []).filter(function(nm){ return !(((typeof _sysGetSourceMeta==='function'?_sysGetSourceMeta(nm):{}) || {}).ioOnly && !_lbvInPresets(nm)) && !_srcIoOff(nm); });   /* 16lc-vpvideo: an I/O-only source a preset uses is a preset source; 16lo-delwin: not one off the patch */
   const sourceRowsHtml = sourceNames.length === 0
     ? '<tr><td colspan="6" class="io-empty">No sources discovered yet — add layers, BG names, or AUX content to populate this list.</td></tr>'
     : sourceNames.map((nm, i) => {
@@ -34744,6 +35020,7 @@ function exportPDF(_returnHtml){
   if (Array.isArray(screens)) {
     _lbnSortOut('dst', screens).forEach((s, i) => {   /* 16kx-r3 (K): numbered without the backdrops (Omar: "no number count drops by one"), one number per destination in the whole show. 16lc-vpcards-fix (E2): number order */
       if(_bdIs(s)) return;   /* 16kx-backdrop: not in the I/O Patch */
+      if(_outIoOff(s)) return;   /* 16lo-delwin */
       destRowsArr.push(`<tr>
         <td class="slot-dst">Destination ${_bdNo(s)}</td>
         <td>${_esc(s.connectorType || '')}</td>
@@ -34756,6 +35033,7 @@ function exportPDF(_returnHtml){
   }
   if (typeof dsms !== 'undefined' && Array.isArray(dsms)) {
     (_lbcOn() ? _lbnSortOut('aux', dsms.filter(Boolean)) : dsms).forEach((d, i) => {   /* 16lc-vpcards-fix (E2) */
+      if(_outIoOff(d)) return;   /* 16lo-delwin */
       const dType = (typeof _sysDeviceRaw==='function') ? (_sysDeviceRaw(d)==='Custom'?(d.customType||''):_sysDeviceRaw(d)) : '';
       destRowsArr.push(`<tr>
         <td class="slot-aux">AUX ${_lbcOn()?_lbnOutNo('aux',d):(i+1)}</td>
@@ -36657,7 +36935,7 @@ function collapseAllPresets(){ presets.forEach(p=>p.minimized=true); scheduleRen
 function expandAllPresets(){ presets.forEach(p=>p.minimized=false); scheduleRender(); }
 
 // ── Neon dialog helpers (replaces native alert/confirm) ───────────────────────
-const _DLG_ICONS={info:'ⓘ',warning:'⚠',error:'✕',success:'✓',destructive:'⚠'};
+const _DLG_ICONS={info:'ⓘ',warning:'⚠',error:'✕',success:'✓',destructive:'⚠',grey:'⚠'};   /* 16lo-delwin: grey */
 let _dlgOnCancel=null;
 function _dlgCancel(){
   const cb=_dlgOnCancel; _dlgClose();
@@ -36702,6 +36980,7 @@ function _dlgTicksWire(box,opts,btn){
   wrap.addEventListener('change',function(ev){
     const t=ev.target; if(!t||!t.dataset||!t.dataset.tick) return;
     if(all&&t===all) kids.forEach(function(k){ k.checked=all.checked; });
+    if(typeof opts.checksTie==='function'){ try{ opts.checksTie(t.dataset.tick,!!t.checked,function(key,on){ const k=kids.find(function(x){ return x.dataset.tick===key; }); if(k) k.checked=!!on; }); }catch(err){ console.error('[dlg] checksTie',err); } }   /* 16lo-delwin */
     sync();
   });
   sync();
@@ -37199,6 +37478,7 @@ function _fsMediaUses(name){
 }
 function _fsRemoveMediaAsk(name){
   const it=_fsMediaItem(name); if(!it) return;
+  if(_lbcOn()){ _lbDelAsk('src',name,'vp'); return; }   /* 16lo-delwin: the window of every source trash */
   const uses=_fsMediaUses(name); const list=uses.slice(0,8).map(function(u){ return u.label; }).join(', ')+(uses.length>8?' and '+(uses.length-8)+' more':'');
   const msg='Remove “'+name+'” from this show?\n\n'+(uses.length?('It is used in '+uses.length+' place'+(uses.length===1?'':'s')+': '+list+'.\nThose will be emptied.'):'It is not used in any preset.')
     +'\n\nThe copy stored inside this app is deleted. The original file on your drive is not touched. Undo brings it back.';
@@ -38116,6 +38396,7 @@ function _fsRenameContentUI(val){
 function _fsRenameContent(old,nn){
   const it=(Array.isArray(customLibrary)?customLibrary:[]).find(function(c){ return c&&c.l===old; }); if(!it) return;
   if(typeof pushUndo==='function') pushUndo();
+  const _soK=_srcKeepBefore(old);   /* 16lo-srcorder */
   it.l=nn;
   presets.forEach(function(p){
     if(p.layers) Object.keys(p.layers).forEach(function(sid){ const L=p.layers[sid]; if(L) Object.keys(L).forEach(function(k){ if(L[k]===old) L[k]=nn; }); });
@@ -38124,8 +38405,10 @@ function _fsRenameContent(old,nn){
     if(p.dsmContent) Object.keys(p.dsmContent).forEach(function(k){ if(p.dsmContent[k]===old) p.dsmContent[k]=nn; });
   });
   if(Array.isArray(sources)) sources.forEach(function(x){ if(x&&x.name===old) x.name=nn; });
+  if(Array.isArray(sources)) sources.forEach(function(x){ if(x&&x.autoB===old) x.autoB=nn; if(x&&x.pairOf===old) x.pairOf=nn; });   /* 16lo-nopairs */
   if(typeof _ioAdvRenameTwin==='function') _ioAdvRenameTwin('src',old,nn);   /* ghost-rows (16kt): the page-1 row follows the name with its mark and notes, as the I/O Patch Simple and Wire renames do */
   if(it.kind) _lbvMoveFile(old,nn);   /* 16lc-vpvideo: the move every rename makes (the copy under the old name is kept, so an Undo and a reopen find it) */
+  _srcKeepAfter(_soK,old,nn);   /* 16lo-srcorder */
   _fsSrcSig=''; _isDirty=true; if(typeof _updateDirtyIndicator==='function') _updateDirtyIndicator();
   scheduleRender(); renderFullscreen();
 }
