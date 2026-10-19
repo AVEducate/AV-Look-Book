@@ -3279,6 +3279,42 @@
   {
    "name": "I/O Patch 16lq-ptabs PT1 (Round 2 #16, Omar 2026-10-17: \"you should be able to type anything if its to long it break into two row and if that not enough when you hover over the tile it should pop up below it with the full name like any file would do in general\"): an Advanced page renamed BALLROOM SALON C NORTH REHEARSAL (32 letters, the most a page name takes) wraps in its tab with its copy and close buttons inside it, ends in … past two lines, and on hover pops up its full name right under the tab; a short name pops nothing up",
    "ok": true
+  },
+  {
+   "name": "Wire 16lr-wirebar WB1 (Round 2 #23, Omar 2026-10-17: \"23 yes\"): with 25 Advanced pages the page bar keeps zoom / Fit, Reset Layout and Export at their size and Fit still takes a click (they were squeezed and Fit cut off); the mouse wheel scrolls the page tabs sideways; a long page name wraps in its tab (180 px at most, the tab keeps its width however many pages there are) and pops up in full right under it, as the I/O Patch tab does",
+   "ok": true
+  },
+  {
+   "name": "Wire 16lr-sheetfit SF1 (Round 2 #24, Omar 2026-10-17: \"24 yes\"): an exported Wire sheet takes its paper's shape, so the drawing fills the page: the PDF's sheet is the shape of the printable area its window prints (Letter and Tabloid: no blank band under it, the full test measured ~0.55 in on Letter), the SVG's sheet is the paper's own shape; the Look Book's Wire page keeps its 1600 × 1131 sheet",
+   "ok": true
+  },
+  {
+   "name": "Wire 16lr-twoout TO1 (Round 2 #26, Omar 2026-10-17: \"this need to be fixed. that should not happen.\"): on Wire Advanced a source tile with two outputs and their names on (Aa) grows as a three-output tile does, so its two name boxes sit under its resolution and cable chip (neither covers the chip), each output numbered and with its own cable type; two outputs with the names off keep the 110 px tile and their two clean dots",
+   "ok": true
+  },
+  {
+   "name": "Help 16lr-menuzoom MZ1 (Round 2 #27, Omar 2026-10-17: \"27 yes fix the drop down.\"): at UI Size Small (0.9) and Large (1.15) a dropdown opens right under its button, its left edge on the button's, as at Default: a preset tile's MODIFIERS menu, an I/O Patch resolution menu, the Show Dates calendar and Wire's I/O Tools menu (which opens up from its button) (they opened up to 174 px away)",
+   "ok": true
+  },
+  {
+   "name": "Look Book 16lr-bookprint BP1 (Round 2 #28, Omar 2026-10-17: \"28. yes\"): the Look Book always prints full size: its canvas pictures place each destination picture without the centring transform Chrome mis-measures when it prints (a layer's corner tag then reached past the paper and EVERY page printed at 96 % on ORGILL, 90 % on Town Hall), at the same place to the pixel (a turned destination keeps only its turn); the canvas on screen keeps its transform",
+   "ok": true
+  },
+  {
+   "name": "Look Book 16lr-cvcheck CV1 (Round 2 #29, Omar 2026-10-17: \"29. yes\"): the export check measures the canvas the destinations need as the Canvas size is measured, after Fit Canvas: destinations that overlap as a blend does give no warning (the check added their widths and asked for a Fit Canvas that had nothing to trim); a canvas Fit Canvas would trim still gets the warning, and none after Fit Canvas",
+   "ok": true
+  },
+  {
+   "name": "Look Book 16lr-noneticked NT1 (Round 2 #30, Omar 2026-10-17: \"the ticks is how the user decideds what gets printed and what doesnt\"): with every Pages to include box unticked, Export makes nothing: \"Nothing to export\" says why, over the Look Book window, which stays open; with one page ticked it exports",
+   "ok": true
+  },
+  {
+   "name": "Help 16lr-kbvcal KB1 (Round 2 #31, Omar 2026-10-17: \"that should be fixed.\"): Help › Keyboard's Calendar rows light their keys: arrow keys the four arrows, Page Up / Page Down Fn with ▲ ▼, Enter / Space both, Escape Esc, Tab Tab, and Alt / Option + ↓ (or F4) Alt, ▼ and F4 (they lit nothing, or only Alt / only Space)",
+   "ok": true
+  },
+  {
+   "name": "Look Book 16lr-exportundo EU1 (Round 2 #34, Omar 2026-10-17: \"remove the hidden undo step.\"): a Look Book export by a click on its window's Export button adds no Undo step on any of the three examples, Wire on Simple (its Wire page fills in what opening Wire fills in, cable colours and the sources the drawing needs, and the undo safety net recorded that as a step that undid nothing you could see)",
+   "ok": true
   }
  ],
  "pageErrors": []

@@ -623,7 +623,7 @@ ipcMain.handle('lb:project:sendShow', async (e, p) => {
       'Here’s the look book for “' + showRaw + '”. Attached:',
       '',
       '  • ' + show + ' - Look Book.pdf — the full look book',
-      '  • ' + show + ' - Cue Sheet.xlsx — the I/O and preset sheets',
+      '  • ' + show + ' - Cue Sheet.xlsx — the cue sheet: a cover, then one row per preset',   // 16lr-mailtext (#33)
       '  • ' + show + ' (open with AV Look Book).avlb — the show file. Open it in AV Look Book: ' + link,
       '',
       'AV Look Book is free for Mac and Windows: ' + link

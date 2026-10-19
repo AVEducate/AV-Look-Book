@@ -4605,11 +4605,15 @@
     _wireAdvRouterRemovePort(hub.id, 'in', hub.inC - 1); await wait(300); return is([g0 >= 0, g1, moved, hub.inC], [true, g0, 44, n], 'gap kept / moved / rows');
   });
   await check('Wire Advanced: a new router or switcher never lands on another tile', async () => {
-    const hits = () => { const R = []; const add = (id, k, e) => { const r = _wireAdvNodeRect(id); if (r) R.push({ k, x: r.x, y: r.y, w: r.w, h: r.h + (e || 0) }); };
+    // 16lr-twoout: ADAPTED (Round 2 #26, Omar 2026-10-17: "this need to be fixed. that should not happen."): a pair counts only when one
+    //   of its tiles is one of the new ones. The check counted every pair on the page, and 'a named output point shows in the ID cell'
+    //   leaves the first source with two named outputs: since 16lr-twoout such a tile is laid out as a three-output one (172 px, its
+    //   names under its cable chip) and reaches the source seeded under it, a pair the new tiles have nothing to do with.
+    const hits = (fresh) => { const R = []; const add = (id, k, e) => { const r = _wireAdvNodeRect(id); if (r) R.push({ id, k, x: r.x, y: r.y, w: r.w, h: r.h + (e || 0) }); };
       wireAdvanced.sources.forEach(o => add('asrc:' + o.id, 'source')); wireAdvanced.dests.forEach(o => add('adst:' + o.id, 'destination')); wireAdvanced.dsms.forEach(o => add('adsm:' + o.id, 'aux'));
       wireAdvanced.routers.forEach(o => add('router:' + o.id, o.kind || 'router', 36)); (wireAdvanced.devices || []).forEach(o => add('device:' + o.id, 'device'));
-      const h = []; for (let i = 0; i < R.length; i++) for (let j = i + 1; j < R.length; j++) { const a = R[i], b = R[j]; if (a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y) h.push(a.k + ' on ' + b.k); } return h; };
-    const n = wireAdvanced.routers.length; _wireAdvAddSwitcher('PLACEMENT TEST', 4, 2); await wait(400); _wireAdvAddRouterAsym(6, 2); await wait(400); const h1 = hits(), added = wireAdvanced.routers.length - n;
+      const h = []; for (let i = 0; i < R.length; i++) for (let j = i + 1; j < R.length; j++) { const a = R[i], b = R[j]; if (!fresh.has(a.id) && !fresh.has(b.id)) continue; if (a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y) h.push(a.k + ' on ' + b.k); } return h; };
+    const n = wireAdvanced.routers.length; _wireAdvAddSwitcher('PLACEMENT TEST', 4, 2); await wait(400); _wireAdvAddRouterAsym(6, 2); await wait(400); const fresh = new Set(wireAdvanced.routers.slice(n).map(o => 'router:' + o.id)); const h1 = hits(fresh), added = wireAdvanced.routers.length - n;
     wireAdvanced.routers.splice(n, added); _wireRender(); await wait(300);
     return is([added, h1], [2, []], 'tiles added / overlaps');
   });
@@ -7193,7 +7197,10 @@ await check('Send and Report a bug open the mail draft WITHOUT leaving the page 
 await check('Look Book: a stale canvas raises the Pre-Export Check BEFORE the export window, and Export Anyway still prints the book', async () => {
   const p = presets[0], s = screens[screens.length - 1], hadOpts = window._pdfOpts;
   const pos = (p.positions && p.positions[s.id]) || { x: 0, y: 0 };
-  pushUndo(); setPosition(p, s.id, (pos.x || 0) + 300, pos.y || 0); scheduleRender(); await wait(400);
+  // 16lr-cvcheck: ADAPTED (Round 2 #29, Omar 2026-10-17: "29. yes"): the stale canvas is every destination of P01 300 px off the left
+  //   edge, which Fit Canvas trims. The check moved only the last destination 300 px right: the gap it left is part of the layout
+  //   Fit Canvas keeps, and since 16lr-cvcheck the Pre-Export Check no longer asks for a Fit Canvas that has nothing to trim.
+  pushUndo(); screens.forEach(x => { const q = (p.positions && p.positions[x.id]) || { x: 0, y: 0 }; setPosition(p, x.id, (q.x || 0) + 300, q.y || 0); }); scheduleRender(); await wait(400);
   const warned = validateProject().warnings.some(w => /Canvas size/.test(w));
   $('[onclick="actions.exportLookBook()"]').click(); await wait(500);
   const vp = $('#validation-panel'), panelUp = vis(vp), modalBefore = vis($('#pdf-export-modal'));
@@ -7217,7 +7224,10 @@ await check('Look Book: a stale canvas raises the Pre-Export Check BEFORE the ex
 await check('Look Book: Close on the Pre-Export Check goes back to the show and prints nothing', async () => {
   const p = presets[0], s = screens[screens.length - 1];
   const pos = (p.positions && p.positions[s.id]) || { x: 0, y: 0 };
-  pushUndo(); setPosition(p, s.id, (pos.x || 0) + 300, pos.y || 0); scheduleRender(); await wait(400);
+  // 16lr-cvcheck: ADAPTED (Round 2 #29, Omar 2026-10-17: "29. yes"): the stale canvas is every destination of P01 300 px off the left
+  //   edge, which Fit Canvas trims. The check moved only the last destination 300 px right: the gap it left is part of the layout
+  //   Fit Canvas keeps, and since 16lr-cvcheck the Pre-Export Check no longer asks for a Fit Canvas that has nothing to trim.
+  pushUndo(); screens.forEach(x => { const q = (p.positions && p.positions[x.id]) || { x: 0, y: 0 }; setPosition(p, x.id, (q.x || 0) + 300, q.y || 0); }); scheduleRender(); await wait(400);
   const real = exportPDF; let built = 0; window.exportPDF = function () { built++; return real.apply(this, arguments); };
   const opened = []; const ow = window.open; window.open = function () { opened.push(1); return null; };
   $('[onclick="actions.exportLookBook()"]').click(); await wait(500);
@@ -16379,6 +16389,199 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
     } catch (e) { return 'threw: ' + e.message; }
     finally { const t = $('#io-ptab-tip'); if (t) t.remove(); try { _ioSetView('simple'); } catch (e) {} try { closeSystem(); } catch (e) {} await restore(); }
     return is(out, want, 'the long name [kept, past two lines, the copy / close buttons in the tab] / hover [the full name, right under the tab] / pointer away [gone] / a short name [nothing pops up]');
+  });
+  // ── Round 16lr: Round 2, the fixes, part 2: Wire, exports and Help (Omar 2026-10-17 / 18: "do ths fixes") ──
+  const _lrBlobs = async (fn) => { const got = [], realU = URL.createObjectURL, realO = window.open, realC = HTMLAnchorElement.prototype.click; URL.createObjectURL = function (b) { got.push(b); return realU.call(URL, b); }; window.open = function () { return { closed: false, close() {}, focus() {}, document: null }; }; HTMLAnchorElement.prototype.click = function () {}; try { fn(); } finally { URL.createObjectURL = realU; window.open = realO; HTMLAnchorElement.prototype.click = realC; } await wait(120); return Promise.all(got.map(b => (b && typeof b.text === 'function') ? b.text() : '')); };
+  const _lrWireAdv = async () => { openWireMode(); await wait(500); okDialogs(); if (wireSettings.wireView !== 'advanced') { _wireSwitchToAdvanced(); await wait(600); okDialogs(); await wait(400); } };
+  const _lrPress = el => { const o = { bubbles: true, cancelable: true, view: window }; el.dispatchEvent(new PointerEvent('pointerdown', o)); el.dispatchEvent(new MouseEvent('mousedown', o)); el.dispatchEvent(new PointerEvent('pointerup', o)); el.dispatchEvent(new MouseEvent('mouseup', o)); el.dispatchEvent(new MouseEvent('click', o)); };
+  // 16lr-wirebar WB1: NEW
+  await check('Wire 16lr-wirebar WB1 (Round 2 #23, Omar 2026-10-17: "23 yes"): with 25 Advanced pages the page bar keeps zoom / Fit, Reset Layout and Export at their size and Fit still takes a click (they were squeezed and Fit cut off); the mouse wheel scrolls the page tabs sideways; a long page name wraps in its tab (180 px at most, the tab keeps its width however many pages there are) and pops up in full right under it, as the I/O Patch tab does', async () => {
+    const out = {}, want = {}, wv = wireSettings.wireView;
+    const R = el => { if (!el) return null; const r = el.getBoundingClientRect(); return [Math.round(r.width), Math.round(r.height)]; };
+    try {
+      await restore(); await _lrWireAdv(); _wireSwitchPage(wireAdvanced._pages[0].id); await wait(200);
+      const bar = () => [R($('#wire-zoom-widget')), R($('#wire-topbar button[onclick="_wireResetLayout()"]')), R($('#wire-topbar .lb-pg-export'))];
+      const b0 = bar();
+      for (let i = 0; i < 26 && wireAdvanced._pages.length < 25; i++) { _wireCopyPage(wireAdvanced._pages[0].id); await wait(40); okDialogs(); }
+      _wireRender(); await wait(400);
+      const fit = $('#wire-zoom-widget button[onclick="_wireZoomFit()"]'), fr = fit.getBoundingClientRect(), hit = document.elementFromPoint(fr.left + fr.width / 2, fr.top + fr.height / 2);
+      out.bar = [wireAdvanced._pages.length, JSON.stringify(bar()) === JSON.stringify(b0), !!hit && fit.contains(hit)]; want.bar = [25, true, true];
+      const strip = $('#wire-page-tabs'); strip.scrollLeft = 0; strip.dispatchEvent(new WheelEvent('wheel', { deltaY: 120, bubbles: true, cancelable: true })); await wait(80);
+      out.wheel = [strip.scrollWidth > strip.clientWidth, strip.scrollLeft > 0]; want.wheel = [true, true];
+      wireAdvanced._pages[0].name = 'BALLROOM SALON C NORTH REHEARSAL'; _wireSwitchPage(wireAdvanced._pages[0].id); await wait(300);
+      const tab = $('#wire-page-tabs .io-ptab'), nm = tab && $('.io-ptab-nm', tab);
+      want.tab = [true, true, 'BALLROOM SALON C NORTH REHEARSAL']; want.tip = ['BALLROOM SALON C NORTH REHEARSAL', true];
+      if (!tab || !nm) { out.tab = 'no name box of its own'; out.tip = null; }
+      else {
+        const r = tab.getBoundingClientRect();
+        out.tab = [nm.scrollHeight > nm.clientHeight + 1, Math.round(r.width) <= 180, tab.dataset.full];
+        tab.dispatchEvent(new MouseEvent('mouseover', { bubbles: true })); await wait(120); const tip = $('#io-ptab-tip');
+        out.tip = tip ? [tip.textContent, Math.abs(tip.getBoundingClientRect().top - r.bottom - 4) <= 2] : null;
+      }
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { const t = $('#io-ptab-tip'); if (t) t.remove(); okDialogs(); try { closeWireMode(); } catch (e) {} wireSettings.wireView = wv; await restore(); }
+    return is(out, want, '25 pages [pages, zoom / Fit, Reset Layout and Export as with 3, Fit takes a click] / the wheel [the tabs scroll, scrolled] / a long name [past two lines, 180 px at most, its full name] / hover [the full name, right under the tab]');
+  });
+  // 16lr-sheetfit SF1: NEW
+  await check('Wire 16lr-sheetfit SF1 (Round 2 #24, Omar 2026-10-17: "24 yes"): an exported Wire sheet takes its paper\'s shape, so the drawing fills the page: the PDF\'s sheet is the shape of the printable area its window prints (Letter and Tabloid: no blank band under it, the full test measured ~0.55 in on Letter), the SVG\'s sheet is the paper\'s own shape; the Look Book\'s Wire page keeps its 1600 × 1131 sheet', async () => {
+    const out = {}, want = {};
+    const vbs = sv => [...String(sv || '').matchAll(/<svg\b[^>]*?viewBox="0 0 ([0-9.]+) ([0-9.]+)"/g)].map(m => [+m[1], +m[2]]);
+    const near = (a, b) => Math.abs(a - b) < 0.006;
+    const keep = wireSettings && wireSettings.sheet;
+    try {
+      await restore(); render(); await wait(300);
+      for (const k of ['letter', 'tabloid']) {
+        wireSettings.sheet = k; const sp = _WIRE_SHEETS[k];
+        const [pdf] = await _lrBlobs(() => _wireExportPdf('light'));
+        const pg = /@page\{size:([0-9.]+)in ([0-9.]+)in;margin:([0-9.]+)in\}/.exec(pdf || ''), mh = /\.svg-wrap>svg\{width:100%;max-height:([0-9.]+)in/.exec(pdf || '');
+        const sh = vbs(String(pdf || '').slice(String(pdf || '').indexOf('<div class="svg-wrap">')))[0];
+        out['pdf_' + k] = (pg && mh && sh) ? near(sh[0] / sh[1], (+pg[1] - 2 * +pg[3]) / +mh[1]) : 'no sheet'; want['pdf_' + k] = true;
+        const [svg] = await _lrBlobs(() => _wireExportSvg('light'));
+        const s1 = vbs(svg)[1];
+        out['svg_' + k] = s1 ? near(s1[0] / s1[1], sp.w / sp.h) : 'no sheet'; want['svg_' + k] = true;
+      }
+      wireSettings.sheet = keep;
+      const book = await userLookBook(); closePdfExportModal(); await wait(150);
+      out.book = /viewBox="0 0 1600 1131"/.test(book); want.book = true;
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { if (wireSettings) wireSettings.sheet = keep; try { closePdfExportModal(); } catch (e) {} await restore(); }
+    return is(out, want, 'Letter / Tabloid [the PDF sheet the shape of its printable area, the SVG sheet the paper\'s shape] / the Look Book\'s Wire sheet 1600 × 1131');
+  });
+  // 16lr-twoout TO1: NEW
+  await check('Wire 16lr-twoout TO1 (Round 2 #26, Omar 2026-10-17: "this need to be fixed. that should not happen."): on Wire Advanced a source tile with two outputs and their names on (Aa) grows as a three-output tile does, so its two name boxes sit under its resolution and cable chip (neither covers the chip), each output numbered and with its own cable type; two outputs with the names off keep the 110 px tile and their two clean dots', async () => {
+    const out = {}, want = {}, wv = wireSettings.wireView;
+    const box = el => el.getBoundingClientRect(), cross = (a, b) => a.left < b.right - 0.5 && b.left < a.right - 0.5 && a.top < b.bottom - 0.5 && b.top < a.bottom - 0.5;
+    try {
+      await restore(); await _lrWireAdv(); await _waSpare();
+      const nm = srcNames()[0];
+      wireAdvanced.sources.push({ id: 'lrTo2', name: nm, x: 60, y: 60, outC: 2, portLabels: true, portNames: ['MAIN', 'BACKUP'] }, { id: 'lrTo0', name: nm, x: 60, y: 400, outC: 2, portLabels: false });
+      _wireRender(); await wait(400);
+      const g = $('g[data-node-id="asrc:lrTo2"]'); if (!g) return 'no tile';
+      const chip = g.querySelector('.wire-source-type-toggle'); if (!chip) return 'no cable chip on the tile';
+      const names = $$('.wire-srcport-fo:not(.wire-srcport-cfo)').filter(f => { const i = f.querySelector('input'); return i && i.dataset.srcId === 'lrTo2'; });
+      out.named = [names.length, names.some(f => cross(box(f), box(chip))), _wireAdvSrcTileH(wireAdvanced.sources.find(s => s.id === 'lrTo2')), g.querySelectorAll('.wire-srcport-cfo').length, $$('text.wire-adv-follow').filter(t => /^[12]$/.test(t.textContent) && Math.abs(+t.getAttribute('x') - (60 + 260 - 12)) < 1).length];
+      want.named = [2, false, 172, 2, 2];
+      out.off = [_wireAdvSrcTileH(wireAdvanced.sources.find(s => s.id === 'lrTo0')), $$('.wire-srcport-fo').filter(f => { const i = f.querySelector('input'); return i && i.dataset.srcId === 'lrTo0'; }).length]; want.off = [110, 0];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { await _waHome(); } catch (e) {} try { closeWireMode(); } catch (e) {} wireSettings.wireView = wv; await restore(); }
+    return is(out, want, 'two named outputs [name boxes, one covers the cable chip, tile height, cable types of their own, numbers 1 and 2] / two outputs, names off [tile height, name boxes]');
+  });
+  // 16lr-menuzoom MZ1: NEW
+  await check('Help 16lr-menuzoom MZ1 (Round 2 #27, Omar 2026-10-17: "27 yes fix the drop down."): at UI Size Small (0.9) and Large (1.15) a dropdown opens right under its button, its left edge on the button\'s, as at Default: a preset tile\'s MODIFIERS menu, an I/O Patch resolution menu, the Show Dates calendar and Wire\'s I/O Tools menu (which opens up from its button) (they opened up to 174 px away)', async () => {
+    const out = {}, want = {}, wv = wireSettings.wireView;
+    const at = (b, m) => Math.abs(m.top - (b.bottom - 1)) <= 1.5 && Math.abs(m.left - b.left) <= 1.5;
+    try {
+      await restore(); render(); await wait(300);
+      for (const z of [0.9, 1.15]) {
+        setA11yScale(z); await wait(300); render(); await wait(300);
+        const o = [];
+        const mb = $$('.del-btn').find(b => /toggleAdvancedMenu/.test(b.getAttribute('onclick') || ''));
+        mb.scrollIntoView({ block: 'center' }); await wait(100); mb.click(); await wait(250); o.push(at(mb.getBoundingClientRect(), $('#adv-menu').getBoundingClientRect())); toggleAdvancedMenu({ currentTarget: mb }); await wait(150);
+        await _loIO(); const card = $$('#io-grid [data-iog-sec="aux"] .iog-card')[0], rb = card && $('[data-sys-field="resolution"]', card);
+        if (rb) { rb.scrollIntoView({ block: 'center' }); await wait(100); const hd = _menuRectEl(rb).getBoundingClientRect(); rb.click(); await wait(300); const m = _sysActiveMenu && _sysActiveMenu.menu; o.push(!!m && at(hd, m.getBoundingClientRect())); _sysCloseMenu(); await wait(100); } else o.push('no AUX card');
+        closeSystem(); await wait(250);
+        actions.editShowInfo(); await wait(500); const cb = $$('.lb-calbtn').find(b => b.offsetParent);
+        if (cb) { const f = cb.parentNode.querySelector('.lb-cal-field') || cb.previousElementSibling; cb.click(); await wait(300); const c = $('#lb-cal'); o.push(!!c && !!f && at(f.getBoundingClientRect(), c.getBoundingClientRect())); try { _lbCalClose(false); } catch (e) {} } else o.push('no calendar button');
+        okDialogs(); try { closeQS(); } catch (e) {} await wait(200);
+        await _lrWireAdv(); const ib = bbIoBtn();
+        if (ib) { ib.click(); await wait(300); const m = $('#wire-router-menu'), br = ib.getBoundingClientRect(), mr = m && m.getBoundingClientRect(); o.push(!!mr && Math.abs(mr.left - Math.max(8, Math.min(br.left, innerWidth - mr.width - 8))) <= 1.5 && (Math.abs(mr.bottom - (br.top - 8)) <= 1.5 || Math.abs(mr.top - (br.bottom + 8)) <= 1.5)); try { _wireCloseRouterMenu(); } catch (e) {} } else o.push('no I/O Tools button');
+        try { closeWireMode(); } catch (e) {} await wait(200);
+        out['z' + z] = o; want['z' + z] = [true, true, true, true];
+      }
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { setA11yScale(1); } catch (e) {} okDialogs(); try { closeSystem(); } catch (e) {} try { closeQS(); } catch (e) {} try { _wireCloseRouterMenu(); closeWireMode(); } catch (e) {} wireSettings.wireView = wv; await restore(); }
+    return is(out, want, 'Small / Large [MODIFIERS, the I/O Patch resolution menu, the calendar: under the button, left edges together; Wire\'s I/O Tools menu: on its button\'s edge]');
+  });
+  // 16lr-bookprint BP1: NEW
+  await check('Look Book 16lr-bookprint BP1 (Round 2 #28, Omar 2026-10-17: "28. yes"): the Look Book always prints full size: its canvas pictures place each destination picture without the centring transform Chrome mis-measures when it prints (a layer\'s corner tag then reached past the paper and EVERY page printed at 96 % on ORGILL, 90 % on Town Hall), at the same place to the pixel (a turned destination keeps only its turn); the canvas on screen keeps its transform', async () => {
+    const out = {}, want = {};
+    try {
+      await restore(); lbOpenExample('town-hall'); await wait(1200); okDialogs(); await wait(300); okDialogs();
+      const p1 = presets[1]; p1.rotations = p1.rotations || {}; p1.rotations[screens[0].id] = 90; render(); await wait(300);
+      const html = await userLookBook(); closePdfExportModal(); await wait(150);
+      const inner = [...html.matchAll(/class="screen-inner" style="([^"]*)"/g)].map(m => m[1]);
+      out.book = [inner.length > 4, inner.filter(s => /translate\(/.test(s)).length, inner.filter(s => /left:calc\(50% - [0-9.]+px\);top:calc\(50% - [0-9.]+px\)/.test(s)).length === inner.length, inner.some(s => /transform:rotate\(90deg\)/.test(s))];
+      want.book = [true, 0, true, true];
+      const fr = document.createElement('iframe'); fr.style.cssText = 'position:fixed;left:-3000px;top:0;width:1300px;height:900px'; document.body.appendChild(fr); fr.srcdoc = html.replace(/window\.print\(\)/g, '0'); await wait(1500);
+      const d = fr.contentDocument, boxes = [...d.querySelectorAll('.pp-livecanvas .screen-box')].filter(b => !/rotate/.test(b.querySelector('.screen-inner').style.transform));
+      out.place = [boxes.length > 4, boxes.filter(b => { const r = b.getBoundingClientRect(), q = b.querySelector('.screen-inner').getBoundingClientRect(); return Math.abs(r.left - q.left) > 0.05 || Math.abs(r.top - q.top) > 0.05 || Math.abs(r.width - q.width) > 0.05; }).length];
+      want.place = [true, 0];
+      fr.remove();
+      out.screen = [...document.querySelectorAll('#canvas-area .screen-inner')].slice(0, 3).every(e => /translate\(-50%, ?-50%\)/.test(e.style.transform)); want.screen = true;
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { closePdfExportModal(); } catch (e) {} await restore(); }
+    return is(out, want, 'the book [pictures, any centred by a transform, all placed by calc, the turned one keeps its turn] / drawn [unturned pictures, any off its box] / the canvas on screen keeps its transform');
+  });
+  // 16lr-cvcheck CV1: NEW
+  await check('Look Book 16lr-cvcheck CV1 (Round 2 #29, Omar 2026-10-17: "29. yes"): the export check measures the canvas the destinations need as the Canvas size is measured, after Fit Canvas: destinations that overlap as a blend does give no warning (the check added their widths and asked for a Fit Canvas that had nothing to trim); a canvas Fit Canvas would trim still gets the warning, and none after Fit Canvas', async () => {
+    const out = {}, want = {};
+    const warn = () => validateProject().warnings.filter(w => /Canvas size/.test(w));
+    try {
+      await restore(); render(); await wait(300);
+      const a = screens[0], b = screens[1], ov = 200;
+      presets.forEach(p => { p.positions = p.positions || {}; const pa = p.positions[a.id] || { x: 0, y: 0 }; p.positions[b.id] = { x: pa.x + parseInt(a.w, 10) - ov, y: pa.y }; screens.slice(2).forEach((s, i) => { p.positions[s.id] = { x: pa.x + parseInt(a.w, 10) * 2 - ov + i * 2000, y: pa.y }; }); });
+      render(); await wait(300);
+      out.blend = [parseInt($('#cv-w').value, 10) < screens.reduce((t, s) => t + parseInt(s.w, 10), 0), warn().length]; want.blend = [true, 0];
+      presets.forEach(p => Object.keys(p.positions).forEach(k => { p.positions[k].x += 120; })); render(); await wait(300);
+      out.moved = warn().length; want.moved = 1;
+      fitCanvasTrim(''); render(); await wait(300);
+      out.fit = warn().length; want.fit = 0;
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { await restore(); }
+    return is(out, want, 'overlapping destinations [the canvas narrower than their widths together, canvas warnings] / all moved 120 px right [warnings] / after Fit Canvas [warnings]');
+  });
+  // 16lr-noneticked NT1: NEW
+  await check('Look Book 16lr-noneticked NT1 (Round 2 #30, Omar 2026-10-17: "the ticks is how the user decideds what gets printed and what doesnt"): with every Pages to include box unticked, Export makes nothing: "Nothing to export" says why, over the Look Book window, which stays open; with one page ticked it exports', async () => {
+    const out = {}, want = {};
+    const ids = ['pdf-opt-cover', 'pdf-opt-toc', 'pdf-opt-sources', 'pdf-opt-dests', 'pdf-opt-presets', 'pdf-opt-summary', 'pdf-opt-wire'];
+    const real = exportPDF; let called = 0;
+    try {
+      await restore(); openPdfExportModal(); await wait(350);
+      ids.forEach(id => { const e = $('#' + id); if (e) e.checked = false; });
+      window.exportPDF = function () { called++; return ''; };
+      _pdfConfirmExport(); await wait(300);
+      const t = dialogText(), dz = +getComputedStyle($('#dlg-overlay')).zIndex || 0;
+      out.none = [called, /Nothing to export/.test(t), vis($('#pdf-export-modal')), dz >= 1000]; want.none = [0, true, true, true];
+      okDialogs(); await wait(150);
+      $('#pdf-opt-cover').checked = true; _pdfConfirmExport(); await wait(300);
+      out.one = [called, vis($('#pdf-export-modal'))]; want.one = [1, false];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { window.exportPDF = real; okDialogs(); ids.forEach(id => { const e = $('#' + id); if (e) e.checked = true; }); try { closePdfExportModal(); } catch (e) {} await restore(); }
+    return is(out, want, 'nothing ticked [exports, "Nothing to export", the window still open, the note above it] / the cover ticked [exports, the window closed]');
+  });
+  // 16lr-kbvcal KB1: NEW
+  await check('Help 16lr-kbvcal KB1 (Round 2 #31, Omar 2026-10-17: "that should be fixed."): Help › Keyboard\'s Calendar rows light their keys: arrow keys the four arrows, Page Up / Page Down Fn with ▲ ▼, Enter / Space both, Escape Esc, Tab Tab, and Alt / Option + ↓ (or F4) Alt, ▼ and F4 (they lit nothing, or only Alt / only Space)', async () => {
+    const out = {}, want = {};
+    try {
+      await restore(); actions.help(); helpTab('kbd'); await wait(400);
+      const rows = $$('#hpanel-kbd .kbv-sc'); if (!rows.length) { closeHelp(); return 'no Keyboard tab'; }
+      const lit = r => { r.dispatchEvent(new MouseEvent('mouseenter')); const k = $$('#kbv-board .kbv-key.on').map(x => x.dataset.k).filter((x, i, a) => a.indexOf(x) === i).sort().join(' '); r.dispatchEvent(new MouseEvent('mouseleave')); return k; };
+      const row = rx => rows.find(r => rx.test((r.children[0] || r).textContent.trim()));
+      const W = { 'Calendar: arrow keys': 'down left right up', 'Calendar: Page Up / Page Down': 'down fn up', 'Calendar: Enter / Space': 'enter space', 'Calendar: Escape': 'esc', 'Calendar: Tab': 'tab', 'Alt / Option + ↓ (or F4)': 'alt down f4' };
+      Object.keys(W).forEach(n => { const r = row(new RegExp('^' + n.replace(/[.*+?^${}()|[\]\\\/]/g, '\\$&') + '$')); out[n] = r ? lit(r) : 'no row'; want[n] = W[n]; });
+      closeHelp(); await wait(150);
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { closeHelp(); } catch (e) {} await restore(); }
+    return is(out, want, 'the keys each Calendar row lights');
+  });
+  // 16lr-exportundo EU1: NEW
+  await check('Look Book 16lr-exportundo EU1 (Round 2 #34, Omar 2026-10-17: "remove the hidden undo step."): a Look Book export by a click on its window\'s Export button adds no Undo step on any of the three examples, Wire on Simple (its Wire page fills in what opening Wire fills in, cable colours and the sources the drawing needs, and the undo safety net recorded that as a step that undid nothing you could see)', async () => {
+    const out = {}, want = {}, wv = wireSettings.wireView;
+    const real = exportPDF;
+    try {
+      wireSettings.wireView = 'simple';   /* the book's Wire page drawn from Simple, as a show opens */
+      for (const ex of ['general-session', 'awards-night', 'town-hall']) {
+        lbOpenExample(ex); await wait(1300); okDialogs(); await wait(300); okDialogs(); await wait(300);
+        const u0 = _undoStack.length; openPdfExportModal(); await wait(350);
+        let html = ''; window.exportPDF = function () { html = real(true) || ''; };
+        const go = $$('#pdf-export-modal button, .pm-modal button').find(b => /_pdfConfirmExport/.test(b.getAttribute('onclick') || ''));
+        try { if (go) _lrPress(go); } finally { window.exportPDF = real; }
+        await wait(400);
+        out[ex] = [!!go, html.length > 1000, _undoStack.length - u0]; want[ex] = [true, true, 0];
+      }
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { window.exportPDF = real; try { closePdfExportModal(); } catch (e) {} wireSettings.wireView = wv; await restore(); }
+    return is(out, want, 'each example [the window\'s Export button, a book made, Undo steps]');
   });
   try { _fsPauseAll(); } catch (e) {} $$('video').forEach(v => { try { v.muted = true; v.pause(); } catch (e) {} });
   return { checks };

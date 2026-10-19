@@ -1598,6 +1598,53 @@ anchor on the function name and replace the first occurrence after it, never all
     name still takes 32 letters. PT1.
   - Tests: AP1, AX1, TB1, RP1, LV1, CR1, WD1, BO1, PT1 new, each failing on 16lp for its own reason;
     the 1 older check that counted the open I/O page tab's parts adapted in place (16lc-picsize Y2: 4 parts, its name is its own box now, as on Wire). Snapshots unchanged.
+- **16lr** (2026-10-18, build 16lr on the local 16lq; search `16lr-`). Round 2 part 2 (Omar: "do ths fixes"; the list and his answers in
+  backups/rounds/sources-names/OMAR_ANSWERS_2026-10-17.md): Wire, the exports and Help. Desktop only (`_lbcOn`).
+  - **16lr-wirebar** (#23, "23 yes"): `#wire-zoom-widget` and the page bar's `.lb-rl-btn` (Reset Layout, Export) do not shrink
+    (the zoom widget, overflow hidden, had a 0 minimum and went from 189 to 45 px at 25 pages, Fit cut off); a page tab keeps its
+    width (`.io-ptab` flex-shrink 0, Wire and the I/O Patch: the two-line names of 16lq-ptabs had let 25 tabs squeeze to ~60 px)
+    and the strip scrolls; a vertical wheel scrolls a page-tab strip sideways (`_lbrTabWheel` on `#io-page-tabs` and
+    `#wire-page-tabs`); Wire's tabs hold their name in `.io-ptab-nm` with the `#io-ptab-tip` pop-up (`_lbqTabTip`). WB1.
+  - **16lr-sheetfit** (#24, "24 yes"): `_wireSheetSvg`'s height follows `o.fit` (inches) through `_wireSheetH`, its width as
+    before; `_wireExportSheetList(theme, fit)`: the PDF passes the printable area (`_wireSheetFit('print')`: w - 0.6 by h - 0.7,
+    its window's @page margin and max-height), SVG / PNG the paper (`_wireSheetFit('paper')`). The Look Book's Wire page passes
+    no fit and keeps 1600 x 1131 (the example snapshots' Wire pages unchanged). SF1.
+  - **16lr-twoout** (#26, "this need to be fixed. that should not happen."): with Aa on, a source tile with two outputs is
+    sized and laid out as a three-output one (`_wireAdvSrcTileH` 172, `_numbered`: numbers and each point's cable type), so the
+    name boxes leave the cable chip alone. TO1.
+  - **16lr-menuzoom** (#27, "27 yes fix the drop down."): the body's UI Size zoom is in a menu's own pixels but not in the
+    button's rect; `_menuZoom(el)` (the product of the ancestors' zoom) converts in `_menuPlace` (width, min-width, the room,
+    left / top through `_menuPx`, identical at zoom 1), `_sysMenuFitRoom`, `_lbCalFitHeight`, the tab pop-up and Wire's I/O Tools
+    menu (`_wireToggleRouterMenu`, which opens up). Other anchored pop-ups (colour pickers, the red pill window, the I/O note
+    window, hover tips) place themselves the same old way: not dropdowns, left for the owner to decide. MZ1.
+  - **16lr-bookprint** (#28, "28. yes"): Chrome's print layout measured a layer's corner tag (absolute, right 3 px) inside the
+    destination picture's translate(-50%,-50%) as if the transform were not there, on a preset page with a page after it; the tag
+    then reached past the paper and Chrome shrank EVERY page (ORGILL 96 %, Town Hall 90 %, General Session 98.6 %). Under
+    `_lbBookBoxes` (the book's `_pdfBoxes`) `_rcScreenBox` writes the picture's place as calc(50% - half its size) with
+    `isolation:isolate` (the same pixels and stacking) and keeps only a turn (`_lbrInnerPos`); the canvas on screen keeps the
+    transform. Containment did not help. Measured with printToPDF of the tab the app opens. BP1.
+  - **16lr-cvcheck** (#29, "29. yes"): `validateProject`'s canvas line compares with `_lbrCanvasNeed()`: per preset the
+    positions after `_fitCanvasPlan`, extents as syncCanvasSize (and `_bdOnly` as `_bdCanvasReport` with backdrops), the largest;
+    no presets: the old sum. So it warns only when Fit Canvas has something to trim (a blend's overlap or a gap between
+    destinations no longer trips it). CV1.
+  - **16lr-noneticked** (#30, "the ticks is how the user decideds what gets printed and what doesnt"): `_pdfConfirmExport`
+    stops with Nothing to export when no page box is ticked; the window stays open. NT1.
+  - **16lr-kbvcal** (#31, "that should be fixed."): `_kbvParse` drops a "Calendar:" heading, reads "(or F4)" as one more key,
+    ↓ ↑ ← → as the arrows, Page Up / Page Down as Fn + ▲ / ▼, F1-F12; the keys come back once each. KB1.
+  - **16lr-exportundo** (#34, "remove the hidden undo step."): `exportPDF` runs `_exportPDF0` inside `_lbUNLookAt`: the
+    gestures the undo safety net has open take the show as the export left it (Wire Simple's first draw fills in cable colours
+    and its sources, as opening Wire does), so the export records no step; a change made earlier in the same gesture keeps its
+    step. EU1.
+  - **16lr-mailtext** (#33, "your correct am wrong fit it to do what is documented and already in place"): the desktop Send
+    email (electron/main.js) names the cue sheet as the cue sheet (a cover, then one row per preset), not "the I/O and preset
+    sheets"; the Manual gives both Send file names. The attachments are unchanged. Reaches Mac users with the next installer.
+  - Tests: WB1, SF1, TO1, MZ1, BP1, CV1, NT1, KB1, EU1 new, each failing on 16lq for its own reason; 3 older checks adapted in place: 'Wire Advanced: a new router or switcher never lands on another tile' counts only
+    pairs with a new tile (an earlier check leaves a source with two named outputs, 172 px since 16lr-twoout, over the source
+    seeded under it), and the two Pre-Export Check flow checks ('a stale canvas raises the Pre-Export Check...', 'Close on the
+    Pre-Export Check...') make their stale canvas by moving every destination off the left edge, which Fit Canvas trims, not by
+    leaving a gap, which 16lr-cvcheck no longer warns about.
+    Snapshots: the three example Look Books regenerated on purpose (16lr-bookprint: each canvas picture's place is written
+    as calc, the same pixels).
 - Declined by the owner, do not resurface: mask shapes, anchor points, hardware profiles, canvas/WebGL renderer,
   interpolation filter toggles, upscale-factor notes, per-layer "sharp pixels", any licence mention.
 

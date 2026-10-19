@@ -1022,9 +1022,10 @@ body.is-mobile .mb-io-card .mb-io-field .mb-io-rescol>.io-rf-ask{flex:1 0 104px;
 #io-tabs{display:flex;align-items:center}
 .io-adv-bar{display:flex;align-items:center;gap:14px;margin:0 0 14px;flex-wrap:wrap}
 .io-adv-pages{display:inline-flex;flex-wrap:nowrap;align-items:center;gap:2px;padding:3px;border:1px solid var(--ss-border-soft);border-radius:4px;background:#0a0d12;box-shadow:var(--n-shadow-inset)}
-#io-page-tabs .io-ptab{white-space:normal}   /* 16lq-ptabs: the name wraps inside the tab, the copy / close buttons stay in it */
-#io-page-tabs .io-ptab>span{flex:none}
-#io-page-tabs .io-ptab>.io-ptab-nm{flex:0 1 auto;min-width:0;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;white-space:normal;overflow-wrap:anywhere;line-height:11px;text-align:left}
+#io-page-tabs .io-ptab,#wire-page-tabs .io-ptab{white-space:normal;flex-shrink:0}   /* 16lq-ptabs: the name wraps inside the tab, the copy / close buttons stay in it; 16lr-wirebar: Wire's tabs too, and a tab keeps its width (up to 180 px) however many pages there are: the strip scrolls */
+#io-page-tabs .io-ptab>span,#wire-page-tabs .io-ptab>span{flex:none}
+#io-page-tabs .io-ptab>.io-ptab-nm,#wire-page-tabs .io-ptab>.io-ptab-nm{flex:0 1 auto;min-width:0;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;white-space:normal;overflow-wrap:anywhere;line-height:11px;text-align:left}
+body:not(.is-mobile) #wire-topbar #wire-zoom-widget,body:not(.is-mobile) #wire-topbar .lb-rl-btn{flex-shrink:0;white-space:nowrap}   /* 16lr-wirebar (#23): zoom / Fit, Reset Layout and Export stay whole; the page tabs give way */
 #io-ptab-tip{position:fixed;z-index:9000;max-width:360px;padding:6px 9px;border-radius:6px;background:#0b0e13;border:1px solid var(--n-line);color:var(--text);font-size:11px;font-weight:600;letter-spacing:.02em;box-shadow:0 6px 18px rgba(0,0,0,.5);pointer-events:none;overflow-wrap:anywhere}
 #io-page-tabs::-webkit-scrollbar,#wire-page-tabs::-webkit-scrollbar{height:5px}
 #io-page-tabs::-webkit-scrollbar-thumb,#wire-page-tabs::-webkit-scrollbar-thumb{background:#2a3038;border-radius:3px}
@@ -4908,7 +4909,7 @@ Also called DSM (Downstage Monitor) in broadcast and theater workflows, same thi
   <div class="bb-cell bb-pill bb-cyan" title="The largest number of layers used in any single preset, this is the figure to compare against your switcher's per-scene layer budget. (The most complex single moment in the show.)"><span class="bb-label">Layers</span><strong id="bb-layers">0</strong></div>
   <div id="bb-spacer"></div>
   <div class="bb-cell" id="bb-sel" style="font-size:10px;opacity:.5">—</div>
-  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy, hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16lq</div>
+  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy, hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16lr</div>
   <!-- 16kq (Omar): the Modifiers menu lives on each preset tile only; this place is kept for the Educator tool of a future build (greyed out, does nothing) --><button class="bb-util" id="tb-educator" type="button" disabled aria-disabled="true" title="Educator: coming in a future build" aria-label="Educator, coming in a future build" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:default;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em;opacity:.38"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10L12 5 2 10l10 5 10-5z"/><path d="M6 12v5c0 1 2.7 2.5 6 2.5s6-1.5 6-2.5v-5"/><line x1="22" y1="10" x2="22" y2="16"/></svg><span>Educator</span></button>
   <button class="bb-util" onclick="actions.help()" title="Help, quick reference, keyboard shortcuts, glossary, accessibility" aria-label="Help, quick reference, keyboard shortcuts, glossary, accessibility" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="4.93" y1="4.93" x2="9.17" y2="9.17"/><line x1="14.83" y1="14.83" x2="19.07" y2="19.07"/><line x1="14.83" y1="9.17" x2="19.07" y2="4.93"/><line x1="4.93" y1="19.07" x2="9.17" y2="14.83"/></svg>Help</button>
   <button class="bb-util" id="tb-bug" onclick="reportBug()" title="Report a bug, opens an email to AV Educate with your show file — attached in the app, downloaded for you to attach in a browser" aria-label="Report a bug" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="7.2"/><path d="M15.4 15.4L21 21" stroke-width="2.6"/><ellipse cx="10" cy="11" rx="2.5" ry="3.3" fill="currentColor" stroke="none"/><circle cx="10" cy="7" r="1.5" fill="currentColor" stroke="none"/><path d="M7.5 9.2l-1.7-.8M7.4 11.2H5.6M7.7 13.1l-1.5 1.1M12.5 9.2l1.7-.8M12.6 11.2h1.8M12.3 13.1l1.5 1.1M9.2 5.9l-.8-1.1M10.8 5.9l.8-1.1" stroke-width="1.3"/></svg>Bug</button>   <!-- 16jk (Omar): Report a bug, after Help -->
@@ -9300,8 +9301,8 @@ function _rcScreenBox(p,s,pos,sc,bgF){
      +'<div class="screen-res" style="font-size:'+resSz+'px">'+_lsTopTag(p,s)+s.w+'x'+s.h+(mainRot?' '+mainRot+'\u00b0':'')+resWarn+'</div>':'';
   // Rotated inner wrapper — sized at raw dims, centered on outer box,
   // rotated so its bounding box equals the effective dims.
-  const innerStyle='position:absolute;left:50%;top:50%;width:'+iw+'px;height:'+ih+'px;'
-    +'transform:translate(-50%,-50%)'+(mainRot?' rotate('+mainRot+'deg)':'')+';'
+  const innerStyle=(_lbBookDraw?_lbrInnerPos(iw,ih,mainRot):('position:absolute;left:50%;top:50%;width:'+iw+'px;height:'+ih+'px;'
+    +'transform:translate(-50%,-50%)'+(mainRot?' rotate('+mainRot+'deg)':'')+';'))   /* 16lr-bookprint: the Look Book places it without the transform */
     +(_cbR?'background:transparent;':bgStyle);   /* 16lg-blend (R4): the master draws the combined picture (_cbSlicesHTML), a slave is see-through */
   return '<div class="screen-box'+(isSel?' sel':'')+(aoiData?' aoi-on':'')+_bgClass+'" data-pid="'+pid+'" data-sid="'+sid+'"'
     +' onclick="screenClick(event,\''+pid+'\',\''+sid+'\')"'
@@ -12313,7 +12314,7 @@ function _lbCalPlace(){
    reach. When the room between the top bar and the bottom edge is shorter than the calendar, it gets that room and scrolls
    inside; with room enough nothing changes. */
 function _lbCalFitHeight(el){
-  var top=Math.max(8,(typeof _topbarSafeTop==='function')?_topbarSafeTop():8), room=Math.floor(innerHeight-top-8);
+  var top=Math.max(8,(typeof _topbarSafeTop==='function')?_topbarSafeTop():8), room=Math.floor((innerHeight-top-8)/_menuZoom(el));   /* 16lr-menuzoom */
   var need=el.scrollHeight+(el.offsetHeight-el.clientHeight);
   if(room>0&&need>room){ if(el.style.maxHeight!==room+'px'){ el.style.maxHeight=room+'px'; el.style.overflowY='auto'; } }
   else if(el.style.maxHeight){ el.style.maxHeight=''; el.style.overflowY=''; }
@@ -19710,17 +19711,87 @@ function _lbqBgOne(pid,sid,isFirst){
    in full under the tab on hover (or keyboard focus). ── */
 function _lbqTabTip(el){
   let tip=document.getElementById('io-ptab-tip');
-  const tab=(el&&el.closest)?el.closest('#io-page-tabs .io-ptab'):null, nm=tab?tab.querySelector('.io-ptab-nm'):null;
+  const tab=(el&&el.closest)?el.closest('#io-page-tabs .io-ptab,#wire-page-tabs .io-ptab'):null, nm=tab?tab.querySelector('.io-ptab-nm'):null;   /* 16lr-wirebar */
   if(!nm||nm.scrollHeight<=nm.clientHeight+1){ if(tip) tip.remove(); return; }   /* it fits: no pop-up */
   if(!tip){ tip=document.createElement('div'); tip.id='io-ptab-tip'; tip.setAttribute('role','tooltip'); document.body.appendChild(tip); }
   tip.textContent=tab.dataset.full||nm.textContent;
-  const r=tab.getBoundingClientRect();
-  tip.style.top=Math.round(r.bottom+4)+'px'; tip.style.left=Math.round(Math.max(8,Math.min(window.innerWidth-tip.offsetWidth-8,r.left)))+'px';
+  const r=tab.getBoundingClientRect(), _z=_menuZoom(tip);   /* 16lr-menuzoom */
+  tip.style.top=_menuPx(r.bottom+4,_z); tip.style.left=_menuPx(Math.max(8,Math.min(window.innerWidth-tip.offsetWidth*_z-8,r.left)),_z);
 }
 document.addEventListener('mouseover',function(e){ if(_srcLbcOff()) return; _lbqTabTip(e.target); },true);
 document.addEventListener('focusin',function(e){ if(_srcLbcOff()) return; _lbqTabTip(e.target); },true);
 document.addEventListener('mouseout',function(e){ if(!e.relatedTarget){ const t=document.getElementById('io-ptab-tip'); if(t) t.remove(); } },true);
 /* ══ end 16lq ══ */
+/* ══ 16lr (Round 2, the fixes, part 2: Wire, exports, Help; Omar 2026-10-17 / 18 "do ths fixes"). Desktop only (_lbcOn): the phone
+   keeps its ways (frozen). ══ */
+/* ── 16lr-menuzoom (#27, Omar: "27 yes fix the drop down."): Help › Accessibility's UI Size zooms the body, and a menu lives in the
+   body, so its left / top / width are in the body's zoomed pixels while the button it hangs from is measured in the window's. A
+   menu at Small or Large opened away from its button (Large: down and to the right; Small: up and to the left, over it). Every
+   dropdown is placed by _menuPlace, so the one rule converts there; at Default (zoom 1) nothing changes. ── */
+function _menuZoom(el){
+  if(_srcLbcOff()) return 1;
+  let z=1;
+  try{ for(let e=el&&el.parentElement; e; e=e.parentElement){ const v=parseFloat(getComputedStyle(e).zoom); if(v>0) z*=v; } }catch(err){ z=1; }
+  return (z>0&&isFinite(z))?z:1;
+}
+function _menuPx(v,z){ return (z===1?Math.round(v):Math.round(v/z*100)/100)+'px'; }
+/* ── 16lr-wirebar (#23, Omar: "23 yes"): the Wire page bar keeps zoom / Fit, Reset Layout and Export whole at any page count; only
+   the page tabs give way and scroll (the stylesheet rule). The mouse wheel scrolls a page-tab strip that is too long sideways (it
+   took a sideways wheel only). Wire's tabs get the I/O Patch tab's two-line name and its pop-up (16lq-ptabs, one tab look, 16ho). ── */
+function _lbrTabWheel(e){
+  if(_srcLbcOff()||e.ctrlKey||e.metaKey) return;
+  const strip=e.currentTarget; if(!strip||strip.scrollWidth<=strip.clientWidth+1) return;
+  const dy=(Math.abs(e.deltaY)>Math.abs(e.deltaX))?e.deltaY:0; if(!dy) return;
+  strip.scrollLeft+=dy*(e.deltaMode===1?16:(e.deltaMode===2?strip.clientWidth:1));
+  e.preventDefault();
+}
+['io-page-tabs','wire-page-tabs'].forEach(function(id){ const el=document.getElementById(id); if(el) el.addEventListener('wheel',_lbrTabWheel,{passive:false}); });
+/* ── 16lr-sheetfit (#24, Omar: "24 yes"): an exported Wire sheet takes the shape of the paper it is for, so the drawing fills the
+   page instead of leaving a blank band under it. The PDF's sheet fills the printable area its window prints (@page margin 0.3 in,
+   the sheet at most h - 0.7 in high); an SVG or PNG has no margins, so its sheet is the paper's own shape. The sheet stays as wide
+   as before (the frame, key and title block keep their size); its height follows. The Look Book's Wire page keeps its sheet. ── */
+function _wireSheetFit(kind){ const sp=_wireSheetSpec(); return (kind==='print')?{w:sp.w-0.6,h:sp.h-0.7}:{w:sp.w,h:sp.h}; }
+function _wireSheetH(sh,W,fit){ if(fit&&fit.w>0&&fit.h>0&&_lbcOn()) return Math.round(W*fit.h/fit.w); return Math.round(1131*sh.h/8.5); }
+/* ── 16lr-bookprint (#28, Omar: "28. yes"): the Look Book always prints full size. Chrome measured a layer's corner tag inside a
+   destination picture centred by a transform (left 50%, translate -50%) as if the transform were not there, on a preset page with a
+   page after it, so the tag reached past the paper's edge and Chrome shrank EVERY page to fit (ORGILL 96 %, Town Hall 90 %). The
+   book's canvas pictures place the destination picture by calc(50% - half its size) instead: the same place to the pixel (inside
+   the box's border, as the transform put it), the same stacking (isolation), a turned destination keeps its turn. The canvas on
+   screen is drawn as before. ── */
+var _lbBookDraw=false;
+function _lbBookBoxes(fn){ if(_srcLbcOff()) return fn(); _lbBookDraw=true; try{ return fn(); } finally { _lbBookDraw=false; } }
+function _lbrInnerPos(iw,ih,rot){ return 'position:absolute;left:calc(50% - '+(iw/2)+'px);top:calc(50% - '+(ih/2)+'px);width:'+iw+'px;height:'+ih+'px;transform:'+(rot?'rotate('+rot+'deg)':'none')+';isolation:isolate;'; }
+/* ── 16lr-cvcheck (#29, Omar: "29. yes"): the export check's canvas size is the one the destinations need once Fit Canvas has trimmed
+   every preset, measured as the Canvas size is (syncCanvasSize: positions, so a blend's overlap and moved destinations count;
+   backdrops left out as _bdCanvasReport does), no longer the sum of the destinations' widths. A blended show no longer gets a
+   warning that Fit Canvas cannot clear; a canvas Fit Canvas would trim still gets it. ── */
+function _lbrCanvasNeed(){
+  if(typeof presets==='undefined'||!Array.isArray(presets)||!presets.length||!Array.isArray(screens)) return null;
+  const nb=screens.filter(function(s){ return !_bdIs(s); }), bd=screens.filter(_bdIs);
+  let W=0, H=0;
+  presets.forEach(function(p){
+    if(!p) return;
+    const plan=_fitCanvasPlan(p)||{dx:0,dy:0}, pos=p.positions||{};
+    const iv=function(list,ax){ return list.map(function(s){ const e=getEffectiveDims(s,p.id), q=pos[s.id]||{x:0,y:0}; const v=Math.max(0,Math.round(ax==='x'?q.x-plan.dx:q.y-plan.dy)); return [v, v+(ax==='x'?e.w:e.h)]; }); };
+    const Nx=iv(nb,'x'), Ny=iv(nb,'y');
+    const mx=Nx.reduce(function(m,v){ return Math.max(m,v[1]); },0), my=Ny.reduce(function(m,v){ return Math.max(m,v[1]); },0);
+    W=Math.max(W, bd.length?mx-_bdOnly(iv(bd,'x'),Nx,mx):mx); H=Math.max(H, bd.length?my-_bdOnly(iv(bd,'y'),Ny,my):my);
+  });
+  if(!bd.length){ W=W||1920; H=H||1080; }
+  return {w:Math.round(W), h:Math.round(H)};
+}
+/* ── 16lr-exportundo (#34, Omar: "remove the hidden undo step."): a Look Book export draws Wire's Simple sheet, and that drawing fills
+   in what opening Wire fills in (cable colours, the sources the drawing needs). The undo safety net saw the show change during the
+   click and recorded a step that undid nothing you could see. What the export fills in now counts as there already for the gesture
+   that exported, the way opening Wire is never recorded; a change made by the same gesture before the export keeps its step. ── */
+function _lbUNLookAt(fn){
+  if(!_lbUNOn()) return fn();
+  const open=[_lbUN.ptr,_lbUN.key,_lbUN.fld].filter(function(t){ return t&&t.snap&&t.stack===_undoStack; });
+  const before=open.length?_snapshot():null;
+  try{ return fn(); }
+  finally{ if(open.length){ try{ const after=_snapshot(); if(after!==before) open.forEach(function(t){ if(t.snap===before) t.snap=after; }); }catch(e){} } }
+}
+/* ══ end 16lr ══ */
 /* ══ 16lc-vpfinish block (r16lm SPEC: Omar's answers to step A's questions, 2026-10-06 ~17:00, and to step C's questions and the picture pack,
    2026-10-06 night / 10-07). Every change of this block is desktop only (_lbcOn): the phone is frozen and keeps its ways. ══ */
 /* (D2, Omar: "the panel stops at card width") the narrowest the Video Presets > Advanced left panel can be dragged: what its cards need (236 px
@@ -20551,16 +20622,17 @@ function _menuMark(anchor, on){ const hd=_menuRectEl(anchor); [anchor,hd].forEac
 function _menuPlace(menu, rect, anchor){
   // 16gp: the body is at least as wide as its header, sits flush on it (1px overlap so the two hairlines read as one),
   // flips above when there is no room below, and never goes off the sides or under the top bar.
+  const _z=_menuZoom(menu);   /* 16lr-menuzoom: the menu's own pixels are the window's divided by the UI Size zoom */
   if(rect&&rect.width){
-    if(menu.dataset.fit==='header'){ menu.style.width=Math.round(rect.width)+'px'; menu.style.minWidth='0'; }   // 16gq: body = header width
-    else { const cur=parseFloat(menu.style.minWidth)||parseFloat(getComputedStyle(menu).minWidth)||0; menu.style.minWidth=Math.round(Math.max(cur, rect.width))+'px'; }
+    if(menu.dataset.fit==='header'){ menu.style.width=Math.round(rect.width/_z)+'px'; menu.style.minWidth='0'; }   /* 16gq: body = header width */
+    else { const cur=parseFloat(menu.style.minWidth)||parseFloat(getComputedStyle(menu).minWidth)||0; menu.style.minWidth=Math.round(Math.max(cur, rect.width/_z))+'px'; }
   }
-  const mw=menu.offsetWidth||220, mh=menu.offsetHeight||200, vw=window.innerWidth, vh=window.innerHeight;
+  const mw=(menu.offsetWidth||220)*_z, mh=(menu.offsetHeight||200)*_z, vw=window.innerWidth, vh=window.innerHeight;
   const safeTop=Math.max(8,(typeof _topbarSafeTop==='function')?_topbarSafeTop():8);
   let left=rect.left, top=rect.bottom-1, above=false;
   if(left+mw>vw-8) left=Math.max(8, vw-mw-8);
   if(top+mh>vh-8){ const up=rect.top+1-mh; if(up>=safeTop){ top=up; above=true; } else top=Math.max(safeTop, vh-mh-8); }
-  menu.style.left=Math.round(left)+'px'; menu.style.top=Math.round(top)+'px';
+  menu.style.left=_menuPx(left,_z); menu.style.top=_menuPx(top,_z);   /* 16lr-menuzoom */
   menu.classList.toggle('above', above);
   const hd=_menuRectEl(anchor); [anchor,hd].forEach(function(el){ if(el&&el.classList) el.classList.toggle('menu-above', above); });
 }
@@ -20573,9 +20645,9 @@ function _sysMenuFitRoom(menu,trigger){
   if(!(mr.top<hd.bottom-2&&mr.bottom>hd.top+2)) return;
   const safeTop=Math.max(8,(typeof _topbarSafeTop==='function')?_topbarSafeTop():8);
   const room=Math.max(window.innerHeight-8-(hd.bottom-1), hd.top+1-safeTop);
-  const extra=menu.offsetHeight-(parseFloat(getComputedStyle(menu).height)||0);
-  if(!(room-extra>=90)) return;
-  menu.style.maxHeight=Math.floor(room-extra)+'px';
+  const extra=menu.offsetHeight-(parseFloat(getComputedStyle(menu).height)||0), _z=_menuZoom(menu);   /* 16lr-menuzoom: the room in the menu's own pixels */
+  if(!(room/_z-extra>=90)) return;
+  menu.style.maxHeight=Math.floor(room/_z-extra)+'px';
   _menuPlace(menu, hd, trigger);
 }
 /* 16kw-fix: the connector box redraws its row when it commits; the box the focus went to (Tab, or a click into it) is
@@ -25887,13 +25959,13 @@ function _wireToggleRouterMenu(ev){
   document.body.appendChild(m);
   // Drop-UP above the trigger when there's room; flip to drop-DOWN when the
   // trigger sits high (mobile top bar). Always clamped into the viewport.
-  var mw = m.offsetWidth || 210, mh = m.offsetHeight || 300;
-  m.style.left = Math.max(8, Math.min(r.left, window.innerWidth - mw - 8)) + 'px';
+  var _z = _menuZoom(m), mw = (m.offsetWidth || 210) * _z, mh = (m.offsetHeight || 300) * _z;   /* 16lr-menuzoom: Wire's router menu too */
+  m.style.left = Math.max(8, Math.min(r.left, window.innerWidth - mw - 8)) / _z + 'px';
   if(r.top - 8 >= mh){
-    m.style.bottom = Math.max(8, (window.innerHeight - r.top + 8)) + 'px';
+    m.style.bottom = Math.max(8, (window.innerHeight - r.top + 8)) / _z + 'px';
   } else {
     var _mt = Math.min(r.bottom + 8, window.innerHeight - mh - 8);
-    m.style.top = Math.max(8, _mt) + 'px';
+    m.style.top = Math.max(8, _mt) / _z + 'px';
   }
   document.addEventListener('keydown', _wireRouterMenuEsc, true);
   setTimeout(function(){
@@ -26235,7 +26307,7 @@ function _wireAdvSrcTileH(s){
   // starts BELOW the name / resolution / type block (block bottom ≈ 74px →
   // h/2 ≥ 86) and the numbered dots + any name fields stack under it with a
   // 9px bottom margin (h ≥ 36·oc − 18).
-  if(oc < 3) return 110;
+  if(oc < 3 && !(oc === 2 && s && s.portLabels && _lbcOn())) return 110;   /* 16lr-twoout (#26, Omar: "this need to be fixed. that should not happen.") */
   return Math.max(172, 36 * oc - 18);
 }
 function _wireRenderAdvancedDiagram(container){
@@ -26547,7 +26619,7 @@ function _wireRenderAdvancedDiagram(container){
       const _soc = p.outC || 1;
       // 16ej: numbers only from the 3rd output on (1–2 dots stay clean at
       // mid-edge; 3+ start below the info block, see _wireAdvSrcTileH).
-      const _numbered = _soc >= 3;
+      const _numbered = _soc >= 3 || (_soc === 2 && p.portLabels && _lbcOn());   /* 16lr-twoout */
       if(_soc > 1){
         if(_numbered) svgNodes += '<text class="wire-adv-follow" x="' + (cx - 12) + '" y="' + (cy + 3) + '" text-anchor="end" font-size="9" font-weight="700" fill="' + srcDotColor + '" pointer-events="none">1</text>';
         for(let k = 1; k < _soc; k++){
@@ -28374,7 +28446,7 @@ function _wireSheetSvg(innerSvg, o){
   o = o || {};
   const light = (o.theme !== 'dark');
   const _sh = _wireSheetSpec(o.sheet);   // 16jf: Letter geometry scaled to the chosen sheet
-  const W = Math.round(1600 * _sh.w / 11), H = Math.round(1131 * _sh.h / 8.5), M = 20, RC = 310, FH = 44, PAD = 14;
+  const W = Math.round(1600 * _sh.w / 11), H = _wireSheetH(_sh, W, o.fit), M = 20, RC = 310, FH = 44, PAD = 14;   /* 16lr-sheetfit */
   const paper = light ? '#ffffff' : '#0a0e16';
   const ink   = light ? '#111827' : '#e8e8ea';
   const line  = light ? '#111827' : '#c9d1dc';
@@ -28530,14 +28602,14 @@ function _lbWireSheetTitle(name){
   return /^page\s*\d+$/i.test(n) ? 'Signal Flow' : n;
 }
 // One sheet per page: Simple = 1 ("Full System"), Advanced = its pages.
-function _wireExportSheetList(theme){
+function _wireExportSheetList(theme, fit){   /* 16lr-sheetfit: fit = the paper the sheets are drawn for, in inches (none: the Letter shape, as the Look Book draws it) */
   const ver = (typeof showMeta === 'object' && showMeta && showMeta.projectVer) ? showMeta.projectVer : 'V1';
   if(wireSettings && wireSettings.wireView === 'advanced'){
     const pages = _wireGetAdvancedPagesForExport(theme, { transparent: true, noLegend: true }) || [];
     // Default-named pages ("Page 2") would echo the page label in the title cell — use a real sheet title instead.
-    return pages.map((p, i) => _wireSheetSvg(p.svg, { theme: theme, pageLabel: 'Page ' + (i + 1), title: (/^page\s*\d+$/i.test(String(p.name || '').trim()) ? 'Signal Flow' : p.name), version: ver, legendRows: p.legend }));
+    return pages.map((p, i) => _wireSheetSvg(p.svg, { theme: theme, pageLabel: 'Page ' + (i + 1), title: (/^page\s*\d+$/i.test(String(p.name || '').trim()) ? 'Signal Flow' : p.name), version: ver, legendRows: p.legend, fit: fit }));
   }
-  return [_wireSheetSvg(_wireBuildExportSvg(theme, { transparent: true, noLegend: true }), { theme: theme, pageLabel: 'Page 1', title: 'Full System', version: ver, legendRows: _wireCableTypesInUse() })];
+  return [_wireSheetSvg(_wireBuildExportSvg(theme, { transparent: true, noLegend: true }), { theme: theme, pageLabel: 'Page 1', title: 'Full System', version: ver, legendRows: _wireCableTypesInUse(), fit: fit })];
 }
 /* 16kk: a sheet's own size, read from the root tag _wireSheetSvg wrote (Letter 1600 x 1131 up to A0 6809 x 4406) */
 function _wireSheetDims(sh){
@@ -28573,7 +28645,7 @@ function _wireStackSheets(sheets, theme){
   });
   return xml + '</svg>';
 }
-function _wireExportSheetsSvg(theme){ return _wireStackSheets(_wireExportSheetList(theme), theme); }
+function _wireExportSheetsSvg(theme){ return _wireStackSheets(_wireExportSheetList(theme, _wireSheetFit('paper')), theme); }   /* 16lr-sheetfit */
 
 function _wireExportSvg(theme){
   // In Advanced, build a combined stacked SVG with all pages. In Simple,
@@ -28633,7 +28705,7 @@ function _wireExportPdf(theme){
   let sections = [];
   // 16ek: every page is a self-contained drawing sheet (frame, key, title
   // block, footer) — no extra header chrome around it.
-  sections = _wireExportSheetList(theme).map(sh => ({ label: '', svg: sh }));
+  sections = _wireExportSheetList(theme, _wireSheetFit('print')).map(sh => ({ label: '', svg: sh }));   /* 16lr-sheetfit */
   let bodyHtml = '';
   sections.forEach((s, i) => {
     bodyHtml += '<div class="page' + (i > 0 ? ' page-break' : '') + '">';
@@ -28742,7 +28814,7 @@ function _wireRenderPageTabs(container){
       const pencil = isActive   // 16iv: × closes the page (double-click renames); 16jf: the copy icon duplicates it
         ? _pageCopyBtnHTML("_wireCopyPage('" + p.id + "')") + '<span onclick="event.stopPropagation();_wireClosePage(\'' + p.id + '\')" title="Close this page" style="cursor:pointer;display:inline-flex;align-items:center;margin-left:2px" onmouseover="this.style.color=\'var(--n-red)\'" onmouseout="this.style.color=\'\'"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></span>'
         : '';
-      html += '<button onclick="_wireSwitchPage(\'' + p.id + '\')" ondblclick="_wireBeginRenamePage(\'' + p.id + '\')" style="' + tabStyle(isActive) + '" title="' + esc(p.name) + ', click to open, double-click to rename"><span style="font-family:var(--font-mono);opacity:' + (isActive ? 1 : .55) + ';font-size:9px">' + (i+1) + '</span><span style="min-width:0;overflow:hidden;text-overflow:ellipsis">' + esc(p.name) + '</span>' + (pencil ? '<span style="display:inline-flex;align-items:center;flex-shrink:0">' + pencil + '</span>' : '') + '</button>';
+      html += '<button' + (_lbcOn() ? ' class="io-ptab" data-full="' + esc(p.name) + '"' : '') + ' onclick="_wireSwitchPage(\'' + p.id + '\')" ondblclick="_wireBeginRenamePage(\'' + p.id + '\')" style="' + tabStyle(isActive) + '" title="' + esc(p.name) + ', click to open, double-click to rename"><span style="font-family:var(--font-mono);opacity:' + (isActive ? 1 : .55) + ';font-size:9px">' + (i+1) + '</span>' + (_lbcOn() ? '<span class="io-ptab-nm">' : '<span style="min-width:0;overflow:hidden;text-overflow:ellipsis">') + esc(p.name) + '</span>' + (pencil ? '<span style="display:inline-flex;align-items:center;flex-shrink:0">' + pencil + '</span>' : '') + '</button>';
     }
   });
   html += '</div>';
@@ -34334,8 +34406,9 @@ function validateProject(){
 
   const cvW=parseInt(document.getElementById('cv-w').value)||0;
   const cvH=parseInt(document.getElementById('cv-h').value)||0;
-  const actualW=_bdNoBd(screens).reduce((a,s)=>a+parseInt(s.w),0);
-  const actualH=_bdNoBd(screens).reduce((a,s)=>Math.max(a,parseInt(s.h)),0);   /* 16kx-backdrop */
+  const _lrNeed=_srcLbcOff()?null:_lbrCanvasNeed();   /* 16lr-cvcheck: the canvas the destinations need once Fit Canvas has trimmed */
+  const actualW=_lrNeed?_lrNeed.w:_bdNoBd(screens).reduce((a,s)=>a+parseInt(s.w),0);
+  const actualH=_lrNeed?_lrNeed.h:_bdNoBd(screens).reduce((a,s)=>Math.max(a,parseInt(s.h)),0);   /* 16kx-backdrop */
   if(screens.length>0&&(cvW!==actualW||cvH!==actualH))
     warnings.push('Canvas size ('+cvW+'×'+cvH+') does not match actual screen layout ('+actualW+'×'+actualH+'), consider using Fit Canvas');
 
@@ -35187,6 +35260,7 @@ function closePdfExportModal(){
 function _pdfConfirmExport(){
   // Read form into window._pdfOpts, close modal, fire export.
   const get = (id) => { const el=document.getElementById(id); return el ? !!el.checked : true; };
+  if(!_srcLbcOff()&&!['pdf-opt-cover','pdf-opt-toc','pdf-opt-sources','pdf-opt-dests','pdf-opt-presets','pdf-opt-summary','pdf-opt-wire'].some(get)){ showAlert({variant:'warning',title:'Nothing to export',message:'No page is ticked under Pages to include. Tick the pages you want in the Look Book.'}); return; }   /* 16lr-noneticked (#30, Omar: "the ticks is how the user decideds what gets printed and what doesnt"): nothing ticked, nothing exported; the window stays open */
   const vEl = document.getElementById('pdf-opt-version');
   window._pdfOpts = {
     includeCover:   get('pdf-opt-cover'),
@@ -35247,7 +35321,8 @@ function _pdfStaticizeAdv(html){
   html = html.replace(/ on(?:click|dblclick|mousedown|focus|change)="[^"]*"/g, '');
   return html;
 }
-function exportPDF(_returnHtml){
+function exportPDF(_returnHtml){ return _lbUNLookAt(function(){ return _exportPDF0(_returnHtml); }); }   /* 16lr-exportundo */
+function _exportPDF0(_returnHtml){
   const show = document.getElementById('show-name').value || 'Untitled Show';
   if(!presets.length){
     showAlert({variant:'warning', title:'Nothing to export', message:'Add some presets first.'});
@@ -35785,7 +35860,7 @@ function exportPDF(_returnHtml){
     if(typeof initStripPositions === 'function') initStripPositions(p.id);
     const _pdfPos = p.positions || {};
     const _pdfBgF = (typeof _bgNeighbors === 'function') ? _bgNeighbors(_pdfPos, p.id) : {};
-    const _pdfBoxes = screens.filter(s => !_screenHidden(p, s.id)).map(s => _rcScreenBox(p, s, _pdfPos, _pdfSc, _pdfBgF[s.id])).join('');
+    const _pdfBoxes = _lbBookBoxes(function(){ return screens.filter(s => !_screenHidden(p, s.id)).map(s => _rcScreenBox(p, s, _pdfPos, _pdfSc, _pdfBgF[s.id])).join(''); });   /* 16lr-bookprint */
     const _pdfOv = (opts.showBlend && typeof _rcOverlapVis === 'function') ? _pdfStaticizeAdv(_rcOverlapVis(_pdfPos, _pdfSc, p.id)) : '';
     const _pdfDv = (opts.showDead && typeof _rcDeadVis === 'function') ? _pdfStaticizeAdv(_rcDeadVis(_pdfPos, _pdfSc, p.id, true)) : '';
     const _pdfBgg = (opts.showBlend && typeof _rcBlendGroups === 'function') ? _pdfStaticizeAdv(_rcBlendGroups(_pdfPos, _pdfSc, p.id)) : '';
@@ -37142,10 +37217,13 @@ function _kbvSetLayout(l){
 }
 // "Ctrl / Cmd + Shift + N" → {keys:['mod','shift','n']}; mouse rows → {mouse:true}
 function _kbvParse(text){
-  const t=String(text||'').toLowerCase().replace(/\(.*?\)/g,'').trim();
+  /* 16lr-kbvcal (#31, Omar: "that should be fixed."): a row's "Calendar:" heading is not a key, "(or F4)" is one more key for the
+     same thing, ↓ ↑ ← → are the arrow keys and Page Up / Page Down are Fn + ▲ / ▼ (the board has no Page keys) */
+  const t=String(text||'').toLowerCase().replace(/\(\s*or\s+([^)]*)\)/g,' / $1').replace(/\(.*?\)/g,'').replace(/^[a-z ]+:\s*/,'').trim();
   if(/click|drag|pill|scroll|wheel/.test(t)) return {mouse:true, keys:[]};
   { const _rng=t.match(/^(\d)\s*[\u2013\u2014-]\s*(\d)$/); if(_rng){ const _k=[]; for(let _d=parseInt(_rng[1],10); _d<=parseInt(_rng[2],10); _d++) _k.push(String(_d)); return {mouse:false, keys:_k}; } }   /* shell-toolbar */
   const keys=[]; let ctrl=false, cmd=false;
+  const ARW={'\u2190':'left','\u2191':'up','\u2192':'right','\u2193':'down',left:'left',up:'up',right:'right',down:'down'};
   t.split(/\s*[+\/]\s*/).filter(Boolean).forEach(p=>{
     if(p==='ctrl'||p==='control') ctrl=true;
     else if(p==='cmd'||p==='command') cmd=true;
@@ -37157,10 +37235,14 @@ function _kbvParse(text){
     else if(p==='enter'||p==='return') keys.push('enter');
     else if(p==='tab') keys.push('tab');
     else if(p==='space'||p==='spacebar') keys.push('space');
+    else if(p==='page up'||p==='pgup') keys.push('fn','up');
+    else if(p==='page down'||p==='pgdn') keys.push('fn','down');
+    else if(Object.prototype.hasOwnProperty.call(ARW,p)) keys.push(ARW[p]);
+    else if(/^f([1-9]|1[0-2])$/.test(p)) keys.push(p);
     else if(p.length===1) keys.push(p);
   });
   if(ctrl&&cmd) keys.unshift('mod'); else if(ctrl) keys.unshift('ctrl'); else if(cmd) keys.unshift('cmd');
-  return {mouse:false, keys};
+  return {mouse:false, keys:keys.filter(function(k,i){ return keys.indexOf(k)===i; })};
 }
 function _kbvPretty(text){
   return String(text||'').replace(/ctrl\s*\/\s*cmd/i, _kbvLayout==='mac'?'⌘ Cmd':'Ctrl');

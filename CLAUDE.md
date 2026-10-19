@@ -239,7 +239,8 @@ Details: HANDBOOK section 5
 `16lm-relink`, `16lm-cvtitle`, `16lm-tablew`, `16lm-whcheck`, `16ln-notes`, `16ln-modalkeys`, `16ln-bgown`, `16ln-a11yfit`,
 `16ln-blur`, `16ln-presetbin`, `16ln-anysize`; 16lm-border came back out in 16ln; `16lo-srcorder`, `16lo-nopairs`,
 `16lo-delwin`, `16lo-addback`; `16lp-backups`, `16lp-p1rename`, `16lp-nameclash`, `16lp-wcnames`, `16lp-wirecards`; `16lq-approval`, `16lq-auxsize`, `16lq-tabskip`, `16lq-rowpick`, `16lq-levelclick`,
-`16lq-cropreset`, `16lq-webmdur`, `16lq-bgone`, `16lq-ptabs`).
+`16lq-cropreset`, `16lq-webmdur`, `16lq-bgone`, `16lq-ptabs`; `16lr-wirebar`, `16lr-sheetfit`, `16lr-twoout`, `16lr-menuzoom`,
+`16lr-bookprint`, `16lr-cvcheck`, `16lr-noneticked`, `16lr-kbvcal`, `16lr-exportundo`, `16lr-mailtext`).
 
 **One card (16lc-vpcards, 2026-10-06)** — the I/O Patch > Simple card (`_iogCardHTML` + `_iogSrcObj` / `_iogOutObj`) is also the card of
 Wire's left panel (desktop; the phone keeps Wire's own) and of the Video Presets > Advanced left panel (Wire > Simple's sections:
@@ -381,6 +382,17 @@ Never add a time-based "ignore clicks for N ms": the phone gate taps the dialog'
   (a capture listener, `e._lbqPicked`); the level line moves only once it drags; a layer given another source drops its crop
   (in `setL`); a WebM without a length gets it (`_lbqRealDur`); IMAGE / VIDEO / SOURCE replace each other (`_lbqBgOne`); a long
   I/O page tab name wraps to two lines (`.io-ptab-nm`, the `#io-ptab-tip` pop-up). HANDBOOK › 16lq.
+  16lr (2026-10-18, Round 2 part 2, the fixes; desktop only): Wire's page bar keeps zoom / Fit, Reset Layout and Export whole
+  (flex-shrink 0), the page tabs keep their width and scroll, also with the wheel (`_lbrTabWheel`), and Wire's tabs take the
+  `.io-ptab` two-line name and pop-up; an exported Wire sheet takes its paper's shape (`_wireSheetFit`, `_wireSheetH`, option
+  `fit`; the Look Book's sheet unchanged); a tile with two named outputs grows as a three-output one (`_wireAdvSrcTileH`);
+  dropdowns convert the UI Size zoom (`_menuZoom` / `_menuPx` in `_menuPlace`, `_sysMenuFitRoom`, `_lbCalFitHeight`, Wire's I/O
+  Tools menu); the Look Book's canvas pictures place the destination picture by calc, not translate(-50%) (`_lbBookDraw`:
+  Chrome mis-measured a layer tag inside the transform when printing and shrank every page); the export check measures the
+  canvas after Fit Canvas (`_lbrCanvasNeed`); nothing ticked, nothing exported; Help › Keyboard's Calendar rows parse
+  (`_kbvParse`); a Look Book export leaves no Undo step (`_lbUNLookAt` around `exportPDF`); the desktop Send email names the
+  cue sheet right (electron/main.js).
+  HANDBOOK › 16lr.
 - Exports' readable print (16li-print: `_lbpInk`, `_wireLogoWordSvg`, `_wireTbFitText`): a value the Look Book prints in a colour made
   for the white page gets an inline colour from `_lbpInk(opts)` in the Dark book (never a stylesheet rule); words drawn into the Wire
   sheet's boxes are measured with `_wireTextWidth` and fitted (smaller, then "…"), never left to run past a line. HANDBOOK › 16li-print.

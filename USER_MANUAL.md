@@ -128,7 +128,7 @@ Build My Show is one Undo step: the first Undo after it takes you back to an emp
 | Selection read-out | The preset, destination and size you last picked. |
 | **build …** | The build stamp. Quote it in a bug report. |
 | **Educator** | Greyed out. A place kept for a teaching tool in a future build; it does nothing today. (The Modifiers menu used to open from here as well; it now opens from the **MODIFIERS ▾** button on each preset tile only, 4.2.) |
-| **Help** | Quick Reference, Keyboard, Glossary, Vocabulary (how Look Book terms map to Aquilon, Spyder, Pixelhue, Barco) and Accessibility, plus links to Feedback and Support. <!-- 16ln-a11yfit -->Accessibility's UI Size (Small, Default, Large) scales the whole app and it always fits the window, so the bottom bar with HELP and BUG stays on screen (build 16ln-a11yfit). <!-- 16lp-wirecards -->Accessibility's **Hand-made Wire cards** (Ask each time, Wire only, Wire and the I/O Patch) sets what the + on a Wire Advanced heading makes (7, Custom tiles; build 16lp-wirecards); Reset puts it back to Ask each time. On the Keyboard tab choose a Mac or PC keyboard; hover or click a shortcut to light its keys. The line under the keyboard names the shortcut on ONE line (a long description is cut with …; the row shows all of it), so the list never moves under the pointer (<!-- 16lc-fixes -->build 16lc-fixes). |
+| **Help** | Quick Reference, Keyboard, Glossary, Vocabulary (how Look Book terms map to Aquilon, Spyder, Pixelhue, Barco) and Accessibility, plus links to Feedback and Support. <!-- 16ln-a11yfit -->Accessibility's UI Size (Small, Default, Large) scales the whole app and it always fits the window, so the bottom bar with HELP and BUG stays on screen (build 16ln-a11yfit). <!-- 16lr-menuzoom -->At every UI Size a dropdown opens right at its button: under it, or above it for Wire's I/O Tools menu (build 16lr-menuzoom; at Small or Large the menus opened away from it). <!-- 16lp-wirecards -->Accessibility's **Hand-made Wire cards** (Ask each time, Wire only, Wire and the I/O Patch) sets what the + on a Wire Advanced heading makes (7, Custom tiles; build 16lp-wirecards); Reset puts it back to Ask each time. On the Keyboard tab choose a Mac or PC keyboard; hover or click a shortcut to light its keys (<!-- 16lr-kbvcal -->the Calendar rows too: Page Up / Page Down light Fn with ▲ ▼, and Alt / Option + ↓ lights F4 as well; build 16lr-kbvcal). The line under the keyboard names the shortcut on ONE line (a long description is cut with …; the row shows all of it), so the list never moves under the pointer (<!-- 16lc-fixes -->build 16lc-fixes). |
 | **Bug** | Downloads the show file and opens an email to AV Educate with a short form and your build stamp. Remove the attachment if you would rather not share the show. |
 
 The status bar is on every page: Video Presets Simple and Advanced, Wire and I/O Patch all end just above it, the way they start just below the top bar. Help opens over whichever page you are on and Escape closes Help only, the page underneath stays open. The numbers follow the show while you work on any page. The phone layout has no status bar.
@@ -622,6 +622,8 @@ It answers "what is plugged into the switcher and what comes out". It does not s
 | **Reset Layout** | Puts every moved tile, the router and every shaped cable back to the automatic columns. The cabling (which router row each tile is on, the tiles you took off) stays. One Undo brings your layout back. |
 | **Export** | Opens the Export window (6.5). It has the look of Reset Layout beside it (build 16lc-picsize), as Export has in the page bar of Video Presets, its Advanced page and the I/O Patch. |
 
+<!-- 16lr-wirebar -->However many Advanced pages there are, zoom / Fit, Reset Layout and Export keep their size and Fit can always be clicked: only the page tabs give way, and their strip scrolls (the mouse wheel scrolls it sideways; build 16lr-wirebar).
+
 Trackpad pinch, or Ctrl / Cmd + mouse wheel, zooms around the pointer. A plain two-finger scroll or wheel pans. The Space bar is not a temporary Hand tool here.
 
 ### 6.2 Left panel: the cards
@@ -674,7 +676,7 @@ Everything you change on a card is one Undo step and lights the unsaved mark.
 1. Press **Export**.
 2. Choose **Format**: PDF opens the print dialog with the page size already set; SVG and PNG download at once.
 3. Choose **Theme**: Light for print and email, Dark to match the app.
-4. Choose **Sheet size**: Letter, Tabloid, ANSI D, ANSI E, A1, A0, landscape. The choice is saved with the show. One size for the whole export.
+4. Choose **Sheet size**: Letter, Tabloid, ANSI D, ANSI E, A1, A0, landscape. The choice is saved with the show. One size for the whole export. <!-- 16lr-sheetfit -->The sheet takes the shape of its paper: in the PDF it fills the printable area of the page (no blank band under it), an SVG or PNG is the paper's own shape (build 16lr-sheetfit). The Look Book's Wire page keeps its own sheet.
 5. Press **Export** again.
 
 The sheet carries the drawing, the Cable Colour Code (a typed connector's row prints "no colour code"; a long typed name is set smaller to fit its colour block, and cut with "…" when it is very long), the title block from Project Info with your logo (<!-- 16li-print -->build 16li-print: a value too long for its row is set smaller, and cut with "…" only when it is very long; without a logo the AV LOOK BOOK wordmark is set to stay inside its box, at every sheet size), and "Page 1 · Full System". The router prints as you see it (build 16lb-simple): its name on a light title bar, its rows as cabled with the IDs you typed, and the tiles and cables as drawn, without the ×, the points or the handles.
@@ -728,14 +730,14 @@ The panels, zoom, tools, Presets, Details, Project Info and Export are as in cha
 - **Page 1 is your show.** It opens already built as a copy of the Simple drawing (build 16lb-simple): the same tiles at the same places, the router with its name, rows and IDs, and the same cables. It takes the show name. If Simple's tiles or cables change later, you are asked whether to rebuild it; moving a tile on Simple does not ask.
 - The last page is always an empty spare. Use it and a new spare appears, up to 25 pages.
 - **Click** a tab to open the page. **Double-click** the tab to rename it: Enter keeps the name, Escape puts the old one back and stays in Wire; a rename is one Undo step.
-- On the open tab: the **copy icon** makes "<name> copy" on the spare page. The **×** closes the page; a page with anything on it asks first, and Undo brings it back. On an empty spare page the × only takes you to the tab in front: the app would make the same empty page again at once, so nothing is closed and there is nothing to undo (I/O Patch Advanced works the same way). Long names are shortened on the tab so the two icons are always reachable.
+- On the open tab: the **copy icon** makes "<name> copy" on the spare page. The **×** closes the page; a page with anything on it asks first, and Undo brings it back. On an empty spare page the × only takes you to the tab in front: the app would make the same empty page again at once, so nothing is closed and there is nothing to undo (I/O Patch Advanced works the same way). Long names are shortened on the tab so the two icons are always reachable. <!-- 16lr-wirebar -->A long name wraps to two lines in its tab (180 px at most); past two lines it ends in … and its full name pops up under the tab when you point at it, as on the I/O Patch. With many pages the tabs keep their width and the strip scrolls (build 16lr-wirebar).
 - If sources, destinations or AUX change in the show after page 1 was built, opening Advanced offers **Rebuild from Simple** once. "Keep my page" leaves your drawing alone. A rebuild replaces page 1 only and can be undone.
 
 ### 7.2 Tiles
 
 **Source tile.** Coloured in the source's cable colour. The dot on the right edge is its output. <!-- 16ld-port -->Its cable-type chip and its dot are in the colour of its cable type, and a point with its own cable type wears that type's colour, as its cable does (build 16ld-port; the dot was the tile's colour before); with no cable type they stay in the tile's colour.
 - **+** on the top right corner adds an output point (up to six). **−** removes the last one (refused while it holds a cable).
-- **Aa** shows a name box beside each point (MAIN, BACKUP, TX-2). Typing a name is one Undo step. At the third point the app asks once whether you want the name boxes.
+- **Aa** shows a name box beside each point (MAIN, BACKUP, TX-2). Typing a name is one Undo step. At the third point the app asks once whether you want the name boxes. <!-- 16lr-twoout -->With the names on, a tile with two points is laid out as one with three: the name boxes sit under its resolution and cable chip, each point numbered with its own cable type (build 16lr-twoout; the boxes covered the chip before).
 - Select the tile and Details lists every output with its own **cable type** button. A point with no type of its own uses the source's cable type. Its menu is the Cable Type menu of 6.2, "Custom…" included: a connector typed there belongs to that output point only.
 - The **pencil** beside the name renames the source everywhere in the show.
 
@@ -984,10 +986,10 @@ Everything that leaves the building sits in the top bar and stays there whicheve
 ### 9.1 Look Book (the printable book)
 
 1. Press **Look Book**. A window opens.
-2. Under **Pages to include**, tick what the book should contain.
+2. Under **Pages to include**, tick what the book should contain. <!-- 16lr-noneticked -->With nothing ticked, Export PDF makes nothing: **Nothing to export** says why and the window stays open (build 16lr-noneticked).
 3. Under **Details**, tick what prints on the canvas pictures and tables.
 4. Type a **Version** (blank = V1) and pick **Light · For Print** or **Dark · For Screen**. The Dark book prints every value readable (build 16li-print): the preset notes and the breakdown's BG detail in plain white, its crop / FX lines in a bright red and its AOI line in a bright amber (build 16li-fix); the labels keep their colours; the Contents heading reads like the other page titles.
-5. Press **Export PDF**. The book opens in a new tab with the print dialog: choose Save as PDF, Letter, landscape. If the browser blocks the new tab the book is saved as a file instead and a message tells you so.
+5. Press **Export PDF**. The book opens in a new tab with the print dialog: choose Save as PDF, Letter, landscape. If the browser blocks the new tab the book is saved as a file instead and a message tells you so. <!-- 16lr-bookprint -->Every page prints full size (build 16lr-bookprint: a layer tag near a destination's edge made some books print every page at 90-96 %, with a grey strip along the right and bottom).
 
 | Pages to include | What you get |
 |---|---|
@@ -1024,7 +1026,7 @@ Good to know
 
 ### 9.2 Excel (the cue sheet)
 
-**Excel** in the top bar, and the **Export** button at the top-right of the Video Presets tab (Simple and Advanced), both write the whole-show cue sheet, `<show>_look_book.xlsx` (Send names the same sheet `<show>_cue_sheet.xlsx`):
+**Excel** in the top bar, and the **Export** button at the top-right of the Video Presets tab (Simple and Advanced), both write the whole-show cue sheet, `<show>_look_book.xlsx` (Send names the same sheet `<show> - Cue Sheet.xlsx` in the desktop app and `<show>_cue_sheet.xlsx` in a browser; <!-- 16lr-mailtext -->the desktop email calls it the cue sheet, build 16lr-mailtext):
 - **Cover** tab: show name, "CUE SHEET", venue, the Show Dates, address, the Show Type ("SHOW TYPE: CORPORATE"), designer, version, from the show info. With Show Dates blank the date line prints the Date Created WITH its label ("CREATED SEPTEMBER 25, 2026"); with both blank it is empty. The I/O Patch Excel opens on the same cover.
 - **Cue sheet** tab: one row per preset (P#, name, notes), one column per destination and per AUX / DSM in use. Each destination cell reads top to bottom: `BG: name (detail)` (a BG without a name reads `BG: Image` for a picture or `BG: Color #rrggbb` for a colour, as the table shows it, and `BG: —` when none is set; build 16lh-bgtxt), then `L1: name (visible size) · effects`, then `AOI: size @ position`. An AUX cell shows what feeds it in that preset. In a preset where destinations are one combined screen (4.4) the master's cell adds `Combined screen 3240x1080 (PJ 1 + PJ 2)` and a slave's cell reads `Blended with PJ 1`, greyed like a backdrop.
 
@@ -1043,7 +1045,7 @@ instead. If nothing is found the export happens at once, with nothing to answer.
   is always there. A book of a nameless show is still a book: it prints "Untitled Show".
 - **The I/O Patch Export is never stopped either.** Its check only ever warns, and it never reads the show name at all, so a
   blank name does not stop it and is not even mentioned.
-- **Warnings let you go on:** a destination with a non-standard size that the engineer has not approved, or one above DCI 4K; a preset with no name; a preset with nothing on it (a BG-only look such as a walk-in logo is fine **(after the fix; today it is flagged)**); a Canvas size that does not match the layout. On the I/O Patch: sources or destinations with no connector or no resolution, and a cable that cannot carry the resolution.
+- **Warnings let you go on:** a destination with a non-standard size that the engineer has not approved, or one above DCI 4K; a preset with no name; a preset with nothing on it (a BG-only look such as a walk-in logo is fine **(after the fix; today it is flagged)**); a Canvas size that does not match the layout (<!-- 16lr-cvcheck -->the layout as Fit Canvas leaves it: a blend's overlap and a gap between destinations are part of it, so the warning comes only when Fit Canvas has something to trim; build 16lr-cvcheck). On the I/O Patch: sources or destinations with no connector or no resolution, and a cable that cannot carry the resolution.
 - **Export Anyway** writes the file, or opens the Look Book window. **Close**, the ✕, a click outside, or Esc go back to the show
   and nothing is exported. The check never changes the show itself, and it has no "fix it" button.
 
@@ -1137,7 +1139,7 @@ The same history covers all three tools. Undo / Redo are in the top bar (dim whe
 
 > **Arrow-key nudges of a layer are one Undo step per burst.** Nudge as many times as you like; when you pause for about half a second the burst is closed, and one Undo puts the layer back where the burst started.
 
-**What does NOT use a step:** selecting, opening or closing a window, switching tools, switching presets in Advanced, switching Wire or I/O Patch between Simple and Advanced, zoom, pan, collapsing presets, opening a Wire or I/O page tab, the × on an empty spare page tab, playing a clip. Looking around never destroys your Redo. One exception: the FIRST switch to Advanced in Wire, and in I/O Patch, builds page 1 from the show, and that build is one step (Undo empties page 1 again and leaves you in Advanced; Redo brings it back).
+**What does NOT use a step:** selecting, opening or closing a window, switching tools, switching presets in Advanced, switching Wire or I/O Patch between Simple and Advanced, zoom, pan, collapsing presets, opening a Wire or I/O page tab, the × on an empty spare page tab, playing a clip, <!-- 16lr-exportundo -->exporting (a Look Book export left a step that undid nothing you could see; build 16lr-exportundo). Looking around never destroys your Redo. One exception: the FIRST switch to Advanced in Wire, and in I/O Patch, builds page 1 from the show, and that build is one step (Undo empties page 1 again and leaves you in Advanced; Redo brings it back).
 
 **Not covered by Undo:** the show name, Date Created, venue, the Project Info fields, the company logo, the canvas size and the AUX / DSM label choice. Change them back by hand. A colour given to a built-in content type with the ✎ swatch IS covered: it belongs to the show.
 
@@ -1262,7 +1264,7 @@ Each item says what you see on build 2026-06-16ko and what to do. "Fixed by" nam
 | **There is no way to remove a video from the Video tab** | Not built in 16ko | Built since: the trash on its card (Video Presets › Advanced › Video tab, 5.2) asks, then removes it from every layer, BG and AUX; one Undo brings it back. The × beside it in Simple's Layer panel (Other library items, 4.5) asks the same question first <!-- 16lc-vpcards-fix2 -->(build 16lc-vpcards-fix2). |
 | **Double-clicking a cable deleted it** | That is what it does; double-click a white handle to reset a route | Undo. |
 | **Wire Advanced: a switcher row refuses × with "Port in use" but I see no cable** | A deleted destination or AUX tile left its backup cable behind | Fixed by the pending patches (the show heals the next time Wire Advanced draws, and lights Save once). |
-| **Wire Advanced: I cannot close a page with a long name; × opens the next page** | The icons sit outside the tab | Rename the page shorter first. Fixed by the pending patches. |
+| **Wire Advanced: I cannot close a page with a long name; × opens the next page** | The icons sat outside the tab | Fixed: the copy icon and × stay inside the tab, a long name wraps to two lines and pops up in full when you point at it (<!-- 16lr-wirebar -->build 16lr-wirebar). |
 | **Wire: Reset Layout in Advanced seemed to do nothing** | It silently reset the SIMPLE drawing | Undo at once. Fixed by the pending patches. |
 | **With Wire open, Delete also removed a layer in Video Presets** | Keys reach the hidden page | Let go of the layer in Video Presets (Escape) before opening Wire. Fixed for Wire by the pending patches; not yet checked for I/O Patch. |
 | **I/O Patch: renamed a source to an existing name and lost a row** | The two sources merge silently | Load the last saved file. Fixed by the pending patches. |
