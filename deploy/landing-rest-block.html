@@ -1,0 +1,245 @@
+<!-- AV Look Book landing page v2 (2026-10-20, Omar: "looks great, lets update the look live !!"), the long block (problem, how it works, who it is for, local first, handoff, fits your
+     workflow, FAQ, the closing call) for a Squarespace CODE BLOCK (HTML mode, "Display Source" OFF), page /av-look-book. Built by
+     mockups/landing_v2/mk_rest.py from deploy/landing-{problem,features,local,faq,cta}-block.html: the same words and links, the
+     download page's v2 look. Script-free. -->
+<div id="avlb-prob">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    #avlb-prob,#avlb-feat,#avlb-local,#avlb-faq,#avlb-cta{--ln:rgba(255,255,255,.14);--ln2:rgba(255,255,255,.28);--t1:#fff;--t2:#b4b4b4;--t3:#8a8a8a;--t4:#6a6a6a;
+      --mono:'IBM Plex Mono',ui-monospace,Menlo,monospace;--head:rama-gothic-e,'Helvetica Neue',Arial,sans-serif;
+      font:15px/1.55 'Helvetica Neue',Arial,sans-serif;color:var(--t2);text-align:left;padding:0 24px;border-left:1px solid var(--ln);border-right:1px solid var(--ln)}
+    #avlb-cta{border-bottom:1px solid var(--ln);padding-bottom:30px}
+    #avlb-local,#avlb-faq{padding-top:30px}
+    :is(#avlb-prob,#avlb-feat,#avlb-local,#avlb-faq,#avlb-cta) *{box-sizing:border-box}
+    :is(#avlb-prob,#avlb-feat,#avlb-local,#avlb-faq,#avlb-cta) a{color:var(--t1);text-decoration:underline;text-underline-offset:3px}
+    /* the section bars (the old eyebrows), numbered */
+    :is(#avlb-prob,#avlb-feat,#avlb-local,#avlb-faq,#avlb-cta) .k{display:flex;align-items:center;margin:44px -24px 34px;padding:13px 24px;border-top:1px solid var(--ln);border-bottom:1px solid var(--ln);
+      font:500 11px/1.2 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--t3)}
+    :is(#avlb-prob,#avlb-feat,#avlb-local,#avlb-faq,#avlb-cta) > .k:first-of-type{margin-top:0}
+    :is(#avlb-prob,#avlb-feat,#avlb-local,#avlb-faq,#avlb-cta) .k b{font-weight:500;color:var(--t1)}
+    :is(#avlb-prob,#avlb-feat,#avlb-local,#avlb-faq,#avlb-cta) .k i{font-style:normal;color:var(--t4);margin:0 .45em}
+    :is(#avlb-prob,#avlb-feat,#avlb-local,#avlb-faq,#avlb-cta) :is(h2,h3,.big){text-wrap:balance}
+    :is(#avlb-prob,#avlb-feat,#avlb-local,#avlb-faq,#avlb-cta) h2{margin:0 0 16px;max-width:1000px;font-family:var(--head);font-weight:600;font-size:clamp(34px,4.2vw,60px);line-height:.95;letter-spacing:.04em;text-transform:uppercase;color:var(--t1)}
+    :is(#avlb-prob,#avlb-feat,#avlb-local,#avlb-faq,#avlb-cta) h3{margin:0 0 12px;font-family:var(--head);font-weight:600;font-size:32px;line-height:1;letter-spacing:.06em;text-transform:uppercase;color:var(--t1)}
+    :is(#avlb-prob,#avlb-feat,#avlb-local,#avlb-faq,#avlb-cta) p{margin:0 0 14px;max-width:760px;font-size:16px;line-height:1.6;color:var(--t2)}
+    :is(#avlb-prob,#avlb-feat,#avlb-local,#avlb-faq,#avlb-cta) p b{color:var(--t1)}
+    /* chips: the documents, the switcher brands, the closing call's words */
+    #avlb-prob .docs,#avlb-local .brands,#avlb-cta .chips{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 22px}
+    #avlb-prob .doc,#avlb-local .brand,#avlb-cta .chip{padding:8px 11px;border:1px solid var(--ln2);font:500 11px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--t1)}
+    #avlb-prob .doc.mem{border-style:dashed;color:var(--t3)}
+    :is(#avlb-prob,#avlb-local) .big{margin:10px 0 0;padding:22px 0 0;border-top:1px dashed var(--ln);font-family:var(--head);font-weight:600;font-size:clamp(24px,2.4vw,32px);line-height:1.05;letter-spacing:.06em;text-transform:uppercase;color:var(--t1)}
+    #avlb-local .big{margin:8px 0 18px;padding-bottom:4px}
+    /* lists */
+    :is(#avlb-prob,#avlb-local) ul{list-style:none;margin:6px 0 18px;padding:0;max-width:820px}
+    #avlb-prob ul{columns:2;column-gap:36px}
+    :is(#avlb-prob,#avlb-local) li{position:relative;margin:0 0 9px;padding-left:20px;break-inside:avoid;font-size:15px;color:var(--t2)}
+    :is(#avlb-prob,#avlb-local) li::before{content:"";position:absolute;left:0;top:.6em;width:7px;height:7px;border:1px solid var(--t3)}
+    #avlb-local li b{color:var(--t1)}
+    /* cards: hairline cells, edge to edge */
+    :is(#avlb-prob,#avlb-feat) .grid3{display:grid;grid-template-columns:repeat(3,1fr);margin:26px -24px 0;border-top:1px solid var(--ln);border-bottom:1px solid var(--ln)}
+    :is(#avlb-prob,#avlb-feat) .card{padding:24px;border-left:1px solid var(--ln)} :is(#avlb-prob,#avlb-feat) .card:first-child{border-left:0}
+    :is(#avlb-prob,#avlb-feat) .card b{display:block;margin-bottom:10px;font-family:var(--head);font-weight:600;font-size:26px;line-height:1;letter-spacing:.07em;text-transform:uppercase;color:var(--t1)}
+    :is(#avlb-prob,#avlb-feat) .card p{margin:0 0 10px;max-width:none;font-size:14px}
+    #avlb-feat .card p.dl{margin-top:14px;padding-top:12px;border-top:1px dashed var(--ln);font-size:13px}
+    #avlb-feat .card p.dl span{font:400 10.5px/1.7 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--t3)!important}
+    :is(#avlb-prob,#avlb-feat) .grid3 + .k{margin-top:-1px}
+    #avlb-prob > .grid3:last-child{margin-bottom:0;border-bottom:0}
+    #avlb-feat .grid3 + p{margin-top:22px}
+    /* how it works: picture and words side by side, a hairline between */
+    #avlb-feat .sub{margin-bottom:30px}
+    #avlb-feat .f{display:grid;grid-template-columns:1.25fr 1fr;margin:0 -24px;border-top:1px solid var(--ln)}
+    #avlb-feat .fimg{position:relative;border-right:1px solid var(--ln);line-height:0;background:#000}
+    #avlb-feat .fimg img{display:block;width:100%;height:100%;object-fit:cover;object-position:left top}
+    #avlb-feat .f:nth-of-type(even) .fimg{order:2;border-right:0;border-left:1px solid var(--ln)}
+    #avlb-feat .f > div:not(.fimg){padding:30px 24px 26px}
+    #avlb-feat .tag{display:inline-block;margin-bottom:16px;padding:6px 9px;border:1px solid var(--ln2);font:500 10.5px/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--t1)}
+    #avlb-feat .f p{font-size:15px}
+    #avlb-feat .f + .k{margin-top:0}
+    /* who it is for: five cells */
+    #avlb-local .who{display:grid;grid-template-columns:repeat(3,1fr);margin:26px -24px -1px;border-top:1px solid var(--ln)}
+    #avlb-local .who > a,#avlb-local .who > div.w{display:flex;flex-direction:column;gap:12px;padding:24px;border-left:1px solid var(--ln);border-bottom:1px solid var(--ln);color:var(--t2);text-decoration:none;transition:background .15s}
+    #avlb-local .who > :nth-child(3n+1){border-left:0}
+    #avlb-local .who > a:hover{background:rgba(255,255,255,.04)}
+    #avlb-local .who b{font-family:var(--head);font-weight:600;font-size:26px;line-height:1;letter-spacing:.07em;text-transform:uppercase;color:var(--t1)}
+    #avlb-local .who span{font-size:14px;line-height:1.55}
+    #avlb-local .who span.more{margin-top:auto;font:500 11px/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--t1)}
+    /* local first | where it lives */
+    #avlb-local .two{display:grid;grid-template-columns:1.35fr 1fr;margin:0 -24px;border-top:1px solid var(--ln)}
+    #avlb-local .two > div{padding:0 24px 28px} #avlb-local .two > div + div{border-left:1px solid var(--ln)}
+    #avlb-local .two .k{margin:0 -24px 30px;border-top:0}
+    #avlb-local .folder{padding:18px 20px;border:1px solid var(--ln);background:rgba(255,255,255,.02);font:400 13px/1.75 var(--mono);color:var(--t2)}
+    #avlb-local .folder b{font-weight:500;color:var(--t1)}
+    #avlb-local .two + .k{margin-top:-1px}
+    /* questions: rows edge to edge */
+    #avlb-faq details{margin:0 -24px;padding:0 24px;border-top:1px solid var(--ln)}
+    #avlb-faq .k + details{border-top:0}
+    #avlb-faq h2{margin-bottom:26px}
+    #avlb-faq h2 + details{border-top:1px solid var(--ln)}
+    #avlb-faq summary{list-style:none;display:flex;justify-content:space-between;align-items:center;gap:20px;padding:17px 0;cursor:pointer;font-size:16px;color:var(--t1)}
+    #avlb-faq summary::-webkit-details-marker{display:none}
+    #avlb-faq summary::after{content:"+";flex:none;font:400 16px/1 var(--mono);color:var(--t3)}
+    #avlb-faq details[open] summary::after{content:"\2212"}
+    #avlb-faq details p{margin:-4px 0 18px;max-width:840px;font-size:15px}
+    #avlb-cta .k{margin-top:0}
+    /* the closing call */
+    #avlb-cta a.go{display:inline-flex;align-items:center;min-height:52px;margin:6px 0 0;padding:0 26px;background:var(--t1);color:#000;border:1px solid var(--t1);
+      font:500 12px/1 var(--mono);letter-spacing:.2em;text-transform:uppercase;text-decoration:none;transition:background .15s}
+    #avlb-cta a.go:hover{background:#d9d9d9;border-color:#d9d9d9}
+    #avlb-cta .guide{margin-top:18px;font-size:14px;color:var(--t2)}
+    #avlb-cta .fine{margin-top:18px;font:400 11px/1.7 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--t4)}
+    #avlb-cta .fine a{color:var(--t3)}
+    #avlb-cta .support{margin:24px -24px 0;padding:20px 24px 0;border-top:1px solid var(--ln);font-size:13px;line-height:1.6;color:var(--t3)}
+    #avlb-cta .support b{color:var(--t1)}
+    @media (max-width:900px){ #avlb-local .who{grid-template-columns:1fr 1fr} #avlb-local .who > *{border-left:1px solid var(--ln)!important} #avlb-local .who > :nth-child(2n+1){border-left:0!important} }
+    @media (max-width:820px){
+      #avlb-prob,#avlb-feat,#avlb-local,#avlb-faq,#avlb-cta{padding-left:18px;padding-right:18px}
+      :is(#avlb-prob,#avlb-feat,#avlb-local,#avlb-faq,#avlb-cta) .k{margin-left:-18px;margin-right:-18px;padding:12px 18px}
+      :is(#avlb-prob,#avlb-feat) .grid3,#avlb-feat .f,#avlb-local .who,#avlb-local .two{grid-template-columns:1fr;margin-left:-18px;margin-right:-18px}
+      :is(#avlb-prob,#avlb-feat) .card{border-left:0;border-top:1px solid var(--ln);padding:20px 18px} :is(#avlb-prob,#avlb-feat) .card:first-child{border-top:0}
+      #avlb-feat .fimg,#avlb-feat .f:nth-of-type(even) .fimg{order:0;border:0;border-bottom:1px solid var(--ln)} #avlb-feat .f > div:not(.fimg){padding:22px 18px}
+      #avlb-local .who > *{border-left:0!important;padding:20px 18px} #avlb-local .two > div{padding:0 18px 24px} #avlb-local .two > div + div{border-left:0;border-top:1px solid var(--ln);padding-top:0}
+      #avlb-local .two .k{margin-left:-18px;margin-right:-18px}
+      #avlb-faq details{margin:0 -18px;padding:0 18px} #avlb-cta .support{margin-left:-18px;margin-right:-18px;padding-left:18px;padding-right:18px}
+      #avlb-prob ul{columns:1} #avlb-cta a.go{width:100%;justify-content:center;letter-spacing:.12em}
+    }
+  </style>
+  <div class="k"><span><b>03</b><i>/</i>The problem</span></div>
+  <h2>Your show shouldn't live in five different documents.</h2>
+  <div class="docs"><span class="doc">PowerPoint look book</span><span class="doc">Excel cue sheet</span><span class="doc">I/O sheet</span><span class="doc">Signal-flow drawing</span><span class="doc">Preset notes</span><span class="doc mem">The engineer's memory</span></div>
+  <p>One change and they stop matching. AV Look Book keeps the show connected: build the destinations, presets, I/O, routing and wiring once, in one project, and every document comes from that one source. Change the show and the look book, the cue sheet and the drawings change with it.</p>
+  <div class="big">Build the show once. Use the information everywhere.</div>
+  <div class="k"><span><b>04</b><i>/</i>Solve it before show site</span></div>
+  <h2>The switcher shouldn't be where you figure out the show.</h2>
+  <p>Building the project makes you answer the questions before load-in. What are the sources? What are the destinations, and at what resolution? What goes to DSM, what goes to AUX? What does each preset do? How is it all connected? Planning the show becomes part of documenting the show.</p>
+  <p>The things that usually surface in rehearsal surface on your laptop instead:</p>
+  <ul>
+    <li>Missing sources or destinations</li><li>Wrong resolutions</li><li>Routing problems and missing outputs</li><li>AUX or DSM conflicts</li><li>Connector mistakes</li><li>Looks that don't fit the destination</li><li>Inconsistent preset naming</li><li>Unclear responsibilities between departments</li>
+  </ul>
+  <div class="grid3">
+    <div class="card"><b>Faster rehearsals</b><p>Instead of "change that look with the camera on the left and slides on the right", the team says "change P07". Everyone is looking at the same picture.</p></div>
+    <div class="card"><b>Approve it before show day</b><p>Producers and clients see the audience screens, IMAG placement, walk-in and playback looks on the real screen shapes, so "that's not what I thought it would look like" happens in pre-production.</p></div>
+    <div class="card"><b>Preflight, no extra checklist</b><p>You don't fill in a form. You build the show, and the questions get answered on the way.</p></div>
+  </div>
+</div>
+<div id="avlb-feat">
+  <div class="k"><span><b>05</b><i>/</i>How it works</span></div>
+  <h2>Built by a show caller. Speaks the room's language.</h2>
+  <p class="sub">Destinations, presets, layers, DSM and AUX, I/O, routing and cabling. Nothing to learn that you don't already say on comms, and one project behind every document.</p>
+
+  <div class="f">
+    <div class="fimg"><img src="https://raw.githubusercontent.com/AVEducate/AV-Look-Book/main/deploy/img/site/01-video-presets.jpg" alt="Video Presets view, four projection destinations with layer assignments"></div>
+    <div>
+      <span class="tag">Video Presets</span>
+      <h3>One look per preset, on the real canvas</h3>
+      <p>Add your destinations at their real resolutions, drop sources onto layers, set DSM and AUX outputs, and capture each look as P01, P02, P03, exactly the way you'll call it.</p>
+      <p>Every preset page in the look book comes straight from this canvas.</p>
+    </div>
+  </div>
+
+  <div class="f">
+    <div class="fimg"><img src="https://raw.githubusercontent.com/AVEducate/AV-Look-Book/main/deploy/img/site/02-wire-simple.jpg" alt="Wire mode, signal flow with the switcher"></div>
+    <div>
+      <span class="tag">Wire</span>
+      <h3>Signal flow that prints true</h3>
+      <p>Sources into the switcher, switcher out to every destination and AUX, with cable colours by connector type. HDMI in and SDI out looks like HDMI in and SDI out.</p>
+      <p>Simple gives you the one-page sheet. Advanced gives you routers, switchers, converters and network switches with port numbers, primary and backup runs, a cable type per output, and multi-page drawings that print from Letter up to ANSI E.</p>
+    </div>
+  </div>
+
+  <div class="f">
+    <div class="fimg"><img src="https://raw.githubusercontent.com/AVEducate/AV-Look-Book/main/deploy/img/site/04-io-patch.jpg" alt="I/O Patch, every source with connector, type, resolution and notes"></div>
+    <div>
+      <span class="tag">I/O Patch</span>
+      <h3>The inventory the engineers ask for</h3>
+      <p>Connector, type, resolution, slot and notes for every source, destination and AUX. Edit it once and it's reflected on the wire diagram, the router tiles and the exports.</p>
+    </div>
+  </div>
+
+  <div class="k"><span><b>06</b><i>/</i>What you hand the crew</span></div>
+  <div class="grid3">
+    <div class="card"><b>Look Book PDF</b><p>Cover, I/O reference, one page per preset with a screen-by-screen breakdown, the wire sheet, and a summary table.</p></div>
+    <div class="card"><b>Excel cue sheet</b><p>Every preset and destination as a spreadsheet for the switcher op and the stage manager.</p></div>
+    <div class="card"><b>Send in one click</b><p>PDF, Excel and the show file attached to a new email, with a link so the recipient can open the show themselves.</p></div>
+  </div>
+
+  <div class="k"><span><b>07</b><i>/</i>Don't start from a blank screen</span></div>
+  <div class="grid3">
+    <div class="card"><b>General Session</b><p>Three LED walls, walk-in, keynote with a hot-backup laptop, panel, playback. One DSM, one AUX.</p><p class="dl"><a href="https://raw.githubusercontent.com/AVEducate/AV-Look-Book/main/site/packets/General%20Session.zip">Download the packet (ZIP)</a><br><span style="color:#9a9a9a">show file &middot; Look Book PDF &middot; Excel cue sheet</span></p></div>
+    <div class="card"><b>Awards Night</b><p>A 32:9 wall between two projection screens, nominee reels, winner cards with a camera PIP, speeches.</p><p class="dl"><a href="https://raw.githubusercontent.com/AVEducate/AV-Look-Book/main/site/packets/Awards%20Night.zip">Download the packet (ZIP)</a><br><span style="color:#9a9a9a">show file &middot; Look Book PDF &middot; Excel cue sheet</span></p></div>
+    <div class="card"><b>Town Hall</b><p>Hybrid all-hands, slides with a CEO PIP, a Teams guest, audience Q&amp;A, a recap video, stream out.</p><p class="dl"><a href="https://raw.githubusercontent.com/AVEducate/AV-Look-Book/main/site/packets/Town%20Hall.zip">Download the packet (ZIP)</a><br><span style="color:#9a9a9a">show file &middot; Look Book PDF &middot; Excel cue sheet</span></p></div>
+  </div>
+  <p class="sub" style="margin-bottom:6px">The same three shows are inside the app under Quick Start, <b style="color:#fff">Start from an example</b>. Open one, look around, then Save As to make it yours. The PDF and the cue sheet are what the crew receives; the show file is what the app opens.</p>
+</div>
+<div id="avlb-local">
+  <div class="k"><span><b>08</b><i>/</i>Who it is for</span></div>
+  <h2>One show. Different views for the people who need them.</h2>
+  <p>A Producer asks what the audience sees. A Show Caller asks which preset to call. A Video Engineer asks how it is routed and connected. The operator asks what happens when P07 is called. AV Look Book is the common reference between them.</p>
+  <div class="who">
+    <a href="/av-look-book-engineers"><b>Video Engineers</b><span>Engineer the show before show site. I/O, routing, wire drawings.</span><span class="more">Read more &rarr;</span></a>
+    <a href="/av-look-book-show-callers"><b>Show Callers</b><span>Know exactly what every preset should look like.</span><span class="more">Read more &rarr;</span></a>
+    <a href="/av-look-book-producers"><b>Producers</b><span>Get everyone aligned on what goes to every screen.</span><span class="more">Read more &rarr;</span></a>
+    <div class="w"><b>Production Companies</b><span>Every show gets an AV Look Book. A repeatable documentation standard for staff and freelancers.</span></div>
+    <div class="w"><b>In-House and Venue AV</b><span>Board Meeting, Town Hall, All Hands, Awards: operational documentation for the rooms you run every week.</span></div>
+  </div>
+  <div class="two">
+    <div>
+      <div class="k"><span><b>09</b><i>/</i>Local first</span></div>
+      <h2>Your show stays yours.</h2>
+      <p>AV Look Book works on your computer, with your files. Nothing about your show goes anywhere unless you export it or send it.</p>
+      <ul>
+        <li><b>Your project files stay on your computer.</b> A show is a single .avlb file you control.</li>
+        <li><b>Works offline.</b> No Internet needed to build the show, no dependence on ballroom Wi-Fi, fine on isolated production networks. When online, the app only checks for a newer version at launch.</li>
+        <li><b>No cloud workspace, no account.</b> Projects are not tied to a login and are not stored in an online workspace.</li>
+        <li><b>No analytics, no AI.</b> The app collects no usage data and sends no project information through AI systems.</li>
+        <li><b>Back it up your way.</b> Copy the file to the show drive, a USB stick, the company server or your approved cloud folder, like the rest of the show.</li>
+      </ul>
+      <p>Companies keep their own software and IT rules, of course. Local, offline operation just means there is a lot less to review.</p>
+    </div>
+    <div>
+      <div class="k"><span><b>10</b><i>/</i>Where it lives</span></div>
+      <div class="folder">CLIENT SHOW/<br>&nbsp;&nbsp;Graphics/<br>&nbsp;&nbsp;Playback/<br>&nbsp;&nbsp;PowerPoint/<br>&nbsp;&nbsp;Switcher/<br>&nbsp;&nbsp;Documents/<br>&nbsp;&nbsp;<b>AV Look Book/</b><br>&nbsp;&nbsp;&nbsp;&nbsp;<b>Client Show.avlb</b><br>&nbsp;&nbsp;&nbsp;&nbsp;Client Show, Look Book.pdf<br>&nbsp;&nbsp;&nbsp;&nbsp;Client Show, Cue Sheet.xlsx</div>
+      <p style="margin-top:12px;font-size:14px">Your project is a show file. Back it up like the rest of your show, and it never depends on anyone else's server.</p>
+    </div>
+  </div>
+  <div class="k"><span><b>11</b><i>/</i>Handoff</span></div>
+  <h2>Turn show knowledge into company knowledge.</h2>
+  <p>"John knows how that room works." "Ask Sarah what P08 does." "The engineer who built it isn't here today." Corporate AV runs on freelancers, rotating crews and last-minute substitutions, and the show shouldn't disappear when the engineer goes home.</p>
+  <p>With the project file, the Day 2 operator, the replacement Show Caller, the Technical Director reviewing the show or the Producer checking the screen layouts all open the same show. No user provisioning, no seats, no passwords, no freelancer account setup, nobody to remove after the show.</p>
+  <div class="big">Send the show. Not another login.</div>
+  <p>Recurring client? Open last year's file, Save As, change what is different. Don't rebuild recurring shows from memory.</p>
+  <div class="k"><span><b>12</b><i>/</i>Fits your workflow</span></div>
+  <h2>Use it with the workflow you already have.</h2>
+  <p>Build it in AV Look Book, share it in the format your crew needs. The PDF look book and the Excel cue sheet go to everyone; the project file goes to anyone with the app. The whole crew does not have to adopt another platform to read the show, and the documentation stays usable outside the app.</p>
+  <p>The show comes first, not the switcher brand. Plan it the same way whether it ends up running on:</p>
+  <div class="brands"><span class="brand">Barco</span><span class="brand">Analog Way</span><span class="brand">Pixelhue</span><span class="brand">Spyder</span><span class="brand">Ross</span><span class="brand">something else</span></div>
+  <p>AV Look Book plans and documents the show. It does not control the switcher, and it is not a replacement for Vectorworks, ConnectCAD or AutoCAD: the integrator documents how the system is built, AV Look Book documents how it is being used for this event. If you already speak sources, destinations, presets, AUX and signal flow, you already speak its language.</p>
+</div>
+<div id="avlb-faq">
+  <div class="k"><span><b>13</b><i>/</i>Questions before you download</span></div>
+  <h2>Straight answers.</h2>
+  <details><summary>Is it really free?</summary><p>Yes. No trial, no subscription, no seats, no account. AV Educate Inc is a 501(c)(3) nonprofit; AV Look Book is built as a resource for the AV community and funded by donations.</p></details>
+  <details><summary>Why do you ask for my email?</summary><p>It does not create an AV Look Book account, and your projects are not tied to it. AV Educate uses the email for AV Look Book updates and news. Unsubscribe any time.</p></details>
+  <details><summary>Does it need the Internet?</summary><p>No. AV Look Book works fully offline. When it is online, the app checks GitHub for a newer version at launch. Nothing about your show is sent.</p></details>
+  <details><summary>Where are my files stored?</summary><p>On your computer. A show is a single .avlb file that you control, plus an autosave draft in the app's own data folder. Back it up like any show file.</p></details>
+  <details><summary>Does AV Educate see my project? Does it upload anything?</summary><p>No. There is no cloud workspace, no analytics, no telemetry and no AI. The only network traffic is the update check at launch and links you click yourself.</p></details>
+  <details><summary>Does it control my switcher?</summary><p>No. AV Look Book plans and documents the show. Programming stays on the switcher.</p></details>
+  <details><summary>Does it replace Vectorworks, ConnectCAD or AutoCAD?</summary><p>No. Those document how the system is built. AV Look Book documents how the system is being used for this event.</p></details>
+  <details><summary>Does it work with my switcher?</summary><p>It is brand-agnostic. Plan the show whether it ends up on Barco, Analog Way, Pixelhue, Spyder, Ross or something else. The Vocabulary reference in the app maps the terms between them.</p></details>
+  <details><summary>Does the whole crew need AV Look Book?</summary><p>No. Build it in the app, then hand out the PDF look book, the Excel cue sheet or the project file. Anyone with the app opens the file and gets the whole show.</p></details>
+  <details><summary>Can I send the project to another engineer?</summary><p>Yes. Send attaches the PDF, the Excel and the show file to a new email. The file opens on any Mac or Windows machine with the app.</p></details>
+  <details><summary>Can I reuse an old show?</summary><p>Yes. Open last year's file, Save As, change what is different. Or start from one of the example shows in Quick Start.</p></details>
+  <details><summary>How do I back up my project?</summary><p>It is a file. Copy it to the show drive, a USB stick, the company file server or your approved cloud folder, like the rest of the show.</p></details>
+  <details><summary>Mac and Windows?</summary><p>Mac (Apple Silicon and Intel) and Windows 10 / 11. Updates arrive inside the app. The Windows installer installs for the current user and needs no administrator rights.</p></details>
+  <details><summary>Why does my computer warn me on first open?</summary><p>The builds are not signed yet. Apple notarization and a Windows certificate cost money, and donations get us there. Mac: System Settings, Privacy &amp; Security, Open Anyway. Windows: More info, Run anyway. The welcome email has the same steps.</p></details>
+  <details><summary>What happens if AV Educate stops developing it?</summary><p>Your files stay yours and stay readable, and the PDF and Excel exports keep the show usable outside the app.</p></details>
+</div>
+<div id="avlb-cta">
+  <div class="k"><span><b>14</b><i>/</i>Get it free</span></div>
+  <h2>Build the show before you build the show.</h2>
+  <div class="chips"><span class="chip">Free</span><span class="chip">Offline</span><span class="chip">No account</span><span class="chip">Built for live-event video</span></div>
+  <a class="go" href="#avlb-signup">Get AV Look Book free &uarr;</a>
+  <div class="guide">Want to see it first? <a href="https://cdn.jsdelivr.net/gh/AVEducate/AV-Look-Book@main/deploy/quick_guide.pdf" target="_blank" rel="noopener">Read the Quick Guide</a> &middot; 14 pages, every screen of the app, opens as a PDF</div>
+  <div class="fine">Mac (Apple Silicon and Intel) &middot; Windows 10 / 11 &middot; Updates arrive inside the app &middot; Questions: <a href="mailto:Info@aveducate.com">Info@aveducate.com</a></div>
+  <div class="support"><b>Support this project.</b> AV Look Book is free because people chip in. <a href="/support">Support The AVE Mission</a> &middot; AV Educate Inc is a 501(c)(3) nonprofit, so gifts are tax-deductible.<br>Have an idea? <a href="/feedback">Vote on what we build next</a>.</div>
+</div>

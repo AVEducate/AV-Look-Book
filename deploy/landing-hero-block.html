@@ -1,44 +1,108 @@
-<!-- AV Look Book landing page, PART 1 (hero) for a Squarespace CODE BLOCK (HTML mode, "Display Source" OFF).
-     2026-09-16: positioning from the landing brief (whole live-event video workflow), department buttons,
-     FREE / OFFLINE / NO ACCOUNT / MAC + WINDOWS chips. Script-free. Images from the public GitHub repo. -->
-<div id="avlb-hero" style="font:15px/1.55 'Helvetica Neue',Arial,sans-serif;color:#d0d0d0;background:transparent;padding:10px 0 4px;text-align:center">
+<!-- AV Look Book landing page v2, PART 1 (hero) for a Squarespace CODE BLOCK (HTML mode, "Display Source" OFF), page
+     /av-look-book. 2026-10-20 (Omar: "let me see a mock up of what it would look like" / "looks great, lets update the look live !!"; the headline "or even better hand them the look book"): the download page's v2 look (spec-sheet frame
+     of hairlines, numbered bars with IBM Plex Mono labels, square buttons, Rama Gothic headings, framed picture) on the same words and
+     links as the hero of 2026-09-16. Also styles the page's Squarespace NEWSLETTER block (02, its form, storage and redirect to
+     /download untouched) and makes this page's sections hug their blocks. Script-free. -->
+<div id="avlb-hero">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
+    #avlb-hero{--ln:rgba(255,255,255,.14);--ln2:rgba(255,255,255,.28);--t1:#fff;--t2:#b4b4b4;--t3:#8a8a8a;--t4:#6a6a6a;
+      --mono:'IBM Plex Mono',ui-monospace,Menlo,monospace;--head:rama-gothic-e,'Helvetica Neue',Arial,sans-serif;
+      font:15px/1.55 'Helvetica Neue',Arial,sans-serif;color:var(--t2);text-align:left;border-left:1px solid var(--ln);border-right:1px solid var(--ln);border-bottom:1px solid var(--ln)}
     #avlb-hero *{box-sizing:border-box}
-    #avlb-hero a{color:#fff;text-decoration:underline;text-underline-offset:3px}
-    #avlb-hero .icon{width:96px;height:96px;border-radius:22px;box-shadow:0 12px 40px rgba(0,0,0,.6);margin:0 auto 18px;display:block}
-    #avlb-hero .k{font-family:rama-gothic-e,'Helvetica Neue',Arial,sans-serif;font-weight:400;font-size:19px;letter-spacing:.16em;text-transform:uppercase;color:#fff;margin-bottom:10px}
-    #avlb-hero h1{font-family:rama-gothic-e,'Helvetica Neue',Arial,sans-serif;font-weight:600;font-size:58px;line-height:1.05;letter-spacing:.12em;text-transform:uppercase;color:#d0d0d0;margin:0 auto 14px;max-width:980px}
-    #avlb-hero .tag{font-family:rama-gothic-e,'Helvetica Neue',Arial,sans-serif;font-size:24px;letter-spacing:.1em;text-transform:uppercase;color:#fff;margin:0 auto 16px;max-width:900px}
-    #avlb-hero .lede{max-width:760px;margin:0 auto 22px;color:#9a9a9a;font-size:17px}
-    #avlb-hero .chips{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:0 auto 24px}
-    #avlb-hero .chip{font-family:rama-gothic-e,'Helvetica Neue',Arial,sans-serif;font-size:16px;letter-spacing:.14em;text-transform:uppercase;padding:6px 12px;border:1px solid rgba(255,255,255,.35);border-radius:4px;color:#fff}
-    #avlb-hero a.go{display:inline-block;padding:16px 26px;border-radius:15px;background:#fff;color:#000;font-family:rama-gothic-e,'Helvetica Neue',Arial,sans-serif;font-size:19px;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;transition:background .15s}
-    #avlb-hero a.go:hover{background:#d0d0d0}
-    #avlb-hero .ctas{display:flex;flex-wrap:wrap;justify-content:center;gap:12px}
-    #avlb-hero a.go2{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.55)} #avlb-hero a.go2:hover{background:rgba(255,255,255,.12)}
-    #avlb-hero .fine{margin-top:16px;font-size:12px;color:#9a9a9a;letter-spacing:.1em;text-transform:uppercase}
-    #avlb-hero .depts{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin:26px auto 0}
-    #avlb-hero .depts .lbl{width:100%;font-size:12px;color:#9a9a9a;letter-spacing:.14em;text-transform:uppercase;margin-bottom:2px}
-    #avlb-hero a.dept{display:inline-block;padding:12px 20px;border-radius:12px;border:1px solid rgba(255,255,255,.35);color:#fff;font-family:rama-gothic-e,'Helvetica Neue',Arial,sans-serif;font-size:18px;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;transition:background .15s,border-color .15s}
-    #avlb-hero a.dept:hover{background:rgba(255,255,255,.1);border-color:#fff}
-    #avlb-hero .shot{margin:34px auto 0;max-width:1100px;border:1px solid rgba(255,255,255,.18);border-radius:8px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.6);background:#000}
+    #avlb-hero a{color:var(--t1);text-decoration:underline;text-underline-offset:3px}
+    #avlb-hero .bar{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:13px 24px;border-top:1px solid var(--ln);
+      font:500 11px/1.2 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--t3)}
+    #avlb-hero .bar b{font-weight:500;color:var(--t1)} #avlb-hero .bar i{font-style:normal;color:var(--t4);margin:0 .45em}
+    #avlb-hero .hero{padding:56px 24px 50px;border-top:1px solid var(--ln)}
+    #avlb-hero .brand{display:flex;align-items:center;gap:14px;margin-bottom:30px}
+    #avlb-hero .icon{width:52px;height:52px;border-radius:12px;display:block}
+    #avlb-hero .brand span{font:500 12px/1.2 var(--mono);letter-spacing:.2em;text-transform:uppercase;color:var(--t1)}
+    #avlb-hero h1{margin:0;max-width:1100px;font-family:var(--head);font-weight:600;font-size:clamp(46px,6.2vw,96px);line-height:.94;letter-spacing:.04em;text-transform:uppercase;color:var(--t1)}
+    #avlb-hero h1,#avlb-hero .tag{text-wrap:balance}
+    #avlb-hero .tag{max-width:1100px;margin:22px 0 0;font-family:var(--head);font-weight:600;font-size:clamp(20px,2vw,26px);line-height:1.15;letter-spacing:.08em;text-transform:uppercase;color:var(--t2)}
+    #avlb-hero .lede{max-width:700px;margin:18px 0 32px;font-size:17px;line-height:1.6;color:var(--t2)}
+    #avlb-hero .ctas{display:flex;flex-wrap:wrap;gap:12px}
+    #avlb-hero a.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:52px;padding:0 26px;border:1px solid var(--ln2);
+      background:transparent;color:var(--t1);font:500 12px/1 var(--mono);letter-spacing:.2em;text-transform:uppercase;text-decoration:none;transition:background .15s,border-color .15s}
+    #avlb-hero a.btn:hover{border-color:var(--t1);background:rgba(255,255,255,.06)}
+    #avlb-hero a.btn.pri{background:var(--t1);border-color:var(--t1);color:#000} #avlb-hero a.btn.pri:hover{background:#d9d9d9;border-color:#d9d9d9}
+    #avlb-hero a.btn svg{width:15px;height:15px;flex:none}
+    #avlb-hero .meta{margin-top:28px;font:400 11px/1.6 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--t4)}
+    /* built for: three departments, one cell each */
+    #avlb-hero .depts{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--ln)}
+    #avlb-hero a.dept{display:flex;flex-direction:column;gap:14px;padding:24px;border-left:1px solid var(--ln);color:var(--t1);text-decoration:none;transition:background .15s}
+    #avlb-hero a.dept:first-child{border-left:0} #avlb-hero a.dept:hover{background:rgba(255,255,255,.04)}
+    #avlb-hero a.dept .n{font:500 11px/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--t3)}
+    #avlb-hero a.dept b{font-family:var(--head);font-weight:600;font-size:30px;line-height:1;letter-spacing:.08em;text-transform:uppercase}
+    #avlb-hero a.dept .more{font:500 11px/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--t1)}
+    /* the app's picture, framed like a drawing */
+    #avlb-hero .shot{position:relative;border-top:1px solid var(--ln);line-height:0}
     #avlb-hero .shot img{display:block;width:100%;height:auto}
-    @media (max-width:760px){ #avlb-hero h1{font-size:36px;letter-spacing:.08em} #avlb-hero .tag{font-size:19px} #avlb-hero .lede{font-size:15px} }
+    #avlb-hero .shot .pl{position:absolute;width:13px;height:13px;color:var(--t3)}
+    #avlb-hero .shot .pl::before,#avlb-hero .shot .pl::after{content:"";position:absolute;background:currentColor}
+    #avlb-hero .shot .pl::before{left:6px;top:0;width:1px;height:13px} #avlb-hero .shot .pl::after{top:6px;left:0;width:13px;height:1px}
+    #avlb-hero .shot .tl{left:-7px;top:-7px} #avlb-hero .shot .tr{right:-7px;top:-7px} #avlb-hero .shot .bl{left:-7px;bottom:-7px} #avlb-hero .shot .br{right:-7px;bottom:-7px}
+    @media (max-width:820px){
+      #avlb-hero .hero{padding:40px 18px 36px} #avlb-hero .bar{padding:12px 18px} #avlb-hero .bar .r{display:none}
+      #avlb-hero .depts{grid-template-columns:1fr} #avlb-hero a.dept{border-left:0;border-top:1px solid var(--ln);padding:20px 18px} #avlb-hero a.dept:first-child{border-top:0}
+      #avlb-hero .ctas a.btn{width:100%} #avlb-hero a.btn{letter-spacing:.12em;padding:0 14px} #avlb-hero .lede{font-size:16px}
+    }
+    /* 02: the page's Squarespace newsletter block (Get AV Look Book free): the same frame, square boxes. Only its look: the form, its
+       mailing list and its redirect to /download stay Squarespace's. */
+    .newsletter-block .newsletter-form-wrapper{position:relative;text-align:left!important;border:1px solid rgba(255,255,255,.14);padding:70px 24px 60px!important;margin:0!important;max-width:none!important}
+    .newsletter-block .newsletter-form-wrapper::after{content:"/\2002Get it free";position:absolute;left:0;right:0;top:0;padding:13px 24px 13px 46px;border-bottom:1px solid rgba(255,255,255,.14);
+      font:500 11px/1.2 'IBM Plex Mono',ui-monospace,Menlo,monospace;letter-spacing:.16em;text-transform:uppercase;color:#8a8a8a}
+    .newsletter-block .newsletter-form-wrapper::before{content:"02";position:absolute;left:24px;top:0;z-index:1;padding:13px 0;font:500 11px/1.2 'IBM Plex Mono',ui-monospace,Menlo,monospace;letter-spacing:.16em;color:#fff}
+    .newsletter-block .newsletter-form-header{margin:0!important;max-width:none!important;text-align:left!important}
+    .newsletter-block .newsletter-form-header-title{text-wrap:balance;margin:0 0 14px!important;font-family:rama-gothic-e,'Helvetica Neue',Arial,sans-serif!important;font-weight:600!important;font-size:clamp(40px,5vw,72px)!important;line-height:.95!important;letter-spacing:.04em!important;text-transform:uppercase;color:#fff!important}
+    .newsletter-block .newsletter-form-header-description,.newsletter-block .newsletter-form-header-description p{max-width:640px;text-align:left!important;color:#b4b4b4!important;font-size:16px!important;line-height:1.6!important;margin-left:0!important}
+    .newsletter-block .newsletter-form-body{display:flex!important;flex-wrap:wrap;justify-content:flex-start!important;align-items:stretch;gap:12px;margin-top:26px!important}
+    .newsletter-block .newsletter-form-fields-wrapper{flex:0 1 360px;margin:0!important}
+    .newsletter-block .newsletter-form-field-wrapper{margin:0!important;padding:0!important;width:100%!important}
+    .newsletter-block .newsletter-form-field-element{width:100%!important;height:52px!important;margin:0!important;padding:0 16px!important;background:#000!important;border:1px solid rgba(255,255,255,.28)!important;border-radius:0!important;
+      color:#fff!important;font:400 13px/1 'IBM Plex Mono',ui-monospace,Menlo,monospace!important;letter-spacing:.06em!important}
+    .newsletter-block .newsletter-form-field-element:focus{border-color:#fff!important;outline:none!important}
+    .newsletter-block .newsletter-form-field-element::placeholder{color:#6a6a6a!important;opacity:1!important}
+    .newsletter-block .newsletter-form-button-wrapper{margin:0!important;padding:0!important}
+    .newsletter-block .newsletter-form-button{height:52px!important;margin:0!important;padding:0 26px!important;background:#fff!important;color:#000!important;border:1px solid #fff!important;border-radius:0!important;
+      font:500 12px/1 'IBM Plex Mono',ui-monospace,Menlo,monospace!important;letter-spacing:.2em!important;text-transform:uppercase!important}
+    .newsletter-block .newsletter-form-button:hover{background:#d9d9d9!important;border-color:#d9d9d9!important}
+    .newsletter-block .newsletter-form-footnote,.newsletter-block .newsletter-form-footnote p{margin-top:24px!important;text-align:left!important;font:400 11px/1.6 'IBM Plex Mono',ui-monospace,Menlo,monospace!important;letter-spacing:.16em!important;text-transform:uppercase;color:#6a6a6a!important}
+    .newsletter-block #avlb-downloads{position:relative;text-align:left!important;margin:-50px 25px 32px!important;font:500 11px/1.6 'IBM Plex Mono',ui-monospace,Menlo,monospace!important;letter-spacing:.16em!important;text-transform:uppercase;color:#8a8a8a!important}
+    @media (max-width:820px){ .newsletter-block .newsletter-form-wrapper{padding:64px 18px 56px!important} .newsletter-block .newsletter-form-wrapper::after{padding:12px 18px 12px 40px} .newsletter-block .newsletter-form-wrapper::before{left:18px;padding:12px 0}
+      .newsletter-block #avlb-downloads{margin:-46px 19px 28px!important}
+      .newsletter-block .newsletter-form-fields-wrapper{flex:1 1 100%} .newsletter-block .newsletter-form-button-wrapper,.newsletter-block .newsletter-form-button{width:100%!important} }
+    /* this page's sections hug their blocks at every width (Fluid Engine rows grow with the window; the blocks mostly do not) */
+    .fluid-engine:has(> .fe-block #avlb-hero),.fluid-engine:has(> .fe-block #avlb-prob),.fluid-engine:has(.newsletter-block){grid-template-rows:auto!important}
+    .fe-block:has(#avlb-hero),.fe-block:has(#avlb-prob),.fluid-engine:has(.newsletter-block) > .fe-block{grid-row:1 / span 1!important}
+    /* and sit 48 px apart (Squarespace's own spacing put about 190 px between them) */
+    section.page-section:has(#avlb-hero) .content-wrapper{padding-bottom:24px!important}
+    section.page-section:has(.newsletter-block) .content-wrapper{padding-top:24px!important;padding-bottom:24px!important}
+    section.page-section:has(#avlb-prob) .content-wrapper{padding-top:24px!important}
+    section.page-section:has(#avlb-hero),section.page-section:has(.newsletter-block),section.page-section:has(#avlb-prob){min-height:0!important}
   </style>
-  <img class="icon" src="https://raw.githubusercontent.com/AVEducate/AV-Look-Book/main/deploy/img/site/icon-512.png" alt="AV Look Book icon">
-  <div class="k">AV Look Book</div>
-  <h1>Plan the show. Engineer the system. Hand the crew the same plan.</h1>
-  <div class="tag">A common language between the people planning the show and the people running it.</div>
-  <p class="lede">AV Look Book is a free, offline pre-production and show documentation tool for live-event video teams. Build your destinations, presets, I/O, routing and signal flow in one project, then hand your Video Engineers, Show Callers, Producers and crew the look book, cue sheet and drawings they run the show from.</p>
-  <div class="chips"><span class="chip">Free</span><span class="chip">Offline</span><span class="chip">No account</span><span class="chip">Mac + Windows</span></div>
-  <div class="ctas"><a class="go" href="#avlb-signup">Get it free &darr;</a><a class="go go2" href="https://cdn.jsdelivr.net/gh/AVEducate/AV-Look-Book@main/deploy/quick_guide.pdf" target="_blank" rel="noopener">Read the Quick Guide</a></div>
-  <div class="fine">No trial &middot; No subscription &middot; No seats &middot; No account</div>
-  <div class="depts">
-    <div class="lbl">Built for</div>
-    <a class="dept" href="/av-look-book-engineers">Video Engineers</a>
-    <a class="dept" href="/av-look-book-show-callers">Show Callers</a>
-    <a class="dept" href="/av-look-book-producers">Producers</a>
+
+  <div class="bar"><span><b>01</b><i>/</i>AV Look Book</span><span class="r">Free<i>&middot;</i>Offline<i>&middot;</i>No account<i>&middot;</i>Mac + Windows</span></div>
+  <div class="hero">
+    <div class="brand"><img class="icon" src="https://raw.githubusercontent.com/AVEducate/AV-Look-Book/main/deploy/img/site/icon-512.png" alt="AV Look Book icon"><span>AV Look Book</span></div>
+    <h1>Plan the show. Engineer the system. Hand them the look book.</h1>
+    <div class="tag">A common language between the people planning the show and the people running it.</div>
+    <p class="lede">AV Look Book is a free, offline pre-production and show documentation tool for live-event video teams. Build your destinations, presets, I/O, routing and signal flow in one project, then hand your Video Engineers, Show Callers, Producers and crew the look book, cue sheet and drawings they run the show from.</p>
+    <div class="ctas">
+      <a class="btn pri" href="#avlb-signup"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2v9M4 7.5 8 11.5l4-4M2.5 14h11"/></svg>Get it free</a>
+      <a class="btn" href="https://cdn.jsdelivr.net/gh/AVEducate/AV-Look-Book@main/deploy/quick_guide.pdf" target="_blank" rel="noopener">Read the Quick Guide</a>
+    </div>
+    <div class="meta">No trial &middot; No subscription &middot; No seats &middot; No account</div>
   </div>
-  <div class="shot"><img src="https://raw.githubusercontent.com/AVEducate/AV-Look-Book/main/deploy/img/site/01-video-presets.jpg" alt="AV Look Book, Video Presets view with four projection destinations and layer assignments"></div>
+  <div class="bar"><span>Built for</span><span class="r">Three departments<i>&middot;</i>one show file</span></div>
+  <div class="depts">
+    <a class="dept" href="/av-look-book-engineers"><span class="n">01</span><b>Video Engineers</b><span class="more">Read more &rarr;</span></a>
+    <a class="dept" href="/av-look-book-show-callers"><span class="n">02</span><b>Show Callers</b><span class="more">Read more &rarr;</span></a>
+    <a class="dept" href="/av-look-book-producers"><span class="n">03</span><b>Producers</b><span class="more">Read more &rarr;</span></a>
+  </div>
+  <div class="bar"><span>Video Presets<i>&mdash;</i>the canvas</span><span class="r">Desktop app</span></div>
+  <div class="shot"><img src="https://raw.githubusercontent.com/AVEducate/AV-Look-Book/main/deploy/img/site/01-video-presets.jpg" alt="AV Look Book, Video Presets view with four projection destinations and layer assignments" width="1800" height="769"><span class="pl tl"></span><span class="pl tr"></span><span class="pl bl"></span><span class="pl br"></span></div>
   <div id="avlb-signup" style="height:1px"></div>
 </div>
