@@ -1,34 +1,73 @@
-<!-- AV Look Book department page: Video Engineers, for a Squarespace CODE BLOCK (HTML mode, "Display Source" OFF). 2026-09-16. Script-free. -->
-<div id="avlb-dept" style="font:15px/1.55 'Helvetica Neue',Arial,sans-serif;color:#d0d0d0;background:transparent;padding:10px 0 4px">
+<!-- AV Look Book department page v2: Video Engineers, for a Squarespace CODE BLOCK (HTML mode, "Display Source" OFF), page
+     /av-look-book-engineers. 2026-10-20 (Omar: "2. LET DO IT"): the landing page's v2 look (hairline frame, numbered bars with IBM Plex
+     Mono labels, square buttons, Rama Gothic headings, framed picture) on the same words, links and picture as the page of
+     2026-09-16 (built by mockups/dept_v2/mk_dept.py, which checks them). Script-free. -->
+<div id="avlb-dept">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
+    #avlb-dept{--ln:rgba(255,255,255,.14);--ln2:rgba(255,255,255,.28);--t1:#fff;--t2:#b4b4b4;--t3:#8a8a8a;--t4:#6a6a6a;
+      --mono:'IBM Plex Mono',ui-monospace,Menlo,monospace;--head:rama-gothic-e,'Helvetica Neue',Arial,sans-serif;
+      font:15px/1.55 'Helvetica Neue',Arial,sans-serif;color:var(--t2);text-align:left;border:1px solid var(--ln)}
     #avlb-dept *{box-sizing:border-box}
-    #avlb-dept a{color:#fff;text-decoration:underline;text-underline-offset:3px}
-    #avlb-dept .k{font-family:rama-gothic-e,'Helvetica Neue',Arial,sans-serif;font-weight:400;font-size:19px;letter-spacing:.16em;text-transform:uppercase;color:#fff;margin-bottom:10px}
-    #avlb-dept h1{font-family:rama-gothic-e,'Helvetica Neue',Arial,sans-serif;font-weight:600;font-size:54px;line-height:1.05;letter-spacing:.12em;text-transform:uppercase;color:#d0d0d0;margin:0 0 14px;max-width:980px}
-    #avlb-dept .role{font-family:rama-gothic-e,'Helvetica Neue',Arial,sans-serif;font-size:24px;letter-spacing:.1em;text-transform:uppercase;color:#fff;margin:0 0 28px}
-    #avlb-dept .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin:0 0 30px}
-    #avlb-dept .card{border:1px solid rgba(255,255,255,.18);border-radius:8px;padding:22px}
-    #avlb-dept .card b{display:block;margin-bottom:8px;font-family:rama-gothic-e,'Helvetica Neue',Arial,sans-serif;font-weight:400;font-size:21px;letter-spacing:.1em;text-transform:uppercase;color:#fff}
-    #avlb-dept .card p{margin:0;font-size:15px;color:#9a9a9a}
-    #avlb-dept .shot{margin:0 auto 30px;max-width:1100px;border:1px solid rgba(255,255,255,.18);border-radius:8px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.6);background:#000}
+    #avlb-dept a{color:var(--t1);text-decoration:underline;text-underline-offset:3px}
+    /* numbered bars */
+    #avlb-dept .bar{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:13px 24px;border-top:1px solid var(--ln);
+      font:500 11px/1.2 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--t3)}
+    #avlb-dept .bar:first-of-type{border-top:0}
+    #avlb-dept .bar b{font-weight:500;color:var(--t1)} #avlb-dept .bar i{font-style:normal;color:var(--t4);margin:0 .45em}
+    /* 01: the headline and the line under it */
+    #avlb-dept .hero{padding:56px 24px 52px;border-top:1px solid var(--ln)}
+    #avlb-dept h1{margin:0;max-width:1100px;font-family:var(--head);font-weight:600;font-size:clamp(46px,6.2vw,96px);line-height:.94;letter-spacing:.04em;text-transform:uppercase;color:var(--t1)}
+    #avlb-dept h1,#avlb-dept .tag,#avlb-dept .cell b{text-wrap:balance}
+    #avlb-dept .tag{max-width:1100px;margin:22px 0 0;font-family:var(--head);font-weight:600;font-size:clamp(20px,2vw,26px);line-height:1.15;letter-spacing:.08em;text-transform:uppercase;color:var(--t2)}
+    /* 02: the four cards as hairline cells, two by two */
+    #avlb-dept .cells{display:grid;grid-template-columns:repeat(2,1fr);border-top:1px solid var(--ln)}
+    #avlb-dept .cell{padding:28px 24px 30px}
+    #avlb-dept .cell:nth-child(even){border-left:1px solid var(--ln)} #avlb-dept .cell:nth-child(n+3){border-top:1px solid var(--ln)}
+    #avlb-dept .cell b{display:block;margin-bottom:12px;font-family:var(--head);font-weight:600;font-size:28px;line-height:1;letter-spacing:.07em;text-transform:uppercase;color:var(--t1)}
+    #avlb-dept .cell p{margin:0;max-width:600px;font-size:15px;line-height:1.6;color:var(--t2)}
+    /* 03: the app's picture, framed like a drawing */
+    #avlb-dept .shot{position:relative;border-top:1px solid var(--ln);line-height:0;background:#000}
     #avlb-dept .shot img{display:block;width:100%;height:auto}
-    #avlb-dept .end{text-align:center;padding:26px 20px 6px;border-top:1px solid rgba(255,255,255,.12)}
-    #avlb-dept a.go{display:inline-block;padding:16px 26px;border-radius:15px;background:#fff;color:#000;font-family:rama-gothic-e,'Helvetica Neue',Arial,sans-serif;font-size:19px;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;transition:background .15s}
-    #avlb-dept a.go:hover{background:#d0d0d0}
-    #avlb-dept .fine{margin-top:14px;font-size:12px;color:#9a9a9a;letter-spacing:.1em;text-transform:uppercase}
-    #avlb-dept .others{margin-top:18px;font-size:13px;color:#9a9a9a}
-    @media (max-width:760px){ #avlb-dept h1{font-size:34px;letter-spacing:.08em} #avlb-dept .role{font-size:19px} #avlb-dept .grid{grid-template-columns:1fr} }
+    #avlb-dept .shot .pl{position:absolute;width:13px;height:13px;color:var(--t3)}
+    #avlb-dept .shot .pl::before,#avlb-dept .shot .pl::after{content:"";position:absolute;background:currentColor}
+    #avlb-dept .shot .pl::before{left:6px;top:0;width:1px;height:13px} #avlb-dept .shot .pl::after{top:6px;left:0;width:13px;height:1px}
+    #avlb-dept .shot .tl{left:-7px;top:-7px} #avlb-dept .shot .tr{right:-7px;top:-7px} #avlb-dept .shot .bl{left:-7px;bottom:-7px} #avlb-dept .shot .br{right:-7px;bottom:-7px}
+    /* 04: the closing call */
+    #avlb-dept .end{padding:34px 24px 0;border-top:1px solid var(--ln)}
+    #avlb-dept a.go{display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:0 26px;background:var(--t1);border:1px solid var(--t1);color:#000;
+      font:500 12px/1 var(--mono);letter-spacing:.2em;text-transform:uppercase;text-decoration:none;transition:background .15s,border-color .15s}
+    #avlb-dept a.go:hover{background:#d9d9d9;border-color:#d9d9d9}
+    #avlb-dept .fine{margin-top:22px;font:400 11px/1.7 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--t4)}
+    #avlb-dept .others{margin:28px -24px 0;padding:18px 24px 20px;border-top:1px solid var(--ln);font-size:14px;line-height:1.6;color:var(--t3)}
+    @media (max-width:820px){
+      #avlb-dept .bar{padding:12px 18px} #avlb-dept .bar .r{display:none}
+      #avlb-dept .hero{padding:40px 18px 36px}
+      #avlb-dept .cells{grid-template-columns:1fr} #avlb-dept .cell{padding:24px 18px 26px} #avlb-dept .cell:nth-child(even){border-left:0} #avlb-dept .cell + .cell{border-top:1px solid var(--ln)}
+      #avlb-dept .end{padding:28px 18px 0} #avlb-dept a.go{width:100%;padding:0 14px;letter-spacing:.12em} #avlb-dept .others{margin:24px -18px 0;padding:16px 18px 18px}
+    }
+    /* the Squarespace section holding this block takes the block's own height at every width (Fluid Engine's rows grow with the
+       window, this block mostly does not) */
+    .fluid-engine:has(> .fe-block #avlb-dept){grid-template-rows:auto!important}
+    .fe-block:has(#avlb-dept){grid-row:1 / span 1!important}
   </style>
-  <div class="k">AV Look Book for Video Engineers</div>
-  <h1>The switcher shouldn't be where you figure out the show.</h1>
-  <div class="role">Engineer the show before show site.</div>
-  <div class="grid">
-    <div class="card"><b>The I/O patch the crew asks for</b><p>Every source, destination and AUX with connector, type, resolution, slot and notes. Edit it once and the wire diagram, the router tiles and the exports follow.</p></div>
-    <div class="card"><b>Signal flow that prints true</b><p>Simple auto-draws the show. Advanced gives you routers, switchers, converters and network switches with port numbers, primary and backup runs, a cable type per output and colour by connector, on Letter through ANSI E sheets.</p></div>
-    <div class="card"><b>Preflight by building</b><p>Missing outputs, wrong resolutions, routing conflicts and AUX or DSM clashes show up on your laptop while you build the project, not in rehearsal.</p></div>
-    <div class="card"><b>Hand it to Day 2</b><p>The project file opens on any machine with the app, and the PDF and Excel go to everyone else. The show does not leave with you.</p></div>
+
+  <div class="bar"><span><b>01</b><i>/</i>AV Look Book for Video Engineers</span><span class="r">Free<i>&middot;</i>Offline<i>&middot;</i>No account<i>&middot;</i>Mac + Windows</span></div>
+  <div class="hero">
+    <h1>The switcher shouldn't be where you figure out the show.</h1>
+    <div class="tag">Engineer the show before show site.</div>
   </div>
-  <div class="shot"><img src="https://raw.githubusercontent.com/AVEducate/AV-Look-Book/main/deploy/img/site/03-wire-advanced.jpg" alt="Advanced wire mode with a router I/O tile"></div>
+  <div class="bar"><span><b>02</b><i>/</i>What you get</span></div>
+  <div class="cells">
+    <div class="cell"><b>The I/O patch the crew asks for</b><p>Every source, destination and AUX with connector, type, resolution, slot and notes. Edit it once and the wire diagram, the router tiles and the exports follow.</p></div>
+    <div class="cell"><b>Signal flow that prints true</b><p>Simple auto-draws the show. Advanced gives you routers, switchers, converters and network switches with port numbers, primary and backup runs, a cable type per output and colour by connector, on Letter through ANSI E sheets.</p></div>
+    <div class="cell"><b>Preflight by building</b><p>Missing outputs, wrong resolutions, routing conflicts and AUX or DSM clashes show up on your laptop while you build the project, not in rehearsal.</p></div>
+    <div class="cell"><b>Hand it to Day 2</b><p>The project file opens on any machine with the app, and the PDF and Excel go to everyone else. The show does not leave with you.</p></div>
+  </div>
+  <div class="bar"><span><b>03</b><i>/</i>Wire<i>&mdash;</i>Advanced</span><span class="r">Desktop app</span></div>
+  <div class="shot"><img src="https://raw.githubusercontent.com/AVEducate/AV-Look-Book/main/deploy/img/site/03-wire-advanced.jpg" alt="Advanced wire mode with a router I/O tile"><span class="pl tl"></span><span class="pl tr"></span><span class="pl bl"></span><span class="pl br"></span></div>
+  <div class="bar"><span><b>04</b><i>/</i>Get it free</span></div>
   <div class="end">
     <a class="go" href="/av-look-book#avlb-signup">Get AV Look Book free</a>
     <div class="fine">Free &middot; Offline &middot; No account &middot; Mac (Apple Silicon and Intel) &middot; Windows 10 / 11</div>
