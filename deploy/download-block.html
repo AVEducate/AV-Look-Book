@@ -4,7 +4,8 @@
      small typewriter labels (IBM Plex Mono, Google Fonts), square buttons, one big button for the visitor's own computer
      (the script below; without it the Apple Silicon Mac is the big one), the app's picture, first launch as three steps.
      AVE site colours and fonts (Rama Gothic headings from the site's own font kit, Helvetica body). The links never change:
-     they always point at the newest release. The previous block (v1, 2026-09-13) is in git history. -->
+     they always point at the newest release. The previous block (v1, 2026-09-13) is in git history. 2026-10-20: the line under the
+     headline reads "Hand them the look book" (Omar: "1. YES"), and a jump link clicked again scrolls even while the page glides. -->
 <div id="avlb-dl">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -84,7 +85,7 @@
   <div class="bar"><span><b>01</b><i>/</i>Download</span><span class="r">macOS<i>&middot;</i>Windows</span></div>
   <div class="hero">
     <h1>Download <em>AV Look Book</em>.</h1>
-    <p class="sub">Plan the show. Engineer the system. Hand the crew the same plan. Free for Mac and Windows; updates arrive inside the app when you're online.</p>
+    <p class="sub">Plan the show. Engineer the system. Hand them the look book. Free for Mac and Windows; updates arrive inside the app when you're online.</p>
     <div class="ctas">
       <a class="btn pri" id="avlb-main" href="https://github.com/AVEducate/AV-Look-Book/releases/latest/download/AVLookBook-mac-arm64.dmg"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 2v9M4 7.5 8 11.5l4-4M2.5 14h11"/></svg><span id="avlb-main-t">Download for Mac</span></a>
       <a class="btn" href="#avlb-platforms">All versions</a>
@@ -155,7 +156,19 @@
      Silicon unless the browser says Intel (Chrome and Edge can tell; Safari and Firefox cannot, so they keep Apple Silicon and the
      line under the button points Intel Macs to their card). */
   (function(){
-    var root=document.getElementById('avlb-dl'); if(!root||root.getAttribute('data-os')) return;
+    var root=document.getElementById('avlb-dl'); if(!root) return;
+    /* "All versions" / "Pick yours below" once the address already ends in #avlb-platforms: the browser ignores that click
+       while the page is still gliding (the site scrolls smoothly), so the block scrolls to the versions itself. The first
+       click stays the browser's own jump. */
+    if(!root.getAttribute('data-jump')){
+      root.setAttribute('data-jump','1');
+      root.addEventListener('click',function(e){
+        var a=e.target&&e.target.closest?e.target.closest('a[href="#avlb-platforms"]'):null, t=document.getElementById('avlb-platforms');
+        if(!a||!t||location.hash!=='#avlb-platforms') return;
+        e.preventDefault(); t.scrollIntoView({block:'start'});
+      });
+    }
+    if(root.getAttribute('data-os')) return;
     var L={ arm:['Download for Mac','For Apple Silicon Macs (M1 to M4). Intel Mac or Windows? <a href="#avlb-platforms">Pick yours below</a>.'],
             x64:['Download for Mac (Intel)','For Intel Macs. Apple Silicon or Windows? <a href="#avlb-platforms">Pick yours below</a>.'],
             win:['Download for Windows','For Windows 10 and 11, 64-bit. On a Mac? <a href="#avlb-platforms">Pick yours below</a>.'] };
