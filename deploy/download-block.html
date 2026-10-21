@@ -5,7 +5,8 @@
      (the script below; without it the Apple Silicon Mac is the big one), the app's picture, first launch as three steps.
      AVE site colours and fonts (Rama Gothic headings from the site's own font kit, Helvetica body). The links never change:
      they always point at the newest release. The previous block (v1, 2026-09-13) is in git history. 2026-10-20: the line under the
-     headline reads "Hand them the look book" (Omar: "1. YES"), and a jump link clicked again scrolls even while the page glides. -->
+     headline reads "Hand them the look book" (Omar: "1. YES"), and a jump link clicked again scrolls even while the page glides; the site's mailing-list pop-up
+     stays off this page (one line at the top of the script). -->
 <div id="avlb-dl">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -152,6 +153,10 @@
     <span><a href="/feedback">Vote on what we build next</a> &middot; Questions: <a href="mailto:Info@aveducate.com">Info@aveducate.com</a></span>
   </div>
   <script>
+  /* the site's "Join our mailing list" pop-up stays off this page (Omar 2026-10-20: "1. yes"): it covered the download cards and,
+     on a phone, stopped the jump to the versions halfway; hidden, it still held the Tab key. Squarespace loads the pop-up after the
+     page is read and only when this setting has a style, so here it never loads; the visitor's next page shows it as before. */
+  (function(){ try{ var s=window.Static&&Static.SQUARESPACE_CONTEXT&&Static.SQUARESPACE_CONTEXT.websiteSettings, o=s&&s.popupOverlaySettings; if(o) o.style=0; }catch(e){} })();
   /* the visitor's own computer gets the big button and the "Your system" card. Windows: by the browser's report. A Mac: Apple
      Silicon unless the browser says Intel (Chrome and Edge can tell; Safari and Firefox cannot, so they keep Apple Silicon and the
      line under the button points Intel Macs to their card). */

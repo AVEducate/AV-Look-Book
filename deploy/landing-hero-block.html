@@ -2,7 +2,8 @@
      /av-look-book. 2026-10-20 (Omar: "let me see a mock up of what it would look like" / "looks great, lets update the look live !!"; the headline "or even better hand them the look book"): the download page's v2 look (spec-sheet frame
      of hairlines, numbered bars with IBM Plex Mono labels, square buttons, Rama Gothic headings, framed picture) on the same words and
      links as the hero of 2026-09-16. Also styles the page's Squarespace NEWSLETTER block (02, its form, storage and redirect to
-     /download untouched) and makes this page's sections hug their blocks. Script-free. -->
+     /download untouched) and makes this page's sections hug their blocks. One small script (2026-10-20): keeps the site's
+     mailing-list pop-up off this page. -->
 <div id="avlb-hero">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -105,4 +106,10 @@
   <div class="bar"><span>Video Presets<i>&mdash;</i>the canvas</span><span class="r">Desktop app</span></div>
   <div class="shot"><img src="https://raw.githubusercontent.com/AVEducate/AV-Look-Book/main/deploy/img/site/01-video-presets.jpg" alt="AV Look Book, Video Presets view with four projection destinations and layer assignments" width="1800" height="769"><span class="pl tl"></span><span class="pl tr"></span><span class="pl bl"></span><span class="pl br"></span></div>
   <div id="avlb-signup" style="height:1px"></div>
+  <script>
+  /* the site's "Join our mailing list" pop-up stays off this page (Omar 2026-10-20: "1. yes"): the page has its own sign-up (02).
+     Squarespace loads the pop-up after the page is read and only when this setting has a style, so here it never loads; the
+     visitor's next page shows it as before. */
+  (function(){ try{ var s=window.Static&&Static.SQUARESPACE_CONTEXT&&Static.SQUARESPACE_CONTEXT.websiteSettings, o=s&&s.popupOverlaySettings; if(o) o.style=0; }catch(e){} })();
+  </script>
 </div>
