@@ -5,7 +5,7 @@
 body{font-family:-apple-system,Helvetica,Arial,sans-serif;background:#5b6470;color:#0a1322}
 @page{size:8.5in 11in;margin:0}
 .pg{width:8.5in;height:11in;background:#fff;margin:18px auto;box-shadow:0 8px 30px rgba(0,0,0,.45);position:relative;overflow:hidden;page-break-after:always;display:flex;flex-direction:column}
-@media print{body{background:#fff}.pg{margin:0;box-shadow:none}}
+@media print{body{background:#fff}.pg{margin:0;box-shadow:none}/* on paper no soft shadows: Apple's PDF engine (Preview, Safari, iPhone) draws Chrome's blurred shadows as dark boxes behind the numbers and grey boxes behind the pictures (Omar 2026-10-22) */.shot,.cnum{box-shadow:none!important}}
 .bar{display:flex;align-items:center;gap:12px;padding:15px 30px;border-bottom:3px solid #0a1322;flex-shrink:0}
 .rtfm{font-family:ui-monospace,Menlo,monospace;font-weight:800;letter-spacing:.18em;font-size:13px;color:#fff;background:#0a1322;padding:6px 12px;border-radius:5px}
 .rtfm .by{color:#0a1322}
