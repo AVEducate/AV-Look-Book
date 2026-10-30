@@ -1699,6 +1699,47 @@ anchor on the function name and replace the first occurrence after it, never all
     the canvas (`.blend-popup-row`, `.blend-label` / `.dead-label`, `.aoi-dim-row` inputs) and 11 of Wire's for its Wire page
     (`.lb-wire-export .wire-...:focus`), which now read `var(--lbs-focus, <their colour>)`; the book defines no --lbs-focus:
     the same colours. Mapped back, each book is byte-identical; the models are unchanged).
+- **16lt** (2026-10-30, build 16lt on 16ls; search `16lt-`). Omar's four pictures of 2026-10-30, taken in v0.8.7. Desktop only
+  (`_lbcOn`): the phone keeps its ways.
+  - **16lt-wirefit** ("every time i go to it, its blow out and i need to hit fit to see all the I.O ... i should not see a massive
+    blow up in wire"): Wire opened at the zoom saved with the show (the General Session example at 100 % put all 17 tiles off
+    screen). `openWireMode` and `_wireSwitchToSimple` now call `_lbtFitWire`, and so does a page tab the user picks (one capture
+    `click` listener on `#wire-page-tabs`, only when the tab is another page): `_wireZoomFit` (never above 100 %, centred), only
+    while Wire shows and its drawing area is real (a hidden page measures nothing and Fit would pick the 10 % floor). The zoom is a
+    view key: no Undo step, nothing unsaved. NEVER fit inside `_wireSwitchPage`: Wire's EXPORT (`_wireGetAdvancedPagesForExport`)
+    and the Look Book walk every page through it, and copying, closing or rebuilding a page keeps the view (the first 16lt build
+    fitted there, and an export reset 150 % to 95 %). LT1, LT6.
+  - **16lt-wiregrid** ("the BG grid also keeps jumping around every time i add anything ... it got cyan can we make the lines
+    grey"): the grid was a background of `#wire-diagram-scroll` at 30 / 150 SCREEN px from the scroll area's corner, so a drawing
+    that grew, re-centred or zoomed (a tile added, Fit) moved under a grid that stayed. `_lbtGridPin` (end of `_wireRender`, and a
+    ResizeObserver on the scroll area and `#wire-diagram`) puts the lines on the drawing's own 30 / 150 unit marks:
+    `backgroundPosition` from the drawing's 0,0 (the svg's place in the scrolled area minus viewBox x / y times the zoom, the UI
+    Size divided out) and `backgroundSize` 30 / 150 x the zoom (the fine lines go under 7 px). Grey = --ss-t3 (126,135,148) at
+    .10 / .22, a `body:not(.is-mobile)` rule (the inline cyan style stays for the phone). Not in any export (it is the scroll
+    area's background). LT2.
+  - **16lt-dragshrink** ("once a video hovers over a layer or BG it can be dropped into, it should shrink to half it size and
+    width, its a visual clue for the user"): the browser's drag picture cannot change while it moves, so `_fsSrcDragStart` makes it
+    a blank pixel (`_LBT_BLANK`) and `_lbtGhostStart` puts a copy of the card under the pointer (`.lbt-ghost`, position fixed,
+    inside `#fs-left-panel` so the card rules apply; inert, its keys and ids stripped, so nothing that finds cards finds it); a
+    capture `dragover` moves it (`translate`, divided by `_menuZoom` for the UI Size) and sets `scale` .5 over a `_fsDropTarget`
+    (a layer chip, a BG, an AUX box, a layer-list row), about the point it was picked up by (transform-origin). `_fsClearDropHot`
+    (drop, dragend) removes it. Every card of that panel (files and sources). LT3.
+  - **16lt-prores** (AV505_GCS26_CaptureNowPromo_v1.mov = Apple ProRes 422 LT + PCM, 470 MB: black picture, size —, NO AUDIO,
+    yet its sound played): the engine has no ProRes decoder. `_lbtNoPic` (import and RELINK, after `_fsApplyBoxInfo`): a video
+    track whose details loaded with no picture size is `media.noPic` and takes the header's size (`_fsParseIsoBmff` w / h);
+    `_lbtCantShow` also tells an older show's item (a codec, no size), and `_fsEnrichMedia` reads that item's size from its header
+    once a session (`_lbtSizeTried`). The card: no black cover, "Can't show" + the format between the chips, its tooltip says to
+    export H.264 (MP4 or MOV); a sound bar with sound and no wave (`_fsAudioPeaks` skips files over 400 MB) reads AUDIO. LT4.
+  - **16lt-thumbdrag** ("when i change out the thumbnails of a tiles the source image is what drags out not the tile"): a picture
+    uploaded on a card (`_iogCardHTML`, the old Wire panel cards), the I/O row minis and the Wire title block logo are
+    `draggable="false"`, so a drag that starts on the picture drags the card (its own drag picture and drop). LT5.
+  - Tests: LT1-LT6 new. Six older checks updated, each for a reason outside the page: `unsaved: Wire view settings` (Wire opens
+    fitted, so its + press starts from the fitted zoom, not 100 %); `Wire 16la-colour-mv (R)` and `Wire 16lb-simple (4)` (a drop
+    lands to the SCREEN pixel: Chrome hands it whole pixels, at 35 % about 3 drawing units, so the old 1-unit tolerance passed by
+    luck); `dates 16kv: the keyboard alone` (its in-between day is off screen on a month's last day but one: it failed on 16ls on
+    2026-10-30 too); `Wire: both side panels collapse to a strip and come back` and `Video Presets 16lc-vpfinish VD2` (they add
+    the scroll bar the list draws to the panel's width: 15 px with a mouse plugged in, read 276 / 277 on 16ls too): see the end of
+    this handbook.
 - Declined by the owner, do not resurface: mask shapes, anchor points, hardware profiles, canvas/WebGL renderer,
   interpolation filter toggles, upscale-factor notes, per-layer "sharp pixels", any licence mention.
 
@@ -1720,6 +1761,14 @@ LB_OUT=<folder> node tests/run_smoke.mjs --flows-only --no-mobile`; the pass / f
 breaks it. A check that NEVER passes, even right after its own patch, points at the harness, not the page: the gate's
 browser page must have window focus (`Emulation.setFocusEmulationEnabled`, re-applied before the flows stage) or
 `el.focus()` / `el.blur()` fire no events and every "type in a field, then leave it" check silently does nothing.
+The gate's machine (16lt, 2026-10-30): with a mouse plugged in (Show scroll bars: Automatic) macOS draws classic 15 px scroll bars
+and the gate's headless Chrome draws them too; a side panel whose list draws one widens by it on purpose (`_lbgSbFit`,
+`_lbfPanelMin`), so the two width checks add the bar the list draws (0 with overlay bars, as when the goldens were made). Never run
+the gate with `--hide-scrollbars`: it hides even styled bars, and VF12 styles 15 px bars to test that widening (the second 16lt
+gate failed VF12 that way). A check that also fails on the build BEFORE the change (`backups/rounds/r16lt-fixes/subset_run.mjs`
+runs a few checks on any page) is the machine or the day, not the change. A drop or a mouse event in a check comes in whole
+screen pixels: a drawing-point tolerance is one screen pixel (`1 / _wireGetZoom()` drawing units), never one unit. A check that
+reads today's date: think of the month's end.
 `USER_MANUAL.md` is the user-facing manual (13 chapters + keyboard table); keep it in step with behaviour changes.
 
 Phone / tablet build: read `PHONE.md` before touching anything under `initMobileShell` or the `body.is-mobile` CSS.

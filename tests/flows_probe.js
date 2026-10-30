@@ -669,12 +669,13 @@
   });
   await check('unsaved: Wire view settings (zoom, tool, folded panes, collapsed side panel) never light Save and are still written to the show file', async () => {
     await _usHome(); openWireMode(); await wait(800); _captureCleanBaseline(); _recomputeDirty();   /* a clean mark with Wire already open: this check is about the view settings alone */
+    const z0 = _wireGetZoom();   /* 16lt-wirefit: Wire opens fitted, so the + press below starts from the fitted zoom (until 16lt it opened at 100 %) */
     const press = async sel => { const b = $(sel); if (!b) throw new Error('no control: ' + sel); b.click(); await wait(200); };
     await press('#wire-overlay [onclick*="_wireZoomBy(0.1)"]'); await press('#wire-tool-hand'); await press('#wire-overlay [onclick*="_wireTogglePane(\'src\')"]');
     await press('.wire-rpane-hdr[data-rpane="info"]'); await press('#wire-overlay [onclick*="_wireTogglePanelCollapse(\'left\')"]'); await wait(500);
     const mark = _usMark(); const ws = JSON.parse(JSON.stringify(getProjectState())).wireSettings;
     const written = [ws.zoom, ws.tool, ws.panes.src, ws.rpanes.info, !!(ws.panelCollapse && ws.panelCollapse.left)];
-    await _usHome(); return is([mark, written], [_usClean, [1.1, 'hand', false, false, true]], 'unsaved mark / what the show file would hold (zoom, tool, Sources pane, Info pane, left panel collapsed)');
+    await _usHome(); return is([mark, written], [_usClean, [Math.max(0.1, Math.round((z0 + 0.1) * 20) / 20), 'hand', false, false, true]], 'unsaved mark / what the show file would hold (zoom, tool, Sources pane, Info pane, left panel collapsed)');
   });
   await check('unsaved: the first look at Wire Advanced (page 1 built from Simple) and its page tabs leave the show clean, and so does Undo back past it', async () => {
     await _usHome(); openWireMode(); await wait(800); await _usWireAdv();
@@ -4436,7 +4437,9 @@
   });
   await check('Wire: both side panels collapse to a strip and come back', async () => {
     _wireTogglePanelCollapse('left'); _wireTogglePanelCollapse('right'); await wait(350); const c = [$('#wire-panel-left').offsetWidth, $('#wire-panel-right').offsetWidth];
-    _wireTogglePanelCollapse('left'); _wireTogglePanelCollapse('right'); await wait(350); return is([c, $('#wire-panel-left').offsetWidth, $('#wire-panel-right').offsetWidth], [[38, 38], 260, 260], 'panel widths');
+    _wireTogglePanelCollapse('left'); _wireTogglePanelCollapse('right'); await wait(350);
+    const l = $('#wire-sources-panel'), sb = Math.max(0, l.offsetWidth - l.clientWidth);   /* a scroll bar the Mac draws (classic bars: a mouse plugged in) widens the left panel on purpose to 261 + the bar (16lc-vpcards-fix G, _lbgSbFit); overlay bars take no room: 260, as when the golden was made */
+    return is([c, $('#wire-panel-left').offsetWidth, $('#wire-panel-right').offsetWidth], [[38, 38], sb > 0 ? 261 + sb : 260, 260], 'panel widths');
   });
   await check('Wire: the Export window offers sheet sizes from Letter to ANSI E', async () => {
     openWireExportModal(); await wait(350); const m = $('#wire-export-modal'); const sizes = $$('[data-wire-sheet]', m).map(b => b.dataset.wireSheet); closeWireExportModal(); await wait(150);
@@ -6443,7 +6446,7 @@ await check('Help says what the app does: the layer chip takes two clicks, the s
     out.escape = [esc.defaultPrevented, !!_dvCal(), vis($('#qs-modal')), document.activeElement === g];
     closeQS(); await wait(200); await restore();
     return is(out, { open: [true, true, '2026-04-20'], moved: '2026-04-28', pgdn: ['2026-05-28', 'May 2026'], pgup: ['2026-03-28', 'March 2026'], inside: [true, true, true, '2026-03-20'],
-      tabs: ['lb-cal-clear', 'lb-cal-today', 'lb-cal-my', 'lb-cal-nav', 'lb-cal-nav', 'day'], enter: ['2026-03-20', false, true], spacePreview: 1, space: [true, true, false, true], escape: [true, false, true, true] }, 'keyboard');
+      tabs: ['lb-cal-clear', 'lb-cal-today', 'lb-cal-my', 'lb-cal-nav', 'lb-cal-nav', 'day'], enter: ['2026-03-20', false, true], spacePreview: new Date(t.getFullYear(), t.getMonth(), t.getDate() + 1).getMonth() === b0.getMonth() ? 1 : 0 /* the day in between shows only in the month on screen, today + 2's */, space: [true, true, false, true], escape: [true, false, true, true] }, 'keyboard');
   });
   // 16kv-dates G: NEW
   await check('dates 16kv: opening and closing the calendar without a pick writes nothing and leaves Save off (Escape, a click outside, its button again; Wire and Quick Setup); in Wire › Project Info a pick is ONE edit exactly like typing in that box: it writes the show, lights Save and, like typing there, records no Undo step', async () => {
@@ -10303,7 +10306,7 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
     const m = multiviewers[0], mid = 'mv:' + m.id, nm0 = m.name;
     const hubOut = () => { const r = _laNode($('#wire-diagram svg'), 'hub'); const sub = r ? (($('.wire-router-subtitle', r) || {}).textContent || '').trim() : 'no label'; return [sub, r ? $$('circle.wire-hub-port', r).filter(c => /^hout:/.test(c.getAttribute('data-port-id') || '') && !c.classList.contains('slb-rport')).length : 0]; };
     const lastOut = () => { const r = _laNode($('#wire-diagram svg'), 'hub'); const o = r ? $$('span[data-slb-row^="out:"]', r).map(e => e.textContent) : []; return o[o.length - 1] || ''; };
-    const near = (p, x, y) => !!p && Math.abs(p[0] - x) <= 1 && Math.abs(p[1] - y) <= 1;
+    const near = (p, x, y) => { const t = Math.max(1, 1 / _wireGetZoom() + 0.5); return !!p && Math.abs(p[0] - x) <= t && Math.abs(p[1] - y) <= t; };   /* to the screen pixel: a drop comes in whole pixels, and Wire opens fitted since 16lt (at 35 % one pixel is about 3 drawing units) */
     try {
       await _cMWire('simple');
       const g0 = _cMGeo(), h0 = hubOut(), n0 = _bdNoBd(screens).length + dsms.length;
@@ -10558,7 +10561,7 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
       await _lbOpen();
       out.data = ['PPT A', screens[0].name, dsms[0].name, multiviewers[0].name].map(n => { const c = _cMWcard(n); return [c ? c.getAttribute('draggable') : 'no card', _cMDragData(c)]; });
       const L = screens[0].id;
-      const near = (p, x, y) => !!p && Math.abs(p.x - x) <= 1 && Math.abs(p.y - y) <= 1;   /* the drop point, centred, to the pixel */
+      const near = (p, x, y) => { const t = Math.max(1, 1 / _wireGetZoom() + 0.5); return !!p && Math.abs(p.x - x) <= t && Math.abs(p.y - y) <= t; };   /* the drop point, centred, to the screen pixel (a drop comes in whole pixels; the drawing is fitted: at 35 % one pixel is about 3 drawing units) */
       out.move = await _cMStep(async () => { await _cMDrop('wire-adv-dest:' + L, 2400, 500); return [near(wireLayout['dst:' + L], 2270, 445), _lbTiles().filter(i => i === 'dst:' + L).length, _lbRows()[1][0]]; });
       _lbSel(['src:CAM 2']); _cMDel(); await wait(400);
       out.off = [_lbRows()[3], !!_lbTile('src:CAM 2')];
@@ -13473,12 +13476,13 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
   await check('Video Presets 16lc-vpfinish VD2 (Omar 2026-10-06: "Narrow panel: the panel stops at card width"; "Max width: leave the resize handle at 360 px"): the Advanced left panel\'s edge drags it no narrower than its cards need (262 px, its min-width too), so its list never scrolls sideways or cuts a card, and no wider than 360', async () => {
     await restore(); await _vcAdv();
     const p = $('#fs-left-panel'), l = $('#fs-source-list'), w0 = p.offsetWidth;
+    const need = Math.min(360, 262 + Math.max(0, l.offsetWidth - l.clientWidth));   /* the cards' 262 and a scroll bar the Mac draws (classic bars: a mouse plugged in; 16lc-vpfinish D2, _lbfPanelMin); overlay bars take no room: 262, as when the golden was made */
     const drag = dx => { fsPanelResizeStart({ preventDefault() {}, clientX: 600 }, 'left'); window.dispatchEvent(new MouseEvent('mousemove', { clientX: 600 + dx, bubbles: true })); window.dispatchEvent(new MouseEvent('mouseup', { clientX: 600 + dx, bubbles: true })); return p.offsetWidth; };
     const nar = drag(-220), sideways = l.scrollWidth > l.clientWidth + 0.5, cut = $$('.iog-card, .iog-add', l).filter(e => e.getClientRects().length && e.getBoundingClientRect().right > l.getBoundingClientRect().left + l.clientWidth + 0.5).length;
     const wid = drag(400), back = drag(-400), minCss = getComputedStyle(p).minWidth;
     p.style.width = w0 + 'px';
     await _vdBack();
-    return is({ nar, sideways, cut, wid, back, minCss }, { nar: 262, sideways: false, cut: 0, wid: 360, back: 262, minCss: '262px' }, 'dragged 220 narrower / list scrolls sideways / cards cut / 400 wider / 400 narrower again / its min-width');
+    return is({ nar, sideways, cut, wid, back, minCss }, { nar: need, sideways: false, cut: 0, wid: 360, back: need, minCss: '262px' }, 'dragged 220 narrower / list scrolls sideways / cards cut / 400 wider / 400 narrower again / its min-width');
   });
   // 16lc-vpfinish VD3: NEW
   await check('Wire 16lc-vpfinish VD3 (Omar 2026-10-06: "Wire > Advanced hand-made custom cards: I/O standard card too"): a hand-made source, destination and AUX card of Wire > Advanced is the I/O Patch card (name box with its name list, Reset, trash, number C1, no corner x); its resolution menu reads Custom resolution..., — Clear — (greyed on an output) first; a pick there is one Undo step; its trash asks first in the I/O Patch window (Cancel keeps it)', async () => {
@@ -16786,6 +16790,149 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
     } catch (e) { return 'threw: ' + e.message; }
     finally { try { closeQS(); } catch (e) {} await wait(200); await restore(); }
     return is(out, want, 'the card / the Show and Destinations strips [colour, glow] / a heading [colour], the dot / the Show Name box focused [edge, glow] / the switch as it opens (on, as the mock-up), flipped (off), flipped back [on, knob, edge, track]');
+  });
+  // 16lt-wirefit LT1: NEW
+  await check('Wire 16lt-wirefit LT1 (Omar 2026-10-30: "every time i go to it, its blow out and i need to hit fit to see all the I.O ... when i go to wire all the information ... should already fit. i should not see a massive blow up in wire"): Wire opens fitted (never above 100 %, every tile inside the visible drawing area), also after a zoom-in left at 150 %; switching back to Simple fits; picking a page tab fits; none of the fitting is an Undo step', async () => {
+    const out = {}, want = {};
+    try {
+      await restore(); render(); await wait(300);
+      const inGap = () => { const g = _wireVisibleGap(), rv = _wireIoFloatReserve(); const n = $$('#wire-diagram .wire-node').map(x => x.getBoundingClientRect()).filter(r => r.width); return n.length > 0 && n.every(r => r.left >= g.left - 1 && r.right <= g.right + 1 && r.top >= g.top - 1 && r.bottom <= g.bottom - rv + 1); };
+      const u0 = _undoStack.length;
+      wireSettings.zoom = 1; wireSettings.wireView = 'simple';
+      openWireMode(); await wait(900);
+      out.open = [_wireGetZoom() <= 1, _wireGetZoom() < 1, inGap()]; want.open = [true, true, true];
+      closeWireMode(); await wait(300); wireSettings.zoom = 1.5;
+      openWireMode(); await wait(900);
+      out.reopen = [_wireGetZoom() <= 1, inGap()]; want.reopen = [true, true];
+      const uOpen = _undoStack.length - u0;   /* opening and re-opening Wire */
+      _wireSwitchToAdvanced(); await wait(700); okDialogs(); await wait(1200); okDialogs(); await wait(300);
+      const u1 = _undoStack.length;   /* (the first switch to Advanced seeds page 1 as one Undo step: as before 16lt) */
+      const tabs = $$('#wire-page-tabs [onclick*="_wireSwitchPage"]');
+      if (tabs.length >= 2) { tabs[1].click(); await wait(600); wireSettings.zoom = 1.5; _wireRender(); await wait(300); $$('#wire-page-tabs [onclick*="_wireSwitchPage"]')[0].click(); await wait(900); out.page = [_wireGetZoom() <= 1, inGap()]; }
+      else out.page = 'fewer than two page tabs';
+      want.page = [true, true];
+      wireSettings.zoom = 1.5; _wireRender(); await wait(300); _wireSwitchToSimple(); await wait(900);
+      out.simple = [_wireGetZoom() <= 1, inGap()]; want.simple = [true, true];
+      out.undo = [uOpen, _undoStack.length - u1]; want.undo = [0, 0];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { closeWireMode(); } catch (e) {} await restore(); }
+    return is(out, want, 'opened at 100 % [at most 100 %, below it, every tile in view] / opened again after 150 % / page 1 picked again after 150 % / Simple again after 150 % / Undo steps added [opening twice, a page tab and Simple]');
+  });
+  // 16lt-wiregrid LT2: NEW
+  await check('Wire 16lt-wiregrid LT2 (Omar 2026-10-30: "the BG grid also keeps jumping around every time i add anything ... and it got cyan can we make the lines grey"): the grid is grey and its lines sit on the drawing\'s own marks (one passes through the drawing\'s 0,0) after opening, a zoom step, a scroll, the switch to Advanced and a router added there', async () => {
+    const out = {}, want = {};
+    try {
+      await restore(); render(); await wait(300);
+      const g = () => { const sc = $('#wire-diagram-scroll'), cs = getComputedStyle(sc), svg = sc.querySelector('#wire-diagram > svg'); const vb = svg.viewBox.baseVal, r = svg.getBoundingClientRect(), sr = sc.getBoundingClientRect(), k = sr.width / sc.offsetWidth, z = parseFloat(svg.getAttribute('width')) / vb.width;
+        const lay = cs.backgroundPosition.split(','), size = parseFloat(cs.backgroundSize.split(',')[2]), bx = parseFloat(lay[2]), by = parseFloat(lay[2].trim().split(' ')[1]);
+        const ph = v => { const f = ((v % 1) + 1) % 1; return Math.min(f, 1 - f) < 0.01; };
+        return [/126, 135, 148/.test(cs.backgroundImage), ph((r.left - vb.x * z * k - (sr.left + sc.clientLeft * k - sc.scrollLeft * k + bx * k)) / (size * k)), ph((r.top - vb.y * z * k - (sr.top + sc.clientTop * k - sc.scrollTop * k + by * k)) / (size * k)), Math.abs(size - 150 * z) < 0.05]; };
+      const ok = [true, true, true, true];
+      wireSettings.wireView = 'simple'; openWireMode(); await wait(900); out.open = g(); want.open = ok;
+      _wireZoomBy(-0.15); await wait(500); out.zoom = g(); want.zoom = ok;
+      const sc = $('#wire-diagram-scroll'); sc.scrollLeft += 137; sc.scrollTop += 41; await wait(200); out.scroll = g(); want.scroll = ok;
+      _wireSwitchToAdvanced(); await wait(700); okDialogs(); await wait(1200); okDialogs(); await wait(300); out.advanced = g(); want.advanced = ok;
+      _wireAdvAddRouter(8); await wait(1000); out.router = g(); want.router = ok;
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { closeWireMode(); } catch (e) {} await restore(); }
+    return is(out, want, '[grey, a coarse line through 0,0 across, down, spacing = 150 units at the zoom] after opening / a zoom step / a scroll / Advanced / a router added');
+  });
+  // 16lt-dragshrink LT3: NEW
+  await check('Video Presets 16lt-dragshrink LT3 (Omar 2026-10-30: "once a video hovers over a layer or BG it can be dropped into, it should shrink to half it size and width, its a visual clue"): a card dragged from the Advanced panel is followed by its own copy, full size off a drop place, half its width and height over a layer, a BG and an AUX box (the pointer stays on it), gone after the drop; the drop lands; the copy is not a card (nothing finds it by the card\'s key)', async () => {
+    const out = {}, want = {};
+    try {
+      await restore(); render(); await wait(300);
+      const p = presets[0], sc0 = screens.find(x => !_bdIsId(x.id)) || screens[0]; setL(p.id, sc0.id, 1, 'PPT A'); scheduleRender(); await wait(200);
+      openFullscreen(p.id); await wait(900); _fsSetSrcTab('images'); await wait(400);
+      const card = $$('#fs-left-panel .iog-card[data-src][draggable="true"]').find(c => c.dataset.src !== 'PPT A') || $('#fs-left-panel .iog-card[data-src][draggable="true"]');
+      if (!card) return 'no draggable card in the panel';
+      card.scrollIntoView({ block: 'center' }); await wait(200);
+      const key = card.getAttribute('data-iog-key'), name = card.dataset.src, cb = card.getBoundingClientRect(), keyed0 = $$('[data-iog-key="' + key + '"]').length;
+      const ctr = e => { if (!e) return null; const b = e.getBoundingClientRect(); return [Math.round(b.left + b.width / 2), Math.round(b.top + b.height / 2)]; };
+      const chip = $('#fs-canvas .layer-chip'), box = $$('#fs-canvas .screen-box').find(b => !b.querySelector('.layer-chip') && !_bdIsId(b.dataset.sid)), aux = $('#fs-canvas .dsm-box');
+      const cv = $('#fs-canvas').getBoundingClientRect(), lp = $('#fs-left-panel').getBoundingClientRect(); let empty = null;
+      for (let y = cv.top + 10; y < cv.bottom && !empty; y += 12) for (let x = Math.max(cv.left, lp.right) + 10; x < cv.right && !empty; x += 12) { const el = document.elementFromPoint(x, y); if (el && el.closest('#fs-canvas') && !_fsDropTarget({ target: el })) empty = [Math.round(x), Math.round(y)]; }
+      const dt = new DataTransfer(), sx = cb.left + cb.width * 0.7, sy = cb.top + cb.height * 0.5;
+      const fire = (type, q) => { const el = document.elementFromPoint(q[0], q[1]); el.dispatchEvent(new DragEvent(type, { bubbles: true, cancelable: true, dataTransfer: dt, clientX: q[0], clientY: q[1] })); };
+      const gh = q => { const c = $('.lbt-ghost'); if (!c) return 'no copy'; const b = c.getBoundingClientRect(); return [Math.round(b.width) === Math.round(cb.width * (c.style.scale === '.5' || c.style.scale === '0.5' ? 0.5 : 1)) ? (c.style.scale === '.5' || c.style.scale === '0.5' ? 'half' : 'full') : 'size ' + Math.round(b.width), q[0] >= b.left - 1 && q[0] <= b.right + 1 && q[1] >= b.top - 1 && q[1] <= b.bottom + 1]; };
+      card.dispatchEvent(new DragEvent('dragstart', { bubbles: true, cancelable: true, dataTransfer: dt, clientX: sx, clientY: sy })); await wait(80);
+      out.start = !!$('.lbt-ghost'); want.start = true;
+      const over = async q => { if (!q) return 'no spot'; fire('dragenter', q); fire('dragover', q); await wait(150); return gh(q); };
+      out.empty = await over(empty); want.empty = ['full', true];
+      out.layer = await over(ctr(chip)); want.layer = ['half', true];
+      out.bg = await over(ctr(box)); want.bg = ['half', true];
+      out.aux = await over(ctr(aux)); want.aux = ['half', true];
+      out.emptyAgain = await over(empty); want.emptyAgain = ['full', true];
+      out.keyedAsBefore = $$('[data-iog-key="' + key + '"]').length === keyed0; want.keyedAsBefore = true;
+      await over(ctr(chip)); fire('drop', ctr(chip)); card.dispatchEvent(new DragEvent('dragend', { bubbles: true, cancelable: true, dataTransfer: dt })); await wait(400);
+      out.after = [$$('.lbt-ghost').length, getL(chip.dataset.pid, chip.dataset.sid, parseInt(chip.dataset.lid)) === name]; want.after = [0, true];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { $$('.lbt-ghost').forEach(e => e.remove()); try { closeFullscreen(); } catch (e) {} await restore(); }
+    return is(out, want, 'a copy after dragstart / over an empty spot [size, pointer on it] / over a layer / a BG / an AUX box / an empty spot again / as many elements with the card\'s key as before the drag / after the drop [copies left, the layer holds the card]');
+  });
+  // 16lt-prores LT4: NEW
+  await check('Video Presets 16lt-prores LT4 (Omar 2026-10-30: a .mov "show no video and say no [audio] yet plays audio", AV505_GCS26_CaptureNowPromo_v1.mov = ProRes 422 LT + PCM, 470 MB): a clip the app cannot show says so on its card (Can\'t show + the format, no black cover) with the size its header states; a clip with sound but no wave reads AUDIO, one without sound NO AUDIO; a clip that plays is untouched; the import rule (_lbtNoPic) marks only a picture track the engine could not open', async () => {
+    const out = {}, want = {};
+    try {
+      await restore(); render(); await wait(300);
+      const add = (l, media) => { _fsAttachBlob(l, new Blob([new Uint8Array(16)], { type: 'video/quicktime' })); customLibrary.push(_lbfFileItem({ l, c: '#808080', kind: 'video', img: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', media: Object.assign({ type: 'video/quicktime', fileName: l + '.mov', size: 1, dur: 78, fps: 29.97, peaks: null }, media) })); };
+      add('LT OLD PRORES', { vcodec: 'ProRes 422 LT', acodec: 'PCM', w: 0, h: 0, hasAudio: true });
+      add('LT NOPIC', { vcodec: 'ProRes 4444', acodec: 'PCM', w: 2880, h: 1620, hasAudio: false, noPic: true });
+      add('LT H264', { vcodec: 'H.264', acodec: 'AAC', w: 640, h: 360, hasAudio: true, peaks: [0.2, 0.5, 0.3] });
+      openFullscreen(presets[0].id); await wait(900); _fsSetSrcTab('video'); await wait(300); _fsSrcSig = ''; _fsRenderSources(true); await wait(300);
+      const cardOf = n => { const c = $('#fs-left-panel .vc[data-src="' + n + '"]'); if (!c) return 'no card'; return [c.classList.contains('vc-nopic'), (($('.vc-np', c) || {}).textContent || ''), (($('.vc-ro-t', c) || {}).textContent || ''), (($('.vc-bar', c) || {}).textContent || '').trim() || ($('.vc-wave', c) ? 'wave' : ''), !!$('.wire-thumb > img', c)]; };
+      out.old = cardOf('LT OLD PRORES'); want.old = [true, 'Can\'t showProRes 422 LT', '—', 'Audio', false];
+      out.nopic = cardOf('LT NOPIC'); want.nopic = [true, 'Can\'t showProRes 4444', '2880x1620', 'No audio', false];
+      out.h264 = cardOf('LT H264'); want.h264 = [false, '', '640x360', 'wave', true];
+      const m1 = { w: 0, h: 0 }; _lbtNoPic(m1, { vcodec: 'ProRes 422 LT', w: 2880, h: 1620 }, { readyState: 1, videoWidth: 0 });
+      const m2 = { w: 1920, h: 1080, noPic: true }; _lbtNoPic(m2, { vcodec: 'H.264', w: 1920, h: 1080 }, { readyState: 4, videoWidth: 1920 });
+      const m3 = { w: 0, h: 0 }; _lbtNoPic(m3, { vcodec: null, acodec: 'AAC' }, { readyState: 1, videoWidth: 0 });
+      out.rule = [m1, m2, m3]; want.rule = [{ w: 2880, h: 1620, noPic: true }, { w: 1920, h: 1080 }, { w: 0, h: 0 }];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { closeFullscreen(); } catch (e) {} await restore(); }
+    return is(out, want, 'cards [cannot show, the note, the size, the sound bar, a cover picture]: an older show\'s ProRes clip / a clip marked at import / an H.264 clip / the import rule on a ProRes track, an H.264 track, a sound-only file');
+  });
+  // 16lt-thumbdrag LT5: NEW
+  await check('Wire 16lt-thumbdrag LT5 (Omar 2026-10-30: "when i change out the thumbnails of a tiles the source image is what drags out not the tile"): a picture uploaded on a card never starts the browser\'s own image drag (draggable false), so a drag that starts on it drags the card: Wire\'s cards (Simple and Advanced), the I/O Patch cards and the Wire title block\'s logo', async () => {
+    const out = {}, want = {};
+    try {
+      await restore(); render(); await wait(300);
+      const PIC = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==';
+      if (typeof wireThumbnails !== 'object' || !wireThumbnails) wireThumbnails = {};
+      wireThumbnails['src:PPT A'] = PIC; wireThumbnails['dst:' + screens[0].id] = PIC; showMeta.logo = PIC;
+      const imgs = sel => { const a = $$(sel); return [a.length > 0, a.every(i => i.getAttribute('draggable') === 'false')]; };
+      wireSettings.wireView = 'simple'; openWireMode(); await wait(900);
+      out.simple = imgs('#wire-panel-left .wire-thumb img'); want.simple = [true, true];
+      out.logo = imgs('#wtb-logo img'); want.logo = [true, true];
+      _wireSwitchToAdvanced(); await wait(700); okDialogs(); await wait(1200); okDialogs(); await wait(300);
+      out.advanced = imgs('#wire-panel-left .wire-thumb img'); want.advanced = [true, true];
+      closeWireMode(); await wait(300);
+      openSystem(); await wait(900);
+      out.iop = imgs('#sys-overlay .iog-card .wire-thumb img'); want.iop = [true, true];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { closeWireMode(); } catch (e) {} try { closeSystem(); } catch (e) {} await restore(); }
+    return is(out, want, '[pictures found, all not draggable]: Wire Simple\'s cards / the title block logo / Wire Advanced\'s cards / the I/O Patch cards');
+  });
+  // 16lt-wirefit LT6: NEW (the first 16lt build fitted inside _wireSwitchPage, so Wire's EXPORT and the Look Book, which walk every page
+  //   through it, reset the zoom: 150 % became 95 %)
+  await check('Wire 16lt-wirefit LT6 (LT1 belongs to the user\'s own moves only): with Wire Advanced open on page 2 at 150 %, exporting every page (Wire\'s EXPORT), the Look Book with its Advanced Wire pages, an Undo and a Redo, copying the page and closing the copy each leave the zoom at 150 % and the page where it was; a page tab picked fits', async () => {
+    const out = {}, z = () => _wireGetZoom(), z15 = async () => { _wireSetZoom(1.5); await wait(250); };
+    try {
+      await restore(); openWireMode(); await wait(700); okDialogs(); _wireSwitchToAdvanced(); await wait(500); okDialogs(); await wait(700); okDialogs();
+      const tabs = () => $$('#wire-page-tabs [onclick*="_wireSwitchPage"]'), pid = b => (/_wireSwitchPage\('([^']+)'\)/.exec(b.getAttribute('onclick') || '') || [])[1];
+      if (tabs().length < 2) return 'fewer than two page tabs';
+      tabs()[1].click(); await wait(600); _wireAdvAddRouter(4); await wait(500); okDialogs(); await wait(300);   /* page 2 holds a router: the export walks both pages */
+      const pg = wireAdvanced._activePageId, on = () => wireAdvanced._activePageId === pg;
+      await z15(); const ex = _wireGetAdvancedPagesForExport('dark', {}); await wait(400); out.export = [Array.isArray(ex) ? ex.length : 'no pages', z(), on()];
+      await z15(); const html = await _laBook('advanced'); await wait(400); out.book = [html.length > 1000, z(), on()];
+      await z15(); doUndo(); await wait(400); out.undo = [z(), on()]; doRedo(); await wait(400); out.redo = [z(), on()];
+      await z15(); _wireCopyPage(pg); await wait(500); okDialogs(); await wait(300); const cp = wireAdvanced._activePageId; out.copy = [cp !== pg, z()];
+      _wireClosePage(cp); await wait(400); okDialogs(); await wait(500); out.close = [wireAdvanced._pages.some(p => p.id === cp), z()];
+      const other = tabs().find(b => pid(b) !== wireAdvanced._activePageId); if (other) { other.click(); await wait(600); } out.pick = !!other && z() <= 1;
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { closeWireMode(); } catch (e) {} await restore(); }
+    return is(out, { export: [2, 1.5, true], book: [true, 1.5, true], undo: [1.5, true], redo: [1.5, true], copy: [true, 1.5], close: [false, 1.5], pick: true },
+      'export [pages, zoom, the page] / Look Book [made, zoom, the page] / Undo [zoom, the page] / Redo / page copied [on the copy, zoom] / copy closed [still there, zoom] / another tab picked fits');
   });
   try { _fsPauseAll(); } catch (e) {} $$('video').forEach(v => { try { v.muted = true; v.pause(); } catch (e) {} });
   return { checks };

@@ -241,7 +241,8 @@ Details: HANDBOOK section 5
 `16lo-delwin`, `16lo-addback`; `16lp-backups`, `16lp-p1rename`, `16lp-nameclash`, `16lp-wcnames`, `16lp-wirecards`; `16lq-approval`, `16lq-auxsize`, `16lq-tabskip`, `16lq-rowpick`, `16lq-levelclick`,
 `16lq-cropreset`, `16lq-webmdur`, `16lq-bgone`, `16lq-ptabs`; `16lr-wirebar`, `16lr-sheetfit`, `16lr-twoout`, `16lr-menuzoom`,
 `16lr-bookprint`, `16lr-cvcheck`, `16lr-noneticked`, `16lr-kbvcal`, `16lr-exportundo`, `16lr-mailtext`; `16ls-vponly`,
-`16ls-delsize`, `16ls-onename`, `16ls-greyfocus`, `16ls-qsgrey`).
+`16ls-delsize`, `16ls-onename`, `16ls-greyfocus`, `16ls-qsgrey`; `16lt-wirefit`, `16lt-wiregrid`,
+`16lt-dragshrink`, `16lt-prores`, `16lt-thumbdrag`).
 
 **One card (16lc-vpcards, 2026-10-06)** — the I/O Patch > Simple card (`_iogCardHTML` + `_iogSrcObj` / `_iogOutObj`) is also the card of
 Wire's left panel (desktop; the phone keeps Wire's own) and of the Video Presets > Advanced left panel (Wire > Simple's sections:
@@ -404,6 +405,16 @@ Never add a time-based "ignore clicks for N ms": the phone gate taps the dialog'
   on `body:not(.is-mobile)`; 59 focus rules read them with their old colour as the fallback); Quick Show Setup in the grey
   look with thin colour strips (`#qs-modal` rules, the switch's `lbs-on`).
   HANDBOOK › 16ls.
+  16lt (2026-10-30, Omar's four pictures of 2026-10-30; desktop only): Wire opens fitted (`_lbtFitWire` from `openWireMode`,
+  Simple and a page tab the user picks, one capture click listener on `#wire-page-tabs`: what FIT does, only while Wire shows; never
+  inside `_wireSwitchPage`, which Wire's EXPORT and the Look Book walk every page through); its grid is grey and on the
+  drawing's own 30 / 150 unit marks at the zoom (`_lbtGridPin` after every `_wireRender` and on resize: `backgroundPosition` /
+  `backgroundSize` of `#wire-diagram-scroll`);
+  a card dragged on the Video Presets > Advanced panel is followed by its own copy (`_lbtGhostStart`, `.lbt-ghost` inside
+  `#fs-left-panel`, the browser's drag picture a blank pixel), half size over a `_fsDropTarget`; a clip the engine cannot show
+  (ProRes: `media.noPic`, `_lbtNoPic`, `_lbtCantShow`) says so on its card with its header's size, and sound without a wave reads
+  AUDIO; every picture on a card and the Wire logo is `draggable="false"`. The gate draws the Mac's own scroll bars (HANDBOOK, end).
+  HANDBOOK › 16lt.
 - Exports' readable print (16li-print: `_lbpInk`, `_wireLogoWordSvg`, `_wireTbFitText`): a value the Look Book prints in a colour made
   for the white page gets an inline colour from `_lbpInk(opts)` in the Dark book (never a stylesheet rule); words drawn into the Wire
   sheet's boxes are measured with `_wireTextWidth` and fitted (smaller, then "…"), never left to run past a line. HANDBOOK › 16li-print.

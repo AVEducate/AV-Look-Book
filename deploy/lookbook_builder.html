@@ -4803,6 +4803,11 @@ body:not(.is-mobile) #qs-sd-toggle{background:#1a1f28!important;border-color:#25
 body:not(.is-mobile) #qs-sd-toggle.lbs-on{border-color:#5d6778!important}
 body:not(.is-mobile) #qs-sd-knob{background:#5d6778!important;box-shadow:none!important}
 body:not(.is-mobile) #qs-sd-toggle.lbs-on #qs-sd-knob{background:#c9d1d9!important}
+/* 16lt-wiregrid (Omar 2026-10-30: "it got cyan can we make the lines grey"): the Wire grid in the app's grey (--ss-t3); where its lines
+   sit and how far apart they are follow the drawing (_lbtGridPin), so adding a tile or Fit no longer moves it under the tiles */
+body:not(.is-mobile) #wire-diagram-scroll{background-image:linear-gradient(rgba(126,135,148,.10) 1px,transparent 1px),linear-gradient(90deg,rgba(126,135,148,.10) 1px,transparent 1px),linear-gradient(rgba(126,135,148,.22) 1px,transparent 1px),linear-gradient(90deg,rgba(126,135,148,.22) 1px,transparent 1px)!important}
+/* 16lt-dragshrink: the copy of a card that follows the pointer while it is dragged on Video Presets > Advanced (_lbtGhostStart) */
+.lbt-ghost{position:fixed!important;left:0!important;top:0!important;z-index:100000;margin:0!important;pointer-events:none!important;opacity:.92;transition:scale .12s ease-out;box-shadow:0 12px 28px rgba(0,0,0,.55)}
 </style>
 </head>
 <body data-skin="black">
@@ -4953,7 +4958,7 @@ Also called DSM (Downstage Monitor) in broadcast and theater workflows, same thi
   <div class="bb-cell bb-pill bb-cyan" title="The largest number of layers used in any single preset, this is the figure to compare against your switcher's per-scene layer budget. (The most complex single moment in the show.)"><span class="bb-label">Layers</span><strong id="bb-layers">0</strong></div>
   <div id="bb-spacer"></div>
   <div class="bb-cell" id="bb-sel" style="font-size:10px;opacity:.5">—</div>
-  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy, hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16ls</div>
+  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy, hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16lt</div>
   <!-- 16kq (Omar): the Modifiers menu lives on each preset tile only; this place is kept for the Educator tool of a future build (greyed out, does nothing) --><button class="bb-util" id="tb-educator" type="button" disabled aria-disabled="true" title="Educator: coming in a future build" aria-label="Educator, coming in a future build" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:default;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em;opacity:.38"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10L12 5 2 10l10 5 10-5z"/><path d="M6 12v5c0 1 2.7 2.5 6 2.5s6-1.5 6-2.5v-5"/><line x1="22" y1="10" x2="22" y2="16"/></svg><span>Educator</span></button>
   <button class="bb-util" onclick="actions.help()" title="Help, quick reference, keyboard shortcuts, glossary, accessibility" aria-label="Help, quick reference, keyboard shortcuts, glossary, accessibility" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="4.93" y1="4.93" x2="9.17" y2="9.17"/><line x1="14.83" y1="14.83" x2="19.07" y2="19.07"/><line x1="14.83" y1="9.17" x2="19.07" y2="4.93"/><line x1="4.93" y1="19.07" x2="9.17" y2="14.83"/></svg>Help</button>
   <button class="bb-util" id="tb-bug" onclick="reportBug()" title="Report a bug, opens an email to AV Educate with your show file — attached in the app, downloaded for you to attach in a browser" aria-label="Report a bug" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="7.2"/><path d="M15.4 15.4L21 21" stroke-width="2.6"/><ellipse cx="10" cy="11" rx="2.5" ry="3.3" fill="currentColor" stroke="none"/><circle cx="10" cy="7" r="1.5" fill="currentColor" stroke="none"/><path d="M7.5 9.2l-1.7-.8M7.4 11.2H5.6M7.7 13.1l-1.5 1.1M12.5 9.2l1.7-.8M12.6 11.2h1.8M12.3 13.1l1.5 1.1M9.2 5.9l-.8-1.1M10.8 5.9l.8-1.1" stroke-width="1.3"/></svg>Bug</button>   <!-- 16jk (Omar): Report a bug, after Help -->
@@ -18811,7 +18816,7 @@ function _iogCardHTML(c){
   if(c.thumbKey) h+='<div class="wire-thumb" tabindex="0" role="button" aria-label="Upload a picture for '+_esc(nm)+'" onclick="_wireUploadThumbnail(\''+tk+'\')" title="Click to upload a custom thumbnail">';
   else if(c.mvCycle) h+=_mvPicThumbOpen(c);   /* 16la-wire-mv (N): the multiviewer's picture is a button: a click or Enter / Space shows the next one */
   else h+='<div class="wire-thumb iog-thumb-fixed'+(c.fixedPic?' iog-mv-thumb':'')+'" title="'+_esc(nm)+'">';
-  if(pic) h+='<img src="'+pic+'" alt="'+_esc(nm)+'" /><button class="wire-thumb-clear" onclick="_wireRemoveThumbnail(\''+tk+'\', event)" title="Remove thumbnail" aria-label="Remove the picture of '+_esc(nm)+'">\u2715</button>';
+  if(pic) h+='<img src="'+pic+'" alt="'+_esc(nm)+'" draggable="false" /><button class="wire-thumb-clear" onclick="_wireRemoveThumbnail(\''+tk+'\', event)" title="Remove thumbnail" aria-label="Remove the picture of '+_esc(nm)+'">\u2715</button>';
   else if(k==='src'&&_lbvCover(c.id)) h+='<img class="lbv-cover" src="'+_lbvCover(c.id)+'" alt="'+_esc(nm)+'" draggable="false" />';   /* 16lc-vpvideo: a video / picture file shows its cover (no remove: it is the file's own) */
   else if(c.fixedPic) h+='<img class="iog-fixed-pic" src="'+c.fixedPic+'" alt="'+_esc(nm)+'" draggable="false" />';   /* 16ky-r2b: the multiviewer picture (no upload, no remove) */
   else h+=_wireAutoThumbHTML(nm, c.color, k==='src'?{hint:1,badge:'CABLE',bls:0.08}:(k==='iodest'?{badge:'I/O only'}:{hint:!!c.thumbKey,badge:k==='aux'?'AUX/DSM':'Dest'}));   /* 16kz-refresh (I) */
@@ -19075,6 +19080,10 @@ function _lbvCss(){ return [
   '#fs-left-panel .vc-bar-fill{position:absolute;left:0;top:0;bottom:0;background:rgba(var(--n-cyan-rgb),.22)}',
   '#fs-left-panel .vc-bar-na{position:relative;display:inline-flex;align-items:center;gap:4px;font-size:8px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:rgb(74,81,96);white-space:nowrap}',
   '#fs-left-panel .vc-bar-na .lb-ico{width:10px;height:10px}',
+  '#fs-left-panel .vc-bar-na.vc-bar-snd{color:var(--text2)}',   /* 16lt-prores */
+  '#fs-left-panel .vc-nopic .wire-thumb{background:rgb(10,13,18)}',
+  '#fs-left-panel .vc-np{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:2;display:flex;flex-direction:column;align-items:center;gap:1px;width:calc(100% - 12px);font-size:8px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;line-height:1.2;text-align:center;color:var(--text2);pointer-events:none}',
+  '#fs-left-panel .vc-np b{font-weight:800;color:#e2e4e8;letter-spacing:.06em}',
   '#fs-left-panel .vc-wave{position:absolute;left:5px;top:2px;width:calc(100% - 10px);height:calc(100% - 4px)}',
   '#fs-left-panel .wire-res-row.vc-ro,#fs-left-panel .wire-cable-btn.vc-ro{cursor:default}',
   '#fs-left-panel .vc-ro-t{flex:1;min-width:0;font-family:var(--font-mono);font-size:10px;font-weight:700;letter-spacing:.02em;text-transform:none;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}',
@@ -19114,19 +19123,21 @@ function _lbvWave(peaks,played){
 /* a file card of the Video tab (Option C) */
 function _fsMediaCardHTML(it){
   const m=it.media||{}, nm=it.l, e=_esc(nm), a=_iogIdAttr(nm), has=!!_fsMediaUrl(nm), v=it.kind==='video';
-  let h='<div class="wire-source-card iog-card iog-k-src vc vc-c'+(has?'':' vc-missing')+'" data-iog-key="'+_esc('src:'+nm)+'" data-src="'+e+'" role="group" aria-label="'+e+' · '+(v?'video':'picture')+' file" draggable="'+(has?'true':'false')+'"'
+  const np=v&&has&&_lbtCantShow(it), npc=_esc(m.vcodec||'this format');   /* 16lt-prores */
+  let h='<div class="wire-source-card iog-card iog-k-src vc vc-c'+(has?'':' vc-missing')+(np?' vc-nopic':'')+'" data-iog-key="'+_esc('src:'+nm)+'" data-src="'+e+'" role="group" aria-label="'+e+' · '+(v?'video':'picture')+' file" draggable="'+(has?'true':'false')+'"'
     +(has?' ondragstart="_fsSrcDragStart(event)" ondragend="_fsClearDropHot()" title="Drag onto a layer, a BG or an AUX box in the canvas" style="cursor:grab"':' title="The file is not in this app\'s storage: click RELINK on its picture to pick it again"')+'>';
   h+='<div class="wire-thumb-col">';
   if(!has) h+='<div class="wire-thumb vc-pic" tabindex="0" role="button" onclick="event.stopPropagation();_fsPickMedia(\''+a+'\')" title="The file is not in this app\'s storage, click to relink it" aria-label="Relink '+e+'">';
-  else if(v) h+='<div class="wire-thumb vc-pic" tabindex="0" role="button" onclick="event.stopPropagation();_lbvPlay(this)" title="Click to preview this clip here · drag the card onto a layer, a BG or an AUX box" aria-label="Play '+e+' here">';
+  else if(v) h+='<div class="wire-thumb vc-pic" tabindex="0" role="button" onclick="event.stopPropagation();_lbvPlay(this)" title="'+(np?'This clip is '+npc+'. The app plays its sound but cannot show its picture: export it as H.264 (MP4 or MOV) to see it here':'Click to preview this clip here · drag the card onto a layer, a BG or an AUX box')+'" aria-label="Play '+e+' here">';
   else h+='<div class="wire-thumb vc-pic" title="Drag the card onto a layer, a BG or an AUX box">';
-  if(it.img) h+='<img src="'+it.img+'" alt="" draggable="false">';
+  if(it.img&&!np) h+='<img src="'+it.img+'" alt="" draggable="false">';
+  if(np) h+='<span class="vc-np"><span>Can\'t show</span><b>'+npc+'</b></span>';   /* 16lt-prores: instead of the black cover, between the chips */
   if(!has) h+='<span class="vc-relink" aria-hidden="true">'+_lbvIco('link')+'Relink</span>';
   else if(v) h+='<span class="wire-thumb-upload-hint" aria-hidden="true">'+_lbIcoHTML('play')+'</span>';
   if(v&&m.fps) h+='<span class="vc-chip vc-tr">'+_lbvFps(m.fps)+' fps</span>';
   h+='<span class="wire-thumb-cable-chip vc-kind">'+(v?'Video':'Image')+'</span>';
   if(v) h+='<span class="vc-chip vc-br">'+_fsFmtTime(m.dur)+'</span>';
-  h+='</div><div class="wire-color-row"><div class="vc-bar"'+(v?' title="'+(m.hasAudio?'The sound of the clip':'No audio in this clip')+'"':'')+'>'+(v?((m.hasAudio&&Array.isArray(m.peaks)&&m.peaks.length)?_lbvWave(m.peaks,0):'<span class="vc-bar-na">'+_lbIcoHTML('mute')+'No audio</span>'):'')+'</div>'
+  h+='</div><div class="wire-color-row"><div class="vc-bar"'+(v?' title="'+(m.hasAudio?'The sound of the clip':'No audio in this clip')+'"':'')+'>'+(v?((m.hasAudio&&Array.isArray(m.peaks)&&m.peaks.length)?_lbvWave(m.peaks,0):(m.hasAudio?'<span class="vc-bar-na vc-bar-snd">'+_lbIcoHTML('vol')+'Audio</span>':'<span class="vc-bar-na">'+_lbIcoHTML('mute')+'No audio</span>')):'')+'</div>'
     +'<button type="button" class="wire-color-shuffle vc-trash" draggable="false" onclick="event.stopPropagation();_fsRemoveMediaAsk(\''+a+'\')" ondragstart="event.preventDefault();event.stopPropagation()" title="Remove this file from the show…" aria-label="Remove '+e+' from the show">'+_LBV_TRASH+'</button></div></div>';
   h+='<div class="wire-source-info"><div class="wire-source-name iog-name"><div class="sys-name-cell iog-name-cell">'+_lbfFitCard('<span class="iog-name-text" aria-hidden="true">'+e+'</span>',nm,true)   /* 16lc-vpfinish (D8 / D11): fitted, as typed */
     +'<input class="sys-name-input" data-sys-kind="src" data-sys-id="'+e+'" value="'+e+'" data-sys-old-name="'+e+'" placeholder="File name" aria-label="Name of the file '+e+'" spellcheck="false" autocomplete="off">'
@@ -20720,7 +20731,7 @@ function _iogMiniFor(kind,r,num){
   const nm=String((r&&r.name)||'').trim(), hit=_iogMiniMap.mp[kind==='src'?'src':(kind==='mv'?'mv':'dst')][_iogMiniMap.low(nm)];
   const col=hit?hit.c:(kind==='src'?'rgba(var(--n-blue-rgb),.22)':(kind==='mv'?'#000':'rgba(255,138,61,.22)'));
   const pic=(kind==='mv')?((hit&&hit.p)||_IOG_MV_PIC):(hit&&hit.p);   /* 16ky-r2b: every multiviewer row shows the multiviewer picture; 16la-wire-mv (N): its multiviewer's own one (a row that names none: picture 1) */
-  return '<span class="iog-mini'+(pic?' iog-mini-pic':'')+(kind==='mv'?' iog-mini-mv':'')+'" style="background:'+_esc(col)+'">'+(pic?'<img src="'+pic+'" alt="">':_nfMini(nm))
+  return '<span class="iog-mini'+(pic?' iog-mini-pic':'')+(kind==='mv'?' iog-mini-mv':'')+'" style="background:'+_esc(col)+'">'+(pic?'<img src="'+pic+'" alt="" draggable="false">':_nfMini(nm))
     +(kind==='src'?'<span class="iog-mini-cable" style="background:'+_esc(col)+'"></span>':'')+'</span><span class="iog-mini-num">'+_esc(num)+'</span>';
 }
 // ── Dropdown machinery ──
@@ -22907,9 +22918,28 @@ function openWireMode(){
   _wireRender();
   // Land on the diagram, not the empty top-left. Center the scroll
   // wrapper on the SVG's middle after the layout has settled.
-  requestAnimationFrame(_wireScrollToContentCenter);
+  requestAnimationFrame(function(){ if(!_lbtFitWire()) _wireScrollToContentCenter(); });   /* 16lt-wirefit: the desktop opens Wire fitted */
   document.addEventListener('keydown', _wireEscClose);
 }
+/* 16lt-wirefit (Omar 2026-10-30: "every time i go to it, its blow out and i need to hit fit to see all the I.O ... when i go to wire all
+   the information ... should already fit. i should not see a massive blow up in wire"): opening Wire, switching to Simple and picking a
+   page tab do what FIT does (_wireZoomFit: never above 100 %, centred). Only while Wire shows (a hidden page measures nothing, and Fit
+   would then pick the 10 % floor); the zoom is a view setting (not an edit, no Undo step). Desktop only: the phone fits on its own. */
+function _lbtFitWire(){
+  if(!_lbcOn()||typeof _wireZoomFit!=='function') return false;
+  const sc=document.getElementById('wire-diagram-scroll');
+  if(!document.body.classList.contains('wire-open')||!sc||sc.clientWidth<200||sc.clientHeight<120) return false;
+  _wireZoomFit(); return true;
+}
+/* a page tab the user picks (a click, or Enter / Space on the tab, which arrive as a click) opens that page fitted. Never inside
+   _wireSwitchPage: the Wire export and the Look Book walk every page through it, and copying, closing or rebuilding a page keeps the view. */
+document.addEventListener('click',function(e){
+  if(!_lbcOn()||typeof wireAdvanced!=='object'||!wireAdvanced) return;
+  const b=e.target&&e.target.closest?e.target.closest('#wire-page-tabs button[onclick*="_wireSwitchPage"]'):null; if(!b) return;
+  const m=/_wireSwitchPage\('([^']+)'\)/.exec(b.getAttribute('onclick')||''), was=wireAdvanced._activePageId;
+  if(!m||m[1]===was) return;
+  requestAnimationFrame(function(){ if(wireAdvanced._activePageId===m[1]) _lbtFitWire(); });
+},true);
 
 // Center the scroll wrapper on the SVG's middle (which is where the
 // content sits with the symmetric padding). Used on open and after Fit /
@@ -23205,12 +23235,41 @@ function _wireRender(){
   // 16gh: the SOURCES / DESTINATIONS / AUX-DSM band is gone — the left panel carries the colours + counts, Details carries the lane key
   if(styleBar) _wireRenderStyleBar(styleBar);          // desktop (bottom)
   if(styleBarTop) _wireRenderStyleBar(styleBarTop);    // mobile (top bar)
+  _lbtGridPin();   /* 16lt-wiregrid */
   var _eh = document.getElementById('wire-empty-hint');
   if(_eh){
     var _adv = wireSettings && wireSettings.wireView === 'advanced';
     var _empty = _adv && wireAdvanced && (((wireAdvanced.sources||[]).length + (wireAdvanced.dests||[]).length + (wireAdvanced.dsms||[]).length + (wireAdvanced.routers||[]).length) === 0);
     _eh.style.display = _empty ? 'block' : 'none';
   }
+}
+/* 16lt-wiregrid (Omar 2026-10-30: "the BG grid also keeps jumping around every time i add anything"): the grid was a background of the
+   scroll area at 30 / 150 screen px from its corner, so whenever the drawing grew, re-centred or zoomed (a tile added, Fit) the tiles moved
+   and the grid did not. Now its lines are the drawing's own 30 / 150 unit marks: placed from the drawing's 0,0 and spaced by the zoom, so
+   the grid moves and scales with the tiles. The fine lines go when they would be closer than 7 px (the coarse ones stay). It still
+   scrolls with the drawing (background-attachment: local). Measured in the scroll area's own px (the UI Size zoom divided out). Desktop
+   only (the phone keeps its screen grid). */
+function _lbtGridPin(){
+  if(!_lbcOn()) return;
+  const sc=document.getElementById('wire-diagram-scroll'), svg=sc?sc.querySelector('#wire-diagram > svg'):null;
+  if(!sc||!svg) return;
+  _lbtGridWatch(sc);
+  const vb=svg.viewBox&&svg.viewBox.baseVal, sr=sc.getBoundingClientRect(), r=svg.getBoundingClientRect();
+  if(!vb||!(vb.width>0)||!(r.width>0)||!(sc.offsetWidth>0)) return;
+  const k=sr.width/sc.offsetWidth;                                                    /* screen px per px of the scroll area (UI Size) */
+  const z=(parseFloat(svg.getAttribute('width'))||(r.width/k))/vb.width;              /* px per drawing unit (the Wire zoom) */
+  const x0=(r.left-sr.left)/k-sc.clientLeft+sc.scrollLeft-vb.x*z, y0=(r.top-sr.top)/k-sc.clientTop+sc.scrollTop-vb.y*z;   /* the drawing's 0,0 in the scrolled area */
+  const big=150*z, fine=(30*z>=7)?30*z:big;
+  const m=function(v,p){ return (((v%p)+p)%p).toFixed(2)+'px'; };
+  const sf=fine.toFixed(2)+'px '+fine.toFixed(2)+'px', sb=big.toFixed(2)+'px '+big.toFixed(2)+'px';
+  const pf=m(x0,fine)+' '+m(y0,fine), pb=m(x0,big)+' '+m(y0,big);
+  sc.style.backgroundSize=[sf,sf,sb,sb].join(',');
+  sc.style.backgroundPosition=[pf,pf,pb,pb].join(',');
+}
+function _lbtGridWatch(sc){
+  if(sc._lbtGrid||typeof ResizeObserver==='undefined') return; sc._lbtGrid=true;
+  const ro=new ResizeObserver(function(){ _lbtGridPin(); });
+  ro.observe(sc); const d=document.getElementById('wire-diagram'); if(d) ro.observe(d);
 }
 // 16ee: Project Info title block. Values → inputs (skipping whichever input
 // is focused so a re-render mid-typing never clobbers the user). Bound ONCE
@@ -23255,7 +23314,7 @@ function _wireSyncTitleBlock(){
   const lg = document.getElementById('wtb-logo');   // 16el
   if(lg){
     const l = (typeof showMeta === 'object' && showMeta && showMeta.logo) ? showMeta.logo : '';
-    lg.innerHTML = (l ? '<img src="' + l + '" alt="Company logo"/><button class="wire-thumb-clear" onclick="event.stopPropagation();_wireRemoveLogo()" title="Remove logo" aria-label="Remove logo">\u2715</button>' : _wireAutoThumbHTML('LOGO', '#3a4250')) + _wireThumbHintHTML();
+    lg.innerHTML = (l ? '<img src="' + l + '" alt="Company logo" draggable="false"/><button class="wire-thumb-clear" onclick="event.stopPropagation();_wireRemoveLogo()" title="Remove logo" aria-label="Remove logo">\u2715</button>' : _wireAutoThumbHTML('LOGO', '#3a4250')) + _wireThumbHintHTML();
   }
   if(_wireTitleBlockBound) return;
   _wireTitleBlockBound = true;
@@ -28999,6 +29058,7 @@ function _wireRenderPageTabs(container){
 function _wireSwitchToSimple(){
   if((wireSettings && wireSettings.wireView) === 'simple') return;
   _wireSetSetting('wireView', 'simple');
+  requestAnimationFrame(_lbtFitWire);   /* 16lt-wirefit */
 }
 
 function _wireSwitchToAdvanced(){
@@ -30196,7 +30256,7 @@ function _wireSourceCardHTML_panel(n, isAdvanced){
   html += '<div class="wire-thumb-col">';   // 16ei: thumb + colour row stack on the left; name / res / cable type on the right
   html += '<div class="wire-thumb" onclick="_wireUploadThumbnail(\'' + safeThumbKey + '\')" title="Click to upload a custom thumbnail">';
   if(thumb){
-    html += '<img src="' + thumb + '" alt="' + safeName + '" />';
+    html += '<img src="' + thumb + '" alt="' + safeName + '" draggable="false" />';
     html += '<button class="wire-thumb-clear" onclick="_wireRemoveThumbnail(\'' + safeThumbKey + '\', event)" title="Remove thumbnail" aria-label="Remove thumbnail">\u2715</button>';
   } else {
     html += _wireAutoThumbHTML(n, wireColor, {hint:1,badge:'CABLE',bls:0.08});   /* 16kz-refresh (I) */
@@ -30360,7 +30420,7 @@ function _wireDestCardHTML_panel(s, isAdvanced){
   html += '<div class="wire-thumb-col">';   // 16hf: thumb + colour row, like the source card
   html += '<div class="wire-thumb" onclick="_wireUploadThumbnail(\'' + safeThumbKey + '\')" title="Click to upload a custom thumbnail">';
   if(thumb){
-    html += '<img src="' + thumb + '" alt="' + safeName + '" />';
+    html += '<img src="' + thumb + '" alt="' + safeName + '" draggable="false" />';
     html += '<button class="wire-thumb-clear" onclick="_wireRemoveThumbnail(\'' + safeThumbKey + '\', event)" title="Remove thumbnail" aria-label="Remove thumbnail">\u2715</button>';
   } else {
     html += _wireAutoThumbHTML(s.name || s.id, nodeColor, {hint:1,badge:'Dest'});   /* 16kz-refresh (I) */
@@ -30404,7 +30464,7 @@ function _wireDsmCardHTML_panel(d, isAdvanced){
   html += '<div class="wire-thumb-col">';   // 16hf
   html += '<div class="wire-thumb" onclick="_wireUploadThumbnail(\'' + safeThumbKey + '\')" title="Click to upload a custom thumbnail">';
   if(thumb){
-    html += '<img src="' + thumb + '" alt="' + safeName + '" />';
+    html += '<img src="' + thumb + '" alt="' + safeName + '" draggable="false" />';
     html += '<button class="wire-thumb-clear" onclick="_wireRemoveThumbnail(\'' + safeThumbKey + '\', event)" title="Remove thumbnail" aria-label="Remove thumbnail">\u2715</button>';
   } else {
     html += _wireAutoThumbHTML(d.name || d.id, nodeColor, {hint:1,badge:'AUX/DSM'});   /* 16kz-refresh (I) */
@@ -30450,7 +30510,7 @@ function _wireCustomSourceCardHTML_panel(s){
   html += '<div class="wire-thumb-col">';   // 16ei
   html += '<div class="wire-thumb" onclick="_wireUploadThumbnail(\'' + safeThumbKey + '\')" title="Click to upload a custom thumbnail">';
   if(thumb){
-    html += '<img src="' + thumb + '" alt="' + safeName + '" />';
+    html += '<img src="' + thumb + '" alt="' + safeName + '" draggable="false" />';
     html += '<button class="wire-thumb-clear" onclick="_wireRemoveThumbnail(\'' + safeThumbKey + '\', event)" title="Remove thumbnail" aria-label="Remove thumbnail">✕</button>';
   } else {
     html += _wireAutoThumbHTML(s.name || '', wireColor, {hint:1,badge:'CABLE',bls:0.08});   /* 16kz-refresh (I) */
@@ -30489,7 +30549,7 @@ function _wireCustomDestCardHTML_panel(d){
   const _k0=html.length;
   html += '<div class="wire-thumb" onclick="_wireUploadThumbnail(\'' + safeThumbKey + '\')" title="Click to upload a custom thumbnail">';
   if(thumb){
-    html += '<img src="' + thumb + '" alt="' + safeName + '" />';
+    html += '<img src="' + thumb + '" alt="' + safeName + '" draggable="false" />';
     html += '<button class="wire-thumb-clear" onclick="_wireRemoveThumbnail(\'' + safeThumbKey + '\', event)" title="Remove thumbnail" aria-label="Remove thumbnail">✕</button>';
   } else {
     html += _wireAutoThumbHTML(d.name || '', (d.wireColor || '#0e7490'), {badge:'Dest'});   /* 16kz-refresh (I) */
@@ -30524,7 +30584,7 @@ function _wireCustomDsmCardHTML_panel(d){
   const _k0=html.length;
   html += '<div class="wire-thumb" onclick="_wireUploadThumbnail(\'' + safeThumbKey + '\')" title="Click to upload a custom thumbnail">';
   if(thumb){
-    html += '<img src="' + thumb + '" alt="' + safeName + '" />';
+    html += '<img src="' + thumb + '" alt="' + safeName + '" draggable="false" />';
     html += '<button class="wire-thumb-clear" onclick="_wireRemoveThumbnail(\'' + safeThumbKey + '\', event)" title="Remove thumbnail" aria-label="Remove thumbnail">✕</button>';
   } else {
     html += _wireAutoThumbHTML(d.name || '', (d.wireColor || '#2d8a5e'), {badge:'AUX/DSM'});   /* 16kz-refresh (I) */
@@ -38123,8 +38183,55 @@ function _fsSrcDragStart(ev){
   _lbkDragBlur(card);   /* 16lc-vpcards-fix (F6): the keys act on the tile again after the drop */
   ev.dataTransfer.setData('text/plain','fs-src:'+name);
   ev.dataTransfer.effectAllowed='copy';
+  if(_lbcOn()) _lbtGhostStart(ev,card);   /* 16lt-dragshrink: before the card is marked as dragged (the copy is the card as it looks) */
   card.classList.add('dragging');
   _fsDragNow=true;   /* 16lc-vpcards: the panel keeps this DOM until the drag ends */
+}
+/* 16lt-dragshrink (Omar 2026-10-30: "once a video hovers over a layer or BG it can be dropped into, it should shrink to half it size and
+   width, its a visual clue for the user"): the browser's own drag picture is fixed once a drag starts, so on the desktop it is a blank
+   pixel and a copy of the card follows the pointer instead (inside the panel, so it keeps the card's look). Over a place the card can
+   be dropped (_fsDropTarget: a layer, a BG, an AUX box, a row of the layer list) the copy is half its width and height, shrinking
+   about the point it was picked up by; off it, full size again. Every card dragged from the Video Presets > Advanced panel (video
+   and picture files, sources). Gone on drop or when the drag ends (_fsClearDropHot). */
+var _lbtGh=null, _LBT_BLANK=(function(){ const i=new Image(); i.src='data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'; return i; })();
+function _lbtGhostStart(ev,card){
+  _lbtGhostEnd();
+  if(!card||!ev.dataTransfer||typeof ev.dataTransfer.setDragImage!=='function') return;
+  const r=card.getBoundingClientRect(); if(!(r.width>0)||!(r.height>0)) return;
+  const host=(card.closest&&card.closest('#fs-left-panel'))||document.body;
+  const z=(typeof _menuZoom==='function')?(_menuZoom(card)||1):1;   /* the UI Size: the copy's px are drawn that much larger */
+  const g=card.cloneNode(true);
+  g.classList.add('lbt-ghost'); g.classList.remove('dragging','fs-drop-hot');
+  g.removeAttribute('draggable'); g.removeAttribute('ondragstart'); g.removeAttribute('ondragend');
+  g.setAttribute('aria-hidden','true'); g.setAttribute('inert','');
+  ['data-iog-key','data-src','role','aria-label','title'].forEach(function(a){ g.removeAttribute(a); });   /* a copy, not a card: nothing that finds cards by these finds it */
+  g.querySelectorAll('[id],[data-sys-id],[data-sys-kind],[data-iog-key],[name]').forEach(function(e){ ['id','data-sys-id','data-sys-kind','data-iog-key','name'].forEach(function(a){ e.removeAttribute(a); }); });
+  g.querySelectorAll('video').forEach(function(v){ try{ v.pause(); v.muted=true; }catch(e){} v.removeAttribute('src'); });
+  const ox=ev.clientX-r.left, oy=ev.clientY-r.top;
+  g.style.width=(r.width/z)+'px'; g.style.transformOrigin=(ox/z).toFixed(1)+'px '+(oy/z).toFixed(1)+'px';
+  host.appendChild(g);
+  try{ ev.dataTransfer.setDragImage(_LBT_BLANK,0,0); }catch(e){}
+  _lbtGh={el:g,ox:ox,oy:oy,z:z,hot:false};
+  _lbtGhostMove(ev.clientX,ev.clientY);
+  document.addEventListener('dragover',_lbtGhostOver,true);
+  document.addEventListener('drop',_lbtGhostEnd,true);
+}
+function _lbtGhostMove(x,y){
+  const g=_lbtGh; if(!g||!(x||y)) return;   /* the last drag event of a drag reports 0,0 */
+  g.el.style.translate=((x-g.ox)/g.z).toFixed(1)+'px '+((y-g.oy)/g.z).toFixed(1)+'px';
+  g.el.style.scale=g.hot?'.5':'1';
+}
+function _lbtGhostOver(ev){
+  const g=_lbtGh; if(!g) return;
+  const hot=!!_fsDropTarget(ev);
+  if(hot!==g.hot){ g.hot=hot; g.el.classList.toggle('lbt-hot',hot); }
+  _lbtGhostMove(ev.clientX,ev.clientY);
+}
+function _lbtGhostEnd(){
+  document.removeEventListener('dragover',_lbtGhostOver,true);
+  document.removeEventListener('drop',_lbtGhostEnd,true);
+  if(_lbtGh&&_lbtGh.el&&_lbtGh.el.parentNode) _lbtGh.el.parentNode.removeChild(_lbtGh.el);
+  _lbtGh=null;
 }
 // What is under the pointer: a layer chip on the canvas, an AUX box in the band, a destination box (→ BG), or a row in the preset overview.
 function _fsDropTarget(ev){
@@ -38142,6 +38249,7 @@ function _fsDropTarget(ev){
   return null;
 }
 function _fsClearDropHot(){
+  _lbtGhostEnd();   /* 16lt-dragshrink */
   document.querySelectorAll('.fs-drop-hot').forEach(e=>e.classList.remove('fs-drop-hot'));
   document.querySelectorAll('.fs-src.dragging, #fs-source-list .dragging').forEach(e=>e.classList.remove('dragging'));   /* 16lc-vpcards: a card too */
   _fsDragNow=false;
@@ -38297,7 +38405,7 @@ function _fsImportOne(file,land){
       .then(function(im){ img=im; return _fsProbeAudio(v); })
       .then(function(has){ media.hasAudio=!!has; return _fsAudioPeaks(file); })
       .then(function(res){ media.peaks=(res&&res.peaks)||null; if(res){ media.channels=res.channels||0; media.sampleRate=res.sampleRate||0; } if(media.peaks&&media.peaks.some(function(x){ return x>0.01; })) media.hasAudio=true; return _fsParseIsoBmff(file); })
-      .then(function(info){ _fsApplyBoxInfo(media,info); if(!media.fps) return _fsProbeFps(v).then(function(f){ media.fps=f||0; }); })
+      .then(function(info){ _fsApplyBoxInfo(media,info); _lbtNoPic(media,info,v); if(!media.fps) return _fsProbeFps(v).then(function(f){ media.fps=f||0; }); })
       .then(function(){ try{ v.removeAttribute('src'); v.load(); }catch(e){} });
   } else {
     const im=new Image(); im.src=url;
@@ -38341,7 +38449,7 @@ function _fsRelinkTake(name,file){
       .then(function(im){ img=im; return _fsProbeAudio(v); })
       .then(function(has){ media.hasAudio=!!has; return _fsAudioPeaks(file); })
       .then(function(res){ media.peaks=(res&&res.peaks)||null; if(res){ media.channels=res.channels||0; media.sampleRate=res.sampleRate||0; } if(media.peaks&&media.peaks.some(function(x){ return x>0.01; })) media.hasAudio=true; return _fsParseIsoBmff(file); })
-      .then(function(info){ _fsApplyBoxInfo(media,info); if(!media.fps) return _fsProbeFps(v).then(function(f){ media.fps=f||0; }); })
+      .then(function(info){ _fsApplyBoxInfo(media,info); _lbtNoPic(media,info,v); if(!media.fps) return _fsProbeFps(v).then(function(f){ media.fps=f||0; }); })
       .then(function(){ try{ v.pause(); v.removeAttribute('src'); v.load(); }catch(e){} });
   } else {
     const im=new Image(); im.src=url;
@@ -39071,6 +39179,18 @@ function _fsParseIsoBmff(file){
     return (out.vcodec||out.acodec||out.fps)?out:null;
   }).catch(function(){ return null; });
 }
+/* 16lt-prores (Omar 2026-10-30: a .mov "show no video and say no [audio] yet plays audio"): AV505_GCS26_CaptureNowPromo_v1.mov is Apple
+   ProRes 422 LT with PCM sound. The app's browser engine has no ProRes decoder: it plays the sound and shows a black picture, so the
+   import measured no size (0 x 0) and kept a black cover; and the card's sound bar read NO AUDIO whenever it had no wave, which is never
+   drawn for a file over 400 MB. Now: a file whose video track the engine cannot open (its details loaded, no picture size) is marked
+   media.noPic and takes the size its header states (2880 x 1620); its card says it cannot show the picture, names the format and how to
+   fix it (export H.264); and a clip with sound but no wave reads AUDIO. An older show's clip is told by its codec and missing size. */
+function _lbtNoPic(media,info,v){
+  if(!info||!info.vcodec) return;   /* no picture track at all (sound only) */
+  if(!(media.w>0&&media.h>0)&&info.w>0&&info.h>0){ media.w=info.w; media.h=info.h; }
+  if(v&&v.readyState>=1&&!(v.videoWidth>0)) media.noPic=true; else delete media.noPic;
+}
+function _lbtCantShow(it){ const m=(it&&it.media)||{}; return !!(it&&it.kind==='video'&&(m.noPic||(m.vcodec&&!(m.w>0)))); }
 function _fsApplyBoxInfo(media,info){ if(info&&info.bits) media.bitDepth=info.bits; if(media.bitDepth===undefined) media.bitDepth=null; if(!info) return; if(info.vcodec) media.vcodec=info.vcodec; if(info.acodec){ media.acodec=info.acodec; media.hasAudio=true; } if(info.channels) media.channels=info.channels; if(info.sampleRate) media.sampleRate=info.sampleRate; if(info.fps) media.fps=info.fps; if(media.vcodec===undefined) media.vcodec=null; }
 // measured frame rate for containers we do not parse (WebM): frames presented over ~1.5 s of muted playback
 function _fsProbeFps(v){
@@ -39090,13 +39210,15 @@ function _fsSnapFrame(t,fps){ fps=fps||30; return Math.round(t*fps)/fps+0.0005; 
 function _fsStepFrame(dir){ const key=_fsTargetKey(); const vid=_fsVideoEls[key]; if(!vid) return; const q=_fsKeyParts(key); const fps=_fsClipFps(_fsMediaItem(q.n?getL(q.pid,q.sid,q.n):getBgName(q.pid,q.sid))); delete _fsWantPlay[key]; try{ vid.pause(); }catch(e){} const dur=isFinite(vid.duration)?vid.duration:1e9; const f=Math.round(vid.currentTime*fps)+dir; try{ vid.currentTime=Math.max(0,Math.min(dur-1/fps,f/fps+0.0005)); }catch(e){} _fsResetFades(); _fsTlSync(); }
 document.addEventListener('keydown',function(e){ if(typeof fsPresetId==='undefined'||!fsPresetId) return; const t=e.target; if(t&&(t.tagName==='INPUT'||t.tagName==='TEXTAREA'||t.tagName==='SELECT'||t.isContentEditable)) return; if(e.key===','){ _fsStepFrame(-1); e.preventDefault(); } else if(e.key==='.'){ _fsStepFrame(1); e.preventDefault(); } else if((e.key==='i'||e.key==='I'||e.key==='o'||e.key==='O')&&!e.metaKey&&!e.ctrlKey&&!e.altKey&&!e.repeat&&!document.querySelector('#dlg-overlay.show')&&_fsVideoEls[_fsTargetKey()]){ if(e.key==='i'||e.key==='I') _fsSetIn(); else _fsSetOut(); e.preventDefault(); } });
 function _fsPathFor(f){ try{ const nat=window.lookbookNative; if(nat&&typeof nat.pathForFile==='function') return nat.pathForFile(f)||''; }catch(e){} return ''; }
-function _fsMediaLacksInfo(it){ const m=it.media||{}; if(!m.fileName) return true; if(it.kind==='video'&&(m.vcodec===undefined||m.bitDepth===undefined||!m.fps)) return true; if(it.kind==='video'&&!(m.dur>0)&&!_srcLbcOff()&&!_lbqDurTried[it.l]) return true; return false; }   /* 16lq-webmdur */
+var _lbtSizeTried={};   /* 16lt-prores: an older clip's size is read from its header once a session */
+function _fsMediaLacksInfo(it){ const m=it.media||{}; if(!m.fileName) return true; if(it.kind==='video'&&(m.vcodec===undefined||m.bitDepth===undefined||!m.fps)) return true; if(it.kind==='video'&&m.vcodec&&!(m.w>0)&&!_lbtSizeTried[it.l]&&_lbcOn()) return true; if(it.kind==='video'&&!(m.dur>0)&&!_srcLbcOff()&&!_lbqDurTried[it.l]) return true; return false; }   /* 16lq-webmdur */
 // older items: the file name comes back with the stored File, codecs / fps / channels from the file itself
 function _fsEnrichMedia(it,blob){
   const _get=function(){ return it.media||null; }, _set=function(v){ if(v===null) delete it.media; else it.media=v; }, _a=_lbPart(_get);   /* unsaved-16kr2: what this fills in is not an edit */
   const m=it.media=it.media||{}; const todo=[];
   if(!m.fileName&&blob&&blob.name) m.fileName=blob.name;
   if(it.kind==='video'){
+    if(m.vcodec&&!(m.w>0)&&!_lbtSizeTried[it.l]&&_lbcOn()){ _lbtSizeTried[it.l]=1; todo.push(_fsParseIsoBmff(blob).then(function(info){ if(info&&info.vcodec&&info.w>0&&info.h>0&&!(m.w>0)){ m.w=info.w; m.h=info.h; m.noPic=true; } })); }   /* 16lt-prores: no size at import = no picture */
     if(m.vcodec===undefined||m.bitDepth===undefined||!m.fps){
       todo.push(_fsParseIsoBmff(blob).then(function(info){ _fsApplyBoxInfo(m,info); if(m.vcodec===undefined) m.vcodec=null; if(m.fps) return;
         const v=document.createElement('video'); v.playsInline=true; v.muted=true; v.preload='auto'; v.src=_fsMediaUrl(it.l);

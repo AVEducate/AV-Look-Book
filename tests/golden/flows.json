@@ -3351,6 +3351,30 @@
   {
    "name": "Quick Setup 16ls-qsgrey QG1 (Omar 2026-10-18, the mock-up: \"this the one i agree with for the update from the mock ups\", its \"Grey, each section keeps a thin colour strip\"): Quick Show Setup is the grey window (#14181f card), each section heading light with its colour strip kept and no glow (Show cyan, Destinations orange), no accent dot, a field focused shows the grey edge with no glow, the Set default for all switch is the mock-up's grey when on and dimmer when off",
    "ok": true
+  },
+  {
+   "name": "Wire 16lt-wirefit LT1 (Omar 2026-10-30: \"every time i go to it, its blow out and i need to hit fit to see all the I.O ... when i go to wire all the information ... should already fit. i should not see a massive blow up in wire\"): Wire opens fitted (never above 100 %, every tile inside the visible drawing area), also after a zoom-in left at 150 %; switching back to Simple fits; picking a page tab fits; none of the fitting is an Undo step",
+   "ok": true
+  },
+  {
+   "name": "Wire 16lt-wiregrid LT2 (Omar 2026-10-30: \"the BG grid also keeps jumping around every time i add anything ... and it got cyan can we make the lines grey\"): the grid is grey and its lines sit on the drawing's own marks (one passes through the drawing's 0,0) after opening, a zoom step, a scroll, the switch to Advanced and a router added there",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16lt-dragshrink LT3 (Omar 2026-10-30: \"once a video hovers over a layer or BG it can be dropped into, it should shrink to half it size and width, its a visual clue\"): a card dragged from the Advanced panel is followed by its own copy, full size off a drop place, half its width and height over a layer, a BG and an AUX box (the pointer stays on it), gone after the drop; the drop lands; the copy is not a card (nothing finds it by the card's key)",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16lt-prores LT4 (Omar 2026-10-30: a .mov \"show no video and say no [audio] yet plays audio\", AV505_GCS26_CaptureNowPromo_v1.mov = ProRes 422 LT + PCM, 470 MB): a clip the app cannot show says so on its card (Can't show + the format, no black cover) with the size its header states; a clip with sound but no wave reads AUDIO, one without sound NO AUDIO; a clip that plays is untouched; the import rule (_lbtNoPic) marks only a picture track the engine could not open",
+   "ok": true
+  },
+  {
+   "name": "Wire 16lt-thumbdrag LT5 (Omar 2026-10-30: \"when i change out the thumbnails of a tiles the source image is what drags out not the tile\"): a picture uploaded on a card never starts the browser's own image drag (draggable false), so a drag that starts on it drags the card: Wire's cards (Simple and Advanced), the I/O Patch cards and the Wire title block's logo",
+   "ok": true
+  },
+  {
+   "name": "Wire 16lt-wirefit LT6 (LT1 belongs to the user's own moves only): with Wire Advanced open on page 2 at 150 %, exporting every page (Wire's EXPORT), the Look Book with its Advanced Wire pages, an Undo and a Redo, copying the page and closing the copy each leave the zoom at 150 % and the page where it was; a page tab picked fits",
+   "ok": true
   }
  ],
  "pageErrors": []

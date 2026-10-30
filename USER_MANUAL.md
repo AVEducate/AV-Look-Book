@@ -43,7 +43,7 @@ Rename a source in any tool and it is renamed in all three. Add a destination an
 6. In the Destination Combinations table at the bottom, type a source name in the **L1** cell of a destination row and press Enter. A layer appears on that destination in that preset.
 7. Drag the layer where you want it, or double-click it and type Position and Size.
 8. Press **Copy** on that tile and **Paste** on another tile to carry the look across.
-9. Open **Wire**, press **Fit**, set a Cable Type on each card, type the switcher's real name.
+9. Open **Wire** (it opens fitted; <!-- 16lt-wirefit -->build 16lt-wirefit), set a Cable Type on each card, type the switcher's real name.
 10. Open **I/O Patch**, use **Set for all** (in each section's title: S0 sources, D0 destinations, A0 AUX / DSM, M0 multiviewers) for the house connector and resolution, then fix the exceptions on the cards.
 11. Press **Save**. Then **Look Book** for the PDF, **Excel** for the cue sheet, or **Send** to email the book, the cue sheet and the show file together.
 
@@ -468,14 +468,15 @@ Zoom: −, +, the percentage goes back to 100 %, Fit fills the space with the ti
 <!-- 16lc-vpvideo -->Each file card is the source card with a video job in each part (build 16lc-vpvideo):
 - **The picture** is the file's cover. Click it (or Enter / Space) to play the clip right there, with sound; click again to pause. The small square at its top left shows play / pause. One preview at a time, and only this page plays files.
 - **On the picture**: the frame rate (top right), **VIDEO** or **IMAGE** (bottom left, where a source card says CABLE) and the length (bottom right; while it plays it counts, 00:04 / 00:12).
-- **The colour bar** shows the clip's sound as a waveform (it turns cyan as it plays), or **NO AUDIO**; a picture leaves it empty.
+- <!-- 16lt-prores -->**A clip the app cannot show** (Apple ProRes, for example: the app plays its sound but has no ProRes decoder) shows **CAN'T SHOW** and its format on the picture instead of a black frame, and its real size (build 16lt-prores). Export it as H.264 (MP4 or MOV) to see it here.
+- **The colour bar** shows the clip's sound as a waveform (it turns cyan as it plays), or **NO AUDIO**; a picture leaves it empty. A clip with sound whose wave is not drawn (a file over 400 MB) reads **AUDIO** (build 16lt-prores: it read NO AUDIO).
 - **The trash** sits where the shuffle sits on a source card. <!-- 16lo-delwin -->It asks in the grey delete window of every trash (build 16lo-delwin) with Video Presets ticked: Video Presets empties every layer, background and AUX box that uses the file, forgets their clip settings and deletes the app's copy; the I/O Patch keeps the name as an I/O-only source unless it is ticked too (Everywhere: out of the show). The original on your drive is never touched. One Undo brings all of it back.
 - **The name**: click it (or the pencil) and type; this card shows it exactly as you type it (build 16lc-vpfinish). It is renamed everywhere (every preset, Wire, the I/O Patch) and the app's stored copy follows the name, so it keeps playing.
 - **The two boxes** show the file's size and its type (they cannot be changed).
 - A **dashed** card with **RELINK** on its picture means the app no longer has the file (another computer, cleared storage). Click the picture and pick the file again; every layer that used it comes back. <!-- 16lm-relink -->Pick the same file and it relinks at once. Pick another file (another name or size) and the app asks first: **Use this file** takes that file's length, size, resolution and picture (also as the cover of every BG it is on), in one Undo step; **Cancel** changes nothing. A video relinks only to a video, a picture only to a picture (build 16lm-relink). Undo puts the old details back; the file you picked stays linked.
 - A file is a source on every page: Wire's left panel and the I/O Patch list it with its cover as the card's picture (a picture you upload on that card wins), Simple's content lists show its cover. Only Video Presets › Advanced plays it.
 
-**Using a source.** Drag a source card (by its picture, or anywhere but its boxes; a destination or AUX card does not drag here):
+**Using a source.** Drag a source card (by its picture, or anywhere but its boxes; a destination or AUX card does not drag here). <!-- 16lt-dragshrink -->The card follows the pointer and turns half its size while it is over a place it can be dropped, a layer, a destination (BG), a Layers row or an AUX box, and full size again off it (build 16lt-dragshrink); a video or picture file card does the same:
 - onto a **layer** in the tile: that layer now shows this source;
 - onto a **destination** (anywhere that is not a layer): it becomes that destination's background (BG);
 - onto a row in the **Layers** tab: same thing, handy for small layers. Dropping on an empty "L2 - drop a source" row adds a layer;
@@ -546,7 +547,7 @@ Picking another layer stops what was playing, unless you started playback with P
 
 It follows everything you do: play, pause, scrub, a different preset. It shows what the canvas shows: the names and sizes, the layer tags, and a backdrop with its picture (or its shaded box), a new picture and Undo too (<!-- 16lc-fixes -->build 16lc-fixes). The 15 % see-through view of the layer strip (4.5.1) is never sent to it: the output always shows the real look. If you go back to Simple it goes black until you return. Press Display again, or close the window, to end it.
 
-It is a reference picture next to your switcher, not a playback machine: H.264 and HEVC clips play, ProRes and HAP show their cover picture.
+It is a reference picture next to your switcher, not a playback machine: H.264 and HEVC clips play; <!-- 16lt-prores -->ProRes and HAP cannot be shown (their card says so, build 16lt-prores; export H.264 to see them).
 
 ### 5.8 Common jobs
 
@@ -618,13 +619,15 @@ It answers "what is plugged into the switcher and what comes out". It does not s
 | **Simple / Advanced** | Simple is this drawing, drawn for you and edited by you. Advanced is the free-form builder (chapter 7). |
 | **− / +** | Zoom out / in by 10 %, from 10 % to 300 % (build 16lb-simple: from 25 % before, so Fit can show a whole Simple drawing of big tiles). The drawing stays centred. At 10 % the − button stays at 10 % (build 16ld-fix: it jumped to 100 %). |
 | **The percentage** | Click it to go back to 100 %. |
-| **Fit** | Shows the whole drawing between the two side panels, including anything you dragged away. It never zooms past 100 %, and in Advanced it keeps the drawing above the floating I/O Tools button. Its icon and word read white (build 16lc-picsize; the same on the Advanced Video Presets page). |
+| **Fit** | Shows the whole drawing between the two side panels, including anything you dragged away. It never zooms past 100 %, and in Advanced it keeps the drawing above the floating I/O Tools button. <!-- 16lt-wirefit -->Wire opens fitted, and so do switching to Simple and picking a page tab (build 16lt-wirefit: it opened at the zoom saved with the show, often far too big); zoom in again whenever you like. Its icon and word read white (build 16lc-picsize; the same on the Advanced Video Presets page). |
 | **Reset Layout** | Puts every moved tile, the router and every shaped cable back to the automatic columns. The cabling (which router row each tile is on, the tiles you took off) stays. One Undo brings your layout back. |
 | **Export** | Opens the Export window (6.5). It has the look of Reset Layout beside it (build 16lc-picsize), as Export has in the page bar of Video Presets, its Advanced page and the I/O Patch. |
 
 <!-- 16lr-wirebar -->However many Advanced pages there are, zoom / Fit, Reset Layout and Export keep their size and Fit can always be clicked: only the page tabs give way, and their strip scrolls (the mouse wheel scrolls it sideways; build 16lr-wirebar).
 
 Trackpad pinch, or Ctrl / Cmd + mouse wheel, zooms around the pointer. A plain two-finger scroll or wheel pans. The Space bar is not a temporary Hand tool here.
+
+<!-- 16lt-wiregrid -->**The grid** is grey and belongs to the drawing (build 16lt-wiregrid): its lines sit on the drawing's own marks and move and scale with the tiles, so adding a tile, Fit or a zoom no longer slides the grid under them. Zoomed far out, only the coarse lines show.
 
 ### 6.2 Left panel: the cards
 
