@@ -2849,7 +2849,7 @@
    "ok": true
   },
   {
-   "name": "Video Presets 16lc-vpcards-fix VF12 (the attack round: always-shown scroll bars): with the lists drawing a 15 px scroll bar, Video Presets > Advanced's panel and Wire's panel widen by it: no card is cut, nothing scrolls sideways",
+   "name": "Video Presets 16lc-vpcards-fix VF12 (the attack round: always-shown scroll bars; 16lu-nobars): with the lists styled to draw a 15 px scroll bar, no bar is drawn (Omar 2026-10-30: remove them) and Video Presets > Advanced's panel and Wire's panel keep their width: no card is cut, nothing scrolls sideways",
    "ok": true
   },
   {
@@ -3374,6 +3374,18 @@
   },
   {
    "name": "Wire 16lt-wirefit LT6 (LT1 belongs to the user's own moves only): with Wire Advanced open on page 2 at 150 %, exporting every page (Wire's EXPORT), the Look Book with its Advanced Wire pages, an Undo and a Redo, copying the page and closing the copy each leave the zoom at 150 % and the page where it was; a page tab picked fits",
+   "ok": true
+  },
+  {
+   "name": "Look 16lu-nobars LU1 (Omar 2026-10-30: \"you added all over the program a scroll bar ... remove them. there only visual cues for the user we dont need them\"): with every list styled to draw a 15 px scroll bar (as macOS draws them with a mouse plugged in), no list on Video Presets (Simple and Advanced), Wire or the I/O Patch draws one; a list scrolled down still hands a click to the card under the pointer",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16lu-modmenu LU2 (Omar 2026-10-30, #27: \"the modifer words opened correctly but the background they are in did not\"): on Video Presets > Advanced the MODIFIERS menu opens at its button and its body is as wide as its words at UI Size Small, Default and Large (there the button is the gear alone at Default and Large): every item on one line, the body never narrower than the button; Simple's menu as before",
+   "ok": true
+  },
+  {
+   "name": "Wire 16lu-cablekey LU3 (Omar 2026-10-30: the export's cable colour code \"where empty on every page. that is wrong\"; his answer \"Every cable on the page\"): the printed CABLE COLOUR CODE lists every cable on the page: a typed source under its cable type, a source with no Cable Type by its own name in its own colour, the router's outputs by the router's name; the sheet and the key under an SVG show them; no cable reads No cables on this page; the Details panel's key on screen is unchanged",
    "ok": true
   }
  ],

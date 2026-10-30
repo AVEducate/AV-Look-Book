@@ -13738,14 +13738,14 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
     return is({ had, kept }, { had: true, kept: false }, 'the picture had the focus / the focus still in the card after the drag');
   });
   // 16lc-vpcards-fix VF12: NEW
-  await check('Video Presets 16lc-vpcards-fix VF12 (the attack round: always-shown scroll bars): with the lists drawing a 15 px scroll bar, Video Presets > Advanced\'s panel and Wire\'s panel widen by it: no card is cut, nothing scrolls sideways', async () => {
+  await check('Video Presets 16lc-vpcards-fix VF12 (the attack round: always-shown scroll bars; 16lu-nobars): with the lists styled to draw a 15 px scroll bar, no bar is drawn (Omar 2026-10-30: remove them) and Video Presets > Advanced\'s panel and Wire\'s panel keep their width: no card is cut, nothing scrolls sideways', async () => {
     await restore(); const st = document.createElement('style'); st.id = 'vf-sb'; st.textContent = '#fs-source-list::-webkit-scrollbar,#wire-sources-panel::-webkit-scrollbar{width:15px;background:#222}'; document.head.appendChild(st);
     const sideways = l => !!l && [l.scrollWidth > l.clientWidth + 0.5, $$('.iog-card', l).filter(e => e.getClientRects().length && e.getBoundingClientRect().right > l.getBoundingClientRect().left + l.clientWidth + 0.5).length];
     await _vcAdv(); _fsRenderSources(true); await wait(300); const vp = [Math.max(0, $('#fs-source-list').offsetWidth - $('#fs-source-list').clientWidth) > 0].concat(sideways($('#fs-source-list'))); try { closeFullscreen(); } catch (e) {} await wait(200);
     openWireMode(); await wait(700); _wireRender(); await wait(300); const w = $('#wire-sources-panel'); const wire = [Math.max(0, w.offsetWidth - w.clientWidth) > 0].concat(sideways(w));
     const lw = $('#wire-panel-left'); lw.style.width = '';
     await _vfBack();
-    return is({ vp, wire }, { vp: [true, false, 0], wire: [true, false, 0] }, 'Video Presets / Wire: [a scroll bar drawn, scrolls sideways, cards cut]');
+    return is({ vp, wire }, { vp: [false, false, 0], wire: [false, false, 0] }, 'Video Presets / Wire: [a scroll bar drawn, scrolls sideways, cards cut]');
   });
   // 16lc-vpcards-fix VF13: NEW
   await check('Wire 16lc-vpcards-fix VF13 (the attack round on 16lc-vpfinish D4, the I/O standard card): a hand-made Wire > Advanced source renamed "ppt a" (PPT A in another case) is refused (Name in use), as the I/O Patch card refuses it', async () => {
@@ -16933,6 +16933,80 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
     finally { try { closeWireMode(); } catch (e) {} await restore(); }
     return is(out, { export: [2, 1.5, true], book: [true, 1.5, true], undo: [1.5, true], redo: [1.5, true], copy: [true, 1.5], close: [false, 1.5], pick: true },
       'export [pages, zoom, the page] / Look Book [made, zoom, the page] / Undo [zoom, the page] / Redo / page copied [on the copy, zoom] / copy closed [still there, zoom] / another tab picked fits');
+  });
+  // 16lu-nobars LU1: NEW
+  await check('Look 16lu-nobars LU1 (Omar 2026-10-30: "you added all over the program a scroll bar ... remove them. there only visual cues for the user we dont need them"): with every list styled to draw a 15 px scroll bar (as macOS draws them with a mouse plugged in), no list on Video Presets (Simple and Advanced), Wire or the I/O Patch draws one; a list scrolled down still hands a click to the card under the pointer', async () => {
+    const out = {}, want = {};
+    const st = document.createElement('style'); st.id = 'lu-sb'; st.textContent = '*::-webkit-scrollbar{width:15px;height:15px;background:#222}'; document.head.appendChild(st);
+    const bars = () => $$('*').filter(el => { const cs = getComputedStyle(el); if (cs.display === 'none' || !el.getClientRects().length) return false;
+      const v = el.offsetWidth - el.clientWidth - (parseFloat(cs.borderLeftWidth) || 0) - (parseFloat(cs.borderRightWidth) || 0), h = el.offsetHeight - el.clientHeight - (parseFloat(cs.borderTopWidth) || 0) - (parseFloat(cs.borderBottomWidth) || 0);
+      return (v > 0.5 && /(auto|scroll)/.test(cs.overflowY)) || (h > 0.5 && /(auto|scroll)/.test(cs.overflowX)); }).map(el => el.id || (typeof el.className === 'string' ? el.className : '') || el.tagName);
+    try {
+      await restore(); render(); await wait(300);
+      out.simple = bars(); want.simple = [];
+      await _vcAdv(); await wait(300); out.advanced = bars(); want.advanced = []; try { closeFullscreen(); } catch (e) {} await wait(200);
+      openWireMode(); await wait(800); _wireRender(); await wait(300); out.wire = bars(); want.wire = [];
+      const p = $('#wire-sources-panel'); p.scrollTop = 160; await wait(150); const pr = p.getBoundingClientRect();
+      const c = $$('.iog-card', p).find(x => { const r = x.getBoundingClientRect(); return r.top > pr.top + 10 && r.bottom < pr.bottom - 10; });
+      if (c) { const r = c.getBoundingClientRect(), h = document.elementFromPoint(r.left + r.width / 2, r.top + 12); out.hit = [p.scrollTop > 0, !!h && c.contains(h)]; } else out.hit = 'no card in view';
+      want.hit = [true, true];
+      try { closeWireMode(); } catch (e) {} await wait(300);
+      openSystem(); await wait(800); out.io = bars(); want.io = [];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { st.remove(); await _vfBack(); await restore(); }
+    return is(out, want, 'scrollers drawing a bar on Video Presets Simple / Advanced / Wire, [Wire\'s panel scrolled, the click lands in the card] / scrollers drawing a bar on the I/O Patch');
+  });
+
+  // 16lu-modmenu LU2: NEW
+  await check('Video Presets 16lu-modmenu LU2 (Omar 2026-10-30, #27: "the modifer words opened correctly but the background they are in did not"): on Video Presets > Advanced the MODIFIERS menu opens at its button and its body is as wide as its words at UI Size Small, Default and Large (there the button is the gear alone at Default and Large): every item on one line, the body never narrower than the button; Simple\'s menu as before', async () => {
+    const out = {}, want = {};
+    const one = async sel => { const b = $(sel); if (!b) return 'no button';
+      b.click(); await wait(300); const m = $('#adv-menu'), br = b.getBoundingClientRect(), mr = m.getBoundingClientRect(), it = $('.adv-item', m);
+      const r = [m.classList.contains('open'), Math.abs(mr.left - br.left) <= 1.5, mr.width >= br.width - 1, m.scrollWidth <= m.clientWidth + 1, it.getBoundingClientRect().height];
+      closeAdvancedMenu(); await wait(150); return r; };
+    try {
+      await restore(); render(); await wait(300); setA11yScale(1); await wait(300);
+      const s1 = await one('#canvas-area button[onclick*="toggleAdvancedMenu"]');
+      if (typeof s1 === 'string') return s1;
+      out.simple = s1.slice(0, 4); want.simple = [true, true, true, true];
+      await _vcAdv(); await wait(300);
+      for (const z of [0.9, 1, 1.15]) {
+        setA11yScale(z); await wait(450);
+        const r = await one('#fs-canvas button[onclick*="toggleAdvancedMenu"]');
+        out['z' + z] = typeof r === 'string' ? r : r.slice(0, 4).concat([Math.abs(r[4] - s1[4] * z) <= 2]); want['z' + z] = [true, true, true, true, true];
+      }
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { setA11yScale(1); } catch (e) {} try { closeAdvancedMenu(); } catch (e) {} await _vfBack(); await restore(); }
+    return is(out, want, 'Simple / Advanced at 90 %, 100 %, 115 %: [open, at its button, at least the button wide, no word wider than the body, one line per item]');
+  });
+
+  // 16lu-cablekey LU3: NEW
+  await check('Wire 16lu-cablekey LU3 (Omar 2026-10-30: the export\'s cable colour code "where empty on every page. that is wrong"; his answer "Every cable on the page"): the printed CABLE COLOUR CODE lists every cable on the page: a typed source under its cable type, a source with no Cable Type by its own name in its own colour, the router\'s outputs by the router\'s name; the sheet and the key under an SVG show them; no cable reads No cables on this page; the Details panel\'s key on screen is unchanged', async () => {
+    const out = {}, want = {};
+    try {
+      await restore(); render(); await wait(300);
+      openWireMode(); await wait(700); _wireSwitchToAdvanced(); await wait(700); okDialogs(); await wait(1200); okDialogs(); await wait(300);
+      const wa = wireAdvanced, src = (wa.sources || []).filter(s => s && s.name && (wa.wires || []).some(w => w.fromId === 'asrc:' + s.id || String(w.fromId).indexOf('asp:' + s.id + ':') === 0));
+      if (src.length < 2) return 'fewer than two cabled sources on page 1';
+      const A = src[0].name, B = src[1].name;
+      _sysSetSourceMeta(A, { connectorType: 'SDI' }); _sysSetSourceMeta(B, { connectorType: '' }); _wireRender(); await wait(300);
+      const rows = _lbuKeyRows();
+      const typed = rows.find(r => r.spec && !r.spec.untyped && r.sources.indexOf(A) >= 0), un = rows.find(r => r.spec && r.spec.untyped && r.spec.type === B);
+      const rop = (wa.wires || []).find(w => String(w.fromId).indexOf('rop:') === 0), rt = rop ? (wa.routers || []).find(r => r.id === String(rop.fromId).split(':')[1]) : null;
+      out.rows = [!!typed && typed.spec.type, !!un, !!un && un.spec.color === _wireGetSourceColor(B), rows.some(r => r.spec && r.spec.untyped && r.spec.type === A), rt ? rows.some(r => r.spec && r.spec.untyped && r.spec.type === _wtlName('router', rt)) : 'no router cable'];
+      want.rows = ['SDI', true, true, false, true];
+      const sheet = _wireSheetSvg(_wireBuildAdvancedExportSvg('dark', { transparent: true, noLegend: true }), { theme: 'dark', pageLabel: 'Page 1', title: 'T', version: 'V1', legendRows: rows });
+      const esc = t => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;');
+      out.sheet = [sheet.indexOf('no cable type') >= 0, sheet.indexOf('No cables on this page') >= 0];
+      want.sheet = [true, false];
+      const lg = _wireLegendSVG(0, 0, 'dark'); out.legend = [lg.h > 0, lg.svg.indexOf('No cable type') >= 0]; want.legend = [true, true];
+      const empty = _wireSheetSvg(_wireBuildAdvancedExportSvg('dark', { transparent: true, noLegend: true }), { theme: 'dark', pageLabel: 'Page 1', title: 'T', version: 'V1', legendRows: [] });
+      out.empty = [empty.indexOf('No cables on this page') >= 0, empty.indexOf('No cable types set on this page') >= 0]; want.empty = [true, false];
+      const scr = _wireCableKeyHTML(); out.screen = [scr.indexOf('>' + esc(B) + '<') < 0, scr.indexOf('No cable type') < 0]; want.screen = [true, true];
+      const ex = _wireGetAdvancedPagesForExport('dark', {}); out.export = !!(ex[0] && ex[0].legend.some(r => r.spec && r.spec.untyped && r.spec.type === B)); want.export = true;
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { closeWireMode(); } catch (e) {} await restore(); }
+    return is(out, want, '[A under SDI, B listed, in its colour, A not listed by name, the router listed] / sheet [no cable type, no empty note] / SVG key [drawn, B listed] / an empty key [No cables on this page, old words] / screen key [no B row, no untyped row] / Wire EXPORT page 1 lists B');
   });
   try { _fsPauseAll(); } catch (e) {} $$('video').forEach(v => { try { v.muted = true; v.pause(); } catch (e) {} });
   return { checks };

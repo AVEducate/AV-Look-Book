@@ -242,7 +242,7 @@ Details: HANDBOOK section 5
 `16lq-cropreset`, `16lq-webmdur`, `16lq-bgone`, `16lq-ptabs`; `16lr-wirebar`, `16lr-sheetfit`, `16lr-twoout`, `16lr-menuzoom`,
 `16lr-bookprint`, `16lr-cvcheck`, `16lr-noneticked`, `16lr-kbvcal`, `16lr-exportundo`, `16lr-mailtext`; `16ls-vponly`,
 `16ls-delsize`, `16ls-onename`, `16ls-greyfocus`, `16ls-qsgrey`; `16lt-wirefit`, `16lt-wiregrid`,
-`16lt-dragshrink`, `16lt-prores`, `16lt-thumbdrag`).
+`16lt-dragshrink`, `16lt-prores`, `16lt-thumbdrag`; `16lu-nobars`, `16lu-modmenu`, `16lu-cablekey`).
 
 **One card (16lc-vpcards, 2026-10-06)** — the I/O Patch > Simple card (`_iogCardHTML` + `_iogSrcObj` / `_iogOutObj`) is also the card of
 Wire's left panel (desktop; the phone keeps Wire's own) and of the Video Presets > Advanced left panel (Wire > Simple's sections:
@@ -415,6 +415,14 @@ Never add a time-based "ignore clicks for N ms": the phone gate taps the dialog'
   (ProRes: `media.noPic`, `_lbtNoPic`, `_lbtCantShow`) says so on its card with its header's size, and sound without a wave reads
   AUDIO; every picture on a card and the Wire logo is `draggable="false"`. The gate draws the Mac's own scroll bars (HANDBOOK, end).
   HANDBOOK › 16lt.
+  16lu (2026-10-30, Omar's test of 16lr; desktop only): no scroll bar is drawn anywhere (`::-webkit-scrollbar` hidden at the end of
+  the main style block, `scrollbar-width:auto` on the two page-tab strips; NEVER `scrollbar-width:none`: Chrome 14x stops
+  hit-testing a scrolled scroller's children with it, the `.lb-lstrip` note), so `_lbgSbFit` / `_lbfPanelMin` measure 0; the
+  MODIFIERS body is its button's width only when its words fit (`toggleAdvancedMenu`: the Advanced preset row's gear alone is
+  55 px); the PRINTED Cable Colour Code lists every cable on the page (`_lbuKeyRows`: the typed rows of `_wireCableTypesInUse`,
+  then one row per source / router / device / Simple output whose cables have no type, in the colour they are drawn), the
+  sheet's key ends in "+ n more" above the PROJECT block, an empty one reads No cables on this page; the Details key on screen
+  is unchanged. HANDBOOK › 16lu.
 - Exports' readable print (16li-print: `_lbpInk`, `_wireLogoWordSvg`, `_wireTbFitText`): a value the Look Book prints in a colour made
   for the white page gets an inline colour from `_lbpInk(opts)` in the Dark book (never a stylesheet rule); words drawn into the Wire
   sheet's boxes are measured with `_wireTextWidth` and fitted (smaller, then "…"), never left to run past a line. HANDBOOK › 16li-print.

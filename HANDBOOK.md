@@ -1740,6 +1740,37 @@ anchor on the function name and replace the first occurrence after it, never all
     2026-10-30 too); `Wire: both side panels collapse to a strip and come back` and `Video Presets 16lc-vpfinish VD2` (they add
     the scroll bar the list draws to the panel's width: 15 px with a mouse plugged in, read 276 / 277 on 16ls too): see the end of
     this handbook.
+- **16lu** (2026-10-30, build 16lu on 16lt; search `16lu-`). Omar's test of 16lr (backups/rounds/r16lu-lrtest/
+  OMAR_ANSWERS_2026-10-30.md). Desktop only (`_lbcOn`): the phone keeps its ways.
+  - **16lu-nobars** ("you added all over the program a scroll bar ... it take away space on the screen that is already tight
+    remove them. there only visual cues for the user we dont need them"): macOS draws 15 px classic bars whenever a mouse is
+    plugged in (Show scroll bars: Automatic), and the app never hid them; 16lr's Wire page tabs scroll instead of squeezing, so
+    that strip showed one too. One rule at the END of the main style block hides `::-webkit-scrollbar` for every element of a
+    desktop body (and the root), `!important`; the page-tab strips get `scrollbar-width:auto` back (Chrome ignores the
+    `::-webkit-scrollbar` rules of an element that sets `scrollbar-width`). Never `scrollbar-width:none`: in Chrome 14x a
+    scroller with `scrollbar-width` set stops hit-testing its children once it is scrolled (the `.lb-lstrip` note). Scrolling
+    is unchanged (wheel, trackpad, keys; a page-tab strip turns a plain wheel sideways, 16lr). `_lbgSbFit` / `_lbfPanelMin`
+    measure 0, so the side panels keep their own widths. LU1; VF12 now expects no bar even when one is styled 15 px wide.
+  - **16lu-modmenu** (#27, "the modifer words opened correctly but the background they are in did not"): 16lr placed the menu
+    at its button at every UI Size; its body took the button's width (`data-fit=header`, 16gs) and the Video Presets >
+    Advanced preset row's MODIFIERS button is the gear alone at Default and Large (55 / 63 px, 127 at Small where its word fits),
+    so every item wrapped (v0.8.7 too, at Default). `toggleAdvancedMenu` measures the body's own width: the header fit only when
+    the words fit in the button, else the body keeps its width with the button's as its minimum. LU2.
+  - **16lu-cablekey** ("in the export the cable colour code where empty on every page. that is wrong"; his answer: "Every cable
+    on the page"): the key listed cable TYPES in use (16ei); his show has none set, so every page read No cable types set on
+    this page. `_lbuKeyRows()` = `_wireCableTypesInUse()` + one row per name and colour for the cables drawn with no type, in
+    the colour `_wireRenderAdvancedDiagram` / `_slbCables` give them: a source's cables (`_wireSrcPortEdgeStyle`), a router's
+    outputs (cyan, the name on its title bar, `_wtlName`), a device's outputs (#5aa9ff), on Simple a destination's / AUX's /
+    multiviewer's cable (`_wireDestEdgeStyle`, `_cmMvEdgeStyle`); return feeds and cables a typed hand-made destination colours
+    are left out (typed rows / their own dash). Rows `{spec: {untyped: true, fam: 'none', type: name, label: 'No cable type',
+    color}, sources}` (one entry per cable). Used by every printed key: `_wireGetAdvancedPagesForExport` (legend),
+    `_wireExportSheetList`, the Look Book's Wire pages (`_rows` in `_exportPDF0`), `_wireLegendSVG`; the sheet draws an untyped
+    row as the colour block with the name (`_wireKeyFitLabel`, ink by `_lbuInk`), no icon, a short sample and "no cable type";
+    rows past the room above the PROJECT block (`(H - 518) / 26`) end in "+ n more on the drawing"; an empty key reads No cables
+    on this page. The Details panel's key on screen (`_wireCableKeyHTML`) is unchanged: it still teaches the Cable Type pick. LU3.
+  - Also found: #13 (Source crop drops on a new source) was not tested: crop is the layer panel's **Mask** (16js) and, for a
+    picture or clip, Advanced's **Source crop**; on the later list as Omar asked. Omar's 10-character name rule is round 16lv.
+
 - Declined by the owner, do not resurface: mask shapes, anchor points, hardware profiles, canvas/WebGL renderer,
   interpolation filter toggles, upscale-factor notes, per-layer "sharp pixels", any licence mention.
 

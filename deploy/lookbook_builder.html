@@ -4808,6 +4808,15 @@ body:not(.is-mobile) #qs-sd-toggle.lbs-on #qs-sd-knob{background:#c9d1d9!importa
 body:not(.is-mobile) #wire-diagram-scroll{background-image:linear-gradient(rgba(126,135,148,.10) 1px,transparent 1px),linear-gradient(90deg,rgba(126,135,148,.10) 1px,transparent 1px),linear-gradient(rgba(126,135,148,.22) 1px,transparent 1px),linear-gradient(90deg,rgba(126,135,148,.22) 1px,transparent 1px)!important}
 /* 16lt-dragshrink: the copy of a card that follows the pointer while it is dragged on Video Presets > Advanced (_lbtGhostStart) */
 .lbt-ghost{position:fixed!important;left:0!important;top:0!important;z-index:100000;margin:0!important;pointer-events:none!important;opacity:.92;transition:scale .12s ease-out;box-shadow:0 12px 28px rgba(0,0,0,.55)}
+/* 16lu-nobars (Omar 2026-10-30: "you added all over the program a scroll bar ... it take away space on the screen that is already tight
+   remove them. there only visual cues for the user we dont need them"): no scroll bar is drawn anywhere on the desktop, whatever the
+   Mac's or Windows' setting (macOS draws 15 px bars whenever a mouse is plugged in, and the side panels then widened by them,
+   _lbgSbFit / _lbfPanelMin: they measure 0 now). Every list still scrolls with the wheel, the trackpad and the keys.
+   ::-webkit-scrollbar, never scrollbar-width:none: a scroller with scrollbar-width set stops hit-testing its children once it is
+   scrolled in Chrome 14x (the .lb-lstrip note), and Chrome skips these rules for an element that sets it (hence auto on the page
+   tabs, which set thin). The phone keeps its own (frozen). */
+body:not(.is-mobile) ::-webkit-scrollbar,body:not(.is-mobile)::-webkit-scrollbar,html:has(>body:not(.is-mobile))::-webkit-scrollbar{width:0 !important;height:0 !important;display:none !important;background:transparent !important}
+body:not(.is-mobile) #io-page-tabs,body:not(.is-mobile) #wire-page-tabs{scrollbar-width:auto}
 </style>
 </head>
 <body data-skin="black">
@@ -4958,7 +4967,7 @@ Also called DSM (Downstage Monitor) in broadcast and theater workflows, same thi
   <div class="bb-cell bb-pill bb-cyan" title="The largest number of layers used in any single preset, this is the figure to compare against your switcher's per-scene layer budget. (The most complex single moment in the show.)"><span class="bb-label">Layers</span><strong id="bb-layers">0</strong></div>
   <div id="bb-spacer"></div>
   <div class="bb-cell" id="bb-sel" style="font-size:10px;opacity:.5">—</div>
-  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy, hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16lt</div>
+  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy, hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16lu</div>
   <!-- 16kq (Omar): the Modifiers menu lives on each preset tile only; this place is kept for the Educator tool of a future build (greyed out, does nothing) --><button class="bb-util" id="tb-educator" type="button" disabled aria-disabled="true" title="Educator: coming in a future build" aria-label="Educator, coming in a future build" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:default;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em;opacity:.38"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10L12 5 2 10l10 5 10-5z"/><path d="M6 12v5c0 1 2.7 2.5 6 2.5s6-1.5 6-2.5v-5"/><line x1="22" y1="10" x2="22" y2="16"/></svg><span>Educator</span></button>
   <button class="bb-util" onclick="actions.help()" title="Help, quick reference, keyboard shortcuts, glossary, accessibility" aria-label="Help, quick reference, keyboard shortcuts, glossary, accessibility" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="4.93" y1="4.93" x2="9.17" y2="9.17"/><line x1="14.83" y1="14.83" x2="19.07" y2="19.07"/><line x1="14.83" y1="9.17" x2="19.07" y2="4.93"/><line x1="4.93" y1="19.07" x2="9.17" y2="14.83"/></svg>Help</button>
   <button class="bb-util" id="tb-bug" onclick="reportBug()" title="Report a bug, opens an email to AV Educate with your show file — attached in the app, downloaded for you to attach in a browser" aria-label="Report a bug" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="7.2"/><path d="M15.4 15.4L21 21" stroke-width="2.6"/><ellipse cx="10" cy="11" rx="2.5" ry="3.3" fill="currentColor" stroke="none"/><circle cx="10" cy="7" r="1.5" fill="currentColor" stroke="none"/><path d="M7.5 9.2l-1.7-.8M7.4 11.2H5.6M7.7 13.1l-1.5 1.1M12.5 9.2l1.7-.8M12.6 11.2h1.8M12.3 13.1l1.5 1.1M9.2 5.9l-.8-1.1M10.8 5.9l.8-1.1" stroke-width="1.3"/></svg>Bug</button>   <!-- 16jk (Omar): Report a bug, after Help -->
@@ -28264,7 +28273,7 @@ function _wireGetAdvancedPagesForExport(theme, opts){
   const used = wireAdvanced._pages.filter(p => _wireAdvPageUsed(p.id));   // 16iu: the spare page never prints
   (used.length ? used : wireAdvanced._pages.slice(0, 1)).forEach(p => {
     _wireSwitchPage(p.id);
-    out.push({ id: p.id, name: p.name || ('Page ' + (out.length + 1)), svg: _wireBuildAdvancedExportSvg(theme, opts), legend: _wireCableTypesInUse() });   // 16ek: key rows per page
+    out.push({ id: p.id, name: p.name || ('Page ' + (out.length + 1)), svg: _wireBuildAdvancedExportSvg(theme, opts), legend: _lbuKeyRows() });   // 16ek: key rows per page; 16lu-cablekey: every cable
   });
   _wireSwitchPage(origPage);
   return out;
@@ -28744,24 +28753,29 @@ function _wireSheetSvg(innerSvg, o){
   barRow('CABLE COLOUR CODE');
   if(!rows.length){
     s += '<rect x="' + cx0 + '" y="' + cy + '" width="' + cw + '" height="28" fill="' + cellBg + '" stroke="' + line + '" stroke-width="0.8"/>';
-    s += '<text x="' + (cx0 + 10) + '" y="' + (cy + 18) + '" font-size="10" font-style="italic" fill="' + muted + '">No cable types set on this page</text>';
+    s += '<text x="' + (cx0 + 10) + '" y="' + (cy + 18) + '" font-size="10" font-style="italic" fill="' + muted + '">' + (_lbcOn() ? 'No cables on this page' : 'No cable types set on this page') + '</text>';   /* 16lu-cablekey: every cable is listed now, so an empty key means no cable */
     cy += 28;
   } else {
-    rows.forEach(r => {
+    let _lbuR = rows;   /* 16lu-cablekey: the key stays above the PROJECT block (Letter: 26 rows); past that its last row reads + n more */
+    { const _mx = Math.max(1, Math.floor((H - 518) / 26)); if(_lbcOn() && rows.length > _mx) _lbuR = rows.slice(0, _mx - 1).concat([{ more: rows.length - (_mx - 1) }]); }
+    _lbuR.forEach(r => {
+      if(r.more){ s += '<rect x="' + cx0 + '" y="' + cy + '" width="' + cw + '" height="26" fill="' + cellBg + '" stroke="' + line + '" stroke-width="0.8"/>'; s += '<text x="' + (cx0 + 10) + '" y="' + (cy + 17) + '" font-size="10" font-style="italic" fill="' + muted + '">+ ' + r.more + ' more on the drawing</text>'; cy += 26; return; }
       const sp = r.spec; const rh = 26;
       s += '<rect x="' + cx0 + '" y="' + cy + '" width="' + cw + '" height="' + rh + '" fill="' + cellBg + '" stroke="' + line + '" stroke-width="0.8"/>';
       // colour block (RCM style) + type label
       s += '<rect x="' + (cx0 + 1) + '" y="' + (cy + 1) + '" width="112" height="' + (rh - 2) + '" fill="' + sp.color + '"/>';
-      s += _lbIconSVGGroup(_lbConnIconKey(sp.type), cx0 + 5, cy + 4, 18, '#0a0e16');   // 16jj
-      if(sp.fam === 'custom') s += _wireKeyFitLabel(sp.type, cx0, cy, !!_lbConnIconKey(sp.type), esc);   /* 16kw-fix: a typed name stays in its block */
+      if(!sp.untyped) s += _lbIconSVGGroup(_lbConnIconKey(sp.type), cx0 + 5, cy + 4, 18, '#0a0e16');   // 16jj
+      if(sp.untyped) s += _wireKeyFitLabel(sp.type, cx0, cy, false, esc).replace('fill="#0a0e16"', 'fill="' + _lbuInk(sp.color) + '"');   /* 16lu-cablekey: a source with no cable type, by its name */
+      else if(sp.fam === 'custom') s += _wireKeyFitLabel(sp.type, cx0, cy, !!_lbConnIconKey(sp.type), esc);   /* 16kw-fix: a typed name stays in its block */
       else
       s += '<text x="' + (cx0 + 66) + '" y="' + (cy + 17) + '" text-anchor="middle" font-size="11" font-weight="800" fill="#0a0e16">' + esc(sp.type) + '</text>';
       // line sample with pattern + arrow
-      const lx0 = cx0 + 124, lx1 = (sp.fam === 'custom') ? cx0 + 150 : cx0 + cw - 40, ly = cy + rh / 2;   /* 16kw-menus: a typed connector: a short grey sample and the words below */
+      const lx0 = cx0 + 124, lx1 = (sp.fam === 'custom' || sp.untyped) ? cx0 + 150 : cx0 + cw - 40, ly = cy + rh / 2;   /* 16kw-menus: a typed connector: a short grey sample and the words below */
       if(sp.roundStart) s += '<circle cx="' + (lx0 + 4) + '" cy="' + ly + '" r="3.2" fill="' + paper + '" stroke="' + sp.color + '" stroke-width="1.6"/>';
       s += '<path d="M' + (sp.roundStart ? lx0 + 8 : lx0) + ' ' + ly + ' H' + lx1 + '" stroke="' + sp.color + '" stroke-width="' + sp.sw + '" fill="none"' + (sp.dash ? ' stroke-dasharray="' + sp.dash + '"' : '') + '/>';
       s += '<path d="M' + lx1 + ' ' + (ly - 5) + ' L' + (lx1 + 10) + ' ' + ly + ' L' + lx1 + ' ' + (ly + 5) + ' Z" fill="' + sp.color + '"/>';
-      if(sp.fam === 'custom') s += '<text x="' + (lx1 + 18) + '" y="' + (cy + 17) + '" font-size="9" font-style="italic" fill="' + muted + '">no colour code</text>';   /* 16kw-menus: grey is not a colour code: every typed connector draws grey */
+      if(sp.fam === 'custom') s += '<text x="' + (lx1 + 18) + '" y="' + (cy + 17) + '" font-size="9" font-style="italic" fill="' + muted + '">no colour code</text>';
+      else if(sp.untyped) s += '<text x="' + (lx1 + 18) + '" y="' + (cy + 17) + '" font-size="9" font-style="italic" fill="' + muted + '">no cable type</text>';   /* 16lu-cablekey */   /* 16kw-menus: grey is not a colour code: every typed connector draws grey */
       s += '<text x="' + (cx0 + cw - 6) + '" y="' + (cy + 17) + '" text-anchor="end" font-size="9" fill="' + muted + '">' + r.sources.length + '</text>';
       cy += rh;
     });
@@ -28842,7 +28856,7 @@ function _wireExportSheetList(theme, fit){   /* 16lr-sheetfit: fit = the paper t
     // Default-named pages ("Page 2") would echo the page label in the title cell — use a real sheet title instead.
     return pages.map((p, i) => _wireSheetSvg(p.svg, { theme: theme, pageLabel: 'Page ' + (i + 1), title: (/^page\s*\d+$/i.test(String(p.name || '').trim()) ? 'Signal Flow' : p.name), version: ver, legendRows: p.legend, fit: fit }));
   }
-  return [_wireSheetSvg(_wireBuildExportSvg(theme, { transparent: true, noLegend: true }), { theme: theme, pageLabel: 'Page 1', title: 'Full System', version: ver, legendRows: _wireCableTypesInUse(), fit: fit })];
+  return [_wireSheetSvg(_wireBuildExportSvg(theme, { transparent: true, noLegend: true }), { theme: theme, pageLabel: 'Page 1', title: 'Full System', version: ver, legendRows: _lbuKeyRows(), fit: fit })];   /* 16lu-cablekey */
 }
 /* 16kk: a sheet's own size, read from the root tag _wireSheetSvg wrote (Letter 1600 x 1131 up to A0 6809 x 4406) */
 function _wireSheetDims(sh){
@@ -29280,6 +29294,60 @@ function _wireCableTypesInUse(){
   rows.sort((a, b) => _ox(a.spec.type) - _ox(b.spec.type));
   return rows;
 }
+/* ── 16lu-cablekey (Omar 2026-10-30, the Wire export's CABLE COLOUR CODE "where empty on every page. that is wrong"; his answer:
+   "Every cable on the page"): the PRINTED key (the sheet's box, the key under an SVG / PNG, the Look Book's Wire pages) lists the
+   cable types in use as before, then one row per source whose cables on the page have no Cable Type, in its own colour with its
+   name, counted in cables, so the key is never empty while cables are drawn. The Details panel's key on screen is unchanged (it
+   still teaches the Cable Type pick). Desktop only (_lbcOn). ── */
+function _lbuKeyRows(){
+  const rows = _wireCableTypesInUse();
+  if(!_lbcOn()) return rows;
+  const grp = new Map();   /* one row per name and colour, counted in cables */
+  const add = function(nm, col){ nm = String(nm == null ? '' : nm).trim(); col = String(col || '').trim(); if(!nm || !col) return; const k = nm + '\u0001' + col; const g = grp.get(k); if(g) g.n++; else grp.set(k, { name: nm, color: col, n: 1 }); };
+  try{
+    if(wireSettings && wireSettings.wireView === 'advanced'){   /* the colours _wireRenderAdvancedDiagram gives a cable that has no type */
+      const wa = wireAdvanced || {};
+      (wa.wires || []).forEach(function(w){
+        if(!w || w.kind === 'return') return;   /* a return feed keeps its own amber dash */
+        if(_wireAdvCustomDestEdgeStyle(w.toId)) return;   /* coloured by a typed hand-made destination: a typed row */
+        const f = String(w.fromId || '');
+        if(f.indexOf('asrc:') === 0 || f.indexOf('asp:') === 0){
+          const sp = f.indexOf('asp:') === 0, id = sp ? f.split(':')[1] : f.slice(5), k = sp ? (parseInt(f.split(':')[2], 10) || 0) : 0;
+          const inst = (wa.sources || []).find(function(x){ return x && x.id === id; }); if(!inst) return;
+          const es = _wireSrcPortEdgeStyle(inst, k); if(es && !es.typed) add(inst.name, es.color);
+        } else if(f.indexOf('dvo:') === 0){
+          const dp = f.split(':'), d = (wa.devices || []).find(function(x){ return x && x.id === dp[1]; }); if(!d) return;
+          const pt = _wireAdvDevPort(d, 'out', parseInt(dp[2], 10) || 0); if(pt && _wireCableSpec(pt.conn)) return;
+          add(_wireAdvDevLabel(d), '#5aa9ff');
+        } else if(f.indexOf('rop:') === 0){
+          const r = (wa.routers || []).find(function(x){ return x && x.id === f.split(':')[1]; });
+          add(r ? _wtlName('router', r) : 'ROUTER I/O', _wireCssVar('--n-cyan', '#00e5ff'));   /* the name on its title bar */
+        }
+      });
+    } else {   /* Simple: as _slbCables draws them */
+      const st = _slbState();
+      st.ins.forEach(function(k){ if(!k) return; const n = k.slice(4), es = _wireEdgeStyle(n); if(es && !es.typed) add(n, es.color); });
+      st.outs.forEach(function(k){ const o = k ? st.all[k] : null; if(!o) return; const kd = _slbKind(k);
+        const es = (kd === 'mv') ? _cmMvEdgeStyle(o.id, _cmMvC()) : _wireDestEdgeStyle(kd, o.id, _wireNodeColor(kd === 'dst' ? 'dest' : 'dsm', o.id));
+        if(!es || es.typed) return;
+        const it = (kd === 'dst') ? (screens || []).find(function(x){ return x && x.id === o.id; }) : (kd === 'dsm' ? (dsms || []).find(function(x){ return x && x.id === o.id; }) : _cmMvById(o.id));
+        add((it && it.name) || o.name || o.id, es.color); });
+    }
+  }catch(e){}
+  grp.forEach(function(g){
+    rows.push({ spec: { fam: 'none', untyped: true, type: g.name, label: 'No cable type', color: g.color, dash: '', sw: 2.5, roundStart: false, markerEnd: '', markerStart: '' }, sources: new Array(g.n).fill(g.name) });
+  });
+  return rows;
+}
+/* the ink for a name written on a source's own colour: dark on a light colour, white on a dark one */
+function _lbuInk(col){
+  let r = 0, g = 0, b = 0; const c = String(col || '').trim(); let m = /^#([0-9a-f]{3})$/i.exec(c);
+  if(m){ r = parseInt(m[1][0] + m[1][0], 16); g = parseInt(m[1][1] + m[1][1], 16); b = parseInt(m[1][2] + m[1][2], 16); }
+  else if((m = /^#([0-9a-f]{6})/i.exec(c))){ r = parseInt(m[1].slice(0, 2), 16); g = parseInt(m[1].slice(2, 4), 16); b = parseInt(m[1].slice(4, 6), 16); }
+  else if((m = /rgba?\(\s*(\d+)[,\s]+(\d+)[,\s]+(\d+)/i.exec(c))){ r = +m[1]; g = +m[2]; b = +m[3]; }
+  else return '#0a0e16';
+  return (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255 > 0.5 ? '#0a0e16' : '#ffffff';
+}
 // Details-panel key (HTML). `selName` highlights the row the selected source uses.
 /* 16kw-fix: a connector typed by the user can be long; built-in names are short and print as before.
    _wireTextWidth measures text in the sheets' font. _wireKeyFitLabel: the printed sheet's key label of a typed connector
@@ -29329,7 +29397,7 @@ function _wireCableKeyHTML(selName){
 }
 // Export key (SVG string) drawn at (x,y); returns {svg, h}. h = 0 → nothing in use.
 function _wireLegendSVG(x, y, theme){
-  const rows = _wireCableTypesInUse();
+  const rows = _lbuKeyRows();   /* 16lu-cablekey: every cable */
   if(!rows.length) return { svg: '', h: 0 };
   const light = (theme === 'light');
   const txt = light ? '#1f2937' : '#e8e8ea';
@@ -29341,9 +29409,9 @@ function _wireLegendSVG(x, y, theme){
     const sp = r.spec;
     const cy = y + TITLE + 6 + i * ROW + 6;
     s += '<path d="M' + x + ' ' + cy + ' H' + (x + LINE_W) + '" stroke="' + sp.color + '" stroke-width="' + sp.sw + '" fill="none"' + (sp.dash ? ' stroke-dasharray="' + sp.dash + '"' : '') + ' marker-end="' + sp.markerEnd + '"' + (sp.markerStart ? ' marker-start="' + sp.markerStart + '"' : '') + '/>';
-    s += _lbIconSVGGroup(_lbConnIconKey(sp.type), x + LINE_W + 10, cy - 6.5, 13, sp.color);   // 16jj
+    if(!sp.untyped) s += _lbIconSVGGroup(_lbConnIconKey(sp.type), x + LINE_W + 10, cy - 6.5, 13, sp.color);   // 16jj; 16lu-cablekey: none for a source's name
     s += '<text x="' + (x + LINE_W + 28) + '" y="' + (cy + 3.5) + '" fill="' + txt + '" font-size="10" font-weight="700">' + _esc(sp.type) + '</text>';
-    s += '<text x="' + (x + LINE_W + 28 + (sp.fam === 'custom' ? Math.max(72, Math.ceil(_wireTextWidth(sp.type, 10, '700')) + 10) : 72)) + '" y="' + (cy + 3.5) + '" fill="' + muted + '" font-size="9">' + _esc(sp.label) + ' · ' + r.sources.length + ' line' + (r.sources.length === 1 ? '' : 's') + '</text>';
+    s += '<text x="' + (x + LINE_W + 28 + ((sp.fam === 'custom' || sp.untyped) ? Math.max(72, Math.ceil(_wireTextWidth(sp.type, 10, '700')) + 10) : 72)) + '" y="' + (cy + 3.5) + '" fill="' + muted + '" font-size="9">' + _esc(sp.label) + ' · ' + r.sources.length + ' line' + (r.sources.length === 1 ? '' : 's') + '</text>';
   });
   s += '</g>';
   return { svg: s, h: TITLE + 6 + rows.length * ROW + 8 };
@@ -36610,7 +36678,7 @@ function _exportPDF0(_returnHtml){
     const _wSheets = _lbWireBook.map(function(_w, _i){
       if(_w.id && typeof _wireSwitchPage === 'function') _wireSwitchPage(_w.id);   /* the open tab is put back below */
       const _inner = (typeof _wireBuildExportSvg === 'function') ? _wireBuildExportSvg(_wTheme, { transparent: true, noLegend: true, wireStyle: opts.wireStyle }) : '';
-      const _rows = (typeof _wireCableTypesInUse === 'function') ? _wireCableTypesInUse() : [];
+      const _rows = (typeof _lbuKeyRows === 'function') ? _lbuKeyRows() : [];   /* 16lu-cablekey: every cable */
       return { name: _w.name, svg: (_inner && typeof _wireSheetSvg === 'function') ? _wireSheetSvg(_inner, { theme: _wTheme, pageLabel: 'Page ' + (_i + 1), title: _lbWireSheetTitle(_w.name), version: _wVer, legendRows: _rows }) : _inner };
     });
     if(_wHome && typeof _wireSwitchPage === 'function') _wireSwitchPage(_wHome);   /* 16kt: back to the page the user is on */
@@ -39794,7 +39862,16 @@ function toggleAdvancedMenu(ev){
   _advClearToggles(); btn.classList.add('menu-open');   // 16go: the ▼ flips while the menu is open
   // 16gs: from the preset row the body is cut to the button's width (like the I/O menus); the status-bar button has
   // no box of its own and sits at the screen edge, so there the body keeps its natural width.
-  if(btn.id==='tb-adv'){ delete menu.dataset.fit; menu.style.width=''; menu.style.minWidth=''; } else { menu.dataset.fit='header'; }
+  if(btn.id==='tb-adv'){ delete menu.dataset.fit; menu.style.width=''; menu.style.minWidth=''; }
+  else if(_lbcOn()){   /* 16lu-modmenu (Omar 2026-10-30, #27: "the modifer words opened correctly but the background they are in did not"):
+       the body is the button's width only when its words fit in it. On Video Presets > Advanced the preset row's button is the gear
+       alone at Default and Large UI Size (55 / 63 px) and the words wrapped in a body that narrow (v0.8.7 too): there the body keeps
+       its own width, never narrower than the button. */
+    delete menu.dataset.fit; menu.style.width=''; menu.style.minWidth='0';
+    const _mz=_menuZoom(menu), _bw=btn.getBoundingClientRect().width/_mz;
+    if(menu.offsetWidth<=_bw+0.5) menu.dataset.fit='header'; else menu.style.minWidth=Math.round(_bw)+'px';
+  }
+  else { menu.dataset.fit='header'; }
   _menuPlace(menu, btn.getBoundingClientRect(), btn);   // 16gp: body hangs off the button — below, or above from the status bar
   _advReflectMenu();
 }
