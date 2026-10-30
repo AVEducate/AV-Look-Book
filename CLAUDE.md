@@ -519,14 +519,14 @@ python3 -c "import re; src=open('deploy/lookbook_builder.html').read(); m=re.sea
 
 ## Release channels + regression gate (established 2026-09-19, v0.2.148)
 Users must never receive a build that has not passed the gate. Two lines:
-- **Stable = `release/0.8`** (v0.8.0 = build 16lb, v0.8.1 = build 16lc, 2026-10-02; v0.8.2 = builds 16ld-16lg, v0.8.3 = build 16lh, 2026-10-08; v0.8.4 = build 16li, 2026-10-09; v0.8.5 = builds 16lj-16lk, 2026-10-10; v0.8.6 = build 16lk with the new Mac install window and Quick Guide v7, 2026-10-11; v0.8.7 = build 16ll (the blend options pop-up) + the grey Welcome window, 2026-10-14), tags without a suffix (`v0.8.8`). These reach every user (Windows self-update,
+- **Stable = `release/0.9`** (v0.9.0 = builds 16lm-16lv, 2026-10-30; the 0.8 line before it: v0.8.0 = build 16lb, v0.8.1 = build 16lc, 2026-10-02; v0.8.2 = builds 16ld-16lg, v0.8.3 = build 16lh, 2026-10-08; v0.8.4 = build 16li, 2026-10-09; v0.8.5 = builds 16lj-16lk, 2026-10-10; v0.8.6 = build 16lk with the new Mac install window and Quick Guide v7, 2026-10-11; v0.8.7 = build 16ll (the blend options pop-up) + the grey Welcome window, 2026-10-14), tags without a suffix (`v0.9.1`). These reach every user (Windows self-update,
   Mac content update). Only cherry-picked bug fixes land here.
-- **Development = `main`**, tags WITH a `-` (`v0.9.0-beta.1`). The workflow publishes those as pre-releases;
+- **Development = `main`**, tags WITH a `-` (`v0.10.0-beta.1`). The workflow publishes those as pre-releases;
   both updaters ignore pre-releases, so users stay on the last full release. Bump `electron/package.json` to
-  the matching `0.9.0-beta.N` before tagging.
+  the matching `0.10.0-beta.N` before tagging.
 - **Before any full release** run `node tests/run_smoke.mjs --no-mobile` (must print `SMOKE: PASS`; the phone build is FROZEN since
   2026-09-30 by the owner: no phone features, no phone checks), `python3 tools/check_js.py`, and
-  open the three example shows by hand. `tests/golden/` is the behaviour of v0.8.0: a difference is a
+  open the three example shows by hand. `tests/golden/` is the behaviour of v0.9.0: a difference is a
   regression unless the change was intended, in which case regenerate with `--golden` in the same commit and say so.
 - Full checklist: `RELEASE.md`. The smoke probe (`tests/smoke_probe.js`) is where new core behaviour gets a check
   added when it ships.
