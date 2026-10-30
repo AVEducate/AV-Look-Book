@@ -15912,45 +15912,45 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
     return is(out, want, 'on Advanced before / the window [ticks, note] / after [on Simple, tiles on Advanced pages, card in Wire\'s list, on the I/O Patch, S]');
   });
   // 16lo-delwin DW5: NEW
-  await check('Video Presets 16lo-delwin DW5 (SPEC rule 8, "Destinations / AUX: Video Presets = everywhere"; the full test\'s #17, Omar 2026-10-17: "a deleation removes it from all places"): the table x of LEFT LED asks with all three ticked and unticking I/O Patch unticks Video Presets; from its I/O card only I/O Patch is ticked and it goes off the patch (still on the canvas, D1 kept, + Add destination lists it); Video Presets takes it out of the show: CENTER LED is D1, no NOT IN THE SHOW row on page 1, no Wire Advanced tile left, one Undo step', async () => {
+  await check('Video Presets 16lo-delwin DW5 (SPEC rule 8 as Omar changed it 2026-10-18, 16ls-vponly: "Off Video Presets only"; the full test\'s #17, Omar 2026-10-17: "a deleation removes it from all places"): the table x of LEFT LED asks with Video Presets ticked (alone it would keep LEFT LED on the I/O Patch as I/O-only) and Everywhere ticks all three; from its I/O card only I/O Patch is ticked and it goes off the patch (still on the canvas, D1 kept, + Add destination lists it); Everywhere takes it out of the show: CENTER LED is D1, no NOT IN THE SHOW row on page 1, no Wire Advanced tile left, one Undo step', async () => {
     const out = {}, want = {};
     try {
       const L = screens[0], C = screens[1];
       await _loIO(); _ioSetView('advanced'); await wait(600); okDialogs(); _ioSetView('simple'); await wait(300); try { closeSystem(); } catch (e) {}
       await _cMWire('advanced'); try { closeWireMode(); } catch (e) {} await wait(300);
-      _lbxRemoveDest(L.id); await wait(250); let w = _loWin(); out.vp = [w.ticks, w.note]; want.vp = [[true, true, true, true], 'LEFT LED leaves the show. CENTER LED becomes D1 and every destination after it moves up one.'];
-      _loTick('io', false); await wait(50); out.untick = _loWin().ticks; want.untick = [false, false, false, true];
+      _lbxRemoveDest(L.id); await wait(250); let w = _loWin(); out.vp = [w.ticks, w.note]; want.vp = [[false, true, false, false], 'LEFT LED leaves the canvas and every preset. The I/O Patch keeps it as an I/O-only destination, and Wire keeps its tiles.'];
+      _loTick('all', true); await wait(50); w = _loWin(); out.all = [w.ticks, w.note]; want.all = [[true, true, true, true], 'LEFT LED leaves the show. CENTER LED becomes D1 and every destination after it moves up one.'];
       $('#dlg-cancel').click(); await wait(250);
       await _loIO(); _sysRowDelete('dest', L.id); await wait(250); w = _loWin(); out.io = w.ticks; want.io = [false, false, true, false];
       $('#dlg-confirm').click(); await wait(400);
       out.off = [screens.some(s => s.id === L.id), _iogDests().some(s => s.id === L.id), _bdNo(L), _lbAddOff('dst').map(o => o.label)]; want.off = [true, false, 1, ['LEFT LED (D1)']];
       try { closeSystem(); } catch (e) {} await restore();
-      const L2 = screens[0], u0 = vpUndoLen(); _lbxRemoveDest(L2.id); await wait(250); $('#dlg-confirm').click(); await wait(500);
+      const L2 = screens[0], u0 = vpUndoLen(); _lbxRemoveDest(L2.id); await wait(250); _loTick('all', true); await wait(50); $('#dlg-confirm').click(); await wait(500);
       const rows = ((ioAdvanced.pages || [])[0] || {}).dests || []; let tiles = 0; _wireAdvEachPage(pg => { (pg.dests || []).forEach(d => { if (d && d.refId === L2.id) tiles++; }); });
       out.vpDel = [screens.some(s => s.id === L2.id), _bdNo(screens[0]), screens[0].name, rows.some(r => r && r.name === 'LEFT LED'), tiles, vpUndoLen() - u0]; want.vpDel = [false, 1, 'CENTER LED', false, 0, 1];
     } catch (e) { return 'threw: ' + e.message; }
     finally { okDialogs(); try { closeSystem(); } catch (e) {} try { closeWireMode(); } catch (e) {} await restore(); }
-    return is(out, want, 'table x [ticks, note] / I/O Patch unticked [ticks] / from its I/O card [ticks] / off the patch [on the canvas, a card, D, + Add destination] / Video Presets [on the canvas, the first D, its name, page-1 row, Wire tiles, steps]');
+    return is(out, want, 'table x [ticks, note] / Everywhere ticked [ticks, note] / from its I/O card [ticks] / off the patch [on the canvas, a card, D, + Add destination] / Everywhere [on the canvas, the first D, its name, page-1 row, Wire tiles, steps]');
   });
   // 16lo-delwin DW6: NEW
-  await check('Video Presets 16lo-delwin DW6 (SPEC rule 8, "The only screen is never deleted (as today)"): with one screen left its window cannot take it off Video Presets (the note says why, Delete is off) but can take it off the I/O Patch', async () => {
+  await check('Video Presets 16lo-delwin DW6 (SPEC rule 8, "The only screen is never deleted (as today)"; since 16ls-vponly the window opens on Video Presets alone): with one screen left its window cannot take it off Video Presets (the note says why, Delete is off) but can take it off the I/O Patch', async () => {
     const out = {}, want = {};
     try {
       const st = JSON.parse(BASE); st.screens = st.screens.slice(0, 1); _applyProjectText(JSON.stringify(st)); await wait(700); okDialogs();
       const s = screens[0]; _lbxRemoveDest(s.id); await wait(250); const w = _loWin();
-      out.vp = [w.ticks, w.off, /only screen left/.test(w.note)]; want.vp = [[true, true, true, true], true, true];
-      _loTick('all', false); _loTick('io', true); await wait(50); out.io = [_loWin().off]; want.io = [false];
+      out.vp = [w.ticks, w.off, /only screen left/.test(w.note)]; want.vp = [[false, true, false, false], true, true];
+      _loTick('vp', false); _loTick('io', true); await wait(50); out.io = [_loWin().off]; want.io = [false];
       $('#dlg-confirm').click(); await wait(400); out.after = [screens.length, !!screens[0].ioOff]; want.after = [1, true];
     } catch (e) { return 'threw: ' + e.message; }
     finally { okDialogs(); await restore(); }
     return is(out, want, 'Video Presets ticked [ticks, Delete off, the note] / I/O Patch alone [Delete off] / after [screens, off the patch]');
   });
   // 16lo-delwin DW7: NEW
-  await check('I/O Patch 16lo-delwin DW7 (SPEC rules 8 and 10: AUX as destinations; "Multiviewers: the trash deletes them everywhere, no window"): AUX Properties\' Remove asks with all three ticked; the AUX card trash on the I/O Patch has I/O Patch ticked and takes it off the patch (A1 kept, + Add AUX lists it); a multiviewer\'s trash deletes it at once, one Undo step', async () => {
+  await check('I/O Patch 16lo-delwin DW7 (SPEC rules 8 and 10: AUX as destinations; "Multiviewers: the trash deletes them everywhere, no window"; 16ls-vponly: Video Presets alone): AUX Properties\' Remove asks with Video Presets ticked; the AUX card trash on the I/O Patch has I/O Patch ticked and takes it off the patch (A1 kept, + Add AUX lists it); a multiviewer\'s trash deletes it at once, one Undo step', async () => {
     const out = {}, want = {};
     try {
       const d = dsms[0], nm = d.name;
-      openDSMPanel(fakeEv, presets[0].id, d.id); await wait(350); $('#dsmp-remove').click(); await wait(300); out.props = _loWin().ticks; want.props = [true, true, true, true];
+      openDSMPanel(fakeEv, presets[0].id, d.id); await wait(350); $('#dsmp-remove').click(); await wait(300); out.props = _loWin().ticks; want.props = [false, true, false, false];
       $('#dlg-cancel').click(); await wait(250);
       await _loIO(); _sysRowDelete('aux', d.id); await wait(250); out.card = _loWin().ticks; want.card = [false, false, true, false];
       $('#dlg-confirm').click(); await wait(400);
@@ -16582,6 +16582,210 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
     } catch (e) { return 'threw: ' + e.message; }
     finally { window.exportPDF = real; try { closePdfExportModal(); } catch (e) {} wireSettings.wireView = wv; await restore(); }
     return is(out, want, 'each example [the window\'s Export button, a book made, Undo steps]');
+  });
+  // ── Round 16ls: Omar's findings while testing 16lq / 16lr (2026-10-18 evening) ──
+  const _lsTicks = () => [...document.querySelectorAll('#dlg-box .dlg-ticks input[data-tick]')].reduce((o, b) => (o[b.dataset.tick] = b.checked, o), {});
+  const _lsTick = async (key, on) => { const b = $('#dlg-box input[data-tick="' + key + '"]'); if (b && b.checked !== on) { b.click(); await wait(80); } };
+  // 16ls-vponly VO1: NEW
+  await check('Delete 16ls-vponly VO1 (Omar 2026-10-18: "when i try to select just video preset everything highlights if am looking just for video preset thing its just going to be deleted in video preset."; his pick "Off Video Presets only"): the delete window opened from Video Presets ticks Video Presets only, and ticking it again ticks nothing else; a destination taken off Video Presets only leaves the canvas but stays an I/O-only destination (same id and name, its I/O card, its tile on Wire\'s Simple drawing), one Undo brings it back; an AUX taken off Video Presets and the I/O Patch stays in Wire as a hand-made card, its hint "an I/O-only" (not "a aux"); a backdrop from Video Presets still opens on Everywhere and leaves the show', async () => {
+    const out = {}, want = {};
+    try {
+      await restore(); render(); await wait(300);
+      const s = screens[1], sid = s.id, nm = s.name, u0 = _undoStack.length;
+      _lbDelAsk('dest', sid, 'vp'); await wait(400);
+      out.open = _lsTicks(); await _lsTick('vp', false); await _lsTick('vp', true); out.retick = _lsTicks();
+      want.open = { all: false, vp: true, io: false, wire: false }; want.retick = { all: false, vp: true, io: false, wire: false };
+      $('#dlg-confirm').click(); await wait(500);
+      const io = (ioDests || []).find(d => d.id === sid);
+      out.dest = [screens.some(x => x.id === sid), !!io && io.vpOff === true && io.name === nm, _slbItems().dst.some(o => o.id === sid), _undoStack.length - u0];
+      want.dest = [false, true, true, 1];
+      openSystem(); await wait(700); okDialogs(); out.card = $$('#io-grid .iog-card').map(c => c.dataset.iogKey || '').filter(k => k.endsWith(':' + sid)); want.card = ['iodest:' + sid]; closeSystem(); await wait(200);
+      doUndo(); await wait(500); out.undo = [screens.some(x => x.id === sid), (ioDests || []).some(d => d.id === sid)]; want.undo = [true, false];
+      await restore(); render(); await wait(300);
+      const d = dsms[0], did = d.id;
+      _lbDelAsk('aux', did, 'io'); await wait(400);
+      const hint = (($$('#dlg-box .dlg-tick i')[0] || {}).textContent || '');
+      out.auxHint = /keeps it as an I\/O-only (AUX|DSM) unless/.test(hint) && !/\ba (aux|dsm)\b/i.test(hint); want.auxHint = true;
+      out.auxOpen = _lsTicks(); await _lsTick('vp', true); out.auxTicks = _lsTicks();
+      want.auxOpen = { all: false, vp: false, io: true, wire: false }; want.auxTicks = { all: false, vp: true, io: true, wire: false };
+      $('#dlg-confirm').click(); await wait(500); _wireAdvHelpers();
+      out.aux = [dsms.some(x => x.id === did), (ioDests || []).some(x => x.id === did), wireAdvanced.customDsms.some(c => c.id === did)]; want.aux = [false, false, true];
+      await restore(); render(); await wait(300);
+      const b = screens[2], bid = b.id; _bdMake(b); render(); await wait(300);
+      _lbDelAsk('dest', bid, 'vp'); await wait(400);
+      out.bdOpen = _lsTicks(); want.bdOpen = { all: true, vp: true, io: true, wire: true };
+      $('#dlg-confirm').click(); await wait(500);
+      out.bd = [screens.some(x => x.id === bid), (ioDests || []).some(x => x.id === bid)]; want.bd = [false, false];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { okDialogs(); try { closeSystem(); } catch (e) {} await restore(); }
+    return is(out, want, 'from Video Presets [the ticks it opens with / Video Presets unticked and ticked again] / Video Presets only [still a screen, the I/O-only twin with its id and name, on the Simple drawing, Undo steps] / its I/O card / one Undo [screen back, twin gone] / an AUX from the I/O Patch [hint, ticks, Video Presets ticked too, then: still an AUX, I/O-only, a hand-made Wire card with its id] / a backdrop from Video Presets [ticks, then: still a screen, I/O-only]');
+  });
+  // 16ls-vponly VO2: NEW
+  await check('Delete 16ls-vponly VO2 (Omar 2026-10-18, "Off Video Presets only"): a destination already taken off the I/O Patch, then taken off Video Presets only, stays in Wire alone as a hand-made card of the same id (it does not come back onto the I/O Patch) and the hint says so; with Wire ticked too it leaves the show', async () => {
+    const out = {}, want = {};
+    try {
+      await restore(); render(); await wait(300);
+      const sid = screens[1].id, find = id => screens.find(x => x.id === id);
+      _lbDelAsk('dest', sid, 'io'); await wait(400); $('#dlg-confirm').click(); await wait(500);
+      out.ioOff = !!(find(sid) || {}).ioOff; want.ioOff = true;
+      _lbDelAsk('dest', sid, 'vp'); await wait(400);
+      out.hint = /off the I\/O Patch, so Wire keeps it as a hand-made card/.test((($$('#dlg-box .dlg-tick i')[0] || {}).textContent || '')); want.hint = true;
+      out.ticks = _lsTicks(); want.ticks = { all: false, vp: true, io: false, wire: false };
+      $('#dlg-confirm').click(); await wait(500); _wireAdvHelpers();
+      out.vp = [!!find(sid), (ioDests || []).some(x => x.id === sid), wireAdvanced.customDests.some(c => c.id === sid)]; want.vp = [false, false, true];
+      await restore(); render(); await wait(300);
+      const sid2 = screens[1].id;
+      _lbDelAsk('dest', sid2, 'io'); await wait(400); $('#dlg-confirm').click(); await wait(500);
+      _lbDelAsk('dest', sid2, 'vp'); await wait(400); await _lsTick('wire', true);
+      out.note = /leaves the show/.test(($('#dlg-tick-note') || {}).textContent || ''); want.note = true;
+      $('#dlg-confirm').click(); await wait(500); _wireAdvHelpers();
+      out.all = [!!find(sid2), (ioDests || []).some(x => x.id === sid2), wireAdvanced.customDests.some(c => c.id === sid2)]; want.all = [false, false, false];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { okDialogs(); await restore(); }
+    return is(out, want, 'off the I/O Patch first [ioOff] / then from Video Presets [the hint, the ticks] / Video Presets only [still a screen, an I/O-only twin, a hand-made Wire card] / off the I/O Patch, then Video Presets and Wire [the note] / then [still a screen, I/O-only, a Wire card]');
+  });
+  // 16ls-delsize DS1: NEW
+  await check('Delete 16ls-delsize DS1 (Omar 2026-10-18: "when i click the everywhere option. size of the box changes size that should not happen"): the delete window keeps one height whatever is ticked: Wire alone, Everywhere, nothing, Video Presets alone, Video Presets and Wire, Wire and the I/O Patch (the note under the ticks changes from one line to two)', async () => {
+    const out = {}, want = {};
+    try {
+      await restore(); render(); await wait(300);
+      _lbDelAsk('dest', screens[1].id, 'wire'); await wait(500);
+      const H = () => Math.round($('#dlg-box').getBoundingClientRect().height), hs = [H()];
+      await _lsTick('all', true); hs.push(H()); await _lsTick('all', false); hs.push(H()); await _lsTick('vp', true); hs.push(H()); await _lsTick('wire', true); hs.push(H()); await _lsTick('vp', false); await _lsTick('io', true); hs.push(H());
+      out.same = hs.every(h => h === hs[0]); want.same = true; out.n = hs.length; want.n = 6;
+      if (!out.same) out.heights = hs;
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { const c = $('#dlg-cancel'); if (c && dlgOpen()) c.click(); } catch (e) {} await wait(150); await restore(); }
+    return is(out, want, 'the window\'s height [the same every time, readings]');
+  });
+  // 16ls-delsize DS2: NEW
+  await check('Video Presets 16ls-delsize DS2 (Omar 2026-10-19 about a preset\'s Reset window: "yes i want it steady and i did mention that"): the Reset window keeps one height whatever is ticked: all four, nothing, Reset Destinations, Reset Layers or Reset AUX alone (its note goes from nothing to "Tick at least one line." to "Nothing to reset: ..."), on P01 and on P02', async () => {
+    const out = {}, want = {};
+    try {
+      await restore(); render(); await wait(300);
+      out.h = []; out.notes = 0;
+      for (const p of presets.slice(0, 2)) {
+        resetPreset(p.id); await wait(500); if (!dlgOpen()) return 'no Reset window for ' + p.code;
+        const H = () => Math.round($('#dlg-box').getBoundingClientRect().height), hs = [H()], ns = new Set([(($('#dlg-tick-note') || {}).textContent || '')]);
+        const step = async (fn) => { await fn(); hs.push(H()); ns.add((($('#dlg-tick-note') || {}).textContent || '')); };
+        await step(async () => _lsTick('all', false));
+        for (const k of ['dest', 'layers', 'aux']) { await step(async () => { await _lsTick('all', false); await _lsTick(k, true); }); }
+        out.h.push(hs.every(h => h === hs[0]) ? 'same' : hs.join(' ')); out.notes = Math.max(out.notes, ns.size);
+        $('#dlg-cancel').click(); await wait(250);
+      }
+      want.h = ['same', 'same']; out.notes = out.notes >= 2; want.notes = true;
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { const c = $('#dlg-cancel'); if (c && dlgOpen()) c.click(); } catch (e) {} await wait(150); await restore(); }
+    return is(out, want, 'P01 and P02 [the window\'s height the same every time, or the readings] / the note [at least two wordings seen]');
+  });
+  // 16ls-onename ON1: NEW
+  await check('Names 16ls-onename ON1 (Omar 2026-10-18: "in testing I created the same word in AUX and in SOURCES, TEST 05 and both got added with zero issue on the I/O Patch page"; his pick "One name, one item"): a source cannot take an output\'s name (an I/O Patch rename to an AUX\'s name in another case, a table cell typed with a destination\'s name: Name in use, nothing written, no Undo step) and an output cannot take a source\'s name (an AUX renamed, a hand-made Wire output card renamed); an existing source typed again is fine; + ADD SOURCE skips a name an output has', async () => {
+    const out = {}, want = {};
+    try {
+      await restore(); render(); await wait(300);
+      const aux = dsms[0], src = _sysDiscoverSources()[0], dst = screens[0], p = presets[0], sid = screens[1].id;
+      out.srcToAux = [_sysRenameBlocked(src, aux.name.toLowerCase(), null), /Name in use/.test(dialogText()) && dialogText().includes(' output in this show')]; okDialogs(); await wait(80);
+      out.auxToSrc = [_kzOutRenameBlocked(aux, src, null, aux.name), dialogText().includes('is already a source in this show')]; okDialogs(); await wait(80);
+      const was = getL(p.id, sid, 3), u0 = _undoStack.length; homeSetL(p.id, sid, 3, dst.name); await wait(150);
+      out.cell = [getL(p.id, sid, 3) === was, dialogText().includes('is already a destination in this show'), _undoStack.length - u0]; okDialogs(); await wait(80);
+      homeSetL(p.id, sid, 3, src); await wait(150); out.again = [getL(p.id, sid, 3) === src, dialogText()]; okDialogs();
+      out.wireCard = [_kzWireNameRefused({ name: 'X' }, src.toLowerCase()), dialogText().includes('is already a source in this show')]; okDialogs();
+      const n1 = _lbfNewSource().name; aux.name = n1; const n2 = _lbfNewSource().name; out.addSrc = [n1 !== n2, /^SOURCE \d+$/.test(n2)];
+      want.srcToAux = [true, true]; want.auxToSrc = [true, true]; want.cell = [true, true, 0]; want.again = [true, '']; want.wireCard = [true, true]; want.addSrc = [true, true];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { okDialogs(); await restore(); }
+    return is(out, want, 'a source renamed to an AUX\'s name [refused, says it is an output] / an AUX renamed to a source\'s name [refused, says so] / a table cell given a destination\'s name [left as it was, says so, Undo steps] / an existing source typed [written, no note] / a hand-made Wire output given a source\'s name [refused, says so] / + ADD SOURCE [skips the output\'s name, still SOURCE n]');
+  });
+  // 16ls-onename ON2: NEW
+  await check('Names 16ls-onename ON2 (Omar 2026-10-18, "One name, one item": the other places a name is given): the Custom window for a layer refuses a destination\'s name before the library takes it (no library item, the window stays open); a file imported with another destination\'s name gets the next free one; + Add multiviewer, a new destination\'s default name and a new hand-made Wire source card skip a name the other kind has; a quick label (IMAG ...) picked for a layer is refused before its Undo step when an output has that name; on I/O Patch Advanced page 1 a typed source row cannot take an AUX\'s name and a typed destination row cannot take a source\'s (no I/O-only twin of that name)', async () => {
+    const out = {}, want = {};
+    try {
+      await restore(); render(); await wait(300);
+      const dst = screens[0], aux = dsms[0], src = _sysDiscoverSources()[0], low = v => String(v || '').trim().toLowerCase();
+      openCustomModal(); await wait(150); $('#custom-input').value = dst.name.toLowerCase(); confirmCustom(); await wait(150);
+      out.custom = [customLibrary.some(c => c && low(c.l) === low(dst.name)), dialogText().includes('is already a destination in this show'), $('#custom-modal').classList.contains('show')]; want.custom = [false, true, true];
+      okDialogs(); closeCustomModal(); await wait(100);
+      const d2nm = screens[1].name, it = await _lqImport(await _lqPng(32, 18, '#336699'), d2nm + '.png');
+      out.file = it ? it.l : 'not imported'; want.file = d2nm.toUpperCase() + ' 2';
+      const k = multiviewers.length + 1; sources.push({ name: 'MV ' + k, ioOnly: true }); _sysAddMV(); await wait(150);
+      out.mv = [multiviewers[multiviewers.length - 1].name, dlgOpen()]; want.mv = ['MV ' + (k + 1), false];
+      const d1 = _r4fNewDest(); sources.push({ name: d1, ioOnly: true }); const d2 = _r4fNewDest();
+      out.newDest = [d1 !== d2, /^DESTINATION \d+$/.test(d2)]; want.newDest = [true, true];
+      aux.name = 'NEW SOURCE'; _wireAdvHelpers(); const nc = wireAdvanced.customSources.length; _wireAdvAddCustomSource(); await wait(100);
+      out.wireCard = (wireAdvanced.customSources[nc] || {}).name; want.wireCard = 'NEW SOURCE 2';
+      const lbl = ['IMAG', 'GFX A', 'GFX B', 'PBP A', 'PBP B'].find(l => !_sysDiscoverSources().some(n => low(n) === low(l))), p0 = presets[0], s1 = screens[1].id;
+      if (!lbl) return 'every quick label is a source in the example';
+      dsms[0].name = lbl; const was = getL(p0.id, s1, 3), uq = _undoStack.length; lpPickCommonContent(p0.id, s1, 3, lbl, '#f0c060'); await wait(150);
+      out.quick = [getL(p0.id, s1, 3) === was, dialogText().includes(' output in this show'), _undoStack.length - uq]; want.quick = [true, true, 0]; okDialogs(); try { closeLayerPanel(); } catch (e) {}
+      await restore();
+      const auxNm = dsms[0].name, srcNm = _sysDiscoverSources()[0], pg = await _lpIO();
+      _ioAdvAdd('src'); await wait(300); const r = pg.sources[pg.sources.length - 1];
+      const b1 = $$('#sys-overlay .sys-name-input').find(i => i.dataset.sysKind === 'adv-src' && i.dataset.sysId === r.id); if (!b1) return 'no typed source row on page 1';
+      b1.focus(); b1.select(); document.execCommand('insertText', false, auxNm); b1.blur(); await wait(400);
+      out.p1src = [dialogText().includes(' output in this show'), low(r.name) !== low(auxNm), _sysDiscoverSources().some(n => low(n) === low(auxNm))]; want.p1src = [true, true, false]; okDialogs(); await wait(150);
+      _ioAdvAdd('dst'); await wait(300); const rd = pg.dests[pg.dests.length - 1];
+      const b2 = $$('#sys-overlay .sys-name-input').find(i => i.dataset.sysKind === 'adv-dst' && i.dataset.sysId === rd.id); if (!b2) return 'no typed destination row on page 1';
+      b2.focus(); b2.select(); document.execCommand('insertText', false, srcNm); b2.blur(); await wait(400);
+      out.p1dst = [dialogText().includes('is already a source in this show'), low(rd.name) !== low(srcNm), (ioDests || []).some(d => d && low(d.name) === low(srcNm))]; want.p1dst = [true, true, false];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { okDialogs(); try { closeCustomModal(); } catch (e) {} try { _ioSetView('simple'); } catch (e) {} try { closeSystem(); } catch (e) {} await restore(); }
+    return is(out, want, 'the Custom window given a destination\'s name [a library item, says so, still open] / a file named like a destination [its name] / + Add multiviewer with a source called the next MV [its name, a window] / a new destination\'s default name taken by a source [another one, still DESTINATION nn] / a new Wire source card with an AUX called NEW SOURCE [its name] / a quick label (IMAG ...) picked for a layer with an AUX of that name [layer as it was, says it is an output, Undo steps] / page 1: a typed source row given the AUX\'s name [says it is an output, not written, no such source] / a typed destination row given a source\'s name [says so, not written, no such I/O-only destination]');
+  });
+  // 16ls-onename ON3: NEW
+  await check('Names 16ls-onename ON3 (Omar 2026-10-18, his own steps: "in testing I created the same word in AUX and in SOURCES, TEST 05 and both got added with zero issue on the I/O Patch page"): on the I/O Patch an AUX card renamed TEST 05 by typing in its name box, then a source card typed test 05: Name in use (an output has it), the source box reads its old name again, no source of that name; the other way too: a source renamed TEST 06, then an AUX card typed Test 06 is refused', async () => {
+    const out = {}, want = {};
+    const typeIn = async (box, txt) => { box.focus(); box.select(); document.execCommand('insertText', false, txt); box.blur(); await wait(450); };
+    try {
+      await _loIO();
+      const aux = () => $$('#io-grid [data-iog-sec="aux"] .iog-card')[0], src = i => $$('#io-grid [data-iog-sec="src"] .iog-card')[i];
+      const ab = aux() && $('.sys-name-input', aux()); if (!ab) return 'no AUX name box on the I/O Patch';
+      await typeIn(ab, 'TEST 05'); okDialogs(); await wait(200);
+      out.aux = dsms.some(d => d && d.name === 'TEST 05'); want.aux = true;
+      const sb = src(0) && $('.sys-name-input', src(0)); if (!sb) return 'no source name box on the I/O Patch'; const s0 = sb.value;
+      await typeIn(sb, 'test 05');
+      out.src = [/Name in use/.test(dialogText()) && dialogText().includes(' output in this show'), _sysDiscoverSources().some(n => n.toLowerCase() === 'test 05')]; want.src = [true, false]; okDialogs(); await wait(250);
+      out.srcBox = ($('.sys-name-input', src(0)) || {}).value === s0; want.srcBox = true;
+      await typeIn($('.sys-name-input', src(1)), 'TEST 06'); okDialogs(); await wait(250);
+      out.src2 = _sysDiscoverSources().includes('TEST 06'); want.src2 = true;
+      const a0 = ($('.sys-name-input', aux()) || {}).value; await typeIn($('.sys-name-input', aux()), 'Test 06');
+      out.aux2 = [dialogText().includes('is already a source in this show'), dsms.some(d => d && String(d.name).toLowerCase() === 'test 06')]; want.aux2 = [true, false]; okDialogs(); await wait(250);
+      out.auxBox = ($('.sys-name-input', aux()) || {}).value === a0; want.auxBox = true;
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { okDialogs(); try { closeSystem(); } catch (e) {} await restore(); }
+    return is(out, want, 'the AUX renamed TEST 05 / a source typed test 05 [Name in use names an output, a source of that name] / the source box [its old name] / a source renamed TEST 06 / the AUX typed Test 06 [says a source has it, an AUX of that name] / the AUX box [its old name]');
+  });
+  // 16ls-greyfocus GF1: NEW
+  await check('Look 16ls-greyfocus GF1 (Omar 2026-10-18: "the button at the bottom start blank build my show still highlight in Cyan they should just highlight with the grey outline now"; his pick "The whole app\'s focus ring"): on the desktop the keyboard focus ring is the Welcome window\'s grey (#5d6778), a field\'s own focus edge goes grey too (the Show name, cyan before; a preset code, amber before), so does a window\'s focused button (the Reset window\'s Reset); the phone keeps its colours', async () => {
+    const out = {}, want = {};
+    try {
+      await restore(); render(); await wait(300);
+      out.ring = getComputedStyle(document.body).getPropertyValue('--ss-ring').trim().toLowerCase(); want.ring = '#5d6778';
+      const f = $('#show-name'); f.focus(); await wait(450); out.show = getComputedStyle(f).borderTopColor; f.blur(); want.show = 'rgb(93, 103, 120)';
+      const pc = $('.t-pcode'); if (pc) { pc.focus(); await wait(450); out.code = getComputedStyle(pc).borderTopColor; pc.blur(); } else out.code = 'no preset code box'; want.code = 'rgb(93, 103, 120)';
+      resetPreset(presets[0].id); await wait(600); const cb = $('#dlg-confirm'); out.dlgBtn = [document.activeElement === cb, getComputedStyle(cb).outlineColor]; want.dlgBtn = [true, 'rgb(93, 103, 120)']; $('#dlg-cancel').click(); await wait(250);
+      document.body.classList.add('is-mobile'); out.phone = getComputedStyle(document.body).getPropertyValue('--ss-ring').trim().toLowerCase() !== '#5d6778'; document.body.classList.remove('is-mobile'); want.phone = true;
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { document.body.classList.remove('is-mobile'); await restore(); }
+    return is(out, want, 'the focus ring / the Show name box focused / a preset code box focused / the Reset window\'s Reset button [focused, its outline] / the phone\'s ring not grey');
+  });
+  // 16ls-qsgrey QG1: NEW
+  await check('Quick Setup 16ls-qsgrey QG1 (Omar 2026-10-18, the mock-up: "this the one i agree with for the update from the mock ups", its "Grey, each section keeps a thin colour strip"): Quick Show Setup is the grey window (#14181f card), each section heading light with its colour strip kept and no glow (Show cyan, Destinations orange), no accent dot, a field focused shows the grey edge with no glow, the Set default for all switch is the mock-up\'s grey when on and dimmer when off', async () => {
+    const out = {}, want = {};
+    try {
+      await restore(); openQS(); await wait(800);
+      const pn = $$('#qs-modal .qs-panel'), st = k => { const p = pn.find(x => x.classList.contains(k)), e = p && p.querySelector('.qs-strip'); return e ? [getComputedStyle(e).backgroundColor, getComputedStyle(e).boxShadow] : null; };
+      out.card = getComputedStyle($('#qs-modal > div')).backgroundColor; want.card = 'rgb(20, 24, 31)';
+      const rgbOf = v => { const e = document.createElement('div'); e.style.background = v; document.body.appendChild(e); const c = getComputedStyle(e).backgroundColor; e.remove(); return c; };
+      out.strips = [st('qs-cyan'), st('qs-orange')]; want.strips = [[rgbOf('var(--n-cyan)'), 'none'], [rgbOf('var(--n-orange)'), 'none']];
+      out.head = [getComputedStyle($('#qs-modal .qs-panel-hdr h4')).color, getComputedStyle($('#qs-modal .qs-accent-dot')).display]; want.head = ['rgb(226, 228, 232)', 'none'];
+      const i = $('#qs-show'); i.focus(); await wait(450); out.focus = [getComputedStyle(i).borderTopColor, getComputedStyle(i).boxShadow]; want.focus = ['rgb(93, 103, 120)', 'none'];
+      const kn = () => [$('#qs-sd-toggle').classList.contains('lbs-on'), getComputedStyle($('#qs-sd-knob')).backgroundColor, getComputedStyle($('#qs-sd-toggle')).borderTopColor, getComputedStyle($('#qs-sd-toggle')).backgroundColor];
+      out.sw = [kn()]; qsToggleSetDefault(); await wait(450); out.sw.push(kn()); qsToggleSetDefault(); await wait(450); out.sw.push(kn());
+      const on = [true, 'rgb(201, 209, 217)', 'rgb(93, 103, 120)', 'rgb(26, 31, 40)'], off = [false, 'rgb(93, 103, 120)', 'rgb(37, 42, 51)', 'rgb(26, 31, 40)'];
+      want.sw = [on, off, on];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { closeQS(); } catch (e) {} await wait(200); await restore(); }
+    return is(out, want, 'the card / the Show and Destinations strips [colour, glow] / a heading [colour], the dot / the Show Name box focused [edge, glow] / the switch as it opens (on, as the mock-up), flipped (off), flipped back [on, knob, edge, track]');
   });
   try { _fsPauseAll(); } catch (e) {} $$('video').forEach(v => { try { v.muted = true; v.pause(); } catch (e) {} });
   return { checks };

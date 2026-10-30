@@ -1645,6 +1645,60 @@ anchor on the function name and replace the first occurrence after it, never all
     leaving a gap, which 16lr-cvcheck no longer warns about.
     Snapshots: the three example Look Books regenerated on purpose (16lr-bookprint: each canvas picture's place is written
     as calc, the same pixels).
+- **16ls** (2026-10-30, build 16ls on the local 16lr; search `16ls-`). Omar's findings while testing 16lq / 16lr, 2026-10-18 evening
+  (his words and picks in backups/rounds/r16ls-testfixes/OMAR_ANSWERS_2026-10-18.md). Desktop only (`_lbcOn`): the phone keeps
+  its ways.
+  - **16ls-vponly** ("when i try to select just video preset everything highlights if am looking just for video preset thing its
+    just going to be deleted in video preset."; his pick "Off Video Presets only", replacing SPEC rule 8's "Video Presets =
+    everywhere"): the delete window ticks only the page it opens on, and Video Presets ticks nothing else (`checksTie` only for a
+    backdrop). Video Presets alone takes a destination / AUX off the canvas and every preset (`deleteScreen`; an AUX's dsmOn,
+    dsmContent, dsmColor, dsmName and dsmType go) and keeps it on the I/O Patch as an I/O-only destination / AUX (`_lbsOutOffVP`:
+    an `ioDests` row with the same id, name, connector, type, size and notes, `aux` for an AUX, and `vpOff`): its I/O card,
+    page-1 row and Wire Advanced tiles stay, and `_slbItems` lists the vpOff rows (`_lbsVpOff`) so its tile stays on Wire's
+    Simple drawing. With Wire ticked too its tiles leave every Wire drawing; with the I/O Patch ticked too Wire keeps a hand-made
+    card of the same id (customDests / customDsms, which its Advanced tiles resolve to). Everywhere, and Video Presets for a
+    backdrop (it lives in Video Presets alone), take it out of the show as before. The hint and the note say what happens
+    (`_lbsDelHintVP`, `_lbsDelNoteVP`: "an I/O-only AUX", no more "a aux"). One already off the I/O Patch (ioOff) stays in
+    Wire alone as the hand-made card; with Wire ticked too it leaves the show. One Undo step. VO1, VO2.
+  - **16ls-delsize** ("when i click the everywhere option. size of the box changes size that should not happen"; 2026-10-19
+    about a preset's Reset window: "yes i want it steady and i did mention that"): when a window with tick boxes and a note
+    shows (the two delete windows, `_lbDelAsk`'s and an I/O-only output's, and a preset's Reset), `_lbsNoteRoom` writes the note
+    of every combination once (the ticks put back) and gives the note the height of the longest (min-height), so the window
+    keeps one size. DS1, DS2.
+  - **16ls-onename** ("I created the same word in AUX and in SOURCES, TEST 05 and both got added with zero issue"; his pick "One
+    name, one item"): a source and an output never share a name, in any capitals. `_kzOutTaken(self, noScreens, noSrc)` lists
+    the sources (`_lbsSrcNames`: the show's sources and Wire's hand-made source cards) unless noSrc, so every output naming spot
+    refuses a source's name (renames, ADD › Destination, Edit Show Info, Wire's output cards, the clash window) and the output
+    defaults skip one (`_kzAuxName`, `_kzWireNewName`, `_lbOutFree`, `_lbhcFree`, `_r4fNewDest` through `_lbsWithSrc`, + Add
+    multiviewer through `_lbsSrcHas`). A source name is refused by `_lbsSrcNameRefused(name, own)` (Name in use names the
+    output) in `homeSetL`, `setL`, the layer panel's custom name and quick labels (`lpPickCommonContent`: GFX A, IMAG ... before
+    its Undo step), the Custom window (`confirmCustom`, before the library takes it), an AUX box, a BG name, an I/O Patch rename
+    (`_sysRenameBlocked`), Wire (`_lbwSrcClash`, `_wireCommitRenameSource`), the
+    Video tab (`_fsRenameContentUI`) and on I/O Patch Advanced page 1, whose typed rows make the show's I/O-only twins
+    (`_lbsP1Refused`: a source row cannot take an output's name, a destination / AUX / multiviewer row a source's; the Backup
+    window's new row too; pages 2 and up stay the user's own lists). Source defaults skip outputs' names (`_lbfNewSource`,
+    `_lbfNewSourceName`, an imported file's `_lbfUniqueFile`, a hand-made Wire source card's `_lbsCardSrcName`). A name that is
+    already a source can be used again; an older show that already shares a name opens as it is. ON1, ON2, ON3 (his own
+    steps: an AUX card renamed TEST 05, then a source card typed test 05, on the I/O Patch).
+  - **16ls-greyfocus** ("the button at the bottom start blank build my show still highlight in Cyan they should just highlight
+    with the grey outline now"; his pick "The whole app's focus ring"): `body:not(.is-mobile)` sets `--ss-ring` and the new
+    `--lbs-focus` to the Welcome window's grey #5d6778 (`--lbs-focus-rgb` 93,103,120, `--lbs-focus-text` #e2e4e8); 59 focus
+    rules of the stylesheet read `var(--lbs-focus, <their colour>)` (generated: every `:focus` rule with a section colour,
+    except the phone's, the section dots, the panel edges that light while you work in a section and hover rules), so on the
+    phone every value falls back to the colour it had. GF1.
+  - **16ls-qsgrey** (the mock-up mockups/quick_setup_grey_mockup, his pick "Grey, each section keeps a thin colour strip"):
+    Quick Show Setup / Edit Show Info in the Welcome window's grey (#14181f card, #11151b panels, #252a33 lines, #5d6778 focus
+    and pointer edge, #e2e4e8 headings); each heading's strip keeps its section's colour without the glow, the accent dots go.
+    The Set default for all switch takes `lbs-on` (openQS, `qsToggleSetDefault`): on as in the mock-up (#5d6778 edge, #c9d1d9
+    knob), off dimmer (#252a33 edge, #5d6778 knob). QG1.
+  - Tests: VO1, VO2, DS1, DS2, ON1, ON2, ON3, GF1, QG1 new, each failing on 16lr for its own reason; 3 older checks adapted in place to SPEC rule 8 as Omar changed it, their golden names following:
+    16lo-delwin DW5 (the table x opens on Video Presets alone, with the I/O-only note; Everywhere ticks all three and
+    takes LEFT LED out of the show), DW6 (the only screen's window opens on Video Presets alone; unticking it and ticking
+    I/O Patch takes it off the patch) and DW7 (AUX Properties' Remove opens on Video Presets alone).
+    Snapshots: the three example Look Books regenerated on purpose (16ls-greyfocus: the book copies 14 of the focus rules, 3 of
+    the canvas (`.blend-popup-row`, `.blend-label` / `.dead-label`, `.aoi-dim-row` inputs) and 11 of Wire's for its Wire page
+    (`.lb-wire-export .wire-...:focus`), which now read `var(--lbs-focus, <their colour>)`; the book defines no --lbs-focus:
+    the same colours. Mapped back, each book is byte-identical; the models are unchanged).
 - Declined by the owner, do not resurface: mask shapes, anchor points, hardware profiles, canvas/WebGL renderer,
   interpolation filter toggles, upscale-factor notes, per-layer "sharp pixels", any licence mention.
 

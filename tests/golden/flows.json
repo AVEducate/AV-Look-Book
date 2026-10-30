@@ -3185,15 +3185,15 @@
    "ok": true
   },
   {
-   "name": "Video Presets 16lo-delwin DW5 (SPEC rule 8, \"Destinations / AUX: Video Presets = everywhere\"; the full test's #17, Omar 2026-10-17: \"a deleation removes it from all places\"): the table x of LEFT LED asks with all three ticked and unticking I/O Patch unticks Video Presets; from its I/O card only I/O Patch is ticked and it goes off the patch (still on the canvas, D1 kept, + Add destination lists it); Video Presets takes it out of the show: CENTER LED is D1, no NOT IN THE SHOW row on page 1, no Wire Advanced tile left, one Undo step",
+   "name": "Video Presets 16lo-delwin DW5 (SPEC rule 8 as Omar changed it 2026-10-18, 16ls-vponly: \"Off Video Presets only\"; the full test's #17, Omar 2026-10-17: \"a deleation removes it from all places\"): the table x of LEFT LED asks with Video Presets ticked (alone it would keep LEFT LED on the I/O Patch as I/O-only) and Everywhere ticks all three; from its I/O card only I/O Patch is ticked and it goes off the patch (still on the canvas, D1 kept, + Add destination lists it); Everywhere takes it out of the show: CENTER LED is D1, no NOT IN THE SHOW row on page 1, no Wire Advanced tile left, one Undo step",
    "ok": true
   },
   {
-   "name": "Video Presets 16lo-delwin DW6 (SPEC rule 8, \"The only screen is never deleted (as today)\"): with one screen left its window cannot take it off Video Presets (the note says why, Delete is off) but can take it off the I/O Patch",
+   "name": "Video Presets 16lo-delwin DW6 (SPEC rule 8, \"The only screen is never deleted (as today)\"; since 16ls-vponly the window opens on Video Presets alone): with one screen left its window cannot take it off Video Presets (the note says why, Delete is off) but can take it off the I/O Patch",
    "ok": true
   },
   {
-   "name": "I/O Patch 16lo-delwin DW7 (SPEC rules 8 and 10: AUX as destinations; \"Multiviewers: the trash deletes them everywhere, no window\"): AUX Properties' Remove asks with all three ticked; the AUX card trash on the I/O Patch has I/O Patch ticked and takes it off the patch (A1 kept, + Add AUX lists it); a multiviewer's trash deletes it at once, one Undo step",
+   "name": "I/O Patch 16lo-delwin DW7 (SPEC rules 8 and 10: AUX as destinations; \"Multiviewers: the trash deletes them everywhere, no window\"; 16ls-vponly: Video Presets alone): AUX Properties' Remove asks with Video Presets ticked; the AUX card trash on the I/O Patch has I/O Patch ticked and takes it off the patch (A1 kept, + Add AUX lists it); a multiviewer's trash deletes it at once, one Undo step",
    "ok": true
   },
   {
@@ -3314,6 +3314,42 @@
   },
   {
    "name": "Look Book 16lr-exportundo EU1 (Round 2 #34, Omar 2026-10-17: \"remove the hidden undo step.\"): a Look Book export by a click on its window's Export button adds no Undo step on any of the three examples, Wire on Simple (its Wire page fills in what opening Wire fills in, cable colours and the sources the drawing needs, and the undo safety net recorded that as a step that undid nothing you could see)",
+   "ok": true
+  },
+  {
+   "name": "Delete 16ls-vponly VO1 (Omar 2026-10-18: \"when i try to select just video preset everything highlights if am looking just for video preset thing its just going to be deleted in video preset.\"; his pick \"Off Video Presets only\"): the delete window opened from Video Presets ticks Video Presets only, and ticking it again ticks nothing else; a destination taken off Video Presets only leaves the canvas but stays an I/O-only destination (same id and name, its I/O card, its tile on Wire's Simple drawing), one Undo brings it back; an AUX taken off Video Presets and the I/O Patch stays in Wire as a hand-made card, its hint \"an I/O-only\" (not \"a aux\"); a backdrop from Video Presets still opens on Everywhere and leaves the show",
+   "ok": true
+  },
+  {
+   "name": "Delete 16ls-vponly VO2 (Omar 2026-10-18, \"Off Video Presets only\"): a destination already taken off the I/O Patch, then taken off Video Presets only, stays in Wire alone as a hand-made card of the same id (it does not come back onto the I/O Patch) and the hint says so; with Wire ticked too it leaves the show",
+   "ok": true
+  },
+  {
+   "name": "Delete 16ls-delsize DS1 (Omar 2026-10-18: \"when i click the everywhere option. size of the box changes size that should not happen\"): the delete window keeps one height whatever is ticked: Wire alone, Everywhere, nothing, Video Presets alone, Video Presets and Wire, Wire and the I/O Patch (the note under the ticks changes from one line to two)",
+   "ok": true
+  },
+  {
+   "name": "Video Presets 16ls-delsize DS2 (Omar 2026-10-19 about a preset's Reset window: \"yes i want it steady and i did mention that\"): the Reset window keeps one height whatever is ticked: all four, nothing, Reset Destinations, Reset Layers or Reset AUX alone (its note goes from nothing to \"Tick at least one line.\" to \"Nothing to reset: ...\"), on P01 and on P02",
+   "ok": true
+  },
+  {
+   "name": "Names 16ls-onename ON1 (Omar 2026-10-18: \"in testing I created the same word in AUX and in SOURCES, TEST 05 and both got added with zero issue on the I/O Patch page\"; his pick \"One name, one item\"): a source cannot take an output's name (an I/O Patch rename to an AUX's name in another case, a table cell typed with a destination's name: Name in use, nothing written, no Undo step) and an output cannot take a source's name (an AUX renamed, a hand-made Wire output card renamed); an existing source typed again is fine; + ADD SOURCE skips a name an output has",
+   "ok": true
+  },
+  {
+   "name": "Names 16ls-onename ON2 (Omar 2026-10-18, \"One name, one item\": the other places a name is given): the Custom window for a layer refuses a destination's name before the library takes it (no library item, the window stays open); a file imported with another destination's name gets the next free one; + Add multiviewer, a new destination's default name and a new hand-made Wire source card skip a name the other kind has; a quick label (IMAG ...) picked for a layer is refused before its Undo step when an output has that name; on I/O Patch Advanced page 1 a typed source row cannot take an AUX's name and a typed destination row cannot take a source's (no I/O-only twin of that name)",
+   "ok": true
+  },
+  {
+   "name": "Names 16ls-onename ON3 (Omar 2026-10-18, his own steps: \"in testing I created the same word in AUX and in SOURCES, TEST 05 and both got added with zero issue on the I/O Patch page\"): on the I/O Patch an AUX card renamed TEST 05 by typing in its name box, then a source card typed test 05: Name in use (an output has it), the source box reads its old name again, no source of that name; the other way too: a source renamed TEST 06, then an AUX card typed Test 06 is refused",
+   "ok": true
+  },
+  {
+   "name": "Look 16ls-greyfocus GF1 (Omar 2026-10-18: \"the button at the bottom start blank build my show still highlight in Cyan they should just highlight with the grey outline now\"; his pick \"The whole app's focus ring\"): on the desktop the keyboard focus ring is the Welcome window's grey (#5d6778), a field's own focus edge goes grey too (the Show name, cyan before; a preset code, amber before), so does a window's focused button (the Reset window's Reset); the phone keeps its colours",
+   "ok": true
+  },
+  {
+   "name": "Quick Setup 16ls-qsgrey QG1 (Omar 2026-10-18, the mock-up: \"this the one i agree with for the update from the mock ups\", its \"Grey, each section keeps a thin colour strip\"): Quick Show Setup is the grey window (#14181f card), each section heading light with its colour strip kept and no glow (Show cyan, Destinations orange), no accent dot, a field focused shows the grey edge with no glow, the Set default for all switch is the mock-up's grey when on and dimmer when off",
    "ok": true
   }
  ],

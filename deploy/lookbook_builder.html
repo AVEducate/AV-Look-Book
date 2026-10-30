@@ -104,7 +104,7 @@ body.is-mobile .lbbd-qsctl:has(.lbbd-qsft){flex-wrap:wrap}
 .lbbd-ftbox input{flex:1 1 auto;min-width:0;width:64px;background:transparent;border:none;outline:none;color:#fff;font-family:var(--font-mono);font-size:12px;font-weight:700;text-align:right;appearance:textfield;-moz-appearance:textfield}
 .lbbd-ftbox input::-webkit-outer-spin-button,.lbbd-ftbox input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
 .lbbd-ftbox em{font-style:normal;font-size:11px;color:var(--text3)}
-.lbbd-ftbox:focus-within{border-color:var(--n-cyan)}
+.lbbd-ftbox:focus-within{border-color:var(--lbs-focus,var(--n-cyan))}
 .lbbd-imgbtn{display:flex;align-items:center;gap:6px;height:30px;box-sizing:border-box;padding:0 10px;border:1px dashed rgba(255,255,255,.18);border-radius:4px;background:transparent;color:var(--text2);font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;font-family:inherit;white-space:nowrap}
 .lbbd-imgbtn:hover{border-color:rgba(var(--n-cyan-rgb),.5);color:#fff}
 .lbbd-thumb{display:inline-block;width:34px;height:20px;border-radius:2px;background:#4a525c center/cover no-repeat;flex:0 0 auto}
@@ -119,7 +119,7 @@ body.is-mobile .lbbd-qsctl:has(.lbbd-qsft){flex-wrap:wrap}
 .lbbd-pgrid{display:grid;grid-template-columns:1fr 16px 1fr;gap:6px;align-items:end;margin-bottom:8px}
 .lbbd-pbox{display:flex;flex-direction:column;gap:4px;font-size:11px;color:var(--text3);letter-spacing:.04em}
 .lbbd-pbox input{width:100%;font-size:12px;padding:7px 12px;border:1px solid rgba(255,255,255,.06);border-radius:4px;background:var(--n-track);color:#9dd6ff;outline:none;box-sizing:border-box;appearance:textfield;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5);font-family:var(--font-mono);text-align:center}
-.lbbd-pbox input:focus{border-color:var(--n-orange)}
+.lbbd-pbox input:focus{border-color:var(--lbs-focus,var(--n-orange))}
 .lbbd-px{color:var(--text3);font-size:13px;text-align:center;padding-bottom:8px}
 .lbbd-pnote{font-size:11px;line-height:1.45;color:var(--text3);margin-bottom:14px}
 .lbbd-pnote.lbbd-hint{margin:-2px 0 8px}
@@ -137,7 +137,7 @@ body.is-mobile .lbbd-ftbox input{font-size:16px;min-height:40px;min-width:64px} 
 #toolbar label{font-size:10px;color:var(--text3);letter-spacing:.04em}
 .tbi{font-size:12px;padding:4px 12px;border:1px solid var(--n-line);border-radius:999px;background:var(--n-track);color:var(--text);height:26px;outline:none;transition:all .18s ease;cursor:text;box-shadow:var(--n-shadow-inset)}
 .tbi:hover{border-color:rgba(var(--n-cyan-rgb),.35);box-shadow:var(--n-shadow-inset), 0 0 6px rgba(var(--n-cyan-rgb),.15)}
-.tbi:focus{border-color:var(--n-cyan);color:#fff;box-shadow:var(--n-shadow-inset), 0 0 10px rgba(var(--n-cyan-rgb),.4)}
+.tbi:focus{border-color:var(--lbs-focus,var(--n-cyan));color:#fff;box-shadow:var(--n-shadow-inset), 0 0 10px rgba(var(--lbs-focus-rgb,var(--n-cyan-rgb)),.4)}
 
 /* Phase 2 — Toolbar section group headers — strip stays lit (identity), dot is a focus indicator */
 .tb-grp-hdr{display:flex;align-items:center;gap:5px;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase}
@@ -263,10 +263,10 @@ body.is-mobile .lb-lstrip{display:none !important}
 .preset-header{display:flex;align-items:flex-end;gap:10px;padding:8px 12px;background:linear-gradient(180deg,rgba(77,220,138,.04) 0%,transparent 70%);border-bottom:1px solid var(--n-line);border-radius:var(--ss-radius-card) var(--ss-radius-card) 0 0}
 .p-code{font-size:12px;padding:0 8px;border:1px solid rgba(240,192,96,.3);border-radius:999px;background:linear-gradient(180deg,#1a1408 0%,#120e08 100%);color:var(--n-amber);width:54px;height:26px;text-align:center;font-family:var(--font-mono);font-weight:700;outline:none;box-sizing:border-box;transition:all .15s;cursor:text;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5);line-height:24px;letter-spacing:.02em;font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1}
 .p-code:hover{border-color:var(--n-amber);box-shadow:inset 2px 2px 4px rgba(0,0,0,.5), 0 0 6px rgba(240,192,96,.3)}
-.p-code:focus{border-color:var(--n-amber);box-shadow:inset 2px 2px 4px rgba(0,0,0,.5), 0 0 0 1px var(--n-amber), 0 0 8px rgba(240,192,96,.3);color:#fff}
+.p-code:focus{border-color:var(--lbs-focus,var(--n-amber));box-shadow:inset 2px 2px 4px rgba(0,0,0,.5), 0 0 0 1px var(--lbs-focus,var(--n-amber)), 0 0 8px rgba(var(--lbs-focus-rgb,240,192,96),.3);color:#fff}
 .p-name{font-size:12px;padding:4px 12px;border:1px solid rgba(255,255,255,.06);border-radius:999px;background:var(--n-track);color:var(--text);height:26px;outline:none;box-sizing:border-box;transition:all .15s;cursor:text;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5)}
 .p-name:hover{border-color:rgba(var(--n-cyan-rgb),.25)}
-.p-name:focus{border-color:var(--n-cyan);color:#fff;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5), 0 0 0 1px var(--n-cyan), 0 0 8px rgba(var(--n-cyan-rgb),.3)}
+.p-name:focus{border-color:var(--lbs-focus,var(--n-cyan));color:#fff;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5), 0 0 0 1px var(--lbs-focus,var(--n-cyan)), 0 0 8px rgba(var(--lbs-focus-rgb,var(--n-cyan-rgb)),.3)}
 .del-btn{font-size:11px;padding:5px 14px;border:1px solid var(--n-line);border-radius:999px;background:linear-gradient(180deg,#1c222c 0%,#14181f 100%);color:var(--text2);cursor:pointer;height:26px;white-space:nowrap;transition:all .18s ease;display:inline-flex;align-items:center;gap:6px;box-shadow:var(--n-shadow-raised)}
 /* del-btn semantic variants (2026-07-01 batch A): the recess pass (L798-801)
    makes ALL del-btns neutral with !important — the approved look. Variants add
@@ -324,7 +324,7 @@ body.is-mobile .lb-lstrip{display:none !important}
 .lfx-lbl{font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
 .lfx-lbl span{font-weight:500;letter-spacing:0;text-transform:none;opacity:.7}
 .lfx-inp{width:100%;height:26px;font-size:11px;font-weight:600;padding:0 8px;border:1px solid var(--n-line);border-radius:4px;background:#0a0d12;color:var(--text);outline:none;box-sizing:border-box;font-family:var(--font-mono);text-align:center;transition:border-color .12s}
-.lfx-inp:focus{border-color:var(--n-cyan)}
+.lfx-inp:focus{border-color:var(--lbs-focus,var(--n-cyan))}
 .lfx-inp.lfx-hex{text-align:left}
 .lfx-tog{height:26px;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:0 10px;border:1px solid var(--n-line);border-radius:4px;background:#0a0d12;color:var(--text3);cursor:pointer;font-family:inherit;min-width:52px;justify-self:start;transition:all .15s}
 .lfx-tog:hover{color:var(--text);border-color:#3a4150}
@@ -412,7 +412,7 @@ td{padding:4px 8px;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:
 td.col-sep{border-left:1px solid rgba(var(--n-cyan-rgb),.06)}
 td input{transition:border-color .15s, box-shadow .15s, background .15s;cursor:text}
 td input:hover{border-color:var(--n-cyan) !important;background:var(--n-track) !important}
-td input:focus{border-color:var(--n-cyan) !important;background:var(--n-track) !important;box-shadow:0 0 0 1px var(--n-cyan), 0 0 8px rgba(var(--n-cyan-rgb),.3) !important}
+td input:focus{border-color:var(--lbs-focus,var(--n-cyan)) !important;background:var(--n-track) !important;box-shadow:0 0 0 1px var(--lbs-focus,var(--n-cyan)), 0 0 8px rgba(var(--lbs-focus-rgb,var(--n-cyan-rgb)),.3) !important}
 tr.row-sel td{background:rgba(77,220,138,.1) !important}
 tr.row-sel{box-shadow:inset 3px 0 0 var(--n-green), 0 0 12px rgba(77,220,138,.15)}
 tr:not(.row-sel):hover td{background:rgba(var(--n-cyan-rgb),.03)}
@@ -432,7 +432,7 @@ tr.screen-drag-over.screen-drag-over-top td{box-shadow:0 -2px 0 var(--n-cyan), 0
    Spacing tightens to match Compact density (the preview's recommended). */
 .home-field{position:relative;display:inline-flex;align-items:center;background:#0a0d12;border:1px solid var(--ss-border-soft);box-shadow:var(--n-shadow-inset);border-radius:5px;transition:border-color .12s,box-shadow .12s;height:24px;width:100%;box-sizing:border-box;overflow:hidden}
 .home-field:hover{border-color:rgba(var(--n-cyan-rgb),.3)}
-.home-field:focus-within{border-color:var(--n-cyan);box-shadow:0 0 0 1px rgba(var(--n-cyan-rgb),.3)}
+.home-field:focus-within{border-color:var(--lbs-focus,var(--n-cyan));box-shadow:0 0 0 1px rgba(var(--lbs-focus-rgb,var(--n-cyan-rgb)),.3)}
 .home-field.open{border-color:var(--n-cyan);box-shadow:0 0 0 1px rgba(var(--n-cyan-rgb),.3)}
 .home-field input{flex:1;background:transparent !important;border:none !important;outline:none !important;font-size:12px !important;color:var(--text) !important;padding:0 4px 0 7px !important;font-family:inherit;width:100%;min-width:0;height:100% !important;box-shadow:none !important}
 .home-field input::placeholder{color:var(--text3);font-style:italic}
@@ -541,7 +541,7 @@ html{--bottombar-h:28px}   /* on html, NOT :root: the Wire export copies every :
 #custom-box h4::before{content:"";width:2px;height:12px;border-radius:1px;background:var(--n-cyan);box-shadow:0 0 4px var(--n-cyan)}
 #custom-input{width:100%;font-size:12px;padding:7px 14px;border:1px solid rgba(255,255,255,.06);border-radius:999px;background:var(--n-track);color:#fff;outline:none;margin-top:6px;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5);transition:all .15s}
 #custom-input:hover{border-color:rgba(var(--n-cyan-rgb),.25)}
-#custom-input:focus{border-color:var(--n-cyan);box-shadow:inset 2px 2px 4px rgba(0,0,0,.5), 0 0 0 1px var(--n-cyan), 0 0 8px rgba(var(--n-cyan-rgb),.3)}
+#custom-input:focus{border-color:var(--lbs-focus,var(--n-cyan));box-shadow:inset 2px 2px 4px rgba(0,0,0,.5), 0 0 0 1px var(--lbs-focus,var(--n-cyan)), 0 0 8px rgba(var(--lbs-focus-rgb,var(--n-cyan-rgb)),.3)}
 #custom-box .mf{margin-bottom:14px}
 #custom-box .mf label{font-size:11px;color:var(--text3);letter-spacing:.04em;font-weight:600}
 #custom-box .mbtns{display:flex;gap:8px;justify-content:flex-end}
@@ -635,7 +635,7 @@ html{--bottombar-h:28px}   /* on html, NOT :root: the Wire export copies every :
   font-family:var(--font-mono);letter-spacing:.02em;
 }
 .fs-num-inp:hover{border-color:rgba(var(--n-cyan-rgb),.25)}
-.fs-num-inp:focus{border-color:var(--n-cyan);box-shadow:inset 2px 2px 4px rgba(0,0,0,.5), 0 0 0 1px var(--n-cyan), 0 0 8px rgba(var(--n-cyan-rgb),.35)}
+.fs-num-inp:focus{border-color:var(--lbs-focus,var(--n-cyan));box-shadow:inset 2px 2px 4px rgba(0,0,0,.5), 0 0 0 1px var(--lbs-focus,var(--n-cyan)), 0 0 8px rgba(var(--lbs-focus-rgb,var(--n-cyan-rgb)),.35)}
 
 /* Type-color variants — text color hints what dimension this is */
 .fs-num-inp.wh{color:#9dd6ff}     /* W/H — cyan-tinged (size) */
@@ -644,7 +644,7 @@ html{--bottombar-h:28px}   /* on html, NOT :root: the Wire export copies every :
 .fs-num-inp.crop{color:#ff9aa8}   /* Crop — pinkish red (cuts away from frame) */
 .fs-num-inp.amber{color:#f0c060}  /* AOI region inputs — amber to match section */
 .fs-num-inp.amber{border-color:rgba(240,192,96,.2);background:#1a1408}
-.fs-num-inp.amber:focus{border-color:var(--n-amber);box-shadow:inset 2px 2px 4px rgba(0,0,0,.5), 0 0 0 1px var(--n-amber), 0 0 8px rgba(240,192,96,.35);color:#fff}
+.fs-num-inp.amber:focus{border-color:var(--lbs-focus,var(--n-amber));box-shadow:inset 2px 2px 4px rgba(0,0,0,.5), 0 0 0 1px var(--lbs-focus,var(--n-amber)), 0 0 8px rgba(var(--lbs-focus-rgb,240,192,96),.35);color:#fff}
 
 /* Layer cards (cyan sub-panel) get auto-smaller inputs — they have narrower 4-col rows */
 .fs-sub.s-cyan .fs-num-inp{width:48px;font-size:10px;padding:3px 6px}
@@ -662,7 +662,7 @@ html{--bottombar-h:28px}   /* on html, NOT :root: the Wire export copies every :
   box-shadow:inset 2px 2px 4px rgba(0,0,0,.5);
   transition:all .15s;
 }
-.fs-edid-inp:focus{border-color:var(--n-orange);box-shadow:inset 2px 2px 4px rgba(0,0,0,.5), 0 0 0 1px var(--n-orange), 0 0 8px rgba(255,138,61,.35);color:#fff}
+.fs-edid-inp:focus{border-color:var(--lbs-focus,var(--n-orange));box-shadow:inset 2px 2px 4px rgba(0,0,0,.5), 0 0 0 1px var(--lbs-focus,var(--n-orange)), 0 0 8px rgba(var(--lbs-focus-rgb,255,138,61),.35);color:#fff}
 .fs-edid-inp::placeholder{color:var(--text3)}
 
 /* Phase 4 — Property modals (Screen, Layer, DSM) — Option C wrapper + header + buttons */
@@ -725,7 +725,7 @@ body.is-mobile .pm-btn-primary,body.is-mobile .pm-btn-cancel,body.is-mobile .pm-
 .dlg-box .dlg-tick:hover{background:rgba(255,255,255,.04)}
 .dlg-box .dlg-tick-sub{margin-left:26px}
 .dlg-box .dlg-tick input{flex:0 0 auto;width:16px;height:16px;margin:2px 0 0;cursor:pointer;accent-color:var(--n-amber)}
-.dlg-box .dlg-tick input:focus-visible{outline:2px solid var(--n-cyan);outline-offset:2px}
+.dlg-box .dlg-tick input:focus-visible{outline:2px solid var(--lbs-focus,var(--n-cyan));outline-offset:2px}
 .dlg-box .dlg-tick-txt{display:flex;flex-direction:column;gap:2px;min-width:0}
 .dlg-box .dlg-tick-txt b{font-size:var(--ss-fs-body);font-weight:700;letter-spacing:.02em}
 .dlg-box .dlg-tick-txt i{font-style:normal;font-size:var(--ss-fs-label);line-height:1.4;color:var(--text2)}
@@ -833,14 +833,14 @@ body.is-mobile .dlg-btn-primary,body.is-mobile .dlg-btn-cancel{min-height:var(--
 #wire-overlay .wire-tb-inp{flex:1 1 auto;min-width:0;height:24px;box-sizing:border-box;background:var(--n-track,#0b0f16);border:1px solid rgba(255,255,255,.08);border-radius:6px;color:var(--text);padding:0 8px;font-size:11px;font-family:inherit;outline:none;transition:border-color .15s,box-shadow .15s}
 #wire-overlay .wire-tb-inp::placeholder{color:var(--text4,#5a636e)}
 #wire-overlay .wire-tb-inp:hover{border-color:rgba(var(--n-cyan-rgb),.3)}
-#wire-overlay .wire-tb-inp:focus{border-color:var(--n-cyan);box-shadow:0 0 0 1px var(--n-cyan),0 0 8px rgba(var(--n-cyan-rgb),.3)}
+#wire-overlay .wire-tb-inp:focus{border-color:var(--lbs-focus,var(--n-cyan));box-shadow:0 0 0 1px var(--lbs-focus,var(--n-cyan)),0 0 8px rgba(var(--lbs-focus-rgb,var(--n-cyan-rgb)),.3)}
 #wire-overlay .wire-tb-inp[type=date]{color-scheme:dark;padding-right:4px}
 #wire-overlay .wire-tb-auto{flex:1 1 auto;min-width:0;height:24px;box-sizing:border-box;display:flex;align-items:center;padding:0 8px;font-size:11px;color:var(--text2);border:1px dashed rgba(255,255,255,.1);border-radius:6px;font-variant-numeric:tabular-nums}
 #wire-overlay .wire-side-panel.wire-panel-collapsed #wire-title-block{display:none}
 /* 16ef: right-panel section collapse (mirrors .wire-pane-hdr on the left) */
 #wire-overlay .wire-rpane-hdr{cursor:pointer;user-select:none;transition:background .12s;outline:none}
 #wire-overlay .wire-rpane-hdr:hover{background:rgba(var(--n-cyan-rgb),0.08)}
-#wire-overlay .wire-rpane-hdr:focus-visible{box-shadow:inset 0 0 0 2px rgba(var(--n-cyan-rgb),.55)}
+#wire-overlay .wire-rpane-hdr:focus-visible{box-shadow:inset 0 0 0 2px rgba(var(--lbs-focus-rgb,var(--n-cyan-rgb)),.55)}
 #wire-overlay .wire-rpane-chev{display:inline-flex;align-items:center;color:var(--n-cyan);transition:transform .15s;flex-shrink:0}
 #wire-overlay .wire-rpane-hdr.collapsed .wire-rpane-chev{transform:rotate(-90deg)}
 #wire-overlay .wire-side-panel.wire-panel-collapsed .wire-rpane-chev{display:none}
@@ -935,7 +935,7 @@ body:has(#sys-overlay.open) #ov,body:has(#sys-overlay.open) #modal{z-index:640 !
 #io-grid .iog-card.wire-source-card{margin:0;position:relative;flex-wrap:wrap;min-width:0;box-sizing:border-box;padding:12px 12px 8px;row-gap:8px;border-radius:8px}
 #io-grid .iog-card .wire-source-info{gap:5px}
 #io-grid .iog-card .wire-thumb-col{align-self:flex-start}
-#io-grid .iog-card .wire-thumb:focus-visible{outline:2px solid var(--n-cyan);outline-offset:2px}
+#io-grid .iog-card .wire-thumb:focus-visible{outline:2px solid var(--lbs-focus,var(--n-cyan));outline-offset:2px}
 #io-grid .iog-card .wire-thumb:focus-within .wire-thumb-clear{opacity:1}
 #io-grid .iog-card .wire-thumb.iog-thumb-fixed{cursor:default}
 #io-grid .iog-card .wire-thumb.iog-thumb-fixed:hover{border-color:#2a2f3a;box-shadow:none}
@@ -1004,7 +1004,7 @@ body:has(#sys-overlay.open) #ov,body:has(#sys-overlay.open) #modal{z-index:640 !
 #io-adv .sys-notes-input.io-note-cell.open{background:#1a1f28;border-color:var(--n-cyan);color:var(--text)}
 .io-note-pop{position:fixed;z-index:1150;box-sizing:border-box;padding:8px;background:#14181f;border:1px solid rgba(var(--n-cyan-rgb),.55);border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,.55)}
 .io-note-pop .io-note-ta{display:block;width:100%;box-sizing:border-box;min-height:64px;resize:vertical;padding:6px 8px;background:#0a0d12;border:1px solid var(--n-line);border-radius:5px;color:var(--text);font-size:12px;line-height:1.45;font-family:inherit;outline:none}
-.io-note-pop .io-note-ta:focus{border-color:var(--n-cyan)}
+.io-note-pop .io-note-ta:focus{border-color:var(--lbs-focus,var(--n-cyan))}
 .io-note-pop .io-note-hint{margin-top:5px;font-size:11px;color:var(--text3);letter-spacing:.02em}
 body.is-mobile .mb-io-card .mb-io-field .mb-io-rescol{flex:1;min-width:0;display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px}   /* 16kz-fix (R6): the Resolution box keeps its whole text; Refresh beside it when both fit, else on the line under it */
 body.is-mobile .mb-io-card .mb-io-field .mb-io-rescol>.sys-pill.clickable{flex:1 0 auto;width:auto;max-width:100%}
@@ -1034,7 +1034,7 @@ body:not(.is-mobile) #wire-topbar #wire-zoom-widget,body:not(.is-mobile) #wire-t
 .io-adv-countset{display:inline-flex;align-items:center;gap:6px;margin-left:14px}
 .io-adv-countcap{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--text3)}
 .io-adv-count{width:46px;height:24px;box-sizing:border-box;padding:0 6px;background:#0a0d12;border:1px solid var(--n-line);border-radius:4px;color:var(--text);font-family:var(--font-mono);font-size:11px;font-weight:600;text-align:center;outline:none;transition:border-color .12s}
-.io-adv-count:focus{border-color:var(--n-cyan)}
+.io-adv-count:focus{border-color:var(--lbs-focus,var(--n-cyan))}
 /* 16hr: everything on the page bars sits at the Simple / Advanced pill height (34px) — Omar */
 .sys-topbar .sys-btn{height:34px}
 #wire-topbar #wire-zoom-widget,#wire-topbar button[onclick="_wireResetLayout()"],button.lb-rl-btn{height:34px !important;box-sizing:border-box}
@@ -1134,7 +1134,7 @@ body.is-mobile #vp-tabs{display:none}
 .fs-tl-vol{position:absolute;left:0;right:0;height:0;border-top:2px solid #fff;z-index:4;cursor:ns-resize;box-shadow:0 0 4px rgba(0,0,0,.9)}
 .fs-tl-vol::before{content:'';position:absolute;left:0;right:0;top:-7px;height:14px}
 .fs-tl-vol:focus{outline:none}
-.fs-tl-vol:focus b{color:var(--n-cyan);box-shadow:0 0 0 1px rgba(var(--n-cyan-rgb),.6)}
+.fs-tl-vol:focus b{color:var(--lbs-focus-text,var(--n-cyan));box-shadow:0 0 0 1px rgba(var(--lbs-focus-rgb,var(--n-cyan-rgb)),.6)}
 @media (max-width:1700px){   /* In / Out / Clear need about 108 px and the Preset 30 / 20 / 10 about 96 px: below a 1700 window the strip tightens (Cover keeps its thumbnail and tooltip, loses its word) so the count-down LCD stays inside */
   .fs-tl-bar{gap:3px}
   .fs-tl-grp{gap:2px}
@@ -1259,9 +1259,9 @@ video.fs-prev{position:absolute;inset:0;width:100%;height:100%;object-fit:contai
 .fs-srcblk-row{display:grid;grid-template-columns:84px 1fr;gap:6px;align-items:center;margin-top:8px}
 .fs-sel-wrap{position:relative;display:block}
 .fs-sel{width:100%;height:30px;appearance:none;-webkit-appearance:none;padding:0 26px 0 10px;border:1px solid var(--n-line);border-radius:4px;background:#0a0d12;color:var(--text);font-family:inherit;font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;outline:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.fs-sel:focus{border-color:var(--n-cyan);color:var(--n-cyan);background:#1a1f28}
+.fs-sel:focus{border-color:var(--lbs-focus,var(--n-cyan));color:var(--lbs-focus-text,var(--n-cyan));background:#1a1f28}
 .fs-sel-wrap::after{content:'▼';position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:8px;color:var(--text3);pointer-events:none}
-.fs-sel-wrap:focus-within::after{color:var(--n-cyan);transform:translateY(-50%) rotate(180deg)}
+.fs-sel-wrap:focus-within::after{color:var(--lbs-focus-text,var(--n-cyan));transform:translateY(-50%) rotate(180deg)}
 .fs-info{font-family:var(--font-mono);font-size:11px;font-weight:600;color:var(--text);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .fs-info .warn{color:var(--n-red);font-weight:700}
 .fs-info-sw{display:inline-block;width:14px;height:11px;border-radius:2px;border:1px solid rgba(255,255,255,.15);vertical-align:-1px;margin-right:6px}
@@ -1277,7 +1277,7 @@ input[type=range].fs-range::-webkit-slider-runnable-track,input[type=range].lfx-
 input[type=range].fs-range::-webkit-slider-thumb,input[type=range].lfx-range::-webkit-slider-thumb,input[type=range].fs-tl-level::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:8px;height:14px;margin-top:-6px;border-radius:2px;background:#e2e4e8;border:1px solid #0a0d12;box-shadow:0 1px 3px rgba(0,0,0,.6)}
 input[type=range].fs-range:hover::-webkit-slider-thumb,input[type=range].lfx-range:hover::-webkit-slider-thumb,input[type=range].fs-tl-level:hover::-webkit-slider-thumb{background:#fff}
 input[type=range].fs-range:focus-visible,input[type=range].lfx-range:focus-visible,input[type=range].fs-tl-level:focus-visible{outline:none}
-input[type=range].fs-range:focus-visible::-webkit-slider-thumb,input[type=range].lfx-range:focus-visible::-webkit-slider-thumb,input[type=range].fs-tl-level:focus-visible::-webkit-slider-thumb{box-shadow:0 0 0 2px rgba(var(--n-cyan-rgb),.5)}
+input[type=range].fs-range:focus-visible::-webkit-slider-thumb,input[type=range].lfx-range:focus-visible::-webkit-slider-thumb,input[type=range].fs-tl-level:focus-visible::-webkit-slider-thumb{box-shadow:0 0 0 2px rgba(var(--lbs-focus-rgb,var(--n-cyan-rgb)),.5)}
 input[type=range].fs-range::-moz-range-track,input[type=range].lfx-range::-moz-range-track,input[type=range].fs-tl-level::-moz-range-track{height:4px;border-radius:2px;background:#2a3038;border:1px solid #1a1f28}
 input[type=range].fs-range::-moz-range-thumb,input[type=range].lfx-range::-moz-range-thumb,input[type=range].fs-tl-level::-moz-range-thumb{width:8px;height:14px;border-radius:2px;background:#e2e4e8;border:1px solid #0a0d12}
 #fs-props .fs-srcpill .pill-label{min-width:0;overflow:hidden;text-overflow:ellipsis}
@@ -1471,17 +1471,17 @@ body[data-skin="black"] #table-toolbar .tb-btn{color:var(--ss-t1) !important}
 body[data-skin="black"] #table-toolbar .tb-btn:hover{color:var(--n-cyan) !important}
 /* table-row P# code field + row delete + custom-modal buttons (2026-06-22) */
 .t-pcode{width:38px;height:22px;font-size:10px;font-weight:700;text-align:center;padding:0 4px;border:1px solid var(--ss-border-soft);border-radius:5px;background:#0a0d12;box-shadow:var(--n-shadow-inset);color:var(--text2);outline:none;cursor:default;font-family:var(--font-mono);box-sizing:border-box;transition:border-color .12s,color .12s}
-.t-pcode:focus{border-color:var(--n-amber);color:var(--n-amber);cursor:text}
+.t-pcode:focus{border-color:var(--lbs-focus,var(--n-amber));color:var(--lbs-focus-text,var(--n-amber));cursor:text}
 /* Phase 3 (2026-06-22): input focus-glow folded from inline onfocus/onblur into CSS.
    data-fx="<accent>" on an input -> accent ring+glow on :focus; reverts on blur.
    !important beats each input's inline resting box-shadow. "-c" variants also whiten text. */
-[data-fx="cyan"]:focus,[data-fx="cyan-c"]:focus{border-color:var(--n-cyan)!important;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5), 0 0 0 1px var(--n-cyan), 0 0 8px rgba(var(--n-cyan-rgb),.3)!important}
-[data-fx="cyan6"]:focus{border-color:var(--n-cyan)!important;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5), 0 0 0 1px var(--n-cyan), 0 0 6px rgba(var(--n-cyan-rgb),.3)!important}
-[data-fx="orange"]:focus,[data-fx="orange-c"]:focus{border-color:var(--n-orange)!important;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5), 0 0 0 1px var(--n-orange), 0 0 8px rgba(255,138,61,.3)!important}
-[data-fx="amber"]:focus,[data-fx="amber-c"]:focus{border-color:var(--n-amber)!important;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5), 0 0 0 1px var(--n-amber), 0 0 8px rgba(240,192,96,.3)!important}
+[data-fx="cyan"]:focus,[data-fx="cyan-c"]:focus{border-color:var(--lbs-focus,var(--n-cyan))!important;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5), 0 0 0 1px var(--lbs-focus,var(--n-cyan)), 0 0 8px rgba(var(--lbs-focus-rgb,var(--n-cyan-rgb)),.3)!important}
+[data-fx="cyan6"]:focus{border-color:var(--lbs-focus,var(--n-cyan))!important;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5), 0 0 0 1px var(--lbs-focus,var(--n-cyan)), 0 0 6px rgba(var(--lbs-focus-rgb,var(--n-cyan-rgb)),.3)!important}
+[data-fx="orange"]:focus,[data-fx="orange-c"]:focus{border-color:var(--lbs-focus,var(--n-orange))!important;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5), 0 0 0 1px var(--lbs-focus,var(--n-orange)), 0 0 8px rgba(var(--lbs-focus-rgb,255,138,61),.3)!important}
+[data-fx="amber"]:focus,[data-fx="amber-c"]:focus{border-color:var(--lbs-focus,var(--n-amber))!important;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5), 0 0 0 1px var(--lbs-focus,var(--n-amber)), 0 0 8px rgba(var(--lbs-focus-rgb,240,192,96),.3)!important}
 [data-fx="red"]:focus,[data-fx="red-c"]:focus{border-color:var(--n-red)!important;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5), 0 0 0 1px var(--n-red), 0 0 6px rgba(255,77,90,.3)!important}
-[data-fx="green"]:focus,[data-fx="green-c"]:focus{border-color:var(--n-green)!important;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5), 0 0 0 1px var(--n-green), 0 0 6px rgba(77,220,138,.3)!important}
-[data-fx="purple"]:focus,[data-fx="purple-c"]:focus{border-color:var(--n-purple)!important;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5), 0 0 0 1px var(--n-purple), 0 0 6px rgba(176,107,255,.3)!important}
+[data-fx="green"]:focus,[data-fx="green-c"]:focus{border-color:var(--lbs-focus,var(--n-green))!important;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5), 0 0 0 1px var(--lbs-focus,var(--n-green)), 0 0 6px rgba(var(--lbs-focus-rgb,77,220,138),.3)!important}
+[data-fx="purple"]:focus,[data-fx="purple-c"]:focus{border-color:var(--lbs-focus,var(--n-purple))!important;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5), 0 0 0 1px var(--lbs-focus,var(--n-purple)), 0 0 6px rgba(var(--lbs-focus-rgb,176,107,255),.3)!important}
 [data-fx="pink"]:focus,[data-fx="pink-c"]:focus{border-color:#ff9aa8!important;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5), 0 0 0 1px #ff9aa8, 0 0 8px rgba(255,154,168,.3)!important}
 [data-fx$="-c"]:focus{color:#fff!important}
 .t-del{font-size:11px;padding:1px 6px;border:1px solid transparent;border-radius:5px;background:transparent;color:var(--text3);cursor:pointer;line-height:1.4;transition:color .12s,border-color .12s,background .12s}
@@ -1540,9 +1540,9 @@ body[data-skin="black"] #custom-modal .tb-btn:not(.pri):hover{color:var(--n-cyan
 .pm-hdr .pm-close:hover{box-shadow:var(--n-shadow-inset) !important}
 /* ── Bottom style — name fields -> recessed muted pill (2026-06-21) ── */
 .sys-name-cell .sys-name-input{border-radius:999px !important;background:var(--n-track) !important;border:1px solid var(--ss-border-soft) !important;box-shadow:var(--n-shadow-inset) !important;padding:5px 13px !important}
-.sys-name-cell .sys-name-input:focus{border-color:var(--n-cyan) !important;box-shadow:var(--n-shadow-inset), 0 0 0 1px var(--n-cyan), 0 0 8px rgba(var(--n-cyan-rgb),.25) !important;color:#fff !important}
+.sys-name-cell .sys-name-input:focus{border-color:var(--lbs-focus,var(--n-cyan)) !important;box-shadow:var(--n-shadow-inset), 0 0 0 1px var(--lbs-focus,var(--n-cyan)), 0 0 8px rgba(var(--lbs-focus-rgb,var(--n-cyan-rgb)),.25) !important;color:#fff !important}
 #wire-overlay .wire-custom-name{border-radius:999px !important;background:var(--n-track) !important;border:1px solid var(--ss-border-soft) !important;box-shadow:var(--n-shadow-inset) !important;padding:5px 12px !important}
-#wire-overlay .wire-custom-name:focus{border-color:var(--n-cyan) !important;box-shadow:var(--n-shadow-inset), 0 0 0 1px var(--n-cyan), 0 0 8px rgba(var(--n-cyan-rgb),.25) !important}
+#wire-overlay .wire-custom-name:focus{border-color:var(--lbs-focus,var(--n-cyan)) !important;box-shadow:var(--n-shadow-inset), 0 0 0 1px var(--lbs-focus,var(--n-cyan)), 0 0 8px rgba(var(--lbs-focus-rgb,var(--n-cyan-rgb)),.25) !important}
 /* ── Pill-in-recess — inline/ID/attr buttons missed by class passes (2026-06-21) ── */
 /* I/O Patch Add/Remove buttons (.sys-add-btn family) */
 .sys-add-btn{position:relative;isolation:isolate;border:1px solid var(--ss-border-soft) !important;border-style:solid !important;background:#0a0d12 !important;box-shadow:var(--n-shadow-inset) !important;color:var(--text2) !important}
@@ -1596,7 +1596,7 @@ button[onclick="_wireDownloadAllThumbnails()"]:hover::before{filter:brightness(1
 /* Show/Canvas fields (.tbi) — match the button recess track: muted #0a0d12 + soft border (2026-06-21) */
 #toolbar .tbi{background:#0a0d12 !important;border:1px solid var(--ss-border-soft) !important}
 #toolbar .tbi:hover{border-color:rgba(var(--n-cyan-rgb),.30) !important;box-shadow:var(--n-shadow-inset) !important}
-#toolbar .tbi:focus{border-color:var(--n-cyan) !important;box-shadow:var(--n-shadow-inset), 0 0 0 1px var(--n-cyan), 0 0 8px rgba(var(--n-cyan-rgb),.25) !important}
+#toolbar .tbi:focus{border-color:var(--lbs-focus,var(--n-cyan)) !important;box-shadow:var(--n-shadow-inset), 0 0 0 1px var(--lbs-focus,var(--n-cyan)), 0 0 8px rgba(var(--lbs-focus-rgb,var(--n-cyan-rgb)),.25) !important}
 /* 16kt-canvas-draft (Omar, decision 22): the Canvas W / H boxes are a read-out, calculated from the destinations: read-only
    and out of the Tab order (both in the markup). 16ku-topbar (Omar 2026-09-24, "i prefer the old way the Canvas looked"):
    they wear the 16ks look again, the two dark recessed boxes with the x between them; the rule that stripped them is gone.
@@ -1664,7 +1664,7 @@ button[onclick="_wireDownloadAllThumbnails()"]:hover::before{filter:brightness(1
 #wire-overlay .wire-source-card.wire-custom-card:hover .wire-card-delete{opacity:1}
 #wire-overlay .wire-card-delete:hover{background:rgba(255,77,90,.4);box-shadow:0 0 6px rgba(255,77,90,.4)}
 #wire-overlay .wire-custom-name{width:100%;font-size:11px;font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:.06em;background:var(--n-track);border:1px solid #2a2f3a;border-radius:4px;padding:4px 6px;font-family:inherit;letter-spacing:.02em;outline:none;transition:border-color .12s}
-#wire-overlay .wire-custom-name:focus{border-color:var(--n-cyan)}
+#wire-overlay .wire-custom-name:focus{border-color:var(--lbs-focus,var(--n-cyan))}
 #wire-overlay .wire-custom-name::placeholder{color:var(--text3);font-style:italic;font-weight:500}
 #wire-overlay .wire-pane-body{overflow:hidden}
 /* 16ke (Omar): the left panel's section headers stack the way the right panel's do. All Sources is pinned at the top,
@@ -1732,7 +1732,7 @@ button[onclick="_wireDownloadAllThumbnails()"]:hover::before{filter:brightness(1
 #wire-overlay .wire-router-grid .r-x:hover{color:var(--n-red);background:rgba(255,77,90,.15)}
 #wire-overlay .wire-res-row{display:flex;gap:2px;align-items:stretch}
 #wire-overlay .wire-source-res{flex:1;min-width:0;font-size:10px;padding:4px 6px;background:var(--n-track);border:1px solid #2a2f3a;border-radius:4px 0 0 4px;color:var(--text);font-family:var(--font-mono);outline:none;transition:border-color .12s}
-#wire-overlay .wire-source-res:focus{border-color:var(--n-cyan)}
+#wire-overlay .wire-source-res:focus{border-color:var(--lbs-focus,var(--n-cyan))}
 #wire-overlay .wire-source-res::placeholder{color:var(--text3);font-style:italic;font-family:inherit}
 #wire-overlay .wire-res-dropdown-btn{flex-shrink:0;width:22px;background:var(--n-track);border:1px solid #2a2f3a;border-left:none;border-radius:0 4px 4px 0;color:var(--text3);cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;transition:all .12s}
 #wire-overlay .wire-res-dropdown-btn:hover{border-color:var(--n-cyan);color:var(--n-cyan);background:rgba(var(--n-cyan-rgb),.06)}
@@ -1782,13 +1782,13 @@ button[onclick="_wireDownloadAllThumbnails()"]:hover::before{filter:brightness(1
 /* 16el: IP address (Details + tile) and the Project Info logo tile */
 #wire-overlay .wire-ip-sec{padding:10px 14px 6px;border-top:1px solid #1e1e1e}
 #wire-overlay .wire-ip-input{width:100%;height:26px;box-sizing:border-box;background:var(--n-track);border:1px solid #2a2f3a;border-radius:6px;color:var(--text);padding:0 8px;font-size:12px;font-family:var(--font-mono);outline:none;transition:border-color .12s,box-shadow .12s}
-#wire-overlay .wire-ip-input:focus{border-color:var(--n-cyan);box-shadow:0 0 0 1px var(--n-cyan)}
+#wire-overlay .wire-ip-input:focus{border-color:var(--lbs-focus,var(--n-cyan));box-shadow:0 0 0 1px var(--lbs-focus,var(--n-cyan))}
 #wire-overlay .wire-ip-hint{font-size:9.5px;color:var(--text3);margin-top:5px;line-height:1.4;font-style:italic}
 #wire-overlay .wire-adv-ip{font-size:9px;font-family:var(--font-mono);color:var(--text2);margin-top:3px;letter-spacing:.02em;white-space:nowrap}
 #wire-overlay .wire-tb-logo-row{align-items:flex-start;margin-top:4px}
 #wire-overlay .wire-tb-logo{flex:1 1 auto;width:auto;height:64px;cursor:pointer}
 #wire-overlay .wire-tb-logo img{width:100%;height:100%;object-fit:contain;background:#0a0e16;display:block}
-#wire-overlay .wire-tb-logo:focus-visible{box-shadow:0 0 0 2px rgba(var(--n-cyan-rgb),.55)}
+#wire-overlay .wire-tb-logo:focus-visible{box-shadow:0 0 0 2px rgba(var(--lbs-focus-rgb,var(--n-cyan-rgb)),.55)}
 /* 16en: Align panel — docked beside the tool palette (tracks the collapsed left panel like the palette does) */
 #wire-overlay #wire-align-panel{position:absolute;top:50%;left:322px;transform:translateY(-50%);z-index:31;width:176px;box-sizing:border-box;padding:10px;background:linear-gradient(180deg,#161a22 0%,#0b0d11 100%);border:1px solid rgba(var(--n-cyan-rgb),.35);border-radius:10px;box-shadow:var(--n-shadow-raised);transition:left .18s ease}
 #wire-overlay #wire-body > #wire-panel-left.wire-panel-collapsed ~ div #wire-align-panel{left:100px}
@@ -1856,10 +1856,10 @@ body.is-mobile #wire-overlay #wire-align-panel{display:none !important}
 #wire-overlay .wire-router-title.wire-title-locked{display:flex;align-items:center;justify-content:center;gap:8px;cursor:default}
 #wire-overlay .wire-router-title.wire-title-locked svg{opacity:.55}
 #wire-overlay .wire-router-title input{background:transparent;border:none;color:inherit;font-weight:inherit;letter-spacing:inherit;font-size:inherit;text-align:center;outline:none;width:90%;text-transform:uppercase;height:40px;line-height:1}
-#wire-overlay .wire-router-title input:focus{outline:1px solid var(--n-cyan);outline-offset:1px;background:#181c25}
+#wire-overlay .wire-router-title input:focus{outline:1px solid var(--lbs-focus,var(--n-cyan));outline-offset:1px;background:#181c25}
 #wire-overlay .wire-router-subtitle{background:#000;color:#e8e8ea;font-weight:700;letter-spacing:.1em;font-size:14px;text-transform:uppercase;text-align:center;height:44px;padding:0 12px;border-bottom:1px solid rgba(var(--n-cyan-rgb),.18);display:flex;align-items:center;justify-content:center;box-sizing:border-box}
 #wire-overlay .wire-router-subtitle input{background:transparent;border:none;color:inherit;font-weight:inherit;letter-spacing:inherit;font-size:inherit;text-align:center;outline:none;width:90%;text-transform:uppercase;height:32px;line-height:1}
-#wire-overlay .wire-router-subtitle input:focus{outline:1px solid var(--n-cyan);outline-offset:1px;background:#0a0e16}
+#wire-overlay .wire-router-subtitle input:focus{outline:1px solid var(--lbs-focus,var(--n-cyan));outline-offset:1px;background:#0a0e16}
 #wire-overlay .wire-router-grid{display:grid;grid-template-columns:72px 1fr 72px 1fr;grid-auto-rows:44px;flex:1;font-size:15px;min-height:0}
 #wire-overlay .wire-switcher-grid{grid-template-columns:48px minmax(0,1.25fr) minmax(0,1fr) 48px minmax(0,1.25fr) minmax(0,1fr) !important}   /* 16jv: # · Source · ID, both halves even */
 #wire-overlay .wire-return-edge{stroke:#ff8a3d !important;stroke-dasharray:7 5}
@@ -1880,15 +1880,15 @@ body.is-mobile #wire-overlay #wire-align-panel{display:none !important}
 .wtl-pic:hover .wtl-hint{fill:rgba(var(--n-cyan-rgb),.85)}
 .wtl-pic:hover .wtl-ico{stroke:#0a0e16}
 .wtl-pen:hover{box-shadow:0 0 0 2px rgba(127,127,127,.35)}
-.wtl-pen:focus-visible{outline:2px solid var(--n-cyan);outline-offset:1px}
+.wtl-pen:focus-visible{outline:2px solid var(--lbs-focus,var(--n-cyan));outline-offset:1px}
 .wire-router-title .wtl-name::placeholder{color:inherit !important;opacity:1 !important}
 /* 16ld-fix: a tool's name box shows while you type in it (the full name shows, wrapped, the rest of the time); its picture box and
    its x take the keyboard focus, and show it */
 .wtl-nm .wtl-name:focus{opacity:1 !important}
 .wtl-nm:focus-within .wtl-nm-show{visibility:hidden}
 .wtl-pic:focus-within .wtl-clr{opacity:1}
-.wtl-pic .wtl-hit:focus-visible{outline:none;stroke:var(--n-cyan);stroke-width:3}
-.wtl-pic circle.wtl-clr:focus-visible{outline:none;stroke:var(--n-cyan);stroke-width:2}
+.wtl-pic .wtl-hit:focus-visible{outline:none;stroke:var(--lbs-focus,var(--n-cyan));stroke-width:3}
+.wtl-pic circle.wtl-clr:focus-visible{outline:none;stroke:var(--lbs-focus,var(--n-cyan));stroke-width:2}
 #wire-overlay .wire-srcport-name{width:100%;height:16px;font-size:9px;font-weight:600;font-family:var(--font-mono);color:var(--text);background:rgba(255,255,255,.04);border:1px solid var(--ss-border-soft);border-radius:4px;padding:1px 6px;box-sizing:border-box;outline:none;text-align:right}
 #wire-overlay .wire-srcport-name:focus{border-color:var(--n-blue)}
 #wire-overlay .wire-srcport-name::placeholder{color:var(--text3);opacity:.55}
@@ -1908,9 +1908,9 @@ body.is-mobile #wire-overlay #wire-align-panel{display:none !important}
 #wire-overlay .wire-router-grid .rc{background:rgba(255,255,255,0.02);color:var(--text);height:44px;padding:0 10px;border-right:1px solid rgba(255,255,255,0.06);border-bottom:1px solid rgba(255,255,255,0.06);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1;display:flex;align-items:center;box-sizing:border-box;font-size:15px}
 #wire-overlay .wire-router-grid .rc-num{justify-content:center;font-family:var(--font-mono);color:var(--text2);background:rgba(0,0,0,0.25)}
 #wire-overlay .wire-router-grid input{background:transparent;border:none;color:inherit;font-family:inherit;font-size:inherit;outline:none;width:100%;height:36px;padding:0;line-height:1;box-sizing:border-box}
-#wire-overlay .wire-router-grid input:focus{outline:1px solid rgba(var(--n-cyan-rgb),.5);background:rgba(var(--n-cyan-rgb),.06)}
+#wire-overlay .wire-router-grid input:focus{outline:1px solid rgba(var(--lbs-focus-rgb,var(--n-cyan-rgb)),.5);background:rgba(var(--lbs-focus-rgb,var(--n-cyan-rgb)),.06)}
 #wire-overlay .wire-router-grid select{background:#0a0e16;border:1px solid rgba(255,255,255,0.1);color:var(--text);font-family:inherit;font-size:inherit;outline:none;width:100%;height:18px;padding:0 4px;cursor:pointer;border-radius:3px;line-height:1;box-sizing:border-box}
-#wire-overlay .wire-router-grid select:focus{border-color:var(--n-cyan)}
+#wire-overlay .wire-router-grid select:focus{border-color:var(--lbs-focus,var(--n-cyan))}
 /* 16jd: converter / network-switch device tiles (Omar, Sibos drawing) — router chrome, smaller rows, a cable type per port */
 #wire-overlay .wire-device-tile{border-color:rgba(90,169,255,.45)}
 #wire-overlay .wire-device-tile.selected{border-color:#5aa9ff;box-shadow:0 0 14px rgba(90,169,255,.4)}
@@ -1940,7 +1940,7 @@ body.is-mobile #wire-overlay #wire-align-panel{display:none !important}
 .blend-popup-row{display:flex;align-items:center;gap:8px;margin:6px 0}
 .blend-popup-row label{font-size:11px;color:var(--text2);flex:1;font-weight:600}
 .blend-popup-row input{width:64px;padding:5px 8px;background:var(--n-track);border:1px solid var(--n-line);border-radius:4px;color:var(--text);font-family:var(--font-mono);font-size:12px;text-align:center;outline:none;transition:border-color .12s}
-.blend-popup-row input:focus{border-color:#ff8a3d;box-shadow:0 0 0 1px rgba(255,138,61,.3)}
+.blend-popup-row input:focus{border-color:var(--lbs-focus,#ff8a3d);box-shadow:0 0 0 1px rgba(var(--lbs-focus-rgb,255,138,61),.3)}
 .blend-popup-row .suffix{font-size:10px;color:var(--text3);font-weight:700;letter-spacing:.06em}
 .blend-popup-divider{height:1px;background:linear-gradient(90deg,transparent 0%,var(--n-line) 50%,transparent 100%);margin:8px 0 6px}
 .blend-popup-break{display:block;width:100%;padding:8px;margin-top:10px;background:linear-gradient(180deg,rgba(255,77,90,.15) 0%,rgba(255,77,90,.05) 100%);border:1px solid rgba(255,77,90,.4);border-radius:6px;color:var(--n-red);font-family:inherit;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:all .12s}
@@ -2005,7 +2005,7 @@ body.is-mobile #wire-overlay #wire-align-panel{display:none !important}
 .qs-row{display:flex;align-items:center;gap:12px;padding:4px 0}
 .qs-inp{flex:1;background:var(--n-track);border:1px solid rgba(255,255,255,.06);border-radius:6px;color:#fff;padding:8px 14px;font-size:12px;outline:none;transition:all .18s ease;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5)}
 .qs-inp:hover{border-color:rgba(var(--n-cyan-rgb),.25)}
-.qs-inp:focus{border-color:var(--n-cyan);box-shadow:inset 2px 2px 4px rgba(0,0,0,.5), 0 0 0 1px var(--n-cyan), 0 0 10px rgba(var(--n-cyan-rgb),.3)}
+.qs-inp:focus{border-color:var(--lbs-focus,var(--n-cyan));box-shadow:inset 2px 2px 4px rgba(0,0,0,.5), 0 0 0 1px var(--lbs-focus,var(--n-cyan)), 0 0 10px rgba(var(--lbs-focus-rgb,var(--n-cyan-rgb)),.3)}
 .qs-step{width:26px;height:26px;border:1px solid var(--n-line);border-radius:6px;background:linear-gradient(180deg,#1c222c 0%,#14181f 100%);color:var(--n-text);font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;box-shadow:var(--n-shadow-raised)}
 .qs-step:hover{color:var(--n-cyan);border-color:var(--n-cyan);box-shadow:var(--n-shadow-raised), 0 0 6px rgba(var(--n-cyan-rgb),.4)}
 .qs-screen-row{background:rgba(255,138,61,.03);border:1px solid rgba(255,138,61,.15);border-radius:8px;overflow:hidden;transition:border-color .15s}
@@ -2077,9 +2077,9 @@ body.is-mobile #wire-overlay #wire-align-panel{display:none !important}
 .qs-panel.qs-amber:focus-within .qs-accent-dot{background:var(--n-amber);box-shadow:0 0 8px var(--n-amber), 0 0 16px rgba(240,192,96,.55);opacity:1}
 
 /* Color-tinted focus rings for inputs inside their panel context */
-.qs-panel.qs-orange .qs-inp:focus{border-color:var(--n-orange);box-shadow:inset 2px 2px 4px rgba(0,0,0,.5), 0 0 0 1px var(--n-orange), 0 0 10px rgba(255,138,61,.3)}
-.qs-panel.qs-green .qs-inp:focus{border-color:var(--n-green);box-shadow:inset 2px 2px 4px rgba(0,0,0,.5), 0 0 0 1px var(--n-green), 0 0 10px rgba(77,220,138,.3)}
-.qs-panel.qs-amber .qs-inp:focus{border-color:var(--n-amber);box-shadow:inset 2px 2px 4px rgba(0,0,0,.5), 0 0 0 1px var(--n-amber), 0 0 10px rgba(240,192,96,.3)}
+.qs-panel.qs-orange .qs-inp:focus{border-color:var(--lbs-focus,var(--n-orange));box-shadow:inset 2px 2px 4px rgba(0,0,0,.5), 0 0 0 1px var(--lbs-focus,var(--n-orange)), 0 0 10px rgba(var(--lbs-focus-rgb,255,138,61),.3)}
+.qs-panel.qs-green .qs-inp:focus{border-color:var(--lbs-focus,var(--n-green));box-shadow:inset 2px 2px 4px rgba(0,0,0,.5), 0 0 0 1px var(--lbs-focus,var(--n-green)), 0 0 10px rgba(var(--lbs-focus-rgb,77,220,138),.3)}
+.qs-panel.qs-amber .qs-inp:focus{border-color:var(--lbs-focus,var(--n-amber));box-shadow:inset 2px 2px 4px rgba(0,0,0,.5), 0 0 0 1px var(--lbs-focus,var(--n-amber)), 0 0 10px rgba(var(--lbs-focus-rgb,240,192,96),.3)}
 
 /* Color-tinted hover for stepper buttons inside their panel */
 .qs-panel.qs-orange .qs-step:hover{color:var(--n-orange);border-color:var(--n-orange);box-shadow:var(--n-shadow-raised), 0 0 6px rgba(255,138,61,.4)}
@@ -2095,7 +2095,7 @@ body.is-mobile #wire-overlay #wire-align-panel{display:none !important}
    the visual weight of .qs-inp. */
 .qs-res-btn{display:flex;align-items:center;gap:10px;background:var(--n-track);border:1px solid rgba(255,255,255,.06);border-radius:6px;color:#fff;padding:8px 14px;font-size:12px;outline:none;width:100%;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5);transition:all .18s ease;cursor:pointer;text-align:left;font-family:inherit}
 .qs-res-btn:hover{border-color:rgba(var(--n-cyan-rgb),.25)}
-.qs-res-btn:focus{border-color:var(--n-cyan);box-shadow:inset 2px 2px 4px rgba(0,0,0,.5), 0 0 0 1px var(--n-cyan), 0 0 10px rgba(var(--n-cyan-rgb),.3)}
+.qs-res-btn:focus{border-color:var(--lbs-focus,var(--n-cyan));box-shadow:inset 2px 2px 4px rgba(0,0,0,.5), 0 0 0 1px var(--lbs-focus,var(--n-cyan)), 0 0 10px rgba(var(--lbs-focus-rgb,var(--n-cyan-rgb)),.3)}
 .qs-res-btn .qs-res-val{font-family:var(--font-mono);font-weight:700;color:#fff;letter-spacing:.02em}
 .qs-res-btn .qs-res-meta{flex:1;font-size:11px;color:var(--text3);font-style:italic;letter-spacing:.02em;margin-left:6px}
 .qs-res-btn .qs-res-meta.custom,#qs-modal .qs-res-btn .qs-res-meta.custom{color:#fff;font-style:normal;font-weight:700;text-transform:uppercase;letter-spacing:.08em}
@@ -2111,9 +2111,9 @@ body.is-mobile #wire-overlay #wire-align-panel{display:none !important}
 @media (max-width:760px){.qs-ex-row{grid-template-columns:1fr}}
 #sys-overlay .sys-type-input,.sys-type-input{color:#fff !important;text-transform:uppercase}   /* 16jb: typed custom names read white everywhere */
 .qs-res-btn svg{color:var(--text3);flex-shrink:0;transition:transform .15s}
-.qs-res-sel:focus{border-color:var(--n-cyan)}
+.qs-res-sel:focus{border-color:var(--lbs-focus,var(--n-cyan))}
   .qs-pn-inp{background:#111;border:1px solid #2a2a2a;border-radius:5px;color:#fff;padding:6px 10px;font-size:11px;width:100%;box-sizing:border-box;outline:none}
-  .qs-pn-inp:focus{border-color:var(--n-cyan)}
+  .qs-pn-inp:focus{border-color:var(--lbs-focus,var(--n-cyan))}
   .qs-pn-inp::placeholder{color:#333}
 
 /* ── Bottom action bar pods ─────────────────── */
@@ -2291,7 +2291,7 @@ body.is-mobile .sys-btn{min-height:var(--ss-touch)}
 .bk-pb.b{color:var(--n-amber);border-color:rgba(240,192,96,.5)}
 .bk-cell .bk-new{width:100%;background:transparent;border:none;outline:none;color:var(--text);font:inherit;font-size:12px;padding:0}
 .bk-cell .bk-new::placeholder{color:var(--text3);font-style:italic}
-.bk-cell .bk-new:focus{box-shadow:inset 0 -1px 0 var(--n-cyan)}
+.bk-cell .bk-new:focus{box-shadow:inset 0 -1px 0 var(--lbs-focus,var(--n-cyan))}
 .sys-chip.dtype-led{color:var(--n-orange);border-color:rgba(255,138,61,0.4);background:rgba(255,138,61,0.07)}
 .sys-chip.dtype-projection{color:var(--n-purple);border-color:rgba(167,139,250,0.4);background:rgba(167,139,250,0.07)}
 .sys-chip.dtype-monitor{color:var(--n-amber);border-color:rgba(240,192,96,0.4);background:rgba(240,192,96,0.07)}
@@ -2300,7 +2300,7 @@ body.is-mobile .sys-btn{min-height:var(--ss-touch)}
 .sys-chip.empty{color:var(--text3);border-style:dashed;font-weight:600}
 .sys-type-cell{display:inline-flex;align-items:center;gap:4px;min-width:88px}
 .sys-type-input{flex:1;min-width:0;background:#1a1f28;border:1px solid var(--n-line);border-radius:999px;color:#fff;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:4px 10px;outline:none}
-.sys-type-input:focus{border-color:var(--n-cyan);box-shadow:0 0 0 1px var(--n-cyan)}
+.sys-type-input:focus{border-color:var(--lbs-focus,var(--n-cyan));box-shadow:0 0 0 1px var(--lbs-focus,var(--n-cyan))}
 .sys-notes-cell{font-size:12px;color:var(--text2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .sys-notes-cell.empty{color:var(--text3);font-style:italic}
 .sys-empty-row{padding:28px 22px;text-align:center;color:var(--text3);font-size:12px;line-height:1.55;font-style:italic}
@@ -2312,7 +2312,7 @@ body.is-mobile .sys-btn{min-height:var(--ss-touch)}
 .sys-name-cell{display:flex;align-items:center;gap:4px}
 .sys-name-cell .sys-name-input{flex:1;min-width:0;padding:5px 9px;background:#1a1f28;border:1px solid var(--n-line);border-radius:5px;color:var(--text);font-size:13px;font-weight:600;font-family:inherit;transition:all .12s}
 .sys-name-cell .sys-name-input:hover{background:#1a1f28;border-color:var(--n-line)}
-.sys-name-cell .sys-name-input:focus{outline:none;background:#1a1f28;border-color:var(--n-cyan);box-shadow:0 0 0 2px rgba(var(--n-cyan-rgb),0.15)}
+.sys-name-cell .sys-name-input:focus{outline:none;background:#1a1f28;border-color:var(--lbs-focus,var(--n-cyan));box-shadow:0 0 0 2px rgba(var(--lbs-focus-rgb,var(--n-cyan-rgb)),0.15)}
 .sys-name-chev{width:24px;height:24px;border-radius:4px;display:grid;place-items:center;color:var(--text3);background:#1a1f28;border:1px solid var(--n-line);cursor:pointer;transition:all .12s;flex-shrink:0;padding:0;font-family:inherit}
 .sys-name-chev:hover{color:var(--text);background:#1a1f28;border-color:var(--n-line)}
 .sys-name-chev.open{color:var(--n-cyan);border-color:rgba(var(--n-cyan-rgb),0.45);background:rgba(var(--n-cyan-rgb),0.06)}
@@ -2420,7 +2420,7 @@ body.is-mobile #color-pop input[type=number]::-webkit-inner-spin-button{-webkit-
 body.is-mobile #color-pop #cp-hex{padding-left:2px !important;padding-right:2px !important;font-size:10px !important;letter-spacing:0 !important}
 .sys-notes-input{width:100%;padding:4px 8px;background:transparent;border:1px solid transparent;border-radius:5px;color:var(--text2);font-size:12px;font-family:inherit;transition:all .12s}
 .sys-notes-input:hover{background:#1a1f28;border-color:var(--n-line);color:var(--text)}
-.sys-notes-input:focus{outline:none;background:#1a1f28;border-color:var(--n-cyan);color:var(--text);box-shadow:0 0 0 2px rgba(var(--n-cyan-rgb),0.15)}
+.sys-notes-input:focus{outline:none;background:#1a1f28;border-color:var(--lbs-focus,var(--n-cyan));color:var(--text);box-shadow:0 0 0 2px rgba(var(--lbs-focus-rgb,var(--n-cyan-rgb)),0.15)}
 .sys-notes-input::placeholder{color:var(--text3);font-style:italic}
 .sys-warn-cell{display:grid;place-items:center;height:26px}
 .sys-warn-pill{width:4px;height:22px;border-radius:3px;background:rgba(255,255,255,0.09);box-shadow:inset 0 0 2px rgba(0,0,0,0.5);transition:background .3s,box-shadow .3s}
@@ -2485,7 +2485,7 @@ body.is-mobile #color-pop #cp-hex{padding-left:2px !important;padding-right:2px 
 .sys-form-field{display:flex;flex-direction:column;gap:4px}
 .sys-form-field label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text3)}
 .sys-form-field input,.sys-form-field select{padding:0 12px;height:38px;background:#1a1f28;border:1px solid var(--n-line);border-radius:6px;color:var(--text);font-size:13px;font-family:inherit;transition:all .12s;-webkit-appearance:none;-moz-appearance:none;appearance:none;line-height:1}
-.sys-form-field input:focus,.sys-form-field select:focus{outline:none;border-color:var(--n-cyan);box-shadow:0 0 0 2px rgba(var(--n-cyan-rgb),0.15)}
+.sys-form-field input:focus,.sys-form-field select:focus{outline:none;border-color:var(--lbs-focus,var(--n-cyan));box-shadow:0 0 0 2px rgba(var(--lbs-focus-rgb,var(--n-cyan-rgb)),0.15)}
 .sys-form-field input[type=number]::-webkit-inner-spin-button,.sys-form-field input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0}
 .sys-form-field input[type=number]{-moz-appearance:textfield}
 .sys-form-field select{padding-right:32px;cursor:pointer;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10' fill='%239da6b3'><path d='M2 4l3 3 3-3z'/></svg>");background-repeat:no-repeat;background-position:right 12px center;background-size:8px 8px}
@@ -2712,8 +2712,8 @@ body:not(.adv-hide-blend):not(.adv-free-position) .screen-box:hover {
   margin: 0;
 }
 .blend-label input:focus, .dead-label input:focus {
-  border-color: var(--n-cyan);
-  box-shadow: 0 0 0 1px var(--n-cyan);
+  border-color: var(--lbs-focus,var(--n-cyan));
+  box-shadow: 0 0 0 1px var(--lbs-focus,var(--n-cyan));
 }
 .blend-label input::selection, .dead-label input::selection { background: var(--n-cyan); color: #04222b; }
 .blend-label input::-moz-selection, .dead-label input::-moz-selection { background: var(--n-cyan); color: #04222b; }
@@ -2860,8 +2860,8 @@ body:not(.adv-hide-aoi) .screen-box.sel {
   margin: 0;
 }
 .aoi-dim-row input:focus {
-  border-color: var(--n-cyan);
-  box-shadow: 0 0 0 1px var(--n-cyan);
+  border-color: var(--lbs-focus,var(--n-cyan));
+  box-shadow: 0 0 0 1px var(--lbs-focus,var(--n-cyan));
 }
 
 /* When AOI mode is OFF (body.adv-hide-aoi), hide the + AOI button.
@@ -4743,7 +4743,7 @@ label.bzp-lbl{cursor:pointer}
 .bzp-grid{display:grid;grid-template-columns:minmax(0,1fr) 64px 12px 64px 22px;gap:6px;align-items:center}
 .bzp-grid input{width:100%;min-width:0;font-size:12px;padding:5px 4px;border:1px solid rgba(255,255,255,.06);border-radius:4px;background:var(--n-track);color:#9dd6ff;outline:none;box-sizing:border-box;box-shadow:inset 2px 2px 4px rgba(0,0,0,.5);font-family:var(--font-mono);text-align:center;-moz-appearance:textfield;appearance:textfield;transition:border-color .15s, box-shadow .15s}
 .bzp-grid input::-webkit-outer-spin-button,.bzp-grid input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
-.bzp-grid input:focus{border-color:var(--n-orange);box-shadow:inset 2px 2px 4px rgba(0,0,0,.5),0 0 0 1px rgba(255,138,61,.3)}
+.bzp-grid input:focus{border-color:var(--lbs-focus,var(--n-orange));box-shadow:inset 2px 2px 4px rgba(0,0,0,.5),0 0 0 1px rgba(var(--lbs-focus-rgb,255,138,61),.3)}
 .bzp-x{color:var(--text3);font-size:13px;text-align:center}
 .bzp-unit{font-size:10px;color:var(--text3);font-weight:700;letter-spacing:.06em}
 .bzp .pm-btn-danger{margin-top:14px}
@@ -4759,6 +4759,50 @@ body:not(.is-mobile) #tbody .home-field input[name="t-d-notes"]{min-width:150px}
    the body is the window's height in its own zoomed pixels, so Large no longer pushes the bottom bar (HELP, BUG) below the window
    and Small no longer leaves a band under it (_a11yFit sets --lb-z and the class). Desktop only. */
 body:not(.is-mobile).lb-zfit{height:calc(100vh / var(--lb-z,1))}
+/* 16ls-greyfocus (Omar 2026-10-18: "the button at the bottom start blank build my show still highlight in Cyan they should just
+   highlight with the grey outline now"; "The whole app's focus ring"): a control with the keyboard focus shows the Welcome window's
+   grey (#5d6778, welcome-grey) instead of cyan, or of its section's colour: the ring (--ss-ring) and every control's own focus edge
+   and glow (--lbs-focus, text --lbs-focus-text). Desktop only: the phone has none of the three and keeps its colours (frozen). The
+   section dots and the panel edges that light up while you work in a section keep their colours. */
+body:not(.is-mobile){--ss-ring:#5d6778;--lbs-focus:#5d6778;--lbs-focus-rgb:93,103,120;--lbs-focus-text:#e2e4e8}
+body:not(.is-mobile) .fs-src.fs-src-add:focus-visible{border-color:var(--lbs-focus)}
+body:not(.is-mobile) .kbv-sc:focus-visible{background:rgba(var(--lbs-focus-rgb),.08)}
+/* 16ls-qsgrey (Omar 2026-10-18, the mock-up mockups/quick_setup_grey_mockup: "this the one i agree with for the update from the mock
+   ups", its third column "Grey, each section keeps a thin colour strip"): Quick Show Setup / Edit Show Info in the grey look of the
+   Welcome window (#14181f card, #252a33 lines, #5d6778 focus and pointer edge): grey panels, fields, example cards, rows and switch,
+   light headings; only each heading's strip keeps its section's colour, without the glow. The Set default for all switch on is
+   the mock-up's (#5d6778 edge, #c9d1d9 knob); off, the mock-up did not show: the same switch dimmer (#252a33 edge, #5d6778
+   knob), the knob on the left as before. Desktop only. */
+body:not(.is-mobile) #qs-modal > div{background:#14181f!important;border:1px solid #252a33!important;border-radius:12px!important;box-shadow:0 24px 70px rgba(0,0,0,.6)!important}
+body:not(.is-mobile) #qs-title{color:#e2e4e8!important}
+body:not(.is-mobile) #qs-subtitle{color:#8a94a3!important}
+body:not(.is-mobile) #qs-modal .qs-panel{background:#11151b!important;border-color:rgba(255,255,255,.08)!important;box-shadow:none!important;border-radius:8px!important}
+body:not(.is-mobile) #qs-modal .qs-panel .qs-panel-hdr{background:none!important;border-bottom-color:rgba(255,255,255,.08)!important}
+body:not(.is-mobile) #qs-modal .qs-panel .qs-panel-hdr h4{color:#e2e4e8!important;font-size:11px!important;letter-spacing:.14em!important}
+body:not(.is-mobile) #qs-modal .qs-panel .qs-strip{box-shadow:none!important}
+body:not(.is-mobile) #qs-modal .qs-accent-dot{display:none!important}
+body:not(.is-mobile) #qs-modal .qs-lbl{color:#c9d1d9!important}
+body:not(.is-mobile) #qs-modal :is(.qs-inp,.qs-res-sel,.qs-pn-inp){background:#0c0f14!important;border:1px solid #252a33!important;box-shadow:none!important;color:#e2e4e8!important}
+body:not(.is-mobile) #qs-modal :is(.qs-inp,.qs-res-sel,.qs-pn-inp,.qs-res-btn):focus{border-color:#5d6778!important;box-shadow:none!important}
+body:not(.is-mobile) #qs-modal .qs-ex{background:#0c0f14!important;border-color:#252a33!important}
+body:not(.is-mobile) #qs-modal .qs-ex b{color:#e2e4e8!important}
+body:not(.is-mobile) #qs-modal .qs-ex:hover,body:not(.is-mobile) #qs-modal .qs-ex:focus-visible{border-color:#5d6778!important;background:#1a1f28!important}
+body:not(.is-mobile) #qs-modal .qs-step:hover{color:#e2e4e8!important;border-color:#5d6778!important;box-shadow:none!important}
+body:not(.is-mobile) #qs-modal .qs-num-display{color:#e2e4e8!important}
+body:not(.is-mobile) #qs-modal .qs-screen-row{background:#0f1318!important;border-color:#252a33!important}
+body:not(.is-mobile) #qs-modal .qs-screen-hdr:hover{background:#1a1f28!important}
+body:not(.is-mobile) #qs-modal .qs-screen-body{border-top-color:#252a33!important}
+body:not(.is-mobile) #qs-modal [id^="qs-sr-lbl-"]{color:#c9d1d9!important}
+body:not(.is-mobile) #qs-modal [id^="qs-sr-no-"]{color:#8a94a3!important}
+body:not(.is-mobile) #qs-modal .qs-res-ctl span[style*="n-orange"]{color:#8a94a3!important}
+body:not(.is-mobile) #qs-modal .qs-res-btn{border-color:#252a33!important}
+body:not(.is-mobile) #qs-modal .qs-res-btn.open .qs-res-val{color:#e2e4e8!important}
+body:not(.is-mobile) #qs-modal .qs-foot{border-top-color:#252a33!important;background:none!important}
+body:not(.is-mobile) #qs-modal .qs-panel [style*="color:var(--n-purple)"]{color:#e2e4e8!important}
+body:not(.is-mobile) #qs-sd-toggle{background:#1a1f28!important;border-color:#252a33!important;box-shadow:none!important}
+body:not(.is-mobile) #qs-sd-toggle.lbs-on{border-color:#5d6778!important}
+body:not(.is-mobile) #qs-sd-knob{background:#5d6778!important;box-shadow:none!important}
+body:not(.is-mobile) #qs-sd-toggle.lbs-on #qs-sd-knob{background:#c9d1d9!important}
 </style>
 </head>
 <body data-skin="black">
@@ -4909,7 +4953,7 @@ Also called DSM (Downstage Monitor) in broadcast and theater workflows, same thi
   <div class="bb-cell bb-pill bb-cyan" title="The largest number of layers used in any single preset, this is the figure to compare against your switcher's per-scene layer budget. (The most complex single moment in the show.)"><span class="bb-label">Layers</span><strong id="bb-layers">0</strong></div>
   <div id="bb-spacer"></div>
   <div class="bb-cell" id="bb-sel" style="font-size:10px;opacity:.5">—</div>
-  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy, hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16lr</div>
+  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy, hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16ls</div>
   <!-- 16kq (Omar): the Modifiers menu lives on each preset tile only; this place is kept for the Educator tool of a future build (greyed out, does nothing) --><button class="bb-util" id="tb-educator" type="button" disabled aria-disabled="true" title="Educator: coming in a future build" aria-label="Educator, coming in a future build" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:default;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em;opacity:.38"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10L12 5 2 10l10 5 10-5z"/><path d="M6 12v5c0 1 2.7 2.5 6 2.5s6-1.5 6-2.5v-5"/><line x1="22" y1="10" x2="22" y2="16"/></svg><span>Educator</span></button>
   <button class="bb-util" onclick="actions.help()" title="Help, quick reference, keyboard shortcuts, glossary, accessibility" aria-label="Help, quick reference, keyboard shortcuts, glossary, accessibility" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="4.93" y1="4.93" x2="9.17" y2="9.17"/><line x1="14.83" y1="14.83" x2="19.07" y2="19.07"/><line x1="14.83" y1="9.17" x2="19.07" y2="4.93"/><line x1="4.93" y1="19.07" x2="9.17" y2="14.83"/></svg>Help</button>
   <button class="bb-util" id="tb-bug" onclick="reportBug()" title="Report a bug, opens an email to AV Educate with your show file — attached in the app, downloaded for you to attach in a browser" aria-label="Report a bug" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="7.2"/><path d="M15.4 15.4L21 21" stroke-width="2.6"/><ellipse cx="10" cy="11" rx="2.5" ry="3.3" fill="currentColor" stroke="none"/><circle cx="10" cy="7" r="1.5" fill="currentColor" stroke="none"/><path d="M7.5 9.2l-1.7-.8M7.4 11.2H5.6M7.7 13.1l-1.5 1.1M12.5 9.2l1.7-.8M12.6 11.2h1.8M12.3 13.1l1.5 1.1M9.2 5.9l-.8-1.1M10.8 5.9l.8-1.1" stroke-width="1.3"/></svg>Bug</button>   <!-- 16jk (Omar): Report a bug, after Help -->
@@ -6805,7 +6849,7 @@ function _r4fDestName(n,taken){   /* 'Destination NN' from number n up: the firs
   for(var g=0;g<10000;g++,n++){ var nm=_w+String(n).padStart(2,'0'); if(!taken[nm.toLowerCase()]) return nm; }
   return _w+String(n).padStart(2,'0');
 }
-function _r4fNewDest(){ return _r4fDestName((typeof _lbcOn==='function'&&_lbcOn()&&typeof _lbnNextOut==='function')?_lbnNextOut('dst'):(_bdNoBd(Array.isArray(screens)?screens:[]).length+1),_bdTaken(null)); }   /* D1: a new destination's name. 16lc-vpcards-fix (E2): the number it gets (the lowest free one) */
+function _r4fNewDest(){ return _r4fDestName((typeof _lbcOn==='function'&&_lbcOn()&&typeof _lbnNextOut==='function')?_lbnNextOut('dst'):(_bdNoBd(Array.isArray(screens)?screens:[]).length+1),_lbsWithSrc(_bdTaken(null))); }   /* 16ls-onename: _lbsWithSrc */   /* D1: a new destination's name. 16lc-vpcards-fix (E2): the number it gets (the lowest free one) */
 function _r4fQsAria(i){ return _qsBd[i]?'backdrop':'destination '+_bdQsNo(i); }   /* D9: what a screen reader calls Quick Setup's row i */
 /* ══ 16kz-answers (Omar 2026-09-28 ~10:15: his answers to the questions left after 16ky; exactly these are built)
    (A) answer 2 ("do the recommended"): on I/O Patch Advanced page 1 the Destinations table's Set for all is split like the
@@ -6837,7 +6881,7 @@ function _kzOutLists(){
     io:(typeof ioDests!=='undefined'&&Array.isArray(ioDests))?ioDests:[], mv:(typeof multiviewers!=='undefined'&&Array.isArray(multiviewers))?multiviewers:[] };
 }
 /* (C) every name an output other than self has: lower-case name -> what has it (noScreens: Quick Setup's rows stand for the screens) */
-function _kzOutTaken(self,noScreens){
+function _kzOutTaken(self,noScreens,noSrc){   /* 16ls-onename: noSrc = the outputs only */
   var t={}, L=_kzOutLists(), sid=self?self.id:null, put=function(n,w){ n=_kzLow(n); if(n&&!t[n]) t[n]=w; };
   if(!noScreens) L.scr.forEach(function(s){ if(s&&s!==self) put(s.name,_bdIs(s)?'a backdrop in this show':'a destination in this show'); });
   L.aux.forEach(function(d){ if(d&&d!==self) put(d.name,((typeof _sysResolveDsmType==='function'&&_sysResolveDsmType(d)==='DSM')?'a DSM':'an AUX')+' output in this show'); });
@@ -6848,6 +6892,7 @@ function _kzOutTaken(self,noScreens){
     if(p.screenName) Object.keys(p.screenName).forEach(function(k){ if(k!==sid) put(p.screenName[k],'the name of a destination'+at); });
     if(p.dsmName) Object.keys(p.dsmName).forEach(function(k){ if(k!==sid) put(p.dsmName[k],'the name of an AUX / DSM output'+at); });
   });
+  if(!noSrc&&!_srcLbcOff()) _lbsSrcNames().forEach(function(n){ put(n,'a source in this show'); });   /* 16ls-onename */
   return t;
 }
 function _kzNameInUse(n,what){ if(typeof showAlert==='function') showAlert({variant:'warning',title:'Name in use',message:'"'+n+'" is already '+what+'. Pick another name, or rename that one first.'}); }
@@ -7523,6 +7568,7 @@ function getDSMContent(pid,dsmId){
 function setDSMContent(pid,dsmId,label){
   const p=presets.find(x=>x.id===pid);if(!p)return;
   if(((p.dsmContent&&p.dsmContent[dsmId])||'')===(label||'')) return;   /* unsaved-16ks3: clicked in and left, nothing typed: no write (p.dsmContent is not even created), no undo step, no redraw */
+  if(label&&_lbsSrcNameRefused(label)){ if(typeof renderTable==='function') renderTable(); return; }   /* 16ls-onename */
   // Snapshot only on a real change (blur fires even when nothing was typed).
   // dsmPanelSelContent's follow-up setDSMColor rides this same snapshot.
   if(typeof pushUndo==='function') pushUndo();   /* taken BEFORE the content object is created, so Undo gives back the show exactly as it was saved */
@@ -7654,6 +7700,7 @@ function _ccOf(entry){
 // Table-cell commit for layer content: one blur-with-change = one undo step.
 // (Direct setL stays snapshot-free — bulk ops like paste push their own.)
 function homeSetL(pid,sid,n,v){
+  if(v&&_lbsSrcNameRefused(v)){ if(typeof renderTable==='function') renderTable(); return; }   /* 16ls-onename */
   if(typeof pushUndo==='function' && (getL(pid,sid,n)||'')!==(v||'')) pushUndo();
   setL(pid,sid,n,v);
   if(v&&typeof _fsSnapAspect==='function') _fsSnapAspect(pid,sid,n);   // 16js: a locked window takes the new picture's shape
@@ -7662,6 +7709,7 @@ function getL(pid,sid,n){return((presets.find(p=>p.id===pid)||{}).layers[sid]||{
 
 function setL(pid,sid,n,v){
   if(v&&_bdIsId(sid)) return;   /* 16kx-backdrop: takes no layer */
+  if(v&&_lbsSrcNameRefused(v)) return;   /* 16ls-onename */
   const p=presets.find(p=>p.id===pid);if(!p)return;
   if(!p.layers[sid]){ if(v===null||v===undefined||v==='') return; p.layers[sid]={}; }   /* unsaved-16ks3: clearing a layer that is not there writes nothing (an empty table cell clicked into and left) */
   if(v===null)delete p.layers[sid][n];
@@ -7729,6 +7777,7 @@ function _bgNameFromImage(img){
 }
 function setBgName(pid,sid,name){
   if(name&&String(name).trim()&&_bdIsId(sid)) return;   /* 16kx-backdrop */
+  if(name&&String(name).trim()&&_lbsSrcNameRefused(name)) return;   /* 16ls-onename */
   const p=presets.find(p=>p.id===pid);if(!p)return;
   if(p.bgBox&&p.bgBox[sid]&&p.bgBox[sid].src!==String(name||'').trim()) delete p.bgBox[sid];   /* 16li-bgsrc: the box belongs to the source it was made for */
   if(!p.bgNames)p.bgNames={};
@@ -11668,6 +11717,7 @@ function openQS(){
   const knob=document.getElementById('qs-sd-knob');
   if(tog){tog.style.background='#1a4a8a';tog.style.borderColor='var(--n-cyan)';}
   if(knob){knob.style.left='18px';knob.style.background='var(--n-cyan)';}
+  if(tog) tog.classList.add('lbs-on');   /* 16ls-qsgrey */
   qsRebuildScreenRows();
   qsUpdatePreview();
   _qsApplyModeLabels();
@@ -11889,6 +11939,7 @@ function qsToggleSetDefault(){
   const tog=document.getElementById('qs-sd-toggle');
   const knob=document.getElementById('qs-sd-knob');
   if(tog){
+    tog.classList.toggle('lbs-on',!!_qsSetDefaultForAll);   /* 16ls-qsgrey */
     tog.style.borderColor=_qsSetDefaultForAll?'rgba(77,220,138,.5)':'rgba(255,77,90,.5)';
     tog.style.boxShadow=_qsSetDefaultForAll
       ?'var(--n-shadow-inset), inset 0 0 6px rgba(77,220,138,.15)'
@@ -13838,6 +13889,7 @@ function lpPickCommonContent(pid, sid, n, label, defaultColor){
   // _LP_COMMON_CONTENT directly for the 6 common labels so their
   // color is authoritative without polluting the user's library.
   // One user pick = one undo step (snapshot only on a real change).
+  if(label&&_lbsSrcNameRefused(label)) return;   /* 16ls-onename: before the Undo step (an output called IMAG) */
   if(typeof pushUndo==='function' && (getL(pid,sid,n)||'')!==(label||'')) pushUndo();
   if(typeof setL === 'function') setL(pid, sid, n, label);
   if(typeof render === 'function') scheduleRender();
@@ -13861,6 +13913,7 @@ function lpApplyCustomName(pid, sid, n){
     if(typeof applyLayerSize === 'function') _vpApplyLayerSize(pop, pid, sid, n);
     return;
   }
+  if(_lbsSrcNameRefused(customName)) return;   /* 16ls-onename */
   // One Apply = one undo step (past the early-returns, before any mutation).
   if(typeof pushUndo==='function') pushUndo();
   // Add to customLibrary as grey if it's a fresh name
@@ -15615,6 +15668,7 @@ const CUSTOM_COLORS=['#7a5c3a','#3a5c6e','#4a3a6e','#3a6e4a','#6e3a4a','#5c6e3a'
 function confirmCustom(){
   const v=document.getElementById('custom-input').value.trim().slice(0,40);
   if(!v)return;
+  if(_lbsSrcNameRefused(v)) return;   /* 16ls-onename: before the library takes it (the window stays open) */
   // Add to library if not already there
   if(!customLibrary.find(c=>c.l===v)&&!CONTENT.find(c=>c.l===v)){
     const c=CUSTOM_COLORS[customLibrary.length%CUSTOM_COLORS.length];
@@ -18176,6 +18230,7 @@ function _ioAdvEnsureAutoPairs(pg){
 function _ioBkAddNamed(name){
   const pg=_ioAdvPage(); if(!pg) return;
   const nm=String(name||'').trim();
+  if(nm&&_lbsP1Refused('adv-src',nm,null)) return;   /* 16ls-onename */
   if(typeof pushUndo==='function') pushUndo();
   const r=_ioAdvBlank('src'); r.name=nm||((_lbcOn()?'SOURCE ':'Source ')+(pg.sources.length+1)); pg.sources.push(r);   /* 16lc-vpcards-fix (E1) */
   _isDirty=true; if(typeof _updateDirtyIndicator==='function') _updateDirtyIndicator(); if(typeof scheduleAutoSave==='function') scheduleAutoSave();
@@ -19266,18 +19321,19 @@ function _lbDelItem(kind,id){
   const o=_lbDelOut(kind,id); if(!o) return null;
   if(kind==='dest'){
     const L=screens.filter(function(x){ return x&&!_bdIs(x); }), i=L.indexOf(o);
-    return { name:o.name||'(unnamed)', num:'D'+_bdNo(o), next:(i>=0&&L[i+1])?(L[i+1].name||''):'', word:'destination', words:'destination', last:_kzLastScreen(o) };
+    return { name:o.name||'(unnamed)', num:'D'+_bdNo(o), next:(i>=0&&L[i+1])?(L[i+1].name||''):'', word:'destination', words:'destination', last:_kzLastScreen(o), bd:_bdIs(o), off:_outIoOff(o) };   /* 16ls-vponly: bd, off */
   }
   const L=_lbnOutList('aux'), i=L.indexOf(o), w=(typeof _sysResolveDsmType==='function')?_sysResolveDsmType(o):'AUX';
-  return { name:o.name||'(unnamed)', num:'A'+_lbnOutNo('aux',o), next:(i>=0&&L[i+1])?(L[i+1].name||''):'', word:w, words:'AUX / DSM' };
+  return { name:o.name||'(unnamed)', num:'A'+_lbnOutNo('aux',o), next:(i>=0&&L[i+1])?(L[i+1].name||''):'', word:w, words:'AUX / DSM', off:_outIoOff(o) };   /* 16ls-vponly: off */
 }
 function _lbDelNote(kind,it,t){
   const any=t.vp||t.io||t.wire; if(!any) return { ok:false, note:'Tick where '+it.name+' goes from.' };
   const out=(kind!=='src');
   if(out&&t.vp&&it.last) return { ok:false, note:it.name+' is the only screen left: it cannot leave Video Presets. Add another screen first.' };
-  if((t.vp&&t.io&&t.wire)||(out&&t.vp)){
+  if((t.vp&&t.io&&t.wire)||(out&&t.vp&&it.bd)){   /* 16ls-vponly: a destination / AUX off Video Presets only stays I/O-only */
     return { ok:true, note:it.name+' leaves the show.'+(it.next?(' '+it.next+' becomes '+it.num+' and every '+it.words+' after it moves up one.'):'') };
   }
+  if(out&&t.vp) return _lbsDelNoteVP(kind,it,t);   /* 16ls-vponly */
   const pages=[]; if(!t.vp) pages.push('Video Presets'); if(!t.io) pages.push('the I/O Patch'); if(!t.wire) pages.push('Wire');
   let n=it.name+' stays in '+pages.join(' and ')+(it.num?(' and keeps '+it.num):'')+'.';
   if(t.io) n+=' + Add '+(kind==='src'?'source':kind==='dest'?'destination':'AUX')+' on the I/O Patch puts it back.';
@@ -19289,8 +19345,8 @@ function _lbDelAsk(kind,id,from,done){
   const it=_lbDelItem(kind,id); if(!it) return;
   from=from||_lbDelPage();
   const out=(kind!=='src');
-  const pre={ vp:from==='vp', io:from==='io'||(out&&from==='vp'), wire:from==='wire'||(out&&from==='vp') };
-  const H={ vp:out?'The canvas and every preset; a '+it.word.toLowerCase()+' off Video Presets leaves the I/O Patch and Wire too':'Every preset’s layers, backgrounds and AUX boxes',
+  const pre={ vp:from==='vp', io:from==='io'||(!!it.bd&&from==='vp'), wire:from==='wire'||(!!it.bd&&from==='vp') };   /* 16ls-vponly: a backdrop as before */
+  const H={ vp:out?_lbsDelHintVP(kind,it):'Every preset’s layers, backgrounds and AUX boxes',   /* 16ls-vponly */
             io:'Its card, the I/O Excel and the Look Book’s I/O pages', wire:'Every Wire drawing (its card stays in Wire’s list)' };
   let msg='Take '+it.name+(it.num?' ('+it.num+')':'')+' off:';
   if(kind==='src'&&typeof _fsMediaItem==='function'&&_fsMediaItem(id)&&typeof _fsMediaUses==='function'){ const u=_fsMediaUses(id); msg+='\n'+(u.length?('Used in '+u.length+' place'+(u.length===1?'':'s')+': '+u.slice(0,8).map(function(x){ return x.label; }).join(', ')+(u.length>8?' and '+(u.length-8)+' more':'')+'.'):'Not used in any preset.'); }   /* a file: where it is used, as its trash said before (16lc-vpvideo) */
@@ -19299,7 +19355,7 @@ function _lbDelAsk(kind,id,from,done){
              { key:'vp', label:'Video Presets', hint:H.vp, checked:pre.vp },
              { key:'io', label:'I/O Patch', hint:H.io, checked:pre.io },
              { key:'wire', label:'Wire', hint:H.wire, checked:pre.wire } ],
-    checksTie: out?function(key,on,set){ if(key==='vp'&&on){ set('io',true); set('wire',true); } if((key==='io'||key==='wire')&&!on) set('vp',false); if(key==='all'&&!on){ set('vp',false); } }:null,
+    checksTie: (out&&it.bd)?function(key,on,set){ if(key==='vp'&&on){ set('io',true); set('wire',true); } if((key==='io'||key==='wire')&&!on) set('vp',false); if(key==='all'&&!on){ set('vp',false); } }:null,
     checksState:function(t){ return _lbDelNote(kind,it,t||{}); },
     confirmLabel:'Delete', cancelLabel:'Cancel',
     onConfirm:function(t){ _lbDelDo(kind,id,t||{}); if(typeof done==='function') done(); } });
@@ -19313,7 +19369,8 @@ function _lbDelDo(kind,id,t){
       if(t.vp&&t.io&&t.wire) _lbDelSrcAll(id);
       else { if(t.vp) _lbDelSrcVP(id,!t.io); if(t.io) _lbDelSrcIO(id); if(t.wire) _lbDelWire('src',id,false); }
     } else {
-      if(t.vp) _lbDelOutAll(kind,id);
+      if((t.vp&&t.io&&t.wire)||(t.vp&&it.bd)) _lbDelOutAll(kind,id);
+      else if(t.vp) _lbsOutOffVP(kind,id,t);   /* 16ls-vponly */
       else { if(t.io) _lbDelOutIO(kind,id); if(t.wire) _lbDelWire(kind==='dest'?'dst':'dsm',id,false); }
     }
   });
@@ -19552,8 +19609,8 @@ function _lbhcIoOut(id,aux){ return _lbhcIoOuts(aux).find(function(d){ return d.
 function _lbhcFree(base,kd){
   const wa=(typeof wireAdvanced==='object'&&wireAdvanced)||{}, low=function(n){ return String(n==null?'':n).trim().toLowerCase(); };
   const hand=((kd==='src')?(wa.customSources||[]):(wa.customDests||[]).concat(wa.customDsms||[])).filter(Boolean).map(function(c){ return low(c.name); });
-  const srcs=(kd==='src')?_sysDiscoverSources().map(low):[], outs=(kd==='src')?{}:_kzOutTaken(null);
-  const taken=function(v){ return hand.indexOf(low(v))>=0||((kd==='src')?srcs.indexOf(low(v))>=0:!!outs[_kzLow(v)]); };
+  const srcs=(kd==='src')?_sysDiscoverSources().map(low):[], outs=_kzOutTaken(null,false,kd==='src');   /* 16ls-onename: a source skips the outputs' names, an output the sources' */
+  const taken=function(v){ return hand.indexOf(low(v))>=0||((kd==='src')?(srcs.indexOf(low(v))>=0||!!outs[_kzLow(v)]||_lbsOutHas(v)):!!outs[_kzLow(v)]); };
   let v=base, n=1; while(taken(v)){ n++; v=base+' '+n; } return v;
 }
 /* Wire and the I/O Patch: the I/O-only source / destination / AUX, one Undo step */
@@ -19792,6 +19849,121 @@ function _lbUNLookAt(fn){
   finally{ if(open.length){ try{ const after=_snapshot(); if(after!==before) open.forEach(function(t){ if(t.snap===before) t.snap=after; }); }catch(e){} } }
 }
 /* ══ end 16lr ══ */
+/* ══ 16ls (Omar 2026-10-18 evening, testing 16lq / 16lr; backups/rounds/r16ls-testfixes/OMAR_ANSWERS_2026-10-18.md). Desktop only
+   (_lbcOn): the phone keeps its ways (frozen). ══ */
+/* ── 16ls-vponly (Omar: "when i try to select just video preset everything highlights if am looking just for video preset thing its
+   just going to be deleted in video preset."; "Off Video Presets only (Recommended)", replacing SPEC rule 8's "Video Presets =
+   everywhere" of 2026-10-17): in the delete window Video Presets no longer ticks the I/O Patch and Wire for a destination or an AUX.
+   Taken off Video Presets only it leaves the canvas and every preset and stays on the I/O Patch as an I/O-only destination / AUX,
+   as a source does: an ioDests row with its own id, so its I/O card, its page-1 row, its Wire Advanced tiles and its tile on Wire's
+   Simple drawing (vpOff) stay with it. Off the I/O Patch too, Wire keeps it as a hand-made card (same id: its Advanced tiles stay;
+   the Simple drawing shows the show's outputs only). A backdrop lives in Video Presets alone: Video Presets still takes it out of
+   the show, as before. One already off the I/O Patch (ioOff) stays in Wire alone, as a hand-made card; with Wire ticked too it
+   leaves the show. ── */
+function _lbsVpOff(aux){
+  if(_srcLbcOff()) return [];
+  return ((typeof ioDests!=='undefined'&&Array.isArray(ioDests))?ioDests:[]).filter(function(d){ return !!d&&!!d.vpOff&&!!d.aux===!!aux; });
+}
+function _lbsDelHintVP(kind,it){
+  if(it.bd) return 'The canvas and every preset (a backdrop is only in Video Presets)';
+  if(it.off) return (kind==='dest'?'The canvas and every preset':'Every preset')+'; it is off the I/O Patch, so Wire keeps it as a hand-made card unless Wire is ticked too';
+  return (kind==='dest'?'The canvas and every preset':'Every preset')+'; the I/O Patch keeps it as an I/O-only '+(kind==='dest'?'destination':it.word)+' unless that is ticked too';
+}
+function _lbsDelNoteVP(kind,it,t){
+  const w=(kind==='dest')?'destination':it.word, gone=(kind==='dest')?'the canvas and every preset':'every preset';
+  if(it.off&&t.wire) return { ok:true, note:it.name+' leaves the show.'+(it.next?(' '+it.next+' becomes '+it.num+' and every '+it.words+' after it moves up one.'):'') };   /* off the I/O Patch already: off all three */
+  if(t.io||it.off) return { ok:true, note:it.name+' leaves '+gone+((t.io&&!it.off)?' and the I/O Patch':'')+'. Wire keeps it as a hand-made card: its tiles stay on Wire Advanced’s pages (the Simple drawing shows the show’s outputs only).' };
+  return { ok:true, note:it.name+' leaves '+gone+'. The I/O Patch keeps it as an I/O-only '+w+(t.wire?'; its tiles leave every Wire drawing (its card stays in Wire’s list).':', and Wire keeps its tiles.') };
+}
+/* the destination / AUX off Video Presets (t: the window's ticks, t.vp on and not every page) */
+function _lbsOutOffVP(kind,id,t){
+  const o=_lbDelOut(kind,id); if(!o) return;
+  const off=_outIoOff(o);
+  if(off&&t.wire){ _lbDelOutAll(kind,id); return; }   /* off the I/O Patch already, now off Wire too: it leaves the show */
+  const rec={ id:o.id, name:o.name||'', connectorType:o.connectorType||'', deviceType:o.deviceType||'', customType:o.customType||'', w:parseInt(o.w,10)||1920, h:parseInt(o.h,10)||1080, notes:o.notes||'' };
+  ['refresh','type'].forEach(function(k){ if(o[k]!=null&&o[k]!=='') rec[k]=o[k]; });
+  if(kind==='aux') rec.aux=true;
+  if(kind==='dest'){ deleteScreen(id); if(_lbDelOut('dest',id)) return; }   /* deleteScreen first: its own step is the one this delete takes; refused (the only screen) = nothing more */
+  else {
+    dsms=dsms.filter(function(d){ return !(d&&d.id===id); });
+    (Array.isArray(presets)?presets:[]).forEach(function(p){ ['dsmOn','dsmContent','dsmColor','dsmName','dsmType'].forEach(function(k){ if(p&&p[k]&&typeof p[k]==='object') delete p[k][id]; }); });
+  }
+  if(t.io||off){   /* off the I/O Patch too (or already): Wire keeps it as a hand-made card */
+    _ioAdvDropTwin('dest',rec.name);
+    _wireAdvHelpers();
+    const card={ id:rec.id, name:rec.name, w:rec.w, h:rec.h };
+    ['connectorType','deviceType','customType','notes'].forEach(function(k){ if(rec[k]) card[k]=rec[k]; });
+    (kind==='dest'?wireAdvanced.customDests:wireAdvanced.customDsms).push(card);
+  } else {
+    rec.vpOff=true;
+    if(typeof ioDests==='undefined'||!Array.isArray(ioDests)) ioDests=[];
+    ioDests.push(rec);
+    if(t.wire) _lbDelWire(kind==='dest'?'dst':'dsm',id,false);
+  }
+}
+/* ── 16ls-delsize (Omar: "when i click the everywhere option. size of the box changes size that should not happen"; 2026-10-19
+   about a preset's Reset window: "yes i want it steady and i did mention that"): a window with tick boxes keeps one size (the two
+   delete windows, _lbDelAsk's and an I/O-only output's, and a preset's Reset): when it opens, the note under the ticks is given
+   the room of its longest wording (every combination of the ticks is measured once, the window's own ticks put back) ── */
+function _lbsNoteRoom(box,opts,kids,note){
+  if(typeof opts.checksState!=='function'||!kids.length||kids.length>6||!note.isConnected||!note.offsetParent) return;
+  const was=kids.map(function(k){ return k.checked; }), say=function(){ let st=null; try{ st=opts.checksState(_dlgTicksRead(box)); }catch(e){ st=null; } note.textContent=(st&&st.note)||''; };
+  let h=0;
+  note.style.boxSizing='border-box';
+  try{ for(let m=0;m<(1<<kids.length);m++){ kids.forEach(function(k,i){ k.checked=!!(m&(1<<i)); }); say(); h=Math.max(h,note.offsetHeight); } }
+  finally{ kids.forEach(function(k,i){ k.checked=was[i]; }); say(); }
+  if(h>0) note.style.minHeight=h+'px';
+}
+/* ── 16ls-onename (Omar: "in testing I created the same word in AUX and in SOURCES, TEST 05 and both got added with zero issue on the
+   I/O Patch page"; "One name, one item (Recommended)"): a source cannot take a name an output has (a destination, an AUX / DSM, a
+   multiviewer, an I/O-only output, a hand-made Wire output card) and an output cannot take a source's name (_kzOutTaken lists the
+   sources too), in any case, wherever the name is given. Name in use says which one has it. A name an older show already shares is
+   left as it is, and a source that has it can still be used. ── */
+function _lbsSrcNames(){
+  const out=[], seen={}, add=function(n){ const k=String(n==null?'':n).trim().toLowerCase(); if(k&&!seen[k]){ seen[k]=1; out.push(String(n).trim()); } };
+  (typeof _sysDiscoverSources==='function'?_sysDiscoverSources():[]).forEach(add);
+  const wa=(typeof wireAdvanced==='object'&&wireAdvanced)||{};
+  (Array.isArray(wa.customSources)?wa.customSources:[]).forEach(function(c){ if(c) add(c.name); });
+  return out;
+}
+/* what output has the name (lower case), else '' */
+function _lbsOutWho(lo){
+  let w=_kzOutTaken(null,false,true)[lo]||'';
+  if(!w){ const wa=(typeof wireAdvanced==='object'&&wireAdvanced)||{}; if((Array.isArray(wa.customDests)?wa.customDests:[]).concat(Array.isArray(wa.customDsms)?wa.customDsms:[]).some(function(c){ return !!c&&String(c.name||'').trim().toLowerCase()===lo; })) w='a hand-made Wire output card'; }
+  return w;
+}
+/* a source name: true = refused (Name in use is up); own: the source's name before (its own name, in any case, is fine) */
+function _lbsSrcNameRefused(nm,own){
+  if(_srcLbcOff()) return false;
+  const n=String(nm==null?'':nm).trim(), lo=n.toLowerCase(); if(!lo) return false;
+  if(own!=null&&String(own).trim().toLowerCase()===lo) return false;
+  if(_lbsSrcNames().some(function(x){ return x.toLowerCase()===lo; })) return false;   /* already a source: using it is fine */
+  const w=_lbsOutWho(lo); if(!w) return false;
+  _kzNameInUse(n,w);
+  return true;
+}
+/* a default source name skips the names outputs have */
+function _lbsOutHas(nm){ return !_srcLbcOff()&&!!_lbsOutWho(String(nm==null?'':nm).trim().toLowerCase()); }
+/* a name a source has (any case) */
+function _lbsSrcHas(nm){ if(_srcLbcOff()) return false; const lo=String(nm==null?'':nm).trim().toLowerCase(); return !!lo&&_lbsSrcNames().some(function(x){ return x.toLowerCase()===lo; }); }
+/* lower-case taken names t with the sources' added: a new destination's default name skips them */
+function _lbsWithSrc(t){ if(!_srcLbcOff()) _lbsSrcNames().forEach(function(n){ t[n.toLowerCase()]=1; }); return t; }
+/* I/O Patch Advanced page 1 (each row there makes the show's I/O-only twin): a source row cannot take an output's name, a
+   destination / AUX / multiviewer row a source's; true = refused (Name in use is up). Pages 2 and up are the user's own lists. */
+function _lbsP1Refused(k,nn,on){
+  if(_srcLbcOff()||!/^adv-/.test(String(k||''))||typeof ioAdvanced!=='object'||!ioAdvanced||ioAdvanced.page!==0) return false;
+  if(k==='adv-src') return _lbsSrcNameRefused(nn,on);
+  const n=String(nn==null?'':nn).trim(); if(!n||(on!=null&&String(on).trim().toLowerCase()===n.toLowerCase())||!_lbsSrcHas(n)) return false;
+  _kzNameInUse(n,'a source in this show');
+  return true;
+}
+/* a new hand-made Wire source card: today's numbering, and never an output's name */
+function _lbsCardSrcName(base){
+  let nm=_wireAdvUniqueCustomName(base);
+  for(let g=0;g<1000&&_lbsOutHas(nm);g++){ const m=nm.match(/^(.*?)(?:\s+(\d+))?$/), stem=(m&&m[1])?m[1]:nm, k=(m&&m[2])?parseInt(m[2],10)+1:2; nm=_wireAdvUniqueCustomName(stem+' '+k); }
+  return nm;
+}
+/* ══ end 16ls ══ */
 /* ══ 16lc-vpfinish block (r16lm SPEC: Omar's answers to step A's questions, 2026-10-06 ~17:00, and to step C's questions and the picture pack,
    2026-10-06 night / 10-07). Every change of this block is desktop only (_lbcOn): the phone is frozen and keeps its ways. ══ */
 /* (D2, Omar: "the panel stops at card width") the narrowest the Video Presets > Advanced left panel can be dragged: what its cards need (236 px
@@ -19853,7 +20025,7 @@ function _lbfNewSourceName(){
   const ord=_srcNameOrder(), media=new Set(); (Array.isArray(customLibrary)?customLibrary:[]).forEach(function(c){ if(c&&c.kind&&c.l) media.add(c.l); });
   const taken=new Set(ord.map(function(x){ return String(x).toLowerCase(); }));
   let n=ord.filter(function(x){ return !media.has(x); }).length+1;
-  while(taken.has(('source '+n))) n++;
+  while(taken.has(('source '+n))||_lbsOutHas('Source '+n)) n++;   /* 16ls-onename */
   return 'Source '+n;
 }
 /* (D11, Omar: "the system default should be to capitalize but user can do it however they want") an imported file is named after its file in
@@ -19862,7 +20034,7 @@ function _lbfNewSourceName(){
 function _lbfUniqueFile(base){
   const taken=new Set(); (typeof allContent==='function'?allContent():[]).forEach(function(c){ if(c&&c.l) taken.add(String(c.l).toLowerCase()); });
   _srcNameOrder().forEach(function(x){ taken.add(String(x).toLowerCase()); });
-  let nm=base, k=2; while(taken.has(nm.toLowerCase())){ nm=base+' '+k; k++; }
+  let nm=base, k=2; while(taken.has(nm.toLowerCase())||_lbsOutHas(nm)){ nm=base+' '+k; k++; }   /* 16ls-onename: never an output's name */
   return nm;
 }
 /* (D12, Omar: "Each imported file gets its own cable colour, the way a new source does") a cable colour of the palette that no source and no
@@ -20099,12 +20271,12 @@ function _lbnNextOut(k){ if(_lbnOff()) return (k==='dst')?(_bdNoBd(Array.isArray
 /* a new source made with + ADD SOURCE: the lowest S number free (after the show's own sources, before the files that are numbered
    automatically) and its name: SOURCE 12 at S12 (E1: new names are in capitals), the next free number in the name when another source has it */
 function _lbfNewSource(){
-  if(_lbnOff()){ const raw=_srcNameOrderRaw(), k=raw.length+1, taken=new Set(raw.map(function(x){ return String(x).toLowerCase(); })); let j=k; while(taken.has('source '+j)) j++; return { name:'SOURCE '+j, no:0 }; }   /* 16lc-vpcards-fix4 (H1): a new I/O-only source lands at the end of the order: SOURCE 12 at S12, or the next free number in its name; no number is kept */
+  if(_lbnOff()){ const raw=_srcNameOrderRaw(), k=raw.length+1, taken=new Set(raw.map(function(x){ return String(x).toLowerCase(); })); let j=k; while(taken.has('source '+j)||_lbsOutHas('SOURCE '+j)) j++; return { name:'SOURCE '+j, no:0 }; }   /* 16ls-onename */   /* 16lc-vpcards-fix4 (H1): a new I/O-only source lands at the end of the order: SOURCE 12 at S12, or the next free number in its name; no number is kept */
   const m=_lbnSrcMap(), media=_lbnMedia(), P=_lbnPins('src'), used=new Set();
   m.forEach(function(v,n){ if(!media.has(n)||P[n]===v) used.add(v); });
   let k=1; while(used.has(k)) k++;
   const taken=new Set(); m.forEach(function(v,n){ taken.add(String(n).toLowerCase()); });
-  let j=k; while(taken.has('source '+j)) j++;
+  let j=k; while(taken.has('source '+j)||_lbsOutHas('SOURCE '+j)) j++;   /* 16ls-onename */
   return { name:'SOURCE '+j, no:k };
 }
 function _lbnPin(k,id,n){ if(_lbnOff()) return;   /* 16lc-vpcards-fix4 (H1): no number is kept (the + ADD SOURCE pin F1, the freeze, the B's G2 pin: off) */ if(!_lbnOk(String(id))||!(n>=1&&n<=999)) return; if(!ioNums||typeof ioNums!=='object') ioNums=_lbnNorm(null); if(!ioNums[k]||typeof ioNums[k]!=='object') ioNums[k]={}; ioNums[k][String(id)]=n; }
@@ -20262,7 +20434,7 @@ function _lbwSrcClash(it,v){
   const n=String(v==null?'':v).trim(), lo=n.toLowerCase(), own=String((it&&it.name)||'');
   if(!lo||!_lbcOn()) return false;
   const hit=(typeof _sysDiscoverSources==='function'?_sysDiscoverSources():[]).some(function(x){ return x!==own&&String(x).trim().toLowerCase()===lo; });
-  if(!hit) return false;
+  if(!hit) return _lbsSrcNameRefused(n,own);   /* 16ls-onename */
   if(typeof showAlert==='function') showAlert({variant:'warning',title:'Name in use',message:'"'+n+'" is already a source in this show. Pick another name, or rename that one first.'});
   return true;
 }
@@ -20790,7 +20962,7 @@ function _sysEscGuard(e){
 function _sysRenameBlocked(oldName,newName,inputEl){
   const o=String(oldName||''), n=String(newName||'').trim(); if(!o||!n||o===n) return false;
   const clash=(typeof _sysDiscoverSources==='function'?_sysDiscoverSources():[]).some(function(x){ return x!==o&&String(x).trim().toLowerCase()===n.toLowerCase(); });
-  if(!clash) return false;
+  if(!clash){ if(_lbsSrcNameRefused(n,o)){ if(inputEl){ inputEl.value=o; inputEl.dataset.sysOldName=o; } return true; } return false; }   /* 16ls-onename */
   if(inputEl){ inputEl.value=o; inputEl.dataset.sysOldName=o; }
   if(typeof showAlert==='function') showAlert({variant:'warning',title:'Name in use',message:'"'+n+'" is already a source in this show. Pick another name, or rename that one first.'});
   return true;
@@ -21225,6 +21397,7 @@ if(!window._sysHandlersAttached){
         if(_nn){
           if(_nn!==_on){
             if(_kzNameBoxBlocked(_k,e.target.dataset.sysId,_nn,e.target,_on)) return;   /* 16kz-answers (C): a name another output has */
+            if(_lbsP1Refused(_k,_nn,_on)){ e.target.value=_on; return; }   /* 16ls-onename: page 1, the other kind's name */
             { const _p1=(_lbcOn()&&/^adv-/.test(_k))?_lbP1Rename(_k,e.target.dataset.sysId,_on,_nn,e.target):false; if(_p1==='refused'){ e.target.value=_on; return; } if(_p1){ e.target.dataset.sysOldName=_nn; return; } }   /* 16lp-p1rename */
             pushUndo();
             _sysSetMeta(_k, e.target.dataset.sysId, 'name', _nn);
@@ -22155,7 +22328,7 @@ function _sysAddMV(){
   let n=multiviewers.length+1;
   const existing=new Set(multiviewers.map(function(m){return m&&m.name;}).filter(Boolean));
   let nm='MV '+n;
-  while(existing.has(nm)){n++;nm='MV '+n;}
+  while(existing.has(nm)||_lbsSrcHas(nm)){n++;nm='MV '+n;}   /* 16ls-onename: never a source's name */
   if(_lbcOn()&&_lbMvClash(nm)) return;   /* 16lp-nameclash: the window adds it */
   if(typeof pushUndo==='function') pushUndo();
   multiviewers.push({id:uid(),name:nm,connectorType:'MV',resolution:'1920x1080',deviceType:'Monitor',notes:'Operator monitor · not on canvas',mvPic:_mvPicRandom()});
@@ -24063,8 +24236,8 @@ function _slbKind(key){ const k = String(key || ''); return k.indexOf('src:') ==
 /* the show's items that can be on the drawing, in the old switcher's order */
 function _slbItems(){
   const src = _wireBuildAllSourceNames().map(function(n){ return { key: 'src:' + n, name: n, kind: 'src' }; });
-  const dst = ((typeof screens !== 'undefined' && Array.isArray(screens)) ? _bdNoBd(screens) : []).filter(Boolean).map(function(s){ return { key: 'dst:' + s.id, id: s.id, name: s.name || s.id, kind: 'dst' }; });
-  const dsm = ((typeof dsms !== 'undefined' && Array.isArray(dsms)) ? dsms : []).filter(Boolean).map(function(d){ return { key: 'dsm:' + d.id, id: d.id, name: d.name || d.id, kind: 'dsm' }; });
+  const dst = ((typeof screens !== 'undefined' && Array.isArray(screens)) ? _bdNoBd(screens) : []).filter(Boolean).map(function(s){ return { key: 'dst:' + s.id, id: s.id, name: s.name || s.id, kind: 'dst' }; }).concat(_lbsVpOff(false).map(function(d){ return { key: 'dst:' + d.id, id: d.id, name: d.name || d.id, kind: 'dst' }; }));   /* 16ls-vponly */
+  const dsm = ((typeof dsms !== 'undefined' && Array.isArray(dsms)) ? dsms : []).filter(Boolean).map(function(d){ return { key: 'dsm:' + d.id, id: d.id, name: d.name || d.id, kind: 'dsm' }; }).concat(_lbsVpOff(true).map(function(d){ return { key: 'dsm:' + d.id, id: d.id, name: d.name || d.id, kind: 'dsm' }; }));   /* 16ls-vponly */
   const mv = _cmMvSimpleNodes().map(function(m){ return { key: 'mv:' + m.id, id: m.id, name: m.name, kind: 'mv' }; });
   return { src: src, dst: dst, dsm: dsm, mv: mv };
 }
@@ -25118,7 +25291,7 @@ function _wireAdvAddCustomSource(){
   if(typeof pushUndo === 'function') pushUndo();
   wireAdvanced.customSources.push({
     id: _wireAdvNewId('cs'),
-    name: _wireAdvUniqueCustomName(_lbcOn() ? 'NEW SOURCE' : 'New Source'),   /* 16lc-vpcards-fix (E1) */
+    name: _lbsCardSrcName(_lbcOn() ? 'NEW SOURCE' : 'New Source'),   /* 16lc-vpcards-fix (E1) */   /* 16ls-onename: never an output's name */
     resolution: '',
     wireColor: _wireRandomPaletteColor()
   });
@@ -25360,6 +25533,7 @@ function _wireCommitRenameSource(inp){
     .concat((typeof customLibrary !== 'undefined' && Array.isArray(customLibrary)) ? customLibrary.map(c => c && c.l) : [])
     .concat((typeof wireAdvanced === 'object' && wireAdvanced && Array.isArray(wireAdvanced.customSources)) ? wireAdvanced.customSources.map(c => c && c.name) : []);
   if(names.some(x => x === nn)){ if(typeof showAlert === 'function') showAlert({ variant: 'warning', title: 'Name in use', message: '\u201C' + nn + '\u201D is already a source in this show. Pick another name, or rename that one first.' }); _wireRender(); return; }
+  if(_lbsSrcNameRefused(nn, old)){ _wireRender(); return; }   /* 16ls-onename */
   if(typeof pushUndo === 'function') pushUndo();
   _sysApplyGlobalRename(old, nn);
   _wireRender();
@@ -37412,6 +37586,7 @@ function _dlgTicksWire(box,opts,btn){
     sync();
   });
   sync();
+  if(note&&!_srcLbcOff()) requestAnimationFrame(function(){ _lbsNoteRoom(box,opts,kids,note); });   /* 16ls-delsize: measured once it shows */
 }
 /* ── 16ks preset-reset-fix: the ONE dialog is modal for the KEYBOARD and for the gesture that opened it ───────────────
    KEYS. While #dlg-overlay is shown no page shortcut may act behind it (before: with a layer picked, the arrow keys
@@ -38818,6 +38993,7 @@ function _fsRenameContentUI(val){
   const nn=(val||'').trim().slice(0,40);
   if(!nn||nn===old){ renderFsPanel(true); return; }
   if(allContent().some(function(c){ return c.l===nn; })){ if(typeof showAlert==='function') showAlert({variant:'warning',title:'Name in use',message:'"'+nn+'" is already a source in this show. Pick another name.'}); renderFsPanel(true); return; }
+  if(_lbsSrcNameRefused(nn,old)){ renderFsPanel(true); return; }   /* 16ls-onename */
   _fsRenameContent(old,nn);
 }
 // rename a custom source everywhere it is used (layers, BGs, DSM content, sources[]) and move its file under the new key

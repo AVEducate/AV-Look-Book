@@ -240,7 +240,8 @@ Details: HANDBOOK section 5
 `16ln-blur`, `16ln-presetbin`, `16ln-anysize`; 16lm-border came back out in 16ln; `16lo-srcorder`, `16lo-nopairs`,
 `16lo-delwin`, `16lo-addback`; `16lp-backups`, `16lp-p1rename`, `16lp-nameclash`, `16lp-wcnames`, `16lp-wirecards`; `16lq-approval`, `16lq-auxsize`, `16lq-tabskip`, `16lq-rowpick`, `16lq-levelclick`,
 `16lq-cropreset`, `16lq-webmdur`, `16lq-bgone`, `16lq-ptabs`; `16lr-wirebar`, `16lr-sheetfit`, `16lr-twoout`, `16lr-menuzoom`,
-`16lr-bookprint`, `16lr-cvcheck`, `16lr-noneticked`, `16lr-kbvcal`, `16lr-exportundo`, `16lr-mailtext`).
+`16lr-bookprint`, `16lr-cvcheck`, `16lr-noneticked`, `16lr-kbvcal`, `16lr-exportundo`, `16lr-mailtext`; `16ls-vponly`,
+`16ls-delsize`, `16ls-onename`, `16ls-greyfocus`, `16ls-qsgrey`).
 
 **One card (16lc-vpcards, 2026-10-06)** — the I/O Patch > Simple card (`_iogCardHTML` + `_iogSrcObj` / `_iogOutObj`) is also the card of
 Wire's left panel (desktop; the phone keeps Wire's own) and of the Video Presets > Advanced left panel (Wire > Simple's sections:
@@ -393,6 +394,16 @@ Never add a time-based "ignore clicks for N ms": the phone gate taps the dialog'
   (`_kbvParse`); a Look Book export leaves no Undo step (`_lbUNLookAt` around `exportPDF`); the desktop Send email names the
   cue sheet right (electron/main.js).
   HANDBOOK › 16lr.
+  16ls (2026-10-30, Omar's findings testing 16lq / 16lr; desktop only): the delete window's Video Presets alone takes a
+  destination / AUX off the canvas and every preset and keeps it on the I/O Patch as I/O-only (`_lbsOutOffVP`: an `ioDests`
+  row with its own id and `vpOff`, on Wire's Simple drawing through `_slbItems`; with the I/O Patch ticked too Wire keeps a
+  hand-made card; a backdrop still leaves the show; SPEC rule 8 "Video Presets = everywhere" replaced); a window with ticks
+  keeps one height (`_lbsNoteRoom`); sources and outputs never share a name (`_kzOutTaken` lists the sources unless noSrc,
+  `_lbsSrcNameRefused` at every source naming spot, `_lbsP1Refused` on I/O Patch Advanced page 1, defaults skip the other
+  kind's names); the desktop focus edge is the Welcome grey (`--ss-ring`, `--lbs-focus`, `--lbs-focus-rgb`, `--lbs-focus-text`
+  on `body:not(.is-mobile)`; 59 focus rules read them with their old colour as the fallback); Quick Show Setup in the grey
+  look with thin colour strips (`#qs-modal` rules, the switch's `lbs-on`).
+  HANDBOOK › 16ls.
 - Exports' readable print (16li-print: `_lbpInk`, `_wireLogoWordSvg`, `_wireTbFitText`): a value the Look Book prints in a colour made
   for the white page gets an inline colour from `_lbpInk(opts)` in the Dark book (never a stylesheet rule); words drawn into the Wire
   sheet's boxes are measured with `_wireTextWidth` and fitted (smaller, then "…"), never left to run past a line. HANDBOOK › 16li-print.
