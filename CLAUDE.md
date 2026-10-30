@@ -242,7 +242,7 @@ Details: HANDBOOK section 5
 `16lq-cropreset`, `16lq-webmdur`, `16lq-bgone`, `16lq-ptabs`; `16lr-wirebar`, `16lr-sheetfit`, `16lr-twoout`, `16lr-menuzoom`,
 `16lr-bookprint`, `16lr-cvcheck`, `16lr-noneticked`, `16lr-kbvcal`, `16lr-exportundo`, `16lr-mailtext`; `16ls-vponly`,
 `16ls-delsize`, `16ls-onename`, `16ls-greyfocus`, `16ls-qsgrey`; `16lt-wirefit`, `16lt-wiregrid`,
-`16lt-dragshrink`, `16lt-prores`, `16lt-thumbdrag`; `16lu-nobars`, `16lu-modmenu`, `16lu-cablekey`).
+`16lt-dragshrink`, `16lt-prores`, `16lt-thumbdrag`; `16lu-nobars`, `16lu-modmenu`, `16lu-cablekey`; `16lv-names`, `16lv-newnames`, `16lv-qshover`).
 
 **One card (16lc-vpcards, 2026-10-06)** — the I/O Patch > Simple card (`_iogCardHTML` + `_iogSrcObj` / `_iogOutObj`) is also the card of
 Wire's left panel (desktop; the phone keeps Wire's own) and of the Video Presets > Advanced left panel (Wire > Simple's sections:
@@ -423,6 +423,20 @@ Never add a time-based "ignore clicks for N ms": the phone gate taps the dialog'
   then one row per source / router / device / Simple output whose cables have no type, in the colour they are drawn), the
   sheet's key ends in "+ n more" above the PROJECT block, an empty one reads No cables on this page; the Details key on screen
   is unchanged. HANDBOOK › 16lu.
+  16lv (2026-10-30, Omar's name rule; desktop only): every name drawn on a card or tile follows ONE rule, `_lbuRows(name, max)`:
+  rows of at most 12 characters (`_LBU_N`; he asked for 10, then picked 12 after DESTINATIO / N 01), a row ends at a space, a word
+  longer than the row is split where the row is full, a cut name's last row is filled and ends in … (one of its 12). A picture's
+  caption is 1 row (`_lbuOne`, `_nfFit`'s `o.one`, `_lbuCap` on Wire tiles, `_wtlLines`), the name beside a picture 2 rows
+  (`_lbuCardName`: `.lbu-rows` nowrap span inside `.iog-name-text` / `.wire-source-name`; tool bars `_wtlNmShow`), Wire's
+  Details every row it needs (`_lbuDet`); the size is the place's own, only a row wider than its line is set smaller
+  (`_lbuFitPx`, canvas widths); the full name is the tooltip (`_lbuTip`, on the name's input for a card). It replaces the old
+  fits (`_lbfFitStyle0` word shrink, `_nfFit`'s two lines, 16lc-names / -midword / -onlyword on tool bars, `_wtlNmPaper`'s paper
+  refit) on the desktop only: with `body.is-mobile` every helper returns the old markup. A new place that draws a card or tile
+  name must use these helpers. 16lv-newnames: a hand-made Wire card and an I/O-only item from a Wire heading's + are named as
+  + Add names a show item (`_lbvNewName`: DESTINATION 05, SOURCE 12, AUX3), and + Add skips a hand-made card's name
+  (`_lbvWithHand` / `_lbvHandHas` in `_r4fNewDest`, `_kzAuxName`, `_lbfNewSource`): Wire finds a source by its NAME. 16lv-qshover:
+  Quick Show Setup's Start blank / Build My Show highlight grey on hover (edge #5d6778, the Welcome face), never the black skin's
+  cyan words (`#qs-modal .pm-btn-*:hover`, end of the main style block). HANDBOOK › 16lv.
 - Exports' readable print (16li-print: `_lbpInk`, `_wireLogoWordSvg`, `_wireTbFitText`): a value the Look Book prints in a colour made
   for the white page gets an inline colour from `_lbpInk(opts)` in the Dark book (never a stylesheet rule); words drawn into the Wire
   sheet's boxes are measured with `_wireTextWidth` and fitted (smaller, then "…"), never left to run past a line. HANDBOOK › 16li-print.

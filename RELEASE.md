@@ -67,7 +67,8 @@ Nothing is pushed, tagged or released until the owner has tried it on his own Ma
 ## Backups of the trusted version
 - Source: tag `v0.8.0`, branch `release/0.8` (the previous trusted version: tag `v0.7.0`, branch `release/0.7`).
 - Installers and page: the GitHub release for v0.8.0 (Mac arm64 / x64 DMG, Windows EXE, `lookbook_builder.html`).
-- Local: `deploy/lookbook_builder.html` is build 16lu (not released yet; 16lt is
+- Local: `deploy/lookbook_builder.html` is build 16lv (not released yet; 16lu is
+  `backups/deploy_lookbook_builder_2026-10-30_before-16lv.html`, 16lt is
   `backups/deploy_lookbook_builder_2026-10-30_before-16lu.html`, 16ls is
   `backups/deploy_lookbook_builder_2026-10-30_before-16lt.html`, 16lr is
   `backups/deploy_lookbook_builder_2026-10-30_before-16ls.html`, 16lq is

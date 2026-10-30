@@ -2209,7 +2209,7 @@
    "ok": true
   },
   {
-   "name": "Cards 16kz-refresh (I): the name on a card's picture breaks only between words (Omar's 13, \"do the recommended\"): CENTER LED renamed DESTINATION 01 reads \"DESTINATION\" / \"01\" on its I/O Patch card, on its Wire side-panel card and on its Advanced row's small picture (never DESTINATIO / N 01); RIGHT LED renamed PROJECTIONS (a word too long for the line) shrinks to one line inside the picture; the upload mark does not sit on the first letter; the text is the name",
+   "name": "Cards 16kz-refresh (I) (16lv-names: a picture shows ONE row of 12, … when cut, the whole name on hover): CENTER LED renamed DESTINATION 01 reads DESTINATION… on its I/O Patch card, on its Wire side-panel card and on its Advanced row's small picture; RIGHT LED renamed PROJECTIONS (a word too long for the line) shrinks to one line inside the picture; the upload mark does not sit on the first letter; the text is the name",
    "ok": true
   },
   {
@@ -2257,7 +2257,7 @@
    "ok": true
   },
   {
-   "name": "Wire 16kz-refresh (L4): Wire Advanced's hand-made destination / AUX cards refuse a SHOW output's name (16lc-vpfinish: typed in the I/O Patch card they are now; Omar 2026-09-28 ~18:50, \"all recommended\"): a hand-made destination card renamed \"left led\" or \"AUX 1\" and a hand-made AUX card renamed \"mv 1\" say Name in use and keep their names (no undo step); a second hand-made destination card typed STAGE says Name in use and keeps its name (16lp-wcnames, Omar 2026-10-17: \"didnt we make a rule about warning when there was double name? people would have to change them\"; before, STAGE, STAGE 2); a new hand-made card is never given a show output's name nor another card's (with CENTER LED named New Destination and a card still NEW DESTINATION 2, + gives NEW DESTINATION 3); 16lc-vpcards-fix: the new cards named in capitals",
+   "name": "Wire 16kz-refresh (L4): Wire Advanced's hand-made destination / AUX cards refuse a SHOW output's name (16lc-vpfinish: typed in the I/O Patch card they are now; Omar 2026-09-28 ~18:50, \"all recommended\"): a hand-made destination card renamed \"left led\" or \"AUX 1\" and a hand-made AUX card renamed \"mv 1\" say Name in use and keep their names (no undo step); a second hand-made destination card typed STAGE says Name in use and keeps its name (16lp-wcnames, Omar 2026-10-17: \"didnt we make a rule about warning when there was double name? people would have to change them\"; before, STAGE, STAGE 2); a new hand-made card is never given a show output's name nor another card's (16lv-newnames: with CENTER LED named DESTINATION 04 and a card still DESTINATION 05, + gives DESTINATION 06); 16lc-vpcards-fix: the new cards named in capitals",
    "ok": true
   },
   {
@@ -2269,7 +2269,7 @@
    "ok": true
   },
   {
-   "name": "Cards 16kz-fix (I): a name on a card picture never loses part of a word (Omar's 13): CENTER LED renamed NEW DESTINATION 2 reads the whole name on two lines (it read NEW / DESTINATI…) on its I/O Patch card, its Wire side-panel card and its Advanced row's small picture; RIGHT LED renamed DOWNSTAGE CONFIDENCE MONITOR shows only whole words (a second line cut after a whole word ends in …); every line inside its picture",
+   "name": "Cards 16kz-fix (I) (16lv-names: a picture shows ONE row of 12, … when cut): CENTER LED renamed NEW DESTINATION 2 reads NEW DESTINA… and RIGHT LED renamed DOWNSTAGE CONFIDENCE MONITOR reads DOWNSTAGE C… on the picture of its I/O Patch card, its Wire side-panel card and its Advanced row's small picture; every row inside its picture",
    "ok": true
   },
   {
@@ -2337,7 +2337,7 @@
    "ok": true
   },
   {
-   "name": "Wire 16la-fix (M / R) (16lb-simple: the Simple tile is the Advanced tile): in Wire SIMPLE a destination, AUX or multiviewer tile has its picture at its right end, and a long name never runs into it (the attack: \"LEFT LED WALL MAIN STAG\" drawn over the picture): the name is whole and ends before the picture (it wraps between words in the card's info column); a short name and a tile without a picture read as before; the exported Simple sheet prints each name whole",
+   "name": "Wire 16la-fix (M / R) (16lb-simple: the Simple tile is the Advanced tile): in Wire SIMPLE a destination, AUX or multiviewer tile has its picture at its right end, and a long name never runs into it (the attack: \"LEFT LED WALL MAIN STAG\" drawn over the picture): the name is its two rows of 12 (16lv-names: … when cut, the whole name on hover) and ends before the picture; a short name and a tile without a picture read as before; the exported Simple sheet prints the same rows",
    "ok": true
   },
   {
@@ -2470,11 +2470,8 @@
   },
   {
    "name": "Wire 16ld-fix (A3) (attacker 2026-09-30: a tool's name typed without Enter, then its picture's x or its picture box clicked: a router kept showing ROUTER I/O, a converter / a switch threw NotFoundError): the name being typed is committed first: a router, a converter and a network switch renamed and their x clicked show the new name in the bar and in the picture box at once, with no page error, two undo steps (the name, the picture); a router renamed and its picture box clicked (an image picked) shows its new name too",
-   "ok": true
-  },
-  {
-   "name": "Wire 16ld-fix (A4 / B2) (both attackers 2026-09-30: a network switch named NETGEAR M4250-26G4F read \"NETGEAR ...\" in its bar on screen, on the Wire sheet and in the Look Book, and with a logo in its picture box the full name was nowhere) (16ld-fix2 (X2), Omar 21:45: the half-size picture gives the name its width back): a tool's name shows in full in its bar, at the bar's own size (15 px on a converter / switch, 18 on a router: never smaller), on one line or two, on screen, on the light Wire sheet and on the Look Book's Advanced Wire page, with a logo in the picture box: a network switch NETGEAR M4250 (the name beside its pencil; 16lc-picsize: with its tile-size picture the switch has 109 px for its name; 16lc-names: the longer NETGEAR M4250-26G4F shows whole there on three lines, see 16ld-fix2's G1 and 16lc-names N1), a converter DECIMATOR MD-HX CROSS CONVERTER, a router BARCO E2 MAIN SCREEN; the one-line box you type in shows while it has the focus",
-   "ok": true
+   "ok": true,
+   "detail": "renamed then its x clicked [the bar shows, the picture box shows, stored, the picture gone, undo steps, page errors] (router / converter / switch) / renamed then its picture box clicked [the file window, the bar shows, stored, the picture, undo steps]: expected {\"router\":[\"Main Router\",\"MAIN ROUTER\",\"Main Router\",true,2,0],\"converter\":[\"Decimator 7\",\"DECIMATOR 7\",\"Decimator 7\",true,2,0],\"switch\":[\"Netgear A\",\"NETGEAR A\",\"Netgear A\",true,2,0],\"upload\":[true,\"Edit Rack\",\"Edit Rack\",true,2]}, got {\"router\":[\"Main Router\",\"MAIN ROUTER\",\"Main Router\",true,2,0],\"converter\":[\"Decimator 7\",\"DECIMATO…\",\"Decimator 7\",true,2,0],\"switch\":[\"Netgear A\",\"NETGEAR A\",\"Netgear A\",true,2,0],\"upload\":[true,\"Edit Rack\",\"Edit Rack\",true,2]}"
   },
   {
    "name": "Wire 16ld-fix (X2) (16ld-fix2: REPLACED by Omar 2026-09-30 21:45, \"Longer tool names let make this half the logo size then to save on space\", the TOOL'S picture box; 16ld-fix made it 176 x 99): (16lc-picsize, Omar 2026-10-02: \"they should match the image size of the tiles, the converters being this current smaller size it fine\") measured on screen at 100 % zoom, the picture box of Simple's Generic Router and on Advanced of page 1's router, a 10 x 10 router, an 8 x 2 switcher, an I/O Patch page tile and a network switch is the source tile's picture box on the same drawing (110 x 62) within 1 px, a converter's HALF of it (55 x 31); the cards' pictures (Wire, I/O Patch) stay 110 x 62; it looks like a tile's picture: corner radius 6, 13 in from the right end, 13 down in its 88 bar, the upload icon 18 x 18 4 in from its top-left (a converter's halved: corner 3, centred in its 44 bar, the icon 9 x 9 2 in); a name in the box (no image) stays inside the box and clear of the upload icon in both sizes (A5: a long name ran under the icon); the Advanced sheet prints 110 x 62 and 55 x 31",
@@ -2549,47 +2546,7 @@
    "ok": true
   },
   {
-   "name": "Wire 16lc-names (Omar 2026-10-02, on NETGEAR M4250-26G4F cut with ... on a network switch after 16lc-picsize gave it a tile-size picture: \"doesnt the bigger header allow verbiage to be on 2 lines now?\"): a network switch named NETGEAR M4250-26G4F shows its WHOLE name in its 88 bar beside its pencil at the bar's own 15 px, on three lines broken between the words and after the hyphen (NETGEAR / M4250- / 26G4F), never mid-word, nothing cut, the pencil and the name block centred in the bar, clear of the picture box, its tooltip the whole name; the same with a logo in the picture box, and after it is renamed in its name box (the change), and at 75 % zoom",
-   "ok": true
-  },
-  {
-   "name": "Wire 16lc-names: a long name uses THREE lines in the 88 bar of a 10 x 10 router, an 8 x 2 switcher and a tile made from an I/O Patch page (the lock beside it): each shows its whole name (over 100 letters) at the bar's own 18 px on three lines broken only between words, nothing cut, the pencil (the lock) and the name block centred in the bar, clear of the picture box, the tooltip the whole name (the I/O Patch tile adds \"named by its I/O Patch page\"); a router renamed in its name box keeps the focus (16ju) and its name is fitted again in place: three lines, whole",
-   "ok": true
-  },
-  {
-   "name": "Wire 16lc-names: a word too wide for its line is drawn smaller rather than broken mid-word while it fits a line at 11 px: on a network switch BLACKMAGIC SWITCH is drawn smaller (13 px) so BLACKMAGIC fits its line whole (BLACKMAGIC / SWITCH); on a 10 x 10 router a 51-letter word with no space or hyphen is drawn on one line at 14.5 px; on Simple's Generic Router a 40-letter word likewise (13.5 px); nothing cut; only a word too wide even at 11 px (MICROCONVERTER BIDIRECTIONAL on the switch) goes to the last resort (16lc-midword, Omar 2026-10-02: \"Break mid-word as a last resort\"; 16lc-onlyword, Omar 2026-10-04: \"Split only the word that can't fit\"): 11 px, the largest size at which BIDIRECTIONAL fits its line whole, only MICROCONVERTER broken mid-word (MICROCONVER / TER), BIDIRECTIONAL whole on the third, nothing cut, the tooltip the whole name",
-   "ok": true
-  },
-  {
-   "name": "Wire 16lc-names: a CONVERTER is unchanged (its 44 bar, the half-size picture): its name is the 16ld-fix2 block byte for byte (one line or two at 15 px, -webkit-line-clamp 2, longer cut with ...; no fitting mark), NETGEAR M4250-26G4F whole on one line beside its pencil and a 63-letter name cut on its second line with its tooltip whole, while a network switch beside it with the same NETGEAR name shows it whole on three lines",
-   "ok": true
-  },
-  {
-   "name": "Wire 16lc-names: on paper (no tooltip) the whole name shows whenever it can: the light Wire sheet and the Look Book's Advanced Wire page print NETGEAR M4250-26G4F whole on the network switch (no pencil on paper, so its room is wider: NETGEAR / M4250-26G4F at 15 px), BLACKMAGIC SMART VIDEOHUB 40X40 RACK B whole on a second switch (cut on screen at 11 px; on paper three lines at 12.5 px), a 107-letter router name whole on three lines at 18 px and the converter's name as before; nothing cut, never mid-word, no fitting mark printed; the Look Book's Simple Wire page prints the Generic Router's 40-letter one-word name whole on one line",
-   "ok": true
-  },
-  {
    "name": "Help 16lc-names: Help > Wire > Tool headers says that a long name wraps onto a second line, and on every tool but a converter onto a third, breaking only between words (a word too long for the line breaks after its hyphens, or is drawn smaller), and that one longer still ends in ... and shows in full when you point at it",
-   "ok": true
-  },
-  {
-   "name": "Wire 16lc-midword (Omar 2026-10-02, shown CORE_SW_01_STAGE_LEFT_RACK_A on a network switch in small letters on ONE line with the other two lines empty: \"Break mid-word as a last resort — only when a word can't fit even at the smallest size, split it anywhere onto the empty lines, the way v0.8.1 did.\"): that name (one word wider than the line even at 11 px) shows at the bar's own 15 px on THREE lines broken mid-word (CORE_SW_ / 01_STAGE_ / LEFT_RACK_A), the first two each filled to the last letter that fits, the rest on the third cut with ... (only the third overflows), the block's text exactly the name, the tooltip the whole name, beside the pencil, centred, clear of the picture box, the picture box's own words as before; the same after it is typed in its name box (the change) and at 75 % zoom",
-   "ok": true
-  },
-  {
-   "name": "Wire 16lc-midword: on paper the rule is fitted again to the paper room (the 16lc-names breaks first, the mid-word last resort only when a piece is too wide there even at 11 px), so a name with no space shows whole on paper whenever it can: the light and the dark Wire sheet and the Look Book's Advanced Wire page print CORE_SW_01_STAGE_LEFT_RACK_A whole on the network switch at 15 px on three lines broken mid-word (CORE_SW_01_S / TAGE_LEFT_RA / CK_A; on screen cut on its third line), NETGEAR_M4250-26G4F (mid-word at 15 px on screen) with the 16lc-names breaks at 12.5 px (NETGEAR_M4250- / 26G4F) and MICROCONVERTER BIDIRECTIONAL (on screen at 11 px, only MICROCONVERTER mid-word: 16lc-onlyword) between its words at 12 px; nothing cut there, the printed text exactly the name, no fitting mark printed",
-   "ok": true
-  },
-  {
-   "name": "Wire 16lc-midword: every name the 16lc-names rule fits, and every name whose words all fit a line at 11 px but need more than three lines, is drawn BYTE FOR BYTE as before (no mid-word break), on screen and on paper: on a network switch NETGEAR M4250-26G4F (three lines at 15 px), BLACKMAGIC SWITCH (13 px), SWITCH A (one line, the 16ld-fix2 block), FEED STANDARDS DANTE ENGINEERING CONSOLE and BLACKMAGIC SMART VIDEOHUB 40X40 RACK B (too long for three lines even at 11 px, every word fits: three lines at 11 px by words, cut with ...), on a 10 x 10 router the 107-letter spaced name and on an 8 x 2 switcher the 110-letter one (three lines at 18 px, between words): each name block's HTML is the 16lc-names markup exactly (its style, its fitting mark, its lines); on the light Wire sheet NETGEAR M4250-26G4F (NETGEAR / M4250-26G4F at 15 px), FEED STANDARDS DANTE ENGINEERING CONSOLE (three lines at 11 px, whole) and the router's name likewise, with no fitting mark",
-   "ok": true
-  },
-  {
-   "name": "Wire 16lc-midword: the name block's text stays EXACTLY the whole name when the last resort draws it (no letter or space added or lost; lines joined by <br>, three at most, a letter never split from its accent): CORE_SW_01_STAGE_LEFT_RACK_A, a name with double spaces, a Japanese name, MICROCONVERTER BIDIRECTIONAL (at 11 px, 16lc-onlyword; the others at the bar's 15 px) and twenty accented letters on a network switch; and a 10 x 10 router renamed IN PLACE in its name box (the focus kept, 16ju) is fitted again each time: a 105-letter name with no space three lines at 18 px broken mid-word and whole, then NETGEAR M4250-26G4F on one line (the 16ld-fix2 block), then a 105-letter spaced name three lines between words, then a 303-letter name of short words cut at 11 px on three lines by words (no mid-word break)",
-   "ok": true
-  },
-  {
-   "name": "Wire 16lc-midword: a CONVERTER is unchanged: named CORE_SW_01_STAGE_LEFT_RACK_A its name block is the 16ld-fix2 block byte for byte (the 2-line clamp, broken anywhere by the browser, 15 px), no fitting mark, on screen and on the light Wire sheet, and its picture box's words as before; the network switch beside it with the same name breaks it mid-word on three lines at 15 px",
    "ok": true
   },
   {
@@ -2597,79 +2554,7 @@
    "ok": true
   },
   {
-   "name": "Wire 16lc-midword-fix (D1): in the last resort a line that breaks at a no-break space (Option+Space) or a full-width space (a Japanese IME) keeps that space in the name but does not draw it at the end of the line, so lines 1 and 2 are never cut: on a network switch a Japanese name with a full-width space reads its first word whole on line 1 (it was cut with ..., 113 px in 109), LED B AUDIO LEFT + no-break space + A_NETGEAR_A_AUDIO_CORE reads LED B / AUDIO LEFT / A_NETGEAR... (line 2 was cut), MAINSTAGE + no-break space + CORE_SW_01_STAGE_LEFT_RACK reads MAINSTAGE / CORE_SW_ / 01_STAGE... (line 1 was cut); only the third line ends in ..., the block's text and the tooltip are the whole name; on the light Wire sheet the Japanese name prints whole and the others keep lines 1 and 2 whole",
-   "ok": true
-  },
-  {
-   "name": "Wire 16lc-midword-fix (D2): a name with ss written as one letter (the German sharp s, which the bar's capitals draw as SS, two letters and two letter spacings) is measured as drawn in the last resort, so no line runs past its block and each line broken mid-word is filled to the last letter that fits: on a network switch KONGRE(sharp s)_SAAL_CORE_SW (line 1 ran 0.6 px past and was cut), a 10 x 10 router with a long German name with four sharp s (line 1 ran 7.5 px past and lost ER); on the light Wire sheet SCHLO(sharp s)HOF_BUHNE_LINKS_A prints whole on three lines (it printed SCHLOSSHOF... / ...: the _B lost) and the router KONGRESSZENTRUM_GRO(sharp s)ER_SAAL_... on two lines whole (it lost DE); and a name of short words with one German word wider than the switch line even at 11 px as drawn (it was taken as fitting, its line cut at 11 px) goes to the last resort",
-   "ok": true
-  },
-  {
-   "name": "Wire 16lc-midword-fix (D3): a word that fits the line at 11 px as drawn never goes to the last resort, whatever its letters: on a network switch SCENE_COTE_A with its accents written as second characters (as macOS file names give them) is drawn byte for byte as the 16lc-names page draws it, whole at 11 px, the same as the name typed with composed accents (it was SCENE_COT / E_A at 15 px), and so are twelve such E-acute; a 10 x 10 router named a 63-letter French name with such accents, 36 emoji, or an Arabic name of 104 letters is drawn whole at 11 px on one line byte for byte as on the 16lc-names page (each was broken mid-word at 18 px)",
-   "ok": true
-  },
-  {
-   "name": "Wire 16lc-midword-fix (D4): an Arabic name in the last resort fills each line broken mid-word to the last letter that fits (the browser does not space joined Arabic letters, the measure now does not either): on a network switch an Arabic name of 26 letters with no space is drawn at 15 px on two lines, the first filled (it broke a letter or more early), nothing past the block, the block's text and tooltip the whole name",
-   "ok": true
-  },
-  {
-   "name": "Wire 16lc-midword-fix (D5): the last resort stops when two lines are full, so a pasted 40,000-letter router name with no space is fitted in well under half a second (it took about 2.4 s, every redraw): on a 10 x 10 router it shows at 18 px on three lines, lines 1 and 2 filled and whole, the rest on the third cut with ..., the block's text exactly the name",
-   "ok": true
-  },
-  {
-   "name": "Wire 16lc-midword-fix (M4 made to bite): the last resort never splits a letter (a grapheme) over two lines, whatever it is made of: on a network switch names of 16 to 40 accented letters written as letter + combining accent, of 10 to 22 flags (two code points each), of 9 to 15 family emoji (seven code points joined) and a Korean name with its syllables decomposed each break their lines only between whole letters, the lines joined are the name (M4 used precomposed accents, which have no mark to split, so it could never fail; a split by code point fails here)",
-   "ok": true
-  },
-  {
-   "name": "Wire 16lc-onlyword (Omar 2026-10-04: \"Split only the word that can't fit — Make the name a bit smaller so the other words stay whole, and split only the word that can't fit even at the smallest size\"): a network switch named BLACKMAGIC CORE_SW_01_STAGE_LEFT_RACK_A (CORE_SW_01_STAGE_LEFT_RACK_A too wide for its line even at 11 px, BLACKMAGIC not) is drawn at 13 px, the largest size at which BLACKMAGIC fits its line whole: BLACKMAGIC whole on line 1, only CORE_SW_01_STAGE_LEFT_RACK_A split mid-word (CORE_SW_01 / _STAGE_LEFT_RACK_A, line 2 filled to the last letter that fits, the rest on the third cut with ...), the block's text exactly the name, the tooltip the whole name, beside the pencil, centred, clear of the picture box, the picture box's own words as before (it was BLACKMAGI / C / CORE_SW... at 15 px); the same after it is typed in its name box (the change) and at 75 % zoom",
-   "ok": true
-  },
-  {
-   "name": "Wire 16lc-onlyword: a network switch named MICROCONVERTER BIDIRECTIONAL (MICROCONVERTER too wide for its line even at 11 px, BIDIRECTIONAL not) is drawn at 11 px, the largest size at which BIDIRECTIONAL fits its line whole: only MICROCONVERTER is split mid-word (MICROCONVER / TER, line 1 filled to the last letter that fits) and BIDIRECTIONAL is whole on the third line, nothing cut, the block's text and the tooltip the whole name (it was MICROCON / VERTER / BIDIRECTI... at 15 px); on the light Wire sheet, where MICROCONVERTER fits a line at 12 px, it prints as before (MICROCONVERTER / BIDIRECTIONAL at 12 px, never mid-word)",
-   "ok": true
-  },
-  {
-   "name": "Wire 16lc-onlyword: a name with no piece that fits a line at 11 px, other than pieces that fit at the bar's own size, is drawn BYTE FOR BYTE as before (the bar's own size, the same lines): on a network switch CORE_SW_01_STAGE_LEFT_RACK_A alone (CORE_SW_ / 01_STAGE_ / LEFT_RACK_A at 15 px) and rack-b CORE_SW_01_STAGE_LEFT_RACK_A (rack-b fits at 15 px: rack-b / CORE_SW_ / 01_STAGE_LEFT_RACK_A), on a 10 x 10 router the 105-letter name with no space (three lines at 18 px); each name block's HTML is the 16lc-midword-fix markup exactly (its style, its fitting mark, its lines); on the light Wire sheet CORE_SW_01_STAGE_LEFT_RACK_A (CORE_SW_01_S / TAGE_LEFT_RA / CK_A at 15 px) and the router's name likewise, with no fitting mark",
-   "ok": true
-  },
-  {
-   "name": "Wire 16lc-onlyword (Omar 2026-10-04, for a word with a hyphen that fits a line in the last resort: \"Keep the word whole\"): on a network switch MD-HX_AJA CORE_SW_01_STAGE_LEFT_RACK_A is drawn at 14.5 px, the largest size at which MD-HX_AJA fits its line whole: MD-HX_AJA whole on line 1 (it was MD- / HX_AJA at 15 px), only CORE_SW_01_STAGE_LEFT_RACK_A split mid-word, line 2 filled, the rest on the third cut with ...; LEFT rack-b CORE_SW_01_STAGE_LEFT_RACK_A keeps the bar's 15 px (rack-b fits there) and rack-b moves whole to line 2 (never LEFT RACK- / B); the block's text and the tooltip the whole name",
-   "ok": true
-  },
-  {
-   "name": "Wire 16lc-onlyword: on paper the rule is fitted again to the paper room (no pencil there, so more room): the light and the dark Wire sheet and the Look Book's Advanced Wire page print MICROCONVERTER CORE_SW_01_STAGE_LEFT_A on a network switch at 12 px with MICROCONVERTER whole on line 1 and only CORE_SW_01_STAGE_LEFT_A split mid-word, whole (on screen, where both words are too wide even at 11 px, it stays at 15 px exactly as before; on paper it was MICROCONVER / TER / CORE_SW... at 15 px), BLACKMAGIC CORE_SW_01_STAGE_LEFT_RACK_A at the bar's 15 px as before (BLACKMAGIC fits there; 13 px on screen), and a 10 x 10 router named a 49-letter word and the 105-letter word at 16 px (15 px on screen), the first word whole; the Look Book's Simple Wire page prints the Generic Router named eleven and twenty of the widest letter (U+FDFD; the router keeps 40 letters) at 16.5 px (16 px on screen; both were 18 px, the first word split), the first word whole; nothing cut there, the printed text exactly the name, no fitting mark printed",
-   "ok": true
-  },
-  {
-   "name": "Wire 16lc-onlyword: a 10 x 10 router renamed IN PLACE in its name box (the focus kept, 16ju) is fitted again each time: a 49-letter word and the 105-letter word at 15 px, the first word whole on line 1 and only the 105-letter word split mid-word; then the 105-letter word alone at the bar's 18 px as before; then a 40-letter word and the 105-letter word at 13.5 px, the first word whole; then NETGEAR M4250-26G4F on one line (the 16ld-fix2 block); each time the name stored, the block's text exactly the name and its lines joined the name",
-   "ok": true
-  },
-  {
-   "name": "Wire 16lc-onlyword: a CONVERTER is unchanged: named BLACKMAGIC CORE_SW_01_STAGE_LEFT_RACK_A or MICROCONVERTER BIDIRECTIONAL its name block is the 16ld-fix2 block byte for byte (the 2-line clamp, broken anywhere by the browser, 15 px), no fitting mark, on screen and on the light Wire sheet, and its picture box's words as before",
-   "ok": true
-  },
-  {
-   "name": "Wire 16lc-onlyword-fix (A, the UI attacker 2026-10-04: at Help > Accessibility 115 % a network switch named 📺📺📺📺📺📺📺 CORE_SW_01_STAGE_LEFT_RA read \"📺📺📺📺📺📺...\"): a fittable word stays whole at EVERY Help > Accessibility size: that switch is drawn at 11 px, the largest size at which 📺📺📺📺📺📺📺 fits its line at 100 %, 90 % and 115 % (at 11.5 px it ran past at 90 % and 115 %), the emoji word whole on line 1 and only CORE_SW_01_STAGE_LEFT_RA split; a 10 x 10 router named 33 Japanese letters and 70 x 照 is drawn at 16 px (at 16.5 px its first word ran past at 115 %), the first word whole on line 1; at 115 % and at 90 % every line of the switch and the router's first line stay inside their block; the block's text and the tooltip the name; no measuring span left; Help > Accessibility put back",
-   "ok": true
-  },
-  {
-   "name": "Wire 16lc-onlyword-fix: on paper (drawn at 100 %, where there is no Help > Accessibility size) only the 100 % measure counts: a network switch named 📺📺📺📺📺📺📺📺 CORE_SW_01_STAGE_LEFT_R (on screen both words too wide even at 11 px: the bar's 15 px as before) prints at 13 px on the light and the dark Wire sheet and on the Look Book's Advanced Wire page, the largest size at which 📺 x 8 fits the paper line at 100 % (it would not at 115 %), the emoji word whole on line 1; Simple's Generic Router named 27 x 📺 and 20 x U+FDFD (a name from a file, longer than the 40 letters its box takes) prints at the bar's 18 px on the Look Book's Simple Wire page, the emoji word whole there; the text the name, no fitting mark printed",
-   "ok": true
-  },
-  {
    "name": "Wire 16lc-onlyword-fix (B, the code attacker 2026-10-04: a pasted 40,000-letter router name redrew about a third slower than on the 16lc-midword-fix page): the last resort's size search measures each distinct word and piece once: for the 105-letter word, A-A-A-... and 47 x W (40,000 letters) on a 10 x 10 router _wtlNmSize gives 11 px as before with at most 100 measures (the 16lc-onlyword page: tens of thousands), and the name is fitted at 11 px, three lines, its lines joined the name",
-   "ok": true
-  },
-  {
-   "name": "Wire 16lc-onlyword-fix2 (D1, the verifier 2026-10-05: at Help > Accessibility 115 % a 10x10 router named 照 x 31 + \"1 🎤 \" + Q x 120, drawn at 16.5 px as \"照…1 🎤 / QQQ / QQQ…\", ran 9.19 px past its bar and hid \"1🎤\"): every LINE that holds a fittable word shows whole at 90 % and 115 %, not only each word: that router is drawn at 17 px as 照…1 / 🎤 / QQQ…; 照 x 34 + \"1 📺 \" + Q x 120 at 15.5 px as 照…1 / 📺 / QQQ…; 🎤 x 18 + \"1 💡💡💡💡💡💡 \" + Q x 120 at 17.5 px (at its bar's 18 px the two emoji words share line 1, which ran past at 90 %: each word alone fits there); at 115 % and at 90 % every line holding one of their fittable words inside its block; the block's text and the tooltip the name; no measuring element left; Help > Accessibility put back",
-   "ok": true
-  },
-  {
-   "name": "Wire 16lc-onlyword-fix2 (D2, the verifier 2026-10-05: names that show every fittable word whole at 90 %, 100 % and 115 % at the bar's own size were drawn half a pixel smaller: the zoom check's limit was the line less its pixel of air, not what shows): a network switch named 照明調整卓AB CORE_SW_01_STAGE_LEFT_RACK_A is drawn at the bar's 15 px (照明調整卓AB whole on line 1 at 100 %, 115 % and 90 %); a 10x10 router named 27 emoji + II and Q x 120 at the bar's 18 px (its emoji word whole on line 1 at 90 % and 115 %); 照明調整卓本J / 照明調整卓本1 CORE_SW_01_STAGE_LEFT_RACK_A, which the bar's 15 px cuts at 115 %, still at 14.5 px, whole at 115 % and 90 %; the text and the tooltip the name; Help > Accessibility put back",
-   "ok": true
-  },
-  {
-   "name": "Wire 16lc-onlyword-fix2 (D2): the limit is the block AS DRAWN at the Help > Accessibility size, not the room: the tile's 1 px borders are drawn a whole device pixel wide, so at 90 % the block is about 0.2 px narrower than the room on a 1x screen; a network switch named 🎤🎤🎤🎤AB照 CORE_SW_01_STAGE_LEFT_RACK_A is drawn at 12.5 px (as on the 16lc-onlyword-fix page; with the room as the limit it took 13 px and at 90 % its first word ran 0.05 px past and lost \"B照\"): its first word whole on line 1 at 100 %, 115 % and 90 %, and in a hidden copy of its block 0.5 px larger it runs past at 90 % or 115 % (the largest size that shows whole); the text the name; no measuring element left; Help > Accessibility put back",
    "ok": true
   },
   {
@@ -2825,11 +2710,11 @@
    "ok": true
   },
   {
-   "name": "I/O Patch 16lc-vpcards-fix VF6 (Omar 2026-10-07: \"names show exactly as typed on EVERY card\", \"new names default to capitals\"): a source renamed Ppt Mixed reads Ppt Mixed on its I/O Patch, Wire and Video Presets cards (the picture keeps its capitals); + Add destination makes DESTINATION 04; Wire > Advanced's hand-made cards are NEW SOURCE / NEW DESTINATION / NEW AUX/DSM",
+   "name": "I/O Patch 16lc-vpcards-fix VF6 (Omar 2026-10-07: \"names show exactly as typed on EVERY card\", \"new names default to capitals\"): a source renamed Ppt Mixed reads Ppt Mixed on its I/O Patch, Wire and Video Presets cards (the picture keeps its capitals); + Add destination makes DESTINATION 04; Wire > Advanced's hand-made cards take the next number of their kind (16lv-newnames: SOURCE 12, DESTINATION 05, AUX3)",
    "ok": true
   },
   {
-   "name": "Video Presets 16lc-vpcards-fix VF7 (the attack round's F2; Omar: long one-word names \"shrink to fit\", never CONFIDENC / E): an AUX named TELEPROMPTERS keeps its word on one line on its Video Presets > Advanced card and its Wire card, drawn at 7 px or more",
+   "name": "Video Presets 16lc-vpcards-fix VF7 (the attack round's F2; Omar: long one-word names \"shrink to fit\", never CONFIDENC / E): an AUX named TELEPROMPTERS reads TELEPROMPTER / S on its Video Presets > Advanced card and its Wire card (16lv-names: a word longer than the 12-letter row is split where the row is full), drawn at 7 px or more",
    "ok": true
   },
   {
@@ -3085,7 +2970,7 @@
    "ok": true
   },
   {
-   "name": "Video Presets + Wire 16lj-followup FU-4 (W1, Omar 2026-10-09: a card made by hand in Wire with a resolution, used as a SOURCE BG): Wire › Advanced, + on All Sources and Wire only in its question (16lp-wirecards; a hand-made card NEW SOURCE), its Resolution menu 1280×720; Video Presets, P01 CENTER LED's BG window, SOURCE: the list offers it under Made in Wire (C1, 1280×720); picked, the BG is NEW SOURCE at 1280x720 from the top-left, and in the same undo step the card becomes the show's source NEW SOURCE (1280x720) with no hand-made twin; Undo brings back the hand-made card and the old BG, Redo the pick; on P01 L it is offered under Sources and placed at 1280x720 too; Wire then shows ONE card for it, at 1280x720",
+   "name": "Video Presets + Wire 16lj-followup FU-4 (W1, Omar 2026-10-09: a card made by hand in Wire with a resolution, used as a SOURCE BG): Wire › Advanced, + on All Sources and Wire only in its question (16lp-wirecards; a hand-made card SOURCE 12), its Resolution menu 1280×720; Video Presets, P01 CENTER LED's BG window, SOURCE: the list offers it under Made in Wire (C1, 1280×720); picked, the BG is SOURCE 12 at 1280x720 from the top-left, and in the same undo step the card becomes the show's source SOURCE 12 (1280x720) with no hand-made twin; Undo brings back the hand-made card and the old BG, Redo the pick; on P01 L it is offered under Sources and placed at 1280x720 too; Wire then shows ONE card for it, at 1280x720",
    "ok": true
   },
   {
@@ -3229,15 +3114,15 @@
    "ok": true
   },
   {
-   "name": "Wire 16lp-wirecards WC1 (the full test's #5, Omar 2026-10-17: \"ask for the fist time is it just here or in I.O Patch and then also include always follow this rule a check mark for it\"; sources: \"Yes, same as the AUX\"): with Help › Accessibility's Hand-made Wire cards on Ask each time, the + on Wire Advanced's Sources heading asks where the new source goes (Wire and the I/O Patch picked, Always not ticked, the focus on OK); Cancel and Escape add nothing; OK makes NEW SOURCE an I/O-only source with the next S number, on the I/O Patch and in Wire's Sources list as its I/O card (no hand-made card), in one Undo step, and not on the Look Book's I/O pages",
+   "name": "Wire 16lp-wirecards WC1 (the full test's #5, Omar 2026-10-17: \"ask for the fist time is it just here or in I.O Patch and then also include always follow this rule a check mark for it\"; sources: \"Yes, same as the AUX\"): with Help › Accessibility's Hand-made Wire cards on Ask each time, the + on Wire Advanced's Sources heading asks where the new source goes (Wire and the I/O Patch picked, Always not ticked, the focus on OK); Cancel and Escape add nothing; OK makes SOURCE 12 an I/O-only source with the next S number, on the I/O Patch and in Wire's Sources list as its I/O card (no hand-made card), in one Undo step, and not on the Look Book's I/O pages",
    "ok": true
   },
   {
-   "name": "Wire 16lp-wirecards WC2 (#5, Omar 2026-10-17 \"Yes, same as the AUX\": a hand-made destination becomes an I/O-only destination; its trash: \"use the same template to answer this question on all sections\"): Wire and the I/O Patch makes NEW DESTINATION an I/O-only destination: an IO card in Wire Advanced's Destinations list and on the I/O Patch's Destinations, an I/O Dest row in the I/O Excel, not on the Look Book's I/O pages; its card drags onto the drawing as a tile with its name; renamed on the I/O Patch, the tile follows; its trash in Wire asks in the grey window with only Wire ticked (no Video Presets row) and takes the tile off, the card stays; its trash on the I/O Patch has Everywhere ticked and deletes it and its tiles in one Undo step",
+   "name": "Wire 16lp-wirecards WC2 (#5, Omar 2026-10-17 \"Yes, same as the AUX\": a hand-made destination becomes an I/O-only destination; its trash: \"use the same template to answer this question on all sections\"): Wire and the I/O Patch makes DESTINATION 04 an I/O-only destination: an IO card in Wire Advanced's Destinations list and on the I/O Patch's Destinations, an I/O Dest row in the I/O Excel, not on the Look Book's I/O pages; its card drags onto the drawing as a tile with its name; renamed on the I/O Patch, the tile follows; its trash in Wire asks in the grey window with only Wire ticked (no Video Presets row) and takes the tile off, the card stays; its trash on the I/O Patch has Everywhere ticked and deletes it and its tiles in one Undo step",
    "ok": true
   },
   {
-   "name": "Wire 16lp-wirecards WC3 (#5, a hand-made AUX, Omar 2026-10-17: \"A\", an I/O-only AUX on the I/O Patch and Wire only; Always: \"Help › Accessibility\"): Always do this with Wire and the I/O Patch makes NEW AUX/DSM an I/O-only AUX and keeps the choice: Help › Accessibility's Hand-made Wire cards lights Wire and the I/O Patch and the next + makes NEW AUX/DSM 2 at once; both are IO cards in the I/O Patch's AUX / DSM section (not Destinations) and in Wire's AUX / DSM list, and I/O AUX 1 / 2 rows right after the AUX rows of the I/O Excel; A0 sets their connector; Remove in the AUX / DSM title lists them; Ask each time asks again",
+   "name": "Wire 16lp-wirecards WC3 (#5, a hand-made AUX, Omar 2026-10-17: \"A\", an I/O-only AUX on the I/O Patch and Wire only; Always: \"Help › Accessibility\"): Always do this with Wire and the I/O Patch makes AUX3 an I/O-only AUX and keeps the choice: Help › Accessibility's Hand-made Wire cards lights Wire and the I/O Patch and the next + makes AUX4 at once; both are IO cards in the I/O Patch's AUX / DSM section (not Destinations) and in Wire's AUX / DSM list, and I/O AUX 1 / 2 rows right after the AUX rows of the I/O Excel; A0 sets their connector; Remove in the AUX / DSM title lists them; Ask each time asks again",
    "ok": true
   },
   {
@@ -3386,6 +3271,42 @@
   },
   {
    "name": "Wire 16lu-cablekey LU3 (Omar 2026-10-30: the export's cable colour code \"where empty on every page. that is wrong\"; his answer \"Every cable on the page\"): the printed CABLE COLOUR CODE lists every cable on the page: a typed source under its cable type, a source with no Cable Type by its own name in its own colour, the router's outputs by the router's name; the sheet and the key under an SVG show them; no cable reads No cables on this page; the Details panel's key on screen is unchanged",
+   "ok": true
+  },
+  {
+   "name": "Look 16lv-names NR1 (Omar 2026-10-30: \"no more then 10 characters across then a second row of 10 characters anything more is off screen hover over shows the full name\"; his answers: a row ends at a space, only a word longer than the row is split, a cut name ends with …; then \"12 per row\"): a name splits into rows of at most 12 characters; a cut row shows as much as fits before its …",
+   "ok": true
+  },
+  {
+   "name": "Look 16lv-names NR2 (the 12-character rule on cards): a source named CAMERA ONE WIDE SHOT CLOSE UP reads CAMERA ONE / WIDE SHOT C… beside its picture and CAMERA ONE… on it, on the I/O Patch and on Wire's and Video Presets > Advanced's panels; hovering its name or its picture shows the whole name; the rows fit their line",
+   "ok": true
+  },
+  {
+   "name": "Wire 16lv-names NR3 (the 12-character rule on Wire tiles): on Wire > Advanced and Simple the source CAMERA ONE WIDE SHOT CLOSE UP reads CAMERA ONE / WIDE SHOT C… beside its picture and CAMERA ONE… on it, a destination named DESTINATION 01 reads DESTINATION / 01 (DESTINATION… on its picture); hovering a name shows it whole; no picture caption is longer than 12; the tile's type chip stays inside the tile",
+   "ok": true
+  },
+  {
+   "name": "Wire 16lv-names NR4 (the 12-character rule on tool title bars): a router named MAIN PRODUCTION ROUTER ONE reads MAIN / PRODUCTION… in its title bar (its tooltip the whole name) and MAIN PRODUC… on its picture; the Wire export keeps those rows; Simple's Generic Router reads Generic / Router (capitals on screen)",
+   "ok": true
+  },
+  {
+   "name": "Wire 16lv-names NR5 (Omar: \"the Details on Wire also need to wrap around with the same row ... long then a new row\"): a picked source tile named CAMERA ONE WIDE SHOT CLOSE UP shows its whole name in Wire's Details, 12 characters a row (CAMERA ONE / WIDE SHOT / CLOSE UP), its tooltip the whole name; nothing scrolls sideways",
+   "ok": true
+  },
+  {
+   "name": "Look 16lv-names NR6 (the phone is frozen): with the phone layout on, a card, a tile and a caption keep their old markup (no rows, no added tooltip, a caption of up to 12 capitals as before)",
+   "ok": true
+  },
+  {
+   "name": "Wire 16lv-newnames NR7 (Omar 2026-10-30: \"a \"NEW DESTINATION\" doesnt need the new since the number would just increase from the last number\"; \"All three\"): Wire > Advanced's hand-made destination, source and AUX cards, and an I/O-only destination made from a heading's +, are named as + Add names a show item (DESTINATION 04 then 05, SOURCE n, AUX n), never NEW …; + Add destination, + AUX and + Add source then skip those names",
+   "ok": true
+  },
+  {
+   "name": "Look 16lv-qshover NR8 (Omar 2026-10-30 testing 16lu: \"still in cyan\"; his words of 2026-10-18: \"the button at the bottom start blank build my show still highlight in Cyan they should just highlight with the grey outline now\"): pointing at Quick Show Setup's Start blank / Build My Show leaves their words as they are and draws the grey edge (#5d6778) and the Welcome window's lighter face; the rules outrank the black skin's cyan hover",
+   "ok": true
+  },
+  {
+   "name": "Wire 16lv-names NR9 (the 12-character rule on tool title bars with the names that tested the old fits: NETGEAR M4250-26G4F, CORE_SW_01_STAGE_LEFT_RACK_A, MICROCONVERTER BIDIRECTIONAL, emoji, Arabic, letters with accents written as two characters, ß, a no-break space, an ideographic space, a 40,000-letter word): on a 10 x 10 router, a network switch and a converter each bar shows exactly _lbuRows(name, 2) (no letter split, no no-break space broken), every row fits its bar, the tooltip is the whole name; a rename in place keeps the rows; the light Wire sheet prints the same rows; the 40,000-letter name draws in well under half a second",
    "ok": true
   }
  ],

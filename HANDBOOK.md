@@ -1771,6 +1771,55 @@ anchor on the function name and replace the first occurrence after it, never all
   - Also found: #13 (Source crop drops on a new source) was not tested: crop is the layer panel's **Mask** (16js) and, for a
     picture or clip, Advanced's **Source crop**; on the later list as Omar asked. Omar's 10-character name rule is round 16lv.
 
+- **16lv** (2026-10-30, build 16lv on 16lu; search `16lv-`). Omar's name rule, given while testing 16lr (backups/rounds/r16lu-lrtest/
+  OMAR_ANSWERS_2026-10-30.md). Desktop only (`_lbcOn`): the phone keeps its ways.
+  - **16lv-names** ("here is the official rule no more then 10 characters across then a second row of 10 characters anything more
+    is off screen hover over shows the full name. the thumbnail show only 1 row of 10 character, right side show only 20 chacaters
+    max in row of 10, and finally the Details on Wire also need to wrap around with the same row 10 character long then a new row";
+    his answers: every card and tile, router / switcher title bars included; a row ends at a space, only a word longer than the
+    row is split; a cut name ends with …; then, shown DESTINATIO / N 01 on his own show: "12 per row"). `_lbuRows(name, max)`:
+    the name (spaces folded) in rows of at most `_LBU_N` = 12 characters; a row ends at the last space that keeps it within 12;
+    a word longer than 12 starts on the row it would begin when one of its letters fits after the space and is split where each
+    row is full (NEW TELEPROMPTERS: NEW TELEPROM / PTERS); past `max` rows the last row shows as much of the rest as fits and
+    ends in … (NEW DESTINATION 2 on a picture: NEW DESTINA…; beside a picture: NEW / DESTINATION…, the whole name in the
+    tooltip); max 0 = every row. Where: the I/O card (`_iogCardHTML`: I/O Patch, Wire's and Video Presets' panels, hand-made
+    cards; the rows in a `.lbu-rows` nowrap span inside `.iog-name-text`, the tooltip on the transparent `.sys-name-input`,
+    `_lbfFitCard` sets a row wider than the panels' 76 px line smaller, 11 down to 6.5 px), the Video tab's file card, the
+    picture's caption (`_wireAutoThumbHTML` / `_nfMini` through `_nfFit`'s new `o.one`: one row, fitted to the picture), Wire
+    tiles Advanced and Simple (`_wireAdvSourceTileHTML`, `_wireAdvGenericTileHTML`; the SVG caption `_wireAdvThumbSvg` via
+    `_lbuCap` / `_lbuCapPx`), the Multiviewers pane cards, tool title bars (`_wtlNmShow`: two rows at the bar's own size,
+    smaller only past the room; `_wtlNmPaper` keeps the rows on paper, their text has no breaks to fit again from), a tool's
+    picture caption (`_wtlLines`), Wire's Details (`_lbuDet`: the router title, a source / output / device instance, a show
+    item's subhead, the multiviewer). Measured: a two-row name keeps a source tile's resolution line, type chip and IP line
+    inside the 110 px tile (the info block is as tall as for any name that wrapped before). Not changed: the router's I/O
+    table cells, the thumbnail ZIP (`drawAutoThumb`), every export's other text. Letters are counted as a reader sees them
+    (`_lbuLetters`, Intl.Segmenter graphemes: an emoji or a letter with its accent is one letter, never split by a row or the …);
+    a plain space, a tab or an ideographic space (U+3000) ends a word, a no-break space does not. Sizes are measured with canvas
+    (`_lbuW`, the place's own font: the SVG captions' `_LBU_SVGF` and their 0.5 px spacing); a tool bar's rows go down to 7 px only
+    for rows of wide letters (emoji), and a converter's bar has a room too (it had none: a two-line clamp); a tool picture's
+    caption too long for a converter's 55 x 31 box even at 6 px shows the letters that fit and … (`_lbuCutTo`). Tests: NR1-NR9;
+    RETIRED on purpose (the fits they pinned are gone; NR9 runs their names through the rule): the 29 checks 16lc-names (5),
+    16lc-midword (5), 16lc-midword-fix D1-D5 and M4 (6), 16lc-onlyword (7), 16lc-onlyword-fix (2), 16lc-onlyword-fix2 (3), 16ld-fix
+    A4/B2 (1); ADAPTED (the same behaviour, the new rows / names): + Destination listed in Wire, 16lp-wcnames, 16kz-refresh (I)
+    and (L4), 16kz-fix (I), 16la-fix (M / R), 16lb-simple (8) x2, 16ld-tools (X) x3, 16ld-fix2 (X2), VF6, VF7 (TELEPROMPTERS
+    reads TELEPROMPTER / S: it used to shrink to one line), FU-4, WC1-WC3, ON2.
+  - **16lv-newnames** (shown that every hand-made destination would read NEW / DESTINATION… under the rule: "a "NEW
+    DESTINATION" doesnt need the new since the number would just increase from the last number"; asked about the other two:
+    "All three"): `_lbvNewName(kd)` names a hand-made Wire card (`_wireAdvAddCustomSource` / `Dest` / `Dsm`) and an I/O-only
+    item from a heading's + (`_lbhcMakeIo`) as + Add names a show item: a destination `_r4fDestName(_lbnNextOut('dst'), ...)`
+    (DESTINATION 05), an AUX `_kzAuxName()` (AUX3, the show's own format), a source `_lbfNewSource().name` (SOURCE 12), each
+    counted on past a name the show's outputs, its sources or the hand-made cards have. + Add destination / + AUX / + Add
+    source skip the hand-made names in turn (`_lbvWithHand`, `_lbvHandHas`): Wire finds a source by its NAME (16en), so a show
+    source and a hand-made card must never share one. Quick Setup's default names are unchanged. Desktop only (the phone keeps
+    NEW …). NR7.
+  - **16lv-qshover** (testing 16lu, "still in cyan"; his words of 2026-10-18: "the button at the bottom start blank build my
+    show still highlight in Cyan they should just highlight with the grey outline now"): 16ls greyed the keyboard focus edge
+    (measured grey: #5d6778 / the 16ls ring) but the black skin's hover rule (`body[data-skin=black] .pm-btn-primary:hover
+    {color:var(--n-cyan) !important}`) still turned the words of Start blank / Build My Show cyan, rgb(78,195,224) under a real
+    mouse. Two rules at the end of the main style block (`body:not(.is-mobile) #qs-modal .pm-btn-*:hover / :active` and their
+    `::before`): the words as they are, the edge #5d6778, the face the Welcome window's (#272e3a -> #1d232d). Other windows'
+    footer buttons keep their hover. NR8.
+
 - Declined by the owner, do not resurface: mask shapes, anchor points, hardware profiles, canvas/WebGL renderer,
   interpolation filter toggles, upscale-factor notes, per-layer "sharp pixels", any licence mention.
 

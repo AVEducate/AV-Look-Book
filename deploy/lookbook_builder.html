@@ -4817,6 +4817,12 @@ body:not(.is-mobile) #wire-diagram-scroll{background-image:linear-gradient(rgba(
    tabs, which set thin). The phone keeps its own (frozen). */
 body:not(.is-mobile) ::-webkit-scrollbar,body:not(.is-mobile)::-webkit-scrollbar,html:has(>body:not(.is-mobile))::-webkit-scrollbar{width:0 !important;height:0 !important;display:none !important;background:transparent !important}
 body:not(.is-mobile) #io-page-tabs,body:not(.is-mobile) #wire-page-tabs{scrollbar-width:auto}
+/* 16lv-qshover (Omar 2026-10-30 testing 16lu, "still in cyan"; his words of 2026-10-18: "the button at the bottom start blank build
+   my show still highlight in Cyan they should just highlight with the grey outline now"): 16ls greyed the keyboard focus edge, but
+   the black skin's hover still turned the words of Start blank / Build My Show cyan. In Quick Show Setup they now highlight as the
+   Welcome window's buttons do: the grey edge (#5d6778), a lighter face, the words as they are. Desktop only. */
+body:not(.is-mobile) #qs-modal .pm-btn-primary:hover,body:not(.is-mobile) #qs-modal .pm-btn-cancel:hover,body:not(.is-mobile) #qs-modal .pm-btn-primary:active,body:not(.is-mobile) #qs-modal .pm-btn-cancel:active{color:var(--text) !important;border-color:#5d6778 !important;filter:none !important}
+body:not(.is-mobile) #qs-modal .pm-btn-primary:hover::before,body:not(.is-mobile) #qs-modal .pm-btn-cancel:hover::before,body:not(.is-mobile) #qs-modal .pm-btn-primary:active::before,body:not(.is-mobile) #qs-modal .pm-btn-cancel:active::before{background:linear-gradient(180deg,#272e3a 0%,#1d232d 100%) !important;filter:none !important}
 </style>
 </head>
 <body data-skin="black">
@@ -4967,7 +4973,7 @@ Also called DSM (Downstage Monitor) in broadcast and theater workflows, same thi
   <div class="bb-cell bb-pill bb-cyan" title="The largest number of layers used in any single preset, this is the figure to compare against your switcher's per-scene layer budget. (The most complex single moment in the show.)"><span class="bb-label">Layers</span><strong id="bb-layers">0</strong></div>
   <div id="bb-spacer"></div>
   <div class="bb-cell" id="bb-sel" style="font-size:10px;opacity:.5">—</div>
-  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy, hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16lu</div>
+  <div class="bb-cell" id="bb-build" title="App build date. If this looks old right after you pull/refresh, you're on a cached copy, hard-refresh with Cmd+Shift+R." style="font-size:9px;opacity:.4;letter-spacing:.04em;font-family:var(--font-mono);padding:0 10px">build 2026-06-16lv</div>
   <!-- 16kq (Omar): the Modifiers menu lives on each preset tile only; this place is kept for the Educator tool of a future build (greyed out, does nothing) --><button class="bb-util" id="tb-educator" type="button" disabled aria-disabled="true" title="Educator: coming in a future build" aria-label="Educator, coming in a future build" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:default;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em;opacity:.38"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10L12 5 2 10l10 5 10-5z"/><path d="M6 12v5c0 1 2.7 2.5 6 2.5s6-1.5 6-2.5v-5"/><line x1="22" y1="10" x2="22" y2="16"/></svg><span>Educator</span></button>
   <button class="bb-util" onclick="actions.help()" title="Help, quick reference, keyboard shortcuts, glossary, accessibility" aria-label="Help, quick reference, keyboard shortcuts, glossary, accessibility" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="4.93" y1="4.93" x2="9.17" y2="9.17"/><line x1="14.83" y1="14.83" x2="19.07" y2="19.07"/><line x1="14.83" y1="9.17" x2="19.07" y2="4.93"/><line x1="4.93" y1="19.07" x2="9.17" y2="14.83"/></svg>Help</button>
   <button class="bb-util" id="tb-bug" onclick="reportBug()" title="Report a bug, opens an email to AV Educate with your show file — attached in the app, downloaded for you to attach in a browser" aria-label="Report a bug" style="height:100%;padding:0 12px;border:none;border-left:1px solid var(--n-line);background:transparent;color:var(--text3);cursor:pointer;transition:all .15s;display:inline-flex;align-items:center;gap:5px;font-size:11px;font-family:inherit;letter-spacing:.03em"><svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="7.2"/><path d="M15.4 15.4L21 21" stroke-width="2.6"/><ellipse cx="10" cy="11" rx="2.5" ry="3.3" fill="currentColor" stroke="none"/><circle cx="10" cy="7" r="1.5" fill="currentColor" stroke="none"/><path d="M7.5 9.2l-1.7-.8M7.4 11.2H5.6M7.7 13.1l-1.5 1.1M12.5 9.2l1.7-.8M12.6 11.2h1.8M12.3 13.1l1.5 1.1M9.2 5.9l-.8-1.1M10.8 5.9l.8-1.1" stroke-width="1.3"/></svg>Bug</button>   <!-- 16jk (Omar): Report a bug, after Help -->
@@ -6863,7 +6869,7 @@ function _r4fDestName(n,taken){   /* 'Destination NN' from number n up: the firs
   for(var g=0;g<10000;g++,n++){ var nm=_w+String(n).padStart(2,'0'); if(!taken[nm.toLowerCase()]) return nm; }
   return _w+String(n).padStart(2,'0');
 }
-function _r4fNewDest(){ return _r4fDestName((typeof _lbcOn==='function'&&_lbcOn()&&typeof _lbnNextOut==='function')?_lbnNextOut('dst'):(_bdNoBd(Array.isArray(screens)?screens:[]).length+1),_lbsWithSrc(_bdTaken(null))); }   /* 16ls-onename: _lbsWithSrc */   /* D1: a new destination's name. 16lc-vpcards-fix (E2): the number it gets (the lowest free one) */
+function _r4fNewDest(){ return _r4fDestName((typeof _lbcOn==='function'&&_lbcOn()&&typeof _lbnNextOut==='function')?_lbnNextOut('dst'):(_bdNoBd(Array.isArray(screens)?screens:[]).length+1),_lbvWithHand(_lbsWithSrc(_bdTaken(null))));   /* 16lv-newnames */ }   /* 16ls-onename: _lbsWithSrc */   /* D1: a new destination's name. 16lc-vpcards-fix (E2): the number it gets (the lowest free one) */
 function _r4fQsAria(i){ return _qsBd[i]?'backdrop':'destination '+_bdQsNo(i); }   /* D9: what a screen reader calls Quick Setup's row i */
 /* ══ 16kz-answers (Omar 2026-09-28 ~10:15: his answers to the questions left after 16ky; exactly these are built)
    (A) answer 2 ("do the recommended"): on I/O Patch Advanced page 1 the Destinations table's Set for all is split like the
@@ -6957,7 +6963,7 @@ function _kzQsGate(){
 }
 /* (D) a new AUX / DSM: the label (AUX, or DSM) with its number, the count + 1, or the next free number */
 function _kzAuxName(){
-  var lbl=(typeof _dsmLabel!=='undefined'&&_dsmLabel)?_dsmLabel:'AUX', t=_kzOutTaken(null), n=_kzOutLists().aux.length+1;
+  var lbl=(typeof _dsmLabel!=='undefined'&&_dsmLabel)?_dsmLabel:'AUX', t=_lbvWithHand(_kzOutTaken(null)), n=_kzOutLists().aux.length+1;   /* 16lv-newnames: never a hand-made card's name */
   for(var g=0;g<10000&&t[(lbl+n).toLowerCase()];g++) n++;
   return lbl+n;
 }
@@ -7260,8 +7266,81 @@ function _nfW(t,f,ls){
 /* the lines of a name on a picture. o: w (the line's width), f (the size), min (the smallest size), ls / lh (letter spacing
    and line height, in em), cx / cy (the middle of the text box), hint [right, bottom] (the upload mark's corner), badge
    [right, top] (the badge's corner): all in the picture's own pixels. Returns { f, lines, dy } or null (no name). */
+/* ── 16lv-names (Omar 2026-10-30, testing 16lr: "here is the official rule no more then 10 characters across then a second row of 10
+   characters anything more is off screen hover over shows the full name. the thumbnail show only 1 row of 10 character, right side
+   show only 20 chacaters max in row of 10, and finally the Details on Wire also need to wrap around with the same row 10 character
+   long then a new row"; his answers: every card and tile, router / switcher title bars included; a row ends at a space when it can,
+   only a word longer than 10 is split; a longer name ends with …; after a picture of DESTINATIO / N 01 he set the row to 12
+   characters: "12 per row"). ONE rule for every name drawn on a card or tile, desktop only
+   (_lbcOn; the phone keeps its ways): _lbuRows(name, max) = the name in rows of at most 12 characters (a row ends at a space; a word
+   longer than 12 is split where the row is full, so it starts on the row it would begin; a cut name's last row shows as much of
+   the rest as fits and ends with …, which counts as one of its 12). A picture's caption is 1 row, the name beside a picture 2, Wire's Details every row it needs (max 0).
+   The size stays the place's own; only a row wider than its line (wide capitals) is set smaller (_lbuFitPx). The full name is the
+   tooltip (_lbuTip). ── */
+const _LBU_N = 12;
+function _lbuOn(){ return typeof _lbcOn === 'function' && _lbcOn(); }
+/* the name's letters as a reader sees them (Intl.Segmenter: an emoji, a letter with its accent, a Hangul syllable is ONE letter, never
+   split over two rows or by the …); a plain space, a tab or an ideographic space (U+3000) ends a word, a no-break space (U+00A0, U+202F,
+   U+2007) does not */
+let _lbuSeg = null;
+function _lbuLetters(t){
+  if(_lbuSeg === null){ try{ _lbuSeg = (typeof Intl === 'object' && Intl.Segmenter) ? new Intl.Segmenter(undefined, { granularity: 'grapheme' }) : false; }catch(e){ _lbuSeg = false; } }
+  if(!_lbuSeg) return Array.from(t);
+  const g = []; for(const x of _lbuSeg.segment(t)) g.push(x.segment); return g;
+}
+function _lbuRows(name, max){
+  const N = _LBU_N, t = String(name == null ? '' : name).replace(/[ \t\n\r\f\v]+/g, ' ').replace(/^[ 　]+|[ 　]+$/g, ''), g = _lbuLetters(t), sp = function(c){ return c === ' ' || c === '　'; }, W = [], R = [];
+  for(let i = 0; i < g.length;){ if(sp(g[i])){ i++; continue; } let j = i; while(j < g.length && !sp(g[j])) j++; W.push([i, j - i]); i = j; }
+  let s = -1, e = -1;   /* the row being filled is letters s .. e-1 */
+  W.forEach(function(x){
+    const at = x[0], n = x[1];
+    if(s < 0){ s = at; e = at; }
+    if(at + n - s <= N){ e = at + n; return; }   /* the word fits on this row */
+    if(n <= N){ R.push([s, e]); s = at; e = at + n; return; }   /* the row ends at the space */
+    if(e > s && at - s + 1 > N){ R.push([s, e]); s = at; }   /* a word longer than the row is split anyway: it starts on this row when a letter of it fits */
+    let p = s; while(at + n - p > N){ R.push([p, p + N]); p += N; }
+    s = p; e = at + n;
+  });
+  if(s >= 0 && e > s) R.push([s, e]);
+  const S = function(a, b){ return g.slice(a, b).join(''); }, rows = R.map(function(r){ return S(r[0], r[1]); });
+  if(max > 0 && R.length > max){   /* cut: the last row shows as much of the rest as fits before the … */
+    const L = rows.slice(0, max - 1), a0 = R[max - 1][0];
+    L.push(S(a0, Math.min(g.length, a0 + N - 1)).replace(/[ 　]+$/, '') + '…');
+    return L;
+  }
+  return rows;
+}
+function _lbuOne(name){ return _lbuRows(name, 1)[0] || ''; }
+function _lbuHTML(name, max){ return _lbuRows(name, max).map(_esc).join('<br>'); }
+function _lbuTip(name){ return _lbuOn() ? ' title="' + _esc(String(name == null ? '' : name)) + '"' : ''; }
+/* the name beside a picture (cards, tiles, the Multiviewers pane): two rows that never wrap again; else the old markup */
+function _lbuCardName(name){ return _lbuOn() ? '<span class="lbu-rows" style="white-space:nowrap">' + _lbuHTML(name, 2) + '</span>' : _esc(name); }
+/* Wire's Details: the whole name, 12 characters a row, as many rows as it needs */
+function _lbuDet(name){ return _lbuOn() ? '<span' + _lbuTip(name) + '>' + _lbuHTML(name, 0) + '</span>' : _esc(name); }
+let _lbuCvx = null, _lbuFam = '';
+function _lbuW(t, f, weight, ls, fam, lsPx){   /* a row's width in px at size f (ls: letter spacing in em, lsPx: in px; fam: a font other than the page's) */
+  if(_lbuCvx === null){ try{ _lbuCvx = document.createElement('canvas').getContext('2d') || false; _lbuFam = getComputedStyle(document.body).fontFamily || 'sans-serif'; }catch(e){ _lbuCvx = false; } }
+  t = String(t); const n = _lbuLetters(t).length; if(!_lbuCvx) return n * f * 0.74;
+  _lbuCvx.font = (weight || 700) + ' ' + f + 'px ' + (fam || _lbuFam); return _lbuCvx.measureText(t).width + n * ((ls || 0) * f + (lsPx || 0));
+}
+function _lbuFitPx(rows, W, F, MIN, weight, ls, caps, fam, lsPx){   /* the largest size (F down to MIN, 0.5 px steps) at which every row fits W */
+  const R = (rows || []).map(function(r){ return caps ? String(r).toUpperCase() : String(r); });
+  for(let f = F; f >= MIN - 1e-9; f -= 0.5){ if(R.every(function(r){ return _lbuW(r, f, weight, ls, fam, lsPx) <= W; })) return f; }
+  return MIN;
+}
+/* one row cut further, to what fits W at size f, and … (a picture too small for 12 letters even at its smallest size) */
+function _lbuCutTo(row, W, f, weight, ls, fam, lsPx){
+  if(_lbuW(row, f, weight, ls, fam, lsPx) <= W) return row;
+  const g = _lbuLetters(String(row).replace(/\u2026$/, ''));
+  while(g.length > 1 && _lbuW(g.join('').replace(/[ \u3000]+$/, '') + '\u2026', f, weight, ls, fam, lsPx) > W) g.pop();
+  return g.join('').replace(/[ \u3000]+$/, '') + '\u2026';
+}
+const _LBU_SVGF = '-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif';   /* the font the Wire pictures' captions are drawn in */
+/* the caption drawn on a Wire tile's picture (SVG): one row of 12 in capitals, its size fitted to the 110 px picture */
+function _lbuCap(name){ return _lbuOn() ? _lbuOne(String(name || '')).toUpperCase() : String(name || '').toUpperCase().slice(0, 12); }
+function _lbuCapPx(name){ return _lbuOn() ? _lbuFitPx([_lbuCap(name)], 102, 13, 7, 800, 0, false, _LBU_SVGF, 0.5) : 13; }
 function _nfFit(name,o){
-  let toks=String(name==null?'':name).trim().split(/\s+/).filter(Boolean).map(function(w,i){ return {t:w,sp:i>0}; });
+  let toks=o.one?[{t:String(name==null?'':name).trim(),sp:false}].filter(function(k){ return k.t; }):String(name==null?'':name).trim().split(/\s+/).filter(Boolean).map(function(w,i){ return {t:w,sp:i>0}; });   /* 16lv-names: o.one */
   if(!toks.length) return null;
   const W=function(t,f){ return _nfW(t,f,o.ls); };
   const wrap=function(ts,f){ const L=[]; let cur=null; ts.forEach(function(k){ if(cur===null){ cur=k.t; return; } const t=cur+(k.sp?' ':'')+k.t; if(W(t,f)<=o.w) cur=t; else { L.push(cur+(k.sp?' ':'')); cur=k.t; } }); if(cur!==null) L.push(cur); return L; };
@@ -7301,7 +7380,7 @@ function _nfCardOpts(o){
   o=o||{}; const bw=o.badge?Math.ceil(_nfW(o.badge,8,o.bls==null?0.06:o.bls))+10:0;
   return { w:96, f:13, min:8, ls:0.04, lh:1.1, cx:55, cy:31, hint:o.hint?[25,25]:null, badge:bw?[5+bw,43]:null };   /* the mark ends at 23: 2 px of air */
 }
-function _nfMini(nm){ return _nfSpanHTML(nm,{ w:32, f:6, min:3, ls:0.02, lh:1.05, cx:18, cy:10.5, hint:null, badge:null },'iog-mini-name'); }
+function _nfMini(nm){ return _nfSpanHTML(_lbuOn()?_lbuOne(nm):nm,{ w:32, f:6, min:3, ls:0.02, lh:1.05, cx:18, cy:10.5, hint:null, badge:null, one:_lbuOn() },'iog-mini-name'); }   /* 16lv-names: one row of 12 */
 /* ── (K) the mirrored card: a destination, AUX / DSM, I/O-only destination or multiviewer card, not on the phone ── */
 function _kmOn(){ return !document.body.classList.contains('is-mobile'); }
 function _kmSwap(h,a,b){ return h.slice(0,a)+h.slice(b)+h.slice(a,b); }   /* the thumb column (from a to b) moves after the info column (from b to the end) */
@@ -7345,6 +7424,30 @@ function _kzWireNameRefused(item,value){   /* a rename: true = refused (the aler
   if(typeof _wireRender==='function'){ try{ _wireRender(); }catch(e){} }
   _kzNameInUse(n,w);
   return true;
+}
+/* ── 16lv-newnames (Omar 2026-10-30: "a "NEW DESTINATION" doesnt need the new since the number would just increase from the last
+   number"; "All three"): a hand-made Wire card and an I/O-only item made from a Wire heading's + are named as + Add names a show item:
+   DESTINATION 05 (_r4fDestName from the lowest free D number), AUX3 (_kzAuxName), SOURCE 12 (_lbfNewSource), counting on to the
+   first name nobody has: the show's outputs and sources, and the hand-made cards. The other way round too: + Add destination, + AUX
+   and + Add source skip a hand-made card's name (Wire finds a source by its NAME, so a show source and a hand-made card must never
+   share one). Desktop only: the phone keeps NEW … (frozen). ── */
+function _lbvHand(){ const wa = (typeof wireAdvanced === 'object' && wireAdvanced) || {}, t = {}; ['customSources', 'customDests', 'customDsms'].forEach(function(k){ (wa[k] || []).forEach(function(c){ if(c && c.name) t[_kzLow(c.name)] = 1; }); }); return t; }
+function _lbvHandHas(n){ return typeof _lbcOn === 'function' && _lbcOn() && !!_lbvHand()[_kzLow(n)]; }
+function _lbvWithHand(t){ if(typeof _lbcOn === 'function' && _lbcOn()){ const h = _lbvHand(); Object.keys(h).forEach(function(k){ if(!t[k]) t[k] = 1; }); } return t; }
+function _lbvNewName(kd){   /* kd: 'dst' | 'dsm' | 'src' */
+  const hand = _lbvHand();
+  if(kd === 'src'){
+    let nm = _lbfNewSource().name; const m = /^(.*?)(\d+)$/.exec(nm), stem = m ? m[1] : 'SOURCE ', srcs = {}; let j = m ? parseInt(m[2], 10) : 1;
+    _sysDiscoverSources().forEach(function(n){ srcs[_kzLow(n)] = 1; });
+    for(let g = 0; g < 10000 && (hand[_kzLow(nm)] || srcs[_kzLow(nm)] || _lbsOutHas(nm)); g++){ j++; nm = stem + j; }
+    return nm;
+  }
+  if(kd === 'dsm'){
+    let nm = _kzAuxName(); const m = /^(.*?)(\d+)$/.exec(nm), stem = m ? m[1] : nm, t = _lbsWithSrc(_kzOutTaken(null)); let j = m ? parseInt(m[2], 10) : 1;
+    for(let g = 0; g < 10000 && (hand[_kzLow(nm)] || t[_kzLow(nm)]); g++){ j++; nm = stem + j; }
+    return nm;
+  }
+  return _r4fDestName(_lbnNextOut('dst'), _lbvWithHand(_lbsWithSrc(_bdTaken(null))));
 }
 function _kzWireNewName(base,kind){   /* a new hand-made card: today's numbering (New Destination 2), and never a show output's name */
   var t=_kzOutTaken(null), nm=_wireAdvUniqueCustomName(base,null,kind);
@@ -18834,8 +18937,8 @@ function _iogCardHTML(c){
   h+='</div>'+(c.colorRow||'')+'</div>';
   const _k1=h.length;
   h+='<div class="wire-source-info">';
-  h+='<div class="wire-source-name iog-name"><div class="sys-name-cell iog-name-cell"><span class="iog-name-text" aria-hidden="true">'+_esc(nm)+'</span>'
-    +'<input class="sys-name-input" '+da+' value="'+_esc(nm)+'" data-sys-old-name="'+_esc(nm)+'" placeholder="'+(k==='src'?'Source name':(k==='mv'?'Multiviewer name':'Destination name'))+'" aria-label="Name of '+_esc(c.num)+'" spellcheck="false" autocomplete="off">'
+  h+='<div class="wire-source-name iog-name"><div class="sys-name-cell iog-name-cell"><span class="iog-name-text" aria-hidden="true">'+_lbuCardName(nm)+'</span>'   /* 16lv-names */
+    +'<input class="sys-name-input" '+da+_lbuTip(nm)+' value="'+_esc(nm)+'" data-sys-old-name="'+_esc(nm)+'" placeholder="'+(k==='src'?'Source name':(k==='mv'?'Multiviewer name':'Destination name'))+'" aria-label="Name of '+_esc(c.num)+'" spellcheck="false" autocomplete="off">'
     +(c.pen?'<button type="button" class="wire-src-pen iog-pen" onclick="event.stopPropagation();_iogPen(this)" title="Rename this source everywhere: Simple, Advanced, Wire and every preset" aria-label="Rename '+_esc(nm)+'"><svg aria-hidden="true" viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3l4 4L8 20H4v-4z"/></svg></button>':'')
     +'<button class="sys-name-chev" '+da+' data-sys-field="'+(k==='src'?'src-name':'dst-name')+'" title="Pick from library" aria-label="Pick a name for '+_esc(nm)+' from the library" aria-haspopup="listbox">'+_IOG_TRI+'</button></div></div>';
   h+='<div class="wire-res-row"><input type="text" class="wire-source-res" '+da+' value="'+_esc(c.res||'')+'" placeholder="resolution, type or pick" onchange="_iogResTyped(this)" aria-label="Resolution of '+_esc(nm)+'" spellcheck="false" autocomplete="off">'
@@ -19148,8 +19251,8 @@ function _fsMediaCardHTML(it){
   if(v) h+='<span class="vc-chip vc-br">'+_fsFmtTime(m.dur)+'</span>';
   h+='</div><div class="wire-color-row"><div class="vc-bar"'+(v?' title="'+(m.hasAudio?'The sound of the clip':'No audio in this clip')+'"':'')+'>'+(v?((m.hasAudio&&Array.isArray(m.peaks)&&m.peaks.length)?_lbvWave(m.peaks,0):(m.hasAudio?'<span class="vc-bar-na vc-bar-snd">'+_lbIcoHTML('vol')+'Audio</span>':'<span class="vc-bar-na">'+_lbIcoHTML('mute')+'No audio</span>')):'')+'</div>'
     +'<button type="button" class="wire-color-shuffle vc-trash" draggable="false" onclick="event.stopPropagation();_fsRemoveMediaAsk(\''+a+'\')" ondragstart="event.preventDefault();event.stopPropagation()" title="Remove this file from the show…" aria-label="Remove '+e+' from the show">'+_LBV_TRASH+'</button></div></div>';
-  h+='<div class="wire-source-info"><div class="wire-source-name iog-name"><div class="sys-name-cell iog-name-cell">'+_lbfFitCard('<span class="iog-name-text" aria-hidden="true">'+e+'</span>',nm,true)   /* 16lc-vpfinish (D8 / D11): fitted, as typed */
-    +'<input class="sys-name-input" data-sys-kind="src" data-sys-id="'+e+'" value="'+e+'" data-sys-old-name="'+e+'" placeholder="File name" aria-label="Name of the file '+e+'" spellcheck="false" autocomplete="off">'
+  h+='<div class="wire-source-info"><div class="wire-source-name iog-name"><div class="sys-name-cell iog-name-cell">'+_lbfFitCard('<span class="iog-name-text" aria-hidden="true">'+(_lbuOn()?_lbuCardName(nm):e)+'</span>',nm,true)   /* 16lv-names */   /* 16lc-vpfinish (D8 / D11): fitted, as typed */
+    +'<input class="sys-name-input" data-sys-kind="src" data-sys-id="'+e+'"'+_lbuTip(nm)+' value="'+e+'" data-sys-old-name="'+e+'" placeholder="File name" aria-label="Name of the file '+e+'" spellcheck="false" autocomplete="off">'
     +'<button type="button" class="wire-src-pen iog-pen" onclick="event.stopPropagation();_iogPen(this)" title="Rename this file everywhere: every preset, Wire and the I/O Patch (the stored file follows)" aria-label="Rename '+e+'"><svg aria-hidden="true" viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3l4 4L8 20H4v-4z"/></svg></button></div></div>';
   h+='<div class="wire-res-row vc-ro" title="The size of the '+(v?'clip':'picture')+'"><span class="vc-ro-t">'+((m.w&&m.h)?(m.w+'x'+m.h):'—')+'</span></div>';
   h+='<div class="wire-cable-btn set vc-ro vc-file" title="The file type">'+_lbvIco(v?'film':'pic')+'<span class="wire-cable-btn-label">'+_esc(_fsFmtType(m.type))+'</span></div>';
@@ -19638,10 +19741,10 @@ function _lbhcMakeIo(kd){
   if(typeof pushUndo==='function') pushUndo();
   if(kd==='src'){
     if(typeof sources==='undefined'||!Array.isArray(sources)) sources=[];
-    sources.push({ name:_lbhcFree('NEW SOURCE','src'), connectorType:'', resolution:'', notes:'', type:'PC', ioOnly:true });
+    sources.push({ name:(_lbcOn()?_lbvNewName('src'):_lbhcFree('NEW SOURCE','src')), connectorType:'', resolution:'', notes:'', type:'PC', ioOnly:true });
   } else {
     if(typeof ioDests==='undefined'||!Array.isArray(ioDests)) ioDests=[];
-    const aux=(kd==='dsm'), o={ id:uid(), name:_lbhcFree(aux?'NEW AUX/DSM':'NEW DESTINATION','out'), connectorType:'', deviceType:'', customType:'', w:1920, h:1080, notes:'' };
+    const aux=(kd==='dsm'), o={ id:uid(), name:(_lbcOn()?_lbvNewName(aux?'dsm':'dst'):_lbhcFree(aux?'NEW AUX/DSM':'NEW DESTINATION','out')), connectorType:'', deviceType:'', customType:'', w:1920, h:1080, notes:'' };
     if(aux) o.aux=true;
     ioDests.push(o);
   }
@@ -20017,6 +20120,11 @@ function _lbfFitStyle0(name,asTyped){
 /* the card's name line with that style (the first name span of a card's HTML); a word too long even at 8 px breaks after its _ - / . first */
 function _lbfFitCard(h,name,asTyped){
   if(!_lbcOn()) return h;
+  if(h.indexOf('<span class="lbu-rows"')>=0){   /* 16lv-names: two rows of 12 replace the word fit below */
+    const f=_lbuFitPx(_lbuRows(name,2),76,11,6.5,700,0.04,false); if(f>=11) return h;
+    const a0='<span class="iog-name-text" aria-hidden="true">', i0=h.indexOf(a0); if(i0<0) return h;
+    return h.slice(0,i0)+'<span class="iog-name-text" aria-hidden="true" style="font-size:'+f+'px" data-lbf-fit="1">'+h.slice(i0+a0.length);
+  }
   const st=_lbfFitStyle(name,asTyped); if(!st) return h;
   const a='<span class="iog-name-text" aria-hidden="true">', i=h.indexOf(a); if(i<0) return h;
   const j=h.indexOf('</span>',i+a.length); if(j<0) return h;
@@ -20291,12 +20399,12 @@ function _lbnNextOut(k){ if(_lbnOff()) return (k==='dst')?(_bdNoBd(Array.isArray
 /* a new source made with + ADD SOURCE: the lowest S number free (after the show's own sources, before the files that are numbered
    automatically) and its name: SOURCE 12 at S12 (E1: new names are in capitals), the next free number in the name when another source has it */
 function _lbfNewSource(){
-  if(_lbnOff()){ const raw=_srcNameOrderRaw(), k=raw.length+1, taken=new Set(raw.map(function(x){ return String(x).toLowerCase(); })); let j=k; while(taken.has('source '+j)||_lbsOutHas('SOURCE '+j)) j++; return { name:'SOURCE '+j, no:0 }; }   /* 16ls-onename */   /* 16lc-vpcards-fix4 (H1): a new I/O-only source lands at the end of the order: SOURCE 12 at S12, or the next free number in its name; no number is kept */
+  if(_lbnOff()){ const raw=_srcNameOrderRaw(), k=raw.length+1, taken=new Set(raw.map(function(x){ return String(x).toLowerCase(); })); let j=k; while(taken.has('source '+j)||_lbsOutHas('SOURCE '+j)||_lbvHandHas('SOURCE '+j)) j++; return { name:'SOURCE '+j, no:0 }; }   /* 16ls-onename */   /* 16lc-vpcards-fix4 (H1): a new I/O-only source lands at the end of the order: SOURCE 12 at S12, or the next free number in its name; no number is kept */
   const m=_lbnSrcMap(), media=_lbnMedia(), P=_lbnPins('src'), used=new Set();
   m.forEach(function(v,n){ if(!media.has(n)||P[n]===v) used.add(v); });
   let k=1; while(used.has(k)) k++;
   const taken=new Set(); m.forEach(function(v,n){ taken.add(String(n).toLowerCase()); });
-  let j=k; while(taken.has('source '+j)||_lbsOutHas('SOURCE '+j)) j++;   /* 16ls-onename */
+  let j=k; while(taken.has('source '+j)||_lbsOutHas('SOURCE '+j)||_lbvHandHas('SOURCE '+j)) j++;   /* 16ls-onename */
   return { name:'SOURCE '+j, no:k };
 }
 function _lbnPin(k,id,n){ if(_lbnOff()) return;   /* 16lc-vpcards-fix4 (H1): no number is kept (the + ADD SOURCE pin F1, the freeze, the B's G2 pin: off) */ if(!_lbnOk(String(id))||!(n>=1&&n<=999)) return; if(!ioNums||typeof ioNums!=='object') ioNums=_lbnNorm(null); if(!ioNums[k]||typeof ioNums[k]!=='object') ioNums[k]={}; ioNums[k][String(id)]=n; }
@@ -23823,6 +23931,11 @@ function _wtlLines(name, small){
   const W = small ? _WTL_PW_S - 6 : _WTL_PW - 12, H = small ? _WTL_PH_S - 14 : _WTL_PH - 28;
   /* a bold capital is about 0.72 of the size wide, plus the 0.5 letter spacing; a line is 1.18 of the size high */
   const fit = function(ls){ const n = Math.max.apply(null, ls.map(function(l){ return l.length; })); return Math.min(F, Math.floor((W / n - 0.5) / 0.72 * 4) / 4, Math.floor(H / (ls.length * 1.18) * 4) / 4); };
+  if(_lbuOn()){   /* 16lv-names: a tool picture's caption is one row of 12, measured in its own font; a converter's small box too small for it even at 6 px shows the letters that fit and … (the whole name is the bar's tooltip) */
+    const L1 = _lbuRows(words.join(' '), 1); if(!L1.length) return { lines: [], fs: F };
+    const fs = Math.min(_lbuFitPx(L1, W, F, 6, 800, 0, false, _LBU_SVGF, 0.5), Math.floor(H / 1.18 * 4) / 4);
+    return { lines: [_lbuCutTo(L1[0], W, fs, 800, 0, _LBU_SVGF, 0.5)], fs: fs };
+  }
   let best = { lines: [words.join(' ')] }; best.fs = fit(best.lines);
   for(let i = 1; i < words.length; i++){ const L = [words.slice(0, i).join(' '), words.slice(i).join(' ')], f = fit(L); if(f > best.fs + 0.01) best = { lines: L, fs: f }; }
   if(best.fs < 6){
@@ -24136,6 +24249,10 @@ function _wtlNmLineHTML(l){
 function _wtlNmStyle(fs, ls, ink, lines){ return (lines ? 'display:block;overflow:hidden;white-space:nowrap;text-overflow:ellipsis' : 'display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;text-overflow:ellipsis;white-space:normal;overflow-wrap:anywhere') + ';line-height:1.15;width:100%;text-align:left;font-size:' + fs + 'px;letter-spacing:' + ls + 'em;color:' + ink + ' !important;background:transparent !important'; }
 /* [its style, its inside]; room 0 (a converter): as before */
 function _wtlNmShow(shown, room, base, ls, ink){
+  if(_lbuOn()){   /* 16lv-names: replaces the 16lc-names / -midword / -onlyword fit (up to three lines, smaller to 11 px) */
+    const R = _lbuRows(shown, 2), fs = (room > 0 && R.length) ? _lbuFitPx(R, room, base, 7, 800, ls, true) : base;   /* down to 7 px only for rows of wide letters (emoji) */
+    return [_wtlNmStyle(fs, ls, ink, true), R.map(_esc).join('<br/>')];
+  }
   const F = room ? _wtlNmFit(shown, room, base, ls) : null;
   if(!F || (F.lines.length === 1 && F.fs === base && !F.cut)) return [_wtlNmStyle(base, ls, ink, false), _esc(shown)];
   return [_wtlNmStyle(F.fs, ls, ink, true), F.lines.map(function(l){ return F.mid ? _wtlNmLineHTML(l) : _esc(l); }).join('<br/>')];   /* 16lc-midword-fix: mid = the last resort */
@@ -24143,7 +24260,7 @@ function _wtlNmShow(shown, room, base, ls, ink){
 /* a name renamed in place (a router keeps the focus, 16ju: _wtlRefreshPic) is fitted again to its room on screen */
 function _wtlNmSet(sh, nm){
   const p = String(sh.getAttribute('data-wtl-fit') || '').split('|');
-  if(p.length < 5){ sh.textContent = nm; return; }
+  if(p.length < 5){ if(_lbuOn()) sh.innerHTML = _lbuRows(nm, 2).map(_esc).join('<br/>'); else sh.textContent = nm; return; }   /* 16lv-names: the rows */
   const N = _wtlNmShow(nm, +p[0], +p[2], +p[3], p[4]); sh.setAttribute('style', N[0]); sh.innerHTML = N[1];
 }
 /* on paper (_wireBuildAdvancedExportSvg, after the pencils are removed): a name drawn as lines is fitted again to the room the pencil
@@ -24154,6 +24271,7 @@ function _wtlNmPaper(root){
   try {
   root.querySelectorAll('.wtl-nm-show[data-wtl-fit]').forEach(function(sh){
     const p = String(sh.getAttribute('data-wtl-fit') || '').split('|'); sh.removeAttribute('data-wtl-fit');
+    if(_lbuOn()) return;   /* 16lv-names: the rows are the same on paper (their text has no line breaks to fit again from) */
     if(p.length < 5 || !/white-space:nowrap/.test(sh.getAttribute('style') || '')) return;
     const N = _wtlNmShow(sh.textContent, +p[1], +p[2], +p[3], p[4]); sh.setAttribute('style', N[0]); sh.innerHTML = N[1];
   });
@@ -24166,7 +24284,7 @@ function _wtlNmPaper(root){
 function _wtlNameHTML(o){
   const shown = String(o.name || '').trim() || String(o.ph || '');
   let s = (o.lead || '') + '<span class="wtl-nm" title="' + _esc(shown + (o.tip || '')) + '" style="position:relative;flex:1 1 110px;min-width:0;min-height:34px;display:flex;align-items:center;color:' + o.ink + ' !important">';
-  const room = o.big ? _wtlNameRoom(o, false) : 0, pp = _wtlNmPap; let N;
+  const room = o.big ? _wtlNameRoom(o, false) : (_lbuOn() ? Math.max(0, (+o.w || 0) - 2 - 16 - (_WTL_PW_S + _WTL_IN + 14) - (o.lead ? (o.leadW || 24) + 12 : 0)) : 0), pp = _wtlNmPap; let N;   /* 16lv-names: a converter's bar has a room too, so a wide row is set smaller, never cut */
   if(o.paper) _wtlNmPap = true; try { N = _wtlNmShow(shown, room, o.base, o.ls, o.ink); } finally { _wtlNmPap = pp; }   /* 16lc-onlyword-fix: o.paper fits at 100 % */
   s += '<span class="wtl-nm-show"' + (o.input ? ' aria-hidden="true"' : '') + ' style="' + N[0] + '"' + ((o.big && o.input) ? ' data-wtl-fit="' + room + '|' + _wtlNameRoom(o, true) + '|' + o.base + '|' + o.ls + '|' + o.ink + '"' : '') + '>' + N[1] + '</span>';
   if(o.input) s += '<input type="text" ' + o.input + ' style="position:absolute;left:0;top:0;width:100%;height:100%;margin:0;padding:0 4px;box-sizing:border-box;opacity:0;cursor:text;text-align:left;letter-spacing:' + o.ls + 'em;color:' + o.ink + ' !important;background:transparent !important" />';
@@ -25359,7 +25477,7 @@ function _wireAdvAddCustomSource(){
   if(typeof pushUndo === 'function') pushUndo();
   wireAdvanced.customSources.push({
     id: _wireAdvNewId('cs'),
-    name: _lbsCardSrcName(_lbcOn() ? 'NEW SOURCE' : 'New Source'),   /* 16lc-vpcards-fix (E1) */   /* 16ls-onename: never an output's name */
+    name: _lbcOn() ? _lbvNewName('src') : _lbsCardSrcName('New Source'),   /* 16lv-newnames: SOURCE 12, not NEW SOURCE */   /* 16lc-vpcards-fix (E1) */   /* 16ls-onename: never an output's name */
     resolution: '',
     wireColor: _wireRandomPaletteColor()
   });
@@ -25371,7 +25489,7 @@ function _wireAdvAddCustomDest(){
   if(typeof pushUndo === 'function') pushUndo();
   wireAdvanced.customDests.push({
     id: _wireAdvNewId('cd'),
-    name: _kzWireNewName(_lbcOn() ? 'NEW DESTINATION' : 'New Destination', 'dst'),   /* 16lc-vpcards-fix (E1) */   /* 16kt-wire2: the same numbering the source + already has; 16kz-refresh (L4): never a show output's name */
+    name: _lbcOn() ? _lbvNewName('dst') : _kzWireNewName('New Destination', 'dst'),   /* 16lv-newnames: DESTINATION 05, not NEW DESTINATION */   /* 16lc-vpcards-fix (E1) */   /* 16kt-wire2: the same numbering the source + already has; 16kz-refresh (L4): never a show output's name */
     w: 1920, h: 1080
   });
   if(typeof scheduleAutoSave === 'function') scheduleAutoSave();
@@ -25382,7 +25500,7 @@ function _wireAdvAddCustomDsm(){
   if(typeof pushUndo === 'function') pushUndo();
   wireAdvanced.customDsms.push({
     id: _wireAdvNewId('cm'),
-    name: _kzWireNewName(_lbcOn() ? 'NEW AUX/DSM' : 'New AUX/DSM', 'dsm'),   /* 16lc-vpcards-fix (E1) */   /* 16kt-wire2; 16kz-refresh (L4) */
+    name: _lbcOn() ? _lbvNewName('dsm') : _kzWireNewName('New AUX/DSM', 'dsm'),   /* 16lv-newnames: AUX3, not NEW AUX/DSM */   /* 16lc-vpcards-fix (E1) */   /* 16kt-wire2; 16kz-refresh (L4) */
     w: 1920, h: 1080
   });
   if(typeof scheduleAutoSave === 'function') scheduleAutoSave();
@@ -25520,7 +25638,7 @@ function _wireAdvGenericTileHTML(opts){
   // SLOT only — visible thumb drawn as native SVG (see _wireAdvThumbSvg).
   /* 16la-wire-mv (M, Omar 2026-09-29): every caller is an OUTPUT tile (a destination or AUX / DSM, the show's or a hand-made one): the info column first, the picture's slot after it; its picture is drawn at the tile's right end */
   h += '<div class="wire-source-info">';
-  h += '<div class="wire-source-name"' + (opts.tint ? ' style="color:' + opts.tint + '"' : '') + '>' + safeName + '</div>';
+  h += '<div class="wire-source-name"' + (opts.tint ? ' style="color:' + opts.tint + '"' : '') + _lbuTip(opts.name || '') + '>' + (_lbuOn() ? _lbuCardName(opts.name || '') : safeName) + '</div>';   /* 16lv-names */
   h += '<div class="wire-adv-res-text">' + (safeRes ? safeRes : '<em>No resolution set</em>') + '</div>';
   h += '<div class="wire-source-type-toggle">';
   h += '<span class="wire-type-btn' + (opts.pillL && opts.pillL.active ? ' active' : '') + '"' + (opts.pillL && opts.pillL.style ? ' style="' + opts.pillL.style + '"' : '') + '>' + ((opts.pillL && opts.pillL.icon) || '') + _esc((opts.pillL && opts.pillL.label) || '') + '</span>';
@@ -25621,7 +25739,7 @@ function _wireAdvSourceTileHTML(name, isSelected){
   // _wireAdvThumbSvg in the diagram renderer. This spacer reserves the layout.
   h += '<div style="width:110px;height:62px;flex-shrink:0"></div>';
   h += '<div class="wire-source-info">';
-  h += '<div class="wire-source-name" style="color:' + wireColor + '">' + safeName + _wireSrcPenHTML(name) + '</div>';   // 16ju: rename here, it lands everywhere
+  h += '<div class="wire-source-name" style="color:' + wireColor + '"' + _lbuTip(name) + '>' + (_lbuOn() ? _lbuCardName(name) : safeName) + _wireSrcPenHTML(name) + '</div>';   /* 16lv-names */   // 16ju: rename here, it lands everywhere
   h += '<div class="wire-adv-res-text">' + (safeRes || '<em>No resolution set</em>') + '</div>';
   h += '<div class="wire-source-type-toggle">';
   // 16ej: the chip reads the CABLE TYPE (HDMI / 3G-SDI / NDI…) once set — the
@@ -26443,7 +26561,7 @@ function _cmMvCardHTML(m){
   const id=_iogIdAttr(m.id), nm=m.name||'', n=_mvPicNo(m)||1;
   const tri='<svg aria-hidden="true" viewBox="0 0 10 10" fill="currentColor" width="8" height="8"><path d="M2 4l3 3 3-3z"/></svg>';
   return '<div class="wire-source-card lbm-mirror cm-mv-card" draggable="true" ondragstart="_cmMvDragStart(event, \''+id+'\')" style="cursor:grab" data-cm-mv="'+_esc(String(m.id))+'" title="Drag it onto the drawing">'
-    +'<div class="wire-source-info"><div class="wire-source-name">'+_esc(nm)+'</div>'
+    +'<div class="wire-source-info"><div class="wire-source-name"'+_lbuTip(nm)+'>'+_lbuCardName(nm)+'</div>'   /* 16lv-names */
     +'<div class="wire-res-row"><input type="text" class="wire-source-res" value="'+_esc(m.resolution||'')+'" placeholder="resolution, type or pick" onchange="_wireSetDestField(\'mv\', \''+id+'\', \'resolution\', this.value)" onclick="event.stopPropagation()" aria-label="Resolution of '+_esc(nm)+'">'
     +'<button class="wire-res-dropdown-btn" onclick="event.stopPropagation();_cmMvResPick(\''+id+'\', this)" title="Pick common resolution" aria-label="Pick common resolution">'+tri+'</button></div>'
     +_wireCableBtnHTML('mv', m.id, m.connectorType||'')+'</div>'
@@ -26521,7 +26639,7 @@ function _cmMvDetailsHTML(id){
   const m=_cmMvById(id), st=_slbState(), j=st.outs.indexOf('mv:'+String(id));   /* 16lb-simple: its router row, as drawn */
   return '<div style="padding:14px;color:var(--text2);font-size:11px;line-height:1.6">'
     +'<div style="font-size:10px;font-weight:800;color:var(--text3);letter-spacing:.14em;text-transform:uppercase;margin-bottom:6px">Multiviewer</div>'
-    +'<div style="font-size:14px;font-weight:700;color:'+_cmMvC()+';margin-bottom:10px;word-break:break-word">'+_esc(m?(m.name||id):id)+'</div>'
+    +'<div style="font-size:14px;font-weight:700;color:'+_cmMvC()+';margin-bottom:10px;word-break:break-word">'+_lbuDet(m?(m.name||id):id)+'</div>'
     +'<div style="color:var(--text3);font-size:10px;margin-bottom:8px">'+(j>=0?('Fed by the router, output '+(j+1)+'.'):'No cable: drag from its dot to the router.')+'</div>'
     +'<div style="font-size:10px;color:var(--text3);font-style:italic">Press Delete (or the \u00d7 on the tile) to take it off the drawing, its cable with it. It stays in the I/O Patch: drag its card back.</div></div>';
 }
@@ -26536,7 +26654,7 @@ function _wireAdvThumbSvg(x, y, thumb, name, colour, w){
     h+='<image class="wire-adv-thumb" href="'+thumb+'" x="'+tx+'" y="'+ty+'" width="'+tw+'" height="'+th+'" preserveAspectRatio="xMidYMid slice" clip-path="inset(0 round 5px)" pointer-events="none"/>';
   } else {
     h+='<rect class="wire-adv-thumb" x="'+tx+'" y="'+ty+'" width="'+tw+'" height="'+th+'" rx="6" ry="6" fill="'+(colour||'#444')+'" pointer-events="none"/>';
-    h+='<text class="wire-adv-thumb" x="'+(tx+tw/2)+'" y="'+(ty+th/2+4)+'" text-anchor="middle" fill="#ffffff" font-size="13" font-weight="800" letter-spacing="0.5" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" pointer-events="none">'+_esc(String(name||'').toUpperCase().slice(0,12))+'</text>';
+    h+='<text class="wire-adv-thumb" x="'+(tx+tw/2)+'" y="'+(ty+th/2+4)+'" text-anchor="middle" fill="#ffffff" font-size="'+_lbuCapPx(name)+'" font-weight="800" letter-spacing="0.5" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif" pointer-events="none">'+_esc(_lbuCap(name))+'</text>';   /* 16lv-names: one row of 12 */
   }
   return h;
 }
@@ -30019,7 +30137,7 @@ function _wireIpSectionHTML(selName){
     + '</div>';
 }
 function _wireAutoThumbHTML(name, colour, nf){
-  if(nf&&_kmOn()) return '<div class="wire-thumb-auto" style="background:' + (colour || '#444') + '">' + _nfSpanHTML(name || '', _nfCardOpts(nf)) + '</div>';   /* 16kz-refresh (I): breaks between words only, a long word shrinks, clear of the upload mark */
+  if(nf&&_kmOn()) return '<div class="wire-thumb-auto"' + _lbuTip(name || '') + ' style="background:' + (colour || '#444') + '">' + _nfSpanHTML(_lbuOn() ? _lbuOne(name || '') : (name || ''), _lbuOn() ? Object.assign(_nfCardOpts(nf), { one: true }) : _nfCardOpts(nf)) + '</div>';   /* 16lv-names: one row of 12 */   /* 16kz-refresh (I): breaks between words only, a long word shrinks, clear of the upload mark */
   return '<div class="wire-thumb-auto" style="background:' + (colour || '#444') + '"><span>' + _esc(name || '') + '</span></div>';
 }
 
@@ -31351,7 +31469,7 @@ function _wireRenderDetailsMain(container){
   const type = nodeId.substring(0, sepIdx);
   const key = nodeId.substring(sepIdx + 1);
   if(type === 'mv'){ container.innerHTML = _cmMvDetailsHTML(key); return; }   /* 16la-colour-mv (R): a Simple multiviewer tile */
-  if(nodeId === 'hub' && !isAdvancedView){ const _r = _slbRouter(_slbState()); container.innerHTML = '<div style="padding:14px;color:var(--text2);font-size:11px;line-height:1.6"><div style="font-size:10px;font-weight:800;color:var(--text3);letter-spacing:.14em;text-transform:uppercase;margin-bottom:6px">Router</div><div style="font-size:14px;font-weight:700;color:var(--n-cyan);margin-bottom:8px;word-break:break-word">' + _esc(_r.title) + '</div><div style="color:var(--text3);font-size:10px;margin-bottom:8px">' + _r.nIn + ' in \u00b7 ' + _r.nOut + ' out</div><div style="font-size:10px;color:var(--text3);font-style:italic">Its rows follow the cables. Type its name in its title and an ID in a row\u2019s ID cell. A tile dropped on the drawing is cabled to its next free row.</div></div>'; return; }   /* 16lb-simple */
+  if(nodeId === 'hub' && !isAdvancedView){ const _r = _slbRouter(_slbState()); container.innerHTML = '<div style="padding:14px;color:var(--text2);font-size:11px;line-height:1.6"><div style="font-size:10px;font-weight:800;color:var(--text3);letter-spacing:.14em;text-transform:uppercase;margin-bottom:6px">Router</div><div style="font-size:14px;font-weight:700;color:var(--n-cyan);margin-bottom:8px;word-break:break-word">' + _lbuDet(_r.title) + '</div><div style="color:var(--text3);font-size:10px;margin-bottom:8px">' + _r.nIn + ' in \u00b7 ' + _r.nOut + ' out</div><div style="font-size:10px;color:var(--text3);font-style:italic">Its rows follow the cables. Type its name in its title and an ID in a row\u2019s ID cell. A tile dropped on the drawing is cabled to its next free row.</div></div>'; return; }   /* 16lb-simple */
 
   let header = '', subhead = '', accent = '', usages = [];
 
@@ -31366,7 +31484,7 @@ function _wireRenderDetailsMain(container){
     for(let k = 0; k < _oc; k++){ _outRows += '<div class="wire-srcport-row"><span class="wire-srcport-num">OUT ' + (k + 1) + '</span><span class="wire-srcport-nm">' + _esc((inst.portNames && inst.portNames[k]) || '\u2014') + '</span>' + _wireSrcPortConnBtnHTML(inst, k, false) + '</div>'; }
     container.innerHTML = '<div style="padding:14px;color:var(--text2);font-size:11px;line-height:1.6">'
       + '<div style="font-weight:700;color:#ff8a3d;letter-spacing:.1em;text-transform:uppercase;font-size:10px;margin-bottom:4px">Source instance</div>'
-      + '<div style="font-size:13px;font-weight:600;color:#ff8a3d;margin-bottom:8px">' + _esc(name) + '</div>'
+      + '<div style="font-size:13px;font-weight:600;color:#ff8a3d;margin-bottom:8px">' + _lbuDet(name) + '</div>'
       + '<div style="color:var(--text3);font-size:10px;margin-bottom:10px">' + wireCount + ' wire' + (wireCount === 1 ? '' : 's') + ' from this source</div>'
       + '<div style="font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);margin:6px 0 2px">Outputs \u00b7 cable type</div>' + _outRows
       + '<div style="font-size:10px;color:var(--text3);font-style:italic;margin-top:8px">Drag the cyan dot to draw more wires. Press Delete to remove this instance.</div>'
@@ -31388,7 +31506,7 @@ function _wireRenderDetailsMain(container){
     const wireOut = (wireAdvanced && wireAdvanced.wires) ? wireAdvanced.wires.filter(w => w.fromId === nodeId).length : 0;
     container.innerHTML = '<div style="padding:14px;color:var(--text2);font-size:11px;line-height:1.6">'
       + '<div style="font-weight:700;color:' + accentC + ';letter-spacing:.1em;text-transform:uppercase;font-size:10px;margin-bottom:4px">' + label + '</div>'
-      + '<div style="font-size:13px;font-weight:600;color:' + accentC + ';margin-bottom:8px">' + _esc(name) + '</div>'
+      + '<div style="font-size:13px;font-weight:600;color:' + accentC + ';margin-bottom:8px">' + _lbuDet(name) + '</div>'
       + '<div style="color:var(--text3);font-size:10px;margin-bottom:10px">' + wireIn + ' wire' + (wireIn === 1 ? '' : 's') + ' in &middot; ' + wireOut + ' wire' + (wireOut === 1 ? '' : 's') + ' out</div>'
       + '<div style="font-size:10px;color:var(--text3);font-style:italic">Press Delete to remove this instance. The template lives in the I/O Patch / Video Presets view.</div>'
       + '</div>';
@@ -31404,7 +31522,7 @@ function _wireRenderDetailsMain(container){
     const wOut = (wireAdvanced.wires || []).filter(w => w.fromId.indexOf(po) === 0).length;
     container.innerHTML = '<div style="padding:14px;color:var(--text2);font-size:11px;line-height:1.6">'
       + '<div style="font-weight:700;color:#5aa9ff;letter-spacing:.1em;text-transform:uppercase;font-size:10px;margin-bottom:4px">' + (isSw ? 'Switch' : 'Converter') + '</div>'
-      + '<div style="font-size:13px;font-weight:600;color:#5aa9ff;margin-bottom:8px">' + _esc(_wireAdvDevLabel(dv) || key) + '</div>'
+      + '<div style="font-size:13px;font-weight:600;color:#5aa9ff;margin-bottom:8px">' + _lbuDet(_wireAdvDevLabel(dv) || key) + '</div>'
       + '<div style="color:var(--text3);font-size:10px;margin-bottom:10px">' + (isSw ? (nI + ' port' + (nI === 1 ? '' : 's')) : (nI + ' in \u00b7 ' + nO + ' out')) + ' \u00b7 ' + wIn + ' wire' + (wIn === 1 ? '' : 's') + ' in \u00b7 ' + wOut + ' wire' + (wOut === 1 ? '' : 's') + ' out</div>'
       + '<div style="font-size:10px;color:var(--text3);font-style:italic">Every port has its own cable type, and a wire leaving a port takes that colour. + adds a port, \u00d7 removes an unwired one. Press Delete to remove the tile.</div>'
       + '</div>';
@@ -31464,7 +31582,7 @@ function _wireRenderDetailsMain(container){
 
   let html = '<div style="padding:14px">';
   html += '<div style="font-size:10px;font-weight:800;color:var(--text3);letter-spacing:.14em;text-transform:uppercase;margin-bottom:6px">' + _esc(header) + '</div>';
-  html += '<div style="font-size:14px;font-weight:700;color:' + accent + ';margin-bottom:14px;word-break:break-word">' + _esc(subhead) + '</div>';
+  html += '<div style="font-size:14px;font-weight:700;color:' + accent + ';margin-bottom:14px;word-break:break-word">' + _lbuDet(subhead) + '</div>';
   html += '<div style="font-size:10px;font-weight:800;color:var(--text3);letter-spacing:.14em;text-transform:uppercase;margin-bottom:8px">Active in ' + usages.length + ' preset' + (usages.length !== 1 ? 's' : '') + '</div>';
   if(usages.length === 0){
     html += '<div style="color:var(--text3);font-style:italic;font-size:11px">Not referenced in any preset.</div>';

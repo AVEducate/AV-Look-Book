@@ -4481,7 +4481,7 @@
   await check('Wire: + Destination opens ABOVE the Wire page and the new destination lands in the Wire panel', async () => {
     await wsOpen(); const n = screens.length; actions.addDestination(); await wait(350); const m = $('#modal'); const f = $('#ms-n'); const r = f.getBoundingClientRect(); const top = document.elementFromPoint(r.left + r.width / 2, r.top + r.height / 2);
     const reach = !!top && m.contains(top); f.value = 'WIRE STACK DEST'; $('#ms-w').value = '1920'; $('#ms-h').value = '1080'; confirmScreen(); await wait(500); okDialogs(); await wait(300);
-    const listed = $$('#wire-sources-panel .wire-source-name').some(e => /WIRE STACK DEST/.test(e.textContent));
+    const listed = $$('#wire-sources-panel .wire-source-name').some(e => /WIRE STACK DEST/.test((e.innerText || e.textContent).replace(/\s+/g, ' ')));   /* 16lv-names: the name in rows */
     const out = is([reach, screens.length, listed], [true, n + 1, true], 'window reachable over Wire / destination count / listed in Wire'); await restore(); await wsOpen(); return out;
   });
   await check('Wire: an edit made on a card (cable colour) lights the unsaved mark without leaving Wire', async () => {
@@ -5127,7 +5127,7 @@
     _wireAdvDeleteCustom('dst', d1.id); _wireAdvDeleteCustom('dst', d2.id);
     _wireAdvDeleteCustom('dsm', m1.id); _wireAdvDeleteCustom('dsm', m2.id); await wait(250);
     await _waHome();
-    return is([dests, auxes, inUse], [['WA ONE DECK', 'NEW DESTINATION'], ['WA ONE AUX', 'NEW AUX/DSM'], [true, true]],
+    return is([dests, auxes, inUse], [['WA ONE DECK', 'DESTINATION 04'], ['WA ONE AUX', 'AUX3'], [true, true]]   /* 16lv-newnames */,
               'the two custom destination names / the two custom AUX names / Name in use [the destination, the AUX]');
   });
   await check('Wire: closes cleanly', async () => { closeWireMode(); await wait(300); return is(getComputedStyle($('#wire-overlay')).display, 'none', 'overlay'); });
@@ -9387,7 +9387,7 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
     return is(out, { next: 'connector', after: ['connector@S0', true], rf: ['refresh@PPT A', '59.94'] }, 'the control after the Rows box / after leaving the box [the focus, the old control replaced by the redraw] / after a Refresh pick [the focus, PPT A\'s rate]');
   });
   // 16kz-refresh Y4: NEW
-  await check('Cards 16kz-refresh (I): the name on a card\'s picture breaks only between words (Omar\'s 13, "do the recommended"): CENTER LED renamed DESTINATION 01 reads "DESTINATION" / "01" on its I/O Patch card, on its Wire side-panel card and on its Advanced row\'s small picture (never DESTINATIO / N 01); RIGHT LED renamed PROJECTIONS (a word too long for the line) shrinks to one line inside the picture; the upload mark does not sit on the first letter; the text is the name', async () => {
+  await check('Cards 16kz-refresh (I) (16lv-names: a picture shows ONE row of 12, … when cut, the whole name on hover): CENTER LED renamed DESTINATION 01 reads DESTINATION… on its I/O Patch card, on its Wire side-panel card and on its Advanced row\'s small picture; RIGHT LED renamed PROJECTIONS (a word too long for the line) shrinks to one line inside the picture; the upload mark does not sit on the first letter; the text is the name', async () => {
     await restore(); const c = screens.find(s => s.name === 'CENTER LED'), r = screens.find(s => s.name === 'RIGHT LED'); c.name = 'DESTINATION 01'; r.name = 'PROJECTIONS'; const out = {};
     try {
       await ioOpenSimple(); _sysRender(); await wait(300);
@@ -9403,12 +9403,12 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
       out.mini = mini('DESTINATION 01');
       _ioSetView('simple'); await wait(300); closeSystem();
       openWireMode(); await wait(400); wireSettings.wireView = 'simple'; _wireRender(); await wait(400);
-      const wcard = n => $$('#wire-sources-panel .wire-source-card').find(k => (($('.wire-source-name', k) || {}).textContent || '').trim() === n) || null;
+      const wcard = n => $$('#wire-sources-panel .wire-source-card').find(k => (($('.sys-name-input', k) || {}).value || '') === n) || null;   /* 16lv-names: the name is rows */
       out.wire = [geo(wcard('DESTINATION 01')), geo(wcard('PROJECTIONS'))];
       closeWireMode(); await wait(300);
     } finally { c.name = 'CENTER LED'; r.name = 'RIGHT LED'; await restore(); }
-    return is(out, { grid: [[['DESTINATION', '01'], 'DESTINATION 01', true, true, true], [['PROJECTIONS'], 'PROJECTIONS', true, true, true]], mini: ['DESTINATION', '01'],
-      wire: [[['DESTINATION', '01'], 'DESTINATION 01', true, true, true], [['PROJECTIONS'], 'PROJECTIONS', true, true, true]] },
+    return is(out, { grid: [[['DESTINATION…'], 'DESTINATION…', true, true, true], [['PROJECTIONS'], 'PROJECTIONS', true, true, true]], mini: ['DESTINATION…'],
+      wire: [[['DESTINATION…'], 'DESTINATION…', true, true, true], [['PROJECTIONS'], 'PROJECTIONS', true, true, true]] },
       'the I/O Patch cards [lines, text, inside the picture, the first letter clear of the upload mark, smaller than 13 px] for DESTINATION 01 and PROJECTIONS / the Advanced row\'s small picture of DESTINATION 01 [lines] / Wire\'s side-panel cards (the same)');
   });
   // 16kz-refresh Y5: NEW
@@ -9682,7 +9682,7 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
   //   an older show renumbers nothing. Here: a hand-made card's default name is in capitals now (Omar, E1: NEW DESTINATION, NEW AUX/DSM); what it pins (a show output's name refused)
   //   is unchanged.
   // ADAPTED in 16lp: 16lp-wcnames (the full test's #25, Omar 2026-10-17: "didnt we make a rule about warning when there was double name? people would have to change them"): two cards typed STAGE are no longer numbered apart, the second is refused; renamed
-  await check('Wire 16kz-refresh (L4): Wire Advanced\'s hand-made destination / AUX cards refuse a SHOW output\'s name (16lc-vpfinish: typed in the I/O Patch card they are now; Omar 2026-09-28 ~18:50, "all recommended"): a hand-made destination card renamed "left led" or "AUX 1" and a hand-made AUX card renamed "mv 1" say Name in use and keep their names (no undo step); a second hand-made destination card typed STAGE says Name in use and keeps its name (16lp-wcnames, Omar 2026-10-17: "didnt we make a rule about warning when there was double name? people would have to change them"; before, STAGE, STAGE 2); a new hand-made card is never given a show output\'s name nor another card\'s (with CENTER LED named New Destination and a card still NEW DESTINATION 2, + gives NEW DESTINATION 3); 16lc-vpcards-fix: the new cards named in capitals', async () => {
+  await check('Wire 16kz-refresh (L4): Wire Advanced\'s hand-made destination / AUX cards refuse a SHOW output\'s name (16lc-vpfinish: typed in the I/O Patch card they are now; Omar 2026-09-28 ~18:50, "all recommended"): a hand-made destination card renamed "left led" or "AUX 1" and a hand-made AUX card renamed "mv 1" say Name in use and keep their names (no undo step); a second hand-made destination card typed STAGE says Name in use and keeps its name (16lp-wcnames, Omar 2026-10-17: "didnt we make a rule about warning when there was double name? people would have to change them"; before, STAGE, STAGE 2); a new hand-made card is never given a show output\'s name nor another card\'s (16lv-newnames: with CENTER LED named DESTINATION 04 and a card still DESTINATION 05, + gives DESTINATION 06); 16lc-vpcards-fix: the new cards named in capitals', async () => {
     await restore(); const out = {};
     try {
       openWireMode(); await wait(400); okDialogs(); wireSettings.wireView = 'advanced'; _wireRender(); await wait(300); okDialogs();
@@ -9695,10 +9695,10 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
       out.ren = [await ren(1, 0, 'left led'), await ren(1, 1, 'AUX 1'), await ren(2, 0, 'mv 1')];
       out.after = [wireAdvanced.customDests.map(c => c.name), wireAdvanced.customDsms.map(c => c.name)];
       await ren(1, 0, 'STAGE'); out.twoRen = await ren(1, 1, 'STAGE'); out.two = wireAdvanced.customDests.map(c => c.name);
-      screens.find(s => s.name === 'CENTER LED').name = 'New Destination'; _wireAdvAddCustomDest(); out.newName = wireAdvanced.customDests[wireAdvanced.customDests.length - 1].name;
+      screens.find(s => s.name === 'CENTER LED').name = 'DESTINATION 04';   /* 16lv-newnames: the name the next card would take */ _wireAdvAddCustomDest(); out.newName = wireAdvanced.customDests[wireAdvanced.customDests.length - 1].name;
     } finally { try { closeWireMode(); } catch (e) {} okDialogs(); await wait(200); await restore(); }
-    return is(out, { made: [['NEW DESTINATION', 'NEW DESTINATION 2'], ['NEW AUX/DSM']], ren: [[true, true, 0], [true, true, 0], [true, true, 0]], after: [['NEW DESTINATION', 'NEW DESTINATION 2'], ['NEW AUX/DSM']], twoRen: [true, true, 0], two: ['STAGE', 'NEW DESTINATION 2'], newName: 'NEW DESTINATION 3' },
-      'the hand-made cards made / each rename into a show output\'s name [Name in use, the card keeps its name, undo steps] / the cards after / the second typed STAGE [Name in use, keeps its name, undo steps] / the cards / a new card with CENTER LED named New Destination');
+    return is(out, { made: [['DESTINATION 04', 'DESTINATION 05'], ['AUX3']], ren: [[true, true, 0], [true, true, 0], [true, true, 0]], after: [['DESTINATION 04', 'DESTINATION 05'], ['AUX3']], twoRen: [true, true, 0], two: ['STAGE', 'DESTINATION 05'], newName: 'DESTINATION 06' },
+      'the hand-made cards made / each rename into a show output\'s name [Name in use, the card keeps its name, undo steps] / the cards after / the second typed STAGE [Name in use, keeps its name, undo steps] / the cards / a new card with CENTER LED named DESTINATION 04');
   });
   // ── 16kz-fix (the fixer's round after the two attacks on 16kz-refresh). Appended at the END of the probe (after 16kz-refresh's
   //    Y16). Each NEW check FAILS on the second builder's 16kz-refresh page (r16kz/build2, sha1 f715089b) for the defect it names
@@ -9761,29 +9761,29 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
       'the fixed columns at this window / the page\'s wide and narrow column rules found / page 1 at each width [rows with a column outside] / page 2 the same');
   });
   // 16kz-fix N3: NEW
-  await check('Cards 16kz-fix (I): a name on a card picture never loses part of a word (Omar\'s 13): CENTER LED renamed NEW DESTINATION 2 reads the whole name on two lines (it read NEW / DESTINATI…) on its I/O Patch card, its Wire side-panel card and its Advanced row\'s small picture; RIGHT LED renamed DOWNSTAGE CONFIDENCE MONITOR shows only whole words (a second line cut after a whole word ends in …); every line inside its picture', async () => {
+  await check('Cards 16kz-fix (I) (16lv-names: a picture shows ONE row of 12, … when cut): CENTER LED renamed NEW DESTINATION 2 reads NEW DESTINA… and RIGHT LED renamed DOWNSTAGE CONFIDENCE MONITOR reads DOWNSTAGE C… on the picture of its I/O Patch card, its Wire side-panel card and its Advanced row\'s small picture; every row inside its picture', async () => {
     await restore(); const c = screens.find(s => s.name === 'CENTER LED'), r = screens.find(s => s.name === 'RIGHT LED'); const A = 'NEW DESTINATION 2', B = 'DOWNSTAGE CONFIDENCE MONITOR'; c.name = A; r.name = B; const out = {};
     try {
       await ioOpenSimple(); _sysRender(); await wait(300);
       const card = n => $$('#io-grid .iog-card').find(k => (($('.sys-name-input', k) || {}).value || '') === n) || null;
       const geo = (k, n) => { const sp = k && $('.wire-thumb-auto > span', k); if (!sp) return 'no picture'; const th = $('.wire-thumb', k).getBoundingClientRect(), ls = _rzLines(sp);
         const inside = $$(':scope > span', sp).every(s => { const b = s.getBoundingClientRect(); return b.left >= th.left - 0.5 && b.right <= th.right + 0.5; });
-        return [_fxWhole(ls, n), ls.length <= 2, inside, n === A ? ls.join(' ') === A : true]; };
+        return [ls.length, ls.join(' ') === _lbuOne(n), inside]; };
       out.grid = [geo(card(A), A), geo(card(B), B)];
       await r2Adv(); if (ioAdvanced.page !== 0) { _ioSetPage(0); await wait(300); }
       _ioAdvRenameTwin('dest', 'CENTER LED', A); _ioAdvRenameTwin('dest', 'RIGHT LED', B); _sysRender(); await wait(300);
       const mini = n => { const rw = r2Row(n); const sp = rw && $('.iog-mini-name', rw); if (!sp) return 'no small picture'; const ls = _rzLines(sp), m = $('.iog-mini', rw).getBoundingClientRect();
-        return [_fxWhole(ls, n), $$(':scope > span', sp).every(s => { const b = s.getBoundingClientRect(); return b.left >= m.left - 0.5 && b.right <= m.right + 0.5; }), n === A ? ls.join(' ') === A : true]; };
+        return [ls.length === 1 && ls[0] === _lbuOne(n), $$(':scope > span', sp).every(s => { const b = s.getBoundingClientRect(); return b.left >= m.left - 0.5 && b.right <= m.right + 0.5; })]; };
       out.mini = [mini(A), mini(B)];
       _ioSetView('simple'); await wait(300); closeSystem();
       openWireMode(); await wait(400); wireSettings.wireView = 'simple'; _wireRender(); await wait(400);
-      const wcard = n => $$('#wire-sources-panel .wire-source-card').find(k => (($('.wire-source-name', k) || {}).textContent || '').trim() === n) || null;
+      const wcard = n => $$('#wire-sources-panel .wire-source-card').find(k => (($('.sys-name-input', k) || {}).value || '') === n) || null;   /* 16lv-names: the name is rows */
       out.wire = [geo(wcard(A), A), geo(wcard(B), B)];
       closeWireMode(); await wait(300);
     } finally { c.name = 'CENTER LED'; r.name = 'RIGHT LED'; try { closeWireMode(); } catch (e) {} await restore(); }
-    const G = [true, true, true, true];
-    return is(out, { grid: [G, G], mini: [[true, true, true], [true, true, true]], wire: [G, G] },
-      'the I/O Patch cards [whole words only, at most two lines, inside the picture, NEW DESTINATION 2 shown whole] for NEW DESTINATION 2 and DOWNSTAGE CONFIDENCE MONITOR / the Advanced rows\' small pictures [whole words, inside, shown whole] / Wire\'s side-panel cards (as the I/O Patch cards)');
+    const G = [1, true, true];
+    return is(out, { grid: [G, G], mini: [[true, true], [true, true]], wire: [G, G] },
+      'the I/O Patch cards [rows, the row is the rule\'s, inside the picture] for NEW DESTINATION 2 and DOWNSTAGE CONFIDENCE MONITOR / the Advanced rows\' small pictures [one row, the rule\'s, inside] / Wire\'s side-panel cards (as the I/O Patch cards)');
   });
   // 16kz-fix N4: NEW
   await check('I/O 16kz-fix (J) R5: the Advanced Notes box shows the WHOLE note: CAM 1 with a note of about 300 characters opens a box as tall as the note (nothing hidden, nothing to scroll; it showed three lines and hid the first), under or over its cell but never over it, inside the window; typing more makes it grow; Escape keeps the note', async () => {
@@ -10468,8 +10468,8 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
   //   column LEFT of the picture's 110 x 62 slot and wraps between words there, as on the Advanced tile, so the 16la-fix fitting of the
   //   old 220 x 36 node (smaller, then cut with "…", _fxSimpleName) is gone. What it pins is the attack's point, unchanged: a long name
   //   never runs into the picture, on screen and on the Simple sheet, and it is whole (not cut).
-  await check('Wire 16la-fix (M / R) (16lb-simple: the Simple tile is the Advanced tile): in Wire SIMPLE a destination, AUX or multiviewer tile has its picture at its right end, and a long name never runs into it (the attack: "LEFT LED WALL MAIN STAG" drawn over the picture): the name is whole and ends before the picture (it wraps between words in the card\'s info column); a short name and a tile without a picture read as before; the exported Simple sheet prints each name whole', async () => {
-    await restore(); const out = {};
+  await check('Wire 16la-fix (M / R) (16lb-simple: the Simple tile is the Advanced tile): in Wire SIMPLE a destination, AUX or multiviewer tile has its picture at its right end, and a long name never runs into it (the attack: "LEFT LED WALL MAIN STAG" drawn over the picture): the name is its two rows of 12 (16lv-names: … when cut, the whole name on hover) and ends before the picture; a short name and a tile without a picture read as before; the exported Simple sheet prints the same rows', async () => {
+    await restore(); const out = {}; const _lvRows = el => el ? ((el.querySelector('.lbu-rows') || el).innerHTML.split(/<br[^>]*>/i).map(h => { const d = document.createElement('div'); d.innerHTML = h; return d.textContent.trim(); }).filter(Boolean)) : null;
     try {
       const pic = _IOG_MV_PICS[1]; const L = screens[0], C = screens[1], A = dsms[1], M = multiviewers[0];
       L.name = 'LEFT LED WALL MAIN STAGE'; A.name = 'AUX 1 RECORD AND STREAM FEED'; M.name = 'MULTIVIEWER OPERATOR POSITION';
@@ -10477,14 +10477,14 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
       wireSettings.mvSimple = [M.id];
       await _pPWire('simple'); _wireSetZoom(1); _wireRender(); await wait(400);
       const node = id => { const g = _laNode($('#wire-diagram svg'), id); if (!g) return 'no node'; const n = $('.wire-adv-tile .wire-source-name', g), th = $(':scope > .wire-adv-thumb', g);
-        const a = n.getBoundingClientRect(), b = th ? th.getBoundingClientRect() : null; return [n.textContent.trim(), b ? a.right <= b.left - 2 : 'no picture slot', n.scrollWidth <= n.clientWidth + 1]; };
+        const a = n.getBoundingClientRect(), b = th ? th.getBoundingClientRect() : null; return [_lvRows(n), b ? a.right <= b.left - 2 : 'no picture slot', n.scrollWidth <= n.clientWidth + 1]; };
       out.long = [node('dst:' + L.id), node('dsm:' + A.id), node('mv:' + M.id)];
       out.short = [node('dst:' + C.id)[0], node('dst:' + screens[2].id)[0], !!$(':scope > rect.wire-adv-thumb', _laNode($('#wire-diagram svg'), 'dst:' + screens[2].id))];
       const doc = new DOMParser().parseFromString(_wireBuildExportSvg('light', {}), 'image/svg+xml');
-      out.sheet = [L, A, M, C].map(o => $$('.wire-source-name', doc).some(e => e.textContent.trim() === o.name));
+      out.sheet = [L, A, M, C].map(o => $$('.wire-source-name', doc).some(e => JSON.stringify(_lvRows(e)) === JSON.stringify(_lbuRows(o.name, 2))));
     } finally { try { closeWireMode(); } catch (e) {} await wait(300); await restore(); }
-    return is(out, { long: [['LEFT LED WALL MAIN STAGE', true, true], ['AUX 1 RECORD AND STREAM FEED', true, true], ['MULTIVIEWER OPERATOR POSITION', true, true]], short: ['CENTER LED', 'RIGHT LED', true], sheet: [true, true, true, true] },
-      'long names [LEFT LED WALL MAIN STAGE, AUX 1 RECORD AND STREAM FEED, MULTIVIEWER OPERATOR POSITION: the name, ends 2 px before the picture, not cut] / short [CENTER LED with a picture, RIGHT LED without one, its colour tile at the right end] / the exported Simple sheet prints each name whole');
+    return is(out, { long: [[_lbuRows('LEFT LED WALL MAIN STAGE', 2), true, true], [_lbuRows('AUX 1 RECORD AND STREAM FEED', 2), true, true], [_lbuRows('MULTIVIEWER OPERATOR POSITION', 2), true, true]], short: [['CENTER LED'], ['RIGHT LED'], true], sheet: [true, true, true, true] },
+      'long names [LEFT LED WALL MAIN STAGE, AUX 1 RECORD AND STREAM FEED, MULTIVIEWER OPERATOR POSITION: the rows, ends 2 px before the picture, not cut] / short [CENTER LED with a picture, RIGHT LED without one, its colour tile at the right end] / the exported Simple sheet prints the same rows');
   });
   // 16la-fix F4: NEW
   // 16lb-simple A9: REPLACES the check named in its header (reason in the block)
@@ -10682,7 +10682,7 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
       _lbSel(['src:CAM 2']); _cMDel(); await wait(400);
       await _lbDrag(_lbRow('in', 0), _lbRow('in', 4));
       out.typed = await _cMStep(async () => { const c = $$('#wire-diagram input.slb-pt').find(i => i.dataset.slbSide === 'in' && i.dataset.slbRow === '2'); if (!c) return 'no ID cell'; c.focus(); c.value = 'SLOT 9'; fire(c, 'change'); await wait(350); const c2 = $$('#wire-diagram input.slb-pt').find(i => i.dataset.slbSide === 'in' && i.dataset.slbRow === '2'); return c2 ? c2.value : 'gone'; });
-      const read = root => { const t = $('.wire-router-tile', root); return t ? [(($('.wire-router-title', t) || {}).textContent || '').trim(), $$('span[data-slb-row^="in:"]', t).map(e => e.textContent).slice(0, 5), (($$('.slb-pt', t).find(e => e.dataset.slbSide === 'in' && e.dataset.slbRow === '2') || {}).textContent || ''),
+      const read = root => { const t = $('.wire-router-tile', root); return t ? [(($('.wire-router-title', t) || {}).innerHTML || '').replace(/<br[^>]*>/gi, ' ').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim(),   /* 16lv-names: rows */ $$('span[data-slb-row^="in:"]', t).map(e => e.textContent).slice(0, 5), (($$('.slb-pt', t).find(e => e.dataset.slbSide === 'in' && e.dataset.slbRow === '2') || {}).textContent || ''),
         $$('.wire-adv-tile .wire-source-name', root).map(e => e.textContent.trim()).includes('CAM 2'), $$('.wire-adv-tile', root).length, $$('path.slb-edge', root).length, $$('.slb-x, .slb-rport, circle.slb-dot, .wire-src-pen, .wire-seg-handle, .wire-end-dot, .wire-edge-hit, input', root).length] : 'no router'; };
       const sheetTxt = _wireExportSheetList('light')[0], sheet = new DOMParser().parseFromString('<!DOCTYPE html><body>' + sheetTxt.replace(/^<\?xml[^>]*>/, '') + '</body>', 'text/html');
       out.sheet = read(sheet.body);
@@ -10762,7 +10762,7 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
       out.after = [lanes(), key('12G-SDI').includes('CAM 2'), key('HDMI 2.0').includes('DSM 1')];
       _lbSel(['src:CAM 1']); await wait(200); out.cabled = /Cabled to the router, input 3\./.test($('#wire-details').textContent) && /Press Delete \(or the × on the tile\) to take it off the Simple drawing/.test($('#wire-details').textContent);
       _lbSel(['src:CAM 2']); await wait(200); out.free = /No cable: drag from its dot to the router\./.test($('#wire-details').textContent);
-      _lbSel(['hub']); await wait(200); out.router = /Generic Router/.test($('#wire-details').textContent) && /Its rows follow the cables/.test($('#wire-details').textContent);
+      _lbSel(['hub']); await wait(200); out.router = /Generic\s*Router/.test($('#wire-details').textContent)   /* 16lv-names: the title in rows */ && /Its rows follow the cables/.test($('#wire-details').textContent);
     } finally { try { closeWireMode(); } catch (e) {} await restore(); }
     const S = String(_wireBuildAllSourceNames().length);
     return is(out, { before: [[['Sources', S], ['Destinations', '3'], ['AUX / DSM', '2']], true, true], after: [[['Sources', S], ['Destinations', '3'], ['AUX / DSM', '1']], false, false], cabled: true, free: true, router: true },
@@ -11205,7 +11205,7 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
       wireAdvanced.wires.push({ id: 'txw1', fromId: 'asrc:' + S0.id, toId: 'rip:' + R[0].id + ':2' }, { id: 'txw2', fromId: 'rop:' + R[0].id + ':1', toId: 'dvi:' + D[0].id + ':0' },
         { id: 'txw3', fromId: 'dvo:' + D[0].id + ':1', toId: 'rip:' + R[1].id + ':0' }, { id: 'txw4', fromId: 'asrc:' + S0.id, toId: 'dvi:' + D[1].id + ':3' });
       _wireZoomFit(); await wait(400); _wireRender(); await wait(400);
-      const tools = [['page 1', 'router', p1, 820, 'the size pencil', 'GENERIC ROUTER'], ['10 x 10', 'router', R[0], 820, 'the size pencil', 'ROUTER I/O'], ['3 x 5', 'router', R[1], 820, 'the size pencil', 'ROUTER I/O'],
+      const tools = [['page 1', 'router', p1, 820, 'the size pencil', 'GENERIC ROU…']   /* 16lv-names: one row of 12 */, ['10 x 10', 'router', R[0], 820, 'the size pencil', 'ROUTER I/O'], ['3 x 5', 'router', R[1], 820, 'the size pencil', 'ROUTER I/O'],
         ['8 x 2 switcher', 'router', R[2], 820, 'the size pencil', '8×2 SWITCHER'], ['I/O Patch page', 'router', R[3], 820, 'the lock', 'ROSS RACK'], ['converter', 'device', D[0], 440, 'the name pencil', 'CONVERTER'], ['switch', 'device', D[1], 300, 'the name pencil', 'SWITCH']];
       out.head = {}; want.head = {}; out.rows = {}; want.rows = {};
       tools.forEach(([label, kind, t, w, first, name]) => {
@@ -11271,7 +11271,7 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
     try {
       await _lbOpen(); const u0 = _undoStack.length;
       const col = _txIdCol('hub'), ink = _txCR('#ffffff', col) >= _txCR('#000000', col) ? '#ffffff' : '#000000';
-      out.head = _txHead('hub'); want.head = _txWant(88, 820, 'the name pencil', col, 'GENERIC ROUTER', col, ink);
+      out.head = _txHead('hub'); want.head = _txWant(88, 820, 'the name pencil', col, 'GENERIC ROU…', col, ink);   /* 16lv-names: one row of 12 */
       const st = _slbState(), n = Math.max(st.ins.length, st.outs.length), g = _txNode('hub');
       const hub = $(':scope > rect', g), HX = +hub.getAttribute('x'), HY = +hub.getAttribute('y'), HW = +hub.getAttribute('width'), fo = $(':scope > foreignObject', g), fr = fo.getBoundingClientRect(), z = fr.height / +fo.getAttribute('height');
       const bad = [];
@@ -11413,7 +11413,7 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
       out.help = [!!row, /pencil and name on the left, a picture on the right/.test(tx), /Click the picture to upload/.test(tx), /removes it/.test(tx), /colour of the image/.test(tx), /picked at random/.test(tx), /white or black/.test(tx), /Generic Router/.test(tx)];
     } catch (e) { return 'threw: ' + e.message; }
     finally { await restore(); }
-    return is(out, { size: true, converter: true, switch: true, rename: ['RANDOM SWITCHER', true, true, 1, 'Random Switcher'], simple: true, help: [true, true, true, true, true, true, true, true] },
+    return is(out, { size: true, converter: true, switch: true, rename: ['RANDOM SWIT…', true, true, 1, 'Random Switcher']   /* 16lv-names: the picture's caption, one row of 12 */, simple: true, help: [true, true, true, true, true, true, true, true] },
       'router pencil [size window] / converter pencil [in its name, selected] / switch pencil / router renamed [its picture box, the name box still there, still focused, undo steps, stored] / Simple\'s pencil / Help [the row, left / right, upload, remove, the image\'s colour, random, white or black, Generic Router]');
   });
   // ── 16ld-fix (the v0.8.0 candidate's fixes: Omar's (X2) "the image thumbnail on the tools should be has big has the source size and
@@ -11493,7 +11493,7 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
       out.upload = [pick, _fxShown(nid), R.title, !!R.pic, _undoStack.length - u0];
     } catch (e) { return 'threw: ' + e.message; }
     finally { const a = document.activeElement; if (a && a.blur) a.blur(); await restore(); }
-    return is(out, { router: ['Main Router', 'MAIN ROUTER', 'Main Router', true, 2, 0], converter: ['Decimator 7', 'DECIMATOR 7', 'Decimator 7', true, 2, 0], switch: ['Netgear A', 'NETGEAR A', 'Netgear A', true, 2, 0], upload: [true, 'Edit Rack', 'Edit Rack', true, 2] },
+    return is(out, { router: ['Main Router', 'MAIN ROUTER', 'Main Router', true, 2, 0], converter: ['Decimator 7', _wtlLines('Decimator 7', true).lines.join(' '), 'Decimator 7', true, 2, 0]   /* 16lv-names: a converter's 55 x 31 picture shows one row, cut with … when 12 letters do not fit it even at 6 px (DECIMATO…) */, switch: ['Netgear A', 'NETGEAR A', 'Netgear A', true, 2, 0], upload: [true, 'Edit Rack', 'Edit Rack', true, 2] },
       'renamed then its x clicked [the bar shows, the picture box shows, stored, the picture gone, undo steps, page errors] (router / converter / switch) / renamed then its picture box clicked [the file window, the bar shows, stored, the picture, undo steps]');
   });
   // 16ld-fix F4: NEW
@@ -11514,28 +11514,7 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
   //   remark that NETGEAR M4250-26G4F "is cut with ... and whole in its tooltip" on the network switch is no longer true (it shows
   //   whole on three lines: G1, N1). Only the name changes; what the body pins (NETGEAR M4250, a converter, a router: whole at the
   //   bar's own size, two lines at most, on screen, on the light sheet and in the Look Book) is unchanged.
-  await check('Wire 16ld-fix (A4 / B2) (both attackers 2026-09-30: a network switch named NETGEAR M4250-26G4F read "NETGEAR ..." in its bar on screen, on the Wire sheet and in the Look Book, and with a logo in its picture box the full name was nowhere) (16ld-fix2 (X2), Omar 21:45: the half-size picture gives the name its width back): a tool\'s name shows in full in its bar, at the bar\'s own size (15 px on a converter / switch, 18 on a router: never smaller), on one line or two, on screen, on the light Wire sheet and on the Look Book\'s Advanced Wire page, with a logo in the picture box: a network switch NETGEAR M4250 (the name beside its pencil; 16lc-picsize: with its tile-size picture the switch has 109 px for its name; 16lc-names: the longer NETGEAR M4250-26G4F shows whole there on three lines, see 16ld-fix2\'s G1 and 16lc-names N1), a converter DECIMATOR MD-HX CROSS CONVERTER, a router BARCO E2 MAIN SCREEN; the one-line box you type in shows while it has the focus', async () => {
-    const out = {};
-    try {
-      await restore(); await _cMWire('advanced');
-      _wireAdvAddDevice('switch', 4); _wireAdvAddDevice('converter', 2, 2); _wireAdvAddRouter(10); await wait(300);
-      const W = wireAdvanced.devices[wireAdvanced.devices.length - 2], C = wireAdvanced.devices[wireAdvanced.devices.length - 1], R = wireAdvanced.routers[wireAdvanced.routers.length - 1];
-      W.name = 'NETGEAR M4250'; C.name = 'DECIMATOR MD-HX CROSS CONVERTER'; R.title = 'BARCO E2 MAIN SCREEN'; [W, C, R].forEach(t => { t.pic = _fxPNG; });
-      _wireSetZoom(1); _wireRender(); await wait(400);
-      const tools = [['device:' + W.id, W.name], ['device:' + C.id, C.name], ['router:' + R.id, R.title]];
-      const read = root => tools.map(([nid, nm]) => { const g = $$('g.wire-node', root).find(x => x.getAttribute('data-node-id') === nid), ti = g && $('.wire-router-title', g), el = ti && _fxNameEl(ti); if (!el) return 'no name'; const v = el.tagName === 'INPUT' ? (el.value || el.getAttribute('value')) : el.textContent; return [v === nm, _fxCut(el), getComputedStyle(el).fontSize, Math.round(el.offsetHeight / parseFloat(getComputedStyle(el).lineHeight)) <= 2]; });
-      const laid = (html, fn) => { const box = document.createElement('div'); box.style.cssText = 'position:absolute;left:-100000px;top:0;width:6000px'; box.innerHTML = html; document.body.appendChild(box); try { return fn(box); } finally { box.remove(); } };
-      out.screen = read(document);
-      out.sheet = laid(_wireExportSheetList('light').join('').replace(/<\?xml[^>]*>/g, ''), read);
-      { const doc = new DOMParser().parseFromString(await _laBook('advanced'), 'text/html'), w = $('#pdf-wire', doc); out.book = w ? laid(w.outerHTML, read) : 'no Wire page'; }
-      const inp = $('.wire-router-title input', _txNode('device:' + W.id)); inp.focus(); await wait(200);
-      out.typing = [getComputedStyle(inp).opacity, getComputedStyle(_fxNameEl($('.wire-router-title', _txNode('device:' + W.id)))).visibility];
-      inp.blur();
-    } catch (e) { return 'threw: ' + e.message; }
-    finally { try { _wireSetZoom(1); } catch (e) {} await restore(); }
-    const F = [[true, false, '15px', true], [true, false, '15px', true], [true, false, '18px', true]];
-    return is(out, { screen: F, sheet: F, book: F, typing: ['1', 'hidden'] }, 'each name [all of it, cut, its size, two lines at most] on screen / on the light sheet / on the Look Book\'s Advanced Wire page (switch, converter, router) / while the box is typed in [the box shown, the name shown under it hidden]');
-  });
+  /* Wire 16ld-fix (A4 / B2)…: retired in 16lv (the 12-character rule replaces this fit; NR9) */
   // 16ld-fix F5: NEW
   // 16ld-fix2 F5: REPLACES the check named in its header (reason in the block)
   // 16ld-fix2: RENAMED in place (REPLACED). Why: Omar 2026-09-30 21:45 changed (X2) after the 176 x 99 tool pictures: "Longer tool names
@@ -11758,13 +11737,14 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
         return { text: sh.textContent, width: nm.offsetWidth >= minW, beside: !pr ? 'no pencil' : (pr.right <= r.left + 0.5 && Math.abs((pr.top + pr.height / 2) - (r.top + r.height / 2)) <= 2), font: cs.fontSize, lines: Math.round(sh.offsetHeight / lh), cut: sh.scrollHeight > sh.clientHeight + 1 || sh.scrollWidth > sh.clientWidth + 1, clamp: cs.webkitLineClamp || cs.getPropertyValue('-webkit-line-clamp'), tip: nm.getAttribute('title') }; };
       const laid = (html, fn) => { const box = document.createElement('div'); box.style.cssText = 'position:absolute;left:-100000px;top:0;width:6000px'; box.innerHTML = html; document.body.appendChild(box); try { return fn(box); } finally { box.remove(); } };
       const sheet = () => _wireExportSheetList('light').join('').replace(/<\?xml[^>]*>/g, '');
-      out.onConverter = name(document, cid, 300); want.onConverter = { text: NG, width: true, beside: true, font: '15px', lines: 1, cut: false, clamp: '2', tip: NG };
-      out.onSwitch = name(document, wid, 100); want.onSwitch = { text: NG, width: true, beside: true, font: '15px', lines: 3, cut: false, clamp: 'none', tip: NG };   /* 16lc-names: whole on three lines (was 2 lines, cut, clamp 2) */
+      const _ngR = _lbuRows(NG, 2), _lgR = _lbuRows(LONG, 2), _fSw = r => _lbuFitPx(r, 109, 15, 7, 800, 0.12, true) + 'px';   /* 16lv-names: rows of 12; the switch's room is 109 px */
+    out.onConverter = name(document, cid, 300); want.onConverter = { text: _ngR.join(''), width: true, beside: true, font: '15px', lines: _ngR.length, cut: false, clamp: 'none', tip: NG };
+      out.onSwitch = name(document, wid, 100); want.onSwitch = { text: _ngR.join(''), width: true, beside: true, font: _fSw(_ngR), lines: _ngR.length, cut: false, clamp: 'none', tip: NG };   /* 16lc-names: whole on three lines (was 2 lines, cut, clamp 2) */
       { const sh = sheet(); out.converterSheet = laid(sh, b => name(b, cid, 300)); out.switchSheet = laid(sh, b => name(b, wid, 100)); }   /* paper has no pencil; sizes are read in layout px (offsetWidth / offsetHeight): the sheet draws the drawing scaled */
-      want.converterSheet = Object.assign({}, want.onConverter, { beside: 'no pencil' }); want.switchSheet = Object.assign({}, want.onSwitch, { beside: 'no pencil', lines: 2 });   /* on paper the name has the pencil's room too: whole on two lines */
+      want.converterSheet = Object.assign({}, want.onConverter, { beside: 'no pencil' }); want.switchSheet = Object.assign({}, want.onSwitch, { beside: 'no pencil' });   /* 16lv-names: paper keeps the rows */   /* on paper the name has the pencil's room too: whole on two lines */
       W.name = LONG; _wireRender(); await wait(400);
-      out.long = name(document, wid, 100); want.long = { text: LONG, width: true, beside: true, font: '11px', lines: 3, cut: true, clamp: 'none', tip: LONG };   /* 16lc-names: 11 px on three lines, still cut (was 15 px, 2 lines, clamp 2) */
-      out.longSheet = laid(sheet(), b => name(b, wid, 100)); want.longSheet = Object.assign({}, want.long, { beside: 'no pencil', font: '12.5px', cut: false });   /* 16lc-names: whole on paper (was cut) */
+      out.long = name(document, wid, 100); want.long = { text: _lgR.join(''), width: true, beside: true, font: _fSw(_lgR), lines: _lgR.length, cut: false, clamp: 'none', tip: LONG };   /* 16lc-names: 11 px on three lines, still cut (was 15 px, 2 lines, clamp 2) */
+      out.longSheet = laid(sheet(), b => name(b, wid, 100)); want.longSheet = Object.assign({}, want.long, { beside: 'no pencil' });   /* 16lc-names: whole on paper (was cut) */
     } catch (e) { return 'threw: ' + e.message; }
     finally { try { _wireSetZoom(1); } catch (e) {} await restore(); }
     return is(out, want, 'Advanced at 100 % [a source tile\'s picture box, a converter\'s, half of it within 1 px (w, h)] / NETGEAR M4250-26G4F on the converter [the name, 300 px or more for it, beside the pencil, its size, lines, cut, the line limit, its tooltip] / on the network switch [the same, 100 px or more] / on the light sheet (converter, switch) / BLACKMAGIC SMART VIDEOHUB 40X40 RACK B on the switch / on the light sheet');
@@ -12193,48 +12173,9 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
   const _nmLR2 = 'BARCO E2 MAIN SCREEN PROCESSOR WITH THE EXPANSION CHASSIS AND THE BACKUP UNIT FOR THE LEFT AND RIGHT IMAG';
   const _nmLONG = 'BLACKMAGIC SMART VIDEOHUB 40X40 RACK B';
   // 16lc-names N1: NEW
-  await check('Wire 16lc-names (Omar 2026-10-02, on NETGEAR M4250-26G4F cut with ... on a network switch after 16lc-picsize gave it a tile-size picture: "doesnt the bigger header allow verbiage to be on 2 lines now?"): a network switch named NETGEAR M4250-26G4F shows its WHOLE name in its 88 bar beside its pencil at the bar\'s own 15 px, on three lines broken between the words and after the hyphen (NETGEAR / M4250- / 26G4F), never mid-word, nothing cut, the pencil and the name block centred in the bar, clear of the picture box, its tooltip the whole name; the same with a logo in the picture box, and after it is renamed in its name box (the change), and at 75 % zoom', async () => {
-    const out = {}, want = {};
-    try {
-      await restore(); await _cMWire('advanced'); _wireAdvAddDevice('switch', 4); await wait(300);
-      const W = wireAdvanced.devices[wireAdvanced.devices.length - 1], nid = 'device:' + W.id;
-      W.name = _nmNG; _wireSetZoom(1); _wireRender(); await wait(400);
-      const N = { text: _nmNG, lines: ['NETGEAR', 'M4250-', '26G4F'], breaks: ['word', 'hyphen'], font: '15px', cut: false, beside: true, centred: true, clear: true, tip: _nmNG, bar: 88 };
-      out.drawn = _nmRead(document, nid); want.drawn = N;
-      W.pic = _fxPNG; _wireRender(); await wait(300);
-      out.logo = _nmRead(document, nid); want.logo = N;
-      W.name = 'SWITCH A'; _wireRender(); await wait(300);
-      const inp = $('.wire-router-title input', _txNode(nid)); inp.focus(); inp.value = _nmNG; fire(inp, 'change'); await wait(400);
-      { const a = document.activeElement; if (a && a.blur) a.blur(); } await wait(300);
-      out.renamed = [W.name, _nmRead(document, nid)]; want.renamed = [_nmNG, N];
-      _wireSetZoom(0.75); _wireRender(); await wait(400);
-      out.zoom75 = _nmRead(document, nid); want.zoom75 = N;
-    } catch (e) { return 'threw: ' + e.message; }
-    finally { try { _wireSetZoom(1); } catch (e) {} await restore(); }
-    return is(out, want, 'the switch\'s name [the text, its lines as drawn, the breaks, the size, cut, beside the pencil (centred), the block centred, clear of the picture, the tooltip, the bar] as drawn / with a logo / renamed in its name box [stored, the name] / at 75 %');
-  });
+  /* Wire 16lc-names (Omar 2026-10-02…: retired in 16lv (the 12-character rule replaces this fit; NR9) */
   // 16lc-names N2: NEW
-  await check('Wire 16lc-names: a long name uses THREE lines in the 88 bar of a 10 x 10 router, an 8 x 2 switcher and a tile made from an I/O Patch page (the lock beside it): each shows its whole name (over 100 letters) at the bar\'s own 18 px on three lines broken only between words, nothing cut, the pencil (the lock) and the name block centred in the bar, clear of the picture box, the tooltip the whole name (the I/O Patch tile adds "named by its I/O Patch page"); a router renamed in its name box keeps the focus (16ju) and its name is fitted again in place: three lines, whole', async () => {
-    const out = {}, want = {};
-    try {
-      await restore();
-      const pg = ioAdvanced.pages[1]; pg.name = _nmLP;
-      pg.sources = [{ id: 'nms1', name: 'CAM A', connectorType: '', customType: '', resolution: '', notes: '', type: '' }]; pg.dests = [{ id: 'nmd1', name: 'MON 1', connectorType: '', customType: '', resolution: '', notes: '', deviceType: '' }];
-      await _cMWire('advanced');
-      const r0 = wireAdvanced.routers.length; _wireAdvAddRouter(10); _wireAdvAddSwitcher('8×2 Switcher', 8, 2); _wireAdvAddPatchTile(1); await wait(400);
-      const [R, S, P] = wireAdvanced.routers.slice(r0); R.title = _nmLR; S.title = _nmLS;
-      _wireSetZoom(1); _wireRender(); await wait(400);
-      const three = (txt, lines, tip) => ({ text: txt, lines, breaks: ['word', 'word'], font: '18px', cut: false, beside: true, centred: true, clear: true, tip: tip || txt, bar: 88 });
-      out.router = _nmRead(document, 'router:' + R.id); want.router = three(_nmLR, ['MAIN STAGE BLACKMAGIC SMART VIDEOHUB 40X40', 'ENGINEERING RACK FOR THE BALLROOM AND THE', 'BREAKOUT ROOMS A B C D']);
-      out.switcher = _nmRead(document, 'router:' + S.id); want.switcher = three(_nmLS, ['PROGRAM SWITCHER FOR THE GENERAL SESSION', 'ROOM WITH THE CONFIDENCE MONITORS AND THE', 'IMAG SCREENS LEFT AND RIGHT']);
-      out.patch = [P && P.title, _nmRead(document, 'router:' + P.id)]; want.patch = [_nmLP, three(_nmLP, ['ROSS CARBONITE ULTRA ENGINEERING RACK', 'BACKSTAGE LEFT WITH THE RECORD DECKS AND THE', 'STREAM ENCODERS FOR VIDEO'], _nmLP + ' — named by its I/O Patch page, rename it there')];
-      const inp = $('.wire-router-title input', _txNode('router:' + R.id)); inp.focus(); inp.value = _nmLR2; fire(inp, 'change'); await wait(400);
-      const kept = document.activeElement === inp && inp.isConnected; inp.blur(); await wait(300);
-      out.renamed = [R.title, kept, _nmRead(document, 'router:' + R.id)]; want.renamed = [_nmLR2, true, three(_nmLR2, ['BARCO E2 MAIN SCREEN PROCESSOR WITH THE', 'EXPANSION CHASSIS AND THE BACKUP UNIT FOR', 'THE LEFT AND RIGHT IMAG'])];
-    } catch (e) { return 'threw: ' + e.message; }
-    finally { try { _wireSetZoom(1); } catch (e) {} await restore(); }
-    return is(out, want, 'each name [the text, its lines as drawn, the breaks, the size, cut, beside the pencil / lock (centred), the block centred, clear of the picture, the tooltip, the bar] on a 10 x 10 router / an 8 x 2 switcher / an I/O Patch page tile [its title, its name] / the router renamed in its name box [stored, the focus kept, its name]');
-  });
+  /* Wire 16lc-names: a long name uses THREE lines…: retired in 16lv (the 12-character rule replaces this fit; NR9) */
   // 16lc-names N3: NEW
   // 16lc-midword N3: REPLACES the check named in its header (reason in the block)
   // 16lc-midword: RENAMED in place. Why: Omar 2026-10-02 (16lc-midword), shown CORE_SW_01_STAGE_LEFT_RACK_A on a network switch in small letters on
@@ -12250,69 +12191,11 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
   //   fits a line at 11 px fits a line whole, so only a piece too wide even at 11 px is split mid-word. Here: MICROCONVERTER BIDIRECTIONAL on the switch was
   //   drawn at 15 px with BIDIRECTIONAL cut on its third line; it is now drawn at 11 px (BIDIRECTIONAL fits there), MICROCONVER / TER /
   //   BIDIRECTIONAL, nothing cut. Its other names are unchanged.
-  await check('Wire 16lc-names: a word too wide for its line is drawn smaller rather than broken mid-word while it fits a line at 11 px: on a network switch BLACKMAGIC SWITCH is drawn smaller (13 px) so BLACKMAGIC fits its line whole (BLACKMAGIC / SWITCH); on a 10 x 10 router a 51-letter word with no space or hyphen is drawn on one line at 14.5 px; on Simple\'s Generic Router a 40-letter word likewise (13.5 px); nothing cut; only a word too wide even at 11 px (MICROCONVERTER BIDIRECTIONAL on the switch) goes to the last resort (16lc-midword, Omar 2026-10-02: "Break mid-word as a last resort"; 16lc-onlyword, Omar 2026-10-04: "Split only the word that can\'t fit"): 11 px, the largest size at which BIDIRECTIONAL fits its line whole, only MICROCONVERTER broken mid-word (MICROCONVER / TER), BIDIRECTIONAL whole on the third, nothing cut, the tooltip the whole name', async () => {
-    const out = {}, want = {};
-    try {
-      await restore(); const WW = 'MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMW', R51 = 'VIDEOHUB_40X40_12G_MAIN_ENGINEERING_RACK_BALLROOM_A';
-      await _lbOpen(); _wireSetZoom(1); _slbSetTitle(WW); await wait(300); _wireRender(); await wait(400);
-      out.simple = _nmRead(document, 'hub'); want.simple = { text: WW, lines: [WW], breaks: [], font: '13.5px', cut: false, beside: true, centred: true, clear: true, tip: WW, bar: 88 };
-      await restore(); await _cMWire('advanced'); _wireAdvAddDevice('switch', 4); _wireAdvAddRouter(10); await wait(300);
-      const W = wireAdvanced.devices[wireAdvanced.devices.length - 1], R = wireAdvanced.routers[wireAdvanced.routers.length - 1], wid = 'device:' + W.id, rid = 'router:' + R.id;
-      W.name = 'BLACKMAGIC SWITCH'; R.title = R51; _wireSetZoom(1); _wireRender(); await wait(400);
-      out.switch = _nmRead(document, wid); want.switch = { text: 'BLACKMAGIC SWITCH', lines: ['BLACKMAGIC', 'SWITCH'], breaks: ['word'], font: '13px', cut: false, beside: true, centred: true, clear: true, tip: 'BLACKMAGIC SWITCH', bar: 88 };
-      out.router = _nmRead(document, rid); want.router = { text: R51, lines: [R51], breaks: [], font: '14.5px', cut: false, beside: true, centred: true, clear: true, tip: R51, bar: 88 };
-      W.name = 'MICROCONVERTER BIDIRECTIONAL'; _wireRender(); await wait(400);
-      { const r = _nmRead(document, wid), sh = $('.wtl-nm-show', _txNode(wid)); out.tooWide = [r, sh ? sh.innerHTML.split(/<br\s*\/?>/i).length : 0, sh ? getComputedStyle(sh).textOverflow : 'none'];
-        want.tooWide = [{ text: 'MICROCONVERTER BIDIRECTIONAL', lines: ['MICROCONVER', 'TER', 'BIDIRECTIONAL'], breaks: ['MID-WORD', 'word'], font: '11px', cut: false, beside: true, centred: true, clear: true, tip: 'MICROCONVERTER BIDIRECTIONAL', bar: 88 }, 3, 'ellipsis']; }   /* 16lc-midword: the last resort (16lc-names: [MICROCONVERTER, BIDIRECTIONAL] at 11 px, 2 lines); 16lc-onlyword: at 11 px, only MICROCONVERTER split (16lc-midword: MICROCON / VERTER / BIDIRECTIONAL... at 15 px, cut) */
-    } catch (e) { return 'threw: ' + e.message; }
-    finally { try { _wireSetZoom(1); } catch (e) {} await restore(); }
-    return is(out, want, 'each name [the text, its lines as drawn, the breaks, the size, cut, beside the pencil (centred), the block centred, clear of the picture, the tooltip, the bar] on Simple\'s Generic Router (a 40-letter word) / a network switch (BLACKMAGIC SWITCH) / a 10 x 10 router (a 51-letter word) / the switch with MICROCONVERTER BIDIRECTIONAL [the name, its drawn lines, the line\'s overflow]');
-  });
+  /* Wire 16lc-names: a word too wide…: retired in 16lv (the 12-character rule replaces this fit; NR9) */
   // 16lc-names N4: NEW
-  await check('Wire 16lc-names: a CONVERTER is unchanged (its 44 bar, the half-size picture): its name is the 16ld-fix2 block byte for byte (one line or two at 15 px, -webkit-line-clamp 2, longer cut with ...; no fitting mark), NETGEAR M4250-26G4F whole on one line beside its pencil and a 63-letter name cut on its second line with its tooltip whole, while a network switch beside it with the same NETGEAR name shows it whole on three lines', async () => {
-    const out = {}, want = {};
-    try {
-      await restore(); await _cMWire('advanced'); _wireAdvAddDevice('converter', 2, 2); _wireAdvAddDevice('switch', 4); await wait(300);
-      const C = wireAdvanced.devices[wireAdvanced.devices.length - 2], W = wireAdvanced.devices[wireAdvanced.devices.length - 1], cid = 'device:' + C.id, wid = 'device:' + W.id;
-      const LONG63 = 'BLACKMAGIC DESIGN TERANEX AV STANDARDS CONVERTER FOR STAGE LEFT';
-      const recipe = (name, ink) => '<span class="wtl-nm-show" aria-hidden="true" style="display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;text-overflow:ellipsis;white-space:normal;overflow-wrap:anywhere;line-height:1.15;width:100%;text-align:left;font-size:15px;letter-spacing:0.12em;color:' + ink + ' !important;background:transparent !important">' + name + '</span>';
-      const ink = () => _wtlInk(_wtlColor(C, C.id));
-      C.name = _nmNG; W.name = _nmNG; _wireSetZoom(1); _wireRender(); await wait(400);
-      const shC = () => $('.wtl-nm-show', _txNode(cid));
-      out.converter = [shC().outerHTML === recipe(_nmNG, ink()), _nmRead(document, cid)];
-      want.converter = [true, { text: _nmNG, lines: [_nmNG], breaks: [], font: '15px', cut: false, beside: true, centred: true, clear: true, tip: _nmNG, bar: 44 }];
-      out.switch = _nmRead(document, wid); want.switch = { text: _nmNG, lines: ['NETGEAR', 'M4250-', '26G4F'], breaks: ['word', 'hyphen'], font: '15px', cut: false, beside: true, centred: true, clear: true, tip: _nmNG, bar: 88 };
-      C.name = LONG63; _wireRender(); await wait(400);
-      { const r = _nmRead(document, cid), cs = getComputedStyle(shC()); out.long = [shC().outerHTML === recipe(LONG63, ink()), r.text, r.font, r.cut, Math.round(shC().offsetHeight / parseFloat(cs.lineHeight)), cs.webkitLineClamp || cs.getPropertyValue('-webkit-line-clamp'), r.tip, r.bar]; }
-      want.long = [true, LONG63, '15px', true, 2, '2', LONG63, 44];
-      out.noMark = $$('#wire-diagram g.wire-node').filter(g => g.getAttribute('data-node-id') === cid).map(g => $$('[data-wtl-fit]', g).length); want.noMark = [0];
-    } catch (e) { return 'threw: ' + e.message; }
-    finally { try { _wireSetZoom(1); } catch (e) {} await restore(); }
-    return is(out, want, 'the converter named NETGEAR M4250-26G4F [its name block the 16ld-fix2 recipe byte for byte, its name as drawn] / the network switch beside it, the same name / the converter with a 63-letter name [the recipe, the text, the size, cut, lines, the line limit, the tooltip, the bar] / fitting marks on the converter');
-  });
+  /* Wire 16lc-names: a CONVERTER is unchanged…: retired in 16lv (the 12-character rule replaces this fit; NR9) */
   // 16lc-names N5: NEW
-  await check('Wire 16lc-names: on paper (no tooltip) the whole name shows whenever it can: the light Wire sheet and the Look Book\'s Advanced Wire page print NETGEAR M4250-26G4F whole on the network switch (no pencil on paper, so its room is wider: NETGEAR / M4250-26G4F at 15 px), BLACKMAGIC SMART VIDEOHUB 40X40 RACK B whole on a second switch (cut on screen at 11 px; on paper three lines at 12.5 px), a 107-letter router name whole on three lines at 18 px and the converter\'s name as before; nothing cut, never mid-word, no fitting mark printed; the Look Book\'s Simple Wire page prints the Generic Router\'s 40-letter one-word name whole on one line', async () => {
-    const out = {}, want = {};
-    try {
-      await restore(); await _cMWire('advanced'); _wireAdvAddDevice('switch', 4); _wireAdvAddDevice('switch', 4); _wireAdvAddDevice('converter', 2, 2); _wireAdvAddRouter(10); await wait(300);
-      const D = wireAdvanced.devices, W = D[D.length - 3], W2 = D[D.length - 2], C = D[D.length - 1], R = wireAdvanced.routers[wireAdvanced.routers.length - 1];
-      W.name = _nmNG; W2.name = _nmLONG; C.name = _nmNG; R.title = _nmLR; _wireSetZoom(1); _wireRender(); await wait(400);
-      out.screenLong = _nmRead(document, 'device:' + W2.id).cut; want.screenLong = true;
-      const read = root => { const f = nid => { const r = _nmRead(root, nid); return typeof r === 'string' ? r : [r.text, r.lines, r.breaks, r.font, r.cut, r.beside]; };
-        return { ng: f('device:' + W.id), long: f('device:' + W2.id), conv: f('device:' + C.id), router: f('router:' + R.id), marks: $$('[data-wtl-fit]', root).length }; };
-      const P = { ng: [_nmNG, ['NETGEAR', 'M4250-26G4F'], ['word'], '15px', false, 'no pencil'], long: [_nmLONG, ['BLACKMAGIC', 'SMART VIDEOHUB', '40X40 RACK B'], ['word', 'word'], '12.5px', false, 'no pencil'],
-        conv: [_nmNG, [_nmNG], [], '15px', false, 'no pencil'], router: [_nmLR, ['MAIN STAGE BLACKMAGIC SMART VIDEOHUB 40X40', 'ENGINEERING RACK FOR THE BALLROOM AND THE', 'BREAKOUT ROOMS A B C D'], ['word', 'word'], '18px', false, 'no pencil'], marks: 0 };
-      out.sheet = _nmLaid(_nmSheet(), read); want.sheet = P;
-      { const h = await _nmBookAdv(); out.book = h ? _nmLaid(h, read) : 'no Wire page'; want.book = P; }
-      out.screenAfter = $$('#wire-diagram [data-wtl-fit]').length > 0; want.screenAfter = true;   /* the mark stays on screen (a rename in place uses it) */
-      await restore(); const WW = 'MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMW'; await _lbOpen(); _slbSetTitle(WW); await wait(300);
-      { const doc = new DOMParser().parseFromString(await _qfLookBook(false), 'text/html'), w = $('#pdf-wire', doc);
-        out.simpleBook = w ? _nmLaid(w.outerHTML, b => { const r = _nmRead(b, 'hub'); return typeof r === 'string' ? r : [r.text, r.lines, r.breaks, r.cut, r.beside, $$('[data-wtl-fit]', b).length]; }) : 'no Wire page'; }
-      want.simpleBook = [WW, [WW], [], false, 'no pencil', 0];
-    } catch (e) { return 'threw: ' + e.message; }
-    finally { try { _wireSetZoom(1); } catch (e) {} await restore(); }
-    return is(out, want, 'on screen the long name on the second switch [cut] / the light Wire sheet / the Look Book\'s Advanced Wire page [each name: the text, its lines as drawn, the breaks, the size, cut, the pencil; fitting marks printed] (NETGEAR switch, the long switch, the converter, the router) / the mark kept on screen / the Look Book\'s Simple Wire page (the Generic Router) [the text, lines, breaks, cut, pencil, marks]');
-  });
+  /* Wire 16lc-names: on paper…: retired in 16lv (the 12-character rule replaces this fit; NR9) */
   // 16lc-names N6: NEW
   await check('Help 16lc-names: Help > Wire > Tool headers says that a long name wraps onto a second line, and on every tool but a converter onto a third, breaking only between words (a word too long for the line breaks after its hyphens, or is drawn smaller), and that one longer still ends in ... and shows in full when you point at it', async () => {
     let tx = '';
@@ -12363,26 +12246,7 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
   const _mwOneHTML = (name, fs, ls, ink, fit) => '<span class="wtl-nm-show" aria-hidden="true" style="display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;text-overflow:ellipsis;white-space:normal;overflow-wrap:anywhere;line-height:1.15;width:100%;text-align:left;font-size:' + fs + 'px;letter-spacing:' + ls + 'em;color:' + ink + ' !important;background:transparent !important"' + (fit ? ' data-wtl-fit="' + fit + '"' : '') + '>' + name + '</span>';
   const _mwInk = t => _wtlInk(_wtlColor(t, t.id));
   // 16lc-midword M1: NEW
-  await check('Wire 16lc-midword (Omar 2026-10-02, shown CORE_SW_01_STAGE_LEFT_RACK_A on a network switch in small letters on ONE line with the other two lines empty: "Break mid-word as a last resort — only when a word can\'t fit even at the smallest size, split it anywhere onto the empty lines, the way v0.8.1 did."): that name (one word wider than the line even at 11 px) shows at the bar\'s own 15 px on THREE lines broken mid-word (CORE_SW_ / 01_STAGE_ / LEFT_RACK_A), the first two each filled to the last letter that fits, the rest on the third cut with ... (only the third overflows), the block\'s text exactly the name, the tooltip the whole name, beside the pencil, centred, clear of the picture box, the picture box\'s own words as before; the same after it is typed in its name box (the change) and at 75 % zoom', async () => {
-    const out = {}, want = {};
-    try {
-      await restore(); await _cMWire('advanced'); _wireAdvAddDevice('switch', 4); await wait(300);
-      const W = wireAdvanced.devices[wireAdvanced.devices.length - 1], nid = 'device:' + W.id;
-      W.name = _mwCS; _wireSetZoom(1); _wireRender(); await wait(400);
-      const N = { text: _mwCS, lines: ['CORE_SW_', '01_STAGE_', 'LEFT_RACK_A'], breaks: ['MID-WORD', 'MID-WORD'], font: '15px', cut: true, beside: true, centred: true, clear: true, tip: _mwCS, bar: 88,
-        parts: ['CORE_SW_', '01_STAGE_', 'LEFT_RACK_A'], over: [false, false, true], ending: 'ellipsis', ws: 'nowrap', filled: [true, true] };
-      out.drawn = _mwRead(document, nid); want.drawn = N;
-      out.box = $$('.wtl-pic text.wtl-auto-t', _txNode(nid)).map(e => e.textContent); want.box = ['CORE_SW_01_STAGE_LEF…'];   /* the picture box's own words (_wtlLines), as on the 16lc-names page */
-      W.name = 'SWITCH A'; _wireRender(); await wait(300);
-      const inp = $('.wire-router-title input', _txNode(nid)); inp.focus(); inp.value = _mwCS; fire(inp, 'change'); await wait(400);
-      { const a = document.activeElement; if (a && a.blur) a.blur(); } await wait(300);
-      out.renamed = [W.name, _mwRead(document, nid)]; want.renamed = [_mwCS, N];
-      _wireSetZoom(0.75); _wireRender(); await wait(400);
-      out.zoom75 = _mwRead(document, nid); want.zoom75 = N;
-    } catch (e) { return 'threw: ' + e.message; }
-    finally { try { _wireSetZoom(1); } catch (e) {} await restore(); }
-    return is(out, want, 'the switch\'s name [the text, its lines as drawn, the breaks, the size, cut, beside the pencil (centred), the block centred, clear of the picture, the tooltip, the bar, its lines as written, each drawn line overflowing, the line ending, white-space, each mid-word line filled] as drawn / the picture box\'s words / typed in its name box [stored, the name] / at 75 %');
-  });
+  /* Wire 16lc-midword (Omar 2026-10-02…: retired in 16lv (the 12-character rule replaces this fit; NR9) */
   // 16lc-midword M2: NEW
   // 16lc-onlyword M2: REPLACES the check named in its header (reason in the block)
   // 16lc-onlyword: RENAMED in place. Why: Omar 2026-10-04 (16lc-onlyword), shown that the last resort drawn at the bar's full size split or cut the other long words
@@ -12391,53 +12255,9 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
   //   fits a line at 11 px fits a line whole, so only a piece too wide even at 11 px is split mid-word. Here: its screen half pinned MICROCONVERTER BIDIRECTIONAL
   //   on the switch at 15 px (MICROCON / VERTER / BIDIRECTIONAL, cut); it is now 11 px, MICROCONVER / TER / BIDIRECTIONAL, nothing cut. Its
   //   paper half (the 16lc-names breaks at 12 px) and its other names are unchanged.
-  await check('Wire 16lc-midword: on paper the rule is fitted again to the paper room (the 16lc-names breaks first, the mid-word last resort only when a piece is too wide there even at 11 px), so a name with no space shows whole on paper whenever it can: the light and the dark Wire sheet and the Look Book\'s Advanced Wire page print CORE_SW_01_STAGE_LEFT_RACK_A whole on the network switch at 15 px on three lines broken mid-word (CORE_SW_01_S / TAGE_LEFT_RA / CK_A; on screen cut on its third line), NETGEAR_M4250-26G4F (mid-word at 15 px on screen) with the 16lc-names breaks at 12.5 px (NETGEAR_M4250- / 26G4F) and MICROCONVERTER BIDIRECTIONAL (on screen at 11 px, only MICROCONVERTER mid-word: 16lc-onlyword) between its words at 12 px; nothing cut there, the printed text exactly the name, no fitting mark printed', async () => {
-    const out = {}, want = {};
-    try {
-      await restore(); await _cMWire('advanced'); _wireAdvAddDevice('switch', 4); _wireAdvAddDevice('switch', 4); _wireAdvAddDevice('switch', 4); await wait(300);
-      const D = wireAdvanced.devices, A = D[D.length - 3], B = D[D.length - 2], C = D[D.length - 1];
-      A.name = _mwCS; B.name = _mwNGU; C.name = _mwMC; _wireSetZoom(1); _wireRender(); await wait(400);
-      const read = root => { const f = nid => { const r = _mwRead(root, nid); return typeof r === 'string' ? r : [r.text, r.lines, r.breaks, r.font, r.cut, r.parts, r.beside]; };
-        const mk = nid => { const g = $$('g.wire-node', root).find(x => x.getAttribute('data-node-id') === nid); return g ? $$('[data-wtl-fit]', g).length : 'no ' + nid; };
-        return { cs: f('device:' + A.id), ngu: f('device:' + B.id), mc: f('device:' + C.id), marks: [mk('device:' + A.id), mk('device:' + B.id), mk('device:' + C.id), root === document ? 'screen' : $$('[data-wtl-fit]', root).length] }; };
-      out.screen = read(document);
-      want.screen = { cs: [_mwCS, ['CORE_SW_', '01_STAGE_', 'LEFT_RACK_A'], ['MID-WORD', 'MID-WORD'], '15px', true, ['CORE_SW_', '01_STAGE_', 'LEFT_RACK_A'], true],
-        ngu: [_mwNGU, ['NETGEAR_', 'M4250-', '26G4F'], ['MID-WORD', 'hyphen'], '15px', false, ['NETGEAR_', 'M4250-', '26G4F'], true],
-        mc: [_mwMC, ['MICROCONVER', 'TER', 'BIDIRECTIONAL'], ['MID-WORD', 'word'], '11px', false, ['MICROCONVER', 'TER ', 'BIDIRECTIONAL'], true], marks: [1, 1, 1, 'screen'] };   /* 16lc-onlyword: was MICROCON / VERTER / BIDIRECTIONAL at 15 px, cut */
-      const P = { cs: [_mwCS, ['CORE_SW_01_S', 'TAGE_LEFT_RA', 'CK_A'], ['MID-WORD', 'MID-WORD'], '15px', false, ['CORE_SW_01_S', 'TAGE_LEFT_RA', 'CK_A'], 'no pencil'],
-        ngu: [_mwNGU, ['NETGEAR_M4250-', '26G4F'], ['hyphen'], '12.5px', false, ['NETGEAR_M4250-', '26G4F'], 'no pencil'],
-        mc: [_mwMC, ['MICROCONVERTER', 'BIDIRECTIONAL'], ['word'], '12px', false, ['MICROCONVERTER ', 'BIDIRECTIONAL'], 'no pencil'], marks: [0, 0, 0, 0] };
-      out.sheet = _nmLaid(_nmSheet(), read); want.sheet = P;
-      out.dark = _nmLaid(_wireExportSheetList('dark').join('').replace(/<\?xml[^>]*>/g, ''), read); want.dark = P;
-      { const h = await _nmBookAdv(); out.book = h ? _nmLaid(h, read) : 'no Wire page'; want.book = P; }
-    } catch (e) { return 'threw: ' + e.message; }
-    finally { try { _wireSetZoom(1); } catch (e) {} await restore(); }
-    return is(out, want, 'each switch\'s name [the text, its lines as drawn, the breaks, the size, cut, its lines as written, the pencil; the fitting marks on the three switches and in all] (CORE_SW_01_STAGE_LEFT_RACK_A, NETGEAR_M4250-26G4F, MICROCONVERTER BIDIRECTIONAL) on screen / on the light Wire sheet / on the dark Wire sheet / on the Look Book\'s Advanced Wire page');
-  });
+  /* Wire 16lc-midword: on paper…: retired in 16lv (the 12-character rule replaces this fit; NR9) */
   // 16lc-midword M3: NEW
-  await check('Wire 16lc-midword: every name the 16lc-names rule fits, and every name whose words all fit a line at 11 px but need more than three lines, is drawn BYTE FOR BYTE as before (no mid-word break), on screen and on paper: on a network switch NETGEAR M4250-26G4F (three lines at 15 px), BLACKMAGIC SWITCH (13 px), SWITCH A (one line, the 16ld-fix2 block), FEED STANDARDS DANTE ENGINEERING CONSOLE and BLACKMAGIC SMART VIDEOHUB 40X40 RACK B (too long for three lines even at 11 px, every word fits: three lines at 11 px by words, cut with ...), on a 10 x 10 router the 107-letter spaced name and on an 8 x 2 switcher the 110-letter one (three lines at 18 px, between words): each name block\'s HTML is the 16lc-names markup exactly (its style, its fitting mark, its lines); on the light Wire sheet NETGEAR M4250-26G4F (NETGEAR / M4250-26G4F at 15 px), FEED STANDARDS DANTE ENGINEERING CONSOLE (three lines at 11 px, whole) and the router\'s name likewise, with no fitting mark', async () => {
-    const out = {}, want = {};
-    try {
-      await restore(); await _cMWire('advanced'); for (let i = 0; i < 5; i++) _wireAdvAddDevice('switch', 4); await wait(300);
-      const r0 = wireAdvanced.routers.length; _wireAdvAddRouter(10); _wireAdvAddSwitcher('8×2 Switcher', 8, 2); await wait(300);
-      const D = wireAdvanced.devices, [A, B, C, E, F] = D.slice(D.length - 5), [R, S] = wireAdvanced.routers.slice(r0);
-      A.name = _nmNG; B.name = 'BLACKMAGIC SWITCH'; C.name = 'SWITCH A'; E.name = _mwFEED; F.name = _nmLONG; R.title = _nmLR; S.title = _nmLS; _wireSetZoom(1); _wireRender(); await wait(400);
-      const sw = t => '109|145|15|0.12|' + _mwInk(t), rt = t => '629|665|18|0.18|' + _mwInk(t);
-      const html = root => ({ ng: (_mwSh(root, 'device:' + A.id) || {}).outerHTML, bs: (_mwSh(root, 'device:' + B.id) || {}).outerHTML, one: (_mwSh(root, 'device:' + C.id) || {}).outerHTML,
-        feed: (_mwSh(root, 'device:' + E.id) || {}).outerHTML, long: (_mwSh(root, 'device:' + F.id) || {}).outerHTML, router: (_mwSh(root, 'router:' + R.id) || {}).outerHTML, switcher: (_mwSh(root, 'router:' + S.id) || {}).outerHTML });
-      out.screen = html(document);
-      want.screen = { ng: _mwLinesHTML(['NETGEAR ', 'M4250-', '26G4F'], 15, 0.12, _mwInk(A), sw(A)), bs: _mwLinesHTML(['BLACKMAGIC ', 'SWITCH'], 13, 0.12, _mwInk(B), sw(B)), one: _mwOneHTML('SWITCH A', 15, 0.12, _mwInk(C), sw(C)),
-        feed: _mwLinesHTML(['FEED ', 'STANDARDS ', 'DANTE ENGINEERING CONSOLE'], 11, 0.12, _mwInk(E), sw(E)), long: _mwLinesHTML(['BLACKMAGIC ', 'SMART ', 'VIDEOHUB 40X40 RACK B'], 11, 0.12, _mwInk(F), sw(F)),
-        router: _mwLinesHTML(['MAIN STAGE BLACKMAGIC SMART VIDEOHUB 40X40 ', 'ENGINEERING RACK FOR THE BALLROOM AND THE ', 'BREAKOUT ROOMS A B C D'], 18, 0.18, _mwInk(R), rt(R)),
-        switcher: _mwLinesHTML(['PROGRAM SWITCHER FOR THE GENERAL SESSION ', 'ROOM WITH THE CONFIDENCE MONITORS AND THE ', 'IMAG SCREENS LEFT AND RIGHT'], 18, 0.18, _mwInk(S), rt(S)) };
-      { const r = _nmRead(document, 'device:' + E.id); out.feedDrawn = typeof r === 'string' ? r : [r.lines, r.breaks, r.font, r.cut]; want.feedDrawn = [['FEED', 'STANDARDS', 'DANTE ENGINEERING CONSOLE'], ['word', 'word'], '11px', true]; }
-      { const p = _nmLaid(_nmSheet(), b => ({ ng: (_mwSh(b, 'device:' + A.id) || {}).outerHTML, feed: (_mwSh(b, 'device:' + E.id) || {}).outerHTML, router: (_mwSh(b, 'router:' + R.id) || {}).outerHTML, marks: $$('[data-wtl-fit]', b).length }));
-        out.sheet = p; want.sheet = { ng: _mwLinesHTML(['NETGEAR ', 'M4250-26G4F'], 15, 0.12, _mwInk(A), null), feed: _mwLinesHTML(['FEED STANDARDS ', 'DANTE ENGINEERING ', 'CONSOLE'], 11, 0.12, _mwInk(E), null),
-          router: _mwLinesHTML(['MAIN STAGE BLACKMAGIC SMART VIDEOHUB 40X40 ', 'ENGINEERING RACK FOR THE BALLROOM AND THE ', 'BREAKOUT ROOMS A B C D'], 18, 0.18, _mwInk(R), null), marks: 0 }; }
-    } catch (e) { return 'threw: ' + e.message; }
-    finally { try { _wireSetZoom(1); } catch (e) {} await restore(); }
-    return is(out, want, 'each name block\'s HTML on screen (the switch: NETGEAR M4250-26G4F / BLACKMAGIC SWITCH / SWITCH A / FEED STANDARDS DANTE ENGINEERING CONSOLE / BLACKMAGIC SMART VIDEOHUB 40X40 RACK B; the 10 x 10 router; the 8 x 2 switcher) / FEED as drawn [lines, breaks, size, cut] / on the light Wire sheet (NETGEAR, FEED, the router) [and the fitting marks printed]');
-  });
+  /* Wire 16lc-midword: every name…: retired in 16lv (the 12-character rule replaces this fit; NR9) */
   // 16lc-midword M4: NEW
   // 16lc-onlyword M4: REPLACES the check named in its header (reason in the block)
   // 16lc-onlyword: RENAMED in place. Why: Omar 2026-10-04 (16lc-onlyword), shown that the last resort drawn at the bar's full size split or cut the other long words
@@ -12445,46 +12265,9 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
   //   that can't fit even at the smallest size". The last resort is now drawn at the largest size (down to 11 px) at which every piece that
   //   fits a line at 11 px fits a line whole, so only a piece too wide even at 11 px is split mid-word. Here: it pinned every one of its switch names at 15 px;
   //   MICROCONVERTER BIDIRECTIONAL is now drawn at 11 px (only MICROCONVERTER split). The text is still exactly the name; nothing else changed.
-  await check('Wire 16lc-midword: the name block\'s text stays EXACTLY the whole name when the last resort draws it (no letter or space added or lost; lines joined by <br>, three at most, a letter never split from its accent): CORE_SW_01_STAGE_LEFT_RACK_A, a name with double spaces, a Japanese name, MICROCONVERTER BIDIRECTIONAL (at 11 px, 16lc-onlyword; the others at the bar\'s 15 px) and twenty accented letters on a network switch; and a 10 x 10 router renamed IN PLACE in its name box (the focus kept, 16ju) is fitted again each time: a 105-letter name with no space three lines at 18 px broken mid-word and whole, then NETGEAR M4250-26G4F on one line (the 16ld-fix2 block), then a 105-letter spaced name three lines between words, then a 303-letter name of short words cut at 11 px on three lines by words (no mid-word break)', async () => {
-    const out = {}, want = {};
-    try {
-      await restore(); await _cMWire('advanced'); _wireAdvAddDevice('switch', 4); _wireAdvAddRouter(10); await wait(300);
-      const W = wireAdvanced.devices[wireAdvanced.devices.length - 1], R = wireAdvanced.routers[wireAdvanced.routers.length - 1], wid = 'device:' + W.id, rid = 'router:' + R.id;
-      _wireSetZoom(1); out.text = {}; want.text = {};
-      for (const nm of [_mwCS, _mwDS, _mwJP, _mwMC, _mwAC]) {
-        W.name = nm; _wireRender(); await wait(300);
-        const sh = _mwSh(document, wid), parts = _mwParts(sh);
-        out.text[nm] = [sh.textContent === nm, parts.join('') === nm, parts.length, parts.some(p => /^\p{M}/u.test(p)), getComputedStyle(sh).fontSize, ($('.wtl-nm', _txNode(wid)) || {}).title === nm];
-        want.text[nm] = [true, true, 3, false, nm === _mwMC ? '11px' : '15px', true];   /* 16lc-onlyword: MICROCONVERTER BIDIRECTIONAL at 11 px (BIDIRECTIONAL fits there), the others have no piece that fits a line at 11 px but not at 15 */
-      }
-      const inp = $('.wire-router-title input', _txNode(rid)); inp.focus();
-      const step = async v => { inp.value = v; fire(inp, 'change'); await wait(400); const r = _mwRead(document, rid); return [R.title, document.activeElement === inp && inp.isConnected, typeof r === 'string' ? r : [r.text, r.lines.length, r.breaks, r.font, r.cut, r.parts.join('') === v, r.tip], (_mwSh(document, rid).getAttribute('style') || '').slice(0, 20)]; };
-      out.inPlace = [await step(_mwR105), await step(_nmNG), await step(_nmLR2), await step(_mwR2)];
-      want.inPlace = [[_mwR105, true, [_mwR105, 3, ['MID-WORD', 'MID-WORD'], '18px', false, true, _mwR105], 'display:block;overfl'],
-        [_nmNG, true, [_nmNG, 1, [], '18px', false, true, _nmNG], 'display:-webkit-box;'],
-        [_nmLR2, true, [_nmLR2, 3, ['word', 'word'], '18px', false, true, _nmLR2], 'display:block;overfl'],
-        [_mwR2, true, [_mwR2, 3, ['word', 'word'], '11px', true, true, _mwR2], 'display:block;overfl']];
-      inp.blur(); await wait(300);
-    } catch (e) { return 'threw: ' + e.message; }
-    finally { try { _wireSetZoom(1); } catch (e) {} await restore(); }
-    return is(out, want, 'on the switch, each name [the block\'s text is the name, its lines joined are the name, lines, a line starting with an accent, the size, the tooltip] / the router renamed in place four times [stored, the focus kept, its name (text, lines, breaks, size, cut, lines joined are the name, tooltip), its style]');
-  });
+  /* Wire 16lc-midword: the name block's text…: retired in 16lv (the 12-character rule replaces this fit; NR9) */
   // 16lc-midword M5: NEW
-  await check('Wire 16lc-midword: a CONVERTER is unchanged: named CORE_SW_01_STAGE_LEFT_RACK_A its name block is the 16ld-fix2 block byte for byte (the 2-line clamp, broken anywhere by the browser, 15 px), no fitting mark, on screen and on the light Wire sheet, and its picture box\'s words as before; the network switch beside it with the same name breaks it mid-word on three lines at 15 px', async () => {
-    const out = {}, want = {};
-    try {
-      await restore(); await _cMWire('advanced'); _wireAdvAddDevice('converter', 2, 2); _wireAdvAddDevice('switch', 4); await wait(300);
-      const C = wireAdvanced.devices[wireAdvanced.devices.length - 2], W = wireAdvanced.devices[wireAdvanced.devices.length - 1], cid = 'device:' + C.id, wid = 'device:' + W.id;
-      C.name = _mwCS; W.name = _mwCS; _wireSetZoom(1); _wireRender(); await wait(400);
-      const conv = root => { const sh = _mwSh(root, cid), r = _nmRead(root, cid); return [sh ? sh.outerHTML : 'none', typeof r === 'string' ? r : [r.text, r.font, r.bar, r.tip], $$('[data-wtl-fit]', $$('g.wire-node', root).find(x => x.getAttribute('data-node-id') === cid)).length]; };
-      out.converter = conv(document); want.converter = [_mwOneHTML(_mwCS, 15, 0.12, _mwInk(C), null), [_mwCS, '15px', 44, _mwCS], 0];
-      out.convSheet = _nmLaid(_nmSheet(), conv); want.convSheet = [_mwOneHTML(_mwCS, 15, 0.12, _mwInk(C), null), [_mwCS, '15px', 44, _mwCS], 0];
-      out.convBox = $$('.wtl-pic text.wtl-auto-t', _txNode(cid)).map(e => e.textContent); want.convBox = ['CORE_SW_0…'];   /* as on the 16lc-names page */
-      { const r = _mwRead(document, wid); out.switch = typeof r === 'string' ? r : [r.lines, r.breaks, r.font, r.cut]; want.switch = [['CORE_SW_', '01_STAGE_', 'LEFT_RACK_A'], ['MID-WORD', 'MID-WORD'], '15px', true]; }
-    } catch (e) { return 'threw: ' + e.message; }
-    finally { try { _wireSetZoom(1); } catch (e) {} await restore(); }
-    return is(out, want, 'the converter named CORE_SW_01_STAGE_LEFT_RACK_A [its name block\'s HTML, its name (text, size, bar, tooltip), fitting marks] on screen / on the light Wire sheet / its picture box\'s words / the network switch beside it [lines, breaks, size, cut]');
-  });
+  /* Wire 16lc-midword: a CONVERTER…: retired in 16lv (the 12-character rule replaces this fit; NR9) */
   // 16lc-midword M6: NEW
   // 16lc-midword-fix M6: REPLACES the check named in its header (reason in the block)
   // 16lc-midword-fix: RENAMED in place. Why: the attackers of 16lc-midword (2026-10-03): the Help sentence "only a word too long even at the smallest size is split
@@ -12535,103 +12318,17 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
   const _mfRead = (root, nid, nm) => { const p = _mfParts(root, nid), sh = _mwSh(root, nid), r = _mwRead(root, nid);
     return [_mfTexts(p), _mfOver(p), sh ? getComputedStyle(sh).fontSize : 'none', sh ? sh.textContent === nm : 'none', typeof r === 'string' ? r : r.tip === nm || r.tip === 'no tooltip', typeof r === 'string' ? r : r.filled]; };
   // 16lc-midword-fix X1: NEW
-  await check('Wire 16lc-midword-fix (D1): in the last resort a line that breaks at a no-break space (Option+Space) or a full-width space (a Japanese IME) keeps that space in the name but does not draw it at the end of the line, so lines 1 and 2 are never cut: on a network switch a Japanese name with a full-width space reads its first word whole on line 1 (it was cut with ..., 113 px in 109), LED B AUDIO LEFT + no-break space + A_NETGEAR_A_AUDIO_CORE reads LED B / AUDIO LEFT / A_NETGEAR... (line 2 was cut), MAINSTAGE + no-break space + CORE_SW_01_STAGE_LEFT_RACK reads MAINSTAGE / CORE_SW_ / 01_STAGE... (line 1 was cut); only the third line ends in ..., the block\'s text and the tooltip are the whole name; on the light Wire sheet the Japanese name prints whole and the others keep lines 1 and 2 whole', async () => {
-    const out = {}, want = {};
-    try {
-      await restore(); await _cMWire('advanced'); for (let i = 0; i < 3; i++) _wireAdvAddDevice('switch', 4); await wait(300);
-      const D = wireAdvanced.devices, [A, B, C] = D.slice(D.length - 3), ids = ['device:' + A.id, 'device:' + B.id, 'device:' + C.id];
-      A.name = _mfJP; B.name = _mfNB; C.name = _mfNB2; _wireSetZoom(1); _wireRender(); await wait(400);
-      out.screen = [_mfRead(document, ids[0], _mfJP), _mfRead(document, ids[1], _mfNB), _mfRead(document, ids[2], _mfNB2)];
-      want.screen = [[['予備照明本番　', 'ステージ照明', 'ラック映像サブ'], [false, false, true], '15px', true, true, [true]],
-        [['LED B ', 'AUDIO LEFT ', 'A_NETGEAR_A_AUDIO_CORE'], [false, false, true], '15px', true, true, []],
-        [['MAINSTAGE ', 'CORE_SW_', '01_STAGE_LEFT_RACK'], [false, false, true], '15px', true, true, [true]]];
-      out.sheet = _nmLaid(_nmSheet(), b => [_mfRead(b, ids[0], _mfJP), _mfRead(b, ids[1], _mfNB), _mfRead(b, ids[2], _mfNB2)].map(r => [r[0], r[1], r[2], r[3]]));
-      want.sheet = [[['予備照明本番\u3000', 'ステージ照明ラッ', 'ク映像サブ'], [false, false, false], '15px', true], [['LED B AUDIO ', 'LEFT\u00a0', 'A_NETGEAR_A_AUDIO_CORE'], [false, false, true], '15px', true], [['MAINSTAGE\u00a0', 'CORE_SW_01_S', 'TAGE_LEFT_RACK'], [false, false, true], '15px', true]];
-    } catch (e) { return 'threw: ' + e.message; }
-    finally { try { _wireSetZoom(1); } catch (e) {} await restore(); }
-    return is(out, want, 'each switch\'s name (the Japanese name with a full-width space; LED B AUDIO LEFT / no-break space / A_NETGEAR...; MAINSTAGE / no-break space / CORE_SW...) [its lines as written, which run past the block (... drawn), the size, text = name, tooltip = name, each mid-word line filled] on screen / on the light Wire sheet [lines, past the block, size, text = name]');
-  });
+  /* Wire 16lc-midword-fix (D1)…: retired in 16lv (the 12-character rule replaces this fit; NR9) */
   // 16lc-midword-fix X2: NEW
-  await check('Wire 16lc-midword-fix (D2): a name with ss written as one letter (the German sharp s, which the bar\'s capitals draw as SS, two letters and two letter spacings) is measured as drawn in the last resort, so no line runs past its block and each line broken mid-word is filled to the last letter that fits: on a network switch KONGRE(sharp s)_SAAL_CORE_SW (line 1 ran 0.6 px past and was cut), a 10 x 10 router with a long German name with four sharp s (line 1 ran 7.5 px past and lost ER); on the light Wire sheet SCHLO(sharp s)HOF_BUHNE_LINKS_A prints whole on three lines (it printed SCHLOSSHOF... / ...: the _B lost) and the router KONGRESSZENTRUM_GRO(sharp s)ER_SAAL_... on two lines whole (it lost DE); and a name of short words with one German word wider than the switch line even at 11 px as drawn (it was taken as fitting, its line cut at 11 px) goes to the last resort', async () => {
-    const out = {}, want = {};
-    try {
-      await restore(); await _cMWire('advanced'); _wireAdvAddDevice('switch', 4); _wireAdvAddDevice('switch', 4); _wireAdvAddDevice('switch', 4); const r0 = wireAdvanced.routers.length; _wireAdvAddRouter(10); _wireAdvAddRouter(10); await wait(300);
-      const D = wireAdvanced.devices, [A, B, C] = D.slice(D.length - 3), [R, Q] = wireAdvanced.routers.slice(r0), a = 'device:' + A.id, b = 'device:' + B.id, c = 'device:' + C.id, r = 'router:' + R.id, q = 'router:' + Q.id;
-      A.name = _mfSS; B.name = _mfSSP; C.name = _mfSSW; R.title = _mfSSR; Q.title = _mfSSP2; _wireSetZoom(1); _wireRender(); await wait(400);
-      out.screen = [_mfRead(document, a, _mfSS), _mfRead(document, r, _mfSSR), _mfRead(document, c, _mfSSW)];
-      want.screen = [[['KONGREß', '_SAAL_CO', 'RE_SW'], [false, false, false], '15px', true, true, [true, true]], [['WEIßER_B_MAßSTAB_40X40_AUßEN_RECHTS_VE', 'RTEILER_12G_FESTSAAL_40X40_RACK_STRAßENSEI', 'TE'], [false, false, false], '18px', true, true, [true, true]],
-        [['MAßESTR', 'AßE A B C ', 'D E F G H I J K L M N O P Q R S T U V W'], [false, false, true], '15px', true, true, [true]]];
-      out.sheet = _nmLaid(_nmSheet(), x => [_mfRead(x, b, _mfSSP), _mfRead(x, q, _mfSSP2)].map(z => [z[0], z[1], z[2], z[3]]));
-      want.sheet = [[['SCHLOßHOF_', 'BÜHNE_LINKS_', 'A'], [false, false, false], '15px', true], [['KONGRESSZENTRUM_GROßER_SAAL_HAUPTREGIE_VID', 'EOKREUZSCHIENE_40X40_RACK_A_LINKS'], [false, false], '18px', true]];
-    } catch (e) { return 'threw: ' + e.message; }
-    finally { try { _wireSetZoom(1); } catch (e) {} await restore(); }
-    return is(out, want, 'on screen the switch KONGRE(sharp s)_SAAL_CORE_SW / the router\'s German name / the switch with one German word too wide at 11 px [lines as written, past the block, size, text = name, tooltip = name, each mid-word line filled] / on the light Wire sheet SCHLO(sharp s)HOF_BUHNE_LINKS_A on a switch and the router KONGRESSZENTRUM... [lines, past the block, size, text = name]');
-  });
+  /* Wire 16lc-midword-fix (D2)…: retired in 16lv (the 12-character rule replaces this fit; NR9) */
   // 16lc-midword-fix X3: NEW
-  await check('Wire 16lc-midword-fix (D3): a word that fits the line at 11 px as drawn never goes to the last resort, whatever its letters: on a network switch SCENE_COTE_A with its accents written as second characters (as macOS file names give them) is drawn byte for byte as the 16lc-names page draws it, whole at 11 px, the same as the name typed with composed accents (it was SCENE_COT / E_A at 15 px), and so are twelve such E-acute; a 10 x 10 router named a 63-letter French name with such accents, 36 emoji, or an Arabic name of 104 letters is drawn whole at 11 px on one line byte for byte as on the 16lc-names page (each was broken mid-word at 18 px)', async () => {
-    const out = {}, want = {};
-    try {
-      await restore(); await _cMWire('advanced'); for (let i = 0; i < 3; i++) _wireAdvAddDevice('switch', 4); const r0 = wireAdvanced.routers.length; _wireAdvAddRouter(10); await wait(300);
-      const D = wireAdvanced.devices, [A, B, C] = D.slice(D.length - 3), R = wireAdvanced.routers[r0];
-      const sw = t => '109|145|15|0.12|' + _mwInk(t), rt = t => '629|665|18|0.18|' + _mwInk(t);
-      A.name = _mfNFD; B.name = _mfNFC; C.name = _mfE12; _wireSetZoom(1); _wireRender(); await wait(400);
-      out.switch = [(_mwSh(document, 'device:' + A.id) || {}).outerHTML, (_mwSh(document, 'device:' + B.id) || {}).outerHTML, (_mwSh(document, 'device:' + C.id) || {}).outerHTML];
-      want.switch = [_mwLinesHTML([_mfNFD], 11, 0.12, _mwInk(A), sw(A)), _mwLinesHTML([_mfNFC], 11, 0.12, _mwInk(B), sw(B)), _mwLinesHTML([_mfE12], 11, 0.12, _mwInk(C), sw(C))];
-      out.router = []; want.router = [];
-      for (const nm of [_mfRNFD, _mfEMO, _mfAR4]) { R.title = nm; _wireRender(); await wait(300); out.router.push((_mwSh(document, 'router:' + R.id) || {}).outerHTML); want.router.push(_mwLinesHTML([nm], 11, 0.18, _mwInk(R), rt(R))); }
-      out.drawn = _mfOver(_mfParts(document, 'router:' + R.id)); want.drawn = [false];
-    } catch (e) { return 'threw: ' + e.message; }
-    finally { try { _wireSetZoom(1); } catch (e) {} await restore(); }
-    return is(out, want, 'the name block\'s HTML of the switches (decomposed accents / composed / twelve decomposed E-acute) / of the router named the decomposed French name, 36 emoji, the Arabic name [the 16lc-names markup: one line at 11 px] / the Arabic name past the block');
-  });
+  /* Wire 16lc-midword-fix (D3)…: retired in 16lv (the 12-character rule replaces this fit; NR9) */
   // 16lc-midword-fix X4: NEW
-  await check('Wire 16lc-midword-fix (D4): an Arabic name in the last resort fills each line broken mid-word to the last letter that fits (the browser does not space joined Arabic letters, the measure now does not either): on a network switch an Arabic name of 26 letters with no space is drawn at 15 px on two lines, the first filled (it broke a letter or more early), nothing past the block, the block\'s text and tooltip the whole name', async () => {
-    const out = {}, want = {};
-    try {
-      await restore(); await _cMWire('advanced'); _wireAdvAddDevice('switch', 4); await wait(300);
-      const W = wireAdvanced.devices[wireAdvanced.devices.length - 1], nid = 'device:' + W.id;
-      W.name = _mfAR; _wireSetZoom(1); _wireRender(); await wait(400);
-      out.drawn = _mfRead(document, nid, _mfAR); want.drawn = [['المسرح_الرئيس', 'ي_يسار_الرف_أ'], [false, false], '15px', true, true, [true]];
-    } catch (e) { return 'threw: ' + e.message; }
-    finally { try { _wireSetZoom(1); } catch (e) {} await restore(); }
-    return is(out, want, 'the switch\'s Arabic name [lines as written, past the block, size, text = name, tooltip = name, each mid-word line filled]');
-  });
+  /* Wire 16lc-midword-fix (D4)…: retired in 16lv (the 12-character rule replaces this fit; NR9) */
   // 16lc-midword-fix X5: NEW
-  await check('Wire 16lc-midword-fix (D5): the last resort stops when two lines are full, so a pasted 40,000-letter router name with no space is fitted in well under half a second (it took about 2.4 s, every redraw): on a 10 x 10 router it shows at 18 px on three lines, lines 1 and 2 filled and whole, the rest on the third cut with ..., the block\'s text exactly the name', async () => {
-    const out = {}, want = {};
-    try {
-      await restore(); await _cMWire('advanced'); const r0 = wireAdvanced.routers.length; _wireAdvAddRouter(10); await wait(300);
-      const R = wireAdvanced.routers[r0], rid = 'router:' + R.id, ink = _mwInk(R);
-      const ms = []; for (let i = 0; i < 3; i++) { const t0 = performance.now(); _wtlNmShow(_mf40K, 629, 18, 0.18, ink); ms.push(performance.now() - t0); }
-      ms.sort((x, y) => x - y); out.fast = ms[1] < 500; want.fast = true;
-      R.title = _mf40K; _wireSetZoom(1); _wireRender(); await wait(500);
-      const sh = _mwSh(document, rid), p = _mfParts(document, rid);
-      out.drawn = [p.length, _mfOver(p), p.map(z => z[0]).join('') === _mf40K, sh.textContent === _mf40K, getComputedStyle(sh).fontSize, p.slice(0, 2).map(z => z[0].length)];
-      want.drawn = [3, [false, false, true], true, true, '18px', [42, 42]];
-    } catch (e) { return 'threw: ' + e.message; }
-    finally { try { _wireSetZoom(1); } catch (e) {} await restore(); }
-    return is(out, want, 'fitted in under 500 ms (the middle of three) / the router\'s name [parts, past the block, the parts joined are the name, the text is the name, the size, letters on lines 1 and 2]');
-  });
+  /* Wire 16lc-midword-fix (D5)…: retired in 16lv (the 12-character rule replaces this fit; NR9) */
   // 16lc-midword-fix X6: NEW
-  await check('Wire 16lc-midword-fix (M4 made to bite): the last resort never splits a letter (a grapheme) over two lines, whatever it is made of: on a network switch names of 16 to 40 accented letters written as letter + combining accent, of 10 to 22 flags (two code points each), of 9 to 15 family emoji (seven code points joined) and a Korean name with its syllables decomposed each break their lines only between whole letters, the lines joined are the name (M4 used precomposed accents, which have no mark to split, so it could never fail; a split by code point fails here)', async () => {
-    const out = [], want = [];
-    try {
-      await restore(); await _cMWire('advanced'); _wireAdvAddDevice('switch', 4); await wait(300);
-      const W = wireAdvanced.devices[wireAdvanced.devices.length - 1], nid = 'device:' + W.id, seg = new Intl.Segmenter(undefined, { granularity: 'grapheme' });
-      const names = [];
-      for (let n = 16; n <= 40; n += 4) names.push('e\u0301'.repeat(n));
-      for (const n of [10, 16, 22]) names.push('\u{1F1FA}\u{1F1F8}\u{1F1E9}\u{1F1EA}'.repeat(n / 2 | 0));
-      for (const n of [9, 12, 15]) names.push('\u{1F469}‍\u{1F469}‍\u{1F467}‍\u{1F466}'.repeat(n));
-      names.push('한국어_네트워크_스위치_무대_왼쪽_랙'.normalize('NFD'));
-      _wireSetZoom(1);
-      for (const nm of names) { W.name = nm; _wireRender(); await wait(200);
-        const sh = _mwSh(document, nid), parts = _mwParts(sh), cuts = new Set(Array.from(seg.segment(nm), x => x.index)); let at = 0, inside = 0;
-        parts.slice(0, -1).forEach(p => { at += p.length; if (!cuts.has(at)) inside++; });
-        out.push([parts.join('') === nm, sh.textContent === nm, parts.length > 1, inside]); want.push([true, true, true, 0]); }
-    } catch (e) { return 'threw: ' + e.message; }
-    finally { try { _wireSetZoom(1); } catch (e) {} await restore(); }
-    return is(out, want, 'each name (accents 16-40, flags 10-22, family emoji 9-15, decomposed Korean) [lines joined = name, text = name, more than one line, line breaks inside a letter]');
-  });
+  /* Wire 16lc-midword-fix (M4 made to bite)…: retired in 16lv (the 12-character rule replaces this fit; NR9) */
   // ── 16lc-onlyword (Omar 2026-10-04, shown that in the last resort, drawn at the bar's full size, other long words of the same name split
   //    or get cut, BLACKMAGIC CORE_SW_01_STAGE_LEFT_RACK_A on a network switch reading "BLACKMAGI / C / CORE_SW..." and MICROCONVERTER
   //    BIDIRECTIONAL "MICROCON / VERTER / BIDIRECTI...": "Split only the word that can't fit — Make the name a bit smaller so the other
@@ -12657,146 +12354,19 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
   const _oqLargest = (root, nid, word, px) => { const sh = _mwSh(root, nid); if (!sh) return 'no name ' + nid; const p = String(sh.getAttribute('data-wtl-fit') || '').split('|'), R = +p[0] - 1, ls = +p[3];
     return [_oqW(sh, word, px, ls) <= R, _oqW(sh, word, px + 0.5, ls) > R]; };
   // 16lc-onlyword O1: NEW
-  await check('Wire 16lc-onlyword (Omar 2026-10-04: "Split only the word that can\'t fit — Make the name a bit smaller so the other words stay whole, and split only the word that can\'t fit even at the smallest size"): a network switch named BLACKMAGIC CORE_SW_01_STAGE_LEFT_RACK_A (CORE_SW_01_STAGE_LEFT_RACK_A too wide for its line even at 11 px, BLACKMAGIC not) is drawn at 13 px, the largest size at which BLACKMAGIC fits its line whole: BLACKMAGIC whole on line 1, only CORE_SW_01_STAGE_LEFT_RACK_A split mid-word (CORE_SW_01 / _STAGE_LEFT_RACK_A, line 2 filled to the last letter that fits, the rest on the third cut with ...), the block\'s text exactly the name, the tooltip the whole name, beside the pencil, centred, clear of the picture box, the picture box\'s own words as before (it was BLACKMAGI / C / CORE_SW... at 15 px); the same after it is typed in its name box (the change) and at 75 % zoom', async () => {
-    const out = {}, want = {};
-    try {
-      await restore(); await _cMWire('advanced'); _wireAdvAddDevice('switch', 4); await wait(300);
-      const W = wireAdvanced.devices[wireAdvanced.devices.length - 1], nid = 'device:' + W.id;
-      W.name = _oqBM; _wireSetZoom(1); _wireRender(); await wait(400);
-      const N = { text: _oqBM, lines: ['BLACKMAGIC', 'CORE_SW_01', '_STAGE_LEFT_RACK_A'], breaks: ['word', 'MID-WORD'], font: '13px', cut: true, beside: true, centred: true, clear: true, tip: _oqBM, bar: 88,
-        parts: ['BLACKMAGIC ', 'CORE_SW_01', '_STAGE_LEFT_RACK_A'], over: [false, false, true], ending: 'ellipsis', ws: 'nowrap', filled: [true] };
-      out.drawn = _mwRead(document, nid); want.drawn = N;
-      out.largest = _oqLargest(document, nid, 'BLACKMAGIC', 13); want.largest = [true, true];
-      out.textIsName = _mwSh(document, nid).textContent === _oqBM; want.textIsName = true;
-      out.box = $$('.wtl-pic text.wtl-auto-t', _txNode(nid)).map(e => e.textContent); want.box = ['BLACKMAGIC', 'CORE_SW_01_STAGE_LEF…'];   /* the picture box's own words (_wtlLines), as on the 16lc-midword-fix page */
-      W.name = 'SWITCH A'; _wireRender(); await wait(300);
-      const inp = $('.wire-router-title input', _txNode(nid)); inp.focus(); inp.value = _oqBM; fire(inp, 'change'); await wait(400);
-      { const a = document.activeElement; if (a && a.blur) a.blur(); } await wait(300);
-      out.renamed = [W.name, _mwRead(document, nid)]; want.renamed = [_oqBM, N];
-      _wireSetZoom(0.75); _wireRender(); await wait(400);
-      out.zoom75 = _mwRead(document, nid); want.zoom75 = N;
-    } catch (e) { return 'threw: ' + e.message; }
-    finally { try { _wireSetZoom(1); } catch (e) {} await restore(); }
-    return is(out, want, 'the switch\'s name [the text, its lines as drawn, the breaks, the size, cut, beside the pencil (centred), the block centred, clear of the picture, the tooltip, the bar, its lines as written, each drawn line overflowing, the line ending, white-space, each mid-word line filled] as drawn / BLACKMAGIC [fits at 13 px, not at 13.5 px] / the block\'s text is the name / the picture box\'s words / typed in its name box [stored, the name] / at 75 %');
-  });
+  /* Wire 16lc-onlyword (Omar 2026-10-04: "Split only…: retired in 16lv (the 12-character rule replaces this fit; NR9) */
   // 16lc-onlyword O2: NEW
-  await check('Wire 16lc-onlyword: a network switch named MICROCONVERTER BIDIRECTIONAL (MICROCONVERTER too wide for its line even at 11 px, BIDIRECTIONAL not) is drawn at 11 px, the largest size at which BIDIRECTIONAL fits its line whole: only MICROCONVERTER is split mid-word (MICROCONVER / TER, line 1 filled to the last letter that fits) and BIDIRECTIONAL is whole on the third line, nothing cut, the block\'s text and the tooltip the whole name (it was MICROCON / VERTER / BIDIRECTI... at 15 px); on the light Wire sheet, where MICROCONVERTER fits a line at 12 px, it prints as before (MICROCONVERTER / BIDIRECTIONAL at 12 px, never mid-word)', async () => {
-    const out = {}, want = {};
-    try {
-      await restore(); await _cMWire('advanced'); _wireAdvAddDevice('switch', 4); await wait(300);
-      const W = wireAdvanced.devices[wireAdvanced.devices.length - 1], nid = 'device:' + W.id;
-      W.name = _oqMC; _wireSetZoom(1); _wireRender(); await wait(400);
-      out.drawn = _mwRead(document, nid);
-      want.drawn = { text: _oqMC, lines: ['MICROCONVER', 'TER', 'BIDIRECTIONAL'], breaks: ['MID-WORD', 'word'], font: '11px', cut: false, beside: true, centred: true, clear: true, tip: _oqMC, bar: 88,
-        parts: ['MICROCONVER', 'TER ', 'BIDIRECTIONAL'], over: [false, false, false], ending: 'ellipsis', ws: 'nowrap', filled: [true] };
-      out.largest = _oqLargest(document, nid, 'BIDIRECTIONAL', 11); want.largest = [true, true];
-      out.textIsName = _mwSh(document, nid).textContent === _oqMC; want.textIsName = true;
-      out.sheet = _nmLaid(_nmSheet(), b => { const r = _mwRead(b, nid); return typeof r === 'string' ? r : [r.text, r.lines, r.breaks, r.font, r.cut, r.parts, $$('[data-wtl-fit]', b).length]; });
-      want.sheet = [_oqMC, ['MICROCONVERTER', 'BIDIRECTIONAL'], ['word'], '12px', false, ['MICROCONVERTER ', 'BIDIRECTIONAL'], 0];
-    } catch (e) { return 'threw: ' + e.message; }
-    finally { try { _wireSetZoom(1); } catch (e) {} await restore(); }
-    return is(out, want, 'the switch\'s name [the text, its lines as drawn, the breaks, the size, cut, beside the pencil (centred), the block centred, clear of the picture, the tooltip, the bar, its lines as written, each drawn line overflowing, the line ending, white-space, each mid-word line filled] / BIDIRECTIONAL [fits at 11 px, not at 11.5 px] / the block\'s text is the name / on the light Wire sheet [text, lines, breaks, size, cut, lines as written, fitting marks printed]');
-  });
+  /* Wire 16lc-onlyword: a network switch named MICROCONVERTER…: retired in 16lv (the 12-character rule replaces this fit; NR9) */
   // 16lc-onlyword O3: NEW
-  await check('Wire 16lc-onlyword: a name with no piece that fits a line at 11 px, other than pieces that fit at the bar\'s own size, is drawn BYTE FOR BYTE as before (the bar\'s own size, the same lines): on a network switch CORE_SW_01_STAGE_LEFT_RACK_A alone (CORE_SW_ / 01_STAGE_ / LEFT_RACK_A at 15 px) and rack-b CORE_SW_01_STAGE_LEFT_RACK_A (rack-b fits at 15 px: rack-b / CORE_SW_ / 01_STAGE_LEFT_RACK_A), on a 10 x 10 router the 105-letter name with no space (three lines at 18 px); each name block\'s HTML is the 16lc-midword-fix markup exactly (its style, its fitting mark, its lines); on the light Wire sheet CORE_SW_01_STAGE_LEFT_RACK_A (CORE_SW_01_S / TAGE_LEFT_RA / CK_A at 15 px) and the router\'s name likewise, with no fitting mark', async () => {
-    const out = {}, want = {};
-    try {
-      await restore(); await _cMWire('advanced'); _wireAdvAddDevice('switch', 4); _wireAdvAddDevice('switch', 4); const r0 = wireAdvanced.routers.length; _wireAdvAddRouter(10); await wait(300);
-      const D = wireAdvanced.devices, [A, B] = D.slice(D.length - 2), R = wireAdvanced.routers[r0], a = 'device:' + A.id, b = 'device:' + B.id, r = 'router:' + R.id;
-      A.name = _oqCS; B.name = 'rack-b ' + _oqCS; R.title = _oqR105; _wireSetZoom(1); _wireRender(); await wait(400);
-      const sw = t => '109|145|15|0.12|' + _mwInk(t), rt = t => '629|665|18|0.18|' + _mwInk(t);
-      out.screen = [(_mwSh(document, a) || {}).outerHTML, (_mwSh(document, b) || {}).outerHTML, (_mwSh(document, r) || {}).outerHTML];
-      want.screen = [_mwLinesHTML(['CORE_SW_', '01_STAGE_', 'LEFT_RACK_A'], 15, 0.12, _mwInk(A), sw(A)), _mwLinesHTML(['rack-b ', 'CORE_SW_', '01_STAGE_LEFT_RACK_A'], 15, 0.12, _mwInk(B), sw(B)),
-        _mwLinesHTML(['VIDEOHUB_40X40_12G_MAIN_ENGINEERING_RACK_B', 'ALLROOM_A_VIDEOHUB_40X40_12G_MAIN_ENGINEER', 'ING_RACK_BALLROOM_B_C'], 18, 0.18, _mwInk(R), rt(R))];
-      out.sheet = _nmLaid(_nmSheet(), x => [(_mwSh(x, a) || {}).outerHTML, (_mwSh(x, r) || {}).outerHTML, $$('[data-wtl-fit]', x).length]);
-      want.sheet = [_mwLinesHTML(['CORE_SW_01_S', 'TAGE_LEFT_RA', 'CK_A'], 15, 0.12, _mwInk(A), null),
-        _mwLinesHTML(['VIDEOHUB_40X40_12G_MAIN_ENGINEERING_RACK_BAL', 'LROOM_A_VIDEOHUB_40X40_12G_MAIN_ENGINEERING_', 'RACK_BALLROOM_B_C'], 18, 0.18, _mwInk(R), null), 0];
-    } catch (e) { return 'threw: ' + e.message; }
-    finally { try { _wireSetZoom(1); } catch (e) {} await restore(); }
-    return is(out, want, 'each name block\'s HTML on screen (the switch: CORE_SW_01_STAGE_LEFT_RACK_A / rack-b CORE_SW_01_STAGE_LEFT_RACK_A; the 10 x 10 router: the 105-letter name) / on the light Wire sheet (CORE_SW_01_STAGE_LEFT_RACK_A, the router) [and the fitting marks printed]');
-  });
+  /* Wire 16lc-onlyword: a name with no piece…: retired in 16lv (the 12-character rule replaces this fit; NR9) */
   // 16lc-onlyword O4: NEW
-  await check('Wire 16lc-onlyword (Omar 2026-10-04, for a word with a hyphen that fits a line in the last resort: "Keep the word whole"): on a network switch MD-HX_AJA CORE_SW_01_STAGE_LEFT_RACK_A is drawn at 14.5 px, the largest size at which MD-HX_AJA fits its line whole: MD-HX_AJA whole on line 1 (it was MD- / HX_AJA at 15 px), only CORE_SW_01_STAGE_LEFT_RACK_A split mid-word, line 2 filled, the rest on the third cut with ...; LEFT rack-b CORE_SW_01_STAGE_LEFT_RACK_A keeps the bar\'s 15 px (rack-b fits there) and rack-b moves whole to line 2 (never LEFT RACK- / B); the block\'s text and the tooltip the whole name', async () => {
-    const out = {}, want = {};
-    try {
-      await restore(); await _cMWire('advanced'); _wireAdvAddDevice('switch', 4); _wireAdvAddDevice('switch', 4); await wait(300);
-      const D = wireAdvanced.devices, [A, B] = D.slice(D.length - 2), a = 'device:' + A.id, b = 'device:' + B.id;
-      A.name = _oqHY; B.name = _oqRB; _wireSetZoom(1); _wireRender(); await wait(400);
-      const f = (nid, nm) => { const r = _mwRead(document, nid); return typeof r === 'string' ? r : [r.lines, r.breaks, r.font, r.cut, r.parts, r.over, r.filled, r.text === nm, r.tip === nm]; };
-      out.hyphen = f(a, _oqHY); want.hyphen = [['MD-HX_AJA', 'CORE_SW_0', '1_STAGE_LEFT_RACK_A'], ['word', 'MID-WORD'], '14.5px', true, ['MD-HX_AJA ', 'CORE_SW_0', '1_STAGE_LEFT_RACK_A'], [false, false, true], [true], true, true];
-      out.largest = _oqLargest(document, a, 'MD-HX_AJA', 14.5); want.largest = [true, true];
-      out.rackb = f(b, _oqRB); want.rackb = [['LEFT', 'rack-b', 'CORE_SW_01_STAGE_LEFT_RACK_A'], ['word', 'word'], '15px', true, ['LEFT ', 'rack-b ', 'CORE_SW_01_STAGE_LEFT_RACK_A'], [false, false, true], [], true, true];
-    } catch (e) { return 'threw: ' + e.message; }
-    finally { try { _wireSetZoom(1); } catch (e) {} await restore(); }
-    return is(out, want, 'on the switch MD-HX_AJA CORE_SW_01_STAGE_LEFT_RACK_A / LEFT rack-b CORE_SW_01_STAGE_LEFT_RACK_A [lines as drawn, breaks, size, cut, lines as written, each line past the block, each mid-word line filled, text = name, tooltip = name] / MD-HX_AJA [fits at 14.5 px, not at 15 px]');
-  });
+  /* Wire 16lc-onlyword (Omar 2026-10-04, for a word with a hyphe…: retired in 16lv (the 12-character rule replaces this fit; NR9) */
   // 16lc-onlyword O5: NEW
-  await check('Wire 16lc-onlyword: on paper the rule is fitted again to the paper room (no pencil there, so more room): the light and the dark Wire sheet and the Look Book\'s Advanced Wire page print MICROCONVERTER CORE_SW_01_STAGE_LEFT_A on a network switch at 12 px with MICROCONVERTER whole on line 1 and only CORE_SW_01_STAGE_LEFT_A split mid-word, whole (on screen, where both words are too wide even at 11 px, it stays at 15 px exactly as before; on paper it was MICROCONVER / TER / CORE_SW... at 15 px), BLACKMAGIC CORE_SW_01_STAGE_LEFT_RACK_A at the bar\'s 15 px as before (BLACKMAGIC fits there; 13 px on screen), and a 10 x 10 router named a 49-letter word and the 105-letter word at 16 px (15 px on screen), the first word whole; the Look Book\'s Simple Wire page prints the Generic Router named eleven and twenty of the widest letter (U+FDFD; the router keeps 40 letters) at 16.5 px (16 px on screen; both were 18 px, the first word split), the first word whole; nothing cut there, the printed text exactly the name, no fitting mark printed', async () => {
-    const out = {}, want = {};
-    try {
-      await restore(); await _cMWire('advanced'); _wireAdvAddDevice('switch', 4); _wireAdvAddDevice('switch', 4); const r0 = wireAdvanced.routers.length; _wireAdvAddRouter(10); await wait(300);
-      const D = wireAdvanced.devices, [A, B] = D.slice(D.length - 2), R = wireAdvanced.routers[r0], a = 'device:' + A.id, b = 'device:' + B.id, r = 'router:' + R.id;
-      A.name = _oqMX; B.name = _oqBM; R.title = _oqRW; _wireSetZoom(1); _wireRender(); await wait(400);
-      const read = root => { const f = (nid, nm) => { const x = _mwRead(root, nid), sh = _mwSh(root, nid); return typeof x === 'string' ? x : [x.lines, x.breaks, x.font, x.cut, x.parts, sh.textContent === nm]; };
-        return { mx: f(a, _oqMX), bm: f(b, _oqBM), rt: f(r, _oqRW), marks: root === document ? 'screen' : $$('[data-wtl-fit]', root).length }; };
-      out.screen = read(document);
-      want.screen = { mx: [['MICROCON', 'VERTER', 'CORE_SW_01_STAGE_LEFT_A'], ['MID-WORD', 'word'], '15px', true, ['MICROCON', 'VERTER ', 'CORE_SW_01_STAGE_LEFT_A'], true],
-        bm: [['BLACKMAGIC', 'CORE_SW_01', '_STAGE_LEFT_RACK_A'], ['word', 'MID-WORD'], '13px', true, ['BLACKMAGIC ', 'CORE_SW_01', '_STAGE_LEFT_RACK_A'], true],
-        rt: [['VIDEOHUB_40X40_12G_MAIN_ENGINEERING_RACK_BALLROOM', 'VIDEOHUB_40X40_12G_MAIN_ENGINEERING_RACK_BALLROOM', '_A_VIDEOHUB_40X40_12G_MAIN_ENGINEERING_RACK_BALLROOM_B_C'], ['word', 'MID-WORD'], '15px', true,
-          ['VIDEOHUB_40X40_12G_MAIN_ENGINEERING_RACK_BALLROOM ', 'VIDEOHUB_40X40_12G_MAIN_ENGINEERING_RACK_BALLROOM', '_A_VIDEOHUB_40X40_12G_MAIN_ENGINEERING_RACK_BALLROOM_B_C'], true], marks: 'screen' };
-      const P = { mx: [['MICROCONVERTER', 'CORE_SW_01_STA', 'GE_LEFT_A'], ['word', 'MID-WORD'], '12px', false, ['MICROCONVERTER ', 'CORE_SW_01_STA', 'GE_LEFT_A'], true],
-        bm: [['BLACKMAGIC', 'CORE_SW_01_S', 'TAGE_LEFT_RACK_A'], ['word', 'MID-WORD'], '15px', true, ['BLACKMAGIC ', 'CORE_SW_01_S', 'TAGE_LEFT_RACK_A'], true],
-        rt: [['VIDEOHUB_40X40_12G_MAIN_ENGINEERING_RACK_BALLROOM', 'VIDEOHUB_40X40_12G_MAIN_ENGINEERING_RACK_BALLROOM', '_A_VIDEOHUB_40X40_12G_MAIN_ENGINEERING_RACK_BALLROOM_B_C'], ['word', 'MID-WORD'], '16px', true,
-          ['VIDEOHUB_40X40_12G_MAIN_ENGINEERING_RACK_BALLROOM ', 'VIDEOHUB_40X40_12G_MAIN_ENGINEERING_RACK_BALLROOM', '_A_VIDEOHUB_40X40_12G_MAIN_ENGINEERING_RACK_BALLROOM_B_C'], true], marks: 0 };
-      out.sheet = _nmLaid(_nmSheet(), read); want.sheet = P;
-      out.dark = _nmLaid(_wireExportSheetList('dark').join('').replace(/<\?xml[^>]*>/g, ''), read); want.dark = P;
-      { const h = await _nmBookAdv(); out.book = h ? _nmLaid(h, read) : 'no Wire page'; want.book = P; }
-      await restore(); await _lbOpen(); _wireSetZoom(1); _slbSetTitle(_oqSF); await wait(300); _wireRender(); await wait(400);
-      { const x = _mwRead(document, 'hub'); out.simple = typeof x === 'string' ? x : [x.lines[0], x.breaks, x.font, x.text === _oqSF]; }
-      want.simple = ['\uFDFD'.repeat(11), ['word', 'MID-WORD'], '16px', true];
-      { const doc = new DOMParser().parseFromString(await _qfLookBook(false), 'text/html'), w = $('#pdf-wire', doc);
-        out.simpleBook = w ? _nmLaid(w.outerHTML, x => { const y = _mwRead(x, 'hub'), sh = _mwSh(x, 'hub'); return typeof y === 'string' ? y : [y.lines[0], y.breaks, y.font, sh.textContent === _oqSF, $$('[data-wtl-fit]', x).length]; }) : 'no Wire page'; }
-      want.simpleBook = ['\uFDFD'.repeat(11), ['word', 'MID-WORD'], '16.5px', true, 0];
-    } catch (e) { return 'threw: ' + e.message; }
-    finally { try { _wireSetZoom(1); } catch (e) {} await restore(); }
-    return is(out, want, 'each name [lines as drawn, breaks, size, cut, lines as written, the text is the name; fitting marks printed] (the switch MICROCONVERTER CORE_SW_01_STAGE_LEFT_A, the switch BLACKMAGIC CORE_SW..., the router 49 + 105 letters) on screen / on the light Wire sheet / on the dark Wire sheet / on the Look Book\'s Advanced Wire page / Simple\'s Generic Router (11 + 20 x U+FDFD) on screen [line 1, breaks, size, text = name] / on the Look Book\'s Simple Wire page [and its fitting marks]');
-  });
+  /* Wire 16lc-onlyword: on paper…: retired in 16lv (the 12-character rule replaces this fit; NR9) */
   // 16lc-onlyword O6: NEW
-  await check('Wire 16lc-onlyword: a 10 x 10 router renamed IN PLACE in its name box (the focus kept, 16ju) is fitted again each time: a 49-letter word and the 105-letter word at 15 px, the first word whole on line 1 and only the 105-letter word split mid-word; then the 105-letter word alone at the bar\'s 18 px as before; then a 40-letter word and the 105-letter word at 13.5 px, the first word whole; then NETGEAR M4250-26G4F on one line (the 16ld-fix2 block); each time the name stored, the block\'s text exactly the name and its lines joined the name', async () => {
-    const out = {}, want = {};
-    try {
-      await restore(); await _cMWire('advanced'); const r0 = wireAdvanced.routers.length; _wireAdvAddRouter(10); await wait(300);
-      const R = wireAdvanced.routers[r0], rid = 'router:' + R.id; _wireSetZoom(1); _wireRender(); await wait(300);
-      const inp = $('.wire-router-title input', _txNode(rid)); inp.focus();
-      const step = async v => { inp.value = v; fire(inp, 'change'); await wait(400); const r = _mwRead(document, rid), sh = _mwSh(document, rid);
-        return [R.title, document.activeElement === inp && inp.isConnected, typeof r === 'string' ? r : [r.lines.length, r.lines[0], r.breaks, r.font, sh.textContent === v, r.parts.join('') === v, r.tip === v], (sh.getAttribute('style') || '').slice(0, 20)]; };
-      out.inPlace = [await step(_oqRW), await step(_oqR105), await step(_oqMW), await step(_nmNG)];
-      want.inPlace = [[_oqRW, true, [3, 'VIDEOHUB_40X40_12G_MAIN_ENGINEERING_RACK_BALLROOM', ['word', 'MID-WORD'], '15px', true, true, true], 'display:block;overfl'],
-        [_oqR105, true, [3, 'VIDEOHUB_40X40_12G_MAIN_ENGINEERING_RACK_B', ['MID-WORD', 'MID-WORD'], '18px', true, true, true], 'display:block;overfl'],
-        [_oqMW, true, [3, 'MWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMWMW', ['word', 'MID-WORD'], '13.5px', true, true, true], 'display:block;overfl'],
-        [_nmNG, true, [1, _nmNG, [], '18px', true, true, true], 'display:-webkit-box;']];
-      inp.blur(); await wait(300);
-    } catch (e) { return 'threw: ' + e.message; }
-    finally { try { _wireSetZoom(1); } catch (e) {} await restore(); }
-    return is(out, want, 'the router renamed in place four times [stored, the focus kept, its name (lines, line 1, breaks, size, text = name, lines joined = name, tooltip), its style]');
-  });
+  /* Wire 16lc-onlyword: a 10 x 10 router renamed IN PLACE…: retired in 16lv (the 12-character rule replaces this fit; NR9) */
   // 16lc-onlyword O7: NEW
-  await check('Wire 16lc-onlyword: a CONVERTER is unchanged: named BLACKMAGIC CORE_SW_01_STAGE_LEFT_RACK_A or MICROCONVERTER BIDIRECTIONAL its name block is the 16ld-fix2 block byte for byte (the 2-line clamp, broken anywhere by the browser, 15 px), no fitting mark, on screen and on the light Wire sheet, and its picture box\'s words as before', async () => {
-    const out = {}, want = {};
-    try {
-      await restore(); await _cMWire('advanced'); _wireAdvAddDevice('converter', 2, 2); _wireAdvAddDevice('converter', 2, 2); await wait(300);
-      const D = wireAdvanced.devices, [C, E] = D.slice(D.length - 2), c = 'device:' + C.id, e = 'device:' + E.id;
-      C.name = _oqBM; E.name = _oqMC; _wireSetZoom(1); _wireRender(); await wait(400);
-      const conv = (root, nid, nm) => { const sh = _mwSh(root, nid), r = _nmRead(root, nid); return [sh ? sh.outerHTML : 'none', typeof r === 'string' ? r : [r.text, r.font, r.bar, r.tip], $$('[data-wtl-fit]', $$('g.wire-node', root).find(x => x.getAttribute('data-node-id') === nid)).length]; };
-      out.screen = [conv(document, c), conv(document, e)];
-      want.screen = [[_mwOneHTML(_oqBM, 15, 0.12, _mwInk(C), null), [_oqBM, '15px', 44, _oqBM], 0], [_mwOneHTML(_oqMC, 15, 0.12, _mwInk(E), null), [_oqMC, '15px', 44, _oqMC], 0]];
-      out.sheet = _nmLaid(_nmSheet(), x => [conv(x, c), conv(x, e)]); want.sheet = want.screen;
-      out.box = [$$('.wtl-pic text.wtl-auto-t', _txNode(c)).map(t => t.textContent), $$('.wtl-pic text.wtl-auto-t', _txNode(e)).map(t => t.textContent)];
-      want.box = [['BLACKMAGIC', 'CORE_SW_0…'], ['MICROCONV…', 'BIDIRECTI…']];   /* as on the 16lc-midword-fix page */
-    } catch (e) { return 'threw: ' + e.message; }
-    finally { try { _wireSetZoom(1); } catch (e) {} await restore(); }
-    return is(out, want, 'each converter (BLACKMAGIC CORE_SW..., MICROCONVERTER BIDIRECTIONAL) [its name block\'s HTML, its name (text, size, bar, tooltip), fitting marks] on screen / on the light Wire sheet / its picture box\'s words');
-  });
+  /* Wire 16lc-onlyword: a CONVERTER…: retired in 16lv (the 12-character rule replaces this fit; NR9) */
   // ── 16lc-onlyword-fix (the attackers of 16lc-onlyword, 2026-10-04, each case reproduced by real input before it was fixed): (A) under
   //    Help > Accessibility 90 % / 115 % (the body's zoom; the drawing is not fitted again when the size changes) a fittable emoji or
   //    Japanese word drawn at the last resort's new smaller size ran past its block and was cut with ... (the size was chosen at 100 % only;
@@ -12826,46 +12396,9 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
   /* the elements the page left right under <html> besides <head> and <body> (the zoom measure's hidden span must be gone) */
   const _ofStray = () => [...document.documentElement.children].filter(e => e !== document.head && e !== document.body).length;
   // 16lc-onlyword-fix OF1: NEW
-  await check('Wire 16lc-onlyword-fix (A, the UI attacker 2026-10-04: at Help > Accessibility 115 % a network switch named 📺📺📺📺📺📺📺 CORE_SW_01_STAGE_LEFT_RA read "📺📺📺📺📺📺..."): a fittable word stays whole at EVERY Help > Accessibility size: that switch is drawn at 11 px, the largest size at which 📺📺📺📺📺📺📺 fits its line at 100 %, 90 % and 115 % (at 11.5 px it ran past at 90 % and 115 %), the emoji word whole on line 1 and only CORE_SW_01_STAGE_LEFT_RA split; a 10 x 10 router named 33 Japanese letters and 70 x 照 is drawn at 16 px (at 16.5 px its first word ran past at 115 %), the first word whole on line 1; at 115 % and at 90 % every line of the switch and the router\'s first line stay inside their block; the block\'s text and the tooltip the name; no measuring span left; Help > Accessibility put back', async () => {
-    const out = {}, want = {}, A0 = (() => { try { return localStorage.getItem(_A11Y_KEY); } catch (e) { return null; } })(), Z0 = document.body.style.zoom;
-    try {
-      await restore(); await _cMWire('advanced'); _wireAdvAddDevice('switch', 4); const r0 = wireAdvanced.routers.length; _wireAdvAddRouter(10); await wait(300);
-      const W = wireAdvanced.devices[wireAdvanced.devices.length - 1], R = wireAdvanced.routers[r0], a = 'device:' + W.id, r = 'router:' + R.id;
-      W.name = _ofTV; R.title = _ofJP; _wireSetZoom(1); _wireRender(); await wait(400);
-      const rd = (nid, nm) => { const x = _mwRead(document, nid), sh = _mwSh(document, nid); return typeof x === 'string' ? x : [x.lines.length, x.lines[0], x.breaks, x.font, sh.textContent === nm, x.tip === nm]; };
-      out.drawn = [rd(a, _ofTV), rd(r, _ofJP)];
-      want.drawn = [[3, _ofTVw, ['word', 'MID-WORD'], '11px', true, true], [3, _ofJ33, ['word', 'MID-WORD'], '16px', true, true]];
-      out.largest = [_ofLargestZ(_mwSh(document, a), 'screen', _ofTVw, 11, [1, 0.9, 1.15]), _ofLargestZ(_mwSh(document, r), 'screen', _ofJ33, 16, [1, 0.9, 1.15])]; want.largest = [[true, true], [true, true]];
-      for (const sc of [1.15, 0.9]) { setA11yScale(sc); await wait(300); const s = _ofIn(_mwSh(document, a)), t = _ofIn(_mwSh(document, r)); out['at' + sc] = [s, Array.isArray(t) ? t[0] : t]; want['at' + sc] = [[true, true, true], true]; }
-      out.stray = _ofStray(); want.stray = 0;
-    } catch (e) { return 'threw: ' + e.message; }
-    finally { try { setA11yScale(1); try { if (A0 === null) localStorage.removeItem(_A11Y_KEY); else localStorage.setItem(_A11Y_KEY, A0); } catch (e) {} document.body.style.zoom = Z0; if (typeof _a11yReflectActive === 'function') _a11yReflectActive(); } catch (e) {} try { _wireSetZoom(1); } catch (e) {} await restore(); }
-    return is(out, want, 'each name (the switch 📺 x 7 CORE_SW_01_STAGE_LEFT_RA, the router 33 Japanese letters and 70 x 照) [lines, line 1, breaks, size, text = name, tooltip = name] / the first word [fits its line at the size at 100 %, 90 % and 115 %, not at 0.5 px more at one of them] / at 115 % and at 90 % [each line of the switch inside its block, the router\'s first line inside its block] / measuring spans left under <html>');
-  });
+  /* Wire 16lc-onlyword-fix (A, the UI attacker…: retired in 16lv (the 12-character rule replaces this fit; NR9) */
   // 16lc-onlyword-fix OF2: NEW
-  await check('Wire 16lc-onlyword-fix: on paper (drawn at 100 %, where there is no Help > Accessibility size) only the 100 % measure counts: a network switch named 📺📺📺📺📺📺📺📺 CORE_SW_01_STAGE_LEFT_R (on screen both words too wide even at 11 px: the bar\'s 15 px as before) prints at 13 px on the light and the dark Wire sheet and on the Look Book\'s Advanced Wire page, the largest size at which 📺 x 8 fits the paper line at 100 % (it would not at 115 %), the emoji word whole on line 1; Simple\'s Generic Router named 27 x 📺 and 20 x U+FDFD (a name from a file, longer than the 40 letters its box takes) prints at the bar\'s 18 px on the Look Book\'s Simple Wire page, the emoji word whole there; the text the name, no fitting mark printed', async () => {
-    const out = {}, want = {};
-    try {
-      await restore(); await _cMWire('advanced'); _wireAdvAddDevice('switch', 4); await wait(300);
-      const W = wireAdvanced.devices[wireAdvanced.devices.length - 1], a = 'device:' + W.id;
-      W.name = _ofP8; _wireSetZoom(1); _wireRender(); await wait(400);
-      { const x = _mwRead(document, a); out.screen = typeof x === 'string' ? x : [x.font, x.lines.length]; want.screen = ['15px', 3]; }
-      const paper = _mwSh(document, a);
-      const read = root => { const x = _mwRead(root, a), sh = _mwSh(root, a); return typeof x === 'string' ? x : [x.lines, x.breaks, x.font, sh.textContent === _ofP8, $$('[data-wtl-fit]', root).length]; };
-      const P = [[_ofP8w, 'CORE_SW_01_ST', 'AGE_LEFT_R'], ['word', 'MID-WORD'], '13px', true, 0];
-      out.sheet = _nmLaid(_nmSheet(), read); want.sheet = P;
-      out.dark = _nmLaid(_wireExportSheetList('dark').join('').replace(/<\?xml[^>]*>/g, ''), read); want.dark = P;
-      { const h = await _nmBookAdv(); out.book = h ? _nmLaid(h, read) : 'no Wire page'; want.book = P; }
-      out.largest100 = _ofLargestZ(paper, 'paper', _ofP8w, 13, [1]); want.largest100 = [true, true];
-      out.not115 = _ofLargestZ(paper, 'paper', _ofP8w, 13, [1.15])[0]; want.not115 = false;
-      await restore(); await _lbOpen(); _wireSetZoom(1); _slbMw().title = _ofSP; await wait(300); _wireRender(); await wait(400);   /* as a file can hold it (the box takes 40 letters) */
-      { const doc = new DOMParser().parseFromString(await _qfLookBook(false), 'text/html'), w = $('#pdf-wire', doc);
-        out.simpleBook = w ? _nmLaid(w.outerHTML, x => { const y = _mwRead(x, 'hub'), sh = _mwSh(x, 'hub'); return typeof y === 'string' ? y : [y.lines[0], y.breaks, y.font, sh.textContent === _ofSP, $$('[data-wtl-fit]', x).length]; }) : 'no Wire page'; }
-      want.simpleBook = [_ofSPw, ['word', 'MID-WORD'], '18px', true, 0];
-    } catch (e) { return 'threw: ' + e.message; }
-    finally { try { _wireSetZoom(1); } catch (e) {} await restore(); }
-    return is(out, want, 'the switch 📺 x 8 CORE_SW_01_STAGE_LEFT_R on screen [size, lines] / on the light Wire sheet, the dark one, the Look Book\'s Advanced Wire page [lines, breaks, size, text = name, fitting marks printed] / 📺 x 8 [fits the paper line at 13 px at 100 %, not at 13.5] / [it fits there at 115 %] / Simple\'s Generic Router 27 x 📺 + 20 x U+FDFD on the Look Book\'s Simple Wire page [line 1, breaks, size, text = name, fitting marks]');
-  });
+  /* Wire 16lc-onlyword-fix: on paper…: retired in 16lv (the 12-character rule replaces this fit; NR9) */
   // 16lc-onlyword-fix OF3: NEW
   await check('Wire 16lc-onlyword-fix (B, the code attacker 2026-10-04: a pasted 40,000-letter router name redrew about a third slower than on the 16lc-midword-fix page): the last resort\'s size search measures each distinct word and piece once: for the 105-letter word, A-A-A-... and 47 x W (40,000 letters) on a 10 x 10 router _wtlNmSize gives 11 px as before with at most 100 measures (the 16lc-onlyword page: tens of thousands), and the name is fitted at 11 px, three lines, its lines joined the name', async () => {
     const out = {}, want = {};
@@ -12904,59 +12437,11 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
   const _ogA11y = () => { const A0 = (() => { try { return localStorage.getItem(_A11Y_KEY); } catch (e) { return null; } })(), Z0 = document.body.style.zoom;
     return () => { try { setA11yScale(1); try { if (A0 === null) localStorage.removeItem(_A11Y_KEY); else localStorage.setItem(_A11Y_KEY, A0); } catch (e) {} document.body.style.zoom = Z0; if (typeof _a11yReflectActive === 'function') _a11yReflectActive(); } catch (e) {} }; };
   // 16lc-onlyword-fix2 OG1: NEW
-  await check('Wire 16lc-onlyword-fix2 (D1, the verifier 2026-10-05: at Help > Accessibility 115 % a 10x10 router named 照 x 31 + "1 🎤 " + Q x 120, drawn at 16.5 px as "照…1 🎤 / QQQ / QQQ…", ran 9.19 px past its bar and hid "1🎤"): every LINE that holds a fittable word shows whole at 90 % and 115 %, not only each word: that router is drawn at 17 px as 照…1 / 🎤 / QQQ…; 照 x 34 + "1 📺 " + Q x 120 at 15.5 px as 照…1 / 📺 / QQQ…; 🎤 x 18 + "1 💡💡💡💡💡💡 " + Q x 120 at 17.5 px (at its bar\'s 18 px the two emoji words share line 1, which ran past at 90 %: each word alone fits there); at 115 % and at 90 % every line holding one of their fittable words inside its block; the block\'s text and the tooltip the name; no measuring element left; Help > Accessibility put back', async () => {
-    const out = {}, want = {}, back = _ogA11y();
-    try {
-      await restore(); await _cMWire('advanced'); const r0 = wireAdvanced.routers.length; _wireAdvAddRouter(10); _wireAdvAddRouter(10); _wireAdvAddRouter(10); await wait(300);
-      const RS = wireAdvanced.routers.slice(r0), ids = RS.map(r => 'router:' + r.id), N = [_ogRA, _ogRB, _ogRC];
-      RS.forEach((r, i) => { r.title = N[i]; }); _wireSetZoom(1); _wireRender(); await wait(400);
-      const rd = (nid, nm, two) => { const x = _mwRead(document, nid), sh = _mwSh(document, nid); return typeof x === 'string' ? x : [x.font, x.lines.length, x.lines[0], two ? x.lines[1] : 'Q fill', x.breaks, sh.textContent === nm, x.tip === nm]; };
-      out.drawn = [rd(ids[0], N[0], true), rd(ids[1], N[1], true), rd(ids[2], N[2], false)];
-      want.drawn = [['17px', 3, _ogA, '🎤', ['word', 'word'], true, true], ['15.5px', 3, _ogB, '📺', ['word', 'word'], true, true], ['17.5px', 3, _ogC, 'Q fill', ['word', 'MID-WORD'], true, true]];
-      for (const sc of [1.15, 0.9]) { setA11yScale(sc); await wait(300); out['at' + sc] = [_ogIn(_mwSh(document, ids[0]), 2), _ogIn(_mwSh(document, ids[1]), 2), _ogIn(_mwSh(document, ids[2]), 1)]; want['at' + sc] = [[true, true], [true, true], [true]]; }
-      setA11yScale(1); await wait(200);
-      out.stray = _ofStray(); want.stray = 0;
-    } catch (e) { return 'threw: ' + e.message; }
-    finally { back(); try { _wireSetZoom(1); } catch (e) {} await restore(); }
-    return is(out, want, 'each router (照 x 31 + "1 🎤 " + Q x 120, 照 x 34 + "1 📺 " + Q x 120, 🎤 x 18 + "1 💡 x 6 " + Q x 120) [size, lines, line 1, line 2, breaks, text = name, tooltip = name] / at 115 % and at 90 % [its lines holding a fittable word inside the block] / measuring elements left under <html>');
-  });
+  /* Wire 16lc-onlyword-fix2 (D1…: retired in 16lv (the 12-character rule replaces this fit; NR9) */
   // 16lc-onlyword-fix2 OG2: NEW
-  await check('Wire 16lc-onlyword-fix2 (D2, the verifier 2026-10-05: names that show every fittable word whole at 90 %, 100 % and 115 % at the bar\'s own size were drawn half a pixel smaller: the zoom check\'s limit was the line less its pixel of air, not what shows): a network switch named 照明調整卓AB CORE_SW_01_STAGE_LEFT_RACK_A is drawn at the bar\'s 15 px (照明調整卓AB whole on line 1 at 100 %, 115 % and 90 %); a 10x10 router named 27 emoji + II and Q x 120 at the bar\'s 18 px (its emoji word whole on line 1 at 90 % and 115 %); 照明調整卓本J / 照明調整卓本1 CORE_SW_01_STAGE_LEFT_RACK_A, which the bar\'s 15 px cuts at 115 %, still at 14.5 px, whole at 115 % and 90 %; the text and the tooltip the name; Help > Accessibility put back', async () => {
-    const out = {}, want = {}, back = _ogA11y();
-    try {
-      await restore(); await _cMWire('advanced'); _wireAdvAddDevice('switch', 4); _wireAdvAddDevice('switch', 4); _wireAdvAddDevice('switch', 4); const r0 = wireAdvanced.routers.length; _wireAdvAddRouter(10); await wait(300);
-      const SW = wireAdvanced.devices.slice(-3), ids = SW.map(d => 'device:' + d.id).concat(['router:' + wireAdvanced.routers[r0].id]), N = [_ogJab, _ogJbj, _ogJb1, _ogREm];
-      SW.forEach((d, i) => { d.name = N[i]; }); wireAdvanced.routers[r0].title = _ogREm; _wireSetZoom(1); _wireRender(); await wait(400);
-      const rd = (nid, nm) => { const x = _mwRead(document, nid), sh = _mwSh(document, nid); return typeof x === 'string' ? x : [x.font, x.lines[0], sh.textContent === nm, x.tip === nm]; };
-      out.drawn = ids.map((d, i) => rd(d, N[i]));
-      want.drawn = [['15px', '照明調整卓AB', true, true], ['14.5px', '照明調整卓本J', true, true], ['14.5px', '照明調整卓本1', true, true], ['18px', _ogEm, true, true]];
-      out.at1 = ids.map(d => _ogIn(_mwSh(document, d), 1)[0]); want.at1 = [true, true, true, true];
-      for (const sc of [1.15, 0.9]) { setA11yScale(sc); await wait(300); out['at' + sc] = ids.map(d => _ogIn(_mwSh(document, d), 1)[0]); want['at' + sc] = [true, true, true, true]; }
-      setA11yScale(1); await wait(200);
-      out.stray = _ofStray(); want.stray = 0;
-    } catch (e) { return 'threw: ' + e.message; }
-    finally { back(); try { _wireSetZoom(1); } catch (e) {} await restore(); }
-    return is(out, want, 'the switches 照明調整卓AB / 本J / 本1 CORE_SW_01_STAGE_LEFT_RACK_A and the router 27 emoji + II + Q x 120 [size, line 1, text = name, tooltip = name] / [line 1 inside its block] at 100 %, at 115 %, at 90 % / measuring elements left under <html>');
-  });
+  /* Wire 16lc-onlyword-fix2 (D2, the verifier…: retired in 16lv (the 12-character rule replaces this fit; NR9) */
   // 16lc-onlyword-fix2 OG3: NEW
-  await check('Wire 16lc-onlyword-fix2 (D2): the limit is the block AS DRAWN at the Help > Accessibility size, not the room: the tile\'s 1 px borders are drawn a whole device pixel wide, so at 90 % the block is about 0.2 px narrower than the room on a 1x screen; a network switch named 🎤🎤🎤🎤AB照 CORE_SW_01_STAGE_LEFT_RACK_A is drawn at 12.5 px (as on the 16lc-onlyword-fix page; with the room as the limit it took 13 px and at 90 % its first word ran 0.05 px past and lost "B照"): its first word whole on line 1 at 100 %, 115 % and 90 %, and in a hidden copy of its block 0.5 px larger it runs past at 90 % or 115 % (the largest size that shows whole); the text the name; no measuring element left; Help > Accessibility put back', async () => {
-    const out = {}, want = {}, back = _ogA11y(), nm = '🎤🎤🎤🎤AB照 ' + _ogCS, w1 = '🎤🎤🎤🎤AB照';
-    try {
-      await restore(); await _cMWire('advanced'); _wireAdvAddDevice('switch', 4); await wait(300);
-      const d = wireAdvanced.devices[wireAdvanced.devices.length - 1], a = 'device:' + d.id; d.name = nm; _wireSetZoom(1); _wireRender(); await wait(400);
-      { const x = _mwRead(document, a), sh = _mwSh(document, a); out.drawn = typeof x === 'string' ? x : [window.devicePixelRatio === 1 ? x.font : '12.5px (a 1x screen)', x.lines[0], sh.textContent === nm, x.tip === nm]; want.drawn = ['12.5px', w1, true, true]; }
-      const f = parseFloat(getComputedStyle(_mwSh(document, a)).fontSize), up = [];
-      out.at1 = _ogIn(_mwSh(document, a), 1)[0]; want.at1 = true;
-      for (const sc of [1.15, 0.9]) { setA11yScale(sc); await wait(300); const sh = _mwSh(document, a); out['at' + sc] = _ogIn(sh, 1)[0]; want['at' + sc] = true;
-        const c = sh.cloneNode(false); c.removeAttribute('data-wtl-fit'); c.setAttribute('style', _wtlNmStyle(f + 0.5, 0.12, '#000', true) + ';position:absolute;left:0;top:0;visibility:hidden;pointer-events:none'); c.textContent = w1; sh.parentNode.appendChild(c);
-        try { up.push(_ogPast(c)[0] > 0.005); } finally { c.remove(); } }
-      setA11yScale(1); await wait(200);
-      out.largest = up.some(Boolean); want.largest = true;
-      out.stray = _ofStray(); want.stray = 0;
-    } catch (e) { return 'threw: ' + e.message; }
-    finally { back(); try { _wireSetZoom(1); } catch (e) {} await restore(); }
-    return is(out, want, 'the switch 🎤🎤🎤🎤AB照 CORE_SW_01_STAGE_LEFT_RACK_A [size, line 1, text = name, tooltip = name] / [line 1 inside its block] at 100 %, 115 %, 90 % / [its first word 0.5 px larger runs past its block at 115 % or 90 %] / measuring elements left under <html>');
-  });
+  /* Wire 16lc-onlyword-fix2 (D2): the limit…: retired in 16lv (the 12-character rule replaces this fit; NR9) */
   // ── 16lc-vpcards (Omar 2026-10-05 / 06, r16lm SPEC A): ONE card everywhere. "Video Preset Advance Cards are wrong, I/O Patch Cards are
   //    correct ... in sizing of the box in Wire should be the same sizing in Video Preset Advance ... if Source 1 (input 01) is millumin A
   //    everything that happens to the card anywhere on the program needs to match up everywhere else"; destination / AUX cards "Left panel,
@@ -13671,7 +13156,7 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
     return is({ nw, before, after, moved, kept }, { nw: 'SOURCE 12', before: 'S12', after: true, moved: 0, kept: false }, 'the new source / its number / once P01 uses it, its number is its place in the order / cards not on their place in the order / Save carries ioNums');
   });
   // 16lc-vpcards-fix VF6: NEW
-  await check('I/O Patch 16lc-vpcards-fix VF6 (Omar 2026-10-07: "names show exactly as typed on EVERY card", "new names default to capitals"): a source renamed Ppt Mixed reads Ppt Mixed on its I/O Patch, Wire and Video Presets cards (the picture keeps its capitals); + Add destination makes DESTINATION 04; Wire > Advanced\'s hand-made cards are NEW SOURCE / NEW DESTINATION / NEW AUX/DSM', async () => {
+  await check('I/O Patch 16lc-vpcards-fix VF6 (Omar 2026-10-07: "names show exactly as typed on EVERY card", "new names default to capitals"): a source renamed Ppt Mixed reads Ppt Mixed on its I/O Patch, Wire and Video Presets cards (the picture keeps its capitals); + Add destination makes DESTINATION 04; Wire > Advanced\'s hand-made cards take the next number of their kind (16lv-newnames: SOURCE 12, DESTINATION 05, AUX3)', async () => {
     await restore(); _sysWithUndo(() => _sysApplyGlobalRename('PPT A', 'Ppt Mixed'));
     const read = scope => { const c = _vcCard(scope, 'src:Ppt Mixed'); const t = c && $('.iog-name-text', c); return t ? t.innerText : 'no card'; };
     await ioOpenSimple(); const io = read('#io-grid'); const d0 = screens.length; _iogAdd('dst'); await wait(400); const dn = screens.length > d0 ? screens[screens.length - 1].name : 'none'; closeSystem(); await wait(200);
@@ -13680,17 +13165,17 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
     const wc = ['customSources', 'customDests', 'customDsms'].map(k => ((wireAdvanced[k] || []).slice(-1)[0] || {}).name); closeWireMode(); await wait(200);
     await _vcAdv(); const vp = read('#fs-left-panel');
     await _vfBack();
-    return is({ io, wire, vp, dn, wc }, { io: 'Ppt Mixed', wire: 'Ppt Mixed', vp: 'Ppt Mixed', dn: 'DESTINATION 04', wc: ['NEW SOURCE', 'NEW DESTINATION', 'NEW AUX/DSM'] }, 'I/O / Wire / Video Presets cards / + Add destination\'s name / the hand-made cards\' names');
+    return is({ io, wire, vp, dn, wc }, { io: 'Ppt Mixed', wire: 'Ppt Mixed', vp: 'Ppt Mixed', dn: 'DESTINATION 04', wc: ['SOURCE 12', 'DESTINATION 05', 'AUX3'] }, 'I/O / Wire / Video Presets cards / + Add destination\'s name / the hand-made cards\' names');
   });
   // 16lc-vpcards-fix VF7: NEW
-  await check('Video Presets 16lc-vpcards-fix VF7 (the attack round\'s F2; Omar: long one-word names "shrink to fit", never CONFIDENC / E): an AUX named TELEPROMPTERS keeps its word on one line on its Video Presets > Advanced card and its Wire card, drawn at 7 px or more', async () => {
+  await check('Video Presets 16lc-vpcards-fix VF7 (the attack round\'s F2; Omar: long one-word names "shrink to fit", never CONFIDENC / E): an AUX named TELEPROMPTERS reads TELEPROMPTER / S on its Video Presets > Advanced card and its Wire card (16lv-names: a word longer than the 12-letter row is split where the row is full), drawn at 7 px or more', async () => {
     await restore(); const D1 = dsms.find(d => d.name === 'DSM 1'); if (!D1) return 'the example changed';
     _sysWithUndo(() => _sysSetMeta('aux', D1.id, 'name', 'TELEPROMPTERS')); await _vcAdv();
     const read = scope => { const c = _vcCard(scope, 'aux:' + D1.id), t = c && $('.iog-name-text', c); return t ? [_vdLines(t), parseFloat(getComputedStyle(t).fontSize) >= 7] : 'no card'; };
     const vp = read('#fs-left-panel'); try { closeFullscreen(); } catch (e) {} await wait(300);
     openWireMode(); await wait(700); const wire = read('#wire-panel-left');
     await _vfBack();
-    return is({ vp, wire }, { vp: [1, true], wire: [1, true] }, 'Video Presets / Wire: [lines, 7 px or more]');
+    return is({ vp, wire }, { vp: [2, true], wire: [2, true] }, 'Video Presets / Wire: [lines, 7 px or more]');
   });
   // 16lc-vpcards-fix VF8: NEW
   await check('Wire 16lc-vpcards-fix VF8 (the attack round\'s F4): a hand-made destination or AUX card of Wire > Advanced carries no Dest / AUX/DSM badge over its automatic name picture (as the show\'s cards look); a show destination with an uploaded picture keeps its badge', async () => {
@@ -15346,11 +14831,11 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
   });
   // 16lj-followup FU-4: NEW
   // ADAPTED in 16lp: 16lp-wirecards (the full test's #5, Omar 2026-10-17: "ask for the fist time is it just here or in I.O Patch"): the + asks where the card goes; this card is a hand-made one, so Wire only; renamed
-  await check('Video Presets + Wire 16lj-followup FU-4 (W1, Omar 2026-10-09: a card made by hand in Wire with a resolution, used as a SOURCE BG): Wire › Advanced, + on All Sources and Wire only in its question (16lp-wirecards; a hand-made card NEW SOURCE), its Resolution menu 1280×720; Video Presets, P01 CENTER LED\'s BG window, SOURCE: the list offers it under Made in Wire (C1, 1280×720); picked, the BG is NEW SOURCE at 1280x720 from the top-left, and in the same undo step the card becomes the show\'s source NEW SOURCE (1280x720) with no hand-made twin; Undo brings back the hand-made card and the old BG, Redo the pick; on P01 L it is offered under Sources and placed at 1280x720 too; Wire then shows ONE card for it, at 1280x720', async () => {
+  await check('Video Presets + Wire 16lj-followup FU-4 (W1, Omar 2026-10-09: a card made by hand in Wire with a resolution, used as a SOURCE BG): Wire › Advanced, + on All Sources and Wire only in its question (16lp-wirecards; a hand-made card SOURCE 12), its Resolution menu 1280×720; Video Presets, P01 CENTER LED\'s BG window, SOURCE: the list offers it under Made in Wire (C1, 1280×720); picked, the BG is SOURCE 12 at 1280x720 from the top-left, and in the same undo step the card becomes the show\'s source SOURCE 12 (1280x720) with no hand-made twin; Undo brings back the hand-made card and the old BG, Redo the pick; on P01 L it is offered under Sources and placed at 1280x720 too; Wire then shows ONE card for it, at 1280x720', async () => {
     const out = {}, want = {};
     try {
       const { st, C } = _u1St(); await _u1Open(st);
-      const c = screens.find(x => x.id === C.id), L = screens[0], NM = 'NEW SOURCE';
+      const c = screens.find(x => x.id === C.id), L = screens[0], NM = _lbvNewName('src');   /* 16lv-newnames: the name the + gives a hand-made source in this show */
       await _fuWireAdv(); const plus = $$('.wire-pane-hdr').find(h => /All Sources/i.test(h.textContent)); const pb = plus && $('.wire-pane-add', plus); if (!pb) return 'no + on All Sources';
       pb.click(); await wait(300); const hw = $('#lbhc-overlay'); if (hw) { $('input[name="lbhc-where"][value="wire"]', hw).click(); $('#lbhc-go').click(); } await wait(600);   /* 16lp-wirecards: the + asks first; Wire only makes the hand-made card */
       const card = (wireAdvanced.customSources || []).find(x => x && x.name === NM); if (!card) return 'no hand-made card made';
@@ -15359,7 +14844,7 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
       await _fuVP();
       await _u1Pop(presets[0], c); const sb = $('#cp-bgsrc-src'); if (sb && !vis($('#cp-bgsrc-list'))) { sb.click(); await wait(300); }
       const groups = $$('#cp-bgsrc-list .sys-dd-group').map(g => g.innerText.trim().toUpperCase()), row = $$('#cp-bgsrc-list .sys-dd-item').find(r => r.dataset.src === NM);
-      out.list = [groups.indexOf('MADE IN WIRE') >= 0, row ? row.innerText.replace(/\s+/g, ' ').trim() : null]; want.list = [true, 'C1 NEW SOURCE 1280×720'];
+      out.list = [groups.indexOf('MADE IN WIRE') >= 0, row ? row.innerText.replace(/\s+/g, ' ').trim() : null]; want.list = [true, 'C1 ' + NM + ' 1280×720'];
       if (!row) return is(out, want, 'the SOURCE list');
       const u0 = _undoStack.length; row.click(); await wait(600);
       const showSrc = () => ((sources || []).find(x => x && x.name === NM) || {}).resolution || null, twins = () => (wireAdvanced.customSources || []).filter(x => x && x.name === NM).length;
@@ -16112,7 +15597,7 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
   const _hcLbNames = async () => [...new DOMParser().parseFromString(await userLookBook(), 'text/html').querySelectorAll('td.io-name-cell')].map(c => c.textContent.trim());   /* the Look Book's I/O pages */
   const _hcXl = async () => { const wb = await ioBook(); if (!wb) return []; const tab = xlRows(wb, wb.sheets.indexOf('Video I-O') + 1); const h = tab.findIndex(r => r[0] && r[0].text === 'DESTINATIONS'); return tab.slice(h + 2).filter(r => r.length && r[0]).map(r => r[0].text + '|' + ((r[2] || {}).text || '')); };
   // 16lp-wirecards WC1: NEW
-  await check('Wire 16lp-wirecards WC1 (the full test\'s #5, Omar 2026-10-17: "ask for the fist time is it just here or in I.O Patch and then also include always follow this rule a check mark for it"; sources: "Yes, same as the AUX"): with Help › Accessibility\'s Hand-made Wire cards on Ask each time, the + on Wire Advanced\'s Sources heading asks where the new source goes (Wire and the I/O Patch picked, Always not ticked, the focus on OK); Cancel and Escape add nothing; OK makes NEW SOURCE an I/O-only source with the next S number, on the I/O Patch and in Wire\'s Sources list as its I/O card (no hand-made card), in one Undo step, and not on the Look Book\'s I/O pages', async () => {
+  await check('Wire 16lp-wirecards WC1 (the full test\'s #5, Omar 2026-10-17: "ask for the fist time is it just here or in I.O Patch and then also include always follow this rule a check mark for it"; sources: "Yes, same as the AUX"): with Help › Accessibility\'s Hand-made Wire cards on Ask each time, the + on Wire Advanced\'s Sources heading asks where the new source goes (Wire and the I/O Patch picked, Always not ticked, the focus on OK); Cancel and Escape add nothing; OK makes SOURCE 12 an I/O-only source with the next S number, on the I/O Patch and in Wire\'s Sources list as its I/O card (no hand-made card), in one Undo step, and not on the Look Book\'s I/O pages', async () => {
     const out = {}, want = {};
     try {
       await restore(); _hcOff(); await _cMWire('advanced'); await wait(300);
@@ -16126,33 +15611,33 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
       b.click(); await wait(200); document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true })); await wait(200);
       out.esc = [!!$('#lbhc-overlay'), sources.length - n0, vpUndoLen() - u0]; want.esc = [false, 0, 0];
       _hcPlus('source').click(); await wait(200); if ($('#lbhc-go')) $('#lbhc-go').click(); await wait(400);
-      const e = sources.find(s => s && s.name === 'NEW SOURCE') || {};
-      out.made = [!!e.ioOnly, _srcNameOrderRaw().length - o0, _lbnSrcNo('NEW SOURCE') === o0 + 1, !!_hcCard('NEW SOURCE') && _hcCard('NEW SOURCE').dataset.iogKey === 'src:NEW SOURCE', (wireAdvanced.customSources || []).length - h0, vpUndoLen() - u0];
+      const e = sources.find(s => s && s.name === 'SOURCE 12') || {};
+      out.made = [!!e.ioOnly, _srcNameOrderRaw().length - o0, _lbnSrcNo('SOURCE 12') === o0 + 1, !!_hcCard('SOURCE 12') && _hcCard('SOURCE 12').dataset.iogKey === 'src:SOURCE 12', (wireAdvanced.customSources || []).length - h0, vpUndoLen() - u0];
       want.made = [true, 1, true, true, 0, 1];
-      out.patch = _sysIoSources().includes('NEW SOURCE'); want.patch = true;
-      const lbn = await _hcLbNames(); out.lb = [lbn.includes('CAM 1'), lbn.includes('NEW SOURCE')]; want.lb = [true, false];
-      doUndo(); await wait(300); out.undo = sources.some(s => s && s.name === 'NEW SOURCE'); want.undo = false;
+      out.patch = _sysIoSources().includes('SOURCE 12'); want.patch = true;
+      const lbn = await _hcLbNames(); out.lb = [lbn.includes('CAM 1'), lbn.includes('SOURCE 12')]; want.lb = [true, false];
+      doUndo(); await wait(300); out.undo = sources.some(s => s && s.name === 'SOURCE 12'); want.undo = false;
     } catch (e) { return 'threw: ' + e.message; }
     finally { okDialogs(); const o = $('#lbhc-overlay'); if (o) o.remove(); _hcOff(); try { closeWireMode(); } catch (e) {} await restore(); }
-    return is(out, want, 'the window [title, picked, Always, focus] / Cancel [window, sources added, steps] / Escape [window, added, steps] / OK [I/O-only, sources added, the next S number, Wire\'s I/O card, hand-made cards added, steps] / on the I/O Patch / the Look Book\'s I/O pages [CAM 1, NEW SOURCE] / after Undo');
+    return is(out, want, 'the window [title, picked, Always, focus] / Cancel [window, sources added, steps] / Escape [window, added, steps] / OK [I/O-only, sources added, the next S number, Wire\'s I/O card, hand-made cards added, steps] / on the I/O Patch / the Look Book\'s I/O pages [CAM 1, SOURCE 12] / after Undo');
   });
   // 16lp-wirecards WC2: NEW
-  await check('Wire 16lp-wirecards WC2 (#5, Omar 2026-10-17 "Yes, same as the AUX": a hand-made destination becomes an I/O-only destination; its trash: "use the same template to answer this question on all sections"): Wire and the I/O Patch makes NEW DESTINATION an I/O-only destination: an IO card in Wire Advanced\'s Destinations list and on the I/O Patch\'s Destinations, an I/O Dest row in the I/O Excel, not on the Look Book\'s I/O pages; its card drags onto the drawing as a tile with its name; renamed on the I/O Patch, the tile follows; its trash in Wire asks in the grey window with only Wire ticked (no Video Presets row) and takes the tile off, the card stays; its trash on the I/O Patch has Everywhere ticked and deletes it and its tiles in one Undo step', async () => {
+  await check('Wire 16lp-wirecards WC2 (#5, Omar 2026-10-17 "Yes, same as the AUX": a hand-made destination becomes an I/O-only destination; its trash: "use the same template to answer this question on all sections"): Wire and the I/O Patch makes DESTINATION 04 an I/O-only destination: an IO card in Wire Advanced\'s Destinations list and on the I/O Patch\'s Destinations, an I/O Dest row in the I/O Excel, not on the Look Book\'s I/O pages; its card drags onto the drawing as a tile with its name; renamed on the I/O Patch, the tile follows; its trash in Wire asks in the grey window with only Wire ticked (no Video Presets row) and takes the tile off, the card stays; its trash on the I/O Patch has Everywhere ticked and deletes it and its tiles in one Undo step', async () => {
     const out = {}, want = {};
     try {
       await restore(); _hcOff(); await _cMWire('advanced'); await wait(300);
       const b = _hcPlus('destination'); if (!b) return 'no + on the Destinations heading';
       b.click(); await wait(200); if ($('#lbhc-go')) $('#lbhc-go').click(); await wait(400);
-      const d = (ioDests || []).find(x => x && x.name === 'NEW DESTINATION'); if (!d) return 'no I/O-only destination made';
-      const c = _hcCard('NEW DESTINATION');
+      const d = (ioDests || []).find(x => x && x.name === 'DESTINATION 04'); if (!d) return 'no I/O-only destination made';
+      const c = _hcCard('DESTINATION 04');
       out.wire = [!!c && c.dataset.iogKey === 'iodest:' + d.id, !!c && (($('.iog-num', c) || {}).textContent || '') === 'IO', !d.aux]; want.wire = [true, true, true];
       const data = _cMDragData(c), n0 = (wireAdvanced.dests || []).length; await _cMDrop(data, 900, 420);
       const t = (wireAdvanced.dests || [])[n0];
-      out.tile = [data === 'wire-adv-dest:' + d.id, !!t && t.refId === d.id, t ? (_wireAdvGetDestTemplate(t.refId) || {}).name : null]; want.tile = [true, true, 'NEW DESTINATION'];
+      out.tile = [data === 'wire-adv-dest:' + d.id, !!t && t.refId === d.id, t ? (_wireAdvGetDestTemplate(t.refId) || {}).name : null]; want.tile = [true, true, 'DESTINATION 04'];
       try { closeWireMode(); } catch (e) {} await wait(250); await _loIO();
-      const ic = _hcIoCard('dst', 'NEW DESTINATION'); out.patch = [!!ic, !_hcIoCard('aux', 'NEW DESTINATION')]; want.patch = [true, true];
-      const xl = await _hcXl(); out.xl = xl.filter(r => /^I\/O (Dest|AUX) /.test(r)); want.xl = ['I/O Dest 1|NEW DESTINATION'];
-      const lbn = await _hcLbNames(); out.lb = [lbn.includes('LEFT LED'), lbn.includes('NEW DESTINATION')]; want.lb = [true, false];
+      const ic = _hcIoCard('dst', 'DESTINATION 04'); out.patch = [!!ic, !_hcIoCard('aux', 'DESTINATION 04')]; want.patch = [true, true];
+      const xl = await _hcXl(); out.xl = xl.filter(r => /^I\/O (Dest|AUX) /.test(r)); want.xl = ['I/O Dest 1|DESTINATION 04'];
+      const lbn = await _hcLbNames(); out.lb = [lbn.includes('LEFT LED'), lbn.includes('DESTINATION 04')]; want.lb = [true, false];
       const box = ic && $('.sys-name-input', ic); if (box) { box.focus(); box.select(); document.execCommand('insertText', false, 'RECORD FEED'); box.blur(); await wait(400); okDialogs(); }
       out.renamed = [d.name, (_wireAdvGetDestTemplate(t.refId) || {}).name]; want.renamed = ['RECORD FEED', 'RECORD FEED'];
       closeSystem(); await wait(250); await _cMWire('advanced'); await wait(300);
@@ -16170,10 +15655,10 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
       doUndo(); await wait(300); out.undo = [(ioDests || []).some(x => x && x.id === d.id), tiles()]; want.undo = [true, 1];
     } catch (e) { return 'threw: ' + e.message; }
     finally { okDialogs(); const o = $('#lbhc-overlay'); if (o) o.remove(); _hcOff(); try { closeSystem(); } catch (e) {} try { closeWireMode(); } catch (e) {} await restore(); }
-    return is(out, want, 'in Wire [its I/O card, IO, a destination] / the drop [its data, the tile, the tile\'s name] / the I/O Patch [in Destinations, not in AUX] / the I/O Excel rows / the Look Book\'s I/O pages [LEFT LED, NEW DESTINATION] / renamed on the I/O Patch [the card, the tile] / Wire\'s trash [Everywhere, I/O Patch, Wire, rows] / its Delete [a tile left, still in the show, its Wire card] / the I/O Patch trash [ticks] / its Delete [in the show, tiles, steps] / one Undo [back, its tile]');
+    return is(out, want, 'in Wire [its I/O card, IO, a destination] / the drop [its data, the tile, the tile\'s name] / the I/O Patch [in Destinations, not in AUX] / the I/O Excel rows / the Look Book\'s I/O pages [LEFT LED, DESTINATION 04] / renamed on the I/O Patch [the card, the tile] / Wire\'s trash [Everywhere, I/O Patch, Wire, rows] / its Delete [a tile left, still in the show, its Wire card] / the I/O Patch trash [ticks] / its Delete [in the show, tiles, steps] / one Undo [back, its tile]');
   });
   // 16lp-wirecards WC3: NEW
-  await check('Wire 16lp-wirecards WC3 (#5, a hand-made AUX, Omar 2026-10-17: "A", an I/O-only AUX on the I/O Patch and Wire only; Always: "Help › Accessibility"): Always do this with Wire and the I/O Patch makes NEW AUX/DSM an I/O-only AUX and keeps the choice: Help › Accessibility\'s Hand-made Wire cards lights Wire and the I/O Patch and the next + makes NEW AUX/DSM 2 at once; both are IO cards in the I/O Patch\'s AUX / DSM section (not Destinations) and in Wire\'s AUX / DSM list, and I/O AUX 1 / 2 rows right after the AUX rows of the I/O Excel; A0 sets their connector; Remove in the AUX / DSM title lists them; Ask each time asks again', async () => {
+  await check('Wire 16lp-wirecards WC3 (#5, a hand-made AUX, Omar 2026-10-17: "A", an I/O-only AUX on the I/O Patch and Wire only; Always: "Help › Accessibility"): Always do this with Wire and the I/O Patch makes AUX3 an I/O-only AUX and keeps the choice: Help › Accessibility\'s Hand-made Wire cards lights Wire and the I/O Patch and the next + makes AUX4 at once; both are IO cards in the I/O Patch\'s AUX / DSM section (not Destinations) and in Wire\'s AUX / DSM list, and I/O AUX 1 / 2 rows right after the AUX rows of the I/O Excel; A0 sets their connector; Remove in the AUX / DSM title lists them; Ask each time asks again', async () => {
     const out = {}, want = {};
     try {
       await restore(); _hcOff(); await _cMWire('advanced'); await wait(300);
@@ -16182,16 +15667,16 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
       $('#lbhc-always', ov).click(); $('#lbhc-go').click(); await wait(400);
       out.rule = [_lbhcRule(), ($('[data-a11y-wirecards="io"]') || { style: {} }).style.borderColor, ($('[data-a11y-wirecards="ask"]') || { style: {} }).style.borderColor]; want.rule = ['io', 'var(--n-cyan)', 'var(--n-line)'];
       _hcPlus('AUX / DSM').click(); await wait(300);
-      out.second = [!!$('#lbhc-overlay'), _lbhcIoOuts(true).map(x => x.name)]; want.second = [false, ['NEW AUX/DSM', 'NEW AUX/DSM 2']];
-      out.wire = ['NEW AUX/DSM', 'NEW AUX/DSM 2'].map(n => !!_hcCard(n) && (($('.iog-num', _hcCard(n)) || {}).textContent || '') === 'IO'); want.wire = [true, true];
+      out.second = [!!$('#lbhc-overlay'), _lbhcIoOuts(true).map(x => x.name)]; want.second = [false, ['AUX3', 'AUX4']];
+      out.wire = ['AUX3', 'AUX4'].map(n => !!_hcCard(n) && (($('.iog-num', _hcCard(n)) || {}).textContent || '') === 'IO'); want.wire = [true, true];
       try { closeWireMode(); } catch (e) {} await wait(250); await _loIO();
-      out.patch = [!!_hcIoCard('aux', 'NEW AUX/DSM'), !!_hcIoCard('aux', 'NEW AUX/DSM 2'), !!_hcIoCard('dst', 'NEW AUX/DSM')]; want.patch = [true, true, false];
+      out.patch = [!!_hcIoCard('aux', 'AUX3'), !!_hcIoCard('aux', 'AUX4'), !!_hcIoCard('dst', 'AUX3')]; want.patch = [true, true, false];
       const xl = await _hcXl(), ia = xl.findIndex(r => /^I\/O AUX 1\|/.test(r)), la = xl.map(r => /^AUX \d+\|/.test(r)).lastIndexOf(true);
-      out.xl = [xl.filter(r => /^I\/O AUX /.test(r)), ia === la + 1]; want.xl = [['I/O AUX 1|NEW AUX/DSM', 'I/O AUX 2|NEW AUX/DSM 2'], true];
+      out.xl = [xl.filter(r => /^I\/O AUX /.test(r)), ia === la + 1]; want.xl = [['I/O AUX 1|AUX3', 'I/O AUX 2|AUX4'], true];
       _sysApplyToAll('aux-all', 'connector', { value: 'SDI' }); await wait(200);
       out.a0 = _lbhcIoOuts(true).map(x => x.connectorType); want.a0 = ['SDI', 'SDI'];
       _sysOpenRemoveAUXModal(); await wait(200);
-      out.remove = $$('#sys-rmaux-overlay .sys-src-picker-item[data-rm-kind="iodest"]').map(x => x.dataset.rmName); want.remove = ['NEW AUX/DSM', 'NEW AUX/DSM 2'];
+      out.remove = $$('#sys-rmaux-overlay .sys-src-picker-item[data-rm-kind="iodest"]').map(x => x.dataset.rmName); want.remove = ['AUX3', 'AUX4'];
       _sysCloseRemoveAUXModal(); closeSystem(); await wait(250);
       setA11yWireCards('ask'); await _cMWire('advanced'); _hcPlus('AUX / DSM').click(); await wait(200);
       out.asks = !!$('#lbhc-overlay'); want.asks = true;
@@ -16715,8 +16200,8 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
       out.mv = [multiviewers[multiviewers.length - 1].name, dlgOpen()]; want.mv = ['MV ' + (k + 1), false];
       const d1 = _r4fNewDest(); sources.push({ name: d1, ioOnly: true }); const d2 = _r4fNewDest();
       out.newDest = [d1 !== d2, /^DESTINATION \d+$/.test(d2)]; want.newDest = [true, true];
-      aux.name = 'NEW SOURCE'; _wireAdvHelpers(); const nc = wireAdvanced.customSources.length; _wireAdvAddCustomSource(); await wait(100);
-      out.wireCard = (wireAdvanced.customSources[nc] || {}).name; want.wireCard = 'NEW SOURCE 2';
+      const _nx = _lbfNewSource().name; aux.name = _nx;   /* 16lv-newnames: the name the next Wire source card would take */ _wireAdvHelpers(); const nc = wireAdvanced.customSources.length; _wireAdvAddCustomSource(); await wait(100);
+      out.wireCard = (wireAdvanced.customSources[nc] || {}).name; want.wireCard = _nx.replace(/\d+$/, d => String(+d + 1));
       const lbl = ['IMAG', 'GFX A', 'GFX B', 'PBP A', 'PBP B'].find(l => !_sysDiscoverSources().some(n => low(n) === low(l))), p0 = presets[0], s1 = screens[1].id;
       if (!lbl) return 'every quick label is a source in the example';
       dsms[0].name = lbl; const was = getL(p0.id, s1, 3), uq = _undoStack.length; lpPickCommonContent(p0.id, s1, 3, lbl, '#f0c060'); await wait(150);
@@ -16733,7 +16218,7 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
       out.p1dst = [dialogText().includes('is already a source in this show'), low(rd.name) !== low(srcNm), (ioDests || []).some(d => d && low(d.name) === low(srcNm))]; want.p1dst = [true, true, false];
     } catch (e) { return 'threw: ' + e.message; }
     finally { okDialogs(); try { closeCustomModal(); } catch (e) {} try { _ioSetView('simple'); } catch (e) {} try { closeSystem(); } catch (e) {} await restore(); }
-    return is(out, want, 'the Custom window given a destination\'s name [a library item, says so, still open] / a file named like a destination [its name] / + Add multiviewer with a source called the next MV [its name, a window] / a new destination\'s default name taken by a source [another one, still DESTINATION nn] / a new Wire source card with an AUX called NEW SOURCE [its name] / a quick label (IMAG ...) picked for a layer with an AUX of that name [layer as it was, says it is an output, Undo steps] / page 1: a typed source row given the AUX\'s name [says it is an output, not written, no such source] / a typed destination row given a source\'s name [says so, not written, no such I/O-only destination]');
+    return is(out, want, 'the Custom window given a destination\'s name [a library item, says so, still open] / a file named like a destination [its name] / + Add multiviewer with a source called the next MV [its name, a window] / a new destination\'s default name taken by a source [another one, still DESTINATION nn] / a new Wire source card with an AUX called the next SOURCE n [its name] / a quick label (IMAG ...) picked for a layer with an AUX of that name [layer as it was, says it is an output, Undo steps] / page 1: a typed source row given the AUX\'s name [says it is an output, not written, no such source] / a typed destination row given a source\'s name [says so, not written, no such I/O-only destination]');
   });
   // 16ls-onename ON3: NEW
   await check('Names 16ls-onename ON3 (Omar 2026-10-18, his own steps: "in testing I created the same word in AUX and in SOURCES, TEST 05 and both got added with zero issue on the I/O Patch page"): on the I/O Patch an AUX card renamed TEST 05 by typing in its name box, then a source card typed test 05: Name in use (an output has it), the source box reads its old name again, no source of that name; the other way too: a source renamed TEST 06, then an AUX card typed Test 06 is refused', async () => {
@@ -17007,6 +16492,164 @@ await check('Send: attaches the Look Book the window builds (wire sheet included
     } catch (e) { return 'threw: ' + e.message; }
     finally { try { closeWireMode(); } catch (e) {} await restore(); }
     return is(out, want, '[A under SDI, B listed, in its colour, A not listed by name, the router listed] / sheet [no cable type, no empty note] / SVG key [drawn, B listed] / an empty key [No cables on this page, old words] / screen key [no B row, no untyped row] / Wire EXPORT page 1 lists B');
+  });
+  // 16lv-names NR1: NEW
+  await check('Look 16lv-names NR1 (Omar 2026-10-30: "no more then 10 characters across then a second row of 10 characters anything more is off screen hover over shows the full name"; his answers: a row ends at a space, only a word longer than the row is split, a cut name ends with …; then "12 per row"): a name splits into rows of at most 12 characters; a cut row shows as much as fits before its …', async () => {
+    const T = [['PLAYBACK MAIN A', 2], ['DESTINATION 01', 2], ['DESTINATION 01', 1], ['NEW DESTINATION 2', 1], ['NEW TELEPROMPTERS', 2], ['CAMERA ONE WIDE SHOT CLOSE UP', 2], ['CAMERA ONE WIDE SHOT CLOSE UP', 1], ['CAMERA ONE WIDE SHOT CLOSE UP', 0], ['', 2]];
+    return is(T.map(x => _lbuRows(x[0], x[1])), [['PLAYBACK', 'MAIN A'], ['DESTINATION', '01'], ['DESTINATION…'], ['NEW DESTINA…'], ['NEW TELEPROM', 'PTERS'], ['CAMERA ONE', 'WIDE SHOT C…'], ['CAMERA ONE…'], ['CAMERA ONE', 'WIDE SHOT', 'CLOSE UP'], []], 'rows');
+  });
+
+  // 16lv-names NR2: NEW
+  await check('Look 16lv-names NR2 (the 12-character rule on cards): a source named CAMERA ONE WIDE SHOT CLOSE UP reads CAMERA ONE / WIDE SHOT C… beside its picture and CAMERA ONE… on it, on the I/O Patch and on Wire\'s and Video Presets > Advanced\'s panels; hovering its name or its picture shows the whole name; the rows fit their line', async () => {
+    const LONG = 'CAMERA ONE WIDE SHOT CLOSE UP', K = 'src:' + LONG, out = {}, want = {};
+    const read = c => { if (!c) return 'no card'; const r = $('.iog-name-text .lbu-rows', c), cell = $('.iog-name-cell', c), cap = $('.wire-thumb-auto', c), inp = $('.sys-name-input', c);
+      return [r ? r.innerHTML.split('<br>') : 'no rows', !!r && r.getBoundingClientRect().right <= cell.getBoundingClientRect().right + 0.5, cap ? cap.textContent : 'no caption', cap ? cap.getAttribute('title') : '', inp ? inp.title : '']; };
+    const W = [['CAMERA ONE', 'WIDE SHOT C…'], true, 'CAMERA ONE…', LONG, LONG];
+    try {
+      await restore(); _sysWithUndo(() => _sysApplyGlobalRename('PPT A', LONG)); await wait(200);
+      await ioOpenSimple(); await wait(300); out.io = read(_vcCard('#io-grid', K)); want.io = W;
+      try { closeSystem(); } catch (e) {} await wait(200);
+      openWireMode(); await wait(800); out.wire = read(_vcCard('#wire-sources-panel', K)); want.wire = W;
+      try { closeWireMode(); } catch (e) {} await wait(200);
+      await _vcAdv(); await wait(300); out.vp = read(_vcCard('#fs-left-panel', K)); want.vp = W;
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { await _vfBack(); await restore(); }
+    return is(out, want, 'I/O Patch / Wire panel / Video Presets panel: [rows, the rows fit their line, the picture\'s caption, its tooltip, the name\'s tooltip]');
+  });
+
+  // 16lv-names NR3: NEW
+  await check('Wire 16lv-names NR3 (the 12-character rule on Wire tiles): on Wire > Advanced and Simple the source CAMERA ONE WIDE SHOT CLOSE UP reads CAMERA ONE / WIDE SHOT C… beside its picture and CAMERA ONE… on it, a destination named DESTINATION 01 reads DESTINATION / 01 (DESTINATION… on its picture); hovering a name shows it whole; no picture caption is longer than 12; the tile\'s type chip stays inside the tile', async () => {
+    const LONG = 'CAMERA ONE WIDE SHOT CLOSE UP', DST = 'DESTINATION 01', out = {}, want = {};
+    const tile = nm => $$('#wire-diagram .wire-source-name').find(e => e.getAttribute('title') === nm);
+    const read = nm => { const el = tile(nm); if (!el) return 'no tile'; const r = $('.lbu-rows', el), fo = el.closest('foreignObject'), typ = $('.wire-type-btn', el.parentElement);
+      return [r ? r.innerHTML.split('<br>') : 'no rows', !!typ && !!fo && typ.getBoundingClientRect().bottom <= fo.getBoundingClientRect().bottom + 0.5]; };
+    const caps = () => $$('#wire-diagram text.wire-adv-thumb').map(t => t.textContent);
+    try {
+      await restore(); _sysWithUndo(() => _sysApplyGlobalRename('PPT A', LONG)); await wait(200);
+      const inp = $('#table-panel input[title^="Destination name"]'); if (!inp) return 'no destination name field in the table';
+      inp.value = DST; fire(inp, 'blur'); await wait(300);
+      openWireMode(); await wait(800); _wireSwitchToAdvanced(); await wait(700); okDialogs(); await wait(1200); okDialogs(); await wait(300);
+      wireSettings.zoom = 1; _wireRender(); await wait(400);
+      const c = caps();
+      out.advanced = [read(LONG), read(DST), c.indexOf('CAMERA ONE…') >= 0, c.indexOf('DESTINATION…') >= 0, c.every(t => t.length <= 12)];
+      want.advanced = [[['CAMERA ONE', 'WIDE SHOT C…'], true], [['DESTINATION', '01'], true], true, true, true];
+      _wireSwitchToSimple(); await wait(900); wireSettings.zoom = 1; _wireRender(); await wait(400);
+      const c2 = caps();
+      out.simple = [read(LONG)[0], read(DST)[0], c2.indexOf('CAMERA ONE…') >= 0, c2.every(t => t.length <= 12)];
+      want.simple = [['CAMERA ONE', 'WIDE SHOT C…'], ['DESTINATION', '01'], true, true];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { closeWireMode(); } catch (e) {} await restore(); }
+    return is(out, want, 'Advanced [source tile [rows, chip inside], destination tile, CAMERA ONE… on a picture, DESTINATION… on a picture, no caption over 12] / Simple [source rows, destination rows, CAMERA ONE…, no caption over 12]');
+  });
+
+  // 16lv-names NR4: NEW
+  await check('Wire 16lv-names NR4 (the 12-character rule on tool title bars): a router named MAIN PRODUCTION ROUTER ONE reads MAIN / PRODUCTION… in its title bar (its tooltip the whole name) and MAIN PRODUC… on its picture; the Wire export keeps those rows; Simple\'s Generic Router reads Generic / Router (capitals on screen)', async () => {
+    const NM = 'MAIN PRODUCTION ROUTER ONE', out = {}, want = {};
+    try {
+      await restore(); render(); await wait(200);
+      openWireMode(); await wait(800); _wireSwitchToSimple(); await wait(700);
+      const hub = $$('#wire-diagram .wtl-nm-show').map(e => e.innerHTML)[0];
+      out.simple = hub ? hub.split('<br>') : 'no router bar'; want.simple = ['Generic', 'Router'];
+      _wireSwitchToAdvanced(); await wait(700); okDialogs(); await wait(1200); okDialogs(); await wait(300);
+      const r = (wireAdvanced.routers || [])[0]; if (!r) return 'no router on page 1';
+      r.title = NM; _wireRender(); await wait(400);
+      const sh = $$('#wire-diagram .wtl-nm-show')[0], nmEl = sh && sh.closest('.wtl-nm');
+      out.bar = sh ? [sh.innerHTML.split('<br>'), nmEl ? nmEl.getAttribute('title').indexOf(NM) === 0 : 'no title'] : 'no bar'; want.bar = [['MAIN', 'PRODUCTION…'], true];
+      out.caption = $$('#wire-diagram text.wtl-auto-t').map(t => t.textContent).indexOf('MAIN PRODUC…') >= 0; want.caption = true;
+      const svg = _wireBuildAdvancedExportSvg('dark', { transparent: true, noLegend: true });
+      const doc = new DOMParser().parseFromString(String(svg).replace(/^<\?xml[^>]*\?>/, ''), 'image/svg+xml'), ps = doc.querySelector('.wtl-nm-show');
+      out.paper = ps ? ps.innerHTML.replace(/<br[^>]*>/g, '|').split('|') : 'no bar on paper'; want.paper = ['MAIN', 'PRODUCTION…'];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { closeWireMode(); } catch (e) {} await restore(); }
+    return is(out, want, 'Simple\'s router / page 1 router [rows, tooltip] / its picture / the export');
+  });
+
+  // 16lv-names NR5: NEW
+  await check('Wire 16lv-names NR5 (Omar: "the Details on Wire also need to wrap around with the same row ... long then a new row"): a picked source tile named CAMERA ONE WIDE SHOT CLOSE UP shows its whole name in Wire\'s Details, 12 characters a row (CAMERA ONE / WIDE SHOT / CLOSE UP), its tooltip the whole name; nothing scrolls sideways', async () => {
+    const LONG = 'CAMERA ONE WIDE SHOT CLOSE UP', out = {}, want = {};
+    try {
+      await restore(); _sysWithUndo(() => _sysApplyGlobalRename('PPT A', LONG)); await wait(200);
+      openWireMode(); await wait(800); _wireSwitchToAdvanced(); await wait(700); okDialogs(); await wait(1200); okDialogs(); await wait(300);
+      const inst = (wireAdvanced.sources || []).find(s => s.name === LONG); if (!inst) return 'no tile of the source on page 1';
+      _wireSelectNode('asrc:' + inst.id, false); _wireRender(); await wait(400);
+      const d = $('#wire-details'), sp = d ? $$('span', d).find(s => s.getAttribute('title') === LONG) : null;
+      out.rows = sp ? sp.innerHTML.split('<br>') : 'no name in Details'; want.rows = ['CAMERA ONE', 'WIDE SHOT', 'CLOSE UP'];
+      out.sideways = d ? d.scrollWidth > d.clientWidth + 0.5 : 'no Details'; want.sideways = false;
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { _wireState.selectedNodes.clear(); } catch (e) {} try { closeWireMode(); } catch (e) {} await restore(); }
+    return is(out, want, 'Details: the name\'s rows / scrolls sideways');
+  });
+
+  // 16lv-names NR6: NEW
+  await check('Look 16lv-names NR6 (the phone is frozen): with the phone layout on, a card, a tile and a caption keep their old markup (no rows, no added tooltip, a caption of up to 12 capitals as before)', async () => {
+    const LONG = 'CAMERA ONE WIDE SHOT CLOSE UP', b = document.body, had = b.classList.contains('is-mobile');
+    try { b.classList.add('is-mobile'); return is([_lbuCardName(LONG), _lbuTip(LONG), _lbuCap(LONG), _lbuDet(LONG)], [LONG, '', 'CAMERA ONE W', LONG], 'phone: [card name, tooltip, caption, Details]'); }
+    finally { if (!had) b.classList.remove('is-mobile'); }
+  });
+
+  // 16lv-newnames NR7: NEW
+  await check('Wire 16lv-newnames NR7 (Omar 2026-10-30: "a "NEW DESTINATION" doesnt need the new since the number would just increase from the last number"; "All three"): Wire > Advanced\'s hand-made destination, source and AUX cards, and an I/O-only destination made from a heading\'s +, are named as + Add names a show item (DESTINATION 04 then 05, SOURCE n, AUX n), never NEW …; + Add destination, + AUX and + Add source then skip those names', async () => {
+    const out = {}, want = {};
+    const num = s => { const m = /(\d+)$/.exec(String(s)); return m ? parseInt(m[1], 10) : -1; };
+    try {
+      await restore(); render(); await wait(200);
+      openWireMode(); await wait(800); _wireSwitchToAdvanced(); await wait(700); okDialogs(); await wait(1200); okDialogs(); await wait(300);
+      const d0 = _r4fNewDest(), s0 = _lbfNewSource().name, a0 = _kzAuxName();
+      _wireAdvAddCustomDest(); _wireAdvAddCustomDest(); _wireAdvAddCustomSource(); _wireAdvAddCustomSource(); _wireAdvAddCustomDsm(); _wireAdvAddCustomDsm(); await wait(300);
+      const D = wireAdvanced.customDests.slice(-2).map(c => c.name), S = wireAdvanced.customSources.slice(-2).map(c => c.name), A = wireAdvanced.customDsms.slice(-2).map(c => c.name);
+      out.dst = [D[0] === d0, /^DESTINATION \d{2}$/.test(D[1]), num(D[1]) === num(D[0]) + 1]; want.dst = [true, true, true];
+      out.src = [S[0] === s0, /^SOURCE \d+$/.test(S[1]), num(S[1]) === num(S[0]) + 1]; want.src = [true, true, true];
+      out.aux = [A[0] === a0, num(A[1]) === num(A[0]) + 1]; want.aux = [true, true];
+      out.noNew = [].concat(D, S, A).some(n => /^NEW /i.test(n)); want.noNew = false;
+      out.addSkips = [D.indexOf(_r4fNewDest()) < 0, S.indexOf(_lbfNewSource().name) < 0, A.indexOf(_kzAuxName()) < 0]; want.addSkips = [true, true, true];
+      _lbhcMakeIo('dst'); await wait(200); const io = (ioDests || []).slice(-1)[0];
+      out.ioOnly = io ? [/^DESTINATION \d{2}$/.test(io.name), D.indexOf(io.name) < 0] : 'no I/O-only destination'; want.ioOnly = [true, true];
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { closeWireMode(); } catch (e) {} await restore(); }
+    return is(out, want, 'hand-made destinations [the first = + Add\'s name, DESTINATION nn, numbered on] / sources / AUX / NEW in any name / + Add skips them [dst, src, aux] / an I/O-only destination [DESTINATION nn, not a hand-made name]');
+  });
+
+  // 16lv-qshover NR8: NEW
+  await check('Look 16lv-qshover NR8 (Omar 2026-10-30 testing 16lu: "still in cyan"; his words of 2026-10-18: "the button at the bottom start blank build my show still highlight in Cyan they should just highlight with the grey outline now"): pointing at Quick Show Setup\'s Start blank / Build My Show leaves their words as they are and draws the grey edge (#5d6778) and the Welcome window\'s lighter face; the rules outrank the black skin\'s cyan hover', async () => {
+    const rules = []; for (const sh of document.styleSheets) { let rs = []; try { rs = sh.cssRules || []; } catch (e) {} for (const r of rs) if (r.selectorText) rules.push(r); }
+    const find = sel => rules.find(r => r.selectorText.split(',').map(x => x.trim()).indexOf(sel) >= 0);
+    const h = find('body:not(.is-mobile) #qs-modal .pm-btn-primary:hover'), hc = find('body:not(.is-mobile) #qs-modal .pm-btn-cancel:hover'), f = find('body:not(.is-mobile) #qs-modal .pm-btn-cancel:hover::before');
+    const rd = r => r ? [r.style.getPropertyValue('color').trim(), r.style.getPropertyPriority('color'), r.style.getPropertyValue('border-color').trim().toLowerCase(), r.style.getPropertyPriority('border-color')] : 'no rule';
+    return is([rd(h), rd(hc), f ? f.style.getPropertyValue('background').replace(/\s+/g, ' ').indexOf('#272e3a') >= 0 || f.style.getPropertyValue('background-image').indexOf('39, 46, 58') >= 0 : 'no face rule', document.body.dataset.skin === 'black' ? 'black' : document.body.dataset.skin],
+      [['var(--text)', 'important', 'rgb(93, 103, 120)', 'important'], ['var(--text)', 'important', 'rgb(93, 103, 120)', 'important'], true, 'black'], '[Build My Show hover: words, !, edge, !] / [Start blank hover] / the Welcome face / the skin');
+  });
+
+  // 16lv-names NR9: NEW (it takes over from the 16lc-names / -midword / -onlyword and 16ld-fix A4/B2 checks: the fits they pinned are gone)
+  await check('Wire 16lv-names NR9 (the 12-character rule on tool title bars with the names that tested the old fits: NETGEAR M4250-26G4F, CORE_SW_01_STAGE_LEFT_RACK_A, MICROCONVERTER BIDIRECTIONAL, emoji, Arabic, letters with accents written as two characters, ß, a no-break space, an ideographic space, a 40,000-letter word): on a 10 x 10 router, a network switch and a converter each bar shows exactly _lbuRows(name, 2) (no letter split, no no-break space broken), every row fits its bar, the tooltip is the whole name; a rename in place keeps the rows; the light Wire sheet prints the same rows; the 40,000-letter name draws in well under half a second', async () => {
+    const out = {}, want = {};
+    const NAMES = ['NETGEAR M4250-26G4F', 'CORE_SW_01_STAGE_LEFT_RACK_A', 'MICROCONVERTER BIDIRECTIONAL', '📺📺📺📺📺📺📺📺 CORE_SW_01_STAGE_LEFT_RA', 'مفتاح الشبكة الرئيسي للمسرح', 'SCÉNÉ_CÔTÉ_A RACK', 'STRAßE MAIN FEED', 'STAGE LEFT CAMERA SWITCH', '照照照照　ABCDEFGHIJKLMNOP', 'x'.repeat(40000)];
+    const rowsOf = sh => sh ? sh.innerHTML.split(/<br[^>]*>/i).map(h => { const d = document.createElement('div'); d.innerHTML = h; return d.textContent; }) : null;
+    try {
+      await restore(); await _cMWire('advanced');
+      const r0 = wireAdvanced.routers.length; _wireAdvAddRouter(10); const R = wireAdvanced.routers[r0];
+      const d0 = wireAdvanced.devices.length; _wireAdvAddDevice('switch', 4); _wireAdvAddDevice('converter', 2, 2); const NS = wireAdvanced.devices[d0], CV = wireAdvanced.devices[d0 + 1];
+      _wireSetZoom(1); const bad = [];
+      for (const nm of NAMES) {
+        R.title = nm; NS.name = nm; CV.name = nm;
+        const t0 = performance.now(); _wireRender(); const ms = performance.now() - t0; await wait(120);
+        const w2 = _lbuRows(nm, 2);
+        for (const [nid, kind] of [['router:' + R.id, 'router'], ['device:' + NS.id, 'switch'], ['device:' + CV.id, 'converter']]) {
+          const sh = _mwSh(document, nid), r = rowsOf(sh), nmEl = sh && sh.closest('.wtl-nm'), tip = nmEl ? (nmEl.getAttribute('title') || '') : '';
+          const fits = !!sh && sh.scrollWidth <= sh.clientWidth + 1;
+          if (JSON.stringify(r) !== JSON.stringify(w2) || !fits || tip.indexOf(nm) !== 0) bad.push([kind, nm.slice(0, 16), r ? r.map(x => x.slice(0, 14)) : 'no bar', fits, tip.indexOf(nm) === 0]);
+        }
+        if (nm.length > 1000 && ms > 500) bad.push(['slow', Math.round(ms)]);
+      }
+      out.bad = bad; want.bad = [];
+      R.title = 'NETGEAR M4250-26G4F'; _wireRender(); await wait(200);
+      const sh = _mwSh(document, 'router:' + R.id); if (sh) { _wtlNmSet(sh, 'CORE_SW_01_STAGE_LEFT_RACK_A'); out.inPlace = rowsOf(sh); } else out.inPlace = 'no bar';
+      want.inPlace = _lbuRows('CORE_SW_01_STAGE_LEFT_RACK_A', 2);
+      _wireRender(); await wait(200);
+      const doc = new DOMParser().parseFromString(String(_wireBuildAdvancedExportSvg('light', {})).replace(/^<\?xml[^>]*\?>/, ''), 'image/svg+xml');
+      out.paper = rowsOf(_mwSh(doc, 'router:' + R.id)); want.paper = _lbuRows('NETGEAR M4250-26G4F', 2);
+    } catch (e) { return 'threw: ' + e.message; }
+    finally { try { _wireSetZoom(1); } catch (e) {} await restore(); }
+    return is(out, want, 'bars that are not the rule [tool, name, rows, every row fits, the tooltip] / a rename in place / the light sheet\'s router');
   });
   try { _fsPauseAll(); } catch (e) {} $$('video').forEach(v => { try { v.muted = true; v.pause(); } catch (e) {} });
   return { checks };
